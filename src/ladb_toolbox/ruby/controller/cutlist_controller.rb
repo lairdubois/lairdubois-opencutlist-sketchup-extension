@@ -1,14 +1,18 @@
 require_relative 'controller'
+require_relative '../model/size'
+require_relative '../model/cutlist'
+require_relative '../model/groupdef'
+require_relative '../model/piecedef'
 
 class CutlistController < Controller
 
-  def initialize(app)
-    super(app)
+  def initialize(plugin)
+    super(plugin)
   end
 
   def setup_dialog_actions(dialog)
 
-    Setup toolbox dialog actions
+    # Setup toolbox dialog actions
     dialog.add_action_callback("ladb_generate_cutlist") do |action_context, json_params|
 
       params = JSON.parse(json_params)
@@ -69,9 +73,9 @@ class CutlistController < Controller
     bounds
   end
 
-  def _dim_from_bounds(bounds)
+  def _size_from_bounds(bounds)
     ordered = [bounds.width, bounds.height, bounds.depth].sort
-    Dim.new(ordered[2], ordered[1], ordered[0])
+    Size.new(ordered[2], ordered[1], ordered[0])
   end
 
   def _convert_to_std_thickness(thickness)
@@ -105,34 +109,34 @@ class CutlistController < Controller
 
       material_name = material ? component.material.name : 'Matière non définie'
 
-      dim = _dim_from_bounds(_compute_faces_bounds(definition))
-      raw_dim = Dim.new(
-          (dim.length + length_increase).to_l,
-          (dim.width + width_increase).to_l,
-          _convert_to_std_thickness((dim.thickness + thickness_increase).to_l)
+      size = _size_from_bounds(_compute_faces_bounds(definition))
+      raw_size = Size.new(
+          (size.length + length_increase).to_l,
+          (size.width + width_increase).to_l,
+          _convert_to_std_thickness((size.thickness + thickness_increase).to_l)
       )
 
-      key = material_name + ':' + raw_dim.thickness.to_s
+      key = material_name + ':' + raw_size.thickness.to_s
       group_def = cutlist.get_group_def(key)
       unless group_def
 
         group_def = GroupDef.new
         group_def.name = material_name
-        group_def.raw_thickness = raw_dim.thickness
+        group_def.raw_thickness = raw_size.thickness
 
         cutlist.set_group_def(key, group_def)
 
       end
 
-      piece_def = group_def.get_piece(definition.name)
+      piece_def = group_def.get_piece_def(definition.name)
       unless piece_def
 
         piece_def = PieceDef.new
         piece_def.name = definition.name
-        piece_def.raw_dim = raw_dim
-        piece_def.dim = dim
+        piece_def.raw_size = raw_size
+        piece_def.size = size
 
-        group_def.set_piece(definition.name, piece_def)
+        group_def.set_piece_def(definition.name, piece_def)
 
       end
       piece_def.count += 1

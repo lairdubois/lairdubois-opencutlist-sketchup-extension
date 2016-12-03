@@ -9,13 +9,13 @@ class GroupDef
     @piece_defs = {}
   end
 
-  def set_piece(key, piece)
-    @piece_defs[key] = piece
+  def set_piece_def(key, piece_def)
+    @piece_defs[key] = piece_def
   end
 
-  def get_piece(key)
+  def get_piece_def(key)
     if @piece_defs.has_key? key
-      @piece_defs[key]
+      return @piece_defs[key]
     end
     nil
   end

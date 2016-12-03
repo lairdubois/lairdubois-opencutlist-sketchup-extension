@@ -1,6 +1,6 @@
 require 'sketchup.rb'
 require 'json'
-require_relative 'ruby/app.rb'
+require_relative 'ruby/plugin.rb'
 
 module Ladb
   module Toolbox
@@ -8,19 +8,19 @@ module Ladb
     unless file_loaded?(__FILE__)
 
       # Initialize the app
-      app = App.new
+      plugin = Plugin.new()
 
       # Setup Menu
       menu = UI.menu
       submenu = menu.add_submenu('L\'Air du Bois')
       submenu.add_item('Fiche de débit') {
-        app.toggle_dialog
+        plugin.toggle_dialog
       }
 
       # Setup Toolbar
       toolbar = UI::Toolbar.new('L\'Air du Bois')
       cmd = UI::Command.new('Boîte à outils') {
-        app.toggle_dialog
+        plugin.toggle_dialog
       }
       cmd.small_icon = 'img/icon-72x72.png'
       cmd.large_icon = 'img/icon-114x114.png'

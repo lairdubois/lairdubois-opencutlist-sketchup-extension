@@ -1,4 +1,4 @@
-class Dim
+class Size
 
   attr_accessor :length
   attr_accessor :width

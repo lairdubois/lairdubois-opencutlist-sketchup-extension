@@ -1,6 +1,3 @@
-Group = Struct.new(:name, :raw_thickness, :piece_defs )
-Piece = Struct.new(:name, :count, :raw_dim, :dim, :component_guids )
-
 class Cutlist
 
   @filepath
@@ -10,16 +7,16 @@ class Cutlist
   def initialize(filepath, length_unit)
     @filepath = filepath
     @length_unit = length_unit
-    @group_defs = []
+    @group_defs = {}
   end
 
   def set_group_def(key, group_def)
-    @group[key] = group_def
+    @group_defs[key] = group_def
   end
 
   def get_group_def(key)
     if @group_defs.has_key? key
-      @group[key]
+      return @group_defs[key]
     end
     nil
   end
@@ -47,17 +44,17 @@ class Cutlist
 
       # Sort and browse pieces
       code = 0
-      group_def.piece_defs.sort_by { |k, v| [v.dim.thickness, v.dim.length, v.dim.width] }.reverse.each { |key, piece_def|
-        group[:raw_area] += piece_def.raw_dim.area
-        group[:raw_volume] += piece_def.raw_dim.volume
+      group_def.piece_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, piece_def|
+        group[:raw_area] += piece_def.raw_size.area
+        group[:raw_volume] += piece_def.raw_size.volume
         group[:pieces].push({
                                 :name => piece_def.name,
-                                :length => piece_def.dim.length,
-                                :width => piece_def.dim.width,
-                                :thickness => piece_def.dim.thickness,
+                                :length => piece_def.size.length,
+                                :width => piece_def.size.width,
+                                :thickness => piece_def.size.thickness,
                                 :count => piece_def.count,
-                                :raw_length => piece_def.raw_dim.length,
-                                :raw_width => piece_def.raw_dim.width,
+                                :raw_length => piece_def.raw_size.length,
+                                :raw_width => piece_def.raw_size.width,
                                 :code => code.to_s,
                                 :component_guids => piece_def.component_guids
                             }

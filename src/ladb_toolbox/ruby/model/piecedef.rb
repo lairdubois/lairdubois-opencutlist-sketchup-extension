@@ -1,13 +1,13 @@
 class PieceDef
 
-  attr_accessor :name, :count, :raw_dim, :dim
+  attr_accessor :name, :count, :raw_size, :size
   attr_reader :component_guids
 
   def initialize
     @name = ''
     @count = 0
-    @raw_dim = Dim.new
-    @dim = Dim.new
+    @raw_size = Size.new
+    @size = Size.new
     @component_guids = []
   end
 
