@@ -7,7 +7,7 @@ module Ladb
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new('L\'Air du Bois - Boîte à outils Sketchup', 'ladb_toolbox/main')
       ex.description = 'Boîte à outils pour les boiseux - Générateur de fiche de débit.'
-      ex.version     = '0.1.0'
+      ex.version     = '0.1.1'
       ex.copyright   = 'L\'Air du Bois © 2016 - GPL'
       ex.creator     = 'Boris Beaulant www.lairdubois.fr'
       Sketchup.register_extension(ex, true)
