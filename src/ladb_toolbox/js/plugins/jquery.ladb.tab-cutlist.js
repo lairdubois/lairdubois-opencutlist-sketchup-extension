@@ -77,7 +77,7 @@
 
         var that = this;
         Twig.twig({
-            href: "../twig/tabs/cutlist/_group-list.twig",
+            href: "../twig/tabs/cutlist/_list.twig",
             load: function (template) {
                 that.$list.append(template.render({
                     groups: groups
