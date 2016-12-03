@@ -1,0 +1,25 @@
+#ladb_wrapper {
+    padding-left: 90px;
+}
+
+#ladb_container {
+    padding-top: 20px;
+}
+
+table.ladb-cutlist tr td {
+    white-space: nowrap;
+}
+
+@media print {
+    .no-print, .no-print * {
+        display: none !important;
+    }
+
+    html, body {
+        margin: 0 !important;
+    }
+
+    table.table-bordered {
+        border-color: #000;
+    }
+}
