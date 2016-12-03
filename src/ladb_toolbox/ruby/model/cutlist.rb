@@ -43,7 +43,7 @@ class Cutlist
       output[:groups].push(group)
 
       # Sort and browse pieces
-      code = 0
+      code = 'A'
       group_def.piece_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, piece_def|
         group[:raw_area] += piece_def.raw_size.area
         group[:raw_volume] += piece_def.raw_size.volume
@@ -55,12 +55,14 @@ class Cutlist
                                 :count => piece_def.count,
                                 :raw_length => piece_def.raw_size.length,
                                 :raw_width => piece_def.raw_size.width,
-                                :code => code.to_s,
+                                :code => code,
                                 :component_guids => piece_def.component_guids
                             }
         )
-        code += 1
+        code = code.succ
       }
+
+      group[:raw_area] = Sketchup.format_area(group[:raw_area])
     }
 
     JSON.generate(output)
