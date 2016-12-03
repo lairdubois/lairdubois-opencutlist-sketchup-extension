@@ -189,14 +189,15 @@ module Ladb
                 :preferences_key => "fr.lairdubois.plugin",
                 :scrollable => true,
                 :resizable => true,
-                :width => 1280,
-                :height => 800,
+                :width => 90,
+                :height => 400,
                 :left => 200,
-                :top => 200,
+                :top => 100,
                 :min_width => 90,
                 :style => UI::HtmlDialog::STYLE_DIALOG
             })
         $dialog.set_file(__dir__ + '/html/dialog.html')
+        $dialog.set_size(90, 400)
         $dialog.add_action_callback("ladb_minimize") do |action_context|
           if $dialog
             $dialog.set_size(90, 400)
@@ -229,10 +230,9 @@ module Ladb
           json_data = self.ladb_generate_cutlist(entities, length_increase, width_increase, thickness_increase)
 
           # Callback to JS
-          $dialog.execute_script("rubyCallback('#{callback}', '#{json_data}');")
+          $dialog.execute_script(callback.sub('%PARAM%', json_data))
 
         end
-        $dialog.set_size(1280, 800)
         $dialog.show
       end
 

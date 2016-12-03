@@ -18,7 +18,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbCutlist = function (element, options) {
+    var LadbTabCutlist = function (element, options) {
         this.options = options;
         this.$element = $(element);
 
@@ -28,38 +28,34 @@
         this.widthIncrease = 5;
         this.thicknessIncrease = 5;
 
-        this.$wrapper = $('#ladb_wrapper', this.$element);
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
         this.$btnRefresh = $('#ladb_btn_refresh', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
-        this.$btnMinimize = $('#ladb_btn_minimize', this.$element);
-        this.$btnMaximize = $('#ladb_btn_maximize', this.$element);
-        this.$btnCutlist = $('#ladb_btn_cutlist', this.$element);
         this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
         this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
         this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
         this.$list = $('#list', this.$element);
     };
 
-    LadbCutlist.DEFAULTS = {};
+    LadbTabCutlist.DEFAULTS = {};
 
-    LadbCutlist.prototype.rubyCall = function (fn, callback, param) {
+    LadbTabCutlist.prototype.rubyCall = function (fn, callback, param) {
         window.location.href = "skp:" + fn + "@" + JSON.stringify({callback: callback, param: param});
     };
 
-    LadbCutlist.prototype.getCodeFromIndex = function (index) {
+    LadbTabCutlist.prototype.getCodeFromIndex = function (index) {
         return String.fromCharCode(65 + (index % 26));
     };
 
-    LadbCutlist.prototype.getLengthUnitInfos = function (lengthUnitIndex) {
+    LadbTabCutlist.prototype.getLengthUnitInfos = function (lengthUnitIndex) {
         if (lengthUnitIndex < 0 || lengthUnitIndex >= LADB_LENGTH_UNIT_INFOS.length) {
             return null;
         }
         return LADB_LENGTH_UNIT_INFOS[lengthUnitIndex];
     };
 
-    LadbCutlist.prototype.generateCutlistCallback = function (jsonData) {
+    LadbTabCutlist.prototype.onCutlistGenerated = function (jsonData) {
 
         var data = JSON.parse(jsonData);
 
@@ -144,34 +140,12 @@
 
     };
 
-    LadbCutlist.prototype.minimize = function () {
-        var that = this;
-        sketchup.ladb_minimize({
-            onCompleted: function() {
-                that.$wrapper.hide();
-                that.$btnMinimize.hide();
-                that.$btnMaximize.show();
-            }
-        });
-    };
-
-    LadbCutlist.prototype.maximize = function () {
-        var that = this;
-        sketchup.ladb_maximize({
-            onCompleted: function() {
-                that.$wrapper.show();
-                that.$btnMinimize.show();
-                that.$btnMaximize.hide();
-            }
-        });
-    };
-
-    LadbCutlist.prototype.bind = function () {
+    LadbTabCutlist.prototype.bind = function () {
         var that = this;
 
         // Bind buttons
         this.$btnRefresh.on('click', function () {
-            that.rubyCall('ladb_generate_cutlist', 'generateCutlistCallback', {
+            that.rubyCall('ladb_generate_cutlist', '$(\'#' + that.$element.attr('id') + '\').ladbTabCutlist(\'onCutlistGenerated\', \'%PARAM%\')', {
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
                 thickness_increase: that.thicknessIncrease + 'mm'
@@ -179,15 +153,6 @@
         });
         this.$btnPrint.on('click', function () {
             window.print();
-        });
-        this.$btnMinimize.on('click', function () {
-            that.minimize();
-        });
-        this.$btnMaximize.on('click', function () {
-            that.maximize();
-        });
-        this.$btnCutlist.on('click', function () {
-            that.maximize();
         });
 
         // Bind inputs
@@ -203,7 +168,7 @@
 
     };
 
-    LadbCutlist.prototype.init = function () {
+    LadbTabCutlist.prototype.init = function () {
         this.bind();
 
         // Init inputs values
@@ -219,11 +184,11 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.cutlist');
-            var options = $.extend({}, LadbCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var data = $this.data('ladb.tabCutlist');
+            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.cutlist', (data = new LadbCutlist(this, options)));
+                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options)));
             }
             if (typeof option == 'string') {
                 data[option](params);
@@ -233,17 +198,17 @@
         })
     }
 
-    var old = $.fn.ladbCutlist;
+    var old = $.fn.ladbTabCutlist;
 
-    $.fn.ladbCutlist = Plugin;
-    $.fn.ladbCutlist.Constructor = LadbCutlist;
+    $.fn.ladbTabCutlist = Plugin;
+    $.fn.ladbTabCutlist.Constructor = LadbTabCutlist;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbCutlist.noConflict = function () {
-        $.fn.ladbCutlist = old;
+    $.fn.ladbTabCutlist.noConflict = function () {
+        $.fn.ladbTabCutlist = old;
         return this;
     }
 

@@ -1,0 +1,19 @@
+{# set tabName #}
+
+<div id="ladb_tab_{{ tabName }}">
+    <div id="ladb_header">
+        <div class="container">
+            {% block headerInner %}
+                {% block headerToolsOuter %}
+                    <div class="no-print ladb-header-tools">
+                        {% block headerToolsInner %}{% endblock %}
+                    </div>
+                {% endblock %}
+                <h1 class="ladb-heading">{% block headerHeadingInner %}{% endblock %}</h1>
+            {% endblock %}
+        </div>
+    </div>
+    <div id="ladb_container" class="container">
+        {% block containerInner %}{% endblock %}
+    </div>
+</div>

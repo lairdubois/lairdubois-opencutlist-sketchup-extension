@@ -1,5 +1,7 @@
+
 #ladb_wrapper {
     padding-left: 90px;
+    padding-bottom: 30px;
 }
 
 #ladb_container {
@@ -10,6 +12,8 @@ table.ladb-cutlist tr td {
     white-space: nowrap;
 }
 
+/* Print */
+
 @media print {
     .no-print, .no-print * {
         display: none !important;
@@ -17,6 +21,14 @@ table.ladb-cutlist tr td {
 
     html, body {
         margin: 0 !important;
+    }
+
+    #ladb_wrapper {
+        padding-left: 0;
+    }
+
+    #ladb_container {
+        padding-top: 0
     }
 
     table.table-bordered {

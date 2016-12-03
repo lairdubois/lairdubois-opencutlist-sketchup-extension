@@ -6,94 +6,21 @@
     <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/ladb.css">
     <link rel="stylesheet" href="../css/ladb_leftbar.css">
+    <link rel="stylesheet" href="../css/ladb_bottombar.css">
     <link rel="stylesheet" href="../css/ladb_header.css">
     <script src="../js/lib/jquery-3.1.1.min.js"></script>
-    <script src="../js/lib/bootstrap.js"></script>
+    <script src="../js/lib/bootstrap.min.js"></script>
     <script src="../js/lib/quantities.js"></script>
-    <script src="../js/plugins/jquery.ladb.cutlist.js"></script>
+    <script src="../js/lib/twig.min.js"></script>
+    <script src="../js/plugins/jquery.ladb.toolbox.js"></script>
+    <script src="../js/plugins/jquery.ladb.tab-cutlist.js"></script>
+    <script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
 </head>
 <body>
-
-<nav class="ladb-leftbar no-print">
-    <a id="ladb_btn_minimize" href="#"><i class="glyphicon glyphicon-chevron-left"></i><div>Réduire</div></a>
-    <a id="ladb_btn_maximize" href="#" style="display: none;"><i class="glyphicon glyphicon-chevron-right"></i><div>Agrandir</div></a>
-    <a id="ladb_btn_cutlist" href="#" class="ladb-active"><i class="glyphicon glyphicon-list-alt"></i><div>Débit</div></a>
-</nav>
-<div id="ladb_wrapper">
-    <div id="ladb_header">
-        <div class="container">
-            <div class="no-print ladb-header-tools">
-                <button id="ladb_btn_refresh" class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"></i> Générer</button>
-                <button id="ladb_btn_print" class="btn btn-default"><i class="glyphicon glyphicon-print"></i> Imprimer</button>
-                <button id="ladb_btn_options" class="btn btn-default" data-toggle="modal" data-target="#ladb_options_modal">Options</button>
-            </div>
-            <h1 class="ladb-heading"><span id="ladb_filename" class="text-muted pull-right"></span>Fiche de débit&nbsp;<small id="ladb_unit"></small></h1>
-        </div>
-    </div>
-    <div id="ladb_container" class="container">
-        <div class="no-print panel panel-default">
-            <div class="panel-body">
-                Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>. Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
-            </div>
-        </div>
-        <div class="no-print">
-
-            <div id="ladb_options_modal" class="modal" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Options</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form">
-                                <div class="form-group">
-                                    <label for="ladb_input_length_increase">Majoration de longueur</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="ladb_input_length_increase">
-                                        <div class="input-group-addon">mm</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ladb_input_width_increase">Majoration de largeur</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="ladb_input_width_increase">
-                                        <div class="input-group-addon">mm</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ladb_input_thickness_increase">Majoration d'épaisseur</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="ladb_input_thickness_increase">
-                                        <div class="input-group-addon">mm</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="list"></div>
-    </div>
-</div>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('body').ladbCutlist();
-        window.onerror = function (errorMsg, url, lineNumber) {
-            alert("JavaScript error:\n" + url + " (line " + lineNumber + "): " + errorMsg);
-            return true;
-        }
+        $('body').ladbToolbox();
     });
-    function rubyCallback(jQueryCallback, jsonData) {
-        $('body').ladbCutlist(jQueryCallback, jsonData);
-    }
-
 </script>
-
 </body>
 </html>

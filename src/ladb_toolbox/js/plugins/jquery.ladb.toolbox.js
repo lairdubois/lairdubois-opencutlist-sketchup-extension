@@ -1,0 +1,194 @@
++function ($) {
+    'use strict';
+
+    // CLASS DEFINITION
+    // ======================
+
+    var LadbToolbox = function (element, options) {
+        this.options = options;
+        this.$element = $(element);
+
+        this.activeTabName = null;
+        this.tabs = {};
+        this.tabBtns = {};
+
+        this.$wrapper = null;
+        this.$btnMinimize = null;
+        this.$btnMaximize = null;
+    };
+
+    LadbToolbox.DEFAULTS = {
+        defaultTabName: 'cutlist',
+        tabDefs: [
+            {
+                name: 'cutlist',
+                icon: 'glyphicon glyphicon-list-alt',
+                label: 'Débit'
+            }
+        ]
+    };
+
+    LadbToolbox.prototype.rubyCall = function (fn, callback, param) {
+        window.location.href = "skp:" + fn + "@" + JSON.stringify({callback: callback, param: param});
+    };
+
+    LadbToolbox.prototype.getTabDef = function (tabName) {
+        var tabDef;
+        for (var i = 0; i < this.options.tabDefs.length; i++) {
+            tabDef = this.options.tabDefs[i];
+            if (tabDef.name == tabName) {
+                return tabDef;
+            }
+        }
+    };
+
+    LadbToolbox.prototype.minimize = function () {
+        var that = this;
+        sketchup.ladb_minimize({
+            onCompleted: function() {
+                that.$wrapper.hide();
+                that.$btnMinimize.hide();
+                that.$btnMaximize.show();
+            }
+        });
+    };
+
+    LadbToolbox.prototype.maximize = function () {
+        var that = this;
+        sketchup.ladb_maximize({
+            onCompleted: function() {
+                that.$wrapper.show();
+                that.$btnMinimize.show();
+                that.$btnMaximize.hide();
+            }
+        });
+    };
+
+    LadbToolbox.prototype.selectTab = function (tabName) {
+        if (tabName != this.activeTabName) {
+            if (this.activeTabName) {
+                var activeTab = this.tabs[this.activeTabName];
+                activeTab.hide();
+            }
+            var tab = this.tabs[tabName];
+            if (tab) {
+                tab.show();
+                this.activeTabName = tabName;
+            } else {
+                var that = this;
+                Twig.twig({
+                    href: "../twig/tabs/" + tabName + "/tab.twig",
+                    load: function (template) {
+
+                        // Render and append tab
+                        that.$wrapper.append(template.render({
+                            tabName: tabName
+                        }));
+
+                        // Fetch tab
+                        var $tab = $('#ladb_tab_' + tabName, that.$wrapper);
+
+                        // Initialize tab (with its jQuery plugin)
+                        var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+                        $tab[jQueryPluginFn]();
+
+                        // Store tab
+                        that.tabs[tabName] = $tab;
+
+                        // Flag tab as active
+                        that.activeTabName = tabName;
+                    }
+                });
+            }
+        }
+    };
+
+    LadbToolbox.prototype.bind = function () {
+        var that = this;
+
+        // Bind buttons
+        this.$btnMinimize.on('click', function () {
+            that.minimize();
+        });
+        this.$btnMaximize.on('click', function () {
+            that.maximize();
+            if (!that.activeTabName) {
+                that.selectTab(that.options.defaultTabName);
+            }
+        });
+        $.each(this.tabBtns, function(tabName, tabBtn){
+            tabBtn.on('click', function () {
+                that.maximize();
+                that.selectTab(tabName);
+            });
+        })
+
+    };
+
+    LadbToolbox.prototype.init = function () {
+        var that = this;
+
+        // Twig lib workaround (Check twig.js @5421:52)
+        window.cordova = 1;
+
+        // Build layout
+        Twig.twig({
+            href: "../twig/core/layout.twig",
+            load: function (template) {
+
+                // Render and append template
+                that.$element.append(template.render({
+                    tabDefs: that.options.tabDefs
+                }));
+
+                // Fetch usefull elements
+                that.$wrapper = $('#ladb_wrapper', that.$element);
+                that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
+                that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+                for (var i = 0; i < that.options.tabDefs.length; i++) {
+                    var tabDef = that.options.tabDefs[i];
+                    that.tabBtns[tabDef.name] = $('#ladb_btn_' + tabDef.name, that.$element);
+                }
+
+                that.bind();
+            }
+        });
+
+    };
+
+
+    // PLUGIN DEFINITION
+    // =======================
+
+    function Plugin(option, params) {
+        return this.each(function () {
+            var $this = $(this);
+            var data = $this.data('ladb.toolbox');
+            var options = $.extend({}, LadbToolbox.DEFAULTS, $this.data(), typeof option == 'object' && option);
+
+            if (!data) {
+                $this.data('ladb.toolbox', (data = new LadbToolbox(this, options)));
+            }
+            if (typeof option == 'string') {
+                data[option](params);
+            } else {
+                data.init();
+            }
+        })
+    }
+
+    var old = $.fn.ladbToolbox;
+
+    $.fn.ladbToolbox = Plugin;
+    $.fn.ladbToolbox.Constructor = LadbToolbox;
+
+
+    // NO CONFLICT
+    // =================
+
+    $.fn.ladbToolbox.noConflict = function () {
+        $.fn.ladbToolbox = old;
+        return this;
+    }
+
+}(jQuery);

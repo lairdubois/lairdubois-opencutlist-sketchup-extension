@@ -1,0 +1,14 @@
+<nav id="ladb_leftbar" class="ladb-leftbar no-print">
+    <a id="ladb_btn_minimize" href="#" style="display: none;"><i class="glyphicon glyphicon-chevron-left"></i><div>Réduire</div></a>
+    <a id="ladb_btn_maximize" href="#"><i class="glyphicon glyphicon-chevron-right"></i><div>Agrandir</div></a>
+    {% for tabDef in tabDefs %}
+        <a id="ladb_btn_{{ tabDef.name }}" href="#"><i class="{{ tabDef.icon }}"></i><div>{{ tabDef.label }}</div></a>
+    {% endfor %}
+</nav>
+<div id="ladb_wrapper" style="display: none;">
+    <div id="ladb_bottombar" class="ladb-bottombar">
+        <ul>
+            <li><a href="https://www.lairdubois.fr/blog/56-un-autre-plugin-sketchup-pour-les-fiches-de-debit.html">v0.1.0</a></li>
+        </ul>
+    </div>
+</div>
