@@ -10,12 +10,12 @@ class Size
     @thickness = thickness
   end
 
-  def area
-    @length * @width
+  def area_m2
+    @length.to_m * @width.to_m
   end
 
-  def volume
-    area * @thickness
+  def volume_m3
+    area_m2 * @thickness.to_m
   end
 
 end

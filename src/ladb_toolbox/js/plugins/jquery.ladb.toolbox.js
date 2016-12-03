@@ -24,12 +24,12 @@
                 name: 'cutlist',
                 icon: 'glyphicon glyphicon-list-alt',
                 label: 'Débit'
-            },
+            }/*,
             {
                 name: 'materials',
                 icon: 'glyphicon glyphicon-leaf',
                 label: 'Matières'
-            }
+            }*/
         ]
     };
 

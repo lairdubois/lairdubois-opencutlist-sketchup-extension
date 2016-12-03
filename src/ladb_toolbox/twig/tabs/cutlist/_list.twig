@@ -2,11 +2,11 @@
 
 {% for group in groups %}
     <table class="table table-bordered ladb-cutlist">
-        <thead style="background-color: #f9f9f9;">
+        <thead>
         <tr style="background-color: #eee;">
             <td colspan="8">
                 <span style="font-size: 18px;">{{ group.name }} / <strong>{{ group.raw_thickness }}</strong></span>
-                <span class="pull-right" style="white-space: nowrap;">Surface brute : <strong>{{ group.raw_area }}</strong>, Volume brut : <strong>{{ group.raw_volume }}</strong></span>
+                <span class="pull-right" style="white-space: nowrap; line-height: 25px;">Surface brute : <strong>{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></strong> / Volume brut : <strong>{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></strong></span>
             </td>
         </tr>
         <tr>
@@ -25,7 +25,14 @@
         </tr>
         </thead>
         <tbody>
+        {% set thickness = 0 %}
         {% for piece in group.pieces %}
+            {% if piece.thickness != thickness %}
+                {% set thickness = piece.thickness %}
+                <tr style="background-color: #fcfcfc;">
+                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ piece.thickness }}mm</strong></td>
+                </tr>
+            {% endif %}
             <tr style="font-size: 120%;">
                 <td>{{ piece.name }}</td>
                 <td class="text-right">{{ piece.length }}</td>
