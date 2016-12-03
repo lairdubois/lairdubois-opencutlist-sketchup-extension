@@ -1,0 +1,42 @@
+{# set groups #}
+
+{% for group in groups %}
+    <table class="table table-bordered ladb-cutlist">
+        <thead style="background-color: #f9f9f9;">
+        <tr style="background-color: #eee;">
+            <td colspan="8">
+                <span style="font-size: 18px;">{{ group.name }} / <strong>{{ group.raw_thickness }}</strong></span>
+                <span class="pull-right" style="white-space: nowrap;">Surface brute : <strong> XXX </strong>, Volume brut : <strong> XXX </strong></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Nom</td>
+            <td class="text-center" colspan="3">Finie</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Nbr.</td>
+            <td class="text-center" colspan="2">Brute</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Id</td>
+        </tr>
+        <tr>
+            <td class="text-center" width="10%">Long.</td>
+            <td class="text-center" width="10%">Larg.</td>
+            <td class="text-center" width="10%">Ep.</td>
+            <td class="text-center" width="10%">Long.</td>
+            <td class="text-center" width="10%">Larg.</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for piece in group.pieces %}
+            <tr style="font-size: 120%;">
+                <td>{{ piece.name }}</td>
+                <td class="text-right">{{ piece.length }}</td>
+                <td class="text-right">{{ piece.width }}</td>
+                <td class="text-right">{{ piece.thickness }}</td>
+                <td class="text-center">x {{ piece.count }}</td>
+                <td class="text-right" style="color: red;">{{ piece.raw_length }}</td>
+                <td class="text-right" style="color: red;">{{ piece.raw_width }}</td>
+                <td class="text-center" style="color: red;">{{ piece.code }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}

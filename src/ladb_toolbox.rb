@@ -2,7 +2,7 @@ require 'sketchup.rb'
 require 'extensions.rb'
 
 module Ladb
-  module Cutlist
+  module Toolbox
 
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new('L\'Air du Bois - Boîte à outils Sketchup', 'ladb_toolbox/main')

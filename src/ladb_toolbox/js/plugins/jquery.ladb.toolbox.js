@@ -24,6 +24,11 @@
                 name: 'cutlist',
                 icon: 'glyphicon glyphicon-list-alt',
                 label: 'Débit'
+            },
+            {
+                name: 'materials',
+                icon: 'glyphicon glyphicon-leaf',
+                label: 'Matières'
             }
         ]
     };
@@ -67,13 +72,24 @@
     LadbToolbox.prototype.selectTab = function (tabName) {
         if (tabName != this.activeTabName) {
             if (this.activeTabName) {
-                var activeTab = this.tabs[this.activeTabName];
-                activeTab.hide();
+
+                // Flag as inactive
+                this.tabBtns[this.activeTabName].removeClass('ladb-active');
+
+                // Hide active tab
+                this.tabs[this.activeTabName].hide();
+
             }
-            var tab = this.tabs[tabName];
-            if (tab) {
-                tab.show();
+            var $tab = this.tabs[tabName];
+            if ($tab) {
+
+                // Display tab
+                $tab.show();
+
+                // Flag tab as active
+                this.tabBtns[tabName].addClass('ladb-active');
                 this.activeTabName = tabName;
+
             } else {
                 var that = this;
                 Twig.twig({
@@ -96,6 +112,7 @@
                         that.tabs[tabName] = $tab;
 
                         // Flag tab as active
+                        that.tabBtns[tabName].addClass('ladb-active');
                         that.activeTabName = tabName;
                     }
                 });
