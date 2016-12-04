@@ -12,6 +12,10 @@ table.ladb-cutlist {
     background-color: #fff;
 }
 
+table.ladb-cutlist.no-print {
+    opacity: 0.5;
+}
+
 table.ladb-cutlist tr td {
     white-space: nowrap;
 }

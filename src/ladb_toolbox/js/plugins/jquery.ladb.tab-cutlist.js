@@ -79,9 +79,29 @@
         Twig.twig({
             href: "../twig/tabs/cutlist/_list.twig",
             load: function (template) {
+
                 that.$list.append(template.render({
                     groups: groups
                 }));
+
+                // Bind buttons
+                $('.ladb-btn-toggle-no-print', that.$list).on('click', function() {
+                    var $i = $('i', $(this));
+                    var groupId = $(this).data('group-id');
+                    var $group = $('#' + groupId);
+                    $group.toggleClass('no-print');
+                    if ($group.hasClass('no-print')) {
+                        $('tbody', $group).hide();
+                        $i.removeClass('glyphicon-eye-close');
+                        $i.addClass('glyphicon-eye-open');
+                    } else {
+                        $('tbody', $group).show();
+                        $i.addClass('glyphicon-eye-close');
+                        $i.removeClass('glyphicon-eye-open');
+                    }
+                    $(this).blur();
+                });
+
             }
         });
 
