@@ -18,6 +18,7 @@
     };
 
     LadbToolbox.DEFAULTS = {
+        version: '0.0.0',
         defaultTabName: 'cutlist',
         tabDefs: [
             {
@@ -155,6 +156,7 @@
 
                 // Render and append template
                 that.$element.append(template.render({
+                    version: that.options.version,
                     tabDefs: that.options.tabDefs
                 }));
 

@@ -5,6 +5,9 @@ module Ladb
   module Toolbox
     class Plugin
 
+      NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
+      VERSION = '01.2'
+
       attr_accessor :dialog
 
       @controllers
@@ -21,7 +24,7 @@ module Ladb
         else
           @dialog = UI::HtmlDialog.new(
               {
-                  :dialog_title => "L'Air du Bois - Boîte à outils Sketchup [BETA]",
+                  :dialog_title => NAME,
                   :preferences_key => "fr.lairdubois.plugin",
                   :scrollable => true,
                   :resizable => true,
@@ -34,6 +37,9 @@ module Ladb
               })
           @dialog.set_file(__dir__ + '/../html/dialog.html')
           @dialog.set_size(90, 400)
+          @dialog.add_action_callback("ladb_dialog_loaded") do |action_context|
+            @dialog.execute_script("$('body').ladbToolbox({ version: '#{VERSION}' });")
+          end
           @dialog.add_action_callback("ladb_minimize") do |action_context|
             if @dialog
               @dialog.set_size(90, 400)
