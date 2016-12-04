@@ -3,7 +3,7 @@ L'Air du Bois : Sketchup Toolbox
 
 **L'Air du Bois : Sketchup Toolbox** is a [SketchUp](http://www.sketchup.com) Plugin that automates the creating of cut lists for your woodworking project.
 
-![L'Air du Bois Sketchup Toolbox](doc/img/capture.jpg)
+![L'Air du Bois Sketchup Toolbox](docs/img/capture.jpg)
 
 License
 -------
