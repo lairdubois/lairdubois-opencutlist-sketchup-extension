@@ -1,16 +1,18 @@
 require 'sketchup.rb'
 require 'extensions.rb'
+require_relative 'ladb_toolbox/ruby/plugin.rb'
 
 module Ladb
   module Toolbox
 
+    # Create and Register extension
     unless file_loaded?(__FILE__)
-      ex = SketchupExtension.new('L\'Air du Bois - Boîte à outils Sketchup', 'ladb_toolbox/main')
+      ex = SketchupExtension.new('L\'Air du Bois :: Boîte à outils Sketchup', 'ladb_toolbox/main')
       ex.description = 'Boîte à outils pour les boiseux - Générateur de fiche de débit.'
-      ex.version     = '0.1.2'
+      ex.version     = Plugin::VERSION
       ex.copyright   = 'L\'Air du Bois © 2016 - GPL'
       ex.creator     = 'Boris Beaulant www.lairdubois.fr'
-      Sketchup.register_extension(ex, true)
+      Sketchup.register_extension(ex, compatible)
       file_loaded(__FILE__)
     end
 

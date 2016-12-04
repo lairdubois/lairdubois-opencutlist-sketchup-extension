@@ -5,10 +5,10 @@ require_relative 'ruby/plugin.rb'
 module Ladb
   module Toolbox
 
-    unless file_loaded?(__FILE__)
+    # Initialize the app
+    plugin = Plugin.new
 
-      # Initialize the app
-      plugin = Plugin.new()
+    unless file_loaded?(__FILE__)
 
       # Setup Menu
       menu = UI.menu
@@ -30,7 +30,7 @@ module Ladb
       toolbar = toolbar.add_item(cmd)
       toolbar.show
 
-      # file_loaded(__FILE__)
+      file_loaded(__FILE__)
     end
 
   end
