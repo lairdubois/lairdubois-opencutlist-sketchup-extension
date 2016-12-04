@@ -7,7 +7,7 @@ L'Air du Bois : Sketchup Toolbox
 
 *L'Air du Bois Boîte à outils Sketchup* est un plugin [SketchUp](http://www.sketchup.com) pour automatiser la création de fiches de débit pour les projets de menuiserie.
 
-![L'Air du Bois Sketchup Toolbox](doc/capture.jpg)
+![L'Air du Bois Sketchup Toolbox](doc/img/capture.jpg)
 
 License
 -------
