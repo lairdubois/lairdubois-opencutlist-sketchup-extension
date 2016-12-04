@@ -19,6 +19,7 @@
 
     LadbToolbox.DEFAULTS = {
         version: '0.0.0',
+        htmlDialogCompatible: true,
         defaultTabName: 'cutlist',
         tabDefs: [
             {
@@ -49,25 +50,17 @@
     };
 
     LadbToolbox.prototype.minimize = function () {
-        var that = this;
-        sketchup.ladb_minimize({
-            onCompleted: function() {
-                that.$wrapper.hide();
-                that.$btnMinimize.hide();
-                that.$btnMaximize.show();
-            }
-        });
+        this.rubyCall('ladb_minimize', null);
+        this.$wrapper.hide();
+        this.$btnMinimize.hide();
+        this.$btnMaximize.show();
     };
 
     LadbToolbox.prototype.maximize = function () {
-        var that = this;
-        sketchup.ladb_maximize({
-            onCompleted: function() {
-                that.$wrapper.show();
-                that.$btnMinimize.show();
-                that.$btnMaximize.hide();
-            }
-        });
+        this.rubyCall('ladb_maximize', null);
+        this.$wrapper.show();
+        this.$btnMinimize.show();
+        this.$btnMaximize.hide();
     };
 
     LadbToolbox.prototype.selectTab = function (tabName) {
@@ -157,6 +150,7 @@
                 // Render and append template
                 that.$element.append(template.render({
                     version: that.options.version,
+                    htmlDialogCompatible: that.options.htmlDialogCompatible,
                     tabDefs: that.options.tabDefs
                 }));
 

@@ -6,6 +6,9 @@
     {% endfor %}
 </nav>
 <div id="ladb_wrapper" style="display: none;">
+    {% if not htmlDialogCompatible %}
+        <div class="alert alert-info">Sketchup 2017</div>
+    {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
         <ul>
             <li><a href="https://www.lairdubois.fr/blog/56-un-autre-plugin-sketchup-pour-les-fiches-de-debit.html" target="_blank">v{{ version }}</a></li>
