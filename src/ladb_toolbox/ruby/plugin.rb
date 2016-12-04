@@ -6,7 +6,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.1.2'
+      VERSION = '0.2.0'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
@@ -60,7 +60,7 @@ module Ladb
                 true,
                 DIALOG_PREF_KEY,
                 DIALOG_MINIMIZED_WIDTH,
-                DIALOG_MINIMIZED_HEIGHT,
+                DIALOG_MAXIMIZED_HEIGHT,
                 DIALOG_LEFT,
                 DIALOG_TOP,
                 true
@@ -71,7 +71,7 @@ module Ladb
           @dialog.set_file(__dir__ + '/../html/dialog.html')
 
           # Set dialog size
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
 
           # Setup dialog actions
           @dialog.add_action_callback("ladb_dialog_loaded") do |action_context|
@@ -79,7 +79,7 @@ module Ladb
           end
           @dialog.add_action_callback("ladb_minimize") do |action_context|
             if @dialog
-              @dialog.set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+              @dialog.set_size(DIALOG_MINIMIZED_WIDTH, html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
             end
           end
           @dialog.add_action_callback("ladb_maximize") do |action_context|

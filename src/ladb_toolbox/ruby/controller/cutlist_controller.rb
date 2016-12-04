@@ -18,10 +18,9 @@ class CutlistController < Controller
       params = JSON.parse(json_params)
 
       # Explode parameters
-      callback = params['callback']
-      length_increase = params['param']['length_increase'].to_l
-      width_increase = params['param']['width_increase'].to_l
-      thickness_increase = params['param']['thickness_increase'].to_l
+      length_increase = params['length_increase'].to_l
+      width_increase = params['width_increase'].to_l
+      thickness_increase = params['thickness_increase'].to_l
 
       # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
@@ -34,8 +33,10 @@ class CutlistController < Controller
       # Generate cutlist
       json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase)
 
+      puts json_data
+
       # Callback to JS
-      dialog.execute_script(callback.sub('%PARAM%', json_data))
+      dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
 
     end
 

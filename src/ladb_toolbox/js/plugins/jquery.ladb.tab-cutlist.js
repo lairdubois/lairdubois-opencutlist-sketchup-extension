@@ -40,8 +40,8 @@
 
     LadbTabCutlist.DEFAULTS = {};
 
-    LadbTabCutlist.prototype.rubyCall = function (fn, callback, param) {
-        window.location.href = "skp:" + fn + "@" + JSON.stringify({callback: callback, param: param});
+    LadbTabCutlist.prototype.rubyCall = function (fn, params) {
+        window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
     };
 
     LadbTabCutlist.prototype.getCodeFromIndex = function (index) {
@@ -92,7 +92,7 @@
 
         // Bind buttons
         this.$btnRefresh.on('click', function () {
-            that.rubyCall('ladb_generate_cutlist', '$(\'#' + that.$element.attr('id') + '\').ladbTabCutlist(\'onCutlistGenerated\', \'%PARAM%\')', {
+            that.rubyCall('ladb_generate_cutlist', {
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
                 thickness_increase: that.thicknessIncrease + 'mm'

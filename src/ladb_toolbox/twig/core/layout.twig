@@ -7,7 +7,17 @@
 </nav>
 <div id="ladb_wrapper" style="display: none;">
     {% if not htmlDialogCompatible %}
-        <div class="alert alert-info">Sketchup 2017</div>
+        <div class="no-print alert alert-danger" style="margin-bottom: 0; font-size: 90%;">
+            <div class="media">
+                <div class="media-left">
+                    <i class="glyphicon glyphicon-exclamation-sign" style="font-size: 150%;"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">Attention</h4>
+                    <p>Vous utilisez une version ancienne de Sketchup. Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.<br/>Pour profiter pleinement de ce plugin, il est préconisé d'utiliser <strong>Sketchup 2017</strong>.</p>
+                </div>
+            </div>
+        </div>
     {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
         <ul>

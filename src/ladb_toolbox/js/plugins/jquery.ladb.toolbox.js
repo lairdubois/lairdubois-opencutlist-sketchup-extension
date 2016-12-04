@@ -26,17 +26,17 @@
                 name: 'cutlist',
                 icon: 'glyphicon glyphicon-list-alt',
                 label: 'Débit'
-            }/*,
+            },
             {
                 name: 'materials',
                 icon: 'glyphicon glyphicon-leaf',
                 label: 'Matières'
-            }*/
+            }
         ]
     };
 
-    LadbToolbox.prototype.rubyCall = function (fn, callback, param) {
-        window.location.href = "skp:" + fn + "@" + JSON.stringify({callback: callback, param: param});
+    LadbToolbox.prototype.rubyCall = function (fn, params) {
+        window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
     };
 
     LadbToolbox.prototype.getTabDef = function (tabName) {
