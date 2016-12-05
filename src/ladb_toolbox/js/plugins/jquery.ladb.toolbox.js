@@ -137,6 +137,8 @@
         this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
             version: this.options.version,
             htmlDialogCompatible: this.options.htmlDialogCompatible,
+            sketchupVersion: this.options.sketchupVersion,
+            currentOS: this.options.currentOS,
             tabDefs: this.options.tabDefs
         }));
 

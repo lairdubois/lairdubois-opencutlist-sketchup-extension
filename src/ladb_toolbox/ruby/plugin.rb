@@ -6,7 +6,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.2.1'
+      VERSION = '0.3.0'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
@@ -38,6 +38,11 @@ module Ladb
           rescue NameError
             html_dialog_compatible = false
           end
+
+          # Check OS
+          current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
+
+          puts current_os
 
           # Create dialog instance
           if html_dialog_compatible
@@ -75,7 +80,7 @@ module Ladb
 
           # Setup dialog actions
           @dialog.add_action_callback("ladb_dialog_loaded") do |action_context|
-            @dialog.execute_script("$('body').ladbToolbox({ version: '#{VERSION}', htmlDialogCompatible: #{html_dialog_compatible} });")
+            @dialog.execute_script("$('body').ladbToolbox({ version: '#{VERSION}', htmlDialogCompatible: #{html_dialog_compatible}, sketchupVersion: '#{Sketchup.version.to_s}', currentOS: '#{current_os}' });")
           end
           @dialog.add_action_callback("ladb_minimize") do |action_context|
             if @dialog
@@ -95,7 +100,11 @@ module Ladb
           if html_dialog_compatible
             @dialog.show
           else
-            @dialog.show_modal
+            if current_os == :MAC
+              @dialog.show_modal
+            else
+              @dialog.show
+            end
           end
 
         end
