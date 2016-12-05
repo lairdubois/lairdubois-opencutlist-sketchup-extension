@@ -1,9 +1,11 @@
-{% extends '../base-tab.twig' %}
+{% extends 'tabs/base-tab.twig' %}
 
 {% block headerHeadingInner %}Matières{% endblock %}
 
 {% block headerToolsInner %}
+    <button id="ladb_btn_list" class="btn btn-primary">Liste</button>
 {% endblock %}
 
 {% block containerInner %}
+    <div id="materials_list"></div>
 {% endblock %}

@@ -75,34 +75,26 @@
         // Update list
         this.$list.empty();
 
-        var that = this;
-        Twig.twig({
-            href: "../twig/tabs/cutlist/_list.twig",
-            load: function (template) {
+        this.$list.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+            groups: groups
+        }));
 
-                that.$list.append(template.render({
-                    groups: groups
-                }));
-
-                // Bind buttons
-                $('.ladb-btn-toggle-no-print', that.$list).on('click', function() {
-                    var $i = $('i', $(this));
-                    var groupId = $(this).data('group-id');
-                    var $group = $('#' + groupId);
-                    $group.toggleClass('no-print');
-                    if ($group.hasClass('no-print')) {
-                        $('tbody', $group).hide();
-                        $i.removeClass('glyphicon-eye-close');
-                        $i.addClass('glyphicon-eye-open');
-                    } else {
-                        $('tbody', $group).show();
-                        $i.addClass('glyphicon-eye-close');
-                        $i.removeClass('glyphicon-eye-open');
-                    }
-                    $(this).blur();
-                });
-
+        // Bind buttons
+        $('.ladb-btn-toggle-no-print', this.$list).on('click', function() {
+            var $i = $('i', $(this));
+            var groupId = $(this).data('group-id');
+            var $group = $('#' + groupId);
+            $group.toggleClass('no-print');
+            if ($group.hasClass('no-print')) {
+                $('tbody', $group).hide();
+                $i.removeClass('glyphicon-eye-close');
+                $i.addClass('glyphicon-eye-open');
+            } else {
+                $('tbody', $group).show();
+                $i.addClass('glyphicon-eye-close');
+                $i.removeClass('glyphicon-eye-open');
             }
+            $(this).blur();
         });
 
     };
@@ -151,11 +143,11 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabCutlist');
+            var data = $this.data('twig2js.tabCutlist');
             var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options)));
+                $this.data('twig2js.tabCutlist', (data = new LadbTabCutlist(this, options)));
             }
             if (typeof option == 'string') {
                 data[option](params);

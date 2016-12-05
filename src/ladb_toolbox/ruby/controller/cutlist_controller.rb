@@ -33,8 +33,6 @@ class CutlistController < Controller
       # Generate cutlist
       json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase)
 
-      puts json_data
-
       # Callback to JS
       dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
 
