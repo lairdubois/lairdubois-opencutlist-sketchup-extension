@@ -9,11 +9,21 @@
         4: {name: 'mètre', unit: 'm'}
     };
 
-    var configurableRoundingFormatter = function (maxDecimals) {
-        return function (scalar, units) {
-            return scalar.toFixed(maxDecimals) + ' ' + units;
-        };
-    };
+    function setSettingsValue(key, value) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem(key, value);
+        }
+    }
+
+    function getSettingsValue(key, defaultValue) {
+        if (typeof(Storage) !== "undefined") {
+            var value = localStorage.getItem(key);
+            if (value) {
+                return value;
+            }
+        }
+        return defaultValue;
+    }
 
     // CLASS DEFINITION
     // ======================
@@ -24,9 +34,9 @@
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
-        this.lengthIncrease = 50;
-        this.widthIncrease = 5;
-        this.thicknessIncrease = 5;
+        this.lengthIncrease = getSettingsValue('lengthIncrease', 50);
+        this.widthIncrease = getSettingsValue('widthIncrease', 5);
+        this.thicknessIncrease = getSettingsValue('thicknessIncrease', 5);
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
@@ -117,12 +127,15 @@
         // Bind inputs
         this.$inputLengthIncrease.on('change', function () {
             that.lengthIncrease = parseFloat(that.$inputLengthIncrease.val());
+            setSettingsValue("lengthIncrease", that.lengthIncrease);
         });
         this.$inputWidthIncrease.on('change', function () {
             that.widthIncrease = parseFloat(that.$inputWidthIncrease.val());
+            setSettingsValue("widthIncrease", that.widthIncrease);
         });
         this.$inputThicknessIncrease.on('change', function () {
             that.thicknessIncrease = parseFloat(that.$inputThicknessIncrease.val());
+            setSettingsValue("thicknessIncrease", that.thicknessIncrease);
         });
 
     };
@@ -143,11 +156,11 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('twig2js.tabCutlist');
+            var data = $this.data('ladb.tabCutlist');
             var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('twig2js.tabCutlist', (data = new LadbTabCutlist(this, options)));
+                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options)));
             }
             if (typeof option == 'string') {
                 data[option](params);

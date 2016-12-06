@@ -42,8 +42,6 @@ module Ladb
           # Check OS
           current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
 
-          puts current_os
-
           # Create dialog instance
           if html_dialog_compatible
             @dialog = UI::HtmlDialog.new(
