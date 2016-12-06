@@ -31,6 +31,7 @@ class Cutlist
     }
 
     # Sort and browse groups
+    code = 'A'
     @group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
 
       group = {
@@ -44,7 +45,6 @@ class Cutlist
       output[:groups].push(group)
 
       # Sort and browse pieces
-      code = 'A'
       group_def.piece_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, piece_def|
         group[:raw_area_m2] += piece_def.raw_size.area_m2
         group[:raw_volume_m3] += piece_def.raw_size.volume_m3

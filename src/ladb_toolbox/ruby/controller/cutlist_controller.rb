@@ -1,3 +1,4 @@
+require 'pathname'
 require_relative 'controller'
 require_relative '../model/size'
 require_relative '../model/cutlist'
@@ -134,7 +135,6 @@ class CutlistController < Controller
       unless group_def
 
         group_def = GroupDef.new
-        group_def.id = _sanitize_string(material_name) + '_' + raw_size.thickness.to_s
         group_def.material_name = material_name
         group_def.raw_thickness = raw_size.thickness
 

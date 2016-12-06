@@ -1,10 +1,12 @@
+require 'securerandom'
+
 class GroupDef
 
-  attr_accessor :id, :material_name, :raw_thickness
-  attr_reader :piece_defs
+  attr_accessor :material_name, :raw_thickness
+  attr_reader :id, :piece_defs
 
   def initialize
-    @id = ''
+    @id = SecureRandom.uuid
     @material_name = ''
     @raw_thickness = 0
     @piece_defs = {}

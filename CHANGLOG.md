@@ -7,7 +7,9 @@ in 0.3 minor versions.
 * 0.3.1 (2016-12-06)
 
   * Bug fix : Cutlist generate fail on Windows after model save
+  * Bug fix : Hide / Show cutlist group fail on SU prior 2017
   * Uses JS localStorage to save user settings
+  * Cutlist : continuous pieces code increment
 
 * 0.3.0 (2016-12-05)
 
