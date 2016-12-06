@@ -33,6 +33,8 @@ class CutlistController < Controller
       # Generate cutlist
       json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase)
 
+      puts json_data
+
       # Callback to JS
       dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
 
@@ -97,8 +99,11 @@ class CutlistController < Controller
       _fetch_leaf_components(entity, leaf_components)
     }
 
+    filename = Pathname.new(Sketchup.active_model.path).basename
+    length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
+
     # Create cut list
-    cutlist = Cutlist.new(Sketchup.active_model.path, Sketchup.active_model.options['UnitsOptions']['LengthUnit'])
+    cutlist = Cutlist.new(filename, length_unit)
 
     # Populate cutlist
     leaf_components.each { |component|
