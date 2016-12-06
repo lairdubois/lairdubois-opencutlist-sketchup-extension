@@ -40,13 +40,13 @@
     };
 
     LadbToolbox.prototype.setSettingsValue = function (key, value) {
-        if (typeof(Storage) !== "undefined") {
+        if (typeof(Storage) !== "undefined" && localStorage != undefined) {
             localStorage.setItem(key, value);
         }
     };
 
     LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
-        if (typeof(Storage) !== "undefined") {
+        if (typeof(Storage) !== "undefined" && localStorage != undefined) {
             var value = localStorage.getItem(key);
             if (value) {
                 return value;

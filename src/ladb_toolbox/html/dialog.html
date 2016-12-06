@@ -17,6 +17,9 @@
 </head>
 <body>
 <script type="text/javascript">
+    window.onerror = function (errorMsg, url, lineNumber) {
+        alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+    };
     $(document).ready(function () {
         window.location.href = 'skp:ladb_dialog_loaded@';
     });
