@@ -3,9 +3,7 @@ Development environement setup instructions
 
 ### Install [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
 
-``` bash
-    $ npm install gulp
-```
+THe way to do this depend of your OS.
 
 ### Install [Gulp](http://gulpjs.com/) - *The streaming build system*
 
