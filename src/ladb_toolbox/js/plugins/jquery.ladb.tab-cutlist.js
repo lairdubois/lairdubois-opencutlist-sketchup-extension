@@ -9,34 +9,19 @@
         4: {name: 'mètre', unit: 'm'}
     };
 
-    function setSettingsValue(key, value) {
-        if (typeof(Storage) !== "undefined") {
-            localStorage.setItem(key, value);
-        }
-    }
-
-    function getSettingsValue(key, defaultValue) {
-        if (typeof(Storage) !== "undefined") {
-            var value = localStorage.getItem(key);
-            if (value) {
-                return value;
-            }
-        }
-        return defaultValue;
-    }
-
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabCutlist = function (element, options) {
+    var LadbTabCutlist = function (element, options, toolbox) {
         this.options = options;
         this.$element = $(element);
+        this.toolbox = toolbox;
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
-        this.lengthIncrease = getSettingsValue('lengthIncrease', 50);
-        this.widthIncrease = getSettingsValue('widthIncrease', 5);
-        this.thicknessIncrease = getSettingsValue('thicknessIncrease', 5);
+        this.lengthIncrease = this.toolbox.getSettingsValue('lengthIncrease', 50);
+        this.widthIncrease = this.toolbox.getSettingsValue('widthIncrease', 5);
+        this.thicknessIncrease = this.toolbox.getSettingsValue('thicknessIncrease', 5);
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
@@ -49,14 +34,6 @@
     };
 
     LadbTabCutlist.DEFAULTS = {};
-
-    LadbTabCutlist.prototype.rubyCall = function (fn, params) {
-        window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
-    };
-
-    LadbTabCutlist.prototype.getCodeFromIndex = function (index) {
-        return String.fromCharCode(65 + (index % 26));
-    };
 
     LadbTabCutlist.prototype.getLengthUnitInfos = function (lengthUnitIndex) {
         if (lengthUnitIndex < 0 || lengthUnitIndex >= LADB_LENGTH_UNIT_INFOS.length) {
@@ -114,7 +91,7 @@
 
         // Bind buttons
         this.$btnRefresh.on('click', function () {
-            that.rubyCall('ladb_generate_cutlist', {
+            that.toolbox.rubyCall('ladb_cutlist_generate', {
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
                 thickness_increase: that.thicknessIncrease + 'mm'
@@ -127,15 +104,15 @@
         // Bind inputs
         this.$inputLengthIncrease.on('change', function () {
             that.lengthIncrease = parseFloat(that.$inputLengthIncrease.val());
-            setSettingsValue("lengthIncrease", that.lengthIncrease);
+            that.toolbox.setSettingsValue("lengthIncrease", that.lengthIncrease);
         });
         this.$inputWidthIncrease.on('change', function () {
             that.widthIncrease = parseFloat(that.$inputWidthIncrease.val());
-            setSettingsValue("widthIncrease", that.widthIncrease);
+            that.toolbox.setSettingsValue("widthIncrease", that.widthIncrease);
         });
         this.$inputThicknessIncrease.on('change', function () {
             that.thicknessIncrease = parseFloat(that.$inputThicknessIncrease.val());
-            setSettingsValue("thicknessIncrease", that.thicknessIncrease);
+            that.toolbox.setSettingsValue("thicknessIncrease", that.thicknessIncrease);
         });
 
     };
@@ -160,7 +137,10 @@
             var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options)));
+                if (options.toolbox == undefined) {
+                    throw 'toolbox option is mandatory.';
+                }
+                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options, options.toolbox)));
             }
             if (typeof option == 'string') {
                 data[option](params);

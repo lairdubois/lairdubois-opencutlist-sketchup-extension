@@ -1,10 +1,11 @@
 class GroupDef
 
-  attr_accessor :name, :raw_thickness
+  attr_accessor :id, :material_name, :raw_thickness
   attr_reader :piece_defs
 
   def initialize
-    @name = ''
+    @id = ''
+    @material_name = ''
     @raw_thickness = 0
     @piece_defs = {}
   end

@@ -16,7 +16,7 @@ class MaterialsController < Controller
 
       output = []
       materials.each { |material|
-        output.push(material.name);
+        output.push(material.material_name);
       }
 
       json_data = output.to_json

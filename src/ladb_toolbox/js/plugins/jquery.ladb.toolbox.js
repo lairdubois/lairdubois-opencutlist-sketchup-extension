@@ -39,14 +39,20 @@
         window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
     };
 
-    LadbToolbox.prototype.getTabDef = function (tabName) {
-        var tabDef;
-        for (var i = 0; i < this.options.tabDefs.length; i++) {
-            tabDef = this.options.tabDefs[i];
-            if (tabDef.name == tabName) {
-                return tabDef;
+    LadbToolbox.prototype.setSettingsValue = function (key, value) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem(key, value);
+        }
+    };
+
+    LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
+        if (typeof(Storage) !== "undefined") {
+            var value = localStorage.getItem(key);
+            if (value) {
+                return value;
             }
         }
+        return defaultValue;
     };
 
     LadbToolbox.prototype.minimize = function () {
@@ -96,7 +102,7 @@
 
                 // Initialize tab (with its jQuery plugin)
                 var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
-                $tab[jQueryPluginFn]();
+                $tab[jQueryPluginFn]({ toolbox: this });
 
                 // Store tab
                 this.tabs[tabName] = $tab;

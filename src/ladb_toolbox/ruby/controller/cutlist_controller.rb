@@ -13,7 +13,7 @@ class CutlistController < Controller
   def setup_dialog_actions(dialog)
 
     # Setup toolbox dialog actions
-    dialog.add_action_callback("ladb_generate_cutlist") do |action_context, json_params|
+    dialog.add_action_callback("ladb_cutlist_generate") do |action_context, json_params|
 
       params = JSON.parse(json_params)
 
@@ -89,6 +89,15 @@ class CutlistController < Controller
     thickness
   end
 
+  def _sanitize_string(str)
+    if str
+      str
+          .downcase
+          .gsub(/^.*(\\|\/)/, '')
+          .gsub!(/[^0-9A-Za-z.\-]/, '_')
+    end
+  end
+
   public
 
   def generate_cutlist(entities, length_increase, width_increase, thickness_increase)
@@ -125,7 +134,8 @@ class CutlistController < Controller
       unless group_def
 
         group_def = GroupDef.new
-        group_def.name = material_name
+        group_def.id = _sanitize_string(material_name) + '_' + raw_size.thickness.to_s
+        group_def.material_name = material_name
         group_def.raw_thickness = raw_size.thickness
 
         cutlist.set_group_def(key, group_def)

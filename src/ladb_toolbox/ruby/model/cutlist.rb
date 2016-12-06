@@ -34,7 +34,8 @@ class Cutlist
     @group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
 
       group = {
-          :name => group_def.name,
+          :id => group_def.id,
+          :material_name => group_def.material_name,
           :raw_thickness => group_def.raw_thickness,
           :raw_area_m2 => 0,
           :raw_volume_m3 => 0,

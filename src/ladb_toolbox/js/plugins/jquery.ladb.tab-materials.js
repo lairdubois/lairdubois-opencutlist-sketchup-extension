@@ -4,20 +4,16 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabMaterials = function (element, options) {
+    var LadbTabMaterials = function (element, options, toolbox) {
         this.options = options;
         this.$element = $(element);
+        this.toolbox = toolbox;
 
         this.$btnList = $('#ladb_btn_list', this.$element);
         this.$list = $('#materials_list', this.$element);
     };
 
     LadbTabMaterials.DEFAULTS = {};
-
-    LadbTabMaterials.prototype.rubyCall = function (fn, params) {
-        console.log('rubyCall ' + fn);
-        window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
-    };
 
     LadbTabMaterials.prototype.onList = function (jsonData) {
 
@@ -34,7 +30,7 @@
 
         // Bind buttons
         this.$btnList.on('click', function () {
-            that.rubyCall('ladb_materials_list', null);
+            that.toolbox.rubyCall('ladb_materials_list', null);
         });
 
     };
@@ -54,7 +50,10 @@
             var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('twig2js.tabMaterials', (data = new LadbTabMaterials(this, options)));
+                if (options.toolbox == undefined) {
+                    throw 'toolbox option is mandatory.';
+                }
+                $this.data('twig2js.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
             }
             if (typeof option == 'string') {
                 data[option](params);
