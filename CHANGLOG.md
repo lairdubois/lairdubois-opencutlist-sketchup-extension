@@ -12,6 +12,7 @@ in 0.3 minor versions.
   * Cutlist generate errors and warnings
   * Cutlist options improvements
   * UI improvements
+  * Save options to localStore
 
 * 0.3.1 (2016-12-06)
 
