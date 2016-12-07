@@ -22,7 +22,8 @@
         this.lengthIncrease = this.toolbox.getSettingsValue('lengthIncrease', 50);
         this.widthIncrease = this.toolbox.getSettingsValue('widthIncrease', 5);
         this.thicknessIncrease = this.toolbox.getSettingsValue('thicknessIncrease', 5);
-        this.codeSequenceByGroup = this.toolbox.getSettingsValue('codeSequenceByGroup', true);
+        this.pieceNumberSequenceByGroup = this.toolbox.getSettingsValue('pieceNumberSequenceByGroup', false);
+        this.pieceNumberLetter = this.toolbox.getSettingsValue('pieceNumberLetter', false);
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
@@ -34,7 +35,8 @@
         this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
         this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
         this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
-        this.$inputCodeSequenceByGroup = $('#ladb_input_code_sequence_by_group', this.$element);
+        this.$inputPieceNumberSequenceByGroup = $('#ladb_input_piece_number_sequence_by_group', this.$element);
+        this.$inputPieceNumberLetter = $('#ladb_input_piece_number_letter', this.$element);
         this.$list = $('#list', this.$element);
     };
 
@@ -133,7 +135,8 @@
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
                 thickness_increase: that.thicknessIncrease + 'mm',
-                code_sequence_by_group: that.codeSequenceByGroup
+                piece_number_sequence_by_group: that.pieceNumberSequenceByGroup,
+                piece_number_letter: that.pieceNumberLetter
             });
             this.blur();
         });
@@ -163,9 +166,13 @@
                 that.toolbox.setSettingsValue('thicknessIncrease', that.thicknessIncrease);
             }
         });
-        this.$inputCodeSequenceByGroup.on('change', function () {
-            that.codeSequenceByGroup = that.$inputCodeSequenceByGroup.is(':checked');
-            that.toolbox.setSettingsValue('codeSequenceByGroup', that.codeSequenceByGroup);
+        this.$inputPieceNumberSequenceByGroup.on('change', function () {
+            that.pieceNumberSequenceByGroup = that.$inputPieceNumberSequenceByGroup.is(':checked');
+            that.toolbox.setSettingsValue('pieceNumberSequenceByGroup', that.pieceNumberSequenceByGroup);
+        });
+        this.$inputPieceNumberLetter.on('change', function () {
+            that.pieceNumberLetter = that.$inputPieceNumberLetter.is(':checked');
+            that.toolbox.setSettingsValue('pieceNumberLetter', that.pieceNumberLetter);
         });
 
     };
@@ -177,7 +184,8 @@
         this.$inputLengthIncrease.val(this.lengthIncrease);
         this.$inputWidthIncrease.val(this.widthIncrease);
         this.$inputThicknessIncrease.val(this.thicknessIncrease);
-        this.$inputCodeSequenceByGroup.prop('checked', this.codeSequenceByGroup);
+        this.$inputPieceNumberSequenceByGroup.prop('checked', this.pieceNumberSequenceByGroup);
+        this.$inputPieceNumberLetter.prop('checked', this.pieceNumberSequenceByGroup);
     };
 
 

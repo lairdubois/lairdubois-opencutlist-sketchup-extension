@@ -22,13 +22,17 @@ class CutlistController < Controller
       length_increase = params['length_increase'].to_l
       width_increase = params['width_increase'].to_l
       thickness_increase = params['thickness_increase'].to_l
-      code_sequence_by_group = params['code_sequence_by_group']
+      piece_number_sequence_by_group = params['piece_number_sequence_by_group']
+      piece_number_letter = params['piece_number_letter']
 
       # Generate cutlist
-      json_data = generate_cutlist(length_increase, width_increase, thickness_increase, code_sequence_by_group)
-
-      puts '### ladb_cutlist_generate'
-      puts json_data
+      json_data = generate_cutlist(
+          length_increase,
+          width_increase,
+          thickness_increase,
+          piece_number_sequence_by_group,
+          piece_number_letter
+      )
 
       # Callback to JS
       dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
@@ -95,7 +99,7 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist(length_increase, width_increase, thickness_increase, code_sequence_by_group)
+  def generate_cutlist(length_increase, width_increase, thickness_increase, piece_number_sequence_by_group, piece_number_letter)
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model
@@ -170,9 +174,11 @@ class CutlistController < Controller
       piece_def.count += 1
       piece_def.add_component_guid(component.guid)
 
+      group_def.piece_count += 1
+
     }
 
-    cutlist.to_json(code_sequence_by_group)
+    cutlist.to_json(piece_number_sequence_by_group, piece_number_letter)
   end
 
 end

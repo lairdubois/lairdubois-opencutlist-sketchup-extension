@@ -22,8 +22,7 @@
     {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
         <ul>
-            <li><a href="https://www.lairdubois.fr" target="_blank">lairdubois.fr</a></li>
-            <li><a href="#" id="ladb_btn_about">SU{{ sketchupVersion }} - {{ currentOS }} - {{ version }}</a></li>
+            <li><a href="https://www.lairdubois.fr" target="_blank"><i class="glyphicon glyphicon-link"></i> www.lairdubois.fr</a></li>
             {% for tabDef in tabDefs if tabDef.bar == 'bottombar' %}
                 <li><a id="ladb_tab_btn_{{ tabDef.name }}" href="#">{% if tabDef.icon %}<i class="{{ tabDef.icon }}"></i>{% endif %} {{ tabDef.label }}</a></li>
             {% endfor %}

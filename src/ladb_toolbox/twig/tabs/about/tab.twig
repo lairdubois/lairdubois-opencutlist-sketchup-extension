@@ -6,8 +6,10 @@
 {% endblock %}
 
 {% block containerInner %}
+    <h3>Version</h3>
+    <p>{{ version }} <em>( SU {{ sketchupVersion }} - {{ currentOS }} )</em></p>
     <h3>Crédits techniques</h3>
-    <p>Le plugin <em>L'Air du Bois : Boîte à outils</em> est développé par <a href="https://www.lairdubois.fr/zeloko" target="_blank">Boris Beaulant</a> et disponible en Open Source sous lience <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE" target="_blank">GNU GPLv3</a> sur son <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin" target="_blank">dépôt GitHub</a>.</p>
+    <p>Le plugin <em>L'Air du Bois : Boîte à outils Sketchup</em> est développé par <a href="https://www.lairdubois.fr/zeloko" target="_blank">Boris Beaulant</a> et disponible en Open Source sous lience <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE" target="_blank">GNU GPLv3</a> sur son <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin" target="_blank">dépôt GitHub</a>.</p>
     <p>Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels <a href="https://fr.wikipedia.org/wiki/Open_source" target="_blank">Open Source</a> suivantes :</p>
     <ul>
         <li>
@@ -21,6 +23,10 @@
         </li>
         <li>
             <a href="https://github.com/twigjs/twig.js" target="_blank">twig.js</a>
+            <span class="label label-default">JS</span>
+        </li>
+        <li>
+            <a href="http://gulpjs.com/" target="_blank">gulp.js</a>
             <span class="label label-default">JS</span>
         </li>
     </ul>

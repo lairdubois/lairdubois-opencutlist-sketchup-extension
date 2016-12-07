@@ -37,7 +37,9 @@ class Cutlist
     nil
   end
 
-  def to_json(code_sequence_by_group)
+  def to_json(code_sequence_by_group, piece_number_letter)
+
+    puts piece_number_letter
 
     # Output JSON
     output = {
@@ -50,16 +52,17 @@ class Cutlist
     }
 
     # Sort and browse groups
-    code = 'A'
+    piece_number = piece_number_letter ? 'A' : '1'
     @group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
 
       if code_sequence_by_group
-        code = 'A'    # Reset code increment on each group
+        piece_number = piece_number_letter ? 'A' : '1'    # Reset code increment on each group
       end
 
       group = {
           :id => group_def.id,
           :material_name => group_def.material_name,
+          :piece_count => group_def.piece_count,
           :raw_thickness => group_def.raw_thickness,
           :raw_area_m2 => 0,
           :raw_volume_m3 => 0,
@@ -79,11 +82,11 @@ class Cutlist
                                 :count => piece_def.count,
                                 :raw_length => piece_def.raw_size.length,
                                 :raw_width => piece_def.raw_size.width,
-                                :code => code,
+                                :number => piece_number,
                                 :component_guids => piece_def.component_guids
                             }
         )
-        code = code.succ
+        piece_number = piece_number.succ
       }
 
     }

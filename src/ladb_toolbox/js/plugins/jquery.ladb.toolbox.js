@@ -118,7 +118,10 @@
 
                 // Render and append tab
                 this.$wrapper.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
-                    tabName: tabName
+                    tabName: tabName,
+                    version: this.options.version,
+                    sketchupVersion: this.options.sketchupVersion,
+                    currentOS: this.options.currentOS
                 }));
 
                 // Fetch tab
@@ -153,8 +156,6 @@
             }
         });
         $.each(this.tabBtns, function (tabName, $tabBtn) {
-            console.log(tabName);
-            console.log($tabBtn);
             $tabBtn.on('click', function () {
                 console.log('onClick ' + tabName);
                 that.maximize();
@@ -174,9 +175,9 @@
         // Render and append template
         this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
             version: this.options.version,
-            htmlDialogCompatible: false, //this.options.htmlDialogCompatible,
             sketchupVersion: this.options.sketchupVersion,
             currentOS: this.options.currentOS,
+            htmlDialogCompatible: this.options.htmlDialogCompatible,
             compatibilityAlertHidden: this.compatibilityAlertHidden,
             tabDefs: this.options.tabDefs
         }));

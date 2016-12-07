@@ -1,5 +1,33 @@
 {# set groups #}
 
+<table id="ladb_summary" class="table table-bordered ladb-cutlist">
+    <thead>
+    <tr style="background-color: #eee;">
+        <td colspan="4" style="line-height: 20px;">
+            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="glyphicon glyphicon-eye-close"></i></button>
+            <div style="margin-left: 40px;">
+                <span style=" line-height: 25px; font-size: 18px;">Résumé</span>
+            </div>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="text-center">Matière</td>
+        <td class="text-center" width="10%">Nbr. pièces</td>
+        <td class="text-center" width="15%">Surface</td>
+        <td class="text-center" width="15%">Volume</td>
+    </tr>
+    {% for group in groups %}
+        <tr style="font-size: 120%;">
+            <td>{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></td>
+            <td class="text-center">x{{ group.piece_count }}</td>
+            <td class="text-right">{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></td>
+            <td class="text-right">{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% for group in groups %}
     <table id="ladb_group_{{ group.id }}" class="table table-bordered ladb-cutlist">
         <thead>
@@ -19,7 +47,7 @@
             <td class="text-center" colspan="3">Finie</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Nbr.</td>
             <td class="text-center" colspan="2">Brute</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Code</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">N°</td>
         </tr>
         <tr>
             <td class="text-center" width="10%">Long.</td>
@@ -33,7 +61,7 @@
             {% if piece.thickness != thickness %}
                 {% set thickness = piece.thickness %}
                 <tr style="background-color: #fcfcfc;">
-                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ piece.thickness }}mm</td>
+                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ piece.thickness }}</td>
                 </tr>
             {% endif %}
             <tr style="font-size: 120%;">
@@ -44,7 +72,7 @@
                 <td class="text-center">x {{ piece.count }}</td>
                 <td class="text-right" style="color: red;">{{ piece.raw_length }}</td>
                 <td class="text-right" style="color: red;">{{ piece.raw_width }}</td>
-                <td class="text-center" style="color: red;">{{ piece.code }}</td>
+                <td class="text-center" style="color: red;">{{ piece.number }}</td>
             </tr>
         {% endfor %}
         </tbody>
