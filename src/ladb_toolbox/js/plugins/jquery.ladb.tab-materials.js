@@ -46,14 +46,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('twig2js.tabMaterials');
+            var data = $this.data('ladg.tabMaterials');
             var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
                 if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('twig2js.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
+                $this.data('ladg.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
             }
             if (typeof option == 'string') {
                 data[option](params);

@@ -18,10 +18,13 @@ gulp.task('twig_compile', function () {
         .pipe(gulp.dest('../src/ladb_toolbox/js/templates'));
 });
 
-gulp.task('rbz', function () {
+gulp.task('rbz_create', function () {
     return gulp.src([ '../src/**/*', '!../src/**/.DS_store', '!../src/**/*.twig', '!../src/**/twig/**', '!../src/**/twig/' ])
         .pipe(zip('ladb_toolbox.rbz'))
         .pipe(gulp.dest('../dist'));
 });
 
-gulp.task('default', ['twig_compile', 'rbz']);
+gulp.task('compile', ['twig_compile']);
+gulp.task('build', ['twig_compile', 'rbz_create']);
+
+gulp.task('default', ['twig_compile', 'rbz_create']);

@@ -27,14 +27,22 @@
         tabDefs: [
             {
                 name: 'cutlist',
+                bar: 'leftbar',
                 icon: 'glyphicon glyphicon-list-alt',
                 label: 'Débit'
-            }/*,
+            },
             {
                 name: 'materials',
+                bar: 'leftbar',
                 icon: 'glyphicon glyphicon-leaf',
                 label: 'Matières'
-            }*/
+            },
+            {
+                name: 'about',
+                bar: 'bottombar',
+                icon: null,
+                label: 'A propos'
+            }
         ]
     };
 
@@ -79,16 +87,22 @@
         this.$btnMaximize.hide();
     };
 
+    LadbToolbox.prototype.unselectActiveTab = function (tabName) {
+        if (this.activeTabName) {
+
+            // Flag as inactive
+            this.tabBtns[this.activeTabName].removeClass('ladb-active');
+
+            // Hide active tab
+            this.tabs[this.activeTabName].hide();
+
+        }
+    };
+
     LadbToolbox.prototype.selectTab = function (tabName) {
         if (tabName != this.activeTabName) {
             if (this.activeTabName) {
-
-                // Flag as inactive
-                this.tabBtns[this.activeTabName].removeClass('ladb-active');
-
-                // Hide active tab
-                this.tabs[this.activeTabName].hide();
-
+                this.unselectActiveTab();
             }
             var $tab = this.tabs[tabName];
             if ($tab) {
@@ -138,17 +152,20 @@
                 that.selectTab(that.options.defaultTabName);
             }
         });
+        $.each(this.tabBtns, function (tabName, $tabBtn) {
+            console.log(tabName);
+            console.log($tabBtn);
+            $tabBtn.on('click', function () {
+                console.log('onClick ' + tabName);
+                that.maximize();
+                that.selectTab(tabName);
+            });
+        });
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
             that.setSettingsValue('compatibilityAlertHidden', that.compatibilityAlertHidden);
         });
-        $.each(this.tabBtns, function(tabName, tabBtn){
-            tabBtn.on('click', function () {
-                that.maximize();
-                that.selectTab(tabName);
-            });
-        })
 
     };
 
@@ -171,7 +188,7 @@
         this.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', this.$element);
         for (var i = 0; i < this.options.tabDefs.length; i++) {
             var tabDef = this.options.tabDefs[i];
-            this.tabBtns[tabDef.name] = $('#ladb_btn_' + tabDef.name, this.$element);
+            this.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, this.$element);
         }
 
         this.bind();
