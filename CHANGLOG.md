@@ -6,7 +6,9 @@ in 0.3 minor versions.
 
 * 0.3.2 (2016-12-07)
 
-  * Add "code sequence by group" in cutlist options
+  * Add "piece number sequence by group" in cut list options
+  * Add "piece number with letter" in cut list options
+  * Add cutlist summary
   * Cutlist generate errors and warnings
   * Cutlist options improvements
   * UI improvements
