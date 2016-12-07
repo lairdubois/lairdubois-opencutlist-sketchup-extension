@@ -157,7 +157,6 @@
         });
         $.each(this.tabBtns, function (tabName, $tabBtn) {
             $tabBtn.on('click', function () {
-                console.log('onClick ' + tabName);
                 that.maximize();
                 that.selectTab(tabName);
             });
