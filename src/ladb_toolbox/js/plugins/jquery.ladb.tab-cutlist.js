@@ -22,6 +22,7 @@
         this.lengthIncrease = this.toolbox.getSettingsValue('lengthIncrease', 50);
         this.widthIncrease = this.toolbox.getSettingsValue('widthIncrease', 5);
         this.thicknessIncrease = this.toolbox.getSettingsValue('thicknessIncrease', 5);
+        this.codeSequenceByGroup = this.toolbox.getSettingsValue('codeSequenceByGroup', true);
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
@@ -30,6 +31,7 @@
         this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
         this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
         this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
+        this.$inputCodeSequenceByGroup = $('#ladb_input_code_sequence_by_group', this.$element);
         this.$list = $('#list', this.$element);
     };
 
@@ -46,6 +48,7 @@
 
         var data = JSON.parse(jsonData);
 
+        var status = data.status;
         var filepath = data.filepath;
         var lengthUnit = data.length_unit;
         var groups = data.groups;
@@ -94,8 +97,10 @@
             that.toolbox.rubyCall('ladb_cutlist_generate', {
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
-                thickness_increase: that.thicknessIncrease + 'mm'
+                thickness_increase: that.thicknessIncrease + 'mm',
+                code_sequence_by_group: that.codeSequenceByGroup
             });
+            this.blur();
         });
         this.$btnPrint.on('click', function () {
             window.print();
@@ -103,16 +108,29 @@
 
         // Bind inputs
         this.$inputLengthIncrease.on('change', function () {
-            that.lengthIncrease = parseFloat(that.$inputLengthIncrease.val());
-            that.toolbox.setSettingsValue("lengthIncrease", that.lengthIncrease);
+            var lengthIncrease = parseFloat(that.$inputLengthIncrease.val());
+            if (!isNaN(lengthIncrease)) {
+                that.lengthIncrease = lengthIncrease;
+                that.toolbox.setSettingsValue("lengthIncrease", that.lengthIncrease);
+            }
         });
         this.$inputWidthIncrease.on('change', function () {
-            that.widthIncrease = parseFloat(that.$inputWidthIncrease.val());
-            that.toolbox.setSettingsValue("widthIncrease", that.widthIncrease);
+            var widthIncrease = parseFloat(that.$inputWidthIncrease.val());
+            if (!isNaN(widthIncrease)) {
+                that.widthIncrease = widthIncrease;
+                that.toolbox.setSettingsValue('widthIncrease', that.widthIncrease);
+            }
         });
         this.$inputThicknessIncrease.on('change', function () {
-            that.thicknessIncrease = parseFloat(that.$inputThicknessIncrease.val());
-            that.toolbox.setSettingsValue("thicknessIncrease", that.thicknessIncrease);
+            var thicknessIncrease = parseFloat(that.$inputThicknessIncrease.val());
+            if (!isNaN(thicknessIncrease)) {
+                that.thicknessIncrease = thicknessIncrease;
+                that.toolbox.setSettingsValue('thicknessIncrease', that.thicknessIncrease);
+            }
+        });
+        this.$inputCodeSequenceByGroup.on('change', function () {
+            that.codeSequenceByGroup = that.$inputCodeSequenceByGroup.is(':checked');
+            that.toolbox.setSettingsValue('codeSequenceByGroup', that.codeSequenceByGroup);
         });
 
     };
@@ -124,6 +142,7 @@
         this.$inputLengthIncrease.val(this.lengthIncrease);
         this.$inputWidthIncrease.val(this.widthIncrease);
         this.$inputThicknessIncrease.val(this.thicknessIncrease);
+        this.$inputCodeSequenceByGroup.prop('checked', this.codeSequenceByGroup);
     };
 
 

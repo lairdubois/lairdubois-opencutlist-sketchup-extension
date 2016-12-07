@@ -1,10 +1,14 @@
 class Cutlist
 
+  STATUS_SUCCESS = 'success'
+
+  @status
   @filepath
   @length_unit
   @group_defs
 
-  def initialize(filepath, length_unit)
+  def initialize(status, filepath, length_unit)
+    @status = status
     @filepath = filepath
     @length_unit = length_unit
     @group_defs = {}
@@ -21,10 +25,11 @@ class Cutlist
     nil
   end
 
-  def to_json
+  def to_json(code_sequence_by_group)
 
     # Output JSON
     output = {
+        :status => @status,
         :filepath => @filepath,
         :length_unit => @length_unit,
         :groups => []
@@ -33,6 +38,10 @@ class Cutlist
     # Sort and browse groups
     code = 'A'
     @group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
+
+      if code_sequence_by_group
+        code = 'A'    # Reset code increment on each group
+      end
 
       group = {
           :id => group_def.id,

@@ -8,6 +8,8 @@
         this.options = options;
         this.$element = $(element);
 
+        this.compatibilityAlertHidden = this.getSettingsValue('compatibilityAlertHidden', false);
+
         this.activeTabName = null;
         this.tabs = {};
         this.tabBtns = {};
@@ -15,6 +17,7 @@
         this.$wrapper = null;
         this.$btnMinimize = null;
         this.$btnMaximize = null;
+        this.$btnCloseCompatibilityAlert = null;
     };
 
     LadbToolbox.DEFAULTS = {
@@ -49,6 +52,13 @@
         if (typeof(Storage) !== "undefined" && localStorage != undefined) {
             var value = localStorage.getItem(key);
             if (value) {
+                if (defaultValue != undefined) {
+                    if (typeof(defaultValue) == 'boolean') {
+                        return 'true' == value;
+                    } else if (typeof(defaultValue) == 'number' && isNaN(value)) {
+                        return defaultValue;
+                    }
+                }
                 return value;
             }
         }
@@ -128,6 +138,11 @@
                 that.selectTab(that.options.defaultTabName);
             }
         });
+        this.$btnCloseCompatibilityAlert.on('click', function () {
+            $('#ladb_compatibility_alert').hide();
+            that.compatibilityAlertHidden = true;
+            that.setSettingsValue('compatibilityAlertHidden', that.compatibilityAlertHidden);
+        });
         $.each(this.tabBtns, function(tabName, tabBtn){
             tabBtn.on('click', function () {
                 that.maximize();
@@ -142,9 +157,10 @@
         // Render and append template
         this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
             version: this.options.version,
-            htmlDialogCompatible: this.options.htmlDialogCompatible,
+            htmlDialogCompatible: false, //this.options.htmlDialogCompatible,
             sketchupVersion: this.options.sketchupVersion,
             currentOS: this.options.currentOS,
+            compatibilityAlertHidden: this.compatibilityAlertHidden,
             tabDefs: this.options.tabDefs
         }));
 
@@ -152,6 +168,7 @@
         this.$wrapper = $('#ladb_wrapper', this.$element);
         this.$btnMinimize = $('#ladb_btn_minimize', this.$element);
         this.$btnMaximize = $('#ladb_btn_maximize', this.$element);
+        this.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', this.$element);
         for (var i = 0; i < this.options.tabDefs.length; i++) {
             var tabDef = this.options.tabDefs[i];
             this.tabBtns[tabDef.name] = $('#ladb_btn_' + tabDef.name, this.$element);

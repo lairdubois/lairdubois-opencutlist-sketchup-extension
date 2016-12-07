@@ -22,6 +22,7 @@ class CutlistController < Controller
       length_increase = params['length_increase'].to_l
       width_increase = params['width_increase'].to_l
       thickness_increase = params['thickness_increase'].to_l
+      code_sequence_by_group = params['code_sequence_by_group']
 
       # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
@@ -32,9 +33,7 @@ class CutlistController < Controller
       end
 
       # Generate cutlist
-      json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase)
-
-      puts json_data
+      json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase, code_sequence_by_group)
 
       # Callback to JS
       dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
@@ -101,7 +100,7 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist(entities, length_increase, width_increase, thickness_increase)
+  def generate_cutlist(entities, length_increase, width_increase, thickness_increase, code_sequence_by_group)
 
     # Fetch leaf components in given entities
     leaf_components = []
@@ -109,11 +108,12 @@ class CutlistController < Controller
       _fetch_leaf_components(entity, leaf_components)
     }
 
+    status = Cutlist::STATUS_SUCCESS
     filename = Pathname.new(Sketchup.active_model.path).basename
     length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
 
     # Create cut list
-    cutlist = Cutlist.new(filename, length_unit)
+    cutlist = Cutlist.new(status, filename, length_unit)
 
     # Populate cutlist
     leaf_components.each { |component|
@@ -121,7 +121,7 @@ class CutlistController < Controller
       material = component.material
       definition = component.definition
 
-      material_name = material ? component.material.name : 'Matière non définie'
+      material_name = material ? component.material.name : '[Matière non définie]'
 
       size = _size_from_bounds(_compute_faces_bounds(definition))
       raw_size = Size.new(
@@ -158,7 +158,7 @@ class CutlistController < Controller
 
     }
 
-    cutlist.to_json
+    cutlist.to_json(code_sequence_by_group)
   end
 
 end

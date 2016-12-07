@@ -6,9 +6,10 @@
     {% endfor %}
 </nav>
 <div id="ladb_wrapper" style="display: none;">
-    {% if not htmlDialogCompatible %}
-        <div class="no-print alert alert-danger" style="margin-bottom: 0; font-size: 90%;">
+    {% if not htmlDialogCompatible and not compatibilityAlertHidden %}
+        <div id="ladb_compatibility_alert" class="no-print alert alert-danger" style="margin-bottom: 0; font-size: 90%;">
             <div class="media">
+                <button id="ladb_btn_close_compatibility_alert" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <div class="media-left">
                     <i class="glyphicon glyphicon-exclamation-sign" style="font-size: 150%;"></i>
                 </div>

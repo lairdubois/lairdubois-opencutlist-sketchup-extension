@@ -6,12 +6,12 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.3.1'
+      VERSION = '0.3.2'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
       DIALOG_MINIMIZED_WIDTH = 90
-      DIALOG_MINIMIZED_HEIGHT = 400
+      DIALOG_MINIMIZED_HEIGHT = 30 + 80 * 2    # = 2 Tab buttons
       DIALOG_LEFT = 200
       DIALOG_TOP = 100
       DIALOG_PREF_KEY = 'fr.lairdubois.plugin'
