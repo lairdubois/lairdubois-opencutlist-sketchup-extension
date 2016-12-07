@@ -1,0 +1,37 @@
+
+{# set title #}
+{# set embeddedBody (facultative) #}
+{# set bodyClasses (facultative) #}
+
+{% block modal %}
+    <div id="{{ id }}" class="modal{% if classes is defined %} {{ classes }}{% endif %}" role="dialog" tabindex="-1" aria-hidden="true" aria-labelledby="{{ id }}_label">
+        {% block dialog %}
+            <div class="modal-dialog">
+                {% block content %}
+                    <div class="modal-content">
+                        {% block contentInner %}
+                            {% block header %}
+                                <div class="modal-header">
+                                    {% block headerInner %}
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        {% if title is defined %}<h3 id="{{ id }}_label" class="modal-title">{{ title|raw }}</h3>{% endif %}
+                                    {% endblock %}
+                                </div>
+                            {% endblock %}
+                            {% block body %}
+                                <div class="modal-body{% if embeddedBody is defined and embeddedBody %} ladb-padding-remove{% endif %}{% if bodyClasses is defined %} {{ bodyClasses }}{% endif %}">
+                                    {% block bodyInner %}{% endblock %}
+                                </div>
+                            {% endblock %}
+                            {% block footer %}
+                                <div class="modal-footer">
+                                    {% block footerInner %}{% endblock %}
+                                </div>
+                            {% endblock %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
