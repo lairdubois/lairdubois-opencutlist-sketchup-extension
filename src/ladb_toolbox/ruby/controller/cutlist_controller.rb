@@ -22,16 +22,16 @@ class CutlistController < Controller
       length_increase = params['length_increase'].to_l
       width_increase = params['width_increase'].to_l
       thickness_increase = params['thickness_increase'].to_l
-      piece_number_sequence_by_group = params['piece_number_sequence_by_group']
       piece_number_letter = params['piece_number_letter']
+      piece_number_sequence_by_group = params['piece_number_sequence_by_group']
 
       # Generate cutlist
       json_data = generate_cutlist(
           length_increase,
           width_increase,
           thickness_increase,
-          piece_number_sequence_by_group,
-          piece_number_letter
+          piece_number_letter,
+      piece_number_sequence_by_group
       )
 
       # Callback to JS
@@ -99,7 +99,7 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist(length_increase, width_increase, thickness_increase, piece_number_sequence_by_group, piece_number_letter)
+  def generate_cutlist(length_increase, width_increase, thickness_increase, piece_number_letter, piece_number_sequence_by_group)
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model

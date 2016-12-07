@@ -31,12 +31,12 @@
                 icon: 'glyphicon glyphicon-list-alt',
                 label: 'Débit'
             },
-            {
+            /*{
                 name: 'materials',
                 bar: 'leftbar',
                 icon: 'glyphicon glyphicon-leaf',
                 label: 'Matières'
-            },
+            },*/
             {
                 name: 'about',
                 bar: 'bottombar',

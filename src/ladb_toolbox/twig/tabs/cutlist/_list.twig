@@ -1,17 +1,17 @@
 {# set groups #}
 
-<table id="ladb_summary" class="table table-bordered ladb-cutlist">
+<table id="ladb_summary" class="no-print table table-bordered ladb-cutlist">
     <thead>
     <tr style="background-color: #eee;">
         <td colspan="4" style="line-height: 20px;">
-            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="glyphicon glyphicon-eye-close"></i></button>
+            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="glyphicon glyphicon-eye-open"></i></button>
             <div style="margin-left: 40px;">
                 <span style=" line-height: 25px; font-size: 18px;">Résumé</span>
             </div>
         </td>
     </tr>
     </thead>
-    <tbody>
+    <tbody style="display: none;">
     <tr>
         <td class="text-center">Matière</td>
         <td class="text-center" width="10%">Nbr. pièces</td>
@@ -36,7 +36,6 @@
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}"><i class="glyphicon glyphicon-eye-close"></i></button>
                 <div style="margin-left: 40px;">
                     <span style=" line-height: 25px; font-size: 18px;">{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></span>
-                    <span class="pull-right" style="white-space: nowrap; line-height: 25px;">Surface brute : <strong>{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></strong> / Volume brut : <strong>{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></strong></span>
                 </div>
             </td>
         </tr>
