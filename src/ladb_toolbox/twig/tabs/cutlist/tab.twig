@@ -4,15 +4,28 @@
 
 {% block headerToolsInner %}
     <button id="ladb_btn_refresh" class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"></i> Générer</button>
-    <button id="ladb_btn_print" class="btn btn-default"><i class="glyphicon glyphicon-print"></i> Imprimer</button>
+    <button id="ladb_btn_print" class="btn btn-default" disabled="disabled"><i class="glyphicon glyphicon-print"></i> Imprimer</button>
     <button id="ladb_btn_options" class="btn btn-default" data-toggle="modal" data-target="#ladb_options_modal">Options</button>
 {% endblock %}
 
 {% block containerInner %}
-    <div class="no-print panel panel-default">
+    <div class="no-print panel panel-default ladb-panel-help">
         <div class="panel-body">
-            Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>. Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
+            <div class="media">
+                <div class="media-left">
+                    <i class="glyphicon glyphicon-question-sign" style="font-size: 150%;"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">Aide</h4>
+                    <p>Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>.<br>
+                        Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.</p>
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="no-print alert alert-danger ladb-alert-errors" style="display: none;">
+    </div>
+    <div class="no-print alert alert-warning ladb-alert-warnings" style="display: none;">
     </div>
     <div class="no-print">
         <div id="ladb_options_modal" class="modal" tabindex="-1" role="dialog">

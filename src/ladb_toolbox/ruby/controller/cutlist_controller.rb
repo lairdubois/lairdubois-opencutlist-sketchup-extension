@@ -24,16 +24,11 @@ class CutlistController < Controller
       thickness_increase = params['thickness_increase'].to_l
       code_sequence_by_group = params['code_sequence_by_group']
 
-      # Retrieve selected entities or all if no selection
-      model = Sketchup.active_model
-      if Sketchup.active_model.selection.empty?
-        entities = model.active_entities
-      else
-        entities = model.selection
-      end
-
       # Generate cutlist
-      json_data = generate_cutlist(entities, length_increase, width_increase, thickness_increase, code_sequence_by_group)
+      json_data = generate_cutlist(length_increase, width_increase, thickness_increase, code_sequence_by_group)
+
+      puts '### ladb_cutlist_generate'
+      puts json_data
 
       # Callback to JS
       dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
@@ -44,16 +39,16 @@ class CutlistController < Controller
 
   private
 
-  def _fetch_leaf_components(entity, leaf_components)
+  def _fetch_leafs(entity, leaf_components)
     child_component_count = 0
     if entity.visible? and entity.layer.visible?
       if entity.is_a? Sketchup::Group
         entity.entities.each { |child_entity|
-          child_component_count += _fetch_leaf_components(child_entity, leaf_components)
+          child_component_count += _fetch_leafs(child_entity, leaf_components)
         }
       elsif entity.is_a? Sketchup::ComponentInstance
         entity.definition.entities.each { |child_entity|
-          child_component_count += _fetch_leaf_components(child_entity, leaf_components)
+          child_component_count += _fetch_leafs(child_entity, leaf_components)
         }
         if child_component_count == 0
           leaf_components.push(entity)
@@ -100,12 +95,22 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist(entities, length_increase, width_increase, thickness_increase, code_sequence_by_group)
+  def generate_cutlist(length_increase, width_increase, thickness_increase, code_sequence_by_group)
+
+    # Retrieve selected entities or all if no selection
+    model = Sketchup.active_model
+    if model.selection.empty?
+      entities = model.active_entities
+      use_selection = false
+    else
+      entities = model.selection
+      use_selection = true
+    end
 
     # Fetch leaf components in given entities
     leaf_components = []
     entities.each { |entity|
-      _fetch_leaf_components(entity, leaf_components)
+      _fetch_leafs(entity, leaf_components)
     }
 
     status = Cutlist::STATUS_SUCCESS
@@ -114,6 +119,15 @@ class CutlistController < Controller
 
     # Create cut list
     cutlist = Cutlist.new(status, filename, length_unit)
+
+    # Errors
+    if leaf_components.length == 0
+      if use_selection
+        cutlist.add_error("Auncune instance de composant na été détectée dans votre sélection")
+      else
+        cutlist.add_error("Auncune instance de composant na été détectée sur votre scène")
+      end
+    end
 
     # Populate cutlist
     leaf_components.each { |component|

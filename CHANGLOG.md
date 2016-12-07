@@ -7,6 +7,8 @@ in 0.3 minor versions.
 * 0.3.2 (2016-12-07)
 
   * Add "code sequence by group" in cutlist options
+  * Cutlist generate errors and warnings
+  * UI improvements
 
 * 0.3.1 (2016-12-06)
 

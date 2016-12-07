@@ -28,6 +28,9 @@
         this.$unit = $('#ladb_unit', this.$element);
         this.$btnRefresh = $('#ladb_btn_refresh', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
+        this.$panelHelp = $('.ladb-panel-help', this.$element);
+        this.$alertErrors = $('.ladb-alert-errors', this.$element);
+        this.$alertWarnings = $('.ladb-alert-warnings', this.$element);
         this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
         this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
         this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
@@ -45,10 +48,13 @@
     };
 
     LadbTabCutlist.prototype.onCutlistGenerated = function (jsonData) {
+        var that = this;
 
         var data = JSON.parse(jsonData);
 
         var status = data.status;
+        var errors = data.errors;
+        var warnings = data.warnings;
         var filepath = data.filepath;
         var lengthUnit = data.length_unit;
         var groups = data.groups;
@@ -62,9 +68,38 @@
         this.$unit.empty();
         this.$unit.append(' en ' + this.lengthUnitInfos.name);
 
+        // Errors
+        this.$alertErrors.empty();
+        if (errors.length > 0) {
+            that.$alertErrors.show();
+            errors.forEach(function (error) {
+                that.$alertErrors.append(error);
+            });
+        } else {
+            that.$alertErrors.hide();
+        }
+
+        // Warnings
+        this.$alertWarnings.empty();
+        if (warnings.length > 0) {
+            that.$alertWarnings.show();
+            warnings.forEach(function (warning) {
+                that.$alertWarnings.append(warning);
+            });
+        } else {
+            that.$alertWarnings.hide();
+        }
+
+        // Hide help panel
+        if (groups.length > 0) {
+            this.$panelHelp.hide();
+        }
+
+        // Update print button state
+        this.$btnPrint.prop('disabled', groups.length == 0);
+
         // Update list
         this.$list.empty();
-
         this.$list.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
             groups: groups
         }));

@@ -3,15 +3,27 @@ class Cutlist
   STATUS_SUCCESS = 'success'
 
   @status
+  @errors
+  @warnings
   @filepath
   @length_unit
   @group_defs
 
   def initialize(status, filepath, length_unit)
     @status = status
+    @errors = []
+    @warnings = []
     @filepath = filepath
     @length_unit = length_unit
     @group_defs = {}
+  end
+
+  def add_error(error)
+    @errors.push(error)
+  end
+
+  def add_warning(warning)
+    @errors.push(warning)
   end
 
   def set_group_def(key, group_def)
@@ -30,6 +42,8 @@ class Cutlist
     # Output JSON
     output = {
         :status => @status,
+        :errors => @errors,
+        :warnings => @warnings,
         :filepath => @filepath,
         :length_unit => @length_unit,
         :groups => []
