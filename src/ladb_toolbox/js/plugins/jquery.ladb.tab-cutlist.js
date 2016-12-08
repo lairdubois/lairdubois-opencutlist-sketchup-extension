@@ -74,7 +74,7 @@
 
         // Errors
         this.$alertErrors.empty();
-        if (errors.length > 0) {
+        if (errors && errors.length > 0) {
             that.$alertErrors.show();
             errors.forEach(function (error) {
                 that.$alertErrors.append(error);
@@ -85,7 +85,7 @@
 
         // Warnings
         this.$alertWarnings.empty();
-        if (warnings.length > 0) {
+        if (warnings && warnings.length > 0) {
             that.$alertWarnings.show();
             warnings.forEach(function (warning) {
                 that.$alertWarnings.append(warning);
