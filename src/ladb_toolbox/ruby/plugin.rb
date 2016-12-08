@@ -43,10 +43,11 @@ module Ladb
           current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
 
           # Create dialog instance
+          dialog_title = NAME + ' - ' + VERSION
           if html_dialog_compatible
             @dialog = UI::HtmlDialog.new(
                 {
-                    :dialog_title => NAME,
+                    :dialog_title => dialog_title,
                     :preferences_key => DIALOG_PREF_KEY,
                     :scrollable => true,
                     :resizable => true,
@@ -59,7 +60,7 @@ module Ladb
                 })
           else
             @dialog = UI::WebDialog.new(
-                NAME,
+                dialog_title,
                 true,
                 DIALOG_PREF_KEY,
                 DIALOG_MINIMIZED_WIDTH,
