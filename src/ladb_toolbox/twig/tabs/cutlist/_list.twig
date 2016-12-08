@@ -37,7 +37,7 @@
             <td colspan="8" style="line-height: 20px;">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}"><i class="glyphicon glyphicon-eye-close"></i></button>
                 <div style="margin-left: 40px;">
-                    <span style=" line-height: 25px; font-size: 18px;">{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></span>
+                    <span style=" line-height: 25px; font-size: 18px;">{{ group.material_name }} / <strong{% if not group.raw_thickness_available %} class="text-danger"{% endif %}>{{ group.raw_thickness }}</strong>{% if not group.raw_thickness_available %} <span class="label label-danger pull-right"><i class="glyphicon glyphicon-exclamation-sign"></i> Non standard{% endif %}</span></span>
                 </div>
             </td>
         </tr>

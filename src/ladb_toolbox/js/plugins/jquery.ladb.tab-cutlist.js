@@ -22,6 +22,7 @@
         this.lengthIncrease = this.toolbox.getSettingsValue('lengthIncrease', 50);
         this.widthIncrease = this.toolbox.getSettingsValue('widthIncrease', 5);
         this.thicknessIncrease = this.toolbox.getSettingsValue('thicknessIncrease', 5);
+        this.stdThicknesses = this.toolbox.getSettingsValue('stdThicknesses', '18;27;35;45;64;80;100');
         this.pieceNumberLetter = this.toolbox.getSettingsValue('pieceNumberLetter', true);
         this.pieceNumberSequenceByGroup = this.toolbox.getSettingsValue('pieceNumberSequenceByGroup', false);
 
@@ -35,6 +36,7 @@
         this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
         this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
         this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
+        this.$inputStdThicknesses = $('#ladb_input_std_thicknesses', this.$element);
         this.$inputPieceNumberSequenceByGroup = $('#ladb_input_piece_number_sequence_by_group', this.$element);
         this.$inputPieceNumberLetter = $('#ladb_input_piece_number_letter', this.$element);
         this.$list = $('#list', this.$element);
@@ -135,6 +137,7 @@
                 length_increase: that.lengthIncrease + 'mm',
                 width_increase: that.widthIncrease + 'mm',
                 thickness_increase: that.thicknessIncrease + 'mm',
+                std_thicknesses: that.stdThicknesses,
                 piece_number_letter: that.pieceNumberLetter,
                 piece_number_sequence_by_group: that.pieceNumberSequenceByGroup
             });
@@ -142,6 +145,7 @@
         });
         this.$btnPrint.on('click', function () {
             window.print();
+            this.blur();
         });
 
         // Bind inputs
@@ -166,6 +170,13 @@
                 that.toolbox.setSettingsValue('thicknessIncrease', that.thicknessIncrease);
             }
         });
+        this.$inputStdThicknesses.on('change', function () {
+            var stdThicknesses = that.$inputStdThicknesses.val();
+            if (true) {
+                that.stdThicknesses = stdThicknesses;
+                that.toolbox.setSettingsValue('stdThicknesses', that.stdThicknesses);
+            }
+        });
         this.$inputPieceNumberLetter.on('change', function () {
             that.pieceNumberLetter = that.$inputPieceNumberLetter.is(':checked');
             that.toolbox.setSettingsValue('pieceNumberLetter', that.pieceNumberLetter);
@@ -184,6 +195,7 @@
         this.$inputLengthIncrease.val(this.lengthIncrease);
         this.$inputWidthIncrease.val(this.widthIncrease);
         this.$inputThicknessIncrease.val(this.thicknessIncrease);
+        this.$inputStdThicknesses.val(this.stdThicknesses);
         this.$inputPieceNumberLetter.prop('checked', this.pieceNumberLetter);
         this.$inputPieceNumberSequenceByGroup.prop('checked', this.pieceNumberSequenceByGroup);
     };

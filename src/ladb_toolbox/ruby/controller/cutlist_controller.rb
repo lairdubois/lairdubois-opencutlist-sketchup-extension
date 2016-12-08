@@ -22,6 +22,7 @@ class CutlistController < Controller
       length_increase = params['length_increase'].to_l
       width_increase = params['width_increase'].to_l
       thickness_increase = params['thickness_increase'].to_l
+      std_thicknesses = _to_std_thicknesses_array(params['std_thicknesses'])
       piece_number_letter = params['piece_number_letter']
       piece_number_sequence_by_group = params['piece_number_sequence_by_group']
 
@@ -30,6 +31,7 @@ class CutlistController < Controller
           length_increase,
           width_increase,
           thickness_increase,
+          std_thicknesses,
           piece_number_letter,
       piece_number_sequence_by_group
       )
@@ -78,14 +80,27 @@ class CutlistController < Controller
     Size.new(ordered[2], ordered[1], ordered[0])
   end
 
-  def _convert_to_std_thickness(thickness)
-    std_thicknesses = ['18mm'.to_l, '27mm'.to_l, '35mm'.to_l, '45mm'.to_l, '65mm'.to_l, '80mm'.to_l, '100mm'.to_l]
+  def _to_std_thicknesses_array(std_thicknesses_str)
+    a = []
+    std_thicknesses_str.split(';').each { |std_thickness|
+      a.push((std_thickness + 'mm').to_l)
+    }
+    a
+  end
+
+  def _convert_to_std_thickness(thickness, std_thicknesses)
     std_thicknesses.each { |std_thickness|
       if thickness <= std_thickness
-        return std_thickness;
+        return {
+            :available => true,
+            :value => std_thickness
+        }
       end
     }
-    thickness
+    {
+        :available => false,
+        :value => thickness
+    }
   end
 
   def _sanitize_string(str)
@@ -99,7 +114,7 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist(length_increase, width_increase, thickness_increase, piece_number_letter, piece_number_sequence_by_group)
+  def generate_cutlist(length_increase, width_increase, thickness_increase, std_thicknesses, piece_number_letter, piece_number_sequence_by_group)
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model
@@ -142,10 +157,11 @@ class CutlistController < Controller
       material_name = material ? component.material.name : '[Matière non définie]'
 
       size = _size_from_bounds(_compute_faces_bounds(definition))
+      std_thickness = _convert_to_std_thickness((size.thickness + thickness_increase).to_l, std_thicknesses)
       raw_size = Size.new(
           (size.length + length_increase).to_l,
           (size.width + width_increase).to_l,
-          _convert_to_std_thickness((size.thickness + thickness_increase).to_l)
+          std_thickness[:value]
       )
 
       key = material_name + ':' + raw_size.thickness.to_s
@@ -155,6 +171,7 @@ class CutlistController < Controller
         group_def = GroupDef.new
         group_def.material_name = material_name
         group_def.raw_thickness = raw_size.thickness
+        group_def.raw_thickness_available = std_thickness[:available]
 
         cutlist.set_group_def(key, group_def)
 

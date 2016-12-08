@@ -4,37 +4,54 @@
 {% set title = 'Options' %}
 
 {% block bodyInner %}
-    <div class="form">
+    <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_input_length_increase">Majoration de longueur</label>
-            <div class="input-group">
-                <input type="number" class="form-control" id="ladb_input_length_increase">
-                <div class="input-group-addon">mm</div>
+            <label for="ladb_input_length_increase" class="control-label col-xs-4">Majoration de longueur</label>
+            <div class="col-xs-8">
+                <div class="input-group">
+                    <input type="number" class="form-control" id="ladb_input_length_increase">
+                    <div class="input-group-addon">mm</div>
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <label for="ladb_input_width_increase">Majoration de largeur</label>
-            <div class="input-group">
-                <input type="number" class="form-control" id="ladb_input_width_increase">
-                <div class="input-group-addon">mm</div>
+            <label for="ladb_input_width_increase" class="control-label col-xs-4">Majoration de largeur</label>
+            <div class="col-xs-8">
+                <div class="input-group">
+                    <input type="number" class="form-control" id="ladb_input_width_increase">
+                    <div class="input-group-addon">mm</div>
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <label for="ladb_input_thickness_increase">Majoration d'épaisseur</label>
-            <div class="input-group">
-                <input type="number" class="form-control" id="ladb_input_thickness_increase">
-                <div class="input-group-addon">mm</div>
+            <label for="ladb_input_thickness_increase" class="control-label col-xs-4">Majoration d'épaisseur</label>
+            <div class="col-xs-8">
+                <div class="input-group">
+                    <input type="number" class="form-control" id="ladb_input_thickness_increase">
+                    <div class="input-group-addon">mm</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_input_std_thicknesses" class="control-label col-xs-4">Epaisseurs standards</label>
+            <div class="col-xs-8">
+                <input type="text" class="form-control" id="ladb_input_std_thicknesses">
+                <span class="help-block">Epaisseurs standards exprimées en mm.</span>
             </div>
         </div>
         <div class="checkbox">
-            <label>
-                <input type="checkbox" id="ladb_input_piece_number_letter"> Utiliser des lettres pour la numérotation de pièce
-            </label>
+            <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                    <input type="checkbox" id="ladb_input_piece_number_letter"> Utiliser des lettres pour la numérotation de pièce
+                </label>
+            </div>
         </div>
         <div class="checkbox">
-            <label>
-                <input type="checkbox" id="ladb_input_piece_number_sequence_by_group"> Réinitialiser les numéros de pièce par bloc
-            </label>
+            <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                    <input type="checkbox" id="ladb_input_piece_number_sequence_by_group"> Réinitialiser les numéros de pièce par bloc
+                </label>
+            </div>
         </div>
     </div>
 {% endblock %}

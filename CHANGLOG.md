@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.3 minor versions.
 
+* 0.3.3
+
+  * Standard thickness option
+  * Standard thickness check
+  * Cut list options modal improvements
+
 * 0.3.2 (2016-12-07)
 
   * Add "piece number sequence by group" in cut list options

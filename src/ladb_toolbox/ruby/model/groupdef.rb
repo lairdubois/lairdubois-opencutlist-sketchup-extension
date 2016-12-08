@@ -2,7 +2,7 @@ require 'securerandom'
 
 class GroupDef
 
-  attr_accessor :material_name, :piece_count, :raw_thickness
+  attr_accessor :material_name, :piece_count, :raw_thickness, :raw_thickness_available
   attr_reader :id, :piece_defs
 
   def initialize

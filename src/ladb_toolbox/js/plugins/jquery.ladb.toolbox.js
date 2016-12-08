@@ -8,6 +8,13 @@
         this.options = options;
         this.$element = $(element);
 
+        this.capabilities = {
+            version: options.version,
+            sketchupVersion: options.sketchupVersion,
+            currentOS: options.currentOS,
+            htmlDialogCompatible: options.htmlDialogCompatible
+        };
+
         this.compatibilityAlertHidden = this.getSettingsValue('compatibilityAlertHidden', false);
 
         this.activeTabName = null;
@@ -21,8 +28,6 @@
     };
 
     LadbToolbox.DEFAULTS = {
-        version: '0.0.0',
-        htmlDialogCompatible: true,
         defaultTabName: 'cutlist',
         tabDefs: [
             {
@@ -87,7 +92,7 @@
         this.$btnMaximize.hide();
     };
 
-    LadbToolbox.prototype.unselectActiveTab = function (tabName) {
+    LadbToolbox.prototype.unselectActiveTab = function () {
         if (this.activeTabName) {
 
             // Flag as inactive
@@ -119,9 +124,7 @@
                 // Render and append tab
                 this.$wrapper.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
                     tabName: tabName,
-                    version: this.options.version,
-                    sketchupVersion: this.options.sketchupVersion,
-                    currentOS: this.options.currentOS
+                    capabilities: this.capabilities
                 }));
 
                 // Fetch tab
@@ -131,7 +134,7 @@
                 var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
                 $tab[jQueryPluginFn]({ toolbox: this });
 
-                // Store tab
+                // Cache tab
                 this.tabs[tabName] = $tab;
 
                 // Flag tab as active
@@ -173,10 +176,7 @@
 
         // Render and append template
         this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
-            version: this.options.version,
-            sketchupVersion: this.options.sketchupVersion,
-            currentOS: this.options.currentOS,
-            htmlDialogCompatible: this.options.htmlDialogCompatible,
+            capabilities: this.capabilities,
             compatibilityAlertHidden: this.compatibilityAlertHidden,
             tabDefs: this.options.tabDefs
         }));

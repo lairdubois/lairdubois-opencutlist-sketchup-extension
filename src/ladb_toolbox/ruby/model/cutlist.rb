@@ -39,8 +39,6 @@ class Cutlist
 
   def to_json(code_sequence_by_group, piece_number_letter)
 
-    puts piece_number_letter
-
     # Output JSON
     output = {
         :status => @status,
@@ -64,6 +62,7 @@ class Cutlist
           :material_name => group_def.material_name,
           :piece_count => group_def.piece_count,
           :raw_thickness => group_def.raw_thickness,
+          :raw_thickness_available => group_def.raw_thickness_available,
           :raw_area_m2 => 0,
           :raw_volume_m3 => 0,
           :pieces => []

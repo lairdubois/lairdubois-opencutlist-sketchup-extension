@@ -11,6 +11,18 @@ THe way to do this depend of your OS.
     $ npm install gulp
 ```
 
+### Install [gulp-zip](https://www.npmjs.com/package/gulp-zip) - *ZIP compress files*
+
+``` bash
+    $ npm install gulp-zip
+```
+
+### Install [gulp-concat](https://www.npmjs.com/package/gulp-concat) - *Concatenates files*
+
+``` bash
+    $ npm install gulp-minify
+```
+
 ### Install [through2](https://github.com/rvagg/through2) - *Tiny wrapper around Node streams2 Transform*
 
 ``` bash
