@@ -90,6 +90,9 @@ class Cutlist
 
     }
 
+    # Reorder groups by material_name ASC, raw_thickness DESC
+    output[:groups].sort_by! { |v| [ v[:material_name], -v[:raw_thickness] ] }
+
     JSON.generate(output)
   end
 

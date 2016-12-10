@@ -19,6 +19,8 @@
 
         var materials = JSON.parse(jsonData);
 
+        // Update list
+        this.$list.empty();
         this.$list.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
             materials: materials
         }));

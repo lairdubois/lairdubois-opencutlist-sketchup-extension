@@ -8,7 +8,7 @@ require_relative '../model/piecedef'
 class CutlistController < Controller
 
   def initialize(plugin)
-    super(plugin)
+    super(plugin, 'cutlist')
   end
 
   def setup_dialog_actions(dialog)
@@ -37,7 +37,7 @@ class CutlistController < Controller
       )
 
       # Callback to JS
-      dialog.execute_script("$('#ladb_tab_cutlist').ladbTabCutlist('onCutlistGenerated', '#{json_data}')")
+      execute_dialog_script(dialog, 'onCutlistGenerated', json_data)
 
     end
 
@@ -56,7 +56,8 @@ class CutlistController < Controller
         entity.definition.entities.each { |child_entity|
           child_component_count += _fetch_leafs(child_entity, leaf_components)
         }
-        if child_component_count == 0
+        bounds = entity.bounds
+        if child_component_count == 0 and bounds.width > 0 and bounds.height > 0 and bounds.depth > 0
           leaf_components.push(entity)
           return 1
         end

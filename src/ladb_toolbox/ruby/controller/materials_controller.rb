@@ -3,7 +3,7 @@ require_relative 'controller'
 class MaterialsController < Controller
 
   def initialize(plugin)
-    super(plugin)
+    super(plugin, 'materials')
   end
 
   def setup_dialog_actions(dialog)
@@ -16,13 +16,13 @@ class MaterialsController < Controller
 
       output = []
       materials.each { |material|
-        output.push(material.material_name);
+        output.push(material.name)
       }
 
       json_data = output.to_json
 
       # Callback to JS
-      dialog.execute_script("$('#ladb_tab_materials').ladbTabMaterials('onList', '#{json_data}')")
+      execute_dialog_script(dialog, 'onList', json_data)
 
     end
 

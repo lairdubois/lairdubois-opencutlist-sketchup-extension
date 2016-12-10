@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.3 minor versions.
 
+* 0.3.4
+
+  * Cutlist ignore flat components
+  * Ruby > JS call escape single quote chars
+
 * 0.3.3 (2016-12-08)
 
   * Standard thickness option
