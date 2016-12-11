@@ -51,10 +51,6 @@
         ]
     };
 
-    LadbToolbox.prototype.rubyCall = function (fn, params) {
-        window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
-    };
-
     LadbToolbox.prototype.setSettingsValue = function (key, value) {
         if (typeof(Storage) !== "undefined" && localStorage != undefined) {
             localStorage.setItem(key, value);
@@ -79,14 +75,14 @@
     };
 
     LadbToolbox.prototype.minimize = function () {
-        this.rubyCall('ladb_minimize', null);
+        rubyCall('ladb_minimize', null);
         this.$wrapper.hide();
         this.$btnMinimize.hide();
         this.$btnMaximize.show();
     };
 
     LadbToolbox.prototype.maximize = function () {
-        this.rubyCall('ladb_maximize', null);
+        rubyCall('ladb_maximize', null);
         this.$wrapper.show();
         this.$btnMinimize.show();
         this.$btnMaximize.hide();

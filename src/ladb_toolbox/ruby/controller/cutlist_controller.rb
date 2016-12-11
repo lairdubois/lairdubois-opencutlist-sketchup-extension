@@ -3,7 +3,7 @@ require_relative 'controller'
 require_relative '../model/size'
 require_relative '../model/cutlist'
 require_relative '../model/groupdef'
-require_relative '../model/piecedef'
+require_relative '../model/partdef'
 
 class CutlistController < Controller
 
@@ -18,26 +18,26 @@ class CutlistController < Controller
 
       params = JSON.parse(json_params)
 
-      # Explode parameters
+      # Extract parameters
       length_increase = params['length_increase'].to_l
       width_increase = params['width_increase'].to_l
       thickness_increase = params['thickness_increase'].to_l
       std_thicknesses = _to_std_thicknesses_array(params['std_thicknesses'])
-      piece_number_letter = params['piece_number_letter']
-      piece_number_sequence_by_group = params['piece_number_sequence_by_group']
+      part_number_letter = params['part_number_letter']
+      part_number_sequence_by_group = params['part_number_sequence_by_group']
 
       # Generate cutlist
-      json_data = generate_cutlist(
+      data = generate_cutlist_data(
           length_increase,
           width_increase,
           thickness_increase,
           std_thicknesses,
-          piece_number_letter,
-      piece_number_sequence_by_group
+          part_number_letter,
+          part_number_sequence_by_group
       )
 
       # Callback to JS
-      execute_dialog_script(dialog, 'onCutlistGenerated', json_data)
+      execute_js_callback('onCutlistGenerated', data)
 
     end
 
@@ -104,18 +104,9 @@ class CutlistController < Controller
     }
   end
 
-  def _sanitize_string(str)
-    if str
-      str
-          .downcase
-          .gsub(/^.*(\\|\/)/, '')
-          .gsub!(/[^0-9A-Za-z.\-]/, '_')
-    end
-  end
-
   public
 
-  def generate_cutlist(length_increase, width_increase, thickness_increase, std_thicknesses, piece_number_letter, piece_number_sequence_by_group)
+  def generate_cutlist_data(length_increase, width_increase, thickness_increase, std_thicknesses, part_number_letter, part_number_sequence_by_group)
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model
@@ -178,25 +169,81 @@ class CutlistController < Controller
 
       end
 
-      piece_def = group_def.get_piece_def(definition.name)
-      unless piece_def
+      part_def = group_def.get_part_def(definition.name)
+      unless part_def
 
-        piece_def = PieceDef.new
-        piece_def.name = definition.name
-        piece_def.raw_size = raw_size
-        piece_def.size = size
+        part_def = PartDef.new
+        part_def.name = definition.name
+        part_def.raw_size = raw_size
+        part_def.size = size
 
-        group_def.set_piece_def(definition.name, piece_def)
+        group_def.set_part_def(definition.name, part_def)
 
       end
-      piece_def.count += 1
-      piece_def.add_component_guid(component.guid)
+      part_def.count += 1
+      part_def.add_component_guid(component.guid)
 
-      group_def.piece_count += 1
+      group_def.part_count += 1
 
     }
 
-    cutlist.to_json(piece_number_sequence_by_group, piece_number_letter)
+    # Data
+    # ----
+
+    data = {
+        :status => cutlist.status,
+        :errors => cutlist.errors,
+        :warnings => cutlist.warnings,
+        :filepath => cutlist.filepath,
+        :length_unit => cutlist.length_unit,
+        :groups => []
+    }
+
+    # Sort and browse groups
+    part_number = part_number_letter ? 'A' : '1'
+    cutlist.group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
+
+      if part_number_sequence_by_group
+        part_number = part_number_letter ? 'A' : '1'    # Reset code increment on each group
+      end
+
+      group = {
+          :id => group_def.id,
+          :material_name => group_def.material_name,
+          :part_count => group_def.part_count,
+          :raw_thickness => group_def.raw_thickness,
+          :raw_thickness_available => group_def.raw_thickness_available,
+          :raw_area_m2 => 0,
+          :raw_volume_m3 => 0,
+          :parts => []
+      }
+      data[:groups].push(group)
+
+      # Sort and browse parts
+      group_def.part_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, part_def|
+        group[:raw_area_m2] += part_def.raw_size.area_m2
+        group[:raw_volume_m3] += part_def.raw_size.volume_m3
+        group[:parts].push({
+                                :name => part_def.name,
+                                :length => part_def.size.length,
+                                :width => part_def.size.width,
+                                :thickness => part_def.size.thickness,
+                                :count => part_def.count,
+                                :raw_length => part_def.raw_size.length,
+                                :raw_width => part_def.raw_size.width,
+                                :number => part_number,
+                                :component_guids => part_def.component_guids
+                            }
+        )
+        part_number = part_number.succ
+      }
+
+    }
+
+    # Reorder groups by material_name ASC, raw_thickness DESC
+    data[:groups].sort_by! { |v| [ v[:material_name], -v[:raw_thickness] ] }
+
+    data
   end
 
 end

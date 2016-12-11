@@ -14,15 +14,13 @@ class MaterialsController < Controller
       model = Sketchup.active_model
       materials = model.materials
 
-      output = []
+      data = []
       materials.each { |material|
-        output.push(material.name)
+        data.push(material.name)
       }
 
-      json_data = output.to_json
-
       # Callback to JS
-      execute_dialog_script(dialog, 'onList', json_data)
+      execute_js_callback('onList', data)
 
     end
 

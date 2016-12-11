@@ -22,7 +22,7 @@
         {% for group in groups %}
             <tr style="font-size: 120%;">
                 <td>{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></td>
-                <td class="text-center">x{{ group.piece_count }}</td>
+                <td class="text-center">x{{ group.part_count }}</td>
                 <td class="text-right">{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></td>
                 <td class="text-right">{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></td>
             </tr>
@@ -58,22 +58,22 @@
             <td class="text-center" width="10%">Ep.</td>
         </tr>
         {% set thickness = 0 %}
-        {% for piece in group.pieces %}
-            {% if piece.thickness != thickness %}
-                {% set thickness = piece.thickness %}
+        {% for part in group.parts %}
+            {% if part.thickness != thickness %}
+                {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
-                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ piece.thickness }}</td>
+                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ part.thickness }}</td>
                 </tr>
             {% endif %}
             <tr style="font-size: 120%;">
-                <td class="text-center" style="color: red;">{{ piece.number }}</td>
-                <td>{{ piece.name }}</td>
-                <td class="text-center">x {{ piece.count }}</td>
-                <td class="text-right" style="color: red;">{{ piece.raw_length }}</td>
-                <td class="text-right" style="color: red;">{{ piece.raw_width }}</td>
-                <td class="text-right">{{ piece.length }}</td>
-                <td class="text-right">{{ piece.width }}</td>
-                <td class="text-right">{{ piece.thickness }}</td>
+                <td class="text-center" style="color: red;">{{ part.number }}</td>
+                <td>{{ part.name }}</td>
+                <td class="text-center">x {{ part.count }}</td>
+                <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
+                <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                <td class="text-right">{{ part.length }}</td>
+                <td class="text-right">{{ part.width }}</td>
+                <td class="text-right">{{ part.thickness }}</td>
             </tr>
         {% endfor %}
         </tbody>

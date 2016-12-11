@@ -7,23 +7,46 @@
     <link rel="stylesheet" href="../css/ladb_leftbar.css">
     <link rel="stylesheet" href="../css/ladb_bottombar.css">
     <link rel="stylesheet" href="../css/ladb_header.css">
+</head>
+<body>
     <script src="../js/lib/jquery-3.1.1.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
-    <script src="../js/lib/twig.js"></script>
+    <script src="../js/lib/twig.min.js"></script>
+    <script src="../js/lib/base64.min.js"></script>
     <script src="../js/plugins/jquery.ladb.toolbox.js"></script>
     <script src="../js/plugins/jquery.ladb.tab-cutlist.js"></script>
     <script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
     <script src="../js/plugins/jquery.ladb.tab-about.js"></script>
     <script src="../js/templates/twig-templates.js"></script>
-</head>
-<body>
-<script type="text/javascript">
-    window.onerror = function (errorMsg, url, lineNumber) {
-        alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
-    };
-    $(document).ready(function () {
-        window.location.href = 'skp:ladb_dialog_loaded@';
-    });
-</script>
+    <script type="text/javascript">
+
+        <!-- Ruby JS interactions -->
+
+        function rubyCall(fn, params) {
+            window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
+        }
+
+        function onRubyCallback(fn, encoded_data, tabName) {
+            var data = JSON.parse(decodeURIComponent(Base64.decode(encoded_data)));
+            if (tabName) {
+                $('#ladb_tab_' + tabName)['ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)](fn, data);
+            } else {
+                $('body').ladbToolbox(fn, data);
+            }
+        }
+
+        <!-- Debug JS errors -->
+
+        window.onerror = function (errorMsg, url, lineNumber) {
+            alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+        };
+
+        <!-- Ready ! -->
+
+        $(document).ready(function () {
+            window.location.href = 'skp:ladb_dialog_loaded@';
+        });
+
+    </script>
 </body>
 </html>

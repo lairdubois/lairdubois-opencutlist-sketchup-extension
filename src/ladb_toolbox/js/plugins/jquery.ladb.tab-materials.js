@@ -15,9 +15,7 @@
 
     LadbTabMaterials.DEFAULTS = {};
 
-    LadbTabMaterials.prototype.onList = function (jsonData) {
-
-        var materials = JSON.parse(jsonData);
+    LadbTabMaterials.prototype.onList = function (materials) {
 
         // Update list
         this.$list.empty();
@@ -32,7 +30,7 @@
 
         // Bind buttons
         this.$btnList.on('click', function () {
-            that.toolbox.rubyCall('ladb_materials_list', null);
+            rubyCall('ladb_materials_list', null);
         });
 
     };
@@ -48,14 +46,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladg.tabMaterials');
+            var data = $this.data('ladb.tabMaterials');
             var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
                 if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladg.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
+                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
             }
             if (typeof option == 'string') {
                 data[option](params);

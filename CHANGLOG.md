@@ -7,7 +7,7 @@ in 0.3 minor versions.
 * 0.3.4
 
   * Cutlist ignore flat components
-  * Ruby > JS call escape single quote chars
+  * Ruby > JS call encode parameter to accept any chars
 
 * 0.3.3 (2016-12-08)
 

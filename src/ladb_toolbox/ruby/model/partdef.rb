@@ -1,4 +1,4 @@
-class PieceDef
+class PartDef
 
   attr_accessor :name, :count, :raw_size, :size
   attr_reader :component_guids
