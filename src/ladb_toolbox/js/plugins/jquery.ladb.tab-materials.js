@@ -23,6 +23,22 @@
             materials: materials
         }));
 
+        // Bind rows
+        $('.ladb-material-row', this.$list).each(function(index) {
+            var $row = $(this);
+            var materialName = $row.data('material-name');
+            $('.ladb-btn-material-update', $row).on('click', function() {
+                rubyCall('ladb_materials_update', {
+                    material_name: materialName,
+                    length_increase: 10,
+                    width_increase: 11,
+                    thickness_increase: 12
+                });
+                $(this).blur();
+            });
+        });
+
+
     };
 
     LadbTabMaterials.prototype.bind = function () {

@@ -1,6 +1,5 @@
 
 {# set title #}
-{# set embeddedBody (facultative) #}
 {# set bodyClasses (facultative) #}
 
 {% block modal %}
@@ -19,7 +18,7 @@
                                 </div>
                             {% endblock %}
                             {% block body %}
-                                <div class="modal-body{% if embeddedBody is defined and embeddedBody %} ladb-padding-remove{% endif %}{% if bodyClasses is defined %} {{ bodyClasses }}{% endif %}">
+                                <div class="modal-body{% if bodyClasses is defined %} {{ bodyClasses }}{% endif %}">
                                     {% block bodyInner %}{% endblock %}
                                 </div>
                             {% endblock %}

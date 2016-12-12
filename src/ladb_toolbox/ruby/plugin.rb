@@ -19,6 +19,15 @@ module Ladb
       attr_accessor :dialog
 
       @controllers
+      @temp_dir
+
+      def temp_dir
+        temp_dir = File.join(Sketchup.temp_dir, "ladb_toolbox")
+        unless Dir.exist?(temp_dir)
+          Dir.mkdir(temp_dir)
+        end
+        temp_dir
+      end
 
       def initialize()
         @controllers = []

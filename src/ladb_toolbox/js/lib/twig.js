@@ -1324,6 +1324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    id: file,
 	                    method: this.getLoaderMethod(),
 	                    async: false,
+	                    path: file,
 	                    options: this.options
 	                });
 
@@ -5511,7 +5512,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (params.async) {
 	            fs.stat(params.path, function (err, stats) {
 	                if (err || !stats.isFile()) {
-	                    throw new Twig.Error('Unable to find template file ' + params.path);
+	                    if (typeof error_callback === 'function') {
+	                        error_callback(new Twig.Error('Unable to find template file ' + params.path));
+	                    }
+	                    return;
 	                }
 	                fs.readFile(params.path, 'utf8', loadTemplateFn);
 	            });
@@ -6311,7 +6315,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    rBetweenTagSpaces = />\s+</g,
 	                    // Replace all space between closing and opening html tags
 	                    output = unfiltered.replace(rBetweenTagSpaces,'><').trim();
-
+	                    // Rewrap output as a Twig.Markup
+	                    output = Twig.Markup(output);
 	                return {
 	                    chain: chain,
 	                    output: output

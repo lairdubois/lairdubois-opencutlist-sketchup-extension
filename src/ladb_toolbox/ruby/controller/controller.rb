@@ -3,11 +3,11 @@ require 'uri'
 
 class Controller
 
-  @app
+  @plugin
   @tab_name
 
   def initialize(plugin, tab_name)
-    @app = plugin
+    @plugin = plugin
     @tab_name = tab_name
   end
 
@@ -25,7 +25,7 @@ class Controller
     encoded_data = Base64.strict_encode64(URI.escape(JSON.generate(data)))
     script = "onRubyCallback('#{fn}', '#{encoded_data}', '#{tab_name}')"
 
-    @app.dialog.execute_script(script)
+    @plugin.dialog.execute_script(script)
   end
 
 end
