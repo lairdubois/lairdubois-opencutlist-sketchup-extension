@@ -19,10 +19,6 @@
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
-        this.lengthIncrease = this.toolbox.getSettingsValue('lengthIncrease', 50);
-        this.widthIncrease = this.toolbox.getSettingsValue('widthIncrease', 5);
-        this.thicknessIncrease = this.toolbox.getSettingsValue('thicknessIncrease', 5);
-        this.stdThicknesses = this.toolbox.getSettingsValue('stdThicknesses', '18;27;35;45;64;80;100');
         this.partNumberLetter = this.toolbox.getSettingsValue('partNumberLetter', true);
         this.partNumberSequenceByGroup = this.toolbox.getSettingsValue('partNumberSequenceByGroup', false);
 
@@ -33,10 +29,6 @@
         this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$alertErrors = $('.ladb-alert-errors', this.$element);
         this.$alertWarnings = $('.ladb-alert-warnings', this.$element);
-        this.$inputLengthIncrease = $('#ladb_input_length_increase', this.$element);
-        this.$inputWidthIncrease = $('#ladb_input_width_increase', this.$element);
-        this.$inputThicknessIncrease = $('#ladb_input_thickness_increase', this.$element);
-        this.$inputStdThicknesses = $('#ladb_input_std_thicknesses', this.$element);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$element);
         this.$inputPartNumberLetter = $('#ladb_input_part_number_letter', this.$element);
         this.$list = $('#list', this.$element);
@@ -132,10 +124,6 @@
         // Bind buttons
         this.$btnRefresh.on('click', function () {
             rubyCall('ladb_cutlist_generate', {
-                length_increase: that.lengthIncrease + 'mm',
-                width_increase: that.widthIncrease + 'mm',
-                thickness_increase: that.thicknessIncrease + 'mm',
-                std_thicknesses: that.stdThicknesses,
                 piece_number_letter: that.partNumberLetter,
                 piece_number_sequence_by_group: that.partNumberSequenceByGroup
             });
@@ -147,34 +135,6 @@
         });
 
         // Bind inputs
-        this.$inputLengthIncrease.on('change', function () {
-            var lengthIncrease = parseFloat(that.$inputLengthIncrease.val());
-            if (!isNaN(lengthIncrease)) {
-                that.lengthIncrease = lengthIncrease;
-                that.toolbox.setSettingsValue("lengthIncrease", that.lengthIncrease);
-            }
-        });
-        this.$inputWidthIncrease.on('change', function () {
-            var widthIncrease = parseFloat(that.$inputWidthIncrease.val());
-            if (!isNaN(widthIncrease)) {
-                that.widthIncrease = widthIncrease;
-                that.toolbox.setSettingsValue('widthIncrease', that.widthIncrease);
-            }
-        });
-        this.$inputThicknessIncrease.on('change', function () {
-            var thicknessIncrease = parseFloat(that.$inputThicknessIncrease.val());
-            if (!isNaN(thicknessIncrease)) {
-                that.thicknessIncrease = thicknessIncrease;
-                that.toolbox.setSettingsValue('thicknessIncrease', that.thicknessIncrease);
-            }
-        });
-        this.$inputStdThicknesses.on('change', function () {
-            var stdThicknesses = that.$inputStdThicknesses.val();
-            if (true) {
-                that.stdThicknesses = stdThicknesses;
-                that.toolbox.setSettingsValue('stdThicknesses', that.stdThicknesses);
-            }
-        });
         this.$inputPartNumberLetter.on('change', function () {
             that.partNumberLetter = that.$inputPartNumberLetter.is(':checked');
             that.toolbox.setSettingsValue('partNumberLetter', that.partNumberLetter);
@@ -190,10 +150,6 @@
         this.bind();
 
         // Init inputs values
-        this.$inputLengthIncrease.val(this.lengthIncrease);
-        this.$inputWidthIncrease.val(this.widthIncrease);
-        this.$inputThicknessIncrease.val(this.thicknessIncrease);
-        this.$inputStdThicknesses.val(this.stdThicknesses);
         this.$inputPartNumberLetter.prop('checked', this.partNumberLetter);
         this.$inputPartNumberSequenceByGroup.prop('checked', this.partNumberSequenceByGroup);
     };

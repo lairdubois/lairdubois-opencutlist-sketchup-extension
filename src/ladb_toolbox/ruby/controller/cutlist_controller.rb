@@ -19,19 +19,11 @@ class CutlistController < Controller
       params = JSON.parse(json_params)
 
       # Extract parameters
-      length_increase = params['length_increase'].to_l
-      width_increase = params['width_increase'].to_l
-      thickness_increase = params['thickness_increase'].to_l
-      std_thicknesses = _to_std_thicknesses_array(params['std_thicknesses'])
       part_number_letter = params['part_number_letter']
       part_number_sequence_by_group = params['part_number_sequence_by_group']
 
       # Generate cutlist
       data = generate_cutlist_data(
-          length_increase,
-          width_increase,
-          thickness_increase,
-          std_thicknesses,
           part_number_letter,
           part_number_sequence_by_group
       )
@@ -81,15 +73,7 @@ class CutlistController < Controller
     Size.new(ordered[2], ordered[1], ordered[0])
   end
 
-  def _to_std_thicknesses_array(std_thicknesses_str)
-    a = []
-    std_thicknesses_str.split(';').each { |std_thickness|
-      a.push((std_thickness + 'mm').to_l)
-    }
-    a
-  end
-
-  def _convert_to_std_thickness(thickness, std_thicknesses)
+  def _find_nearest_highest_std_thickness(thickness, std_thicknesses)
     std_thicknesses.each { |std_thickness|
       if thickness <= std_thickness
         return {
@@ -106,7 +90,7 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist_data(length_increase, width_increase, thickness_increase, std_thicknesses, part_number_letter, part_number_sequence_by_group)
+  def generate_cutlist_data(part_number_letter, part_number_sequence_by_group)
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model
@@ -147,21 +131,23 @@ class CutlistController < Controller
       definition = component.definition
 
       material_name = material ? component.material.name : '[Matière non définie]'
+      material_attributes = MaterialAttributes.new(material)
 
       size = _size_from_bounds(_compute_faces_bounds(definition))
-      std_thickness = _convert_to_std_thickness((size.thickness + thickness_increase).to_l, std_thicknesses)
+      std_thickness = _find_nearest_highest_std_thickness((size.thickness + material_attributes.l_thickness_increase).to_l, material_attributes.l_std_thicknesses)
       raw_size = Size.new(
-          (size.length + length_increase).to_l,
-          (size.width + width_increase).to_l,
+          (size.length + material_attributes.l_length_increase).to_l,
+          (size.width + material_attributes.l_width_increase).to_l,
           std_thickness[:value]
       )
 
-      key = material_name + ':' + raw_size.thickness.to_s
+      key = material_name + (material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : '')
       group_def = cutlist.get_group_def(key)
       unless group_def
 
         group_def = GroupDef.new
         group_def.material_name = material_name
+        group_def.material_type = material_attributes.type
         group_def.raw_thickness = raw_size.thickness
         group_def.raw_thickness_available = std_thickness[:available]
 
@@ -210,6 +196,7 @@ class CutlistController < Controller
       group = {
           :id => group_def.id,
           :material_name => group_def.material_name,
+          :material_type => group_def.material_type,
           :part_count => group_def.part_count,
           :raw_thickness => group_def.raw_thickness,
           :raw_thickness_available => group_def.raw_thickness_available,

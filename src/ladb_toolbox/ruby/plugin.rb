@@ -6,7 +6,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.3.4'
+      VERSION = '0.4.0'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
@@ -35,7 +35,7 @@ module Ladb
         @controllers.push(MaterialsController.new(self))
       end
 
-      def toggle_dialog
+      def toggle_dialog()
         if @dialog and @dialog.visible?
           @dialog.close
         else

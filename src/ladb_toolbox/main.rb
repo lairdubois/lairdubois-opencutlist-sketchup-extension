@@ -11,11 +11,14 @@ module Ladb
     unless file_loaded?(__FILE__)
 
       # Setup Menu
-      menu = UI.menu
-      submenu = menu.add_submenu('L\'Air du Bois')
-      submenu.add_item('Fiche de débit') {
-        plugin.toggle_dialog
-      }
+      # menu = UI.menu
+      # submenu = menu.add_submenu('L\'Air du Bois')
+      # submenu.add_item('Fiche de débit') {
+      #   plugin.toggle_dialog()
+      # }
+      # submenu.add_item('Matières') {
+      #   plugin.toggle_dialog()
+      # }
 
       # Setup Toolbar
       toolbar = UI::Toolbar.new('L\'Air du Bois')

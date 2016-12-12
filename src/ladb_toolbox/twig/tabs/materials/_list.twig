@@ -2,16 +2,12 @@
 
 <ul>
 {% for material in materials %}
-    <li class="ladb-material-row" data-material-name="{{ material.name }}">
-        <a href="#" data-toggle="modal" data-target="#ladb_modal_material_{{ material.id }}">{{ material.name }}</a>
+    <li class="ladb-material-row" data-material-id="{{ material.id }}">
+        <a href="#" class="ladb-btn-material-edit">{{ material.display_name }}</a>
         - id = {{ material.id }}
         - {{ material.attributes.type }}
         - {{ material.attributes.length_increase }}
-        <button class="ladb-btn-material-update">Update</button>
         <img src="{{ material.thumbnail_file }}" width="128" height="128">
     </li>
 {% endfor %}
 </ul>
-{% for material in materials %}
-    {% include 'tabs/materials/_material-modal.twig' with { 'material':material } %}
-{% endfor %}
