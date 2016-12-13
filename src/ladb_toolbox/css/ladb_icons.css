@@ -1,0 +1,66 @@
+@font-face {
+  font-family: 'ladb_toolbox';
+  src:  url('../fonts/ladb_toolbox.eot?p82ls7');
+  src:  url('../fonts/ladb_toolbox.eot?p82ls7#iefix') format('embedded-opentype'),
+  url('../fonts/ladb_toolbox.ttf?p82ls7') format('truetype'),
+  url('../fonts/ladb_toolbox.woff?p82ls7') format('woff'),
+  url('../fonts/ladb_toolbox.svg?p82ls7#ladb_toolbox') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+i {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'ladb_toolbox' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ladb-toolbox-icon-link:before {
+  content: "\e90c";
+}
+.ladb-toolbox-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-toolbox-icon-eye-open:before {
+  content: "\e90b";
+}
+.ladb-toolbox-icon-settings:before {
+  content: "\e907";
+}
+.ladb-toolbox-icon-warning:before {
+  content: "\e908";
+}
+.ladb-toolbox-icon-help:before {
+  content: "\e909";
+}
+.ladb-toolbox-icon-print:before {
+  content: "\e906";
+}
+.ladb-toolbox-icon-cutlist:before {
+  content: "\e900";
+}
+.ladb-toolbox-icon-hardwood:before {
+  content: "\e903";
+}
+.ladb-toolbox-icon-materials:before {
+  content: "\e901";
+}
+.ladb-toolbox-icon-panel:before {
+  content: "\e902";
+}
+.ladb-toolbox-icon-chevron-right:before {
+  content: "\e904";
+}
+.ladb-toolbox-icon-chevron-left:before {
+  content: "\e905";
+}
+

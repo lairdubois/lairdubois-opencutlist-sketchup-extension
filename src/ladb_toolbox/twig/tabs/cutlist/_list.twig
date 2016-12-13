@@ -4,9 +4,9 @@
     <table id="ladb_summary" class="no-print table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
-            <td colspan="4" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="glyphicon glyphicon-eye-open"></i></button>
-                <div style="margin-left: 40px;">
+            <td colspan="5" style="line-height: 20px;">
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-right" data-group-id="ladb_summary"><i class="ladb-toolbox-icon-eye-open"></i></button>
+                <div>
                     <span style=" line-height: 25px; font-size: 18px;">Résumé</span>
                 </div>
             </td>
@@ -14,6 +14,7 @@
         </thead>
         <tbody style="display: none;">
         <tr>
+            <td class="text-center" width="5%">Type</td>
             <td class="text-center">Matière</td>
             <td class="text-center" width="10%">Nbr. pièces</td>
             <td class="text-center" width="15%">Surface</td>
@@ -21,6 +22,7 @@
         </tr>
         {% for group in groups %}
             <tr style="font-size: 120%;">
+                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'material_type':group.material_type } %}</td>
                 <td>{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></td>
                 <td class="text-center">x{{ group.part_count }}</td>
                 <td class="text-right">{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></td>
@@ -35,9 +37,9 @@
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="8" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}"><i class="glyphicon glyphicon-eye-close"></i></button>
-                <div style="margin-left: 40px;">
-                    <span style=" line-height: 25px; font-size: 18px;">{{ group.material_name }}{% if group.material_type > 0 %} / <strong{% if not group.raw_thickness_available %} class="text-danger"{% endif %}>{{ group.raw_thickness }}</strong>{% if not group.raw_thickness_available %} <span class="label label-danger pull-right"><i class="glyphicon glyphicon-exclamation-sign"></i> Epaisseur non standard{% endif %}</span>{% endif %}</span>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-right" data-group-id="ladb_group_{{ group.id }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
+                <div>
+                    <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'material_type':group.material_type } %} {{ group.material_name }}{% if group.material_type > 0 %} / <strong{% if not group.raw_thickness_available %} class="text-danger"{% endif %}>{{ group.raw_thickness }}</strong>{% if not group.raw_thickness_available %} <span class="label label-danger pull-right"><i class="glyphicon glyphicon-exclamation-sign"></i> Epaisseur non standard{% endif %}</span>{% endif %}</span>
                 </div>
             </td>
         </tr>

@@ -33,13 +33,13 @@
             {
                 name: 'cutlist',
                 bar: 'leftbar',
-                icon: 'glyphicon glyphicon-list-alt',
+                icon: 'ladb-toolbox-icon-cutlist',
                 label: 'Débit'
             },
             {
                 name: 'materials',
                 bar: 'leftbar',
-                icon: 'glyphicon glyphicon-leaf',
+                icon: 'ladb-toolbox-icon-materials',
                 label: 'Matières'
             },
             {

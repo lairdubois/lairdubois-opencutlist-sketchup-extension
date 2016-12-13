@@ -106,12 +106,12 @@
             $group.toggleClass('no-print');
             if ($group.hasClass('no-print')) {
                 $('tbody', $group).hide();
-                $i.removeClass('glyphicon-eye-close');
-                $i.addClass('glyphicon-eye-open');
+                $i.removeClass('ladb-toolbox-icon-eye-close');
+                $i.addClass('ladb-toolbox-icon-eye-open');
             } else {
                 $('tbody', $group).show();
-                $i.addClass('glyphicon-eye-close');
-                $i.removeClass('glyphicon-eye-open');
+                $i.addClass('ladb-toolbox-icon-eye-close');
+                $i.removeClass('ladb-toolbox-icon-eye-open');
             }
             $(this).blur();
         });

@@ -3,9 +3,9 @@
 {% block headerHeadingInner %}<span id="ladb_filename" class="text-muted pull-right"></span>Fiche de débit&nbsp;<small id="ladb_unit"></small>{% endblock %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_refresh" class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"></i> Générer</button>
-    <button id="ladb_btn_print" class="btn btn-default" disabled="disabled"><i class="glyphicon glyphicon-print"></i> Imprimer</button>
-    <button id="ladb_btn_options" class="btn btn-default" data-toggle="modal" data-target="#ladb_options_modal">Options</button>
+    <button id="ladb_btn_refresh" class="btn btn-primary">Générer</button>
+    <button id="ladb_btn_print" class="btn btn-default" disabled="disabled"><i class="ladb-toolbox-icon-print"></i> Imprimer</button>
+    <button id="ladb_btn_options" class="btn btn-default" data-toggle="modal" data-target="#ladb_options_modal"><i class="ladb-toolbox-icon-settings"></i> Options</button>
 {% endblock %}
 
 {% block containerInner %}
@@ -13,7 +13,7 @@
         <div class="panel-body">
             <div class="media">
                 <div class="media-left">
-                    <i class="glyphicon glyphicon-question-sign" style="font-size: 150%;"></i>
+                    <i class="ladb-toolbox-icon-help" style="font-size: 150%;"></i>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">Aide</h4>

@@ -228,7 +228,7 @@ class CutlistController < Controller
     }
 
     # Reorder groups by material_name ASC, raw_thickness DESC
-    data[:groups].sort_by! { |v| [ v[:material_name], -v[:raw_thickness] ] }
+    data[:groups].sort_by! { |v| [ v[:material_type], v[:material_name], -v[:raw_thickness] ] }
 
     data
   end
