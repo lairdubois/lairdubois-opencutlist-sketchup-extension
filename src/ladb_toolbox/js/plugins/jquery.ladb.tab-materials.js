@@ -38,7 +38,7 @@
         }));
 
         // Bind rows
-        $('.ladb-material-row', this.$list).each(function(index) {
+        $('.ladb-material-box', this.$list).each(function(index) {
             var $row = $(this);
             var materialId = $row.data('material-id');
             $('.ladb-btn-material-edit', $row).on('click', function() {

@@ -54,6 +54,17 @@ class MaterialAttributes
     end
   end
 
+  def self.type_order(type)
+    case type
+      when TYPE_HARDWOOD
+        1
+      when TYPE_PLYWOOD
+        2
+      else
+        99
+    end
+  end
+
   # -----
 
   def length_increase

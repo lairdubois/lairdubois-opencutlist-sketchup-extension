@@ -1,0 +1,11 @@
+.ladb-box {
+    border: 1px solid #ccc;
+    padding: 4px;
+    margin: 4px;
+    background-color: #fff;
+    float: left;
+}
+
+.ladb-box > .ladb-content {
+     min-height: 64px;
+}
