@@ -1,3 +1,4 @@
+require 'securerandom'
 require_relative 'controller'
 require_relative '../model/material_attributes'
 
@@ -24,7 +25,7 @@ class MaterialsController < Controller
       }
       materials.each { |material|
 
-        thumbnail_file = File.join(temp_dir, "#{material.display_name}.png")
+        thumbnail_file = File.join(temp_dir, SecureRandom.uuid + ".png")
         material.write_thumbnail(thumbnail_file, 128)
 
         material_attributes = MaterialAttributes.new(material)
