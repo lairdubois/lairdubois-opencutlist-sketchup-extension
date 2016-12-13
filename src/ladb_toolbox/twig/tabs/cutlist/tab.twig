@@ -23,10 +23,7 @@
             </div>
         </div>
     </div>
-    <div class="no-print alert alert-danger ladb-alert-errors" style="display: none;">
-    </div>
-    <div class="no-print alert alert-warning ladb-alert-warnings" style="display: none;">
-    </div>
+    {{ parent() }}
     <div id="list"></div>
     {% include 'tabs/cutlist/_options-modal.twig' with { 'classes':'no-print' } %}
 {% endblock %}

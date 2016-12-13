@@ -1,14 +1,14 @@
 {# set materials #}
 
 {% for material in materials %}
-    <div class="ladb-box ladb-material-box" data-material-id="{{ material.id }}">
+    <div class="ladb-material-box col-md-2 col-sm-3 col-xs-6" data-material-id="{{ material.id }}">
         <div class="ladb-content">
             <div class="ladb-image">
-                <a href="#" class="ladb-btn-material-edit">
-                    <img src="{{ material.thumbnail_file }}" width="128" height="128">
-                </a>
+                <div class="ladb-img-sizer" style="padding-top: 100%;">
+                    <img src="{{ material.thumbnail_file }}">
+                </div>
             </div>
-            <div class="ladb-overlay-caption">{{ material.display_name }}</div>
+            <div class="ladb-overlay-caption">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type } %}{{ material.display_name|escape }}</div>
         </div>
     </div>
 {% endfor %}

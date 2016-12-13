@@ -53,13 +53,13 @@
 
     LadbToolbox.prototype.setSettingsValue = function (key, value) {
         if (typeof(Storage) !== "undefined" && localStorage != undefined) {
-            localStorage.setItem(key, value);
+            localStorage.setItem('ladb_toolbox_' + key, value);
         }
     };
 
     LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
         if (typeof(Storage) !== "undefined" && localStorage != undefined) {
-            var value = localStorage.getItem(key);
+            var value = localStorage.getItem('ladb_toolbox_' + key);
             if (value) {
                 if (defaultValue != undefined) {
                     if (typeof(defaultValue) == 'boolean') {

@@ -2,7 +2,13 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 0.3 minor versions.
+in 0.x versions.
+
+* 0.4.0 (2016-12-14)
+
+  * New 'Materials' module
+  * Ability to manage option on each material
+  * Cutlist UI improvements
 
 * 0.3.4
 

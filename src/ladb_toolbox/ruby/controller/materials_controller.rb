@@ -17,7 +17,11 @@ class MaterialsController < Controller
 
       temp_dir = @plugin.temp_dir
 
-      data = []
+      data = {
+          :errors => [],
+          :warnings => [],
+          :materials => []
+      }
       materials.each { |material|
 
         thumbnail_file = File.join(temp_dir, "#{material.display_name}.png")
@@ -25,7 +29,7 @@ class MaterialsController < Controller
 
         material_attributes = MaterialAttributes.new(material)
 
-        data.push({
+        data[:materials].push({
                       :id => material.entityID,
                       :name => material.name,
                       :display_name => material.display_name,
@@ -41,6 +45,14 @@ class MaterialsController < Controller
                   })
       }
 
+      # Errors
+      if materials.count == 0
+        data[:errors].push('Votre modèle ne contient aucune matière.')
+      end
+
+      # Sort materials by type ASC, display_name ASC
+      data[:materials].sort_by! { |v| [MaterialAttributes.type_order(v[:attributes][:type]), v[:display_name]] }
+
       # Callback to JS
       execute_js_callback('onList', data)
 
@@ -48,16 +60,13 @@ class MaterialsController < Controller
 
     dialog.add_action_callback("ladb_materials_update") do |action_context, json_params|
 
-      puts json_params
-
       params = JSON.parse(json_params)
 
       # Extract parameters
-      material = params['material']
-      name = material['name']
-      display_name = material['display_name']
+      name = params['name']
+      display_name = params['display_name']
 
-      attributes = material['attributes']
+      attributes = params['attributes']
       type = MaterialAttributes.valid_type(attributes['type'])
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
@@ -81,7 +90,7 @@ class MaterialsController < Controller
         material_attributes.width_increase = width_increase
         material_attributes.thickness_increase = thickness_increase
         material_attributes.std_thicknesses = std_thicknesses
-        material_attributes.save_to_attributes
+        material_attributes.write_to_attributes
 
       end
 

@@ -73,13 +73,20 @@ class CutlistController < Controller
     Size.new(ordered[2], ordered[1], ordered[0])
   end
 
-  def _find_nearest_highest_std_thickness(thickness, std_thicknesses)
+  def _find_std_thickness(thickness, std_thicknesses, nearest_highest)
     std_thicknesses.each { |std_thickness|
       if thickness <= std_thickness
-        return {
-            :available => true,
-            :value => std_thickness
-        }
+        if nearest_highest
+          return {
+              :available => true,
+              :value => std_thickness
+          }
+        else
+          return {
+              :available => thickness == std_thickness,
+              :value => thickness
+          }
+        end
       end
     }
     {
@@ -118,9 +125,9 @@ class CutlistController < Controller
     # Errors
     if leaf_components.length == 0
       if use_selection
-        cutlist.add_error("Auncune instance de composant na été détectée dans votre sélection")
+        cutlist.add_error("Auncune instance de composant n'a été détectée dans votre sélection")
       else
-        cutlist.add_error("Auncune instance de composant na été détectée sur votre scène")
+        cutlist.add_error("Auncune instance de composant n'a été détectée sur votre scène")
       end
     end
 
@@ -134,7 +141,11 @@ class CutlistController < Controller
       material_attributes = MaterialAttributes.new(material)
 
       size = _size_from_bounds(_compute_faces_bounds(definition))
-      std_thickness = _find_nearest_highest_std_thickness((size.thickness + material_attributes.l_thickness_increase).to_l, material_attributes.l_std_thicknesses)
+      std_thickness = _find_std_thickness(
+          (size.thickness + material_attributes.l_thickness_increase).to_l,
+          material_attributes.l_std_thicknesses,
+          material_attributes.type == MaterialAttributes::TYPE_HARDWOOD
+      )
       raw_size = Size.new(
           (size.length + material_attributes.l_length_increase).to_l,
           (size.width + material_attributes.l_width_increase).to_l,
@@ -187,7 +198,7 @@ class CutlistController < Controller
 
     # Sort and browse groups
     part_number = part_number_letter ? 'A' : '1'
-    cutlist.group_defs.sort_by { |k, v| [v.raw_thickness] }.reverse.each { |key, group_def|
+    cutlist.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name, -v.raw_thickness] }.each { |key, group_def|
 
       if part_number_sequence_by_group
         part_number = part_number_letter ? 'A' : '1'    # Reset code increment on each group
@@ -226,9 +237,6 @@ class CutlistController < Controller
       }
 
     }
-
-    # Reorder groups by material_name ASC, raw_thickness DESC
-    data[:groups].sort_by! { |v| [ MaterialAttributes.type_order(v[:material_type]), v[:material_name], -v[:raw_thickness] ] }
 
     data
   end

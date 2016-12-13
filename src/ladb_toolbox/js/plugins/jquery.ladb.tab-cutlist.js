@@ -19,8 +19,8 @@
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
-        this.partNumberLetter = this.toolbox.getSettingsValue('partNumberLetter', true);
-        this.partNumberSequenceByGroup = this.toolbox.getSettingsValue('partNumberSequenceByGroup', false);
+        this.partNumberLetter = this.toolbox.getSettingsValue('cutlist_part_number_letter', true);
+        this.partNumberSequenceByGroup = this.toolbox.getSettingsValue('cutlist_part_number_sequence_by_group', false);
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
@@ -105,16 +105,24 @@
             var $group = $('#' + groupId);
             $group.toggleClass('no-print');
             if ($group.hasClass('no-print')) {
-                $('tbody', $group).hide();
                 $i.removeClass('ladb-toolbox-icon-eye-close');
                 $i.addClass('ladb-toolbox-icon-eye-open');
             } else {
-                $('tbody', $group).show();
                 $i.addClass('ladb-toolbox-icon-eye-close');
                 $i.removeClass('ladb-toolbox-icon-eye-open');
             }
             $(this).blur();
         });
+        $('a.ladb-scrollto', this.$list).on('click', function() {
+            console.log('CLICK');
+            var target = $(this).attr('href');
+            $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
+                $(target).effect("highlight", {}, 1500);
+            });
+            $(this).blur();
+            return false;
+        });
+
 
     };
 
@@ -137,11 +145,11 @@
         // Bind inputs
         this.$inputPartNumberLetter.on('change', function () {
             that.partNumberLetter = that.$inputPartNumberLetter.is(':checked');
-            that.toolbox.setSettingsValue('partNumberLetter', that.partNumberLetter);
+            that.toolbox.setSettingsValue('cutlist_part_number_letter', that.partNumberLetter);
         });
         this.$inputPartNumberSequenceByGroup.on('change', function () {
             that.partNumberSequenceByGroup = that.$inputPartNumberSequenceByGroup.is(':checked');
-            that.toolbox.setSettingsValue('partNumberSequenceByGroup', that.partNumberSequenceByGroup);
+            that.toolbox.setSettingsValue('cutlist_part_number_sequence_by_group', that.partNumberSequenceByGroup);
         });
 
     };

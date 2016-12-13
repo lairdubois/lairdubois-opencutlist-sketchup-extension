@@ -12,7 +12,7 @@
             </td>
         </tr>
         </thead>
-        <tbody style="display: none;">
+        <tbody>
         <tr>
             <td class="text-center" width="5%">Type</td>
             <td class="text-center">Matière</td>
@@ -22,8 +22,13 @@
         </tr>
         {% for group in groups %}
             <tr style="font-size: 120%;">
-                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'material_type':group.material_type } %}</td>
-                <td>{{ group.material_name }} / <strong>{{ group.raw_thickness }}</strong></td>
+                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %}</td>
+                <td>
+                    {% include 'tabs/cutlist/_group-label.twig' %}
+                    <div class="ladb-minitools">
+                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
+                    </div>
+                </td>
                 <td class="text-center">x{{ group.part_count }}</td>
                 <td class="text-right">{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></td>
                 <td class="text-right">{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></td>
@@ -39,7 +44,7 @@
             <td colspan="8" style="line-height: 20px;">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-right" data-group-id="ladb_group_{{ group.id }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div>
-                    <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'material_type':group.material_type } %} {{ group.material_name }}{% if group.material_type > 0 %} / <strong{% if not group.raw_thickness_available %} class="text-danger"{% endif %}>{{ group.raw_thickness }}</strong>{% if not group.raw_thickness_available %} <span class="label label-danger pull-right"><i class="glyphicon glyphicon-exclamation-sign"></i> Epaisseur non standard{% endif %}</span>{% endif %}</span>
+                    <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>
             </td>
         </tr>
@@ -69,7 +74,7 @@
             {% endif %}
             <tr style="font-size: 120%;">
                 <td class="text-center" style="color: red;">{{ part.number }}</td>
-                <td>{{ part.name }}</td>
+                <td>{{ part.name|escape }}</td>
                 <td class="text-center">x {{ part.count }}</td>
                 <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
                 <td class="text-right" style="color: red;">{{ part.raw_width }}</td>

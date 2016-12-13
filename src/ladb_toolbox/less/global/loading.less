@@ -1,0 +1,73 @@
+//
+// Loading
+//
+
+@ladb-loading-bounce-size:    12px;
+@ladb-loading-bounce-gutter:  2px;
+
+@ladb-loading-width:          (@ladb-loading-bounce-size * 3 + @ladb-loading-bounce-gutter * 6);
+
+.ladb-loading-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  opacity: 0.9;
+
+  > div {
+    position: absolute;
+    height: 50px;
+    top: 50%;
+    margin-top: -25px;
+    width: 200px;
+    left: 50%;
+    margin-left: -100px;
+    display: block;
+    text-align: center;
+  }
+
+}
+
+.ladb-loading {
+  display: block;
+  text-align: center;
+
+  &.ladb-loading-float {
+    position: absolute;
+    margin-left: auto;
+    padding: (@ladb-loading-width / 2);
+    left: 50%;
+  }
+
+  .spinner {
+    margin: 0 auto 0;
+    width: @ladb-loading-width;
+    text-align: center;
+
+    & > div {
+      width: @ladb-loading-bounce-size;
+      height: @ladb-loading-bounce-size;
+      background-color: @ladb-brand-dark;
+      margin: 0 @ladb-loading-bounce-gutter;
+
+      border-radius: 100%;
+      display: inline-block;
+      -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+
+    .bounce1 {
+      -webkit-animation-delay: -0.32s;
+      animation-delay: -0.32s;
+    }
+
+    .bounce2 {
+      -webkit-animation-delay: -0.16s;
+      animation-delay: -0.16s;
+    }
+
+  }
+
+}

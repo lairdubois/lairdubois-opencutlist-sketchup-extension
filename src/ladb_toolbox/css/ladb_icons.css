@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'ladb_toolbox';
-  src:  url('../fonts/ladb_toolbox.eot?p82ls7');
-  src:  url('../fonts/ladb_toolbox.eot?p82ls7#iefix') format('embedded-opentype'),
-  url('../fonts/ladb_toolbox.ttf?p82ls7') format('truetype'),
-  url('../fonts/ladb_toolbox.woff?p82ls7') format('woff'),
-  url('../fonts/ladb_toolbox.svg?p82ls7#ladb_toolbox') format('svg');
+  src:  url('../fonts/ladb_toolbox.eot?cyft3f');
+  src:  url('../fonts/ladb_toolbox.eot?cyft3f#iefix') format('embedded-opentype'),
+  url('../fonts/ladb_toolbox.ttf?cyft3f') format('truetype'),
+  url('../fonts/ladb_toolbox.woff?cyft3f') format('woff'),
+  url('../fonts/ladb_toolbox.svg?cyft3f#ladb_toolbox') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,14 +24,11 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ladb-toolbox-icon-link:before {
-  content: "\e90c";
+.ladb-toolbox-icon-arrow-circle-down:before {
+  content: "\e90f";
 }
-.ladb-toolbox-icon-eye-close:before {
-  content: "\e90a";
-}
-.ladb-toolbox-icon-eye-open:before {
-  content: "\e90b";
+.ladb-toolbox-icon-arrow-circle-up:before {
+  content: "\e910";
 }
 .ladb-toolbox-icon-settings:before {
   content: "\e907";
@@ -50,6 +47,15 @@ i {
 }
 .ladb-toolbox-icon-hardwood:before {
   content: "\e903";
+}
+.ladb-toolbox-icon-link:before {
+  content: "\e90c";
+}
+.ladb-toolbox-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-toolbox-icon-eye-open:before {
+  content: "\e90b";
 }
 .ladb-toolbox-icon-materials:before {
   content: "\e901";

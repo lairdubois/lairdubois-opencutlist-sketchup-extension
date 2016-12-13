@@ -1,7 +1,7 @@
 {# set tabName #}
 
 <div id="ladb_tab_{{ tabName }}">
-    <div id="ladb_header">
+    <div class="ladb-header">
         <div class="container">
             {% block headerInner %}
                 {% block headerToolsOuter %}
@@ -14,6 +14,9 @@
         </div>
     </div>
     <div id="ladb_container" class="container">
-        {% block containerInner %}{% endblock %}
+        {% block containerInner %}
+            <div class="no-print alert alert-danger ladb-alert-errors" style="display: none;"></div>
+            <div class="no-print alert alert-warning ladb-alert-warnings" style="display: none;"></div>
+        {% endblock %}
     </div>
 </div>

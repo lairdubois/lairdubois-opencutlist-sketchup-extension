@@ -23,6 +23,12 @@ THe way to do this depend of your OS.
     $ npm install gulp-minify
 ```
 
+### Install [gulp-less](https://www.npmjs.com/package/gulp-less) - *Less for Gulp*
+
+``` bash
+    $ npm install gulp-less
+```
+
 ### Install [through2](https://github.com/rvagg/through2) - *Tiny wrapper around Node streams2 Transform*
 
 ``` bash

@@ -37,7 +37,7 @@ class MaterialAttributes
     @width_increase = get_default(:width_increase)
     @thickness_increase = get_default(:thickness_increase)
     @std_thicknesses = get_default(:std_thicknesses)
-    load_from_attributes
+    read_from_attributes
   end
 
   # -----
@@ -125,7 +125,7 @@ class MaterialAttributes
 
   # -----
 
-  def load_from_attributes
+  def read_from_attributes
     if @material
       @type = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'type', TYPE_UNKNOW)
       @length_increase = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'length_increase', get_default(:length_increase))
@@ -135,7 +135,7 @@ class MaterialAttributes
     end
   end
 
-  def save_to_attributes
+  def write_to_attributes
     if @material
       @material.set_attribute(ATTRIBUTE_DICTIONARY, 'type', @type)
       @material.set_attribute(ATTRIBUTE_DICTIONARY, 'length_increase', @length_increase)
