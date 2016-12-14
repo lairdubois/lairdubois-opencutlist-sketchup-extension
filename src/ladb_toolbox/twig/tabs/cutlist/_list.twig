@@ -1,4 +1,9 @@
+{# set errors #}
+{# set warnings #}
 {# set groups #}
+
+{% include 'core/_errors.twig' %}
+{% include 'core/_warnings.twig' %}
 
 {% if groups|length > 0 %}
     <table id="ladb_summary" class="no-print table table-bordered ladb-cutlist">

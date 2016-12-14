@@ -205,6 +205,9 @@
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
 }
+.alert ul {
+  padding-left: 20px;
+}
 .ladb-cutlist {
   background-color: #fff;
 }

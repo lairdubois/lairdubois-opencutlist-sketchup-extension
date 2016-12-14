@@ -13,8 +13,6 @@
         this.editedMaterial = null;
 
         this.$btnList = $('#ladb_btn_list', this.$element);
-        this.$alertErrors = $('.ladb-alert-errors', this.$element);
-        this.$alertWarnings = $('.ladb-alert-warnings', this.$element);
         this.$list = $('#materials_list', this.$element);
         this.$modal = $('#materials_modal', this.$element);
         this.$inputName = $('#ladb_materials_input_name', this.$modal);
@@ -29,9 +27,8 @@
     LadbTabMaterials.DEFAULTS = {};
 
     LadbTabMaterials.prototype.loadList = function () {
-        this.$alertErrors.empty();
-        this.$alertWarnings.empty();
         this.$list.empty();
+        this.$btnList.prop('disabled', true);
         rubyCall('ladb_materials_list', null);
     };
 
@@ -42,31 +39,11 @@
         var warnings = data.warnings;
         this.materials = data.materials;
 
-        // Errors
-        this.$alertErrors.empty();
-        if (errors && errors.length > 0) {
-            that.$alertErrors.show();
-            errors.forEach(function (error) {
-                that.$alertErrors.append(error);
-            });
-        } else {
-            that.$alertErrors.hide();
-        }
-
-        // Warnings
-        this.$alertWarnings.empty();
-        if (warnings && warnings.length > 0) {
-            that.$alertWarnings.show();
-            warnings.forEach(function (warning) {
-                that.$alertWarnings.append(warning);
-            });
-        } else {
-            that.$alertWarnings.hide();
-        }
-
         // Update list
         this.$list.empty();
         this.$list.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
+            errors: errors,
+            warnings: warnings,
             materials: this.materials
         }));
 
@@ -78,6 +55,9 @@
                 that.editMaterial(materialId);
             });
         });
+
+        // Restor button state
+        this.$btnList.prop('disabled', false);
 
     };
 

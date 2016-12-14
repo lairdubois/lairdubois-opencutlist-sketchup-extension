@@ -128,9 +128,9 @@ class CutlistController < Controller
     # Errors
     if leaf_components.length == 0
       if use_selection
-        cutlist.add_error("Auncune instance de composant n'a été détectée dans votre sélection")
+        cutlist.add_error("Auncune instance de composant visible n'a été détectée dans votre sélection")
       else
-        cutlist.add_error("Auncune instance de composant n'a été détectée sur votre scène")
+        cutlist.add_error("Auncune instance de composant visible n'a été détectée sur votre scène")
       end
     end
 
@@ -203,14 +203,23 @@ class CutlistController < Controller
     }
 
     # Warnings
-    hardwood_material_count = 0
-    cutlist.material_usages.each { |key, material_usage|
-      if material_usage.type == MaterialAttributes::TYPE_HARDWOOD
-        hardwood_material_count += material_usage.use_count
+    if leaf_components.length > 0
+      hardwood_material_count = 0
+      cutlist.material_usages.each { |key, material_usage|
+        if material_usage.type == MaterialAttributes::TYPE_HARDWOOD
+          hardwood_material_count += material_usage.use_count
+        end
+      }
+      if hardwood_material_count == 0
+        if use_selection
+          cutlist.add_warning("Votre sélection n'utilise aucune matière du type 'Bois massif'.")
+        else
+          cutlist.add_warning("Votre modèle n'utilise aucune matière du type 'Bois massif'.")
+        end
       end
-    }
-    if hardwood_material_count == 0
-      cutlist.add_warning("Votre modèle n'utilise aucune matière du type 'Bois massif'.")
+      if use_selection
+        cutlist.add_warning("Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.")
+      end
     end
 
     # Data

@@ -26,11 +26,9 @@
 
         this.$filename = $('#ladb_filename', this.$element);
         this.$unit = $('#ladb_unit', this.$element);
-        this.$btnRefresh = $('#ladb_btn_refresh', this.$element);
+        this.$btnGenerate = $('#ladb_btn_generate', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
         this.$panelHelp = $('.ladb-panel-help', this.$element);
-        this.$alertErrors = $('.ladb-alert-errors', this.$element);
-        this.$alertWarnings = $('.ladb-alert-warnings', this.$element);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$element);
         this.$inputPartNumberLetter = $('#ladb_input_part_number_letter', this.$element);
         this.$list = $('#list', this.$element);
@@ -46,9 +44,8 @@
     };
 
     LadbTabCutlist.prototype.generateCutlist = function () {
-        this.$alertErrors.empty();
-        this.$alertWarnings.empty();
         this.$list.empty();
+        this.$btnGenerate.prop('disabled', true);
         rubyCall('ladb_cutlist_generate', {
             part_number_letter: this.partNumberLetter,
             part_number_sequence_by_group: this.partNumberSequenceByGroup
@@ -75,28 +72,6 @@
         this.$unit.empty();
         this.$unit.append(' en ' + this.lengthUnitInfos.name);
 
-        // Errors
-        this.$alertErrors.empty();
-        if (errors && errors.length > 0) {
-            that.$alertErrors.show();
-            errors.forEach(function (error) {
-                that.$alertErrors.append(error);
-            });
-        } else {
-            that.$alertErrors.hide();
-        }
-
-        // Warnings
-        this.$alertWarnings.empty();
-        if (warnings && warnings.length > 0) {
-            that.$alertWarnings.show();
-            warnings.forEach(function (warning) {
-                that.$alertWarnings.append(warning);
-            });
-        } else {
-            that.$alertWarnings.hide();
-        }
-
         // Hide help panel
         if (groups.length > 0) {
             this.$panelHelp.hide();
@@ -108,6 +83,8 @@
         // Update list
         this.$list.empty();
         this.$list.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+            errors: errors,
+            warnings: warnings,
             groups: groups
         }));
 
@@ -136,6 +113,8 @@
             return false;
         });
 
+        // Restor button state
+        this.$btnGenerate.prop('disabled', false);
 
     };
 
@@ -143,7 +122,7 @@
         var that = this;
 
         // Bind buttons
-        this.$btnRefresh.on('click', function () {
+        this.$btnGenerate.on('click', function () {
             that.generateCutlist();
             this.blur();
         });

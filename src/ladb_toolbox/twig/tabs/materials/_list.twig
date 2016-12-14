@@ -1,4 +1,9 @@
+{# set errors #}
+{# set warnings #}
 {# set materials #}
+
+{% include 'core/_errors.twig' %}
+{% include 'core/_warnings.twig' %}
 
 {% for material in materials %}
     <div class="ladb-material-box col-md-2 col-sm-3 col-xs-6" data-material-id="{{ material.id }}">
