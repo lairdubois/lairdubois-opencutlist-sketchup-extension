@@ -1,0 +1,27 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'cutlist_part_modal' %}
+{% set title = 'Editer' %}
+
+{% block bodyInner %}
+    <div class="form form-horizontal">
+        <div class="form-group">
+            <label for="ladb_cutlist_part_input_name" class="control-label col-xs-4">Nom</label>
+            <div class="col-xs-8">
+                <input type="text" class="form-control" id="ladb_cutlist_part_input_name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_cutlist_part_input_material" class="control-label col-xs-4">Matière</label>
+            <div class="col-xs-8">
+                <select class="form-control" id="ladb_cutlist_part_select_material_name">
+                </select>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+    <button type="button" class="btn btn-primary" id="ladb_cutlist_part_update">Valider</button>
+{% endblock %}

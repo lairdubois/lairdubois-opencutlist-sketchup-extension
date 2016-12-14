@@ -34,6 +34,44 @@ class CutlistController < Controller
 
     end
 
+    dialog.add_action_callback("ladb_cutlist_part_update") do |action_context, json_params|
+
+      params = JSON.parse(json_params)
+
+      # Extract parameters
+      definition_id = params['definition_id']
+      name = params['name']
+      material_name = params['material_name']
+      component_ids = params['component_ids']
+
+      model = Sketchup.active_model
+
+      # Update definition's name
+      definitions = model.definitions
+      definition = definitions[definition_id]
+      if definition and definition.name != name
+        definition.name = name
+      end
+
+      # Update component instance material
+      materials = model.materials
+      if material_name == nil or material_name.empty? or (material = materials[material_name])
+
+        component_ids.each { |component_id|
+          entity = model.find_entity_by_id(component_id)
+          if entity
+            if material_name == nil or material_name.empty?
+              entity.material = nil
+            elsif entity.material != material
+              entity.material = material
+            end
+          end
+        }
+
+      end
+
+    end
+
   end
 
   private
@@ -187,7 +225,7 @@ class CutlistController < Controller
       part_def = group_def.get_part_def(definition.name)
       unless part_def
 
-        part_def = PartDef.new
+        part_def = PartDef.new(definition.guid)
         part_def.name = definition.name
         part_def.raw_size = raw_size
         part_def.size = size
@@ -196,7 +234,7 @@ class CutlistController < Controller
 
       end
       part_def.count += 1
-      part_def.add_component_guid(component.guid)
+      part_def.add_component_id(component.entityID)
 
       group_def.part_count += 1
 
@@ -275,6 +313,8 @@ class CutlistController < Controller
           end
         end
         group[:parts].push({
+                                :id => part_def.id,
+                                :definition_id => part_def.definition_id,
                                 :name => part_def.name,
                                 :length => part_def.size.length,
                                 :width => part_def.size.width,
@@ -283,7 +323,8 @@ class CutlistController < Controller
                                 :raw_length => part_def.raw_size.length,
                                 :raw_width => part_def.raw_size.width,
                                 :number => part_number,
-                                :component_guids => part_def.component_guids
+                                :component_ids => part_def.component_ids,
+                                :material_name => group_def.material_name
                             }
         )
         part_number = part_number.succ

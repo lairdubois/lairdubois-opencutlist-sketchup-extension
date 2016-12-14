@@ -1,9 +1,9 @@
 Development environement setup instructions
 ===========================================
 
-### Install [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
+### Install [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
 
-THe way to do this depend of your OS.
+The way to do this depend of your OS. See the [Doc](https://docs.npmjs.com/getting-started/installing-node)
 
 ### Install [Gulp](http://gulpjs.com/) - *The streaming build system*
 

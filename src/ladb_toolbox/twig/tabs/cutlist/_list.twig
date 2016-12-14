@@ -30,7 +30,7 @@
                 <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %}</td>
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
-                    <div class="ladb-minitools">
+                    <div class="ladb-minitools no-print">
                         <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>
@@ -83,7 +83,12 @@
             {% endif %}
             <tr style="font-size: 120%;">
                 <td class="text-center" style="color: red;">{{ part.number }}</td>
-                <td>{{ part.name|escape }}</td>
+                <td>
+                    {{ part.name|escape }}
+                    <div class="ladb-minitools no-print">
+                        <a class="ladb-btn-edit" data-part-id="{{ part.id }}"><i class="ladb-toolbox-icon-edit"></i></a>
+                    </div>
+                </td>
                 <td class="text-center">x {{ part.count }}</td>
                 {% if group.material_type > 0 %}
                     <td class="text-right" style="color: red;">{{ part.raw_length }}</td>

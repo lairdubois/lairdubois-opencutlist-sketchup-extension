@@ -1,18 +1,22 @@
+require 'securerandom'
+
 class PartDef
 
   attr_accessor :name, :count, :raw_size, :size
-  attr_reader :component_guids
+  attr_reader :id, :definition_id, :component_ids
 
-  def initialize
+  def initialize(definition_id)
+    @id = SecureRandom.uuid
+    @definition_id = definition_id
     @name = ''
     @count = 0
     @raw_size = Size.new
     @size = Size.new
-    @component_guids = []
+    @component_ids = []
   end
 
-  def add_component_guid(component_guid)
-    @component_guids.push(component_guid)
+  def add_component_id(component_id)
+    @component_ids.push(component_id)
   end
 
 end

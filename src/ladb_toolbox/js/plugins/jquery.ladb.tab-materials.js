@@ -14,19 +14,20 @@
 
         this.$btnList = $('#ladb_btn_list', this.$element);
         this.$list = $('#materials_list', this.$element);
-        this.$modal = $('#materials_modal', this.$element);
-        this.$inputName = $('#ladb_materials_input_name', this.$modal);
-        this.$inputType = $('#ladb_materials_input_type', this.$modal);
-        this.$inputLengthIncrease = $('#ladb_materials_input_length_increase', this.$modal);
-        this.$inputWidthIncrease = $('#ladb_materials_input_width_increase', this.$modal);
-        this.$inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', this.$modal);
-        this.$inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', this.$modal);
-        this.$btnUpdate = $('#ladb_materials_update', this.$modal);
+        this.$modalEdit = $('#materials_modal', this.$element);
+        this.$inputName = $('#ladb_materials_input_name', this.$modalEdit);
+        this.$inputType = $('#ladb_materials_input_type', this.$modalEdit);
+        this.$inputLengthIncrease = $('#ladb_materials_input_length_increase', this.$modalEdit);
+        this.$inputWidthIncrease = $('#ladb_materials_input_width_increase', this.$modalEdit);
+        this.$inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', this.$modalEdit);
+        this.$inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', this.$modalEdit);
+        this.$btnMaterialUpdate = $('#ladb_materials_update', this.$modalEdit);
     };
 
     LadbTabMaterials.DEFAULTS = {};
 
     LadbTabMaterials.prototype.loadList = function () {
+        this.materials = [];
         this.$list.empty();
         this.$btnList.prop('disabled', true);
         rubyCall('ladb_materials_list', null);
@@ -37,14 +38,17 @@
 
         var errors = data.errors;
         var warnings = data.warnings;
-        this.materials = data.materials;
+        var materials = data.materials;
+
+        // Keep useful data
+        this.materials = materials;
 
         // Update list
         this.$list.empty();
         this.$list.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
             errors: errors,
             warnings: warnings,
-            materials: this.materials
+            materials: materials
         }));
 
         // Bind rows
@@ -80,7 +84,7 @@
             this.editedMaterial = material;
 
             // Title
-            var $modalTitle = $('.modal-title', this.$modal);
+            var $modalTitle = $('.modal-title', this.$modalEdit);
             $modalTitle.html(material.display_name);
 
             // Form fields
@@ -94,7 +98,7 @@
             // Arrange cut options form section
             this.arrangeCutOptionsFormSectionByType(material.attributes.type);
 
-            this.$modal.modal('show');
+            this.$modalEdit.modal('show');
         }
     };
 
@@ -166,7 +170,7 @@
             that.loadList();
             this.blur();
         });
-        this.$btnUpdate.on('click', function () {
+        this.$btnMaterialUpdate.on('click', function () {
 
             that.editedMaterial.display_name = that.$inputName.val();
             that.editedMaterial.attributes.type = that.$inputType.val();
@@ -184,7 +188,7 @@
             that.editedMaterial = null;
 
             // Hide modal
-            that.$modal.modal('hide');
+            that.$modalEdit.modal('hide');
 
         });
 

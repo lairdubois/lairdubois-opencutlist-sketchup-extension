@@ -19,7 +19,9 @@
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
+        this.groups = [];
         this.materialUsages = [];
+        this.editedPart = null;
 
         this.partNumberLetter = this.toolbox.getSettingsValue('cutlist_part_number_letter', true);
         this.partNumberSequenceByGroup = this.toolbox.getSettingsValue('cutlist_part_number_sequence_by_group', false);
@@ -32,6 +34,10 @@
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$element);
         this.$inputPartNumberLetter = $('#ladb_input_part_number_letter', this.$element);
         this.$list = $('#list', this.$element);
+        this.$modalEdit = $('#cutlist_part_modal', this.$element);
+        this.$btnPartUpdate = $('#ladb_cutlist_part_update', this.$modalEdit);
+        this.$selectMaterialName = $('#ladb_cutlist_part_select_material_name', this.$modalEdit);
+        this.$inputPartName = $('#ladb_cutlist_part_input_name', this.$modalEdit);
     };
 
     LadbTabCutlist.DEFAULTS = {};
@@ -44,6 +50,7 @@
     };
 
     LadbTabCutlist.prototype.generateCutlist = function () {
+        this.groups = [];
         this.$list.empty();
         this.$btnGenerate.prop('disabled', true);
         rubyCall('ladb_cutlist_generate', {
@@ -60,8 +67,12 @@
         var warnings = data.warnings;
         var filepath = data.filepath;
         var lengthUnit = data.length_unit;
-        this.materialUsages = data.material_usages;
+        var materialUsages = data.material_usages;
         var groups = data.groups;
+
+        // Keep usefull data
+        this.groups = groups;
+        this.materialUsages = materialUsages;
 
         // Update filename
         this.$filename.empty();
@@ -104,7 +115,6 @@
             $(this).blur();
         });
         $('a.ladb-scrollto', this.$list).on('click', function() {
-            console.log('CLICK');
             var target = $(this).attr('href');
             $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
                 $(target).effect("highlight", {}, 1500);
@@ -112,10 +122,50 @@
             $(this).blur();
             return false;
         });
+        $('a.ladb-btn-edit', this.$list).on('click', function() {
+            var partGuid = $(this).data('part-id');
+            that.editPart(partGuid);
+            $(this).blur();
+            return false;
+        });
 
-        // Restor button state
+        // Restore button state
         this.$btnGenerate.prop('disabled', false);
 
+    };
+
+    LadbTabCutlist.prototype.findPartById = function (id) {
+        for (var i = 0 ; i < this.groups.length; i++) {
+            var group = this.groups[i];
+            for (var j = 0; j < group.parts.length; j++) {
+                var part = group.parts[j];
+                if (part.id == id) {
+                    return part;
+                }
+            }
+        }
+        return null;
+    };
+
+    LadbTabCutlist.prototype.editPart = function (id) {
+        var part = this.findPartById(id);
+        if (part) {
+
+            // Keep the edited part
+            this.editedPart = part;
+
+            // Populate material select
+            this.$selectMaterialName.empty();
+            this.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material_usages.twig" }).render({
+                materialUsages: this.materialUsages
+            }));
+
+            // Form fields
+            this.$inputPartName.val(part.name);
+            this.$selectMaterialName.val(part.material_name);
+
+            this.$modalEdit.modal('show');
+        }
     };
 
     LadbTabCutlist.prototype.bind = function () {
@@ -129,6 +179,20 @@
         this.$btnPrint.on('click', function () {
             window.print();
             this.blur();
+        });
+        this.$btnPartUpdate.on('click', function () {
+
+            that.editedPart.name = that.$inputPartName.val();
+            that.editedPart.material_name = that.$selectMaterialName.val();
+
+            rubyCall('ladb_cutlist_part_update', that.editedPart);
+
+            // Reset edited material
+            that.editedPart = null;
+
+            // Hide modal
+            that.$modalEdit.modal('hide');
+
         });
 
         // Bind inputs

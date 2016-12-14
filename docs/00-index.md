@@ -1,5 +1,5 @@
-Getting started with L'Air du Bois
-==================================
+Getting started with L'Air du Bois : Sketchup Toolbox
+=====================================================
 
 ## Development environement
 
