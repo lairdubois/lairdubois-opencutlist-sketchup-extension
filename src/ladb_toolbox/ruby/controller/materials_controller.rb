@@ -21,6 +21,9 @@ class MaterialsController < Controller
       data = {
           :errors => [],
           :warnings => [],
+          :hardwood_material_count => 0,
+          :plywood_material_count => 0,
+          :unknow_material_count => 0,
           :materials => []
       }
       materials.each { |material|
@@ -44,6 +47,15 @@ class MaterialsController < Controller
                           :std_thicknesses => material_attributes.std_thicknesses
                       }
                   })
+
+        case material_attributes.type
+          when MaterialAttributes::TYPE_HARDWOOD
+            data[:hardwood_material_count] += 1
+          when MaterialAttributes::TYPE_PLYWOOD
+            data[:plywood_material_count] += 1
+          else
+            data[:unknow_material_count] += 1
+        end
       }
 
       # Errors

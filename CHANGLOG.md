@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
+* 0.4.1
+
+  * Cutlist options bugfix
+  * Add no hard wood material warning in cutlist
+
 * 0.4.0 (2016-12-14)
 
   * New 'Materials' module

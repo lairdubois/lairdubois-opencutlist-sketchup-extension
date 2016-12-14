@@ -10,7 +10,7 @@
         this.toolbox = toolbox;
 
         this.materials = [];
-        this.currentMaterial = null;
+        this.editedMaterial = null;
 
         this.$btnList = $('#ladb_btn_list', this.$element);
         this.$alertErrors = $('.ladb-alert-errors', this.$element);
@@ -29,6 +29,9 @@
     LadbTabMaterials.DEFAULTS = {};
 
     LadbTabMaterials.prototype.loadList = function () {
+        this.$alertErrors.empty();
+        this.$alertWarnings.empty();
+        this.$list.empty();
         rubyCall('ladb_materials_list', null);
     };
 
@@ -36,6 +39,7 @@
         var that = this;
 
         var errors = data.errors;
+        var warnings = data.warnings;
         this.materials = data.materials;
 
         // Errors
@@ -47,6 +51,17 @@
             });
         } else {
             that.$alertErrors.hide();
+        }
+
+        // Warnings
+        this.$alertWarnings.empty();
+        if (warnings && warnings.length > 0) {
+            that.$alertWarnings.show();
+            warnings.forEach(function (warning) {
+                that.$alertWarnings.append(warning);
+            });
+        } else {
+            that.$alertWarnings.hide();
         }
 
         // Update list
@@ -81,7 +96,8 @@
         var material = this.findMaterialById(id);
         if (material) {
 
-            this.currentMaterial = material;
+            // Keep the edited material
+            this.editedMaterial = material;
 
             // Title
             var $modalTitle = $('.modal-title', this.$modal);
@@ -168,21 +184,28 @@
         // Bind buttons
         this.$btnList.on('click', function () {
             that.loadList();
+            this.blur();
         });
         this.$btnUpdate.on('click', function () {
 
-            that.currentMaterial.display_name = that.$inputName.val();
-            that.currentMaterial.attributes.type = that.$inputType.val();
-            that.currentMaterial.attributes.length_increase = that.$inputLengthIncrease.val();
-            that.currentMaterial.attributes.width_increase = that.$inputWidthIncrease.val();
-            that.currentMaterial.attributes.thickness_increase = that.$inputThicknessIncrease.val();
-            that.currentMaterial.attributes.std_thicknesses = that.$inputStdThicknesses.val();
+            that.editedMaterial.display_name = that.$inputName.val();
+            that.editedMaterial.attributes.type = that.$inputType.val();
+            that.editedMaterial.attributes.length_increase = that.$inputLengthIncrease.val();
+            that.editedMaterial.attributes.width_increase = that.$inputWidthIncrease.val();
+            that.editedMaterial.attributes.thickness_increase = that.$inputThicknessIncrease.val();
+            that.editedMaterial.attributes.std_thicknesses = that.$inputStdThicknesses.val();
 
-            rubyCall('ladb_materials_update', that.currentMaterial);
+            rubyCall('ladb_materials_update', that.editedMaterial);
 
+            // Update default cut options to last used
             that.storeDefaultCutOptionsFormSectionByType(that.$inputType.val());
 
+            // Reset edited material
+            that.editedMaterial = null;
+
+            // Hide modal
             that.$modal.modal('hide');
+
         });
 
         // Bind inputs
@@ -195,8 +218,13 @@
     };
 
     LadbTabMaterials.prototype.init = function () {
+        var that = this;
+
         this.bind();
-        setTimeout(this.loadList, 500);
+        setTimeout(function() {
+            that.loadList();
+        }, 500);
+
     };
 
 

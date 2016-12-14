@@ -3,7 +3,7 @@ class Cutlist
   STATUS_SUCCESS = 'success'
 
   attr_accessor :status, :filepath, :length_unit
-  attr_reader :errors, :warnings, :group_defs
+  attr_reader :errors, :warnings, :material_usages, :group_defs
 
   def initialize(status, filepath, length_unit)
     @status = status
@@ -11,6 +11,7 @@ class Cutlist
     @warnings = []
     @filepath = filepath
     @length_unit = length_unit
+    @material_usages = {}
     @group_defs = {}
   end
 
@@ -19,7 +20,18 @@ class Cutlist
   end
 
   def add_warning(warning)
-    @errors.push(warning)
+    @warnings.push(warning)
+  end
+
+  def set_material_usage(key, material_usage)
+    @material_usages[key] = material_usage
+  end
+
+  def get_material_usage(key)
+    if @material_usages.has_key? key
+      return @material_usages[key]
+    end
+    nil
   end
 
   def set_group_def(key, group_def)

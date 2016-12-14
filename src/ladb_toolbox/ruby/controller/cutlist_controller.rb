@@ -4,6 +4,7 @@ require_relative '../model/size'
 require_relative '../model/cutlist'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
+require_relative '../model/material_usage'
 
 class CutlistController < Controller
 
@@ -116,7 +117,7 @@ class CutlistController < Controller
     }
 
     status = Cutlist::STATUS_SUCCESS
-    filename = Pathname.new(Sketchup.active_model.path).basename
+    filename = Pathname.new(model.path).basename
     length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
 
     # Create cut list
@@ -131,6 +132,14 @@ class CutlistController < Controller
       end
     end
 
+    # Materials usages
+    materials = model.materials
+    materials.each { |material|
+      material_attributes = MaterialAttributes.new(material)
+      material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type)
+      cutlist.set_material_usage(material.name, material_usage)
+    }
+
     # Populate cutlist
     leaf_components.each { |component|
 
@@ -139,6 +148,13 @@ class CutlistController < Controller
 
       material_name = material ? component.material.name : '[Matière non définie]'
       material_attributes = MaterialAttributes.new(material)
+
+      if material
+        material_usage = cutlist.get_material_usage(material.name)
+        if material_usage
+          material_usage.use_count += 1
+        end
+      end
 
       size = _size_from_bounds(_compute_faces_bounds(definition))
       std_thickness = _find_std_thickness(
@@ -184,6 +200,17 @@ class CutlistController < Controller
 
     }
 
+    # Warnings
+    hardwood_material_count = 0
+    cutlist.material_usages.each { |key, material_usage|
+      if material_usage.type == MaterialAttributes::TYPE_HARDWOOD
+        hardwood_material_count += material_usage.use_count
+      end
+    }
+    if hardwood_material_count == 0
+      cutlist.add_warning("Votre modèle n'utilise aucune matière du type 'Bois massif'.")
+    end
+
     # Data
     # ----
 
@@ -193,7 +220,18 @@ class CutlistController < Controller
         :warnings => cutlist.warnings,
         :filepath => cutlist.filepath,
         :length_unit => cutlist.length_unit,
+        :material_usages => [],
         :groups => []
+    }
+
+    # Sort and browse material usages
+    cutlist.material_usages.sort_by { |k, v| [MaterialAttributes.type_order(v.type), -v.use_count, v.name] }.each { |key, material_usage|
+      data[:material_usages].push({
+                               :name => material_usage.name,
+                               :display_name => material_usage.display_name,
+                               :type => material_usage.type,
+                               :use_count => material_usage.use_count
+                           })
     }
 
     # Sort and browse groups

@@ -19,6 +19,8 @@
 
         this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
 
+        this.materialUsages = [];
+
         this.partNumberLetter = this.toolbox.getSettingsValue('cutlist_part_number_letter', true);
         this.partNumberSequenceByGroup = this.toolbox.getSettingsValue('cutlist_part_number_sequence_by_group', false);
 
@@ -43,6 +45,16 @@
         return LADB_LENGTH_UNIT_INFOS[lengthUnitIndex];
     };
 
+    LadbTabCutlist.prototype.generateCutlist = function () {
+        this.$alertErrors.empty();
+        this.$alertWarnings.empty();
+        this.$list.empty();
+        rubyCall('ladb_cutlist_generate', {
+            part_number_letter: this.partNumberLetter,
+            part_number_sequence_by_group: this.partNumberSequenceByGroup
+        });
+    };
+
     LadbTabCutlist.prototype.onCutlistGenerated = function (data) {
         var that = this;
 
@@ -51,6 +63,7 @@
         var warnings = data.warnings;
         var filepath = data.filepath;
         var lengthUnit = data.length_unit;
+        this.materialUsages = data.material_usages;
         var groups = data.groups;
 
         // Update filename
@@ -131,10 +144,7 @@
 
         // Bind buttons
         this.$btnRefresh.on('click', function () {
-            rubyCall('ladb_cutlist_generate', {
-                piece_number_letter: that.partNumberLetter,
-                piece_number_sequence_by_group: that.partNumberSequenceByGroup
-            });
+            that.generateCutlist();
             this.blur();
         });
         this.$btnPrint.on('click', function () {
