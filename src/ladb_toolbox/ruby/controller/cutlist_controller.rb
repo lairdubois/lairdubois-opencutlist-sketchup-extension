@@ -261,7 +261,9 @@ class CutlistController < Controller
       group_def.part_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, part_def|
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
           group[:raw_area_m2] += part_def.raw_size.area_m2
-          group[:raw_volume_m3] += part_def.raw_size.volume_m3
+          if group_def.material_type == MaterialAttributes::TYPE_HARDWOOD
+            group[:raw_volume_m3] += part_def.raw_size.volume_m3
+          end
         end
         group[:parts].push({
                                 :name => part_def.name,
