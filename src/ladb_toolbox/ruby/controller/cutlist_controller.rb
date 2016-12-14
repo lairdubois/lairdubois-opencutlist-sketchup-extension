@@ -64,6 +64,8 @@ class CutlistController < Controller
     definition.entities.each { |entity|
       if entity.is_a? Sketchup::Face
         bounds.add(entity.bounds)
+      elsif entity.is_a? Sketchup::Group
+        bounds.add(_compute_faces_bounds(entity))
       end
     }
     bounds
@@ -146,7 +148,7 @@ class CutlistController < Controller
       material = component.material
       definition = component.definition
 
-      material_name = material ? component.material.name : '[Matière non définie]'
+      material_name = material ? component.material.name : 'Matière non définie'
       material_attributes = MaterialAttributes.new(material)
 
       if material
@@ -257,8 +259,10 @@ class CutlistController < Controller
 
       # Sort and browse parts
       group_def.part_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, part_def|
-        group[:raw_area_m2] += part_def.raw_size.area_m2
-        group[:raw_volume_m3] += part_def.raw_size.volume_m3
+        if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
+          group[:raw_area_m2] += part_def.raw_size.area_m2
+          group[:raw_volume_m3] += part_def.raw_size.volume_m3
+        end
         group[:parts].push({
                                 :name => part_def.name,
                                 :length => part_def.size.length,

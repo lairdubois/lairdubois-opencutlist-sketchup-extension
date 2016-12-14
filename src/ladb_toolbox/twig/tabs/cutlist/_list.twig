@@ -30,8 +30,8 @@
                     </div>
                 </td>
                 <td class="text-center">x{{ group.part_count }}</td>
-                <td class="text-right">{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup></td>
-                <td class="text-right">{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup></td>
+                <td class="text-right">{% if group.raw_area_m2 == 0 %}-{% else %}{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
+                <td class="text-right">{% if group.raw_volume_m3 == 0 %}-{% else %}{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -41,7 +41,7 @@
     <table id="ladb_group_{{ group.id }}" class="table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
-            <td colspan="8" style="line-height: 20px;">
+            <td colspan="{% if group.material_type > 0 %}8{% else %}6{% endif %}" style="line-height: 20px;">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-right" data-group-id="ladb_group_{{ group.id }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
@@ -54,12 +54,16 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">N°</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Désignation</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">Nbr.</td>
-            <td class="text-center" colspan="2">Brute</td>
+            {% if group.material_type > 0 %}
+                <td class="text-center" colspan="2">Brute</td>
+            {% endif %}
             <td class="text-center" colspan="3">Finie</td>
         </tr>
         <tr>
-            <td class="text-center" width="10%">Long.</td>
-            <td class="text-center" width="10%">Larg.</td>
+            {% if group.material_type > 0 %}
+                <td class="text-center" width="10%">Long.</td>
+                <td class="text-center" width="10%">Larg.</td>
+            {% endif %}
             <td class="text-center" width="10%">Long.</td>
             <td class="text-center" width="10%">Larg.</td>
             <td class="text-center" width="10%">Ep.</td>
@@ -76,8 +80,10 @@
                 <td class="text-center" style="color: red;">{{ part.number }}</td>
                 <td>{{ part.name|escape }}</td>
                 <td class="text-center">x {{ part.count }}</td>
-                <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
-                <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                {% if group.material_type > 0 %}
+                    <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                {% endif %}
                 <td class="text-right">{{ part.length }}</td>
                 <td class="text-right">{{ part.width }}</td>
                 <td class="text-right">{{ part.thickness }}</td>

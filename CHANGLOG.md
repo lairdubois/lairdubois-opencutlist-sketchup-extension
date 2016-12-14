@@ -7,6 +7,7 @@ in 0.x versions.
 * 0.4.1
 
   * Cutlist options bugfix
+  * compute_faces_bounds now considers groups
   * Add no hard wood material warning in cutlist
 
 * 0.4.0 (2016-12-14)
