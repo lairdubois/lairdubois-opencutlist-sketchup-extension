@@ -239,6 +239,9 @@ class CutlistController < Controller
 
     # Warnings
     if leaf_components.length > 0
+      if use_selection
+        cutlist.add_warning("Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.")
+      end
       hardwood_material_count = 0
       plywood_material_count = 0
       cutlist.material_usages.each { |key, material_usage|
@@ -250,9 +253,6 @@ class CutlistController < Controller
       }
       if hardwood_material_count == 0 or plywood_material_count == 0
         cutlist.add_warning("Votre #{use_selection ? "sélection" : "modèle"} n'utilise aucune matière ayant un type défini (<strong>bois massif</strong> ou <strong>bois panneau</strong>)")
-      end
-      if use_selection
-        cutlist.add_warning("Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.")
       end
     end
 
