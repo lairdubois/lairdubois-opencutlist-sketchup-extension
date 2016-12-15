@@ -75,17 +75,21 @@
     };
 
     LadbToolbox.prototype.minimize = function () {
-        rubyCall('ladb_minimize', null);
-        this.$wrapper.hide();
-        this.$btnMinimize.hide();
-        this.$btnMaximize.show();
+        var that = this;
+        rubyCallCommand('dialog_minimize', null, function() {
+            that.$wrapper.hide();
+            that.$btnMinimize.hide();
+            that.$btnMaximize.show();
+        });
     };
 
     LadbToolbox.prototype.maximize = function () {
-        rubyCall('ladb_maximize', null);
-        this.$wrapper.show();
-        this.$btnMinimize.show();
-        this.$btnMaximize.hide();
+        var that = this;
+        rubyCallCommand('dialog_maximize', null, function() {
+            that.$wrapper.show();
+            that.$btnMinimize.show();
+            that.$btnMaximize.hide();
+        });
     };
 
     LadbToolbox.prototype.unselectActiveTab = function () {

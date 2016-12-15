@@ -11,6 +11,7 @@ in 0.x versions.
   * Add no hard wood material warning in cutlist
   * Edit part name and material from cut list
   * UI improvements
+  * JS <> Ruby exchange protocol rewrited
 
 * 0.4.0 (2016-12-14)
 

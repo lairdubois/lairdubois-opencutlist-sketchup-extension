@@ -8,6 +8,18 @@
 .ladb-container {
   padding-top: 20px;
 }
+/* Bootstrap */
+a:focus {
+  outline: none !important;
+}
+/* Bootstrap-select */
+.bootstrap-select .dropdown-toggle:focus {
+  border-color: #66afe9 !important;
+  outline: 0 !important;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6) !important;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6) !important;
+  background: #fff !important;
+}
 @media print {
   .no-print,
   .no-print * {
@@ -143,7 +155,6 @@
   float: right;
 }
 .ladb-minitools a {
-  font-size: 120%;
   color: #d9d9d9;
   width: 1em;
 }

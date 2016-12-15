@@ -8,10 +8,10 @@ class MaterialsController < Controller
     super(plugin, 'materials')
   end
 
-  def setup_dialog_actions(dialog)
+  def setup_dialog_commands()
 
     # Setup toolbox dialog actions
-    dialog.add_action_callback("ladb_materials_list") do |action_context, json_params|
+    @plugin.register_command("materials_list") do ||
 
       model = Sketchup.active_model
       materials = model.materials
@@ -66,20 +66,14 @@ class MaterialsController < Controller
       # Sort materials by type ASC, display_name ASC
       data[:materials].sort_by! { |v| [v[:display_name]] }
 
-      # Callback to JS
-      execute_js_callback('onList', data)
-
+      data
     end
 
-    dialog.add_action_callback("ladb_materials_update") do |action_context, json_params|
+    @plugin.register_command("materials_update") do |material_data|
 
-      params = JSON.parse(json_params)
-
-      # Extract parameters
-      name = params['name']
-      display_name = params['display_name']
-
-      attributes = params['attributes']
+      name = material_data['name']
+      display_name = material_data['display_name']
+      attributes = material_data['attributes']
       type = MaterialAttributes.valid_type(attributes['type'])
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']

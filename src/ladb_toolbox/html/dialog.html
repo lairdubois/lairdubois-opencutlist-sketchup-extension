@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
     <link rel="stylesheet" href="../css/ladb-toolbox.css">
     <link rel="stylesheet" href="../css/ladb_icons.css">
 </head>
@@ -10,6 +11,7 @@
     <script src="../js/lib/jquery-3.1.1.min.js"></script>
     <script src="../js/lib/jquery-ui.min.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
+    <script src="../js/lib/bootstrap-select.min.js"></script>
     <script src="../js/lib/twig.min.js"></script>
     <script src="../js/lib/base64.min.js"></script>
     <script src="../js/plugins/jquery.ladb.toolbox.js"></script>
@@ -21,16 +23,28 @@
 
         <!-- Ruby JS interactions -->
 
-        function rubyCall(fn, params) {
-            window.location.href = "skp:" + fn + "@" + JSON.stringify(params);
+        var commandId = 0;
+        var commandCallbacks = new Map();
+
+        function rubyCallCommand(command, params, callback) {
+            var call = {
+                id: commandId,
+                command: command,
+                params: params
+            };
+            commandCallbacks.set(commandId, callback);
+            commandId++;
+            window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);
         }
 
-        function onRubyCallback(fn, encoded_data, tabName) {
-            var data = JSON.parse(decodeURIComponent(Base64.decode(encoded_data)));
-            if (tabName) {
-                $('#ladb_tab_' + tabName)['ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)](fn, data);
-            } else {
-                $('body').ladbToolbox(fn, data);
+        function rubyCommandCallback(id, encodedData) {
+            if (commandCallbacks.has(id)) {
+                var callback = commandCallbacks.get(id);
+                if (callback) {
+                    var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
+                    callback(data);
+                    commandCallbacks.delete(id);
+                }
             }
         }
 
@@ -43,7 +57,9 @@
         <!-- Ready ! -->
 
         $(document).ready(function () {
-            window.location.href = 'skp:ladb_dialog_loaded@';
+            rubyCallCommand('dialog_loaded', null, function(data) {
+                $('body').ladbToolbox(data);
+            });
         });
 
     </script>

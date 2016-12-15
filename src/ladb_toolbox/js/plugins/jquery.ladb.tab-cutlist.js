@@ -59,84 +59,87 @@
     };
 
     LadbTabCutlist.prototype.generateCutlist = function () {
+        var that = this;
+
         this.groups = [];
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
-        rubyCall('ladb_cutlist_generate', this.options);
-    };
 
-    LadbTabCutlist.prototype.onCutlistGenerated = function (data) {
-        var that = this;
+        rubyCallCommand('cutlist_generate', this.options, function(data) {
 
-        var status = data.status;
-        var errors = data.errors;
-        var warnings = data.warnings;
-        var filepath = data.filepath;
-        var lengthUnit = data.length_unit;
-        var materialUsages = data.material_usages;
-        var groups = data.groups;
+            console.log(data);
 
-        // Keep usefull data
-        this.groups = groups;
-        this.materialUsages = materialUsages;
+            var status = data.status;
+            var errors = data.errors;
+            var warnings = data.warnings;
+            var filepath = data.filepath;
+            var lengthUnit = data.length_unit;
+            var materialUsages = data.material_usages;
+            var groups = data.groups;
 
-        // Update filename
-        this.$filename.empty();
-        this.$filename.append(filepath.split('\\').pop().split('/').pop());
+            // Keep usefull data
+            that.groups = groups;
+            that.materialUsages = materialUsages;
 
-        // Update unit and length options
-        this.lengthUnitInfos = this.getLengthUnitInfos(lengthUnit);
-        this.$unit.empty();
-        this.$unit.append(' en ' + this.lengthUnitInfos.name);
+            // Update filename
+            that.$filename.empty();
+            that.$filename.append(filepath.split('\\').pop().split('/').pop());
 
-        // Hide help panel
-        if (groups.length > 0) {
-            this.$panelHelp.hide();
-        }
+            // Update unit and length options
+            that.lengthUnitInfos = that.getLengthUnitInfos(lengthUnit);
+            that.$unit.empty();
+            that.$unit.append(' en ' + that.lengthUnitInfos.name);
 
-        // Update print button state
-        this.$btnPrint.prop('disabled', groups.length == 0);
-
-        // Update page
-        this.$page.empty();
-        this.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
-            errors: errors,
-            warnings: warnings,
-            groups: groups
-        }));
-
-        // Bind buttons
-        $('.ladb-btn-toggle-no-print', this.$page).on('click', function() {
-            var $i = $('i', $(this));
-            var groupId = $(this).data('group-id');
-            var $group = $('#' + groupId);
-            $group.toggleClass('no-print');
-            if ($group.hasClass('no-print')) {
-                $i.removeClass('ladb-toolbox-icon-eye-close');
-                $i.addClass('ladb-toolbox-icon-eye-open');
-            } else {
-                $i.addClass('ladb-toolbox-icon-eye-close');
-                $i.removeClass('ladb-toolbox-icon-eye-open');
+            // Hide help panel
+            if (groups.length > 0) {
+                that.$panelHelp.hide();
             }
-            $(this).blur();
-        });
-        $('a.ladb-scrollto', this.$page).on('click', function() {
-            var target = $(this).attr('href');
-            $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
-                $(target).effect("highlight", {}, 1500);
-            });
-            $(this).blur();
-            return false;
-        });
-        $('a.ladb-btn-edit', this.$page).on('click', function() {
-            var partGuid = $(this).data('part-id');
-            that.editPart(partGuid);
-            $(this).blur();
-            return false;
-        });
 
-        // Restore button state
-        this.$btnGenerate.prop('disabled', false);
+            // Update print button state
+            that.$btnPrint.prop('disabled', groups.length == 0);
+
+            // Update page
+            that.$page.empty();
+            that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                errors: errors,
+                warnings: warnings,
+                groups: groups
+            }));
+
+            // Bind buttons
+            $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
+                var $i = $('i', $(this));
+                var groupId = $(this).data('group-id');
+                var $group = $('#' + groupId);
+                $group.toggleClass('no-print');
+                if ($group.hasClass('no-print')) {
+                    $i.removeClass('ladb-toolbox-icon-eye-close');
+                    $i.addClass('ladb-toolbox-icon-eye-open');
+                } else {
+                    $i.addClass('ladb-toolbox-icon-eye-close');
+                    $i.removeClass('ladb-toolbox-icon-eye-open');
+                }
+                $(this).blur();
+            });
+            $('a.ladb-scrollto', that.$page).on('click', function() {
+                var target = $(this).attr('href');
+                $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
+                    $(target).effect("highlight", {}, 1500);
+                });
+                $(this).blur();
+                return false;
+            });
+            $('a.ladb-btn-edit', that.$page).on('click', function() {
+                var partGuid = $(this).data('part-id');
+                that.editPart(partGuid);
+                $(this).blur();
+                return false;
+            });
+
+            // Restore button state
+            that.$btnGenerate.prop('disabled', false);
+
+        });
 
     };
 
@@ -170,6 +173,9 @@
             this.$inputPartName.val(part.name);
             this.$selectMaterialName.val(part.material_name);
 
+            // Refresh select
+            this.$selectMaterialName.selectpicker('refresh');
+
             this.$modalEditPart.modal('show');
         }
     };
@@ -191,18 +197,20 @@
             that.editedPart.name = that.$inputPartName.val();
             that.editedPart.material_name = that.$selectMaterialName.val();
 
-            rubyCall('ladb_cutlist_part_update', that.editedPart);
+            rubyCallCommand('cutlist_part_update', that.editedPart, function() {
 
-            // Reset edited part
-            that.editedPart = null;
+                // Reset edited part
+                that.editedPart = null;
 
-            // Hide modal
-            that.$modalEditPart.modal('hide');
+                // Hide modal
+                that.$modalEditPart.modal('hide');
 
-            // Refresh the list
-            setTimeout(function() {
-                that.generateCutlist();
-            }, 500);
+                // Refresh the list
+                setTimeout(function() {
+                    that.generateCutlist();
+                }, 500);
+
+            });
 
         });
 
@@ -224,6 +232,15 @@
         // Init inputs values
         this.$inputPartNumberWithLetters.prop('checked', this.options.part_number_with_letters);
         this.$inputPartNumberSequenceByGroup.prop('checked', this.options.part_number_sequence_by_group);
+
+        // Init selects
+        this.$selectMaterialName.selectpicker({
+            size: 10,
+            iconBase: 'ladb-toolbox-icon',
+            tickIcon: 'ladb-toolbox-icon-tick',
+            showTick: true
+        });
+
     };
 
 

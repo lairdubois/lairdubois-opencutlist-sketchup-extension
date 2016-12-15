@@ -12,30 +12,23 @@ class CutlistController < Controller
     super(plugin, 'cutlist')
   end
 
-  def setup_dialog_actions(dialog)
+  def setup_dialog_commands()
 
     # Setup toolbox dialog actions
-    dialog.add_action_callback("ladb_cutlist_generate") do |action_context, json_params|
-
-      # Extract parameters
-      settings = JSON.parse(json_params)
+    @plugin.register_command("cutlist_generate") do |settings|
 
       # Generate cutlist
-      data = generate_cutlist_data(settings)
-
-      # Callback to JS
-      execute_js_callback('onCutlistGenerated', data)
+      generate_cutlist_data(settings)
 
     end
 
-    dialog.add_action_callback("ladb_cutlist_part_update") do |action_context, json_params|
+    @plugin.register_command("cutlist_part_update") do |part_data|
 
       # Extract parameters
-      part = JSON.parse(json_params)
-      definition_id = part['definition_id']
-      name = part['name']
-      material_name = part['material_name']
-      component_ids = part['component_ids']
+      definition_id = part_data['definition_id']
+      name = part_data['name']
+      material_name = part_data['material_name']
+      component_ids = part_data['component_ids']
 
       model = Sketchup.active_model
 
@@ -251,7 +244,7 @@ class CutlistController < Controller
           plywood_material_count += material_usage.use_count
         end
       }
-      if hardwood_material_count == 0 or plywood_material_count == 0
+      if hardwood_material_count == 0 and plywood_material_count == 0
         cutlist.add_warning("Votre #{use_selection ? "sélection" : "modèle"} n'utilise aucune matière ayant un type défini (<strong>bois massif</strong> ou <strong>bois panneau</strong>)")
       end
     end

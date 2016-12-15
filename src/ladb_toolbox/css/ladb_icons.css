@@ -1,15 +1,15 @@
 @font-face {
   font-family: 'ladb_toolbox';
-  src:  url('../fonts/ladb_toolbox.eot?tx8bfx');
-  src:  url('../fonts/ladb_toolbox.eot?tx8bfx#iefix') format('embedded-opentype'),
-  url('../fonts/ladb_toolbox.ttf?tx8bfx') format('truetype'),
-  url('../fonts/ladb_toolbox.woff?tx8bfx') format('woff'),
-  url('../fonts/ladb_toolbox.svg?tx8bfx#ladb_toolbox') format('svg');
+  src:  url('../fonts/ladb_toolbox.eot?afni7x');
+  src:  url('../fonts/ladb_toolbox.eot?afni7x#iefix') format('embedded-opentype'),
+  url('../fonts/ladb_toolbox.ttf?afni7x') format('truetype'),
+  url('../fonts/ladb_toolbox.woff?afni7x') format('woff'),
+  url('../fonts/ladb_toolbox.svg?afni7x#ladb_toolbox') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
-i {
+i, span.ladb-toolbox-icon {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'ladb_toolbox' !important;
   speak: none;
@@ -24,6 +24,21 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ladb-toolbox-icon-tick:before {
+  content: "\e90e";
+}
+.ladb-toolbox-icon-link:before {
+  content: "\e90c";
+}
+.ladb-toolbox-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-toolbox-icon-eye-open:before {
+  content: "\e90b";
+}
+.ladb-toolbox-icon-hardwood:before {
+  content: "\e903";
+}
 .ladb-toolbox-icon-edit:before {
   content: "\e90d";
 }
@@ -47,18 +62,6 @@ i {
 }
 .ladb-toolbox-icon-cutlist:before {
   content: "\e900";
-}
-.ladb-toolbox-icon-link:before {
-  content: "\e90c";
-}
-.ladb-toolbox-icon-eye-close:before {
-  content: "\e90a";
-}
-.ladb-toolbox-icon-eye-open:before {
-  content: "\e90b";
-}
-.ladb-toolbox-icon-hardwood:before {
-  content: "\e903";
 }
 .ladb-toolbox-icon-materials:before {
   content: "\e901";

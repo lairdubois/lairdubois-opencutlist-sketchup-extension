@@ -21,6 +21,13 @@ module Ladb
       @controllers
       @temp_dir
 
+      def initialize()
+        @commands = {}
+        @controllers = []
+        @controllers.push(CutlistController.new(self))
+        @controllers.push(MaterialsController.new(self))
+      end
+
       def temp_dir
         temp_dir = File.join(Sketchup.temp_dir, "ladb_toolbox")
         unless Dir.exist?(temp_dir)
@@ -29,10 +36,16 @@ module Ladb
         temp_dir
       end
 
-      def initialize()
-        @controllers = []
-        @controllers.push(CutlistController.new(self))
-        @controllers.push(MaterialsController.new(self))
+      def register_command(command, &block)
+        @commands[command] = block
+      end
+
+      def execute_command(command, params)
+        if @commands.has_key? command
+          command = @commands[command]
+          return command.call(params)
+        end
+        raise "Command '#{command}' not found"
       end
 
       def toggle_dialog()
@@ -87,21 +100,37 @@ module Ladb
           @dialog.set_size(DIALOG_MINIMIZED_WIDTH, html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
 
           # Setup dialog actions
-          @dialog.add_action_callback("ladb_dialog_loaded") do |action_context|
-            @dialog.execute_script("$('body').ladbToolbox({ version: '#{VERSION}', htmlDialogCompatible: #{html_dialog_compatible}, sketchupVersion: '#{Sketchup.version.to_s}', currentOS: '#{current_os}' });")
+          @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
+            puts call_json
+            call = JSON.parse(call_json)
+            result = execute_command(call['command'], call['params'])
+            script = "rubyCommandCallback(#{call['id']}, '#{result.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(result))) : ''}');"
+            puts script
+            @dialog.execute_script(script)
           end
-          @dialog.add_action_callback("ladb_minimize") do |action_context|
+
+          # Register commands
+          register_command('dialog_loaded') do |params|
+            {
+                :version => VERSION,
+                :htmlDialogCompatible => html_dialog_compatible,
+                :sketchupVersion => Sketchup.version.to_s,
+                :currentOS => '#{current_os}'
+            }
+          end
+          register_command('dialog_minimize') do |params|
             if @dialog
               @dialog.set_size(DIALOG_MINIMIZED_WIDTH, html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
             end
           end
-          @dialog.add_action_callback("ladb_maximize") do |action_context|
+          register_command('dialog_maximize') do |params|
             if @dialog
               @dialog.set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
             end
           end
+
           @controllers.each { |controller|
-            controller.setup_dialog_actions(dialog)
+            controller.setup_dialog_commands
           }
 
           # Show dialog
