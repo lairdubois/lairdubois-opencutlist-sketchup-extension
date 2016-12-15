@@ -64,7 +64,7 @@ class MaterialsController < Controller
       end
 
       # Sort materials by type ASC, display_name ASC
-      data[:materials].sort_by! { |v| [MaterialAttributes.type_order(v[:attributes][:type]), v[:display_name]] }
+      data[:materials].sort_by! { |v| [v[:display_name]] }
 
       # Callback to JS
       execute_js_callback('onList', data)

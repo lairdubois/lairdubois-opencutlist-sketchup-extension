@@ -37,7 +37,7 @@
         this.$btnPrint = $('#ladb_btn_print', this.$element);
         this.$panelHelp = $('.ladb-panel-help', this.$element);
 
-        this.$list = $('#list', this.$element);
+        this.$page = $('.ladb-page', this.$element);
 
         this.$modalOptions = $('#ladb_cutlist_modal_options', this.$element);
         this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
@@ -60,7 +60,7 @@
 
     LadbTabCutlist.prototype.generateCutlist = function () {
         this.groups = [];
-        this.$list.empty();
+        this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
         rubyCall('ladb_cutlist_generate', this.options);
     };
@@ -97,16 +97,16 @@
         // Update print button state
         this.$btnPrint.prop('disabled', groups.length == 0);
 
-        // Update list
-        this.$list.empty();
-        this.$list.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+        // Update page
+        this.$page.empty();
+        this.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
             errors: errors,
             warnings: warnings,
             groups: groups
         }));
 
         // Bind buttons
-        $('.ladb-btn-toggle-no-print', this.$list).on('click', function() {
+        $('.ladb-btn-toggle-no-print', this.$page).on('click', function() {
             var $i = $('i', $(this));
             var groupId = $(this).data('group-id');
             var $group = $('#' + groupId);
@@ -120,7 +120,7 @@
             }
             $(this).blur();
         });
-        $('a.ladb-scrollto', this.$list).on('click', function() {
+        $('a.ladb-scrollto', this.$page).on('click', function() {
             var target = $(this).attr('href');
             $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
                 $(target).effect("highlight", {}, 1500);
@@ -128,7 +128,7 @@
             $(this).blur();
             return false;
         });
-        $('a.ladb-btn-edit', this.$list).on('click', function() {
+        $('a.ladb-btn-edit', this.$page).on('click', function() {
             var partGuid = $(this).data('part-id');
             that.editPart(partGuid);
             $(this).blur();

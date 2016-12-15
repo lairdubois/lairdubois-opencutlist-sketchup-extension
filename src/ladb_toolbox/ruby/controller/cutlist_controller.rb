@@ -240,17 +240,16 @@ class CutlistController < Controller
     # Warnings
     if leaf_components.length > 0
       hardwood_material_count = 0
+      plywood_material_count = 0
       cutlist.material_usages.each { |key, material_usage|
         if material_usage.type == MaterialAttributes::TYPE_HARDWOOD
           hardwood_material_count += material_usage.use_count
+        elsif material_usage.type == MaterialAttributes::TYPE_PLYWOOD
+          plywood_material_count += material_usage.use_count
         end
       }
-      if hardwood_material_count == 0
-        if use_selection
-          cutlist.add_warning("Votre sélection n'utilise aucune matière du type 'Bois massif'.")
-        else
-          cutlist.add_warning("Votre modèle n'utilise aucune matière du type 'Bois massif'.")
-        end
+      if hardwood_material_count == 0 or plywood_material_count == 0
+        cutlist.add_warning("Votre #{use_selection ? "sélection" : "modèle"} n'utilise aucune matière ayant un type défini (<strong>bois massif</strong> ou <strong>bois panneau</strong>)")
       end
       if use_selection
         cutlist.add_warning("Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.")

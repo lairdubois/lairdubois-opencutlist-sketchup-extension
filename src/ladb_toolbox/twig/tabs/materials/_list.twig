@@ -2,18 +2,23 @@
 {# set warnings #}
 {# set materials #}
 
-{% include 'core/_errors.twig' %}
-{% include 'core/_warnings.twig' %}
+{% include 'core/_alert-errors.twig' %}
+{% include 'core/_alert-warnings.twig' %}
 
+<div class="row">
 {% for material in materials %}
-    <div class="ladb-material-box col-md-2 col-sm-3 col-xs-6" data-material-id="{{ material.id }}">
-        <div class="ladb-content">
-            <div class="ladb-image">
-                <div class="ladb-img-sizer" style="padding-top: 100%;">
-                    <img src="{{ material.thumbnail_file }}">
+    <div class="col-md-2 col-sm-3 col-xs-6">
+        <div class="ladb-material-box" data-material-id="{{ material.id }}">
+            <div class="ladb-content">
+                <div class="ladb-image">
+                    <div class="ladb-img-sizer" style="padding-top: 100%;">
+                        <img src="{{ material.thumbnail_file }}">
+                    </div>
                 </div>
+                <div class="ladb-overlay-caption">{{ material.display_name|escape }}</div>
+                <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type } %}</div>
             </div>
-            <div class="ladb-overlay-caption">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type } %}{{ material.display_name|escape }}</div>
         </div>
     </div>
 {% endfor %}
+</div>

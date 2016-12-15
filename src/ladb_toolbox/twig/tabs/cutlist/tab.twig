@@ -9,22 +9,9 @@
 {% endblock %}
 
 {% block containerInner %}
-    <div class="no-print panel panel-default ladb-panel-help">
-        <div class="panel-body">
-            <div class="media">
-                <div class="media-left">
-                    <i class="ladb-toolbox-icon-help" style="font-size: 150%;"></i>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading">Aide</h4>
-                    <p>Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>.<br>
-                        Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'tabs/cutlist/_panel-help.twig' with { 'classes':'no-print' } %}
     {{ parent() }}
-    <div id="list"></div>
-    {% include 'tabs/cutlist/_options-modal.twig' with { 'classes':'no-print' } %}
-    {% include 'tabs/cutlist/_part-modal.twig' with { 'classes':'no-print' } %}
+    <div class="ladb-page"></div>
+    {% include 'tabs/cutlist/_modal-options.twig' with { 'classes':'no-print' } %}
+    {% include 'tabs/cutlist/_modal-part.twig' with { 'classes':'no-print' } %}
 {% endblock %}

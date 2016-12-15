@@ -5,6 +5,8 @@
 .ladb-material-box {
   .list-box();
   .list-box-hover();
+  width: 100%;
+  margin-bottom: @ladb-gutter;
 
   .ladb-content {
     position: relative;
@@ -19,6 +21,16 @@
     color: #fff;
     #gradient > .vertical(rgba(0, 0, 0, 0), rgba(0, 0, 0, .3), 0%, 100%);
     text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
+    overflow: hidden;
+  }
+
+  .ladb-overlay-icon {
+    position: absolute;
+    right: 10px;
+    top: 4px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
+    color: #fff;
+    font-size: 150%;
   }
 
 }

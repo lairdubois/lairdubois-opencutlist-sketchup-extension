@@ -5,7 +5,7 @@
   padding-left: 90px;
   padding-bottom: 30px;
 }
-#ladb_container {
+.ladb-container {
   padding-top: 20px;
 }
 @media print {
@@ -206,7 +206,8 @@
   animation-delay: -0.16s;
 }
 .alert ul {
-  padding-left: 20px;
+  padding-left: 0;
+  list-style: none;
 }
 .ladb-cutlist {
   background-color: #fff;
@@ -217,9 +218,11 @@
 .ladb-cutlist.no-print tbody {
   display: none;
 }
+.ladb-btn-toggle-no-print {
+  margin-right: 10px;
+}
 .ladb-material-box {
   border: 1px solid #ddd;
-  margin: 0 10px 20px 10px;
   padding: 4px;
   background-color: #fff;
   float: left;
@@ -227,6 +230,8 @@
   -moz-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.055);
   box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.055);
   cursor: pointer;
+  width: 100%;
+  margin-bottom: 20px;
 }
 .ladb-material-box > .ladb-content {
   min-height: 64px;
@@ -253,4 +258,13 @@
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#4d000000', GradientType=0);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+.ladb-material-box .ladb-overlay-icon {
+  position: absolute;
+  right: 10px;
+  top: 4px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 150%;
 }

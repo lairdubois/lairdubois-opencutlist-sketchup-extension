@@ -1,0 +1,13 @@
+<div class="panel panel-default ladb-panel-help{% if classes is defined %} {{ classes }}{% endif %}">
+    <div class="panel-body">
+        <div class="media">
+            <div class="media-left">
+                <i class="ladb-toolbox-icon-help" style="font-size: 150%;"></i>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">Aide</h4>
+                {% block panelHelpBodyInner %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>

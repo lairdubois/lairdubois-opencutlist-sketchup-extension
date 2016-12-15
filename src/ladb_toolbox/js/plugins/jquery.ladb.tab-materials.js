@@ -13,7 +13,9 @@
         this.editedMaterial = null;
 
         this.$btnList = $('#ladb_btn_list', this.$element);
-        this.$list = $('#materials_list', this.$element);
+
+        this.$page = $('.ladb-page', this.$element);
+
         this.$modalEditPart = $('#materials_modal', this.$element);
         this.$inputName = $('#ladb_materials_input_name', this.$modalEditPart);
         this.$inputType = $('#ladb_materials_input_type', this.$modalEditPart);
@@ -28,7 +30,7 @@
 
     LadbTabMaterials.prototype.loadList = function () {
         this.materials = [];
-        this.$list.empty();
+        this.$page.empty();
         this.$btnList.prop('disabled', true);
         rubyCall('ladb_materials_list', null);
     };
@@ -43,16 +45,16 @@
         // Keep useful data
         this.materials = materials;
 
-        // Update list
-        this.$list.empty();
-        this.$list.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
+        // Update page
+        this.$page.empty();
+        this.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
             errors: errors,
             warnings: warnings,
             materials: materials
         }));
 
         // Bind rows
-        $('.ladb-material-box', this.$list).each(function(index) {
+        $('.ladb-material-box', this.$page).each(function(index) {
             var $box = $(this);
             var materialId = $box.data('material-id');
             $box.on('click', function() {
