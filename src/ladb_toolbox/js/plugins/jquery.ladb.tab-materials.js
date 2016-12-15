@@ -193,9 +193,7 @@
                 that.$modalEditPart.modal('hide');
 
                 // Refresh the list
-                setTimeout(function() {
-                    that.loadList();
-                }, 500);
+                that.loadList();
 
             });
 

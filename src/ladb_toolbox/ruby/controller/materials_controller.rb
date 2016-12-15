@@ -17,6 +17,10 @@ class MaterialsController < Controller
       materials = model.materials
 
       temp_dir = @plugin.temp_dir
+      material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
+      unless Dir.exist?(material_thumbnails_dir)
+        Dir.mkdir(material_thumbnails_dir)
+      end
 
       data = {
           :errors => [],
@@ -26,9 +30,9 @@ class MaterialsController < Controller
           :unknow_material_count => 0,
           :materials => []
       }
-      materials.each { |material|
+      materials.each_with_index { |material, index|
 
-        thumbnail_file = File.join(temp_dir, SecureRandom.uuid + ".png")
+        thumbnail_file = File.join(material_thumbnails_dir, "#{index}.png")
         material.write_thumbnail(thumbnail_file, 128)
 
         material_attributes = MaterialAttributes.new(material)

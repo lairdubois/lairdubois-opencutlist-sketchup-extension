@@ -10,6 +10,7 @@ in 0.x versions.
   * compute_faces_bounds now considers groups
   * Add no hard wood material warning in cutlist
   * Edit part name and material from cut list
+  * View part thumbnails
   * UI improvements
   * JS <> Ruby exchange protocol rewrited
 

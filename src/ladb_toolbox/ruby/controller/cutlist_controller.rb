@@ -22,6 +22,37 @@ class CutlistController < Controller
 
     end
 
+    @plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
+
+      data = {
+          :thumbnail_file => ''
+      }
+
+      # Extract parameters
+      definition_id = part_data['definition_id']
+
+      model = Sketchup.active_model
+      definitions = model.definitions
+      definition = definitions[definition_id]
+      if definition
+
+        definition.refresh_thumbnail
+
+        temp_dir = @plugin.temp_dir
+        component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
+        unless Dir.exist?(component_thumbnails_dir)
+          Dir.mkdir(component_thumbnails_dir)
+        end
+
+        thumbnail_file = File.join(component_thumbnails_dir, "#{definition_id}.png")
+        definition.save_thumbnail(thumbnail_file)
+
+        data[:thumbnail_file] = thumbnail_file
+      end
+
+      data
+    end
+
     @plugin.register_command("cutlist_part_update") do |part_data|
 
       # Extract parameters

@@ -101,11 +101,9 @@ module Ladb
 
           # Setup dialog actions
           @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
-            puts call_json
             call = JSON.parse(call_json)
             result = execute_command(call['command'], call['params'])
             script = "rubyCommandCallback(#{call['id']}, '#{result.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(result))) : ''}');"
-            puts script
             @dialog.execute_script(script)
           end
 

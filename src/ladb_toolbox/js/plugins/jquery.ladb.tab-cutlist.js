@@ -157,26 +157,38 @@
     };
 
     LadbTabCutlist.prototype.editPart = function (id) {
+        var that = this;
+
         var part = this.findPartById(id);
         if (part) {
 
-            // Keep the edited part
-            this.editedPart = part;
+            rubyCallCommand('cutlist_part_get_thumbnail', part, function(data) {
 
-            // Populate material select
-            this.$selectMaterialName.empty();
-            this.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material_usages.twig" }).render({
-                materialUsages: this.materialUsages
-            }));
+                var thumbnailFile = data['thumbnail_file'];
 
-            // Form fields
-            this.$inputPartName.val(part.name);
-            this.$selectMaterialName.val(part.material_name);
+                var $imgThumbnail = $('.ladb-part-thumbnail', that.$modalEditPart);
+                $imgThumbnail.attr('src', thumbnailFile);
 
-            // Refresh select
-            this.$selectMaterialName.selectpicker('refresh');
+                // Keep the edited part
+                that.editedPart = part;
 
-            this.$modalEditPart.modal('show');
+                // Populate material select
+                that.$selectMaterialName.empty();
+                that.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material_usages.twig" }).render({
+                    materialUsages: that.materialUsages
+                }));
+
+                // Form fields
+                that.$inputPartName.val(part.name);
+                that.$selectMaterialName.val(part.material_name);
+
+                // Refresh select
+                that.$selectMaterialName.selectpicker('refresh');
+
+                that.$modalEditPart.modal('show');
+
+            });
+
         }
     };
 
@@ -206,9 +218,7 @@
                 that.$modalEditPart.modal('hide');
 
                 // Refresh the list
-                setTimeout(function() {
-                    that.generateCutlist();
-                }, 500);
+                that.generateCutlist();
 
             });
 
