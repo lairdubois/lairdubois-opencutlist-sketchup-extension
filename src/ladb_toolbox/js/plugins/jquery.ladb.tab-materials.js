@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabMaterials = function (element, options, toolbox) {
-        this.options = options;
+    var LadbTabMaterials = function (element, settings, toolbox) {
+        this.settings = settings;
         this.$element = $(element);
         this.toolbox = toolbox;
 
@@ -216,20 +216,20 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(option, params) {
+    function Plugin(setting, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tabMaterials');
-            var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var settings = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
 
             if (!data) {
-                if (options.toolbox == undefined) {
+                if (settings.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
+                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, settings, settings.toolbox)));
             }
-            if (typeof option == 'string') {
-                data[option](params);
+            if (typeof setting == 'string') {
+                data[setting](params);
             } else {
                 data.init();
             }

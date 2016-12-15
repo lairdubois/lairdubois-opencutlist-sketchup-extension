@@ -9,14 +9,14 @@
         4: {name: 'mètre', unit: 'm'}
     };
 
-    const SETTINGS_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
-    const SETTINGS_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
+    const OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
+    const OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabCutlist = function (element, options, toolbox) {
-        this.options = options;
+    var LadbTabCutlist = function (element, settings, toolbox) {
+        this.settings = settings;
         this.$element = $(element);
         this.toolbox = toolbox;
 
@@ -26,9 +26,9 @@
         this.materialUsages = [];
         this.editedPart = null;
 
-        this.settings = {
-            part_number_with_letters: this.toolbox.getSettingsValue(SETTINGS_KEY_PART_NUMBER_WITH_LETTERS, true),
-            part_number_sequence_by_group: this.toolbox.getSettingsValue(SETTINGS_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
+        this.options = {
+            part_number_with_letters: this.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
+            part_number_sequence_by_group: this.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
         };
 
         this.$filename = $('#ladb_filename', this.$element);
@@ -39,11 +39,9 @@
 
         this.$list = $('#list', this.$element);
 
-        this.$modalSettings = $('#ladb_cutlist_modal_settings', this.$element);
-        this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalSettings);
-        this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalSettings);
-
-        console.log(this.$inputPartNumberWithLetters);
+        this.$modalOptions = $('#ladb_cutlist_modal_options', this.$element);
+        this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
+        this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalOptions);
 
         this.$modalEditPart = $('#ladb_cutlist_modal_part', this.$element);
         this.$btnPartUpdate = $('#ladb_cutlist_part_update', this.$modalEditPart);
@@ -64,7 +62,7 @@
         this.groups = [];
         this.$list.empty();
         this.$btnGenerate.prop('disabled', true);
-        rubyCall('ladb_cutlist_generate', this.settings);
+        rubyCall('ladb_cutlist_generate', this.options);
     };
 
     LadbTabCutlist.prototype.onCutlistGenerated = function (data) {
@@ -210,12 +208,12 @@
 
         // Bind inputs
         this.$inputPartNumberWithLetters.on('change', function () {
-            that.settings.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
-            that.toolbox.setSettingsValue(SETTINGS_KEY_PART_NUMBER_WITH_LETTERS, that.settings.part_number_with_letters);
+            that.options.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
+            that.toolbox.setSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.options.part_number_with_letters);
         });
         this.$inputPartNumberSequenceByGroup.on('change', function () {
-            that.settings.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
-            that.toolbox.setSettingsValue(SETTINGS_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.settings.part_number_sequence_by_group);
+            that.options.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
+            that.toolbox.setSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.options.part_number_sequence_by_group);
         });
 
     };
@@ -224,28 +222,28 @@
         this.bind();
 
         // Init inputs values
-        this.$inputPartNumberWithLetters.prop('checked', this.settings.part_number_with_letters);
-        this.$inputPartNumberSequenceByGroup.prop('checked', this.settings.part_number_sequence_by_group);
+        this.$inputPartNumberWithLetters.prop('checked', this.options.part_number_with_letters);
+        this.$inputPartNumberSequenceByGroup.prop('checked', this.options.part_number_sequence_by_group);
     };
 
 
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(option, params) {
+    function Plugin(setting, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tabCutlist');
-            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var settings = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
 
             if (!data) {
-                if (options.toolbox == undefined) {
+                if (settings.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options, options.toolbox)));
+                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, settings, settings.toolbox)));
             }
-            if (typeof option == 'string') {
-                data[option](params);
+            if (typeof setting == 'string') {
+                data[setting](params);
             } else {
                 data.init();
             }

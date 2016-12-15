@@ -4,15 +4,15 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbToolbox = function (element, options) {
-        this.options = options;
+    var LadbToolbox = function (element, settings) {
+        this.settings = settings;
         this.$element = $(element);
 
         this.capabilities = {
-            version: options.version,
-            sketchupVersion: options.sketchupVersion,
-            currentOS: options.currentOS,
-            htmlDialogCompatible: options.htmlDialogCompatible
+            version: settings.version,
+            sketchupVersion: settings.sketchupVersion,
+            currentOS: settings.currentOS,
+            htmlDialogCompatible: settings.htmlDialogCompatible
         };
 
         this.compatibilityAlertHidden = this.getSettingsValue('compatibilityAlertHidden', false);
@@ -151,7 +151,7 @@
         this.$btnMaximize.on('click', function () {
             that.maximize();
             if (!that.activeTabName) {
-                that.selectTab(that.options.defaultTabName);
+                that.selectTab(that.settings.defaultTabName);
             }
         });
         $.each(this.tabBtns, function (tabName, $tabBtn) {
@@ -174,7 +174,7 @@
         this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
             capabilities: this.capabilities,
             compatibilityAlertHidden: this.compatibilityAlertHidden,
-            tabDefs: this.options.tabDefs
+            tabDefs: this.settings.tabDefs
         }));
 
         // Fetch usefull elements
@@ -182,8 +182,8 @@
         this.$btnMinimize = $('#ladb_btn_minimize', this.$element);
         this.$btnMaximize = $('#ladb_btn_maximize', this.$element);
         this.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', this.$element);
-        for (var i = 0; i < this.options.tabDefs.length; i++) {
-            var tabDef = this.options.tabDefs[i];
+        for (var i = 0; i < this.settings.tabDefs.length; i++) {
+            var tabDef = this.settings.tabDefs[i];
             this.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, this.$element);
         }
 
@@ -195,17 +195,17 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(option, params) {
+    function Plugin(setting, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.toolbox');
-            var options = $.extend({}, LadbToolbox.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var settings = $.extend({}, LadbToolbox.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
 
             if (!data) {
-                $this.data('ladb.toolbox', (data = new LadbToolbox(this, options)));
+                $this.data('ladb.toolbox', (data = new LadbToolbox(this, settings)));
             }
-            if (typeof option == 'string') {
-                data[option](params);
+            if (typeof settings == 'string') {
+                data[settings](params);
             } else {
                 data.init();
             }

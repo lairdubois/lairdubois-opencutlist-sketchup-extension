@@ -5,7 +5,7 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_generate" class="btn btn-primary">Générer</button>
     <button id="ladb_btn_print" class="btn btn-default" disabled="disabled"><i class="ladb-toolbox-icon-print"></i> Imprimer</button>
-    <button id="ladb_btn_settings" class="btn btn-default" data-toggle="modal" data-target="#ladb_cutlist_modal_settings"><i class="ladb-toolbox-icon-settings"></i> Options</button>
+    <button id="ladb_btn_settings" class="btn btn-default" data-toggle="modal" data-target="#ladb_cutlist_modal_options"><i class="ladb-toolbox-icon-settings"></i> Options</button>
 {% endblock %}
 
 {% block containerInner %}
@@ -25,6 +25,6 @@
     </div>
     {{ parent() }}
     <div id="list"></div>
-    {% include 'tabs/cutlist/_settings-modal.twig' with { 'classes':'no-print' } %}
+    {% include 'tabs/cutlist/_options-modal.twig' with { 'classes':'no-print' } %}
     {% include 'tabs/cutlist/_part-modal.twig' with { 'classes':'no-print' } %}
 {% endblock %}
