@@ -14,14 +14,14 @@
 
         this.$btnList = $('#ladb_btn_list', this.$element);
         this.$list = $('#materials_list', this.$element);
-        this.$modalEdit = $('#materials_modal', this.$element);
-        this.$inputName = $('#ladb_materials_input_name', this.$modalEdit);
-        this.$inputType = $('#ladb_materials_input_type', this.$modalEdit);
-        this.$inputLengthIncrease = $('#ladb_materials_input_length_increase', this.$modalEdit);
-        this.$inputWidthIncrease = $('#ladb_materials_input_width_increase', this.$modalEdit);
-        this.$inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', this.$modalEdit);
-        this.$inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', this.$modalEdit);
-        this.$btnMaterialUpdate = $('#ladb_materials_update', this.$modalEdit);
+        this.$modalEditPart = $('#materials_modal', this.$element);
+        this.$inputName = $('#ladb_materials_input_name', this.$modalEditPart);
+        this.$inputType = $('#ladb_materials_input_type', this.$modalEditPart);
+        this.$inputLengthIncrease = $('#ladb_materials_input_length_increase', this.$modalEditPart);
+        this.$inputWidthIncrease = $('#ladb_materials_input_width_increase', this.$modalEditPart);
+        this.$inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', this.$modalEditPart);
+        this.$inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', this.$modalEditPart);
+        this.$btnMaterialUpdate = $('#ladb_materials_update', this.$modalEditPart);
     };
 
     LadbTabMaterials.DEFAULTS = {};
@@ -83,10 +83,6 @@
             // Keep the edited material
             this.editedMaterial = material;
 
-            // Title
-            var $modalTitle = $('.modal-title', this.$modalEdit);
-            $modalTitle.html(material.display_name);
-
             // Form fields
             this.$inputName.val(material.display_name);
             this.$inputType.val(material.attributes.type);
@@ -98,7 +94,7 @@
             // Arrange cut options form section
             this.arrangeCutOptionsFormSectionByType(material.attributes.type);
 
-            this.$modalEdit.modal('show');
+            this.$modalEditPart.modal('show');
         }
     };
 
@@ -188,7 +184,12 @@
             that.editedMaterial = null;
 
             // Hide modal
-            that.$modalEdit.modal('hide');
+            that.$modalEditPart.modal('hide');
+
+            // Refresh the list
+            setTimeout(function() {
+                that.loadList();
+            }, 500);
 
         });
 

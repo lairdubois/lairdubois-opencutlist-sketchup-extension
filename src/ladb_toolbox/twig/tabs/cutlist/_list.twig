@@ -81,7 +81,7 @@
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ part.thickness }}</td>
                 </tr>
             {% endif %}
-            <tr style="font-size: 120%;">
+            <tr style="font-size: 120%;" id="ladb_part_{{ part.id }}">
                 <td class="text-center" style="color: red;">{{ part.number }}</td>
                 <td>
                     {{ part.name|escape }}

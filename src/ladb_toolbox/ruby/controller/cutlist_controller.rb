@@ -17,17 +17,11 @@ class CutlistController < Controller
     # Setup toolbox dialog actions
     dialog.add_action_callback("ladb_cutlist_generate") do |action_context, json_params|
 
-      params = JSON.parse(json_params)
-
       # Extract parameters
-      part_number_letter = params['part_number_letter']
-      part_number_sequence_by_group = params['part_number_sequence_by_group']
+      settings = JSON.parse(json_params)
 
       # Generate cutlist
-      data = generate_cutlist_data(
-          part_number_letter,
-          part_number_sequence_by_group
-      )
+      data = generate_cutlist_data(settings)
 
       # Callback to JS
       execute_js_callback('onCutlistGenerated', data)
@@ -36,13 +30,12 @@ class CutlistController < Controller
 
     dialog.add_action_callback("ladb_cutlist_part_update") do |action_context, json_params|
 
-      params = JSON.parse(json_params)
-
       # Extract parameters
-      definition_id = params['definition_id']
-      name = params['name']
-      material_name = params['material_name']
-      component_ids = params['component_ids']
+      part = JSON.parse(json_params)
+      definition_id = part['definition_id']
+      name = part['name']
+      material_name = part['material_name']
+      component_ids = part['component_ids']
 
       model = Sketchup.active_model
 
@@ -138,7 +131,11 @@ class CutlistController < Controller
 
   public
 
-  def generate_cutlist_data(part_number_letter, part_number_sequence_by_group)
+  def generate_cutlist_data(settings)
+
+    # Check settings
+    part_number_with_letters = settings['part_number_with_letters']
+    part_number_sequence_by_group = settings['part_number_sequence_by_group']
 
     # Retrieve selected entities or all if no selection
     model = Sketchup.active_model
@@ -274,7 +271,7 @@ class CutlistController < Controller
     }
 
     # Sort and browse material usages
-    cutlist.material_usages.sort_by { |k, v| [MaterialAttributes.type_order(v.type), -v.use_count, v.name] }.each { |key, material_usage|
+    cutlist.material_usages.sort_by { |k, v| [v.display_name.downcase] }.each { |key, material_usage|
       data[:material_usages].push({
                                :name => material_usage.name,
                                :display_name => material_usage.display_name,
@@ -284,11 +281,11 @@ class CutlistController < Controller
     }
 
     # Sort and browse groups
-    part_number = part_number_letter ? 'A' : '1'
+    part_number = part_number_with_letters ? 'A' : '1'
     cutlist.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name, -v.raw_thickness] }.each { |key, group_def|
 
       if part_number_sequence_by_group
-        part_number = part_number_letter ? 'A' : '1'    # Reset code increment on each group
+        part_number = part_number_with_letters ? 'A' : '1'    # Reset code increment on each group
       end
 
       group = {
