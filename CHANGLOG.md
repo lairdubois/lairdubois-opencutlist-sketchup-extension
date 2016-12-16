@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
-* 0.4.1
+* 0.4.1 (2016-12-16)
 
   * Cutlist options bugfix
   * compute_faces_bounds now considers groups

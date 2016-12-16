@@ -44,7 +44,7 @@ class CutlistController < Controller
           Dir.mkdir(component_thumbnails_dir)
         end
 
-        thumbnail_file = File.join(component_thumbnails_dir, "#{definition_id}.png")
+        thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
         definition.save_thumbnail(thumbnail_file)
 
         data[:thumbnail_file] = thumbnail_file
@@ -246,7 +246,7 @@ class CutlistController < Controller
       part_def = group_def.get_part_def(definition.name)
       unless part_def
 
-        part_def = PartDef.new(definition.guid)
+        part_def = PartDef.new(definition.name)
         part_def.name = definition.name
         part_def.raw_size = raw_size
         part_def.size = size
