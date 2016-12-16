@@ -11,7 +11,7 @@ class Controller
     @tab_name = tab_name
   end
 
-  def setup_dialog_commands()
+  def setup_commands()
   end
 
 end

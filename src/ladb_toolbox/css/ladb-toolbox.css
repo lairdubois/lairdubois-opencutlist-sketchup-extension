@@ -231,6 +231,10 @@ a:focus {
 .ladb-btn-toggle-no-print {
   margin-right: 10px;
 }
+.ladb-part-thumbnail {
+  text-align: center;
+  margin-bottom: 20px;
+}
 .ladb-material-box {
   border: 1px solid #ddd;
   padding: 4px;

@@ -106,6 +106,9 @@
                 groups: groups
             }));
 
+            // Init tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
             // Bind buttons
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
                 var $i = $('i', $(this));

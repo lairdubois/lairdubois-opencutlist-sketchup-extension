@@ -8,7 +8,7 @@ class MaterialsController < Controller
     super(plugin, 'materials')
   end
 
-  def setup_dialog_commands()
+  def setup_commands()
 
     # Setup toolbox dialog actions
     @plugin.register_command("materials_list") do ||

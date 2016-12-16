@@ -21,7 +21,7 @@
     <script src="../js/templates/twig-templates.js"></script>
     <script type="text/javascript">
 
-        <!-- Ruby JS interactions -->
+        // Ruby JS interactions
 
         var commandId = 0;
         var commandCallbacks = new Map();
@@ -48,13 +48,13 @@
             }
         }
 
-        <!-- Debug JS errors -->
+        // Debug JS errors
 
         window.onerror = function (errorMsg, url, lineNumber) {
-            alert('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber);
+            alert('Error: ' + errorMsg + '\n Script: ' + url + '\n Line: ' + lineNumber);
         };
 
-        <!-- Ready ! -->
+        // Ready !
 
         $(document).ready(function () {
             rubyCallCommand('dialog_loaded', null, function(data) {

@@ -31,7 +31,7 @@
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     <div class="ladb-minitools no-print">
-                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
+                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto" data-toggle="tooltip" title="Défiler vers le bloc"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x{{ group.part_count }}</td>
@@ -86,7 +86,7 @@
                 <td>
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
-                        <a class="ladb-btn-edit" data-part-id="{{ part.id }}"><i class="ladb-toolbox-icon-edit"></i></a>
+                        <a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="Editer les propriétés"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>

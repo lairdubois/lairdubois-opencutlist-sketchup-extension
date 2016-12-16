@@ -12,7 +12,7 @@ class CutlistController < Controller
     super(plugin, 'cutlist')
   end
 
-  def setup_dialog_commands()
+  def setup_commands()
 
     # Setup toolbox dialog actions
     @plugin.register_command("cutlist_generate") do |settings|
