@@ -9,8 +9,8 @@
         4: {name: 'mètre', unit: 'm'}
     };
 
-    const OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
-    const OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
+    var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
+    var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
 
     // CLASS DEFINITION
     // ======================
@@ -66,8 +66,6 @@
         this.$btnGenerate.prop('disabled', true);
 
         rubyCallCommand('cutlist_generate', this.options, function(data) {
-
-            console.log(data);
 
             var status = data.status;
             var errors = data.errors;
