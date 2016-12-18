@@ -93,25 +93,40 @@ class CutlistController < Controller
 
   private
 
-  def _fetch_leafs(entity, leaf_components)
-    child_component_count = 0
+  def _fetch_useful_component_instances(entity, component_instances)
+    child_face_count = 0
     if entity.visible? and entity.layer.visible?
       if entity.is_a? Sketchup::Group
+
+        # Entity is a group : check its children
         entity.entities.each { |child_entity|
-          child_component_count += _fetch_leafs(child_entity, leaf_components)
+          child_face_count += _fetch_useful_component_instances(child_entity, component_instances)
         }
+
       elsif entity.is_a? Sketchup::ComponentInstance
+
+        # Entity is a component : check its children
         entity.definition.entities.each { |child_entity|
-          child_component_count += _fetch_leafs(child_entity, leaf_components)
+          child_face_count += _fetch_useful_component_instances(child_entity, component_instances)
         }
-        bounds = entity.bounds
-        if child_component_count == 0 and bounds.width > 0 and bounds.height > 0 and bounds.depth > 0
-          leaf_components.push(entity)
-          return 1
+
+        # Considere component if it contains no faces or no child component
+        if child_face_count > 0
+          bounds = _compute_faces_bounds(entity.definition)
+          if bounds.width > 0 and bounds.height > 0 and bounds.depth > 0
+            component_instances.push(entity)
+            child_face_count = 0 # Do not propagate face count to parent
+          end
         end
+
+      elsif entity.is_a? Sketchup::Face
+
+        # Entity is a face : return 1
+        child_face_count = 1
+
       end
     end
-    child_component_count
+    child_face_count
   end
 
   def _compute_faces_bounds(definition)
@@ -174,7 +189,7 @@ class CutlistController < Controller
     # Fetch leaf components in given entities
     leaf_components = []
     entities.each { |entity|
-      _fetch_leafs(entity, leaf_components)
+      _fetch_useful_component_instances(entity, leaf_components)
     }
 
     status = Cutlist::STATUS_SUCCESS
@@ -327,9 +342,9 @@ class CutlistController < Controller
       # Sort and browse parts
       group_def.part_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width] }.reverse.each { |key, part_def|
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
-          group[:raw_area_m2] += part_def.raw_size.area_m2
+          group[:raw_area_m2] += part_def.raw_size.area_m2 * part_def.count
           if group_def.material_type == MaterialAttributes::TYPE_HARDWOOD
-            group[:raw_volume_m3] += part_def.raw_size.volume_m3
+            group[:raw_volume_m3] += part_def.raw_size.volume_m3 * part_def.count
           end
         end
         group[:parts].push({

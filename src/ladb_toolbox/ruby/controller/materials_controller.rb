@@ -103,6 +103,9 @@ class MaterialsController < Controller
         material_attributes.std_thicknesses = std_thicknesses
         material_attributes.write_to_attributes
 
+        # Set material as current
+        materials.current = material
+
       end
 
     end
