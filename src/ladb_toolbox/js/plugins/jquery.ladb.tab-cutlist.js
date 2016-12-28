@@ -67,10 +67,10 @@
 
         rubyCallCommand('cutlist_generate', this.options, function(data) {
 
-            var status = data.status;
             var errors = data.errors;
             var warnings = data.warnings;
-            var filepath = data.filepath;
+            var filename = data.filename;
+            var pageLabel = data.page_label;
             var lengthUnit = data.length_unit;
             var materialUsages = data.material_usages;
             var groups = data.groups;
@@ -81,7 +81,7 @@
 
             // Update filename
             that.$filename.empty();
-            that.$filename.append(filepath.split('\\').pop().split('/').pop());
+            that.$filename.append(filename+ ' <small>'+ pageLabel + '<small>');
 
             // Update unit and length options
             that.lengthUnitInfos = that.getLengthUnitInfos(lengthUnit);

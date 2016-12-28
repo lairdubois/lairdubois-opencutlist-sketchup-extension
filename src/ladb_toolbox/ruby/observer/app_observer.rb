@@ -45,15 +45,23 @@ module Ladb
 
       def remove_model_observers
         if @active_model
-          @active_model.definitions.remove_observer(@definitions_observer)
-          @active_model.materials.remove_observer(@materials_observer)
+          if @active_model.definitions
+            @active_model.definitions.remove_observer(@definitions_observer)
+          end
+          if @active_model.materials
+            @active_model.materials.remove_observer(@materials_observer)
+          end
         end
       end
 
       def add_model_observers
         if @active_model
-          @active_model.definitions.add_observer(@definitions_observer)
-          @active_model.materials.add_observer(@materials_observer)
+          if @active_model.definitions
+            @active_model.definitions.add_observer(@definitions_observer)
+          end
+          if @active_model.materials
+            @active_model.materials.add_observer(@materials_observer)
+          end
         end
       end
 

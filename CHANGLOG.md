@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
+* 0.4.3
+
+  * Cutlist inherited and child materials
+  
 * 0.4.2 (2016-12-18)
 
   * Cutlist considere all components that contains faces. Not only leaf components.

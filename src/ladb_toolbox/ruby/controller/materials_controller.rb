@@ -1,3 +1,4 @@
+require 'pathname'
 require 'securerandom'
 require_relative 'controller'
 require_relative '../model/material_attributes'
@@ -25,6 +26,7 @@ class MaterialsController < Controller
       data = {
           :errors => [],
           :warnings => [],
+          :filename => Pathname.new(model.path).basename,
           :hardwood_material_count => 0,
           :plywood_material_count => 0,
           :unknow_material_count => 0,

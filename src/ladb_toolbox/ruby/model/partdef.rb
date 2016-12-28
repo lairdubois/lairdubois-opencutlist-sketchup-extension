@@ -2,7 +2,7 @@ require 'securerandom'
 
 class PartDef
 
-  attr_accessor :name, :count, :raw_size, :size
+  attr_accessor :name, :count, :raw_size, :size, :material_name, :material_origins
   attr_reader :id, :definition_id, :component_ids
 
   def initialize(definition_id)
@@ -12,6 +12,8 @@ class PartDef
     @count = 0
     @raw_size = Size.new
     @size = Size.new
+    @material_name = ''
+    @material_origins = []
     @component_ids = []
   end
 

@@ -12,6 +12,7 @@
         this.materials = [];
         this.editedMaterial = null;
 
+        this.$filename = $('#ladb_filename', this.$element);
         this.$btnList = $('#ladb_btn_list', this.$element);
 
         this.$page = $('.ladb-page', this.$element);
@@ -39,10 +40,15 @@
 
             var errors = data.errors;
             var warnings = data.warnings;
+            var filename = data.filename;
             var materials = data.materials;
 
             // Keep useful data
             that.materials = materials;
+
+            // Update filename
+            that.$filename.empty();
+            that.$filename.append(filename);
 
             // Update page
             that.$page.empty();

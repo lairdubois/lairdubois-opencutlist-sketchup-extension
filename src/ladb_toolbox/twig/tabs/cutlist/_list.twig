@@ -57,21 +57,21 @@
         <tbody>
         <tr>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">N°</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="37%">Désignation</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="{% if group.material_type > 0 %}37%{% else %}87%{% endif %}">Désignation</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">Nbr.</td>
             {% if group.material_type > 0 %}
                 <td class="text-center" colspan="2">Brute</td>
+                <td class="text-center" colspan="3">Finie</td>
             {% endif %}
-            <td class="text-center" colspan="3">Finie</td>
         </tr>
         <tr>
             {% if group.material_type > 0 %}
                 <td class="text-center" width="10%">Long.</td>
                 <td class="text-center" width="10%">Larg.</td>
+                <td class="text-center" width="10%">Long.</td>
+                <td class="text-center" width="10%">Larg.</td>
+                <td class="text-center" width="10%">Ep.</td>
             {% endif %}
-            <td class="text-center" width="10%">Long.</td>
-            <td class="text-center" width="10%">Larg.</td>
-            <td class="text-center" width="10%">Ep.</td>
         </tr>
         {% set thickness = 0 %}
         {% for part in group.parts %}
@@ -86,17 +86,22 @@
                 <td>
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
-                        <a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="Editer les propriétés"><i class="ladb-toolbox-icon-edit"></i></a>
+                        {% for material_origin in part.material_origins %}
+                            {% if material_origin > 1 %} {# OWNED origin are ignored #}
+                                <a data-toggle="tooltip" title="Matière"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
+                            {% endif %}
+                        {% endfor %}
+                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="Editer les propriétés"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>
                 {% if group.material_type > 0 %}
                     <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
                     <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                    <td class="text-right">{{ part.length }}</td>
+                    <td class="text-right">{{ part.width }}</td>
+                    <td class="text-right">{{ part.thickness }}</td>
                 {% endif %}
-                <td class="text-right">{{ part.length }}</td>
-                <td class="text-right">{{ part.width }}</td>
-                <td class="text-right">{{ part.thickness }}</td>
             </tr>
         {% endfor %}
         </tbody>

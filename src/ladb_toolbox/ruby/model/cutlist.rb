@@ -1,15 +1,13 @@
 class Cutlist
 
-  STATUS_SUCCESS = 'success'
-
-  attr_accessor :status, :filepath, :length_unit
+  attr_accessor :filename, :page_label, :length_unit
   attr_reader :errors, :warnings, :material_usages, :group_defs
 
-  def initialize(status, filepath, length_unit)
-    @status = status
+  def initialize(filename, page_label, length_unit)
     @errors = []
     @warnings = []
-    @filepath = filepath
+    @filename = filename
+    @page_label = page_label
     @length_unit = length_unit
     @material_usages = {}
     @group_defs = {}
