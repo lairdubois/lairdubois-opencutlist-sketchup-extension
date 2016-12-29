@@ -42,8 +42,8 @@ tab:
       thickness: Epaisseur
       thickness_short: Ep.
       edit_part_properties: Editer les propriétés
-      material_origin_2: La matière de cette pièce est héritée des éléments parents
-      material_origin_3: La matière de cette pièce est extraite des sous éléments
+      material_origin_2: La matière de cette pièce est héritée des ses éléments parents
+      material_origin_3: La matière de cette pièce est extraite des ses éléments enfants
   materials:
     label: Matières
     title: Matières
