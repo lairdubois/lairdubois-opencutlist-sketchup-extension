@@ -27,7 +27,7 @@ If you only want to compile less, yaml and twig :
     $ gulp compile
 ```
 
-If you want to build the .rbz archive
+If you want to build the .rbz archive. It creates the [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz) archive.
 
 ``` bash
     $ cd build
