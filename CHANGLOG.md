@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
+* 0.4.4
+
+  * Replace JS localstorage by SU defaults
+  * Improve JS <-> Ruby command pipeline
+
 * 0.4.3 (2016-12-28)
 
   * Cutlist inherited and child materials
