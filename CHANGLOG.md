@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
-* 0.4.3
+* 0.4.3 (2016-12-28)
 
   * Cutlist inherited and child materials
   * I18n support
