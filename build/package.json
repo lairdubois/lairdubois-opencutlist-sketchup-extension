@@ -1,0 +1,33 @@
+{
+  "name": "lairdubois-toolbox-sketchup-plugin",
+  "version": "0.4.3",
+  "description": "L'Air du Bois : Sketchup Toolbox ================================",
+  "main": "index.js",
+  "directories": {
+    "doc": "../docs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-less": "^3.3.0",
+    "gulp-zip": "^3.2.0",
+    "js-yaml": "^3.7.0",
+    "merge": "^1.2.0",
+    "through2": "^2.0.3",
+    "twig": "^0.10.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin.git"
+  },
+  "author": "Boris Beaulant",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/issues"
+  },
+  "homepage": "https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin#readme"
+}

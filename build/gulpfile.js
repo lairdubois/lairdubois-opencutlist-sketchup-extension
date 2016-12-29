@@ -4,7 +4,6 @@ var ladb_i18n_compile = require('./plugins/gulp-ladb-i18n-compile');
 var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
-var yaml = require('gulp-yaml');
 
 // Convert less to .css files
 gulp.task('less_compile', function () {

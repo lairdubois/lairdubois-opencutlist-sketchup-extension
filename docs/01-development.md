@@ -1,48 +1,36 @@
 Development environement setup instructions
 ===========================================
 
-### Install [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
+To be able to rebuild the plugin *.rbz* archive, you need to install some tools.
+
+The plugin *.rbz* archive is build by a **Glup** task. Then first, you need to install **Glup** and some dependencies.
+
+## 1. Install [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
 
 The way to do this depend of your OS. See the [Doc](https://docs.npmjs.com/getting-started/installing-node)
 
-### Install [Gulp](http://gulpjs.com/) - *The streaming build system*
+## 2. Install dependencies
 
 ``` bash
-    $ npm install gulp
+    $ cd build
+    $ npm install
 ```
 
-### Install [gulp-zip](https://www.npmjs.com/package/gulp-zip) - *ZIP compress files*
+## 3. Run tasks !
+
+Now you are ready to run tasks.
+
+If you only want to compile less, yaml and twig :
 
 ``` bash
-    $ npm install gulp-zip
+    $ cd build
+    $ gulp compile
 ```
 
-### Install [gulp-concat](https://www.npmjs.com/package/gulp-concat) - *Concatenates files*
+If you want to build the .rbz archive
 
 ``` bash
-    $ npm install gulp-minify
+    $ cd build
+    $ gulp build
 ```
 
-### Install [gulp-less](https://www.npmjs.com/package/gulp-less) - *Less for Gulp*
-
-``` bash
-    $ npm install gulp-less
-```
-
-### Install [through2](https://github.com/rvagg/through2) - *Tiny wrapper around Node streams2 Transform*
-
-``` bash
-    $ npm install through2
-```
-
-### Install [Twig.js](https://github.com/twigjs/twig.js) - *The view template engine*
-
-``` bash
-    $ npm install twig
-```
-
-### Install [yaml-js](https://www.npmjs.com/package/yaml-js) - *Pure Javascript YAML loader and dumper*
-
-``` bash
-    $ npm install yaml-js
-```
