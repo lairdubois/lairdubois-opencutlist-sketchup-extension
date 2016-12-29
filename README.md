@@ -12,6 +12,11 @@ This code is under the **GNU GPLv3 license**.
 
 [Read the license](LICENSE)
 
+Documentation
+-------------
+
+[Read the documentation](docs/00-index.md)
+
 Authors
 -------
 
