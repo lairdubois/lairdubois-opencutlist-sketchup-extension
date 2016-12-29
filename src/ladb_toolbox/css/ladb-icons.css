@@ -9,7 +9,7 @@
   font-style: normal;
 }
 
-i {
+i, span.ladb-toolbox-icon {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'ladb_toolbox' !important;
   speak: none;

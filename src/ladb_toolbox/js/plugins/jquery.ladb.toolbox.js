@@ -34,19 +34,16 @@
                 name: 'cutlist',
                 bar: 'leftbar',
                 icon: 'ladb-toolbox-icon-cutlist',
-                label: 'Débit'
             },
             {
                 name: 'materials',
                 bar: 'leftbar',
                 icon: 'ladb-toolbox-icon-materials',
-                label: 'Matières'
             },
             {
                 name: 'about',
                 bar: 'bottombar',
                 icon: null,
-                label: 'A propos'
             }
         ]
     };

@@ -12,18 +12,18 @@
             <td colspan="5" style="line-height: 20px;">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="ladb-toolbox-icon-eye-open"></i></button>
                 <div>
-                    <span style=" line-height: 25px; font-size: 18px;">Résumé</span>
+                    <span style=" line-height: 25px; font-size: 18px;">{{ 'tab.cutlist.list.summary'|i18next }}</span>
                 </div>
             </td>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td class="text-center" width="5%">Type</td>
-            <td class="text-center" width="55%">Matière</td>
-            <td class="text-center" width="10%">Nbr. pièces</td>
-            <td class="text-center" width="15%">Surface</td>
-            <td class="text-center" width="15%">Volume</td>
+            <td class="text-center" width="5%">{{ 'tab.cutlist.list.type'|i18next }}</td>
+            <td class="text-center" width="55%">{{ 'tab.cutlist.list.material'|i18next }}</td>
+            <td class="text-center" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
+            <td class="text-center" width="15%">{{ 'tab.cutlist.list.area'|i18next }}Surface</td>
+            <td class="text-center" width="15%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
         </tr>
         {% for group in groups %}
             <tr style="font-size: 120%;">
@@ -56,21 +56,21 @@
         </thead>
         <tbody>
         <tr>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">N°</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="{% if group.material_type > 0 %}37%{% else %}87%{% endif %}">Désignation</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">Nbr.</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="{% if group.material_type > 0 %}37%{% else %}87%{% endif %}">{{ 'tab.cutlist.list.name'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if group.material_type > 0 %}
-                <td class="text-center" colspan="2">Brute</td>
+                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.raw'|i18next }}</td>
                 <td class="text-center" colspan="3">Finie</td>
             {% endif %}
         </tr>
         <tr>
             {% if group.material_type > 0 %}
-                <td class="text-center" width="10%">Long.</td>
-                <td class="text-center" width="10%">Larg.</td>
-                <td class="text-center" width="10%">Long.</td>
-                <td class="text-center" width="10%">Larg.</td>
-                <td class="text-center" width="10%">Ep.</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.thickness_short'|i18next }}</td>
             {% endif %}
         </tr>
         {% set thickness = 0 %}
@@ -78,7 +78,7 @@
             {% if group.material_type == 1 and part.thickness != thickness %}
                 {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
-                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">Epaisseur {{ part.thickness }}</td>
+                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
                 </tr>
             {% endif %}
             <tr style="font-size: 120%;" id="ladb_part_{{ part.id }}">
@@ -88,10 +88,10 @@
                     <div class="ladb-minitools no-print">
                         {% for material_origin in part.material_origins %}
                             {% if material_origin > 1 %} {# OWNED origin are ignored #}
-                                <a data-toggle="tooltip" title="Matière"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
+                                <a data-toggle="tooltip" title="{{ ('tab.cutlist.list.material_origin_'~material_origin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
                             {% endif %}
                         {% endfor %}
-                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="Editer les propriétés"><i class="ladb-toolbox-icon-edit"></i></a>
+                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.list.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>

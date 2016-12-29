@@ -1,7 +1,5 @@
 {% extends 'tabs/base-tab.twig' %}
 
-{% block headerHeadingInner %}A propos{% endblock %}
-
 {% block containerInner %}
     <h3>Version</h3>
     <p>{{ capabilities.version }} <em>( SU {{ capabilities.sketchupVersion }} - {{ capabilities.currentOS }} )</em></p>
@@ -28,6 +26,10 @@
         </li>
         <li>
             <a href="https://github.com/dankogai/js-base64" target="_blank">base64.js</a>
+            <span class="label label-default">JS</span>
+        </li>
+        <li>
+            <a href="http://i18next.com/" target="_blank">i18next</a>
             <span class="label label-default">JS</span>
         </li>
         <li>

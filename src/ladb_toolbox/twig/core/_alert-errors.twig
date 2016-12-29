@@ -7,7 +7,7 @@
             <i class="ladb-toolbox-icon-warning" style="font-size: 150%;"></i>
         </div>
         <div class="media-body">
-            <h4 class="media-heading">Erreur</h4>
+            <h4 class="media-heading">{{ 'default.error'|i18next }}</h4>
             <ul>
                 {% for error in errors %}
                     <li>{{ error }}</li>

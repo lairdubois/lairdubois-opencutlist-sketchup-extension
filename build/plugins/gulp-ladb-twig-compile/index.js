@@ -1,6 +1,6 @@
 var through = require('through2');
-var twig = require('twig').twig;
 var gutil = require('gulp-util');
+var twig = require('twig').twig;
 var merge = require('merge');
 
 var PluginError = gutil.PluginError;

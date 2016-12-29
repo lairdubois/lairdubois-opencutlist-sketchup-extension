@@ -1,0 +1,65 @@
+default:
+  minimize: Réduire
+  maximize: Agrandir
+  cancel: Annuler
+  validate: Valider
+  close: Fermer
+  refresh: Rafraichir
+  generate: Générer
+  print: Imprimer
+  options: Options
+  caution: Attention
+  help: Aide
+  error: Erreur
+  warning: Avertissement
+tab:
+  cutlist:
+    label: Débit
+    title: Fiche de débit
+    help: Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>.<br>Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
+    not_available_thickness: Epaisseur non disponible
+    form:
+      title: Propriétés d'une pièce
+      name: Nom
+      material: Matière
+      material_unkown: Aucune
+    option:
+      part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
+      art_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
+    list:
+      summary: Résumé
+      type: Type
+      material: Matière
+      part_count: Nbr. pièces
+      area: Surface
+      volume: Volume
+      number: N°
+      name: Désignation
+      count: Nbr.
+      raw: Finie
+      length_short: Long.
+      width_short: Larg.
+      thickness: Epaisseur
+      thickness_short: Ep.
+      edit_part_properties: Editer les propriétés
+      material_origin_2: La matière de cette pièce est héritée des éléments parents
+      material_origin_3: La matière de cette pièce est extraite des sous éléments
+  materials:
+    label: Matières
+    title: Matières
+    form:
+      title: Propriétés d'une matière
+      name: Nom
+      type: Type
+      type_unknow: Aucun
+      type_hardwood: Bois massif
+      type_plywood: Bois panneau
+      cut_options: Options de débit
+      length_increase: Surcote de longueur
+      width_increase: Surcote de largeur
+      thickness_increase: Surcote d'épaisseur
+      std_thicknesses: Epaisseurs disponibles
+      std_thicknesses_help: Epaisseurs brutes disponibles exprimées en mm.
+  about:
+    label: A propos
+    title: A propos

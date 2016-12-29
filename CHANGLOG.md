@@ -7,6 +7,7 @@ in 0.x versions.
 * 0.4.3
 
   * Cutlist inherited and child materials
+  * I18n support
   
 * 0.4.2 (2016-12-18)
 

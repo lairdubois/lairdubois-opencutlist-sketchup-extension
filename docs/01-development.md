@@ -40,3 +40,9 @@ The way to do this depend of your OS. See the [Doc](https://docs.npmjs.com/getti
 ``` bash
     $ npm install twig
 ```
+
+### Install [yaml-js](https://www.npmjs.com/package/yaml-js) - *Pure Javascript YAML loader and dumper*
+
+``` bash
+    $ npm install yaml-js
+```
