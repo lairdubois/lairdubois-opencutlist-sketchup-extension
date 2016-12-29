@@ -12,7 +12,7 @@
         this.materials = [];
         this.editedMaterial = null;
 
-        this.$filename = $('#ladb_filename', this.$element);
+        this.$fileTabs = $('.ladb-file-tabs', this.$element);
         this.$btnList = $('#ladb_btn_list', this.$element);
 
         this.$page = $('.ladb-page', this.$element);
@@ -47,8 +47,10 @@
             that.materials = materials;
 
             // Update filename
-            that.$filename.empty();
-            that.$filename.append(filename);
+            that.$fileTabs.empty();
+            that.$fileTabs.append(Twig.twig({ ref: "tabs/materials/_file-tab.twig" }).render({
+                filename: filename
+            }));
 
             // Update page
             that.$page.empty();

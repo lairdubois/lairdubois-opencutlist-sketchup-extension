@@ -1,0 +1,3 @@
+{% extends 'tabs/base-file-tab.twig' %}
+
+{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}{% endblock %}

@@ -65,10 +65,9 @@ module Ladb
 
         filename = Pathname.new(model.path).basename
         page_label = (model.pages and model.pages.selected_page) ? model.pages.selected_page.label : ''
-        length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
 
         # Create cut list
-        cutlist = Cutlist.new(filename, page_label, length_unit)
+        cutlist = Cutlist.new(filename, page_label)
 
         # Errors
         if component_paths.length == 0
@@ -180,7 +179,6 @@ module Ladb
             :warnings => cutlist.warnings,
             :filename => cutlist.filename,
             :page_label => cutlist.page_label,
-            :length_unit => cutlist.length_unit,
             :material_usages => [],
             :groups => []
         }

@@ -1,14 +1,6 @@
 +function ($) {
     'use strict';
 
-    var LADB_LENGTH_UNIT_INFOS = {
-        0: {name: 'pouce', unit: 'in'},
-        1: {name: 'pied', unit: 'ft'},
-        2: {name: 'millimètre', unit: 'mm'},
-        3: {name: 'centimètre', unit: 'cm'},
-        4: {name: 'mètre', unit: 'm'}
-    };
-
     var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
     var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
 
@@ -20,8 +12,6 @@
         this.$element = $(element);
         this.toolbox = toolbox;
 
-        this.lengthUnitInfos = LADB_LENGTH_UNIT_INFOS[2];
-
         this.groups = [];
         this.materialUsages = [];
         this.editedPart = null;
@@ -31,8 +21,7 @@
             part_number_sequence_by_group: this.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
         };
 
-        this.$filename = $('#ladb_filename', this.$element);
-        this.$unit = $('#ladb_unit', this.$element);
+        this.$fileTabs = $('.ladb-file-tabs', this.$element);
         this.$btnGenerate = $('#ladb_btn_generate', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
         this.$panelHelp = $('.ladb-panel-help', this.$element);
@@ -51,13 +40,6 @@
 
     LadbTabCutlist.DEFAULTS = {};
 
-    LadbTabCutlist.prototype.getLengthUnitInfos = function (lengthUnitIndex) {
-        if (lengthUnitIndex < 0 || lengthUnitIndex >= LADB_LENGTH_UNIT_INFOS.length) {
-            return null;
-        }
-        return LADB_LENGTH_UNIT_INFOS[lengthUnitIndex];
-    };
-
     LadbTabCutlist.prototype.generateCutlist = function () {
         var that = this;
 
@@ -71,7 +53,6 @@
             var warnings = data.warnings;
             var filename = data.filename;
             var pageLabel = data.page_label;
-            var lengthUnit = data.length_unit;
             var materialUsages = data.material_usages;
             var groups = data.groups;
 
@@ -80,13 +61,11 @@
             that.materialUsages = materialUsages;
 
             // Update filename
-            that.$filename.empty();
-            that.$filename.append(filename+ ' <small>'+ pageLabel + '<small>');
-
-            // Update unit and length options
-            that.lengthUnitInfos = that.getLengthUnitInfos(lengthUnit);
-            that.$unit.empty();
-            that.$unit.append(' en ' + that.lengthUnitInfos.name);
+            that.$fileTabs.empty();
+            that.$fileTabs.append(Twig.twig({ ref: "tabs/cutlist/_file-tab.twig" }).render({
+                filename: filename,
+                pageLabel: pageLabel
+            }));
 
             // Hide help panel
             if (groups.length > 0) {

@@ -46,6 +46,14 @@ a:focus {
   .table-bordered > tfoot > tr > td {
     border: 1px solid #000;
   }
+  .ladb-file-tabs {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  .ladb-file-tabs a {
+    border: 1px solid #ddd !important;
+  }
 }
 .ladb-bottombar {
   position: fixed;
@@ -129,6 +137,9 @@ a:focus {
 .ladb-header .ladb-header-tools {
   margin: 15px 0 15px 20px;
   float: right;
+}
+.ladb-header .nav-tabs {
+  border-bottom: none;
 }
 /* Print */
 @media print {

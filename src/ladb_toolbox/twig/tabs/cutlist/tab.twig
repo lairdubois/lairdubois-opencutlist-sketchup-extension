@@ -1,7 +1,5 @@
 {% extends 'tabs/base-tab.twig' %}
 
-{% block headerHeadingInner %}<span id="ladb_filename" class="text-muted pull-right"></span>{{ parent() }}&nbsp;<small id="ladb_unit"></small>{% endblock %}
-
 {% block headerToolsInner %}
     <button id="ladb_btn_generate" class="btn btn-primary">{{ 'default.generate'|i18next }}</button>
     <button id="ladb_btn_print" class="btn btn-default" disabled="disabled"><i class="ladb-toolbox-icon-print"></i> {{ 'default.print'|i18next }}</button>
