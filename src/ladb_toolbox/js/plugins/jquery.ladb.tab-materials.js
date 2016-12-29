@@ -219,18 +219,35 @@
     LadbTabMaterials.prototype.init = function () {
         var that = this;
 
-        // Init selects
-        this.$selectType.selectpicker({
-            size: 10,
-            iconBase: 'ladb-toolbox-icon',
-            tickIcon: 'ladb-toolbox-icon-tick',
-            showTick: true
-        });
+        this.toolbox.pullSettingsValues([
+            'materials_type_0_length_increase',
+            'materials_type_1_length_increase',
+            'materials_type_2_length_increase',
+            'materials_type_0_width_increase',
+            'materials_type_1_width_increase',
+            'materials_type_2_width_increase',
+            'materials_type_0_thickness_increase',
+            'materials_type_1_thickness_increase',
+            'materials_type_2_thickness_increase',
+            'materials_type_0_std_thickness',
+            'materials_type_1_std_thickness',
+            'materials_type_2_std_thickness'
+        ], function() {
 
-        this.bind();
-        setTimeout(function() {
-            that.loadList();
-        }, 500);
+            // Init selects
+            that.$selectType.selectpicker({
+                size: 10,
+                iconBase: 'ladb-toolbox-icon',
+                tickIcon: 'ladb-toolbox-icon-tick',
+                showTick: true
+            });
+
+            that.bind();
+            setTimeout(function() {
+                that.loadList();
+            }, 500);
+
+        });
 
     };
 

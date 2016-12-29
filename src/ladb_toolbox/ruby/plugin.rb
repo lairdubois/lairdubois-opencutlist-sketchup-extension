@@ -8,7 +8,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.4.3'
+      VERSION = '0.4.4'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
@@ -116,6 +116,22 @@ module Ladb
                 :language => @language,
                 :html_dialog_compatible => @html_dialog_compatible
             }
+          end
+          register_command('read_default_values') do |params|
+            keys = params['keys']
+            values = []
+            keys.each { |key|
+              values.push({
+                              :key => key,
+                              :value => Sketchup.read_default('ladb_toolbox', key)
+                          })
+            }
+            { :values => values }
+          end
+          register_command('write_default_value') do |params|
+            key = params['key']
+            value = params['value']
+            Sketchup.write_default('ladb_toolbox', key, value)
           end
           register_command('dialog_minimize') do |params|
             if @dialog

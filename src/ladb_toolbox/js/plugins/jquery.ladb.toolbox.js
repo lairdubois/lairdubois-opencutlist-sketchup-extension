@@ -1,6 +1,8 @@
 +function ($) {
     'use strict';
 
+    var KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
+
     // CLASS DEFINITION
     // ======================
 
@@ -17,7 +19,7 @@
             htmlDialogCompatible: settings.html_dialog_compatible
         };
 
-        this.compatibilityAlertHidden = this.getSettingsValue('compatibilityAlertHidden', false);
+        this.settingsValues = {};
 
         this.activeTabName = null;
         this.tabs = {};
@@ -50,25 +52,33 @@
         ]
     };
 
+    LadbToolbox.prototype.pullSettingsValues = function (keys, callback) {
+        var that = this;
+
+        rubyCallCommand('read_default_values', { keys: keys }, function(data) {          // Read settings values from SU default
+            var values = data.values;
+            for (var i = 0; i < values.length; i++) {
+                var value = values[i];
+                that.settingsValues[value.key] = value.value;
+            }
+            callback();
+        });
+    };
+
     LadbToolbox.prototype.setSettingsValue = function (key, value) {
-        if (typeof(Storage) !== "undefined" && localStorage != undefined) {
-            localStorage.setItem('ladb_toolbox_' + key, value);
-        }
+        this.settingsValues[key] = value;
+        rubyCallCommand('write_default_value', { key: key, value: value });             // Write settings value to SU default
     };
 
     LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
-        if (typeof(Storage) !== "undefined" && localStorage != undefined) {
-            var value = localStorage.getItem('ladb_toolbox_' + key);
-            if (value) {
-                if (defaultValue != undefined) {
-                    if (typeof(defaultValue) == 'boolean') {
-                        return 'true' == value;
-                    } else if (typeof(defaultValue) == 'number' && isNaN(value)) {
-                        return defaultValue;
-                    }
+        var value = this.settingsValues[key];
+        if (value != null) {
+            if (defaultValue != undefined) {
+                if (typeof(defaultValue) == 'number' && isNaN(value)) {
+                    return defaultValue;
                 }
-                return value;
             }
+            return value;
         }
         return defaultValue;
     };
@@ -166,7 +176,7 @@
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
-            that.setSettingsValue('compatibilityAlertHidden', that.compatibilityAlertHidden);
+            that.setSettingsValue(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
 
     };
@@ -182,29 +192,37 @@
         // Continue with a timeout to be sure that translations are loaded
         setTimeout(function() {
 
-            // Add i18next twig filter
-            Twig.extendFilter("i18next", function(value, options) {
-                return i18next.t(value, options ? options[0] : {});
+            that.pullSettingsValues([
+                KEY_COMPATIBILITY_ALERT_HIDDEN
+            ], function() {
+
+                that.compatibilityAlertHidden = that.getSettingsValue(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+
+                // Add i18next twig filter
+                Twig.extendFilter("i18next", function(value, options) {
+                    return i18next.t(value, options ? options[0] : {});
+                });
+
+                // Render and append layout template
+                that.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
+                    capabilities: that.capabilities,
+                    compatibilityAlertHidden: that.compatibilityAlertHidden,
+                    tabDefs: that.settings.tabDefs
+                }));
+
+                // Fetch usefull elements
+                that.$wrapper = $('#ladb_wrapper', that.$element);
+                that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
+                that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+                that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
+                for (var i = 0; i < that.settings.tabDefs.length; i++) {
+                    var tabDef = that.settings.tabDefs[i];
+                    that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+                }
+
+                that.bind();
+
             });
-
-            // Render and append layout template
-            that.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
-                capabilities: that.capabilities,
-                compatibilityAlertHidden: that.compatibilityAlertHidden,
-                tabDefs: that.settings.tabDefs
-            }));
-
-            // Fetch usefull elements
-            that.$wrapper = $('#ladb_wrapper', that.$element);
-            that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
-            that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
-            that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
-            for (var i = 0; i < that.settings.tabDefs.length; i++) {
-                var tabDef = that.settings.tabDefs[i];
-                that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
-            }
-
-            that.bind();
 
         }, 1);
 

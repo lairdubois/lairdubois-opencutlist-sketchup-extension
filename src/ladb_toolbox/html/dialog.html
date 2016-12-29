@@ -31,6 +31,8 @@
 
         var commandId = 0;
         var commandCallbacks = {};
+        var commandCallStack = [];
+        var commandRunning = false;
 
         function rubyCallCommand(command, params, callback) {
             var call = {
@@ -40,16 +42,27 @@
             };
             commandCallbacks[commandId] = callback;
             commandId++;
-            window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);
+            commandCallStack.push(call);
+            popCommandCallStack();
         }
 
         function rubyCommandCallback(id, encodedData) {
             var callback = commandCallbacks[id];
             if (callback) {
-                if (callback) {
-                    var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
-                    callback(data);
-                    commandCallbacks[id] = null;
+                var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
+                callback(data);
+                commandCallbacks[id] = null;
+            }
+            commandRunning = false;
+            popCommandCallStack();
+        }
+
+        function popCommandCallStack() {
+            if (!commandRunning) {
+                var call = commandCallStack.pop();
+                if (call) {
+                    commandRunning = true;
+                    window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);
                 }
             }
         }

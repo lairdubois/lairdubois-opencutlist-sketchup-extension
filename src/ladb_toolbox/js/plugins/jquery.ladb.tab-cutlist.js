@@ -16,11 +16,6 @@
         this.materialUsages = [];
         this.editedPart = null;
 
-        this.options = {
-            part_number_with_letters: this.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
-            part_number_sequence_by_group: this.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
-        };
-
         this.$fileTabs = $('.ladb-file-tabs', this.$element);
         this.$btnGenerate = $('#ladb_btn_generate', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
@@ -217,18 +212,32 @@
     };
 
     LadbTabCutlist.prototype.init = function () {
-        this.bind();
+        var that = this;
 
-        // Init inputs values
-        this.$inputPartNumberWithLetters.prop('checked', this.options.part_number_with_letters);
-        this.$inputPartNumberSequenceByGroup.prop('checked', this.options.part_number_sequence_by_group);
+        this.toolbox.pullSettingsValues([
+            OPTION_KEY_PART_NUMBER_WITH_LETTERS,
+            OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP
+        ], function() {
 
-        // Init selects
-        this.$selectMaterialName.selectpicker({
-            size: 10,
-            iconBase: 'ladb-toolbox-icon',
-            tickIcon: 'ladb-toolbox-icon-tick',
-            showTick: true
+            that.options = {
+                part_number_with_letters: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
+                part_number_sequence_by_group: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
+            };
+
+            // Init inputs values
+            that.$inputPartNumberWithLetters.prop('checked', that.options.part_number_with_letters);
+            that.$inputPartNumberSequenceByGroup.prop('checked', that.options.part_number_sequence_by_group);
+
+            // Init selects
+            that.$selectMaterialName.selectpicker({
+                size: 10,
+                iconBase: 'ladb-toolbox-icon',
+                tickIcon: 'ladb-toolbox-icon-tick',
+                showTick: true
+            });
+
+            that.bind();
+
         });
 
     };
