@@ -23,6 +23,11 @@ tab:
     help: Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>.<br>Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
+    tooltip:
+      scroll_to_bloc: Défiler vers le bloc
+      edit_part_properties: Editer les propriétés
+      material_origin_2: La matière de cette pièce est héritée des ses éléments parents
+      material_origin_3: La matière de cette pièce est extraite des ses éléments enfants
     form:
       title: Propriétés d'une pièce
       name: Nom
@@ -45,9 +50,6 @@ tab:
       width_short: Larg.
       thickness: Epaisseur
       thickness_short: Ep.
-      edit_part_properties: Editer les propriétés
-      material_origin_2: La matière de cette pièce est héritée des ses éléments parents
-      material_origin_3: La matière de cette pièce est extraite des ses éléments enfants
     error:
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.

@@ -31,7 +31,7 @@
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     <div class="ladb-minitools no-print">
-                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto" data-toggle="tooltip" title="Défiler vers le bloc"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
+                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_bloc'|i18next }}"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x{{ group.part_count }}</td>
@@ -88,10 +88,10 @@
                     <div class="ladb-minitools no-print">
                         {% for material_origin in part.material_origins %}
                             {% if material_origin > 1 %} {# OWNED origin are ignored #}
-                                <a data-toggle="tooltip" title="{{ ('tab.cutlist.list.material_origin_'~material_origin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
+                                <a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~material_origin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
                             {% endif %}
                         {% endfor %}
-                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.list.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
+                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>
