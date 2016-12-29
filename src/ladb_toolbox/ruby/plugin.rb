@@ -1,3 +1,4 @@
+require 'fileutils'
 require_relative 'observer/app_observer'
 require_relative 'controller/cutlist_controller'
 require_relative 'controller/materials_controller'
@@ -23,24 +24,32 @@ module Ladb
       @controllers
       @html_dialog_compatible
       @current_os
+      @language
       @started
+      @temp_dir
 
       def initialize()
         @commands = {}
         @controllers = []
         @html_dialog_compatible = false
         @current_os = :OTHER
+        @language = 'fr'
         @started = false
+        @temp_dir = nil
       end
 
       # -----
 
       def temp_dir
-        temp_dir = File.join(Sketchup.temp_dir, "ladb_toolbox")
-        unless Dir.exist?(temp_dir)
-          Dir.mkdir(temp_dir)
+        if @temp_dir
+          return @temp_dir
         end
-        temp_dir
+        dir = File.join(Sketchup.temp_dir, "ladb_toolbox")
+        if Dir.exist?(dir)
+          FileUtils.remove_dir(dir, true)   # Temp dir exists we clean it
+        end
+        Dir.mkdir(dir)
+        @temp_dir = dir
       end
 
       # -----
@@ -69,6 +78,16 @@ module Ladb
           # Fetch OS
           @current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
 
+          # Locale
+          available_translations = []
+          Dir["#{__dir__}/../js/i18n/*.js"].each { |file|
+            available_translations.push(File.basename(file, File.extname(file)))
+          }
+          language = Sketchup.get_locale.split('-')[0]
+          if available_translations.include? language
+            @language = language   # Uses SU locale only if translation is available
+          end
+
           # Check compatibility (If we can we use the HtmlDialog class - new in Sketchup 2017)
           @html_dialog_compatible = true
           begin
@@ -91,9 +110,11 @@ module Ladb
           register_command('dialog_loaded') do |params|
             {
                 :version => VERSION,
-                :htmlDialogCompatible => @html_dialog_compatible,
-                :sketchupVersion => Sketchup.version.to_s,
-                :currentOS => "#{@current_os}"
+                :sketchup_version => Sketchup.version.to_s,
+                :current_os => "#{@current_os}",
+                :locale => Sketchup.get_locale,
+                :language => @language,
+                :html_dialog_compatible => @html_dialog_compatible
             }
           end
           register_command('dialog_minimize') do |params|
@@ -156,7 +177,7 @@ module Ladb
           end
 
           # Setup dialog page
-          @dialog.set_file(__dir__ + '/../html/dialog.html')
+          @dialog.set_file("#{__dir__}/../html/dialog.html")
 
           # Set dialog size
           @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)

@@ -10,9 +10,11 @@
 
         this.capabilities = {
             version: settings.version,
-            sketchupVersion: settings.sketchupVersion,
-            currentOS: settings.currentOS,
-            htmlDialogCompatible: settings.htmlDialogCompatible
+            sketchupVersion: settings.sketchup_version,
+            currentOS: settings.current_os,
+            locale: settings.locale,
+            language: settings.language,
+            htmlDialogCompatible: settings.html_dialog_compatible
         };
 
         this.compatibilityAlertHidden = this.getSettingsValue('compatibilityAlertHidden', false);
@@ -33,17 +35,17 @@
             {
                 name: 'cutlist',
                 bar: 'leftbar',
-                icon: 'ladb-toolbox-icon-cutlist',
+                icon: 'ladb-toolbox-icon-cutlist'
             },
             {
                 name: 'materials',
                 bar: 'leftbar',
-                icon: 'ladb-toolbox-icon-materials',
+                icon: 'ladb-toolbox-icon-materials'
             },
             {
                 name: 'about',
                 bar: 'bottombar',
-                icon: null,
+                icon: null
             }
         ]
     };
@@ -170,25 +172,41 @@
     };
 
     LadbToolbox.prototype.init = function () {
+        var that = this;
 
-        // Render and append template
-        this.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
-            capabilities: this.capabilities,
-            compatibilityAlertHidden: this.compatibilityAlertHidden,
-            tabDefs: this.settings.tabDefs
-        }));
+        // Init i18next
+        $('<script>')
+            .attr('src', '../js/i18n/' + this.capabilities.language + '.js')
+            .appendTo('body');
 
-        // Fetch usefull elements
-        this.$wrapper = $('#ladb_wrapper', this.$element);
-        this.$btnMinimize = $('#ladb_btn_minimize', this.$element);
-        this.$btnMaximize = $('#ladb_btn_maximize', this.$element);
-        this.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', this.$element);
-        for (var i = 0; i < this.settings.tabDefs.length; i++) {
-            var tabDef = this.settings.tabDefs[i];
-            this.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, this.$element);
-        }
+        // Continue with a timeout to be sure that translations are loaded
+        setTimeout(function() {
 
-        this.bind();
+            // Add i18next twig filter
+            Twig.extendFilter("i18next", function(value, options) {
+                return i18next.t(value, options ? options[0] : {});
+            });
+
+            // Render and append layout template
+            that.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
+                capabilities: that.capabilities,
+                compatibilityAlertHidden: that.compatibilityAlertHidden,
+                tabDefs: that.settings.tabDefs
+            }));
+
+            // Fetch usefull elements
+            that.$wrapper = $('#ladb_wrapper', that.$element);
+            that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
+            that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+            that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
+            for (var i = 0; i < that.settings.tabDefs.length; i++) {
+                var tabDef = that.settings.tabDefs[i];
+                that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+            }
+
+            that.bind();
+
+        }, 1);
 
     };
 

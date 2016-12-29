@@ -25,22 +25,6 @@
     <script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
     <script src="../js/plugins/jquery.ladb.tab-about.js"></script>
     <script src="../js/templates/twig-templates.js"></script>
-    <script>
-        var locale = localStorage.getItem('locale') || 'fr';
-
-        // Initialize I18next
-
-        $('<script>')
-            .attr('src', '../js/i18n/' + locale + '.js')
-            .appendTo('body');
-
-        // Add twig filter
-
-        Twig.extendFilter("i18next", function(value, options) {
-            return i18next.t(value, options ? options[0] : {});
-        });
-
-    </script>
     <script type="text/javascript">
 
         // Ruby JS interactions
