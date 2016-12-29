@@ -12,6 +12,9 @@ default:
   help: Aide
   error: Erreur
   warning: Avertissement
+core:
+  warning:
+    old_su: Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.<br/>Pour profiter pleinement de ce plugin, il est préconisé d'utiliser <strong>Sketchup 2017</strong>.
 tab:
   cutlist:
     label: Débit
