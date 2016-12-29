@@ -81,7 +81,7 @@ module Ladb
 
         # Errors
         if materials.count == 0
-          data[:errors].push('Votre modèle ne contient aucune matière.')
+          data[:errors].push('tab.materials.error.no_materials')
         end
 
         # Sort materials by type ASC, display_name ASC

@@ -10,7 +10,7 @@
             <h4 class="media-heading">{{ 'default.error'|i18next }}</h4>
             <ul>
                 {% for error in errors %}
-                    <li>{{ error }}</li>
+                    <li>{{ error|i18next }}</li>
                 {% endfor %}
             </ul>
         </div>

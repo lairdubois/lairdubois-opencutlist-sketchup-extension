@@ -10,7 +10,7 @@
                 <h4 class="media-heading">{{ 'default.warning'|i18next }}</h4>
                 <ul>
                     {% for warning in warnings %}
-                        <li>{{ warning }}</li>
+                        <li>{{ warning|i18next }}</li>
                     {% endfor %}
                 </ul>
             </div>

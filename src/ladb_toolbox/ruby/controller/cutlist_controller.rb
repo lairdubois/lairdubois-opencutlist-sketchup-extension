@@ -73,9 +73,9 @@ module Ladb
         # Errors
         if component_paths.length == 0
           if use_selection
-            cutlist.add_error("Aucune instance de composant visible n'a été détectée dans votre sélection")
+            cutlist.add_error("tab.cutlist.error.no_component_in_selection")
           else
-            cutlist.add_error("Aucune instance de composant visible n'a été détectée sur votre scène")
+            cutlist.add_error("tab.cutlist.error.no_component_in_model")
           end
         end
 
@@ -95,7 +95,7 @@ module Ladb
           material, material_origin = _get_smart_material(component_path)
           definition = component.definition
 
-          material_name = material ? material.name : 'Matière non définie'
+          material_name = material ? material.name : ''
           material_attributes = MaterialAttributes.new(material)
 
           if material
@@ -156,7 +156,7 @@ module Ladb
         # Warnings
         if component_paths.length > 0
           if use_selection
-            cutlist.add_warning("Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.")
+            cutlist.add_warning("tab.cutlist.warning.partial_cutlist")
           end
           hardwood_material_count = 0
           plywood_material_count = 0
@@ -168,7 +168,7 @@ module Ladb
             end
           }
           if hardwood_material_count == 0 and plywood_material_count == 0
-            cutlist.add_warning("Votre #{use_selection ? "sélection" : "modèle"} n'utilise aucune matière ayant un type défini (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>)")
+            cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
           end
         end
 
