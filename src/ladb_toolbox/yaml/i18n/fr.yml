@@ -25,7 +25,7 @@ tab:
       material: Matière
     option:
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
-      art_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
+      part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
     list:
       summary: Résumé
       type: Type
