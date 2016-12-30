@@ -27,7 +27,7 @@ tab:
       scroll_to_bloc: Défiler vers le bloc
       edit_part_properties: Editer les propriétés
       material_origin_1: La matière de cette pièce est définie sur ses instances
-      material_origin_2: La matière de cette pièce est actuellement héritée des l'un de ses éléments parents
+      material_origin_2: La matière de cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière de cette pièce est actuellement extraite des ses éléments enfants
     form:
       title: Propriétés d'une pièce
