@@ -9,6 +9,8 @@ in 0.x versions.
   * Replace JS localstorage by SU defaults
   * Improve JS <-> Ruby command pipeline
   * Cutlist materials origins improvements
+  * Cutlist auto_orient option
+  * Cutlist options help popovers
 
 * 0.4.3 (2016-12-28)
 

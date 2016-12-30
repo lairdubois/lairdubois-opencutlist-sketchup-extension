@@ -34,8 +34,12 @@ tab:
       name: Nom
       material: Matière
     option:
+      auto_orient: Orientation automatique des pièces
+      auto_orient_help: Si cette option est active, les 3 dimensions des pièces sont triées pour que la plus grande représente la longueur et la plus petite l'épaisseur.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
+      part_number_with_letters_help: Si cette option est actve, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
+      part_number_sequence_by_group_help: Si cette option est actve, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
     list:
       summary: Résumé
       type: Type

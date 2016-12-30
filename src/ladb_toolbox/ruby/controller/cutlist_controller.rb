@@ -45,6 +45,7 @@ module Ladb
         # Check settings
         part_number_with_letters = settings['part_number_with_letters']
         part_number_sequence_by_group = settings['part_number_sequence_by_group']
+        auto_orient = settings['auto_orient']
 
         # Retrieve selected entities or all if no selection
         model = Sketchup.active_model
@@ -104,7 +105,7 @@ module Ladb
             end
           end
 
-          size = _size_from_bounds(_compute_faces_bounds(definition))
+          size = _size_from_bounds(_compute_faces_bounds(definition), auto_orient)
           std_thickness = _find_std_thickness(
               (size.thickness + material_attributes.l_thickness_increase).to_l,
               material_attributes.l_std_thicknesses,
@@ -365,9 +366,13 @@ module Ladb
         bounds
       end
 
-      def _size_from_bounds(bounds)
-        ordered = [bounds.width, bounds.height, bounds.depth].sort
-        Size.new(ordered[2], ordered[1], ordered[0])
+      def _size_from_bounds(bounds, auto_orient = true)
+        if auto_orient
+          ordered = [bounds.width, bounds.height, bounds.depth].sort
+          Size.new(ordered[2], ordered[1], ordered[0])
+        else
+          Size.new(bounds.width, bounds.height, bounds.depth)
+        end
       end
 
       # -- Thickness utils --
