@@ -150,7 +150,7 @@
                 defaultLengthIncrease = '50mm';
                 defaultWidthIncrease = '5mm';
                 defaultThicknessIncrease = '5mm';
-                defaultStdThicknesses = '18mm;27mm;35mm;45mm;80mm;100mm';
+                defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
                 break;
             case 2:   // TYPE_PLYWOOD
                 defaultLengthIncrease = '10mm';
