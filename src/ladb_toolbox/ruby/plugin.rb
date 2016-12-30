@@ -10,13 +10,15 @@ module Ladb
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
       VERSION = '0.4.4'
 
+      DEFAULT_KEY_SECTION = 'ladb_toolbox'
+
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
       DIALOG_MINIMIZED_WIDTH = 90
       DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 2    # = 2 Tab buttons
       DIALOG_LEFT = 200
       DIALOG_TOP = 100
-      DIALOG_PREF_KEY = 'fr.lairdubois.plugin'
+      DIALOG_PREF_KEY = 'fr.lairdubois.toolbox'
 
       attr_accessor :dialog
 
@@ -107,41 +109,20 @@ module Ladb
 
           # -- Commands --
 
-          register_command('dialog_loaded') do |params|
-            {
-                :version => VERSION,
-                :sketchup_version => Sketchup.version.to_s,
-                :current_os => "#{@current_os}",
-                :locale => Sketchup.get_locale,
-                :language => @language,
-                :html_dialog_compatible => @html_dialog_compatible
-            }
+          register_command('core_read_default_values') do |params|
+            read_default_values_command(params)
           end
-          register_command('read_default_values') do |params|
-            keys = params['keys']
-            values = []
-            keys.each { |key|
-              values.push({
-                              :key => key,
-                              :value => Sketchup.read_default('ladb_toolbox', key)
-                          })
-            }
-            { :values => values }
+          register_command('core_write_default_value') do |params|
+            write_default_value_command(params)
           end
-          register_command('write_default_value') do |params|
-            key = params['key']
-            value = params['value']
-            Sketchup.write_default('ladb_toolbox', key, value)
+          register_command('core_dialog_loaded') do |params|
+            dialog_loaded_command
           end
-          register_command('dialog_minimize') do |params|
-            if @dialog
-              @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
-            end
+          register_command('core_dialog_minimize') do |params|
+            dialog_minimize_command
           end
-          register_command('dialog_maximize') do |params|
-            if @dialog
-              @dialog.set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
-            end
+          register_command('core_dialog_maximize') do |params|
+            dialog_maximize_command
           end
 
           @controllers.each { |controller|
@@ -217,6 +198,51 @@ module Ladb
             end
           end
 
+        end
+      end
+
+      private
+
+      # -- Commands ---
+
+      def read_default_values_command(params)
+        keys = params['keys']
+        values = []
+        keys.each { |key|
+          values.push({
+                          :key => key,
+                          :value => Sketchup.read_default(DEFAULT_KEY_SECTION, key)
+                      })
+        }
+        { :values => values }
+      end
+
+      def write_default_value_command(params)
+        key = params['key']
+        value = params['value']
+        Sketchup.write_default(DEFAULT_KEY_SECTION, key, value)
+      end
+
+      def dialog_loaded_command
+        {
+            :version => VERSION,
+            :sketchup_version => Sketchup.version.to_s,
+            :current_os => "#{@current_os}",
+            :locale => Sketchup.get_locale,
+            :language => @language,
+            :html_dialog_compatible => @html_dialog_compatible
+        }
+      end
+
+      def dialog_minimize_command
+        if @dialog
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
+        end
+      end
+
+      def dialog_maximize_command
+        if @dialog
+          @dialog.set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
         end
       end
 

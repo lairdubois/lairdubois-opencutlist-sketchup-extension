@@ -55,7 +55,7 @@
     LadbToolbox.prototype.pullSettingsValues = function (keys, callback) {
         var that = this;
 
-        rubyCallCommand('read_default_values', { keys: keys }, function(data) {          // Read settings values from SU default
+        rubyCallCommand('core_read_default_values', { keys: keys }, function(data) {          // Read settings values from SU default
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
@@ -67,7 +67,7 @@
 
     LadbToolbox.prototype.setSettingsValue = function (key, value) {
         this.settingsValues[key] = value;
-        rubyCallCommand('write_default_value', { key: key, value: value });             // Write settings value to SU default
+        rubyCallCommand('core_write_default_value', { key: key, value: value });             // Write settings value to SU default
     };
 
     LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
@@ -85,7 +85,7 @@
 
     LadbToolbox.prototype.minimize = function () {
         var that = this;
-        rubyCallCommand('dialog_minimize', null, function() {
+        rubyCallCommand('core_dialog_minimize', null, function() {
             that.$wrapper.hide();
             that.$btnMinimize.hide();
             that.$btnMaximize.show();
@@ -94,7 +94,7 @@
 
     LadbToolbox.prototype.maximize = function () {
         var that = this;
-        rubyCallCommand('dialog_maximize', null, function() {
+        rubyCallCommand('core_dialog_maximize', null, function() {
             that.$wrapper.show();
             that.$btnMinimize.show();
             that.$btnMaximize.hide();
