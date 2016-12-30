@@ -86,11 +86,7 @@
                 <td>
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
-                        {% for material_origin in part.material_origins %}
-                            {% if material_origin > 1 %} {# OWNED origin are ignored #}
-                                <a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~material_origin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ material_origin }}"></i></a>
-                            {% endif %}
-                        {% endfor %}
+                        {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}
                         &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>

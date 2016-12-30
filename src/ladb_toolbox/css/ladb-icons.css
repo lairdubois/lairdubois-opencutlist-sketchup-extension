@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'ladb_toolbox';
-  src:  url('../fonts/ladb_toolbox.eot?l17mmh');
-  src:  url('../fonts/ladb_toolbox.eot?l17mmh#iefix') format('embedded-opentype'),
-  url('../fonts/ladb_toolbox.ttf?l17mmh') format('truetype'),
-  url('../fonts/ladb_toolbox.woff?l17mmh') format('woff'),
-  url('../fonts/ladb_toolbox.svg?l17mmh#ladb_toolbox') format('svg');
+  src:  url('../fonts/ladb_toolbox.eot?y3si8u');
+  src:  url('../fonts/ladb_toolbox.eot?y3si8u#iefix') format('embedded-opentype'),
+  url('../fonts/ladb_toolbox.ttf?y3si8u') format('truetype'),
+  url('../fonts/ladb_toolbox.woff?y3si8u') format('woff'),
+  url('../fonts/ladb_toolbox.svg?y3si8u#ladb_toolbox') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,10 +24,13 @@ i, span.ladb-toolbox-icon {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ladb-toolbox-icon-material-origin-2:before {
-  content: "\e911";
+.ladb-toolbox-icon-material-origin-1:before {
+  content: "\e913";
 }
 .ladb-toolbox-icon-material-origin-3:before {
+  content: "\e911";
+}
+.ladb-toolbox-icon-material-origin-2:before {
   content: "\e912";
 }
 .ladb-toolbox-icon-edit:before {

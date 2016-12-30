@@ -37,6 +37,8 @@ gulp.task('rbz_create', function () {
 
             '!../src/**/.DS_store',
 
+            '!../src/**/icomoon/',
+
             '!../src/**/*.less',
             '!../src/**/less/**',
             '!../src/**/less/',

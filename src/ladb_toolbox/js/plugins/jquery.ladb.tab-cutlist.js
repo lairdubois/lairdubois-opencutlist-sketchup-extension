@@ -31,6 +31,7 @@
         this.$btnPartUpdate = $('#ladb_cutlist_part_update', this.$modalEditPart);
         this.$selectMaterialName = $('#ladb_cutlist_part_select_material_name', this.$modalEditPart);
         this.$inputPartName = $('#ladb_cutlist_part_input_name', this.$modalEditPart);
+        this.$divMaterialOrigins = $('.ladb-material-origins', this.$modalEditPart);
     };
 
     LadbTabCutlist.DEFAULTS = {};
@@ -149,7 +150,7 @@
 
                 // Populate material select
                 that.$selectMaterialName.empty();
-                that.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material_usages.twig" }).render({
+                that.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material-usages.twig" }).render({
                     materialUsages: that.materialUsages
                 }));
 
@@ -159,6 +160,14 @@
 
                 // Refresh select
                 that.$selectMaterialName.selectpicker('refresh');
+
+                // Material origins
+                that.$divMaterialOrigins.empty();
+                that.$divMaterialOrigins.append(Twig.twig({ ref: "tabs/cutlist/_material-origins.twig" }).render({
+                    materialOrigins: part.material_origins,
+                    displayOwned: true,
+                    flat: true
+                }));
 
                 that.$modalEditPart.modal('show');
 
