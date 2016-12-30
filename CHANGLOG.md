@@ -8,6 +8,7 @@ in 0.x versions.
 
   * Replace JS localstorage by SU defaults
   * Improve JS <-> Ruby command pipeline
+  * Cutlist materials origins improvements
 
 * 0.4.3 (2016-12-28)
 
