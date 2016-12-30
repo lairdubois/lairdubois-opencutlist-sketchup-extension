@@ -2,6 +2,7 @@
     'use strict';
 
     var OPTION_KEY_AUTO_ORIENT = 'cutlist_auto_orient';
+    var OPTION_KEY_SMART_MATERIAL = 'cutlist_smart_material';
     var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
     var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
 
@@ -26,6 +27,7 @@
 
         this.$modalOptions = $('#ladb_cutlist_modal_options', this.$element);
         this.$inputAutoOrient = $('#ladb_input_auto_orient', this.$modalOptions);
+        this.$inputSmartMaterial = $('#ladb_input_smart_material', this.$modalOptions);
         this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalOptions);
 
@@ -215,6 +217,10 @@
             that.options.auto_orient = that.$inputAutoOrient.is(':checked');
             that.toolbox.setSettingsValue(OPTION_KEY_AUTO_ORIENT, that.options.auto_orient);
         });
+        this.$inputSmartMaterial.on('change', function () {
+            that.options.smart_material = that.$inputSmartMaterial.is(':checked');
+            that.toolbox.setSettingsValue(OPTION_KEY_SMART_MATERIAL, that.options.smart_material);
+        });
         this.$inputPartNumberWithLetters.on('change', function () {
             that.options.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
             that.toolbox.setSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.options.part_number_with_letters);
@@ -231,18 +237,21 @@
 
         this.toolbox.pullSettingsValues([
             OPTION_KEY_AUTO_ORIENT,
+            OPTION_KEY_SMART_MATERIAL,
             OPTION_KEY_PART_NUMBER_WITH_LETTERS,
             OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP
         ], function() {
 
             that.options = {
                 auto_orient: that.toolbox.getSettingsValue(OPTION_KEY_AUTO_ORIENT, true),
+                smart_material: that.toolbox.getSettingsValue(OPTION_KEY_SMART_MATERIAL, true),
                 part_number_with_letters: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
                 part_number_sequence_by_group: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
             };
 
             // Init inputs values
             that.$inputAutoOrient.prop('checked', that.options.auto_orient);
+            that.$inputSmartMaterial.prop('checked', that.options.smart_material);
             that.$inputPartNumberWithLetters.prop('checked', that.options.part_number_with_letters);
             that.$inputPartNumberSequenceByGroup.prop('checked', that.options.part_number_sequence_by_group);
 

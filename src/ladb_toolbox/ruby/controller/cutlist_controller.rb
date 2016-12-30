@@ -43,9 +43,10 @@ module Ladb
       def generate_command(settings)
 
         # Check settings
+        auto_orient = settings['auto_orient']
+        smart_material = settings['smart_material']
         part_number_with_letters = settings['part_number_with_letters']
         part_number_sequence_by_group = settings['part_number_sequence_by_group']
-        auto_orient = settings['auto_orient']
 
         # Retrieve selected entities or all if no selection
         model = Sketchup.active_model
@@ -92,7 +93,7 @@ module Ladb
 
           component = component_path.last
 
-          material, material_origin = _get_smart_material(component_path)
+          material, material_origin = _get_material(component_path, smart_material)
           definition = component.definition
 
           material_name = material ? material.name : ''
@@ -401,7 +402,7 @@ module Ladb
 
       # -- Material Utils --
 
-      def _get_smart_material(path)
+      def _get_material(path, smart = true)
         unless path
           return nil, MATERIAL_ORIGIN_UNKNOW
         end
@@ -414,7 +415,7 @@ module Ladb
         end
         material = entity.material
         material_origin = MATERIAL_ORIGIN_OWNED
-        unless material
+        unless material or !smart
           material = _get_dominant_child_material(entity)
           if material
             material_origin = MATERIAL_ORIGIN_CHILD
