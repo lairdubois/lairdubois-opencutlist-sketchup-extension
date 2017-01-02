@@ -6,11 +6,11 @@
 {% include 'core/_alert-warnings.twig' %}
 
 {% if groups|length > 0 %}
-    <table id="ladb_summary" class="no-print table table-bordered ladb-cutlist">
+    <table id="ladb_summary" class="{% if userSettings.summary_no_print %}no-print {% endif %}table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="5" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary"><i class="ladb-toolbox-icon-eye-open"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{{ 'tab.cutlist.list.summary'|i18next }}</span>
                 </div>
@@ -20,7 +20,7 @@
         <tbody>
         <tr>
             <td class="text-center" width="5%">{{ 'tab.cutlist.list.type'|i18next }}</td>
-            <td class="text-center" width="55%">{{ 'tab.cutlist.list.material'|i18next }}</td>
+            <td class="text-center" width="55%">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
             <td class="text-center" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
             <td class="text-center" width="15%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             <td class="text-center" width="15%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
@@ -31,7 +31,7 @@
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     <div class="ladb-minitools no-print">
-                        <a href="#ladb_group_{{ group.id }}" class="ladb-scrollto" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_bloc'|i18next }}"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
+                        <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x{{ group.part_count }}</td>
@@ -47,7 +47,7 @@
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="{% if group.material_type > 0 %}8{% else %}6{% endif %}" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>
@@ -61,7 +61,7 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if group.material_type > 0 %}
                 <td class="text-center" colspan="2">{{ 'tab.cutlist.list.raw'|i18next }}</td>
-                <td class="text-center" colspan="3">Finie</td>
+                <td class="text-center" colspan="3">{{ 'tab.cutlist.list.final'|i18next }}</td>
             {% endif %}
         </tr>
         <tr>

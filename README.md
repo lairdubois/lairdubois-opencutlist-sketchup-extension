@@ -20,4 +20,4 @@ Documentation
 Authors
 -------
 
-See the list of [contributors](http://github.com/lairdubois/lairdubois/contributors).
+See the list of [contributors](http://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/contributors).

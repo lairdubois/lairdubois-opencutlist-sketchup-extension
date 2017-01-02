@@ -6,12 +6,14 @@ in 0.x versions.
 
 * 0.4.4
 
+  * English translation (thanks to @mobilarte)
   * Replace JS localstorage by SU defaults
   * Improve JS <-> Ruby command pipeline
   * Cutlist materials origins improvements
   * Cutlist auto_orient option
   * Cutlist smart_material option
   * Cutlist options help popovers
+  * Cutlist summary no-print setting
 
 * 0.4.3 (2016-12-28)
 

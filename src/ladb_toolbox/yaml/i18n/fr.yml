@@ -24,18 +24,19 @@ tab:
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     tooltip:
-      scroll_to_bloc: Défiler vers le bloc
+      show_hide_block: Afficher / Marquer ce bloc
+      scroll_to_block: Défiler vers le bloc
       edit_part_properties: Editer les propriétés
-      material_origin_1: La matière de cette pièce est définie sur ses instances
-      material_origin_2: La matière de cette pièce est actuellement héritée de l'un de ses éléments parents
-      material_origin_3: La matière de cette pièce est actuellement extraite des ses éléments enfants
+      material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
+      material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
+      material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite des ses éléments enfants
     form:
       title: Propriétés d'une pièce
       name: Nom
       material: Matière
     option:
       auto_orient: Orientation automatique des pièces
-      auto_orient_help: Si cette option est active, les 3 dimensions des pièces sont triées pour que la plus grande représente la longueur et la plus petite l'épaisseur.
+      auto_orient_help: Si cette option est active, les 3 dimensions des pièces sont triées pour que la plus grande représente la longueur et la plus petite l'épaisseur. Sinon, la longueur est sur l'axe rouge, la largeur sur le vert et l'épaisseur du le bleu.
       smart_material: Attrribution <em>intelligente</em> des matières
       smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attriburer la matière principale de leur éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
@@ -45,14 +46,15 @@ tab:
     list:
       summary: Résumé
       type: Type
-      material: Matière
+      material_thickness: Matière / Epaisseur
       part_count: Nb. pièces
       area: Surface
       volume: Volume
       number: N°
       name: Désignation
       count: Nb.
-      raw: Finie
+      raw: Brute
+      final: Finie
       length_short: Long.
       width_short: Larg.
       thickness: Epaisseur

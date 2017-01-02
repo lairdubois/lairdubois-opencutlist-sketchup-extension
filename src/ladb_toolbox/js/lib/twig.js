@@ -7155,7 +7155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} path The location of the template file on disk.
 	     * @param {Object|Function} The options or callback.
 	     * @param {Function} fn callback.
-	     * 
+	     *
 	     * @throws Twig.Error
 	     */
 	    Twig.exports.renderFile = function(path, options, fn) {

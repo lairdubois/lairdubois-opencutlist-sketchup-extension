@@ -1,16 +1,18 @@
 +function ($) {
     'use strict';
 
-    var OPTION_KEY_AUTO_ORIENT = 'cutlist_auto_orient';
-    var OPTION_KEY_SMART_MATERIAL = 'cutlist_smart_material';
-    var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_part_number_with_letters';
-    var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_part_number_sequence_by_group';
+    var OPTION_KEY_AUTO_ORIENT = 'cutlist_option_auto_orient';
+    var OPTION_KEY_SMART_MATERIAL = 'cutlist_option_smart_material';
+    var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_option_part_number_with_letters';
+    var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
+
+    var SETTING_KEY_SUMMARY_NO_PRINT = 'cutlist_setting_summary_hidden';
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabCutlist = function (element, settings, toolbox) {
-        this.settings = settings;
+    var LadbTabCutlist = function (element, options, toolbox) {
+        this.options = options;
         this.$element = $(element);
         this.toolbox = toolbox;
 
@@ -47,7 +49,7 @@
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
 
-        rubyCallCommand('cutlist_generate', this.options, function(data) {
+        rubyCallCommand('cutlist_generate', this.userOptions, function(data) {
 
             var errors = data.errors;
             var warnings = data.warnings;
@@ -78,6 +80,7 @@
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                userSettings: that.userSettings,
                 errors: errors,
                 warnings: warnings,
                 groups: groups
@@ -100,8 +103,12 @@
                     $i.removeClass('ladb-toolbox-icon-eye-open');
                 }
                 $(this).blur();
+                if (groupId == 'ladb_summary') {
+                    that.userSettings.summary_no_print = $group.hasClass('no-print');
+                    that.toolbox.setUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, that.userSettings.summary_no_print);
+                }
             });
-            $('a.ladb-scrollto', that.$page).on('click', function() {
+            $('a.ladb-btn-scrollto', that.$page).on('click', function() {
                 var target = $(this).attr('href');
                 $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 500).promise().then(function() {
                     $(target).effect("highlight", {}, 1500);
@@ -214,20 +221,20 @@
 
         // Bind inputs
         this.$inputAutoOrient.on('change', function () {
-            that.options.auto_orient = that.$inputAutoOrient.is(':checked');
-            that.toolbox.setSettingsValue(OPTION_KEY_AUTO_ORIENT, that.options.auto_orient);
+            that.userOptions.auto_orient = that.$inputAutoOrient.is(':checked');
+            that.toolbox.setUserSetting(OPTION_KEY_AUTO_ORIENT, that.userOptions.auto_orient);
         });
         this.$inputSmartMaterial.on('change', function () {
-            that.options.smart_material = that.$inputSmartMaterial.is(':checked');
-            that.toolbox.setSettingsValue(OPTION_KEY_SMART_MATERIAL, that.options.smart_material);
+            that.userOptions.smart_material = that.$inputSmartMaterial.is(':checked');
+            that.toolbox.setUserSetting(OPTION_KEY_SMART_MATERIAL, that.userOptions.smart_material);
         });
         this.$inputPartNumberWithLetters.on('change', function () {
-            that.options.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
-            that.toolbox.setSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.options.part_number_with_letters);
+            that.userOptions.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
+            that.toolbox.setUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.userOptions.part_number_with_letters);
         });
         this.$inputPartNumberSequenceByGroup.on('change', function () {
-            that.options.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
-            that.toolbox.setSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.options.part_number_sequence_by_group);
+            that.userOptions.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
+            that.toolbox.setUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.userOptions.part_number_sequence_by_group);
         });
 
     };
@@ -235,25 +242,30 @@
     LadbTabCutlist.prototype.init = function () {
         var that = this;
 
-        this.toolbox.pullSettingsValues([
+        this.toolbox.pullUserSettings([
             OPTION_KEY_AUTO_ORIENT,
             OPTION_KEY_SMART_MATERIAL,
             OPTION_KEY_PART_NUMBER_WITH_LETTERS,
-            OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP
+            OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP,
+            SETTING_KEY_SUMMARY_NO_PRINT
         ], function() {
 
-            that.options = {
-                auto_orient: that.toolbox.getSettingsValue(OPTION_KEY_AUTO_ORIENT, true),
-                smart_material: that.toolbox.getSettingsValue(OPTION_KEY_SMART_MATERIAL, true),
-                part_number_with_letters: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
-                part_number_sequence_by_group: that.toolbox.getSettingsValue(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
+            that.userOptions = {
+                auto_orient: that.toolbox.getUserSetting(OPTION_KEY_AUTO_ORIENT, true),
+                smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, true),
+                part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
+                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
+            };
+
+            that.userSettings = {
+                summary_no_print: that.toolbox.getUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, false)
             };
 
             // Init inputs values
-            that.$inputAutoOrient.prop('checked', that.options.auto_orient);
-            that.$inputSmartMaterial.prop('checked', that.options.smart_material);
-            that.$inputPartNumberWithLetters.prop('checked', that.options.part_number_with_letters);
-            that.$inputPartNumberSequenceByGroup.prop('checked', that.options.part_number_sequence_by_group);
+            that.$inputAutoOrient.prop('checked', that.userOptions.auto_orient);
+            that.$inputSmartMaterial.prop('checked', that.userOptions.smart_material);
+            that.$inputPartNumberWithLetters.prop('checked', that.userOptions.part_number_with_letters);
+            that.$inputPartNumberSequenceByGroup.prop('checked', that.userOptions.part_number_sequence_by_group);
 
             // Init selects
             that.$selectMaterialName.selectpicker({
@@ -277,20 +289,20 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(setting, params) {
+    function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tabCutlist');
-            var settings = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
+            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (settings.toolbox == undefined) {
+                if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, settings, settings.toolbox)));
+                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options, options.toolbox)));
             }
-            if (typeof setting == 'string') {
-                data[setting](params);
+            if (typeof option == 'string') {
+                data[option](params);
             } else {
                 data.init();
             }

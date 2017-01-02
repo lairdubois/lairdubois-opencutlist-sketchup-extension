@@ -1,0 +1,89 @@
+default:
+  minimize: Minimize
+  maximize: Maximize
+  cancel: Cancel
+  validate: Validate
+  close: Close
+  empty_filename: Untitled
+  refresh: Refresh
+  generate: Generate
+  print: Print
+  options: Options
+  caution: Caution
+  help: Help
+  error: Error
+  warning: Warning
+core:
+  warning:
+    old_su: You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.<br/>To take full advantage of this plugin, we recommend to upgrade to <strong>Sketchup 2017</strong>.
+tab:
+  cutlist:
+    label: Cutlist
+    title: Cutlist
+    help: Select the root of the cutlist in your scene then click on the <strong>Generate</strong> button.<br>If no component was selected, all visible components of the scene will be considered.
+    material_unknow: Undefined material
+    not_available_thickness: Unavailable thickness
+    tooltip:
+      show_hide_block: Afficher / Marquer ce bloc
+      scroll_to_block: Scroll to block
+      edit_part_properties: Edit properties
+      material_origin_1: The material of this part is defined on its instances
+      material_origin_2: The material of this part is inherited from one of its parent elements
+      material_origin_3: The material of this part is extracted from one its child elements
+    form:
+      title: Properties of a part
+      name: Name
+      material: Material
+    option:
+      auto_orient: Automatic orientation of parts
+      auto_orient_help: If this option is enabled, the 3 dimensions of a part are sorted so that the largest represents length and the smallest represents the thickness.
+      smart_material: <em>Intelligent</em> assignment of material
+      smart_material_help: If this option is enabled, parts without defined material may be assigned the material assigned to one of their parent or child.
+      part_number_with_letters: Use letters to enumerate parts
+      part_number_with_letters_help: If this option is enabled, parts are enumerated with letters (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: Reinitialize the enumeration of parts by block
+      part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+    list:
+      summary: Summary
+      type: Type
+      material_thickness: Material / Thickness
+      part_count: Quantity
+      area: Surface
+      volume: Volume
+      number: N°
+      name: Designation
+      count: #
+      raw: Raw
+      final: Final
+      length_short: L
+      width_short: W
+      thickness: Thickness
+      thickness_short: T
+    error:
+      no_component_in_selection: No instance of a visible component was detected in your selection.
+      no_component_in_model: No instance of a visible component was detected in your scene.
+    warning:
+      partial_cutlist: This cutlist is a partial representation of your model, because it only uses selected parts.
+      no_typed_materials_in_model: Your model does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
+      no_typed_materials_in_selection: Your selection does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
+  materials:
+    label: Materials
+    title: Materials
+    form:
+      title: Properties of material
+      name: Name
+      type: Type
+      type_unknow: Unknown
+      type_hardwood: Solid wood
+      type_plywood: Sheet good
+      cut_options: Cutlist options
+      length_increase: Length oversize
+      width_increase: Width oversize
+      thickness_increase: Thickness oversize
+      std_thicknesses: Standard thickness
+      std_thicknesses_help: Raw thicknesses available in mm.
+    error:
+      no_materials: Your model does not contain any material.
+  about:
+    label: About
+    title: About

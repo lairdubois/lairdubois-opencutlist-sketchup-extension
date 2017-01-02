@@ -6,20 +6,20 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbToolbox = function (element, settings) {
-        this.settings = settings;
+    var LadbToolbox = function (element, options) {
+        this.options = options;
         this.$element = $(element);
 
         this.capabilities = {
-            version: settings.version,
-            sketchupVersion: settings.sketchup_version,
-            currentOS: settings.current_os,
-            locale: settings.locale,
-            language: settings.language,
-            htmlDialogCompatible: settings.html_dialog_compatible
+            version: options.version,
+            sketchupVersion: options.sketchup_version,
+            currentOS: options.current_os,
+            locale: options.locale,
+            language: options.language,
+            htmlDialogCompatible: options.html_dialog_compatible
         };
 
-        this.settingsValues = {};
+        this.userSettings = {};
 
         this.activeTabName = null;
         this.tabs = {};
@@ -52,26 +52,26 @@
         ]
     };
 
-    LadbToolbox.prototype.pullSettingsValues = function (keys, callback) {
+    LadbToolbox.prototype.pullUserSettings = function (keys, callback) {
         var that = this;
 
         rubyCallCommand('core_read_default_values', { keys: keys }, function(data) {          // Read settings values from SU default
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
-                that.settingsValues[value.key] = value.value;
+                that.userSettings[value.key] = value.value;
             }
             callback();
         });
     };
 
-    LadbToolbox.prototype.setSettingsValue = function (key, value) {
-        this.settingsValues[key] = value;
+    LadbToolbox.prototype.setUserSetting = function (key, value) {
+        this.userSettings[key] = value;
         rubyCallCommand('core_write_default_value', { key: key, value: value });             // Write settings value to SU default
     };
 
-    LadbToolbox.prototype.getSettingsValue = function (key, defaultValue) {
-        var value = this.settingsValues[key];
+    LadbToolbox.prototype.getUserSetting = function (key, defaultValue) {
+        var value = this.userSettings[key];
         if (value != null) {
             if (defaultValue != undefined) {
                 if (typeof(defaultValue) == 'number' && isNaN(value)) {
@@ -164,7 +164,7 @@
         this.$btnMaximize.on('click', function () {
             that.maximize();
             if (!that.activeTabName) {
-                that.selectTab(that.settings.defaultTabName);
+                that.selectTab(that.options.defaultTabName);
             }
         });
         $.each(this.tabBtns, function (tabName, $tabBtn) {
@@ -176,7 +176,7 @@
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
-            that.setSettingsValue(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
+            that.setUserSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
 
     };
@@ -192,11 +192,11 @@
         // Continue with a timeout to be sure that translations are loaded
         setTimeout(function() {
 
-            that.pullSettingsValues([
+            that.pullUserSettings([
                 KEY_COMPATIBILITY_ALERT_HIDDEN
             ], function() {
 
-                that.compatibilityAlertHidden = that.getSettingsValue(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+                that.compatibilityAlertHidden = that.getUserSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
 
                 // Add i18next twig filter
                 Twig.extendFilter("i18next", function(value, options) {
@@ -207,7 +207,7 @@
                 that.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
                     capabilities: that.capabilities,
                     compatibilityAlertHidden: that.compatibilityAlertHidden,
-                    tabDefs: that.settings.tabDefs
+                    tabDefs: that.options.tabDefs
                 }));
 
                 // Fetch usefull elements
@@ -215,8 +215,8 @@
                 that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
                 that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
-                for (var i = 0; i < that.settings.tabDefs.length; i++) {
-                    var tabDef = that.settings.tabDefs[i];
+                for (var i = 0; i < that.options.tabDefs.length; i++) {
+                    var tabDef = that.options.tabDefs[i];
                     that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
                 }
 
@@ -232,17 +232,17 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(setting, params) {
+    function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.toolbox');
-            var settings = $.extend({}, LadbToolbox.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
+            var options = $.extend({}, LadbToolbox.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.toolbox', (data = new LadbToolbox(this, settings)));
+                $this.data('ladb.toolbox', (data = new LadbToolbox(this, options)));
             }
-            if (typeof settings == 'string') {
-                data[settings](params);
+            if (typeof option == 'string') {
+                data[option](params);
             } else {
                 data.init();
             }
