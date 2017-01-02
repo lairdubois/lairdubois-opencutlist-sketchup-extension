@@ -7141,7 +7141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            data: markup,
 	            path: path,
 	            id: id,
-	            options: options.options['twig options']
+	            options: options.settings['twig options']
 	        }); // Twig.Templates.load(id) ||
 
 	        return function(context) {
@@ -7155,7 +7155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} path The location of the template file on disk.
 	     * @param {Object|Function} The options or callback.
 	     * @param {Function} fn callback.
-	     * 
+	     *
 	     * @throws Twig.Error
 	     */
 	    Twig.exports.renderFile = function(path, options, fn) {
@@ -7167,7 +7167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        options = options || {};
 
-	        var settings = options.options || {};
+	        var settings = options.settings || {};
 
 	        var params = {
 	            path: path,
