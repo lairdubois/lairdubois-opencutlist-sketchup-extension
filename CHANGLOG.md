@@ -6,6 +6,7 @@ in 0.x versions.
 
 * 0.4.4
 
+  * English translation (thanks to @mobilarte)
   * Replace JS localstorage by SU defaults
   * Improve JS <-> Ruby command pipeline
   * Cutlist materials origins improvements
