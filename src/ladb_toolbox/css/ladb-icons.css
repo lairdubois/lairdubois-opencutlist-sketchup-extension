@@ -69,6 +69,9 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-eye-open:before {
   content: "\e90b";
 }
+.ladb-toolbox-icon-tip:before {
+  content: "\e914";
+}
 .ladb-toolbox-icon-hardwood:before {
   content: "\e903";
 }

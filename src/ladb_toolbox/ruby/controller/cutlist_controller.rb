@@ -154,7 +154,7 @@ module Ladb
 
         }
 
-        # Warnings
+        # Warnings & tips
         if component_paths.length > 0
           if use_selection
             cutlist.add_warning("tab.cutlist.warning.partial_cutlist")
@@ -170,6 +170,7 @@ module Ladb
           }
           if hardwood_material_count == 0 and plywood_material_count == 0
             cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
+            cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
           end
         end
 
@@ -179,6 +180,7 @@ module Ladb
         data = {
             :errors => cutlist.errors,
             :warnings => cutlist.warnings,
+            :tips => cutlist.tips,
             :filename => cutlist.filename,
             :page_label => cutlist.page_label,
             :material_usages => [],
