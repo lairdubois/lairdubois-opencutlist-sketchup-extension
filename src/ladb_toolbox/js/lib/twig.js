@@ -7141,7 +7141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            data: markup,
 	            path: path,
 	            id: id,
-	            options: options.settings['twig options']
+	            options: options.options['twig options']
 	        }); // Twig.Templates.load(id) ||
 
 	        return function(context) {
@@ -7167,7 +7167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        options = options || {};
 
-	        var settings = options.settings || {};
+	        var settings = options.options || {};
 
 	        var params = {
 	            path: path,

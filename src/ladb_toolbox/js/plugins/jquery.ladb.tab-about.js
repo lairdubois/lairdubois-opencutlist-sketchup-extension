@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabAbout = function (element, settings, toolbox) {
-        this.settings = settings;
+    var LadbTabAbout = function (element, options, toolbox) {
+        this.options = options;
         this.$element = $(element);
         this.toolbox = toolbox;
 
@@ -26,20 +26,20 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(setting, params) {
+    function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladg.tabAbout');
-            var settings = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
+            var options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (settings.toolbox == undefined) {
+                if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladg.tabAbout', (data = new LadbTabAbout(this, settings, settings.toolbox)));
+                $this.data('ladg.tabAbout', (data = new LadbTabAbout(this, options, options.toolbox)));
             }
-            if (typeof setting == 'string') {
-                data[setting](params);
+            if (typeof option == 'string') {
+                data[option](params);
             } else {
                 data.init();
             }

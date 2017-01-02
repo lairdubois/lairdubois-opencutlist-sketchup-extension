@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabMaterials = function (element, settings, toolbox) {
-        this.settings = settings;
+    var LadbTabMaterials = function (element, options, toolbox) {
+        this.options = options;
         this.$element = $(element);
         this.toolbox = toolbox;
 
@@ -159,17 +159,17 @@
                 defaultStdThicknesses = '4mm;8mm;10mm;15mm;18mm;22mm';
                 break;
         }
-        this.$inputLengthIncrease.val(this.toolbox.getSettingsValue('materials_type_' + type + '_length_increase', defaultLengthIncrease));
-        this.$inputWidthIncrease.val(this.toolbox.getSettingsValue('materials_type_' + type + '_width_increase', defaultWidthIncrease));
-        this.$inputThicknessIncrease.val(this.toolbox.getSettingsValue('materials_type_' + type + '_thickness_increase', defaultThicknessIncrease));
-        this.$inputStdThicknesses.val(this.toolbox.getSettingsValue('materials_type_' + type + '_std_thicknesses', defaultStdThicknesses));
+        this.$inputLengthIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_length_increase', defaultLengthIncrease));
+        this.$inputWidthIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_width_increase', defaultWidthIncrease));
+        this.$inputThicknessIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_thickness_increase', defaultThicknessIncrease));
+        this.$inputStdThicknesses.val(this.toolbox.getUserSetting('materials_type_' + type + '_std_thicknesses', defaultStdThicknesses));
     };
 
     LadbTabMaterials.prototype.storeDefaultCutOptionsFormSectionByType = function (type) {
-        this.toolbox.setSettingsValue('materials_type_' + type + '_length_increase', this.$inputLengthIncrease.val());
-        this.toolbox.setSettingsValue('materials_type_' + type + '_width_increase', this.$inputWidthIncrease.val());
-        this.toolbox.setSettingsValue('materials_type_' + type + '_thickness_increase', this.$inputThicknessIncrease.val());
-        this.toolbox.setSettingsValue('materials_type_' + type + '_std_thicknesses', this.$inputStdThicknesses.val());
+        this.toolbox.setUserSetting('materials_type_' + type + '_length_increase', this.$inputLengthIncrease.val());
+        this.toolbox.setUserSetting('materials_type_' + type + '_width_increase', this.$inputWidthIncrease.val());
+        this.toolbox.setUserSetting('materials_type_' + type + '_thickness_increase', this.$inputThicknessIncrease.val());
+        this.toolbox.setUserSetting('materials_type_' + type + '_std_thicknesses', this.$inputStdThicknesses.val());
     };
 
     LadbTabMaterials.prototype.bind = function () {
@@ -219,7 +219,7 @@
     LadbTabMaterials.prototype.init = function () {
         var that = this;
 
-        this.toolbox.pullSettingsValues([
+        this.toolbox.pullUserSettings([
             'materials_type_0_length_increase',
             'materials_type_1_length_increase',
             'materials_type_2_length_increase',
@@ -255,20 +255,20 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(setting, params) {
+    function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tabMaterials');
-            var settings = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof setting == 'object' && setting);
+            var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (settings.toolbox == undefined) {
+                if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, settings, settings.toolbox)));
+                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, options, options.toolbox)));
             }
-            if (typeof setting == 'string') {
-                data[setting](params);
+            if (typeof option == 'string') {
+                data[option](params);
             } else {
                 data.init();
             }

@@ -24,11 +24,12 @@ tab:
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     tooltip:
-      scroll_to_bloc: Défiler vers le bloc
+      show_hide_block: Afficher / Marquer ce bloc
+      scroll_to_block: Défiler vers le bloc
       edit_part_properties: Editer les propriétés
-      material_origin_1: La matière de cette pièce est définie sur ses instances
-      material_origin_2: La matière de cette pièce est actuellement héritée de l'un de ses éléments parents
-      material_origin_3: La matière de cette pièce est actuellement extraite des ses éléments enfants
+      material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
+      material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
+      material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite des ses éléments enfants
     form:
       title: Propriétés d'une pièce
       name: Nom
@@ -45,14 +46,15 @@ tab:
     list:
       summary: Résumé
       type: Type
-      material: Matière
+      material_thickness: Matière / Epaisseur
       part_count: Nb. pièces
       area: Surface
       volume: Volume
       number: N°
       name: Désignation
       count: Nb.
-      raw: Finie
+      raw: Brute
+      final: Finie
       length_short: Long.
       width_short: Larg.
       thickness: Epaisseur

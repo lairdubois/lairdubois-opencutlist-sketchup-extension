@@ -12,6 +12,7 @@ in 0.x versions.
   * Cutlist auto_orient option
   * Cutlist smart_material option
   * Cutlist options help popovers
+  * Cutlist summary no-print setting
 
 * 0.4.3 (2016-12-28)
 

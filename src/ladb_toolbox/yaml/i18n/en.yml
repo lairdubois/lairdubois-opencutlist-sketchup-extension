@@ -24,7 +24,8 @@ tab:
     material_unknow: Undefined material
     not_available_thickness: Unavailable thickness
     tooltip:
-      scroll_to_bloc: Scroll to block
+      show_hide_block: Afficher / Marquer ce bloc
+      scroll_to_block: Scroll to block
       edit_part_properties: Edit properties
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
@@ -45,7 +46,7 @@ tab:
     list:
       summary: Summary
       type: Type
-      material: Material
+      material_thickness: Material / Thickness
       part_count: Quantity
       area: Surface
       volume: Volume
@@ -53,6 +54,7 @@ tab:
       name: Designation
       count: #
       raw: Raw
+      final: Final
       length_short: L
       width_short: W
       thickness: Thickness
@@ -61,7 +63,7 @@ tab:
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
     warning:
-      partial_cutlist: This cutlist is a partial representation of your model, because it only use selected parts.
+      partial_cutlist: This cutlist is a partial representation of your model, because it only uses selected parts.
       no_typed_materials_in_model: Your model does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
       no_typed_materials_in_selection: Your selection does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
   materials:
