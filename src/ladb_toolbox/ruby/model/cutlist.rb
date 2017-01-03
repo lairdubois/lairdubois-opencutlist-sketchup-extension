@@ -3,11 +3,12 @@ module Ladb
     class Cutlist
 
       attr_accessor :filename, :page_label
-      attr_reader :errors, :warnings, :material_usages, :group_defs
+      attr_reader :errors, :warnings, :tips, :material_usages, :group_defs
 
       def initialize(filename, page_label)
         @errors = []
         @warnings = []
+        @tips = []
         @filename = filename
         @page_label = page_label
         @material_usages = {}
@@ -20,6 +21,10 @@ module Ladb
 
       def add_warning(warning)
         @warnings.push(warning)
+      end
+
+      def add_tip(tip)
+        @tips.push(tip)
       end
 
       def set_material_usage(key, material_usage)

@@ -13,6 +13,7 @@ default:
   help: Aide
   error: Erreur
   warning: Avertissement
+  tip: Astuce
 core:
   warning:
     old_su: Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.<br/>Pour profiter pleinement de ce plugin, il est préconisé d'utiliser <strong>Sketchup 2017</strong>.
@@ -66,6 +67,8 @@ tab:
       partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
       no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>).
       no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>).
+    tip:
+      no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>) dans l'onglet <strong>Matières</strong>.
   materials:
     label: Matières
     title: Matières

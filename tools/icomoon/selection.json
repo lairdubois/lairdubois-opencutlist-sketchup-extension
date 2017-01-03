@@ -27,7 +27,7 @@
         {}
       ],
       "properties": {
-        "order": 109,
+        "order": 113,
         "id": 22,
         "name": "material-origin-1",
         "prevSize": 20,
@@ -60,7 +60,7 @@
         {}
       ],
       "properties": {
-        "order": 107,
+        "order": 114,
         "id": 21,
         "name": "material-origin-3",
         "prevSize": 20,
@@ -93,7 +93,7 @@
         {}
       ],
       "properties": {
-        "order": 108,
+        "order": 115,
         "id": 20,
         "name": "material-origin-2",
         "prevSize": 20,
@@ -123,7 +123,7 @@
         {}
       ],
       "properties": {
-        "order": 87,
+        "order": 117,
         "id": 18,
         "name": "edit",
         "prevSize": 20,
@@ -153,7 +153,7 @@
         {}
       ],
       "properties": {
-        "order": 88,
+        "order": 118,
         "id": 15,
         "name": "arrow-circle-down",
         "prevSize": 20,
@@ -183,7 +183,7 @@
         {}
       ],
       "properties": {
-        "order": 89,
+        "order": 119,
         "id": 16,
         "name": "arrow-circle-up",
         "prevSize": 20,
@@ -213,7 +213,7 @@
         {}
       ],
       "properties": {
-        "order": 93,
+        "order": 123,
         "id": 9,
         "name": "settings",
         "prevSize": 20,
@@ -242,7 +242,7 @@
         {}
       ],
       "properties": {
-        "order": 103,
+        "order": 124,
         "id": 8,
         "name": "warning",
         "prevSize": 20,
@@ -271,7 +271,7 @@
         {}
       ],
       "properties": {
-        "order": 95,
+        "order": 125,
         "id": 7,
         "name": "help",
         "prevSize": 20,
@@ -301,7 +301,7 @@
         {}
       ],
       "properties": {
-        "order": 96,
+        "order": 126,
         "id": 6,
         "name": "print",
         "prevSize": 20,
@@ -309,7 +309,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 13
+      "iconIdx": 14
     },
     {
       "icon": {
@@ -330,7 +330,7 @@
         {}
       ],
       "properties": {
-        "order": 97,
+        "order": 127,
         "id": 5,
         "name": "cutlist",
         "prevSize": 20,
@@ -338,7 +338,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 14
+      "iconIdx": 15
     },
     {
       "icon": {
@@ -363,7 +363,7 @@
         {}
       ],
       "properties": {
-        "order": 86,
+        "order": 116,
         "id": 19,
         "name": "tick",
         "prevSize": 32,
@@ -399,7 +399,7 @@
         {}
       ],
       "properties": {
-        "order": 90,
+        "order": 120,
         "id": 12,
         "name": "link",
         "prevSize": 32,
@@ -441,7 +441,7 @@
         {}
       ],
       "properties": {
-        "order": 91,
+        "order": 121,
         "id": 10,
         "name": "eye-close",
         "prevSize": 32,
@@ -473,7 +473,7 @@
         {}
       ],
       "properties": {
-        "order": 92,
+        "order": 122,
         "id": 11,
         "name": "eye-open",
         "prevSize": 32,
@@ -482,6 +482,35 @@
       "setIdx": 0,
       "setId": 2,
       "iconIdx": 9
+    },
+    {
+      "icon": {
+        "paths": [
+          "M512 64c-176.731 0-320 143.269-320 320 0 104.69 50.278 197.633 128 256.015v191.985c0 35.346 28.653 64 64 64 0 35.346 28.653 64 64 64h128c35.347 0 64-28.654 64-64 35.347 0 64-28.654 64-64v-191.985c77.722-58.382 128-151.325 128-256.015 0-176.731-143.269-320-320-320zM640 800c0 17.673-14.326 32-32 32h-192c-17.674 0-32-14.327-32-32v-32h256v32zM704 553.307c-33.234 33.030-64 42.389-64 124.041v26.652h-64v-128l128-128v-64l-64-64-64 64-64-64-64 64-64-64-64 64v64l128 128v128h-64v-26.652c0-81.652-30.766-91.011-64-124.041-39.823-45.127-64-104.389-64-169.307 0-141.385 114.615-256 256-256s256 114.615 256 256c0 64.918-24.177 124.18-64 169.307zM512 576l-128-128v-64l64 64 64-64 64 64 64-64v64l-128 128z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "tip"
+        ],
+        "grid": 16
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 112,
+        "id": 23,
+        "name": "tip",
+        "prevSize": 32,
+        "code": 59668
+      },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 13
     },
     {
       "icon": {
@@ -502,7 +531,7 @@
         {}
       ],
       "properties": {
-        "order": 100,
+        "order": 130,
         "id": 17,
         "name": "hardwood",
         "prevSize": 32,
@@ -510,7 +539,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 17
+      "iconIdx": 18
     },
     {
       "icon": {
@@ -531,7 +560,7 @@
         {}
       ],
       "properties": {
-        "order": 98,
+        "order": 128,
         "id": 4,
         "name": "materials",
         "prevSize": 32,
@@ -539,7 +568,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 15
+      "iconIdx": 16
     },
     {
       "icon": {
@@ -569,7 +598,7 @@
         {}
       ],
       "properties": {
-        "order": 99,
+        "order": 129,
         "id": 3,
         "name": "panel",
         "prevSize": 32,
@@ -577,7 +606,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 16
+      "iconIdx": 17
     },
     {
       "icon": {
@@ -598,7 +627,7 @@
         {}
       ],
       "properties": {
-        "order": 101,
+        "order": 131,
         "id": 0,
         "name": "chevron-right",
         "prevSize": 32,
@@ -606,7 +635,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 18
+      "iconIdx": 19
     },
     {
       "icon": {
@@ -627,7 +656,7 @@
         {}
       ],
       "properties": {
-        "order": 102,
+        "order": 132,
         "id": 1,
         "name": "chevron-left",
         "prevSize": 32,
@@ -635,7 +664,7 @@
       },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 19
+      "iconIdx": 20
     }
   ],
   "height": 1024,

@@ -42,6 +42,9 @@
         </tbody>
     </table>
 {% endif %}
+
+{% include 'core/_alert-tips.twig' %}
+
 {% for group in groups %}
     <table id="ladb_group_{{ group.id }}" class="table table-bordered ladb-cutlist">
         <thead>

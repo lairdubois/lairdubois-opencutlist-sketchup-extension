@@ -53,6 +53,7 @@
 
             var errors = data.errors;
             var warnings = data.warnings;
+            var tips = data.tips;
             var filename = data.filename;
             var pageLabel = data.page_label;
             var materialUsages = data.material_usages;
@@ -83,6 +84,7 @@
                 userSettings: that.userSettings,
                 errors: errors,
                 warnings: warnings,
+                tips: tips,
                 groups: groups
             }));
 
@@ -161,7 +163,7 @@
 
                 // Populate material select
                 that.$selectMaterialName.empty();
-                that.$selectMaterialName.append(Twig.twig({ ref: "tabs/cutlist/_material-usages.twig" }).render({
+                that.$selectMaterialName.append(Twig.twig({ref: "tabs/cutlist/_material-usages.twig"}).render({
                     materialUsages: that.materialUsages
                 }));
 
@@ -174,11 +176,13 @@
 
                 // Material origins
                 that.$divMaterialOrigins.empty();
-                that.$divMaterialOrigins.append(Twig.twig({ ref: "tabs/cutlist/_material-origins.twig" }).render({
-                    materialOrigins: part.material_origins,
-                    displayOwned: true,
-                    flat: true
-                }));
+                if (part.material_name) {
+                    that.$divMaterialOrigins.append(Twig.twig({ref: "tabs/cutlist/_material-origins.twig"}).render({
+                        materialOrigins: part.material_origins,
+                        displayOwned: true,
+                        flat: true
+                    }));
+                }
 
                 that.$modalEditPart.modal('show');
 
