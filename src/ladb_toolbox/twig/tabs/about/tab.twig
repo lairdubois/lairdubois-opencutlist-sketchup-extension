@@ -1,11 +1,11 @@
 {% extends 'tabs/base-tab.twig' %}
 
 {% block containerInner %}
-    <h3>Version</h3>
+    <h3>{{ 'tab.about.version'|i18next }}</h3>
     <p>{{ capabilities.version }} {{ capabilities.language|upper }} <em>( SU {{ capabilities.sketchupVersion }} - {{ capabilities.currentOS }} - {{ capabilities.locale }} )</em></p>
-    <h3>Crédits techniques</h3>
-    <p>Le plugin <em>L'Air du Bois : Boîte à outils Sketchup</em> est développé par <a href="https://www.lairdubois.fr/zeloko" target="_blank">Boris Beaulant</a> et disponible en Open Source sous lience <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE" target="_blank">GNU GPLv3</a> sur son <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin" target="_blank">dépôt GitHub</a>.</p>
-    <p>Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels <a href="https://fr.wikipedia.org/wiki/Open_source" target="_blank">Open Source</a> suivantes :</p>
+    <h3>{{ 'tab.about.credits'|i18next }}</h3>
+    <p>{{ 'tab.about.credits_description'|i18next }}</p>
+    <p>{{ 'tab.about.credits_vendors'|i18next }}</p>
     <ul>
         <li>
             <a href="https://jquery.com/" target="_blank">jQuery</a>
@@ -37,5 +37,5 @@
             <span class="label label-default">JS</span>
         </li>
     </ul>
-    <p>Un remerciement particulier à <a href="https://www.jetbrains.com" target="_blank">JetBrains</a> pour leur soutien à ce projet par leur <a href="https://www.jetbrains.com/buy/opensource/">Licence spéciale pour les projets Open Source</a>.</p>
+    <p>{{ 'tab.about.credits_thanks'|i18next }}</p>
 {% endblock %}
