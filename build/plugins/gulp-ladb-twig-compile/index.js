@@ -24,7 +24,7 @@ module.exports = function (opt) {
 
             // LADB Sanitize
             data = data.replace('twig({', 'Twig.twig({allowInlineIncludes:true, ');
-            //Fix for compiling on Windows (including slash above)
+            // Fix for compiling on Windows (including slash above)
             data = data.replace(/\\r\\n/g, '\\n');
 
         } catch (err) {

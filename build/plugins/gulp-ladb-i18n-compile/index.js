@@ -35,15 +35,11 @@ module.exports = function (opt) {
         if (file.isNull()) return cb(null, file);
         if (file.isStream()) return cb(new PluginError('gulp-ladb-i18n-compile', 'Streaming not supported'));
 
-        var options = merge({
-            safe: false
-        }, opt);
         var data;
         try {
 
             var contents = file.contents.toString('utf8');
-            var ymlOptions = { schema: yaml.DEFAULT_FULL_SCHEMA };
-            var ymlDocument = options.safe ? yaml.safeLoad(contents, ymlOptions) : yaml.load(contents, ymlOptions);
+            var ymlDocument = yaml.safeLoad(contents);
 
             markownValues(ymlDocument);
 

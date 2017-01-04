@@ -13,14 +13,19 @@ default:
   help: Help
   error: Error
   warning: Warning
+  tip: Astuce
 core:
   warning:
-    old_su: You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.<br/>To take full advantage of this plugin, we recommend to upgrade to <strong>Sketchup 2017</strong>.
+    old_su: |
+      You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
+      To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
 tab:
   cutlist:
     label: Cutlist
     title: Cutlist
-    help: Select the root of the cutlist in your scene then click on the <strong>Generate</strong> button.<br>If no component was selected, all visible components of the scene will be considered.
+    help: |
+      Select the root of the cutlist in your scene then click on the **Generate** button.
+      If no component was selected, all visible components of the scene will be considered.
     material_unknow: Undefined material
     not_available_thickness: Unavailable thickness
     tooltip:
@@ -37,7 +42,7 @@ tab:
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: If this option is enabled, the 3 dimensions of a part are sorted so that the largest represents length and the smallest represents the thickness.
-      smart_material: <em>Intelligent</em> assignment of material
+      smart_material: "*Intelligent* assignment of material"
       smart_material_help: If this option is enabled, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is enabled, parts are enumerated with letters (A, B, C, ... Z, AA, AB, ...).
@@ -64,8 +69,10 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
     warning:
       partial_cutlist: This cutlist is a partial representation of your model, because it only uses selected parts.
-      no_typed_materials_in_model: Your model does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
-      no_typed_materials_in_selection: Your selection does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
+      no_typed_materials_in_model: Your model does not use any defined material (**Solid Wood** or **Sheet Material**).
+      no_typed_materials_in_selection: Your selection does not use any defined material (**Solid Wood** or **Sheet Material**).
+    tip:
+      no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet **Matières**.
   materials:
     label: Materials
     title: Materials
@@ -87,3 +94,9 @@ tab:
   about:
     label: About
     title: About
+    version: Version
+    credits: Crédits techniques
+    credits_description: "Le plugin *L'Air du Bois : Boîte à outils Sketchup* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et [contributeurs](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) et disponible en Open Source sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin)."
+    credits_vendors: "Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels Open Source suivantes :"
+    credits_thanks: "Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/)."
+    
