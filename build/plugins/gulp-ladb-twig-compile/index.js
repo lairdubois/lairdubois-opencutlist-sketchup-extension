@@ -27,6 +27,10 @@ module.exports = function (opt) {
             //Fix for compiling on Windows (including slash above)
             data = data.replace(/\\r\\n/g, '\\n');
 
+            //Fix for compiling on Windows (including slash above)
+            data = data.replace(/\\r\\n/g, '\\n');
+
+
         } catch (err) {
             return cb(new PluginError('gulp-ladb-twig-compile', err));
         }
