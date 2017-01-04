@@ -13,18 +13,19 @@ default:
   help: Help
   error: Error
   warning: Warning
+  tip: Tip
 core:
   warning:
-    old_su: You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.<br/>To take full advantage of this plugin, we recommend to upgrade to <strong>Sketchup 2017</strong>.
+    old_su: You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.<br/>To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
 tab:
   cutlist:
     label: Cutlist
     title: Cutlist
-    help: Select the root of the cutlist in your scene then click on the <strong>Generate</strong> button.<br>If no component was selected, all visible components of the scene will be considered.
+    help: "Select the root of the cutlist in your scene then click on the **Generate** button.\nIf no component was selected, all visible components of the scene will be considered to compute the cutlist."
     material_unknow: Undefined material
     not_available_thickness: Unavailable thickness
     tooltip:
-      show_hide_block: Afficher / Marquer ce bloc
+      show_hide_block: Show / Mark this block
       scroll_to_block: Scroll to block
       edit_part_properties: Edit properties
       material_origin_1: The material of this part is defined on its instances
@@ -36,19 +37,19 @@ tab:
       material: Material
     option:
       auto_orient: Automatic orientation of parts
-      auto_orient_help: If this option is enabled, the 3 dimensions of a part are sorted so that the largest represents length and the smallest represents the thickness.
-      smart_material: <em>Intelligent</em> assignment of material
+      auto_orient_help: If this option is enabled, the 3 dimensions of a part are sorted such that the largest represents length and the smallest represents the thickness.
+      smart_material: *Intelligent* assignment of material
       smart_material_help: If this option is enabled, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
-      part_number_with_letters_help: If this option is enabled, parts are enumerated with letters (A, B, C, ... Z, AA, AB, ...).
+      part_number_with_letters_help: If this option is enabled, parts will be enumerated using letters (A, B, C, ... Z, AA, AB, ...), otherwise they will be enumerated with numbers.
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
-      part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+      part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts will be reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
     list:
       summary: Summary
       type: Type
       material_thickness: Material / Thickness
       part_count: Quantity
-      area: Surface
+      area: Area
       volume: Volume
       number: N°
       name: Designation
@@ -63,9 +64,11 @@ tab:
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
     warning:
-      partial_cutlist: This cutlist is a partial representation of your model, because it only uses selected parts.
-      no_typed_materials_in_model: Your model does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
-      no_typed_materials_in_selection: Your selection does not use any defined material (<strong>Solid Wood</strong> or <strong>Sheet Material</strong>).
+      partial_cutlist: This cutlist is a partial representation of your model, because it only uses a selection of parts.
+      no_typed_materials_in_model: Your model does not use any defined material (**Solid wood** or **Sheet good**).
+      no_typed_materials_in_selection: Your selection does not use any defined material (**Solid wood** or **Sheet good**).
+    tip:
+      no_typed_materials: Apply a material on the parts you wish to see in the cutlist and define the properties of this material (**Solid wood** or **Sheet good**) in the tab **Materials**.
   materials:
     label: Materials
     title: Materials
@@ -81,9 +84,14 @@ tab:
       width_increase: Width oversize
       thickness_increase: Thickness oversize
       std_thicknesses: Standard thickness
-      std_thicknesses_help: Raw thicknesses available in mm.
+      std_thicknesses_help: Available raw thicknesses expressed in mm.
     error:
       no_materials: Your model does not contain any material.
   about:
     label: About
     title: About
+    version: Version
+    credits: Technical Credits
+    credits_description: "The plugin *L'Air du Bois : Toolbox for Sketchup* is developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and [contributors](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors), it is available under Open Source licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) on [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin)."
+    credits_vendors: "The adventure would not be possible without the work of the authors of the following Open Source components:"
+    credits_thanks: "A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/)."    
