@@ -34,7 +34,7 @@
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-toolbox-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>
-                <td class="text-center">x{{ group.part_count }}</td>
+                <td class="text-center">x {{ group.part_count }}</td>
                 <td class="text-right">{% if group.raw_area_m2 == 0 %}-{% else %}{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
                 <td class="text-right">{% if group.raw_volume_m3 == 0 %}-{% else %}{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
             </tr>
