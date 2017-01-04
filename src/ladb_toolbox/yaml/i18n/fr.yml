@@ -41,7 +41,13 @@ tab:
       material: Matière
     option:
       auto_orient: Orientation automatique des pièces
-      auto_orient_help: Si cette option est active, les 3 dimensions des pièces sont triées pour que la plus grande représente la longueur et la plus petite l'épaisseur. Sinon, la longueur est sur l'axe rouge, la largeur sur le vert et l'épaisseur sur le bleu.
+      auto_orient_help: |
+        Si cette option est active, les trois dimensions des pièces sont triées pour que la plus grande représente la *longueur* et la plus petite l'*épaisseur*.
+
+        Sinon,
+        - la *longueur* est sur l'axe <span style='color:red'>rouge</span>
+        - la *largeur* sur le <span style='color:green'>vert</span>
+        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       smart_material: Attrribution *intelligente* des matières
       smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attriburer la matière principale de leur éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
