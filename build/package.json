@@ -13,6 +13,8 @@
     "gulp-less": "^3.3.0",
     "gulp-zip": "^3.2.0",
     "js-yaml": "^3.7.0",
+    "markdown-it": "^8.2.2",
+    "markdown-it-external-links": "0.0.6",
     "merge": "^1.2.0",
     "through2": "^2.0.3",
     "twig": "^0.10.3"

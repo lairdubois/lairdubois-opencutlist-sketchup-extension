@@ -14,6 +14,7 @@ in 0.x versions.
   * Cutlist smart_material option
   * Cutlist options help popovers
   * Cutlist summary no-print setting
+  * Add Markdown support in i18n files
 
 * 0.4.3 (2016-12-28)
 

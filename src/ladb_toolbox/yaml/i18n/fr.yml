@@ -21,7 +21,7 @@ tab:
   cutlist:
     label: Débit
     title: Fiche de débit
-    help: Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton <strong>Générer</strong>.<br>Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
+    help: "Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.\nSi aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés."
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     tooltip:
@@ -38,7 +38,7 @@ tab:
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: Si cette option est active, les 3 dimensions des pièces sont triées pour que la plus grande représente la longueur et la plus petite l'épaisseur. Sinon, la longueur est sur l'axe rouge, la largeur sur le vert et l'épaisseur du le bleu.
-      smart_material: Attrribution <em>intelligente</em> des matières
+      smart_material: Attrribution *intelligente* des matières
       smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attriburer la matière principale de leur éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
       part_number_with_letters_help: Si cette option est actve, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
@@ -65,10 +65,10 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
     warning:
       partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
-      no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>).
-      no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>).
+      no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (**Bois massif** ou **Bois panneau**).
+      no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (**Bois massif** ou **Bois panneau**).
     tip:
-      no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (<strong>Bois massif</strong> ou <strong>Bois panneau</strong>) dans l'onglet <strong>Matières</strong>.
+      no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet **Matières**.
   materials:
     label: Matières
     title: Matières
@@ -90,3 +90,8 @@ tab:
   about:
     label: A propos
     title: A propos
+    version: Version
+    credits: Crédits techniques
+    credits_description: "Le plugin *L'Air du Bois : Boîte à outils Sketchup* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et [contributeurs](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) et disponible en Open Source sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin)."
+    credits_vendors: "Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels Open Source suivantes :"
+    credits_thanks: "Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/)."
