@@ -96,7 +96,11 @@ tab:
     title: About
     version: Version
     credits: Crédits techniques
-    credits_description: "Le plugin *L'Air du Bois : Boîte à outils Sketchup* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et [contributeurs](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) et disponible en Open Source sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin)."
-    credits_vendors: "Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels Open Source suivantes :"
-    credits_thanks: "Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/)."
+    credits_description: |
+      Le plugin *L'Air du Bois : Boîte à outils Sketchup* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et [contributeurs](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors).
+      Ce projet est disponible en Open Source sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin).
+    credits_vendors: |
+      Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels Open Source suivantes :
+    credits_thanks: |
+      Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
     
