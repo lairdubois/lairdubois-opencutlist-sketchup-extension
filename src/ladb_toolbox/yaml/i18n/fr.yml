@@ -48,12 +48,12 @@ tab:
         - la *longueur* est sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
-      smart_material: Attrribution *intelligente* des matières
-      smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attriburer la matière principale de leur éléments enfants ou celle héritée de leurs éléments parents.
+      smart_material: Attribution *intelligente* des matières
+      smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
-      part_number_with_letters_help: Si cette option est actve, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
+      part_number_with_letters_help: Si cette option est active, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
-      part_number_sequence_by_group_help: Si cette option est actve, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
+      part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
     list:
       summary: Résumé
       type: Type

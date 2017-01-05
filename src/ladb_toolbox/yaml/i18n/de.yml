@@ -1,0 +1,111 @@
+default:
+  minimize: Minimieren
+  maximize: Maximieren
+  cancel: Abbrechen
+  validate: Bestätigen
+  close: Schliessen
+  empty_filename: ohne Titel
+  refresh: Aktualisieren
+  generate: Generieren
+  print: Drucken
+  options: Optionen
+  caution: Vorsicht
+  help: Hilfe
+  error: Fehler
+  warning: Warnung
+  tip: Tipp
+core:
+  warning:
+    old_su: |
+      Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
+      Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
+tab:
+  cutlist:
+    label: Stückliste
+    title: Stückliste
+    help: |
+      Wählen Sie die Basis ihrer Stückliste in der Szene aus und klicken dann auf **Generieren**.
+      Werden keine Komponenten ausgewählt, verwendet die Stückliste alle sichtbaren Komponenten der Szene.
+    material_unknow: Material nicht definiert
+    not_available_thickness: Dicke nicht verfügbar
+    tooltip:
+      show_hide_block: Anzeigen / Ausblenden
+      scroll_to_block: Zum Abschnitt blättern
+      edit_part_properties: Eigenschaften editieren
+      material_origin_1: Das Material dieses Stücks ist auf einer Instanz definiert
+      material_origin_2: Das Material dieses Stücks wird von einem übergeordneten Stück geerbt.
+      material_origin_3: Das Material dieses Stücks wird aus einem enthaltenen Teil extrahiert
+    form:
+      title: Eigenschaften eines Stücks
+      name: Name
+      material: Material
+    option:
+      auto_orient: Automatische Orientierung der Stücke
+      auto_orient_help: |
+        Ist diese Option aktiv, werden die Masse sortiert, so dass der grösste Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
+      
+        Ansonsten werden die Masse der lokalen Achsen übernommen, wobei:
+        - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
+        - die *Breite* auf der <span style='color:red'>grünen</span> Achse ist, und
+        - die *Dicke* auf der <span style='color:red'>blauen</span> Achse ist
+      smart_material: intelligente Zuweisung des Materials
+      smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
+      part_number_with_letters: Buchstaben zur Nummerierung verwenden
+      part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
+      part_number_sequence_by_group: Reinitialisieren der Aufzählung bei jedem Abschnitt
+      part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
+    list:
+      summary: Zusammenfassung
+      type: Art
+      material_thickness: Material / Dicke
+      part_count: Menge
+      area: Fläche
+      volume: Volumen
+      number: Nr.
+      name: Bezeichnung
+      count: Stk.
+      raw: Rohmass
+      final: Fertigmass
+      length_short: L
+      width_short: B
+      thickness: Dicke
+      thickness_short: D
+    error:
+      no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
+      no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
+    warning:
+      partial_cutlist: Diese Stückliste ist nur eine Teildarstellung ihres Modells, da sie lediglich eine Auswahl berücksichtigt.
+      no_typed_materials_in_model: Ihr Modell verwenden kein definiertes Material (**Solid wood** oder **Sheet good**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**Massivholz** oder **Platten**).
+    tip:
+      no_typed_materials: Übertragen Sie ein Material auf die Stücke, die Sie in der Stückliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab *Materialien*.
+  materials:
+    label: Materialien
+    title: Materialien
+    form:
+      title: Eigenschaften des Materials
+      name: Bezeichnung
+      type: Art
+      type_unknow: Unbekannt
+      type_hardwood: Massivholz
+      type_plywood: Platten
+      cut_options: Stücklistoptionen
+      length_increase: Längenübermass
+      width_increase: Breitenübermass
+      thickness_increase: Dickenübermass
+      std_thicknesses: Verfügbare Dicken
+      std_thicknesses_help: Verfügbare Dicken in mm Rohmass.
+    error:
+      no_materials: Ihr Modell enthält keine Materialien.
+  about:
+    label: Über
+    title: Über
+    version: Version
+    credits: Technischer Verdienst
+    credits_description: |
+      Das Plugin *L'Air du Bois : Werkzeugkiste für Sketchup* wird von [Boris Beaulant](https://www.lairdubois.fr/zeloko) und [contributors](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) entwickelt. 
+      Es ist mit einer Open Source Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin) verfügbar.
+    credits_vendors:  |
+      Dieses Abenteuer wäre nicht möglich ohne die Autoren der folgenden Open Source Komponenten:
+    credits_thanks: |
+      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).  
