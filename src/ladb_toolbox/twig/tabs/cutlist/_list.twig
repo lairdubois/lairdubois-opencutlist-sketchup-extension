@@ -78,7 +78,7 @@
         </tr>
         {% set thickness = 0 %}
         {% for part in group.parts %}
-            {% if group.material_type == 1 and part.thickness != thickness %}
+            {% if showThicknessSeparators and group.material_type == 1 and part.thickness != thickness %}
                 {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>

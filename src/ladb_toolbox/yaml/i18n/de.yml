@@ -54,6 +54,7 @@ tab:
       part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
       part_number_sequence_by_group: Reinitialisieren der Aufzählung bei jedem Abschnitt
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
+      part_order_strategy: Ordre de tri des pièces
     list:
       summary: Zusammenfassung
       type: Art

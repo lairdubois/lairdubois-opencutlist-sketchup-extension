@@ -54,6 +54,12 @@ tab:
       part_number_with_letters_help: Si cette option est active, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
       part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
+      part_order_strategy: Tri des pièces
+      part_order_strategy_help: Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+      property_thickness: Epaisseur
+      property_length: Longeur
+      property_width: Largeur
+      property_name: Désignation
     list:
       summary: Résumé
       type: Type

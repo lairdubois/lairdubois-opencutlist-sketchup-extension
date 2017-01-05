@@ -54,6 +54,7 @@ tab:
       part_number_with_letters_help: If this option is enabled, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
       part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+      part_order_strategy: Ordre de tri des pièces
     list:
       summary: Summary
       type: Type

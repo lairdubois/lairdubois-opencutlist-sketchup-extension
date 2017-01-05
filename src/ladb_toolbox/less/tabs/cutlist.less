@@ -24,3 +24,29 @@
   text-align: center;
   margin-bottom: @ladb-gutter;
 }
+
+#ladb_sortable_part_order_strategy {
+  list-style: none;
+  padding: 0;
+
+  > li {
+    margin: 5px 0;
+    border: 1px solid @ladb-global-border;
+    padding: 5px 10px;
+    background: lighten(@ladb-global-border, 10%);
+
+    .ladb-handle {
+      cursor: move;
+      color: lighten(#000, 50%);
+      margin-right: 5px;
+    }
+
+    a {
+      float: right;
+      color: #000;
+      cursor: pointer;
+    }
+
+  }
+
+}

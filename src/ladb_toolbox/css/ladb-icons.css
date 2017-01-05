@@ -24,6 +24,15 @@ i, span.ladb-toolbox-icon {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ladb-toolbox-icon-sort-asc:before {
+  content: "\e915";
+}
+.ladb-toolbox-icon-sort-desc:before {
+  content: "\e916";
+}
+.ladb-toolbox-icon-reorder:before {
+  content: "\e917";
+}
 .ladb-toolbox-icon-material-origin-1:before {
   content: "\e913";
 }
@@ -87,4 +96,3 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-chevron-left:before {
   content: "\e905";
 }
-

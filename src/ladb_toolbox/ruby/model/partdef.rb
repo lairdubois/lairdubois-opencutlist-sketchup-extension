@@ -19,6 +19,40 @@ module Ladb
         @component_ids = []
       end
 
+      # -----
+
+      def self.part_order(part_def, strategy)
+        block = []
+        if strategy
+          properties = strategy.split('>')
+          properties.each { |property|
+            if property.length < 1
+              next
+            end
+            order = 1
+            if property.start_with?('-') && property.length == 2
+              order = -1
+              property.slice!(0)
+            end
+            case property
+              when 'length'
+                block.push(part_def.size.length * order)
+              when 'width'
+                block.push(part_def.size.width * order)
+              when 'thickness'
+                block.push(part_def.size.thickness * order)
+              when 'name'
+                block.push(part_def.name.downcase * order)
+              else
+                next
+            end
+          }
+        end
+        block
+      end
+
+      # -----
+
       def add_component_id(component_id)
         @component_ids.push(component_id)
       end

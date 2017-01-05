@@ -47,6 +47,7 @@ module Ladb
         smart_material = settings['smart_material']
         part_number_with_letters = settings['part_number_with_letters']
         part_number_sequence_by_group = settings['part_number_sequence_by_group']
+        part_order_strategy = settings['part_order_strategy']
 
         # Retrieve selected entities or all if no selection
         model = Sketchup.active_model
@@ -199,7 +200,7 @@ module Ladb
 
         # Sort and browse groups
         part_number = part_number_with_letters ? 'A' : '1'
-        cutlist.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name, -v.raw_thickness] }.each { |key, group_def|
+        cutlist.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.raw_thickness] }.each { |key, group_def|
 
           if part_number_sequence_by_group
             part_number = part_number_with_letters ? 'A' : '1'    # Reset code increment on each group
@@ -219,7 +220,7 @@ module Ladb
           data[:groups].push(group)
 
           # Sort and browse parts
-          group_def.part_defs.sort_by { |k, v| [v.size.thickness, v.size.length, v.size.width, v.name] }.reverse.each { |key, part_def|
+          group_def.part_defs.sort_by { |k, v| PartDef::part_order(v, part_order_strategy) }.each { |key, part_def|
             if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
               group[:raw_area_m2] += part_def.raw_size.area_m2 * part_def.count
               if group_def.material_type == MaterialAttributes::TYPE_HARDWOOD

@@ -5,6 +5,7 @@
     var OPTION_KEY_SMART_MATERIAL = 'cutlist_option_smart_material';
     var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_option_part_number_with_letters';
     var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
+    var OPTION_KEY_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
 
     var SETTING_KEY_SUMMARY_NO_PRINT = 'cutlist_setting_summary_hidden';
 
@@ -32,6 +33,7 @@
         this.$inputSmartMaterial = $('#ladb_input_smart_material', this.$modalOptions);
         this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalOptions);
+        this.$sortablePartNumberSequenceByGroup = $('#ladb_sortable_part_order_strategy', this.$modalOptions);
 
         this.$modalEditPart = $('#ladb_cutlist_modal_part', this.$element);
         this.$btnPartUpdate = $('#ladb_cutlist_part_update', this.$modalEditPart);
@@ -81,6 +83,7 @@
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                showThicknessSeparators: that.userOptions.part_order_strategy.startsWith('thickness') || that.userOptions.part_order_strategy.startsWith('-thickness'),
                 userSettings: that.userSettings,
                 errors: errors,
                 warnings: warnings,
@@ -251,6 +254,7 @@
             OPTION_KEY_SMART_MATERIAL,
             OPTION_KEY_PART_NUMBER_WITH_LETTERS,
             OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP,
+            OPTION_KEY_PART_ORDER_STRATEGY,
             SETTING_KEY_SUMMARY_NO_PRINT
         ], function() {
 
@@ -258,7 +262,8 @@
                 auto_orient: that.toolbox.getUserSetting(OPTION_KEY_AUTO_ORIENT, true),
                 smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, true),
                 part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
-                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false)
+                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false),
+                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, '-thickness>-length>-width>name')
             };
 
             that.userSettings = {
@@ -277,6 +282,48 @@
                 iconBase: 'ladb-toolbox-icon',
                 tickIcon: 'ladb-toolbox-icon-tick',
                 showTick: true
+            });
+
+            // Init sortable
+            var onSortableChange = function() {
+                var properties = [];
+                that.$sortablePartNumberSequenceByGroup.children('li').each(function () {
+                    properties.push($(this).data('property'));
+                });
+                that.userOptions.part_order_strategy = properties.join('>');
+                that.toolbox.setUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, that.userOptions.part_order_strategy);
+                console.log(that.userOptions.part_order_strategy);
+            };
+            var properties = that.userOptions.part_order_strategy.split('>');
+            for (var i = 0; i < properties.length; i++) {
+                var property = properties[i];
+                that.$sortablePartNumberSequenceByGroup.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
+                    order: property.startsWith('-') ? '-' : '',
+                    property: property.startsWith('-') ? property.substr(1) : property
+                }));
+            }
+            that.$sortablePartNumberSequenceByGroup.find('a').on('click', function() {
+                var $item = $(this).parent().parent();
+                var $icon = $('i', $(this));
+                var property = $item.data('property');
+                if (property.startsWith('-')) {
+                    property = property.substr(1);
+                    $icon.addClass('ladb-toolbox-icon-sort-asc');
+                    $icon.removeClass('ladb-toolbox-icon-sort-desc');
+                } else {
+                    property = '-' + property;
+                    $icon.removeClass('ladb-toolbox-icon-sort-asc');
+                    $icon.addClass('ladb-toolbox-icon-sort-desc');
+                }
+                $item.data('property', property);
+                onSortableChange()
+            });
+            that.$sortablePartNumberSequenceByGroup.sortable({
+                cursor: 'move',
+                handle: '.ladb-handle',
+                update: function (event, ui) {
+                    onSortableChange();
+                }
             });
 
             that.bind();

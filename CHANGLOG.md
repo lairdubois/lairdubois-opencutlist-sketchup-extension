@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
+* 0.4.5
+
+  * Cutlist part_order_strategy option
+  
 * 0.4.4 (2017-01-05)
 
   * English translation (thanks to @mobilarte)
