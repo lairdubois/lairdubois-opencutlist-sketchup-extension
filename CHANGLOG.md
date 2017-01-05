@@ -4,9 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
-* 0.4.4
+* 0.4.4 (2017-01-05)
 
   * English translation (thanks to @mobilarte)
+  * German translation (thanks to @mobilarte)
   * Replace JS localstorage by SU defaults
   * Improve JS <-> Ruby command pipeline
   * Cutlist materials origins improvements
