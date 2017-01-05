@@ -35,7 +35,7 @@ module Ladb
         @controllers = []
         @html_dialog_compatible = false
         @current_os = :OTHER
-        @language = 'fr'
+        @language = 'en'
         @started = false
         @temp_dir = nil
       end
