@@ -55,6 +55,14 @@ tab:
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
       part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
       part_order_strategy: Ordre de tri des pièces
+      part_order_strategy_help: |
+        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+        Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
+      property_thickness: Thickness
+      property_length: Length
+      property_width: Width
+      property_name: Désignation
+      property_count: Count
     list:
       summary: Summary
       type: Type

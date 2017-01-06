@@ -55,6 +55,14 @@ tab:
       part_number_sequence_by_group: Reinitialisieren der Aufzählung bei jedem Abschnitt
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       part_order_strategy: Ordre de tri des pièces
+      part_order_strategy_help: |
+        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+        Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
+      property_thickness: Dicke
+      property_length: Länge
+      property_width: Breite
+      property_name: Bezeichnung
+      property_count: Stk.
     list:
       summary: Zusammenfassung
       type: Art

@@ -55,11 +55,14 @@ tab:
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
       part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
       part_order_strategy: Tri des pièces
-      part_order_strategy_help: Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+      part_order_strategy_help: |
+        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+        Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
       property_thickness: Epaisseur
       property_length: Longeur
       property_width: Largeur
       property_name: Désignation
+      property_count: Quantité
     list:
       summary: Résumé
       type: Type
@@ -69,7 +72,7 @@ tab:
       volume: Volume
       number: N°
       name: Désignation
-      count: Nb.
+      count: Qte.
       raw: Brute
       final: Finie
       length_short: Long.

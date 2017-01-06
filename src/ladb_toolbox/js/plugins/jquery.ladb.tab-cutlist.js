@@ -263,7 +263,7 @@
                 smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, true),
                 part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
                 part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false),
-                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, '-thickness>-length>-width>name')
+                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, '-thickness>-length>-width>-count>name')
             };
 
             that.userSettings = {

@@ -48,6 +48,9 @@ module Ladb
               when 'name'
                 a_value = part_def_a.name.downcase
                 b_value = part_def_b.name.downcase
+              when 'count'
+                a_value = part_def_a.count
+                b_value = part_def_b.count
               else
                 next
             end
