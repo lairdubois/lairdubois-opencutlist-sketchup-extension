@@ -220,7 +220,7 @@ module Ladb
           data[:groups].push(group)
 
           # Sort and browse parts
-          group_def.part_defs.sort_by { |k, v| PartDef::part_order(v, part_order_strategy) }.each { |key, part_def|
+          group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
             if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
               group[:raw_area_m2] += part_def.raw_size.area_m2 * part_def.count
               if group_def.material_type == MaterialAttributes::TYPE_HARDWOOD

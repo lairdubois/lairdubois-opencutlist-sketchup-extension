@@ -21,34 +21,46 @@ module Ladb
 
       # -----
 
-      def self.part_order(part_def, strategy)
-        block = []
+      def self.part_order(part_def_a, part_def_b, strategy)
+        a_values = []
+        b_values = []
         if strategy
           properties = strategy.split('>')
           properties.each { |property|
             if property.length < 1
               next
             end
-            order = 1
-            if property.start_with?('-') && property.length == 2
-              order = -1
+            asc = true
+            if property.start_with?('-')
+              asc = false
               property.slice!(0)
             end
             case property
               when 'length'
-                block.push(part_def.size.length * order)
+                a_value = part_def_a.size.length
+                b_value = part_def_b.size.length
               when 'width'
-                block.push(part_def.size.width * order)
+                a_value = part_def_a.size.width
+                b_value = part_def_b.size.width
               when 'thickness'
-                block.push(part_def.size.thickness * order)
+                a_value = part_def_a.size.thickness
+                b_value = part_def_b.size.thickness
               when 'name'
-                block.push(part_def.name.downcase * order)
+                a_value = part_def_a.name.downcase
+                b_value = part_def_b.name.downcase
               else
                 next
             end
+            if asc
+              a_values.push(a_value)
+              b_values.push(b_value)
+            else
+              a_values.push(b_value)
+              b_values.push(a_value)
+            end
           }
         end
-        block
+        a_values <=> b_values
       end
 
       # -----

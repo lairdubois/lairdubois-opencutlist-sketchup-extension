@@ -16,8 +16,8 @@ module Ladb
         @part_defs = {}
       end
 
-      def set_part_def(key, piece_def)
-        @part_defs[key] = piece_def
+      def set_part_def(key, part_def)
+        @part_defs.store(key, part_def)
       end
 
       def get_part_def(key)
