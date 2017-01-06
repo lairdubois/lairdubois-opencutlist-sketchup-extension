@@ -63,6 +63,7 @@ tab:
       property_width: Breite
       property_name: Bezeichnung
       property_count: Stk.
+      reset: Réinitialiser les options par défaut
     list:
       summary: Zusammenfassung
       type: Art

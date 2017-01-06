@@ -63,6 +63,7 @@ tab:
       property_width: Width
       property_name: Désignation
       property_count: Count
+      reset: Réinitialiser les options par défaut
     list:
       summary: Summary
       type: Type

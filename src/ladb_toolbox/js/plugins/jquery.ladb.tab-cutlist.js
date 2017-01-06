@@ -7,7 +7,15 @@
     var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
     var OPTION_KEY_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
 
+    var OPTION_DEFAULT_AUTO_ORIENT = true;
+    var OPTION_DEFAULT_SMART_MATERIAL = true;
+    var OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS = true;
+    var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = false;
+    var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
+
     var SETTING_KEY_SUMMARY_NO_PRINT = 'cutlist_setting_summary_hidden';
+
+    var SETTING_DEFAULT_SUMMARY_NO_PRINT = false;
 
     // CLASS DEFINITION
     // ======================
@@ -33,7 +41,8 @@
         this.$inputSmartMaterial = $('#ladb_input_smart_material', this.$modalOptions);
         this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalOptions);
-        this.$sortablePartNumberSequenceByGroup = $('#ladb_sortable_part_order_strategy', this.$modalOptions);
+        this.$sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', this.$modalOptions);
+        this.$btnReset = $('#ladb_cutlist_options_reset', this.$modalOptions);
 
         this.$modalEditPart = $('#ladb_cutlist_modal_part', this.$element);
         this.$btnPartUpdate = $('#ladb_cutlist_part_update', this.$modalEditPart);
@@ -194,6 +203,76 @@
         }
     };
 
+    LadbTabCutlist.prototype.resetOptions = function () {
+
+        this.userOptions = {
+            auto_orient: OPTION_DEFAULT_AUTO_ORIENT,
+            smart_material: OPTION_DEFAULT_SMART_MATERIAL,
+            part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
+            part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
+            part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
+        };
+
+        this.refreshOptionsInputs();
+
+    };
+
+    LadbTabCutlist.prototype.refreshOptionsInputs = function () {
+        var that = this;
+
+        // Checkboxes
+
+        this.$inputAutoOrient.prop('checked', this.userOptions.auto_orient);
+        this.$inputSmartMaterial.prop('checked', this.userOptions.smart_material);
+        this.$inputPartNumberWithLetters.prop('checked', this.userOptions.part_number_with_letters);
+        this.$inputPartNumberSequenceByGroup.prop('checked', this.userOptions.part_number_sequence_by_group);
+
+        // Part order sortables
+
+        var properties = this.userOptions.part_order_strategy.split('>');
+        var onSortableChange = function() {
+            var properties = [];
+            that.$sortablePartOrderStrategy.children('li').each(function () {
+                properties.push($(this).data('property'));
+            });
+            that.userOptions.part_order_strategy = properties.join('>');
+            that.toolbox.setUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, that.userOptions.part_order_strategy);
+        };
+
+        this.$sortablePartOrderStrategy.empty();
+        for (var i = 0; i < properties.length; i++) {
+            var property = properties[i];
+            this.$sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
+                order: property.startsWith('-') ? '-' : '',
+                property: property.startsWith('-') ? property.substr(1) : property
+            }));
+        }
+        this.$sortablePartOrderStrategy.find('a').on('click', function() {
+            var $item = $(this).parent().parent();
+            var $icon = $('i', $(this));
+            var property = $item.data('property');
+            if (property.startsWith('-')) {
+                property = property.substr(1);
+                $icon.addClass('ladb-toolbox-icon-sort-asc');
+                $icon.removeClass('ladb-toolbox-icon-sort-desc');
+            } else {
+                property = '-' + property;
+                $icon.removeClass('ladb-toolbox-icon-sort-asc');
+                $icon.addClass('ladb-toolbox-icon-sort-desc');
+            }
+            $item.data('property', property);
+            onSortableChange()
+        });
+        this.$sortablePartOrderStrategy.sortable({
+            cursor: 'move',
+            handle: '.ladb-handle',
+            update: function (event, ui) {
+                onSortableChange();
+            }
+        });
+
+    };
+
     LadbTabCutlist.prototype.bind = function () {
         var that = this;
 
@@ -224,6 +303,9 @@
 
             });
 
+        });
+        this.$btnReset.on('click', function() {
+           that.resetOptions();
         });
 
         // Bind inputs
@@ -259,22 +341,19 @@
         ], function() {
 
             that.userOptions = {
-                auto_orient: that.toolbox.getUserSetting(OPTION_KEY_AUTO_ORIENT, true),
-                smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, true),
-                part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, true),
-                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, false),
-                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, '-thickness>-length>-width>-count>name')
+                auto_orient: that.toolbox.getUserSetting(OPTION_KEY_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
+                smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
+                part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
+                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
+                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
             };
 
             that.userSettings = {
-                summary_no_print: that.toolbox.getUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, false)
+                summary_no_print: that.toolbox.getUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, SETTING_DEFAULT_SUMMARY_NO_PRINT)
             };
 
-            // Init inputs values
-            that.$inputAutoOrient.prop('checked', that.userOptions.auto_orient);
-            that.$inputSmartMaterial.prop('checked', that.userOptions.smart_material);
-            that.$inputPartNumberWithLetters.prop('checked', that.userOptions.part_number_with_letters);
-            that.$inputPartNumberSequenceByGroup.prop('checked', that.userOptions.part_number_sequence_by_group);
+            // Init options inputs
+            that.refreshOptionsInputs();
 
             // Init selects
             that.$selectMaterialName.selectpicker({
@@ -282,48 +361,6 @@
                 iconBase: 'ladb-toolbox-icon',
                 tickIcon: 'ladb-toolbox-icon-tick',
                 showTick: true
-            });
-
-            // Init sortable
-            var onSortableChange = function() {
-                var properties = [];
-                that.$sortablePartNumberSequenceByGroup.children('li').each(function () {
-                    properties.push($(this).data('property'));
-                });
-                that.userOptions.part_order_strategy = properties.join('>');
-                that.toolbox.setUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, that.userOptions.part_order_strategy);
-                console.log(that.userOptions.part_order_strategy);
-            };
-            var properties = that.userOptions.part_order_strategy.split('>');
-            for (var i = 0; i < properties.length; i++) {
-                var property = properties[i];
-                that.$sortablePartNumberSequenceByGroup.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
-                    order: property.startsWith('-') ? '-' : '',
-                    property: property.startsWith('-') ? property.substr(1) : property
-                }));
-            }
-            that.$sortablePartNumberSequenceByGroup.find('a').on('click', function() {
-                var $item = $(this).parent().parent();
-                var $icon = $('i', $(this));
-                var property = $item.data('property');
-                if (property.startsWith('-')) {
-                    property = property.substr(1);
-                    $icon.addClass('ladb-toolbox-icon-sort-asc');
-                    $icon.removeClass('ladb-toolbox-icon-sort-desc');
-                } else {
-                    property = '-' + property;
-                    $icon.removeClass('ladb-toolbox-icon-sort-asc');
-                    $icon.addClass('ladb-toolbox-icon-sort-desc');
-                }
-                $item.data('property', property);
-                onSortableChange()
-            });
-            that.$sortablePartNumberSequenceByGroup.sortable({
-                cursor: 'move',
-                handle: '.ladb-handle',
-                update: function (event, ui) {
-                    onSortableChange();
-                }
             });
 
             that.bind();
