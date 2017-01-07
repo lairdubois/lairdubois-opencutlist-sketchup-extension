@@ -92,7 +92,11 @@ tab:
       no_typed_materials_in_model: Ihr Modell verwenden kein definiertes Material (**Solid wood** oder **Sheet good**).
       no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**Massivholz** oder **Platten**).
     tip:
-      no_typed_materials: Übertragen Sie ein Material auf die Stücke, die Sie in der Stückliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab *Materialien*.
+      no_component: |
+        Les pièces que vous souhaitez voir apparaitre dans la *fiche de débit* doivent être des instances de **composant**.
+        Si vous utilisez uniquement des groupes, convertissez-les en composant.
+        L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
+      no_typed_materials: Übertragen Sie ein Material auf die Stücke, die Sie in der Stückliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-toolbox-icon-materials"></i> *Materialien*.
   materials:
     label: Materialien
     title: Materialien

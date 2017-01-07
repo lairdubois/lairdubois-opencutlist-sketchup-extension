@@ -92,9 +92,7 @@
             }));
 
             // Hide help panel
-            if (groups.length > 0) {
-                that.$panelHelp.hide();
-            }
+            that.$panelHelp.hide();
 
             // Update print button state
             that.$btnPrint.prop('disabled', groups.length == 0);
