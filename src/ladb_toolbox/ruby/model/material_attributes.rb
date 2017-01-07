@@ -122,6 +122,7 @@ module Ladb
         @std_thicknesses.split(';').each { |std_thickness|
           a.push((std_thickness).to_l)
         }
+        a.sort!
         a
       end
 

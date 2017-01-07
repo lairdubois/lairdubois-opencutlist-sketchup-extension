@@ -1,21 +1,29 @@
 +function ($) {
     'use strict';
 
+    // Options keys
+
     var OPTION_KEY_AUTO_ORIENT = 'cutlist_option_auto_orient';
     var OPTION_KEY_SMART_MATERIAL = 'cutlist_option_smart_material';
     var OPTION_KEY_PART_NUMBER_WITH_LETTERS = 'cutlist_option_part_number_with_letters';
     var OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
     var OPTION_KEY_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
 
+    var OPTION_KEY_SUMMARY_NO_PRINT = 'cutlist_option_summary_hidden';
+    var OPTION_KEY_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
+    var OPTION_KEY_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
+
+    // Options defaults
+
     var OPTION_DEFAULT_AUTO_ORIENT = true;
     var OPTION_DEFAULT_SMART_MATERIAL = true;
     var OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS = true;
-    var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = false;
+    var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
 
-    var SETTING_KEY_SUMMARY_NO_PRINT = 'cutlist_setting_summary_hidden';
-
-    var SETTING_DEFAULT_SUMMARY_NO_PRINT = false;
+    var OPTION_DEFAULT_SUMMARY_NO_PRINT = false;
+    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = true;
+    var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
 
     // CLASS DEFINITION
     // ======================
@@ -41,6 +49,8 @@
         this.$inputSmartMaterial = $('#ladb_input_smart_material', this.$modalOptions);
         this.$inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', this.$modalOptions);
         this.$inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', this.$modalOptions);
+        this.$inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', this.$modalOptions);
+        this.$inputHideRawDimensions = $('#ladb_input_hide_raw_dimensions', this.$modalOptions);
         this.$sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', this.$modalOptions);
         this.$btnReset = $('#ladb_cutlist_options_reset', this.$modalOptions);
 
@@ -60,7 +70,7 @@
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
 
-        rubyCallCommand('cutlist_generate', this.userOptions, function(data) {
+        rubyCallCommand('cutlist_generate', this.generateOptions, function(data) {
 
             var errors = data.errors;
             var warnings = data.warnings;
@@ -92,8 +102,8 @@
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
-                showThicknessSeparators: that.userOptions.part_order_strategy.startsWith('thickness') || that.userOptions.part_order_strategy.startsWith('-thickness'),
-                userSettings: that.userSettings,
+                showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
+                uiOptions: that.uiOptions,
                 errors: errors,
                 warnings: warnings,
                 tips: tips,
@@ -101,7 +111,9 @@
             }));
 
             // Init tooltips
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip({
+                container: 'body'
+            });
 
             // Bind buttons
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
@@ -118,8 +130,8 @@
                 }
                 $(this).blur();
                 if (groupId == 'ladb_summary') {
-                    that.userSettings.summary_no_print = $group.hasClass('no-print');
-                    that.toolbox.setUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, that.userSettings.summary_no_print);
+                    that.uiOptions.summary_no_print = $group.hasClass('no-print');
+                    that.toolbox.setSetting(OPTION_KEY_SUMMARY_NO_PRINT, that.uiOptions.summary_no_print);
                 }
             });
             $('a.ladb-btn-scrollto', that.$page).on('click', function() {
@@ -205,13 +217,34 @@
 
     LadbTabCutlist.prototype.resetOptions = function () {
 
-        this.userOptions = {
+        // Reset local options
+        this.generateOptions = {
             auto_orient: OPTION_DEFAULT_AUTO_ORIENT,
             smart_material: OPTION_DEFAULT_SMART_MATERIAL,
             part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
             part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
             part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
         };
+
+        this.uiOptions = {
+            summary_no_print: this.uiOptions.summary_no_print,      // This value is not reset
+            hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
+            hide_raw_dimensions: OPTION_DEFAULT_HIDE_RAW_DIMENSIONS
+        };
+
+        // Sync with SU
+        this.toolbox.setSettings([
+
+            { key: OPTION_KEY_AUTO_ORIENT, value:this.generateOptions.auto_orient },
+            { key: OPTION_KEY_SMART_MATERIAL, value:this.generateOptions.smart_material },
+            { key: OPTION_KEY_PART_NUMBER_WITH_LETTERS, value:this.generateOptions.part_number_with_letters },
+            { key: OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, value:this.generateOptions.part_number_sequence_by_group },
+            { key: OPTION_KEY_PART_ORDER_STRATEGY, value:this.generateOptions.part_order_strategy },
+
+            { key: OPTION_KEY_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:this.uiOptions.hide_untyped_material_dimensions },
+            { key: OPTION_KEY_HIDE_RAW_DIMENSIONS, value:this.uiOptions.hide_raw_dimensions }
+
+        ]);
 
         this.refreshOptionsInputs();
 
@@ -222,21 +255,23 @@
 
         // Checkboxes
 
-        this.$inputAutoOrient.prop('checked', this.userOptions.auto_orient);
-        this.$inputSmartMaterial.prop('checked', this.userOptions.smart_material);
-        this.$inputPartNumberWithLetters.prop('checked', this.userOptions.part_number_with_letters);
-        this.$inputPartNumberSequenceByGroup.prop('checked', this.userOptions.part_number_sequence_by_group);
+        this.$inputAutoOrient.prop('checked', this.generateOptions.auto_orient);
+        this.$inputSmartMaterial.prop('checked', this.generateOptions.smart_material);
+        this.$inputPartNumberWithLetters.prop('checked', this.generateOptions.part_number_with_letters);
+        this.$inputPartNumberSequenceByGroup.prop('checked', this.generateOptions.part_number_sequence_by_group);
+        this.$inputHideUntypedMaterialDimensions.prop('checked', this.uiOptions.hide_untyped_material_dimensions);
+        this.$inputHideRawDimensions.prop('checked', this.uiOptions.hide_raw_dimensions);
 
         // Part order sortables
 
-        var properties = this.userOptions.part_order_strategy.split('>');
+        var properties = this.generateOptions.part_order_strategy.split('>');
         var onSortableChange = function() {
             var properties = [];
             that.$sortablePartOrderStrategy.children('li').each(function () {
                 properties.push($(this).data('property'));
             });
-            that.userOptions.part_order_strategy = properties.join('>');
-            that.toolbox.setUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, that.userOptions.part_order_strategy);
+            that.generateOptions.part_order_strategy = properties.join('>');
+            that.toolbox.setSetting(OPTION_KEY_PART_ORDER_STRATEGY, that.generateOptions.part_order_strategy);
         };
 
         this.$sortablePartOrderStrategy.empty();
@@ -310,20 +345,28 @@
 
         // Bind inputs
         this.$inputAutoOrient.on('change', function () {
-            that.userOptions.auto_orient = that.$inputAutoOrient.is(':checked');
-            that.toolbox.setUserSetting(OPTION_KEY_AUTO_ORIENT, that.userOptions.auto_orient);
+            that.generateOptions.auto_orient = that.$inputAutoOrient.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_AUTO_ORIENT, that.generateOptions.auto_orient);
         });
         this.$inputSmartMaterial.on('change', function () {
-            that.userOptions.smart_material = that.$inputSmartMaterial.is(':checked');
-            that.toolbox.setUserSetting(OPTION_KEY_SMART_MATERIAL, that.userOptions.smart_material);
+            that.generateOptions.smart_material = that.$inputSmartMaterial.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_SMART_MATERIAL, that.generateOptions.smart_material);
         });
         this.$inputPartNumberWithLetters.on('change', function () {
-            that.userOptions.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
-            that.toolbox.setUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.userOptions.part_number_with_letters);
+            that.generateOptions.part_number_with_letters = that.$inputPartNumberWithLetters.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, that.generateOptions.part_number_with_letters);
         });
         this.$inputPartNumberSequenceByGroup.on('change', function () {
-            that.userOptions.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
-            that.toolbox.setUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.userOptions.part_number_sequence_by_group);
+            that.generateOptions.part_number_sequence_by_group = that.$inputPartNumberSequenceByGroup.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, that.generateOptions.part_number_sequence_by_group);
+        });
+        this.$inputHideUntypedMaterialDimensions.on('change', function () {
+            that.uiOptions.hide_untyped_material_dimensions = that.$inputHideUntypedMaterialDimensions.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_HIDE_UNTYPED_MATERIAL_DIMENSIONS, that.uiOptions.hide_untyped_material_dimensions);
+        });
+        this.$inputHideRawDimensions.on('change', function () {
+            that.uiOptions.hide_raw_dimensions = that.$inputHideRawDimensions.is(':checked');
+            that.toolbox.setSetting(OPTION_KEY_HIDE_RAW_DIMENSIONS, that.uiOptions.hide_raw_dimensions);
         });
 
     };
@@ -331,25 +374,32 @@
     LadbTabCutlist.prototype.init = function () {
         var that = this;
 
-        this.toolbox.pullUserSettings([
+        this.toolbox.pullSettings([
+
             OPTION_KEY_AUTO_ORIENT,
             OPTION_KEY_SMART_MATERIAL,
             OPTION_KEY_PART_NUMBER_WITH_LETTERS,
             OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP,
             OPTION_KEY_PART_ORDER_STRATEGY,
-            SETTING_KEY_SUMMARY_NO_PRINT
+
+            OPTION_KEY_SUMMARY_NO_PRINT,
+            OPTION_KEY_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
+            OPTION_KEY_HIDE_RAW_DIMENSIONS
+
         ], function() {
 
-            that.userOptions = {
-                auto_orient: that.toolbox.getUserSetting(OPTION_KEY_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
-                smart_material: that.toolbox.getUserSetting(OPTION_KEY_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
-                part_number_with_letters: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
-                part_number_sequence_by_group: that.toolbox.getUserSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
-                part_order_strategy: that.toolbox.getUserSetting(OPTION_KEY_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
+            that.generateOptions = {
+                auto_orient: that.toolbox.getSetting(OPTION_KEY_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
+                smart_material: that.toolbox.getSetting(OPTION_KEY_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
+                part_number_with_letters: that.toolbox.getSetting(OPTION_KEY_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
+                part_number_sequence_by_group: that.toolbox.getSetting(OPTION_KEY_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
+                part_order_strategy: that.toolbox.getSetting(OPTION_KEY_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
             };
 
-            that.userSettings = {
-                summary_no_print: that.toolbox.getUserSetting(SETTING_KEY_SUMMARY_NO_PRINT, SETTING_DEFAULT_SUMMARY_NO_PRINT)
+            that.uiOptions = {
+                summary_no_print: that.toolbox.getSetting(OPTION_KEY_SUMMARY_NO_PRINT, OPTION_DEFAULT_SUMMARY_NO_PRINT),
+                hide_untyped_material_dimensions: that.toolbox.getSetting(OPTION_KEY_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
+                hide_raw_dimensions: that.toolbox.getSetting(OPTION_KEY_HIDE_RAW_DIMENSIONS, OPTION_DEFAULT_HIDE_RAW_DIMENSIONS)
             };
 
             // Init options inputs
@@ -366,7 +416,9 @@
             that.bind();
 
             // Init tooltips & popover
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip({
+                container: 'body'
+            });
             $('[data-toggle="popover"]').popover({
                 html: true
             });

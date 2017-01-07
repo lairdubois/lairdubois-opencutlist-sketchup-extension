@@ -54,16 +54,20 @@ tab:
       part_number_with_letters_help: Si cette option est active, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
       part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
+      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
+      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_raw_dimensions: Masquer les dimension brutes
+      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
-        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri.
         Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
       property_thickness: Epaisseur
       property_length: Longeur
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
-      reset: Réinitialiser les options par défaut
+      reset: Réinitialiser aux valeurs par défaut
     list:
       summary: Résumé
       type: Type
@@ -104,7 +108,7 @@ tab:
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
       std_thicknesses: Epaisseurs disponibles
-      std_thicknesses_help: Epaisseurs brutes disponibles exprimées en mm.
+      std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle qui sera prise en compte.
     error:
       no_materials: Votre modèle ne contient aucune matière.
   about:

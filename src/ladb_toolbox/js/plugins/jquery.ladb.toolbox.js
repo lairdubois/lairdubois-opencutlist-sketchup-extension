@@ -19,7 +19,7 @@
             htmlDialogCompatible: options.html_dialog_compatible
         };
 
-        this.userSettings = {};
+        this.settings = {};
 
         this.activeTabName = null;
         this.tabs = {};
@@ -52,26 +52,33 @@
         ]
     };
 
-    LadbToolbox.prototype.pullUserSettings = function (keys, callback) {
+    LadbToolbox.prototype.pullSettings = function (keys, callback) {
         var that = this;
 
-        rubyCallCommand('core_read_default_values', { keys: keys }, function(data) {          // Read settings values from SU default
+        rubyCallCommand('core_read_settings', { keys: keys }, function(data) {          // Read settings values from SU default
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
-                that.userSettings[value.key] = value.value;
+                that.settings[value.key] = value.value;
             }
             callback();
         });
     };
 
-    LadbToolbox.prototype.setUserSetting = function (key, value) {
-        this.userSettings[key] = value;
-        rubyCallCommand('core_write_default_value', { key: key, value: value });             // Write settings value to SU default
+    LadbToolbox.prototype.setSettings = function (settings) {
+        for (var i = 0; i < settings.length; i++) {
+            var setting = settings[i];
+            this.settings[setting.key] = setting.value;
+        }
+        rubyCallCommand('core_write_settings', { settings: settings });                 // Write settings values to SU default
     };
 
-    LadbToolbox.prototype.getUserSetting = function (key, defaultValue) {
-        var value = this.userSettings[key];
+    LadbToolbox.prototype.setSetting = function (key, value) {
+        this.setSettings([ { key: key, value: value } ]);
+    };
+
+    LadbToolbox.prototype.getSetting = function (key, defaultValue) {
+        var value = this.settings[key];
         if (value != null) {
             if (defaultValue != undefined) {
                 if (typeof(defaultValue) == 'number' && isNaN(value)) {
@@ -176,7 +183,7 @@
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
-            that.setUserSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
+            that.setSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
 
     };
@@ -192,11 +199,11 @@
         // Continue with a timeout to be sure that translations are loaded
         setTimeout(function() {
 
-            that.pullUserSettings([
+            that.pullSettings([
                 KEY_COMPATIBILITY_ALERT_HIDDEN
             ], function() {
 
-                that.compatibilityAlertHidden = that.getUserSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+                that.compatibilityAlertHidden = that.getSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
 
                 // Add i18next twig filter
                 Twig.extendFilter("i18next", function(value, options) {

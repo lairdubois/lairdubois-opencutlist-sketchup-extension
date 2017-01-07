@@ -54,6 +54,10 @@ tab:
       part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
       part_number_sequence_by_group: Reinitialisieren der Aufzählung bei jedem Abschnitt
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
+      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
+      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_raw_dimensions: Masquer les dimension brutes
+      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
       part_order_strategy: Ordre de tri des pièces
       part_order_strategy_help: |
         Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
@@ -63,7 +67,7 @@ tab:
       property_width: Breite
       property_name: Bezeichnung
       property_count: Stk.
-      reset: Réinitialiser les options par défaut
+      reset: Réinitialiser aux valeurs par défaut
     list:
       summary: Zusammenfassung
       type: Art

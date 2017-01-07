@@ -100,7 +100,7 @@
             this.$inputLengthIncrease.val(material.attributes.length_increase);
             this.$inputWidthIncrease.val(material.attributes.width_increase);
             this.$inputThicknessIncrease.val(material.attributes.thickness_increase);
-            this.$inputStdThicknesses.val(material.attributes.std_thicknesses);
+            this.$inputStdThicknesses.tokenfield('setTokens', material.attributes.std_thicknesses);
 
             // Refresh select
             this.$selectType.selectpicker('refresh');
@@ -159,17 +159,17 @@
                 defaultStdThicknesses = '4mm;8mm;10mm;15mm;18mm;22mm';
                 break;
         }
-        this.$inputLengthIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_length_increase', defaultLengthIncrease));
-        this.$inputWidthIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_width_increase', defaultWidthIncrease));
-        this.$inputThicknessIncrease.val(this.toolbox.getUserSetting('materials_type_' + type + '_thickness_increase', defaultThicknessIncrease));
-        this.$inputStdThicknesses.val(this.toolbox.getUserSetting('materials_type_' + type + '_std_thicknesses', defaultStdThicknesses));
+        this.$inputLengthIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_length_increase', defaultLengthIncrease));
+        this.$inputWidthIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_width_increase', defaultWidthIncrease));
+        this.$inputThicknessIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_thickness_increase', defaultThicknessIncrease));
+        this.$inputStdThicknesses.tokenfield('setTokens', this.toolbox.getSetting('materials_type_' + type + '_std_thicknesses', defaultStdThicknesses));
     };
 
     LadbTabMaterials.prototype.storeDefaultCutOptionsFormSectionByType = function (type) {
-        this.toolbox.setUserSetting('materials_type_' + type + '_length_increase', this.$inputLengthIncrease.val());
-        this.toolbox.setUserSetting('materials_type_' + type + '_width_increase', this.$inputWidthIncrease.val());
-        this.toolbox.setUserSetting('materials_type_' + type + '_thickness_increase', this.$inputThicknessIncrease.val());
-        this.toolbox.setUserSetting('materials_type_' + type + '_std_thicknesses', this.$inputStdThicknesses.val());
+        this.toolbox.setSetting('materials_type_' + type + '_length_increase', this.$inputLengthIncrease.val());
+        this.toolbox.setSetting('materials_type_' + type + '_width_increase', this.$inputWidthIncrease.val());
+        this.toolbox.setSetting('materials_type_' + type + '_thickness_increase', this.$inputThicknessIncrease.val());
+        this.toolbox.setSetting('materials_type_' + type + '_std_thicknesses', this.$inputStdThicknesses.val());
     };
 
     LadbTabMaterials.prototype.bind = function () {
@@ -219,7 +219,7 @@
     LadbTabMaterials.prototype.init = function () {
         var that = this;
 
-        this.toolbox.pullUserSettings([
+        this.toolbox.pullSettings([
             'materials_type_0_length_increase',
             'materials_type_1_length_increase',
             'materials_type_2_length_increase',
@@ -240,6 +240,11 @@
                 iconBase: 'ladb-toolbox-icon',
                 tickIcon: 'ladb-toolbox-icon-tick',
                 showTick: true
+            });
+
+            // Init tokenfield
+            that.$inputStdThicknesses.tokenfield({
+                delimiter: ';'
             });
 
             that.bind();

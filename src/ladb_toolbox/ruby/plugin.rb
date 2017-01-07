@@ -8,7 +8,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.4.4'
+      VERSION = '0.4.5'
 
       DEFAULT_KEY_SECTION = 'ladb_toolbox'
 
@@ -109,11 +109,11 @@ module Ladb
 
           # -- Commands --
 
-          register_command('core_read_default_values') do |params|
-            read_default_values_command(params)
+          register_command('core_read_settings') do |params|
+            read_settings_command(params)
           end
-          register_command('core_write_default_value') do |params|
-            write_default_value_command(params)
+          register_command('core_write_settings') do |params|
+            write_settings_command(params)
           end
           register_command('core_dialog_loaded') do |params|
             dialog_loaded_command
@@ -205,7 +205,7 @@ module Ladb
 
       # -- Commands ---
 
-      def read_default_values_command(params)
+      def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ] }
         keys = params['keys']
         values = []
         keys.each { |key|
@@ -217,10 +217,13 @@ module Ladb
         { :values => values }
       end
 
-      def write_default_value_command(params)
-        key = params['key']
-        value = params['value']
-        Sketchup.write_default(DEFAULT_KEY_SECTION, key, value)
+      def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
+        settings = params['settings']
+        settings.each { |setting|
+          key = setting['key']
+          value = setting['value']
+          Sketchup.write_default(DEFAULT_KEY_SECTION, key, value)
+        }
       end
 
       def dialog_loaded_command

@@ -54,6 +54,10 @@ tab:
       part_number_with_letters_help: If this option is enabled, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
       part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
+      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_raw_dimensions: Masquer les dimension brutes
+      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
       part_order_strategy: Ordre de tri des pièces
       part_order_strategy_help: |
         Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
@@ -63,7 +67,7 @@ tab:
       property_width: Width
       property_name: Désignation
       property_count: Count
-      reset: Réinitialiser les options par défaut
+      reset: Réinitialiser aux valeurs par défaut
     list:
       summary: Summary
       type: Type

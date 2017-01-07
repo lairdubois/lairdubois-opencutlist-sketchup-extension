@@ -29,14 +29,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladg.tabAbout');
+            var data = $this.data('ladb.tabAbout');
             var options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
                 if (options.toolbox == undefined) {
                     throw 'toolbox option is mandatory.';
                 }
-                $this.data('ladg.tabAbout', (data = new LadbTabAbout(this, options, options.toolbox)));
+                $this.data('ladb.tabAbout', (data = new LadbTabAbout(this, options, options.toolbox)));
             }
             if (typeof option == 'string') {
                 data[option](params);
