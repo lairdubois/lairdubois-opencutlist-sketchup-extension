@@ -100,7 +100,7 @@ module Ladb
 
           # -- Observers --
 
-          Sketchup.add_observer(AppObserver.new(self))
+          # TODO : Sketchup.add_observer(AppObserver.new(self))
 
           # -- Controllers --
 
