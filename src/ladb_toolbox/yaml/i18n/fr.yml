@@ -93,7 +93,7 @@ tab:
       no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (**Bois massif** ou **Bois panneau**).
     tip:
       no_component: |
-        Les pièces que vous souhaitez voir apparaitre dans la *fiche de débit* doivent être des instances de **composant**.
+        Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
       no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet <i class="ladb-toolbox-icon-materials"></i> **Matières**.

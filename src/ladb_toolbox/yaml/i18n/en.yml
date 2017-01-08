@@ -93,8 +93,8 @@ tab:
       no_typed_materials_in_selection: The selection does not use any defined material (**Solid wood** or **Sheet good**).
     tip:
       no_component: |
-        The parts to be include in the *cutlist* must instances *of component*.
-        If you use only groups, convert them into components
+        The parts to be included in the *cutlist* must instances of a **component**.
+        If you use only groups, convert them into components.
         When using components parts can be replicated without being copied.
       no_typed_materials: Apply a material on the parts to be included in the cutlist and define the properties of this material (**Solid wood** or **Sheet good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
   materials:
