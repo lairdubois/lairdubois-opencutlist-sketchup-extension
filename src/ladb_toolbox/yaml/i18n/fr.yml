@@ -102,13 +102,17 @@ tab:
   materials:
     label: Matières
     title: Matières
+    type_0: Non défini
+    type_1: Bois massif
+    type_2: Bois panneau
+    tooltip:
+      type_0: Type $t(tab.materials.type_0)
+      type_1: Type $t(tab.materials.type_1)
+      type_2: Type $t(tab.materials.type_2)
     form:
       title: Propriétés d'une matière
       name: Nom
       type: Type
-      type_unknow: Aucun
-      type_hardwood: Bois massif
-      type_plywood: Bois panneau
       cut_options: Options de débit
       length_increase: Surcote de longueur
       width_increase: Surcote de largeur

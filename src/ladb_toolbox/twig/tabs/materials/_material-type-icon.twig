@@ -1,1 +1,1 @@
-{% if type > 0 %}<span style='font-size: 110%;'><i class='ladb-toolbox-icon-{{ type == 1 ? 'hardwood' : 'panel' }}'></i></span> {% endif %}
+<span style='font-size: 110%;' data-toggle='tooltip' title='{{ ('tab.materials.tooltip.type_'~type)|i18next }}'><i class='ladb-toolbox-icon-{{ type == 1 ? 'solid-wood' : (type == 2 ? 'sheet-good' : 'unknow') }}'></i></span>

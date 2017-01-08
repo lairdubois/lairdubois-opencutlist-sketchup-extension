@@ -50,7 +50,7 @@
 
         function rubyCommandCallback(id, encodedData) {
             var callback = commandCallbacks[id];
-            if (callback) {
+            if (callback && typeof callback == 'function') {
                 var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
                 callback(data);
                 commandCallbacks[id] = null;

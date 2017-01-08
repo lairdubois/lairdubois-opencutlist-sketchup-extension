@@ -112,7 +112,7 @@ module Ladb
           std_thickness = _find_std_thickness(
               (size.thickness + material_attributes.l_thickness_increase).to_l,
               material_attributes.l_std_thicknesses,
-              material_attributes.type == MaterialAttributes::TYPE_HARDWOOD
+              material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
           )
           raw_size = Size.new(
               (size.length + material_attributes.l_length_increase).to_l,
@@ -164,9 +164,9 @@ module Ladb
           hardwood_material_count = 0
           plywood_material_count = 0
           cutlist.material_usages.each { |key, material_usage|
-            if material_usage.type == MaterialAttributes::TYPE_HARDWOOD
+            if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
               hardwood_material_count += material_usage.use_count
-            elsif material_usage.type == MaterialAttributes::TYPE_PLYWOOD
+            elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
               plywood_material_count += material_usage.use_count
             end
           }
@@ -224,7 +224,7 @@ module Ladb
           group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
             if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
               group[:raw_area_m2] += part_def.raw_size.area_m2 * part_def.count
-              if group_def.material_type == MaterialAttributes::TYPE_HARDWOOD
+              if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD
                 group[:raw_volume_m3] += part_def.raw_size.volume_m3 * part_def.count
               end
             end

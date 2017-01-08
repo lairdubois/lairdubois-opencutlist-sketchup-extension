@@ -1,4 +1,4 @@
 <option value="" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.material_unknow'|i18next }}</span>"></option>
 {% for materialUsage in materialUsages %}
-    <option value="{{ materialUsage.name }}"{% if materialUsage.type > 0 %} data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type } %} {{ materialUsage.display_name|escape }}"{% endif %}>{{ materialUsage.display_name|escape }}</option>
+    <option value="{{ materialUsage.name }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type } %} {{ materialUsage.display_name|escape }}">{{ materialUsage.display_name|escape }}</option>
 {% endfor %}

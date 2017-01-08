@@ -102,14 +102,18 @@ tab:
   materials:
     label: Materials
     title: Materials
+    type_0: Undefined
+    type_1: Solid wood
+    type_2: Sheet good
+    tooltip:
+      type_0: Type $t(tab.materials.type_0)
+      type_1: Type $t(tab.materials.type_1)
+      type_2: Type $t(tab.materials.type_2)
     form:
       title: Properties of Material
       name: Name
       type: Type
-      type_unknow: Unknown
-      type_hardwood: Solid wood
-      type_plywood: Sheet good
-      cut_options: Cutlist Options
+      cut_options: Cut Options
       length_increase: Length oversize
       width_increase: Width oversize
       thickness_increase: Thickness oversize

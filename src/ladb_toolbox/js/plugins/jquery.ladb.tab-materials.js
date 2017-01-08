@@ -60,6 +60,11 @@
                 materials: materials
             }));
 
+            // Init tooltips
+            $('[data-toggle="tooltip"]').tooltip({
+                container: 'body'
+            });
+
             // Bind rows
             $('.ladb-material-box', that.$page).each(function(index) {
                 var $box = $(this);
@@ -117,14 +122,14 @@
             case 0:   // TYPE_UNKNOW
                 this.$inputLengthIncrease.closest('section').hide();
                 break;
-            case 1:   // TYPE_HARDWOOD
+            case 1:   // TYPE_SOLID_WOOD
                 this.$inputLengthIncrease.closest('section').show();
                 this.$inputLengthIncrease.closest('.form-group').show();
                 this.$inputWidthIncrease.closest('.form-group').show();
                 this.$inputThicknessIncrease.closest('.form-group').show();
                 this.$inputStdThicknesses.closest('.form-group').show();
                 break;
-            case 2:   // TYPE_PLYWOOD
+            case 2:   // TYPE_SHEET_GOOD
                 this.$inputLengthIncrease.closest('section').show();
                 this.$inputLengthIncrease.closest('.form-group').show();
                 this.$inputWidthIncrease.closest('.form-group').show();
@@ -146,13 +151,13 @@
                 defaultThicknessIncrease = '0';
                 defaultStdThicknesses = '';
                 break;
-            case 1:   // TYPE_HARDWOOD
+            case 1:   // TYPE_SOLID_WOOD
                 defaultLengthIncrease = '50mm';
                 defaultWidthIncrease = '5mm';
                 defaultThicknessIncrease = '5mm';
                 defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
                 break;
-            case 2:   // TYPE_PLYWOOD
+            case 2:   // TYPE_SHEET_GOOD
                 defaultLengthIncrease = '10mm';
                 defaultWidthIncrease = '10mm';
                 defaultThicknessIncrease = '0';
@@ -166,10 +171,12 @@
     };
 
     LadbTabMaterials.prototype.storeDefaultCutOptionsFormSectionByType = function (type) {
-        this.toolbox.setSetting('materials_type_' + type + '_length_increase', this.$inputLengthIncrease.val());
-        this.toolbox.setSetting('materials_type_' + type + '_width_increase', this.$inputWidthIncrease.val());
-        this.toolbox.setSetting('materials_type_' + type + '_thickness_increase', this.$inputThicknessIncrease.val());
-        this.toolbox.setSetting('materials_type_' + type + '_std_thicknesses', this.$inputStdThicknesses.val());
+        this.toolbox.setSettings([
+            { key:'materials_type_' + type + '_length_increase', value:this.$inputLengthIncrease.val() },
+            { key:'materials_type_' + type + '_width_increase', value:this.$inputWidthIncrease.val() },
+            { key:'materials_type_' + type + '_thickness_increase', value:this.$inputThicknessIncrease.val() },
+            { key:'materials_type_' + type + '_std_thicknesses', value:this.$inputStdThicknesses.val() }
+        ]);
     };
 
     LadbTabMaterials.prototype.bind = function () {

@@ -5,8 +5,8 @@ module Ladb
       ATTRIBUTE_DICTIONARY = 'ladb_toolbox'
 
       TYPE_UNKNOW = 0
-      TYPE_HARDWOOD = 1
-      TYPE_PLYWOOD = 2
+      TYPE_SOLID_WOOD = 1
+      TYPE_SHEET_GOOD = 2
 
       DEFAULTS = {
           TYPE_UNKNOW => {
@@ -15,13 +15,13 @@ module Ladb
               :thickness_increase => '0',
               :std_thicknesses => ''
           },
-          TYPE_HARDWOOD => {
+          TYPE_SOLID_WOOD => {
               :length_increase => '50mm',
               :width_increase => '5mm',
               :thickness_increase => '5mm',
               :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm'
           },
-          TYPE_PLYWOOD => {
+          TYPE_SHEET_GOOD => {
               :length_increase => '10mm',
               :width_increase => '10mm',
               :thickness_increase => '0',
@@ -47,7 +47,7 @@ module Ladb
       def self.valid_type(type)
         if type
           i_type = type.to_i
-          if i_type < TYPE_UNKNOW or i_type > TYPE_PLYWOOD
+          if i_type < TYPE_UNKNOW or i_type > TYPE_SHEET_GOOD
             TYPE_UNKNOW
           end
           i_type
@@ -58,9 +58,9 @@ module Ladb
 
       def self.type_order(type)
         case type
-          when TYPE_HARDWOOD
+          when TYPE_SOLID_WOOD
             1
-          when TYPE_PLYWOOD
+          when TYPE_SHEET_GOOD
             2
           else
             99
@@ -71,7 +71,7 @@ module Ladb
 
       def length_increase
         case @type
-          when TYPE_HARDWOOD, TYPE_PLYWOOD
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
             @length_increase
           else
             get_default(:length_increase)
@@ -84,7 +84,7 @@ module Ladb
 
       def width_increase
         case @type
-          when TYPE_HARDWOOD, TYPE_PLYWOOD
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
             @width_increase
           else
             get_default(:width_increase)
@@ -97,7 +97,7 @@ module Ladb
 
       def thickness_increase
         case @type
-          when TYPE_HARDWOOD
+          when TYPE_SOLID_WOOD
             @thickness_increase
           else
             get_default(:thickness_increase)
@@ -110,7 +110,7 @@ module Ladb
 
       def std_thicknesses
         case @type
-          when TYPE_HARDWOOD, TYPE_PLYWOOD
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
             @std_thicknesses
           else
             get_default(:std_thicknesses)

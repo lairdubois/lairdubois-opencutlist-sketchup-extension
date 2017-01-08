@@ -102,13 +102,17 @@ tab:
   materials:
     label: Materialien
     title: Materialien
+    type_0: Unbekannt
+    type_1: Massivholz
+    type_2: Platten
+    tooltip:
+      type_0: Type $t(tab.materials.type_0)
+      type_1: Type $t(tab.materials.type_1)
+      type_2: Type $t(tab.materials.type_2)
     form:
       title: Eigenschaften des Materials
       name: Bezeichnung
       type: Art
-      type_unknow: Unbekannt
-      type_hardwood: Massivholz
-      type_plywood: Platten
       cut_options: Stücklistoptionen
       length_increase: Längenübermass
       width_increase: Breitenübermass

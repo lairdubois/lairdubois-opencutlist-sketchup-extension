@@ -70,9 +70,9 @@ module Ladb
                                 })
 
           case material_attributes.type
-            when MaterialAttributes::TYPE_HARDWOOD
+            when MaterialAttributes::TYPE_SOLID_WOOD
               data[:hardwood_material_count] += 1
-            when MaterialAttributes::TYPE_PLYWOOD
+            when MaterialAttributes::TYPE_SHEET_GOOD
               data[:plywood_material_count] += 1
             else
               data[:unknow_material_count] += 1

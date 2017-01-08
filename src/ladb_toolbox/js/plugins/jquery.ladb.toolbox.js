@@ -66,7 +66,9 @@
                 var value = values[i];
                 that.settings[value.key] = value.value;
             }
-            callback();
+            if (callback && typeof callback == 'function') {
+                callback();
+            }
         });
     };
 
@@ -95,7 +97,7 @@
         return defaultValue;
     };
 
-    // Commands /////
+    // Actions /////
 
     LadbToolbox.prototype.minimize = function () {
         var that = this;
