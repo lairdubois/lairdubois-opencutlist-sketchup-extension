@@ -29,7 +29,7 @@ tab:
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     tooltip:
-      show_hide_block: Afficher / Marquer ce bloc
+      show_hide_block: Afficher / Masquer ce bloc
       scroll_to_block: Défiler vers le bloc
       edit_part_properties: Editer les propriétés
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
@@ -123,6 +123,8 @@ tab:
     credits_description: |
       Le plugin *L'Air du Bois : Boîte à outils Sketchup* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et [contributeurs](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors).
       Ce projet est disponible en Open Source sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin).
+    credits_runtime: Exécution
+    credits_development: Développement
     credits_vendors: |
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels Open Source suivantes :
     credits_thanks: |
