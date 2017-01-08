@@ -48,26 +48,26 @@ tab:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
         - die *Breite* auf der <span style='color:red'>grünen</span> Achse ist, und
         - die *Dicke* auf der <span style='color:red'>blauen</span> Achse ist
-      smart_material: intelligente Zuweisung des Materials
+      smart_material: "*intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
       part_number_with_letters: Buchstaben zur Nummerierung verwenden
       part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
-      part_number_sequence_by_group: Reinitialisieren der Aufzählung bei jedem Abschnitt
+      part_number_sequence_by_group: Aufzählung bei jedem Abschnitt reinitialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
-      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
-      hide_raw_dimensions: Masquer les dimension brutes
-      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
-      part_order_strategy: Ordre de tri des pièces
+      hide_untyped_material_dimensions: Abmessungen für Stücke ohne Typ maskieren
+      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Stücke ohne definiertes Material (**Massivholz** oder **Platten**) nicht angezeigt.
+      hide_raw_dimensions: Ausblenden der Rohmasse
+      hide_raw_dimensions_help: Ist diese Option aktiv, werden die Rohmasse nicht angezeigt.
+      part_order_strategy: Sortierfolge der Stücke
       part_order_strategy_help: |
-        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
-        Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
+        Die Sortierfolge der Stücke wird durch die Reihenfolge der folgenden Zeilen definiert.
+        Jede Eigenschaft kann <i class="ladb-toolbox-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-toolbox-icon-sort-desc"></i> *absteigend* sortiert werden.
       property_thickness: Dicke
       property_length: Länge
       property_width: Breite
       property_name: Bezeichnung
       property_count: Stk.
-      reset: Réinitialiser aux valeurs par défaut
+      reset: Zurücksetzen auf Standardwerte
     list:
       summary: Zusammenfassung
       type: Art
@@ -93,9 +93,9 @@ tab:
       no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**Massivholz** oder **Platten**).
     tip:
       no_component: |
-        Les pièces que vous souhaitez voir apparaitre dans la *fiche de débit* doivent être des instances de **composant**.
-        Si vous utilisez uniquement des groupes, convertissez-les en composant.
-        L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
+        Zur Berücksichtigung in der *Stückliste* müssen die Teile Instanzen einer **Komponente** sein.
+        Wenn Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
+        Durch die Verwendung von Komponenten können Stücke repliziert werden ohne sie zu kopieren.
       no_typed_materials: Übertragen Sie ein Material auf die Stücke, die Sie in der Stückliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-toolbox-icon-materials"></i> *Materialien*.
   materials:
     label: Materialien
@@ -112,7 +112,7 @@ tab:
       width_increase: Breitenübermass
       thickness_increase: Dickenübermass
       std_thicknesses: Verfügbare Dicken
-      std_thicknesses_help: Verfügbare Dicken in mm Rohmass.
+      std_thicknesses_help: Rohmass der verfügbaren Dicken in mm.
     error:
       no_materials: Ihr Modell enthält keine Materialien.
   about:
@@ -121,8 +121,10 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_description: |
-      Das Plugin *L'Air du Bois : Werkzeugkiste für Sketchup* wird von [Boris Beaulant](https://www.lairdubois.fr/zeloko) und [contributors](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) entwickelt. 
+      Das Plugin *L'Air du Bois : Werkzeugkiste für Sketchup* wird von [Boris Beaulant](https://www.lairdubois.fr/zeloko) und [Mitwirkende](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) entwickelt. 
       Es ist mit einer Open Source Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin) verfügbar.
+    credits_runtime: Laufzeit
+    credits_development: Entwicklung
     credits_vendors:  |
       Dieses Abenteuer wäre nicht möglich ohne die Autoren der folgenden Open Source Komponenten:
     credits_thanks: |

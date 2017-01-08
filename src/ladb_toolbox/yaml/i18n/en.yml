@@ -54,20 +54,20 @@ tab:
       part_number_with_letters_help: If this option is enabled, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
       part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
-      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
-      hide_raw_dimensions: Masquer les dimension brutes
-      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
-      part_order_strategy: Ordre de tri des pièces
+      hide_untyped_material_dimensions: Hide the dimensions for parts without type
+      hide_untyped_material_dimensions_help: If this option is active, the dimensions of parts without defined material type (**Solid wood** or **Sheet good**) will not be displayed.
+      hide_raw_dimensions: Hide raw dimensions
+      hide_raw_dimensions_help: If this option is active, the raw dimensions of parts will not be displayed.
+      part_order_strategy: Sort order of parts
       part_order_strategy_help: |
-        Définissez l'ordre de tri des pièces en réorganisant les lignes suivantes.
-        Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
+        Define the sort order of parts by reorganizing the following lines.
+        Each property can be sorted in <i class="ladb-toolbox-icon-sort-asc"></i> *ascending* or <i class="ladb-toolbox-icon-sort-desc"></i> *descending* order.
       property_thickness: Thickness
       property_length: Length
       property_width: Width
-      property_name: Désignation
+      property_name: Designation
       property_count: Count
-      reset: Réinitialiser aux valeurs par défaut
+      reset: Restore default values
     list:
       summary: Summary
       type: Type
@@ -93,9 +93,9 @@ tab:
       no_typed_materials_in_selection: The selection does not use any defined material (**Solid wood** or **Sheet good**).
     tip:
       no_component: |
-        Les pièces que vous souhaitez voir apparaitre dans la *fiche de débit* doivent être des instances de **composant**.
-        Si vous utilisez uniquement des groupes, convertissez-les en composant.
-        L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
+        The parts to be included in the *cutlist* must instances of a **component**.
+        If you use only groups, convert them into components.
+        When using components parts can be replicated without being copied.
       no_typed_materials: Apply a material on the parts to be included in the cutlist and define the properties of this material (**Solid wood** or **Sheet good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
   materials:
     label: Materials
@@ -121,7 +121,10 @@ tab:
     version: Version
     credits: Technical Credits
     credits_description: |
-      The plugin  *L'Air du Bois : Toolbox for Sketchup* is being developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and [contributors](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors). It is available under Open Source licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) on [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin).
+      The plugin  *L'Air du Bois : Toolbox for Sketchup* is being developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and [Contributors](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors). 
+      It is available under Open Source licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) on [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin).
+    credits_runtime: Runtime
+    credits_development: Development
     credits_vendors: |
       The adventure would not be possible without the work of the authors of the following Open Source components:
     credits_thanks: |
