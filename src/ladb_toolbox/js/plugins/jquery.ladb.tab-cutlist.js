@@ -114,10 +114,8 @@
                 groups: groups
             }));
 
-            // Init tooltips
-            $('[data-toggle="tooltip"]').tooltip({
-                container: 'body'
-            });
+            // Setup tooltips
+            that.toolbox.setupTooltips();
 
             // Bind buttons
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
@@ -429,15 +427,6 @@
             });
 
             that.bind();
-
-            // Init tooltips & popover
-            $('[data-toggle="tooltip"]').tooltip({
-                container: 'body'
-            });
-            $('[data-toggle="popover"]').popover({
-                html: true
-            });
-
         });
 
     };

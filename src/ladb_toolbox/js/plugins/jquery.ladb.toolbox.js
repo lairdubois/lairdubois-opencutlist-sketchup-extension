@@ -159,6 +159,10 @@
                 var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
                 $tab[jQueryPluginFn]({ toolbox: this });
 
+                // Setup tooltips & popovers
+                this.setupTooltips();
+                this.setupPopovers();
+
                 // Cache tab
                 this.tabs[tabName] = $tab;
 
@@ -171,6 +175,18 @@
     };
 
     // Internals /////
+
+    LadbToolbox.prototype.setupTooltips = function() {
+        $('[data-toggle="tooltip"]').tooltip({
+            container: 'body'
+        });
+    };
+
+    LadbToolbox.prototype.setupPopovers = function() {
+        $('[data-toggle="popover"]').popover({
+            html: true
+        });
+    };
 
     LadbToolbox.prototype.bind = function () {
         var that = this;

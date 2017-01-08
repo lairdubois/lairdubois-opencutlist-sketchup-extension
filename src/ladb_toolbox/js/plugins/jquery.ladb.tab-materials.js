@@ -60,10 +60,8 @@
                 materials: materials
             }));
 
-            // Init tooltips
-            $('[data-toggle="tooltip"]').tooltip({
-                container: 'body'
-            });
+            // Setup tooltips
+            that.toolbox.setupTooltips();
 
             // Bind rows
             $('.ladb-material-box', that.$page).each(function(index) {
