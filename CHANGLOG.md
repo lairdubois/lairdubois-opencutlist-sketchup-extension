@@ -7,8 +7,9 @@ in 0.x versions.
 * 0.4.5
 
   * Cutlist part_order_strategy option
+  * Cutlist hide_raw_dimensions option
+  * Cutlist hide_final_dimensions option
   * Cutlist hide_untyped_material_dimensions option
-  * Cutlist parthide_raw_dimensions option
   * Materials improve std_thickness input field
   
 * 0.4.4 (2017-01-05)

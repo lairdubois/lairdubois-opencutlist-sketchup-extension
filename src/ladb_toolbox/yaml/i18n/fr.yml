@@ -57,7 +57,9 @@ tab:
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
       hide_raw_dimensions: Masquer les dimension brutes
-      hide_raw_dimensions_help: Si cette option est active, les dimensions brutes ne sont pas affichées.
+      hide_raw_dimensions_help: Si cette option est active, les dimensions **brutes** des pièces ne sont pas affichées.
+      hide_final_dimensions: Masquer les dimension finies
+      hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri.
@@ -67,7 +69,7 @@ tab:
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
-      reset: Réinitialiser aux valeurs par défaut
+      reset: Restaurer les valeurs par défaut
     list:
       summary: Résumé
       type: Type

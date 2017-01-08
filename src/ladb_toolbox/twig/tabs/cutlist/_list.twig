@@ -45,13 +45,20 @@
 {% endif %}
 {% for group in groups %}
 
-    {% set showDimensions = group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions %}
     {% set showRawDimensions = group.material_type > 0 and not uiOptions.hide_raw_dimensions %}
+    {% set showFinalDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_final_dimensions %}
+    {% set colspan = 8 %}
+    {% if not showRawDimensions %}
+        {% set colspan = colspan - 2 %}
+    {% endif %}
+    {% if not showFinalDimensions %}
+        {% set colspan = colspan - 3 %}
+    {% endif %}
 
     <table id="ladb_group_{{ group.id }}" class="table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
-            <td colspan="{% if showDimensions %}{% if showRawDimensions %}8{% else %}6{% endif %}{% else %}3{% endif %}" style="line-height: 20px;">
+            <td colspan="{{ colspan }}" style="line-height: 20px;">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
@@ -62,21 +69,21 @@
         <tbody>
         <tr>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="{% if showDimensions %}{% if showRawDimensions %}37%{% else %}57%{% endif %}{% else %}87%{% endif %}">{{ 'tab.cutlist.list.name'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
-            {% if showDimensions %}
-                {% if showRawDimensions %}
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.list.raw'|i18next }}</td>
-                {% endif %}
+            {% if showRawDimensions %}
+                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.raw'|i18next }}</td>
+            {% endif %}
+            {% if showFinalDimensions %}
                 <td class="text-center" colspan="3">{{ 'tab.cutlist.list.final'|i18next }}</td>
             {% endif %}
         </tr>
         <tr>
-            {% if showDimensions %}
-                {% if showRawDimensions %}
-                    <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
-                    <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
-                {% endif %}
+            {% if showRawDimensions %}
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
+                <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+            {% endif %}
+            {% if showFinalDimensions %}
                 <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
                 <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
                 <td class="text-center" width="10%">{{ 'tab.cutlist.list.thickness_short'|i18next }}</td>
@@ -84,7 +91,7 @@
         </tr>
         {% set thickness = 0 %}
         {% for part in group.parts %}
-            {% if showThicknessSeparators and group.material_type == 1 and part.thickness != thickness %}
+            {% if showThicknessSeparators and showFinalDimensions and group.material_type == 1 and part.thickness != thickness %}
                 {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
@@ -100,11 +107,11 @@
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>
-                {% if showDimensions %}
-                    {% if showRawDimensions %}
-                        <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
-                        <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
-                    {% endif %}
+                {% if showRawDimensions %}
+                    <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                {% endif %}
+                {% if showFinalDimensions %}
                     <td class="text-right">{{ part.length }}</td>
                     <td class="text-right">{{ part.width }}</td>
                     <td class="text-right">{{ part.thickness }}</td>

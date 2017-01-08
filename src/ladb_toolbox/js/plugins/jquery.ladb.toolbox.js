@@ -1,7 +1,10 @@
 +function ($) {
     'use strict';
 
-    var KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
+    // CONSTANTS
+    // ======================
+
+    var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
 
     // CLASS DEFINITION
     // ======================
@@ -52,6 +55,8 @@
         ]
     };
 
+    // Settings /////
+
     LadbToolbox.prototype.pullSettings = function (keys, callback) {
         var that = this;
 
@@ -89,6 +94,8 @@
         }
         return defaultValue;
     };
+
+    // Commands /////
 
     LadbToolbox.prototype.minimize = function () {
         var that = this;
@@ -161,6 +168,8 @@
         }
     };
 
+    // Internals /////
+
     LadbToolbox.prototype.bind = function () {
         var that = this;
 
@@ -183,7 +192,7 @@
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
-            that.setSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
+            that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
 
     };
@@ -200,10 +209,10 @@
         setTimeout(function() {
 
             that.pullSettings([
-                KEY_COMPATIBILITY_ALERT_HIDDEN
+                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
             ], function() {
 
-                that.compatibilityAlertHidden = that.getSetting(KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+                that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
 
                 // Add i18next twig filter
                 Twig.extendFilter("i18next", function(value, options) {

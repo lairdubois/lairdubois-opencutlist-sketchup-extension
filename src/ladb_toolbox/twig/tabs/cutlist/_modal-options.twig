@@ -6,7 +6,7 @@
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
+            <div class="col-xs-offset-1 col-xs-10">
                 <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.auto_orient_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
                     <input type="checkbox" id="ladb_input_auto_orient"> {{ 'tab.cutlist.option.auto_orient'|i18next }}
@@ -14,15 +14,16 @@
             </div>
         </div>
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
+            <div class="col-xs-offset-1 col-xs-10">
                 <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.smart_material_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
                     <input type="checkbox" id="ladb_input_smart_material"> {{ 'tab.cutlist.option.smart_material'|i18next }}
                 </label>
             </div>
         </div>
+        <br>
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
+            <div class="col-xs-offset-1 col-xs-10">
                 <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.part_number_with_letters_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
                     <input type="checkbox" id="ladb_input_part_number_with_letters"> {{ 'tab.cutlist.option.part_number_with_letters'|i18next }}
@@ -30,26 +31,35 @@
             </div>
         </div>
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
+            <div class="col-xs-offset-1 col-xs-10">
                 <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.part_number_sequence_by_group_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
                     <input type="checkbox" id="ladb_input_part_number_sequence_by_group"> {{ 'tab.cutlist.option.part_number_sequence_by_group'|i18next }}
                 </label>
             </div>
         </div>
+        <br>
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
-                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_untyped_material_dimensions_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_raw_dimensions_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
-                    <input type="checkbox" id="ladb_input_hide_untyped_material_dimensions"> {{ 'tab.cutlist.option.hide_untyped_material_dimensions'|i18next }}
+                    <input type="checkbox" id="ladb_input_hide_raw_dimensions"> {{ 'tab.cutlist.option.hide_raw_dimensions'|i18next }}
                 </label>
             </div>
         </div>
         <div class="checkbox">
-            <div class="col-xs-offset-2 col-xs-8">
-                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_raw_dimensions_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_final_dimensions_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
                 <label>
-                    <input type="checkbox" id="ladb_input_hide_raw_dimensions"> {{ 'tab.cutlist.option.hide_raw_dimensions'|i18next }}
+                    <input type="checkbox" id="ladb_input_hide_final_dimensions"> {{ 'tab.cutlist.option.hide_final_dimensions'|i18next }}
+                </label>
+            </div>
+        </div>
+        <div class="checkbox" style="padding-left: 10px;">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_untyped_material_dimensions_help'|i18next }}"><i class="ladb-toolbox-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_hide_untyped_material_dimensions"> <span>{{ 'tab.cutlist.option.hide_untyped_material_dimensions'|i18next }}</span>
                 </label>
             </div>
         </div>
