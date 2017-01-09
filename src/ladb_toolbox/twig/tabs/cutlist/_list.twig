@@ -7,11 +7,11 @@
 {% include 'core/_alert-tips.twig' %}
 
 {% if groups|length > 0 %}
-    <table id="ladb_summary" class="{% if uiOptions.summary_no_print %}no-print {% endif %}table table-bordered ladb-cutlist">
+    <table id="ladb_group_summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="5" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_summary" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="summary" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{{ 'tab.cutlist.list.summary'|i18next }}</span>
                 </div>
@@ -55,11 +55,11 @@
         {% set colspan = colspan - 3 %}
     {% endif %}
 
-    <table id="ladb_group_{{ group.id }}" class="table table-bordered ladb-cutlist">
+    <table id="ladb_group_{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist">
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="{{ colspan }}" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="ladb_group_{{ group.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="{{ group.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>

@@ -1,5 +1,3 @@
-require 'securerandom'
-
 module Ladb
   module Toolbox
     class GroupDef
@@ -7,8 +5,8 @@ module Ladb
       attr_accessor :material_name, :material_type, :part_count, :raw_thickness, :raw_thickness_available
       attr_reader :id, :part_defs
 
-      def initialize
-        @id = SecureRandom.uuid
+      def initialize(id)
+        @id = id
         @material_name = ''
         @material_type = MaterialAttributes::TYPE_UNKNOW
         @raw_thickness = 0

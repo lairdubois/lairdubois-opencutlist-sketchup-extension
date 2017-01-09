@@ -1,4 +1,5 @@
 require 'pathname'
+require 'digest'
 require_relative 'controller'
 require_relative '../model/size'
 require_relative '../model/cutlist'
@@ -120,24 +121,26 @@ module Ladb
               std_thickness[:value]
           )
 
-          key = material_name + (material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : '')
-          group_def = cutlist.get_group_def(key)
+          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
+          group_def = cutlist.get_group_def(group_id)
           unless group_def
 
-            group_def = GroupDef.new
+            group_def = GroupDef.new(group_id)
             group_def.material_name = material_name
             group_def.material_type = material_attributes.type
             group_def.raw_thickness = raw_size.thickness
             group_def.raw_thickness_available = std_thickness[:available]
 
-            cutlist.set_group_def(key, group_def)
+            cutlist.set_group_def(group_id, group_def)
 
           end
 
+          part_id = Digest::SHA1.hexdigest("#{definition.entityID}")
           part_def = group_def.get_part_def(definition.name)
           unless part_def
 
-            part_def = PartDef.new(definition.name)
+            part_def = PartDef.new(part_id)
+            part_def.definition_id = definition.name
             part_def.name = definition.name
             part_def.raw_size = raw_size
             part_def.size = size

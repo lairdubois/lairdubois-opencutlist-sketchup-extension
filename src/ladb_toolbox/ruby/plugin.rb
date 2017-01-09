@@ -158,6 +158,7 @@ module Ladb
                     :left => DIALOG_LEFT,
                     :top => DIALOG_TOP,
                     :min_width => DIALOG_MINIMIZED_WIDTH,
+                    :min_heght => DIALOG_MINIMIZED_HEIGHT,
                     :style => UI::HtmlDialog::STYLE_DIALOG
                 })
           else
@@ -171,6 +172,8 @@ module Ladb
                 DIALOG_TOP,
                 true
             )
+            @dialog.min_width = DIALOG_MINIMIZED_WIDTH
+            @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
           end
 
           # Setup dialog page
@@ -239,7 +242,7 @@ module Ladb
 
       def dialog_minimize_command
         if @dialog
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT) #@html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
         end
       end
 

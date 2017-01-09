@@ -58,7 +58,7 @@ tab:
       hide_untyped_material_dimensions_help: If this option is active, the dimensions of parts without defined material type (**Solid wood** or **Sheet good**) will not be displayed.
       hide_raw_dimensions: Hide raw dimensions
       hide_raw_dimensions_help: If this option is active, the raw dimensions of parts will not be displayed.
-      hide_final_dimensions: Masquer les dimension finies
+      hide_final_dimensions: Masquer les dimensions finies
       hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
       part_order_strategy: Sort order of parts
       part_order_strategy_help: |

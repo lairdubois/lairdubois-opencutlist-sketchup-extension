@@ -58,7 +58,7 @@ tab:
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Stücke ohne definiertes Material (**Massivholz** oder **Platten**) nicht angezeigt.
       hide_raw_dimensions: Ausblenden der Rohmasse
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die Rohmasse nicht angezeigt.
-      hide_final_dimensions: Masquer les dimension finies
+      hide_final_dimensions: Masquer les dimensions finies
       hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
       part_order_strategy: Sortierfolge der Stücke
       part_order_strategy_help: |
