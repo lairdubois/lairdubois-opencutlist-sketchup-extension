@@ -106,9 +106,9 @@ tab:
     type_1: Massivholz
     type_2: Platten
     tooltip:
-      type_0: Type $t(tab.materials.type_0)
-      type_1: Type $t(tab.materials.type_1)
-      type_2: Type $t(tab.materials.type_2)
+      type_0: Type de matière '$t(tab.materials.type_0)'
+      type_1: Type de matière '$t(tab.materials.type_1)'
+      type_2: Type de matière '$t(tab.materials.type_2)'
     form:
       title: Eigenschaften des Materials
       name: Bezeichnung

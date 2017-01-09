@@ -28,26 +28,8 @@ i, span.ladb-toolbox-icon {
   opacity: 0.3;
 }
 
-.ladb-toolbox-icon-refresh:before {
-  content: "\e918";
-}
-.ladb-toolbox-icon-tick:before {
-  content: "\e90e";
-}
-.ladb-toolbox-icon-link:before {
-  content: "\e90c";
-}
-.ladb-toolbox-icon-eye-close:before {
-  content: "\e90a";
-}
-.ladb-toolbox-icon-eye-open:before {
-  content: "\e90b";
-}
-.ladb-toolbox-icon-tip:before {
-  content: "\e914";
-}
-.ladb-toolbox-icon-solid-wood:before {
-  content: "\e903";
+.ladb-toolbox-icon-menu:before {
+  content: "\e91a";
 }
 .ladb-toolbox-icon-sort-asc:before {
   content: "\e915";
@@ -91,6 +73,27 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-cutlist:before {
   content: "\e900";
 }
+.ladb-toolbox-icon-refresh:before {
+  content: "\e918";
+}
+.ladb-toolbox-icon-tick:before {
+  content: "\e90e";
+}
+.ladb-toolbox-icon-link:before {
+  content: "\e90c";
+}
+.ladb-toolbox-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-toolbox-icon-eye-open:before {
+  content: "\e90b";
+}
+.ladb-toolbox-icon-tip:before {
+  content: "\e914";
+}
+.ladb-toolbox-icon-solid-wood:before {
+  content: "\e903";
+}
 .ladb-toolbox-icon-materials:before {
   content: "\e901";
 }
@@ -106,3 +109,4 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-chevron-left:before {
   content: "\e905";
 }
+

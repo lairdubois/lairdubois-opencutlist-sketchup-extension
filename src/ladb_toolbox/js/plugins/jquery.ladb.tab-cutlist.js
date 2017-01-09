@@ -12,10 +12,10 @@
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
 
-    var SETTING_KEY_OPTION_SUMMARY_NO_PRINT = 'cutlist_option_summary_hidden';
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
+    var SETTING_KEY_OPTION_SUMMARY_NO_PRINT = 'cutlist_option_summary_hidden';
 
     // Options defaults
 
@@ -228,12 +228,9 @@
             part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
         };
 
-        this.uiOptions = {
-            summary_no_print: this.uiOptions.summary_no_print,      // This value is not reset
-            hide_raw_dimensions: OPTION_DEFAULT_HIDE_RAW_DIMENSIONS,
-            hide_final_dimensions: OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS,
-            hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS
-        };
+        this.uiOptions.hide_raw_dimensions = OPTION_DEFAULT_HIDE_RAW_DIMENSIONS;
+        this.uiOptions.hide_final_dimensions = OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS;
+        this.uiOptions.hide_untyped_material_dimensions = OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS;
 
         // Sync with SU
         this.toolbox.setSettings([
@@ -393,10 +390,10 @@
             SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
             SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
 
-            SETTING_KEY_OPTION_SUMMARY_NO_PRINT,
             SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
             SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
-            SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS
+            SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
+            SETTING_KEY_OPTION_SUMMARY_NO_PRINT
 
         ], function() {
 
@@ -409,10 +406,10 @@
             };
 
             that.uiOptions = {
-                summary_no_print: that.toolbox.getSetting(SETTING_KEY_OPTION_SUMMARY_NO_PRINT, OPTION_DEFAULT_SUMMARY_NO_PRINT),
                 hide_raw_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, OPTION_DEFAULT_HIDE_RAW_DIMENSIONS),
                 hide_final_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS, OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS),
-                hide_untyped_material_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS)
+                hide_untyped_material_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
+                summary_no_print: that.toolbox.getSetting(SETTING_KEY_OPTION_SUMMARY_NO_PRINT, OPTION_DEFAULT_SUMMARY_NO_PRINT)
             };
 
             // Init options inputs

@@ -106,9 +106,9 @@ tab:
     type_1: Solid wood
     type_2: Sheet good
     tooltip:
-      type_0: Type $t(tab.materials.type_0)
-      type_1: Type $t(tab.materials.type_1)
-      type_2: Type $t(tab.materials.type_2)
+      type_0: Type de matière '$t(tab.materials.type_0)'
+      type_1: Type de matière '$t(tab.materials.type_1)'
+      type_2: Type de matière '$t(tab.materials.type_2)'
     form:
       title: Properties of Material
       name: Name
