@@ -242,7 +242,7 @@ module Ladb
 
       def dialog_minimize_command
         if @dialog
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT) #@html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
         end
       end
 
