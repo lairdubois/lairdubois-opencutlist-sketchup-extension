@@ -12,6 +12,7 @@ in 0.x versions.
   * Cutlist hide_untyped_material_dimensions option
   * Cutlist hidden_group_ids
   * Materials improve std_thickness input field
+  * i18n init bug fix on slow computer
   
 * 0.4.4 (2017-01-05)
 

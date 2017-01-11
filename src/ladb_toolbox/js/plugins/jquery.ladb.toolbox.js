@@ -219,13 +219,8 @@
     LadbToolbox.prototype.init = function () {
         var that = this;
 
-        // Init i18next
-        $('<script>')
-            .attr('src', '../js/i18n/' + this.capabilities.language + '.js')
-            .appendTo('body');
-
-        // Continue with a timeout to be sure that translations are loaded
-        setTimeout(function() {
+        // Setup i18n initialized event
+        i18next.on('initialized', function(options) {
 
             that.pullSettings([
                 SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
@@ -259,7 +254,12 @@
 
             });
 
-        }, 1);
+        });
+
+        // Init i18next
+        $('<script>')
+            .attr('src', '../js/i18n/' + this.capabilities.language + '.js')
+            .appendTo('body');
 
     };
 
