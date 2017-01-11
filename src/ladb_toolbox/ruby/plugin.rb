@@ -167,7 +167,7 @@ module Ladb
                 true,
                 DIALOG_PREF_KEY,
                 DIALOG_MINIMIZED_WIDTH,
-                DIALOG_MAXIMIZED_HEIGHT,
+                @current_os == :MAC ? DIALOG_MAXIMIZED_HEIGHT : DIALOG_MINIMIZED_HEIGHT,
                 DIALOG_LEFT,
                 DIALOG_TOP,
                 true
@@ -180,7 +180,7 @@ module Ladb
           @dialog.set_file("#{__dir__}/../html/dialog.html")
 
           # Set dialog size
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, !@html_dialog_compatible && @current_os == :MAC ? DIALOG_MAXIMIZED_HEIGHT : DIALOG_MINIMIZED_HEIGHT)
 
           # Setup dialog actions
           @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
@@ -242,7 +242,7 @@ module Ladb
 
       def dialog_minimize_command
         if @dialog
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, @html_dialog_compatible ? DIALOG_MINIMIZED_HEIGHT : DIALOG_MAXIMIZED_HEIGHT)
+          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, !@html_dialog_compatible && @current_os == :MAC ? DIALOG_MAXIMIZED_HEIGHT : DIALOG_MINIMIZED_HEIGHT)
         end
       end
 

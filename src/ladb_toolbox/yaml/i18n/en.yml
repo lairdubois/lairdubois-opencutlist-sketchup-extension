@@ -35,6 +35,9 @@ tab:
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
+    menu:
+      show_all_groups: Afficher tous les blocs
+      hide_all_other_groups: Masquer tous les autres blocs
     form:
       title: Properties of a part
       name: Name

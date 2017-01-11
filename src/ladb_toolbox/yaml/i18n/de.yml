@@ -35,6 +35,9 @@ tab:
       material_origin_1: Das Material dieses Stücks ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Stücks wird von einem übergeordneten Stück geerbt.
       material_origin_3: Das Material dieses Stücks wird aus einem enthaltenen Teil extrahiert
+    menu:
+      show_all_groups: Afficher tous les blocs
+      hide_all_other_groups: Masquer tous les autres blocs
     form:
       title: Eigenschaften eines Stücks
       name: Name

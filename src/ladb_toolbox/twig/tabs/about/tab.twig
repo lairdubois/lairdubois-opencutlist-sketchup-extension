@@ -2,7 +2,8 @@
 
 {% block containerInner %}
     <h3>{{ 'tab.about.version'|i18next }}</h3>
-    <p>{{ capabilities.version }} {{ capabilities.language|upper }} <em>( SU {{ capabilities.sketchupVersion }} - {{ capabilities.currentOS }} - {{ capabilities.locale }} )</em></p>
+    <p><strong>{{ capabilities.version }}</strong> {{ capabilities.language|upper }} <em>( SU {{ capabilities.sketchupVersion }} - {{ capabilities.currentOS }} - {{ capabilities.locale }} )</em></p>
+    <p><em><small>{{ capabilities.userAgent }}</small></em></p>
     <h3>{{ 'tab.about.credits'|i18next }}</h3>
     <p>{{ 'tab.about.credits_description'|i18next }}</p>
     <p>{{ 'tab.about.credits_vendors'|i18next }}</p>

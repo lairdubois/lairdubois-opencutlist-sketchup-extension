@@ -7,11 +7,17 @@
 {% include 'core/_alert-tips.twig' %}
 
 {% if groups|length > 0 %}
-    <table id="ladb_group_summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist">
+    <table id="ladb_group_summary" data-group-id="summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="5" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="summary" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
+                <div class="btn-group pull-right">
+                    <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-toolbox-icon-eye-close"></i> Masquer tous les autres blocs</a></li>
+                    </ul>
+                </div>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{{ 'tab.cutlist.list.summary'|i18next }}</span>
                 </div>
@@ -55,11 +61,22 @@
         {% set colspan = colspan - 3 %}
     {% endif %}
 
-    <table id="ladb_group_{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist">
+    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
         <thead>
         <tr style="background-color: #eee;">
             <td colspan="{{ colspan }}" style="line-height: 20px;">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-group-id="{{ group.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
+                <div class="btn-group pull-right">
+                    <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        {#{% if group.material_name is not empty %}#}
+                            {#<li><a href="#" class="ladb-item-edit-material"><i class="ladb-toolbox-icon-edit"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</a></li>#}
+                        {#{% endif %}#}
+                        {#<li><a href="#" class="ladb-item-edit-group"><i class="ladb-toolbox-icon-materials"></i> Changer de matière</a></li>#}
+                        {#<li role="separator" class="divider"></li>#}
+                        <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-toolbox-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
+                    </ul>
+                </div>
                 <div>
                     <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>
@@ -103,7 +120,7 @@
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
                         {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}
-                        &nbsp;<a class="ladb-btn-edit" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
+                        &nbsp;<a class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>

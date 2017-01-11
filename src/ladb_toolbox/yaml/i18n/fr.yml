@@ -31,10 +31,14 @@ tab:
     tooltip:
       show_hide_block: Afficher / Masquer ce bloc
       scroll_to_block: Défiler vers le bloc
-      edit_part_properties: Editer les propriétés
+      edit_part_properties: Editer les propriétés de la pièce
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite des ses éléments enfants
+    menu:
+      show_all_groups: Afficher tous les blocs
+      hide_all_other_groups: Masquer tous les autres blocs
+      edit_material: Editer la matière '{{ material }}'
     form:
       title: Propriétés d'une pièce
       name: Nom

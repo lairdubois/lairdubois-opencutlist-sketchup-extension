@@ -17,6 +17,7 @@
             version: options.version,
             sketchupVersion: options.sketchup_version,
             currentOS: options.current_os,
+            userAgent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,
             htmlDialogCompatible: options.html_dialog_compatible
