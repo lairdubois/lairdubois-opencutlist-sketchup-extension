@@ -82,7 +82,7 @@ tab:
       volume: Volume
       number: N°
       name: Description
-      count: #
+      count: "#"
       raw: Raw
       final: Final
       length_short: L
