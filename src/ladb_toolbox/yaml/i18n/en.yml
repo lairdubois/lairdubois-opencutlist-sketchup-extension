@@ -26,7 +26,7 @@ tab:
     help: |
       Select the root of the cutlist in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be considered to compute the cutlist.
-    material_unknow: Material not defined
+    material_unknow: Material Type Undefined
     not_available_thickness: Thickness not available
     tooltip:
       show_hide_block: Show / Hide
@@ -36,8 +36,8 @@ tab:
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
     menu:
-      show_all_groups: Afficher tous les blocs
-      hide_all_other_groups: Masquer tous les autres blocs
+      show_all_groups: Show all blocks
+      hide_all_other_groups: Hide all other blocks
     form:
       title: Properties of a part
       name: Name
@@ -45,34 +45,34 @@ tab:
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
-        If this option is enabled, the 3 dimensions of a part are sorted such that the largest represents the *length* and the smallest represents the *thickness*.
+        If this option is selected, the 3 dimensions of a part are sorted such that the largest represents the *length* and the smallest represents the *thickness*.
 
         Otherwise, the local axes of the object define the dimensions as:
          - *length* on the <span style='color:red'>red</span> axis
          - *width* on the <span style='color:green'>green</span> axis
          - *thickness* on the <span style='color:blue'>blue</span> axis
       smart_material:  "*Intelligent* assignment of material"
-      smart_material_help: If this option is enabled, parts without defined material may be assigned the material assigned to one of their parent or child.
+      smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
-      part_number_with_letters_help: If this option is enabled, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
+      part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts by block
-      part_number_sequence_by_group_help: If this option is enabled, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
       hide_untyped_material_dimensions: Hide the dimensions for parts without type
-      hide_untyped_material_dimensions_help: If this option is active, the dimensions of parts without defined material type (**Solid wood** or **Sheet good**) will not be displayed.
+      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts without defined material type (**Solid Wood** or **Sheet Good**) will not be displayed.
       hide_raw_dimensions: Hide raw dimensions
-      hide_raw_dimensions_help: If this option is active, the raw dimensions of parts will not be displayed.
-      hide_final_dimensions: Masquer les dimensions finies
-      hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
-      part_order_strategy: Sort order of parts
+      hide_raw_dimensions_help: If this option is selected, the **raw** dimensions of parts will not be displayed.
+      hide_final_dimensions: Hide final dimensions
+      hide_final_dimensions_help: If this option is selected, the **final** dimensions will not be displayed.
+      part_order_strategy: Sort Order Of Parts
       part_order_strategy_help: |
         Define the sort order of parts by reorganizing the following lines.
         Each property can be sorted in <i class="ladb-toolbox-icon-sort-asc"></i> *ascending* or <i class="ladb-toolbox-icon-sort-desc"></i> *descending* order.
       property_thickness: Thickness
       property_length: Length
       property_width: Width
-      property_name: Designation
+      property_name: Description
       property_count: Count
-      reset: Restore default values
+      reset: Restore Default Values
     list:
       summary: Summary
       type: Type
@@ -81,7 +81,7 @@ tab:
       area: Area
       volume: Volume
       number: N°
-      name: Designation
+      name: Description
       count: #
       raw: Raw
       final: Final
@@ -94,33 +94,33 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
     warning:
       partial_cutlist: This cutlist is a partial representation of your model, as it merely uses a selection of parts.
-      no_typed_materials_in_model: This model does not use any defined material (**Solid wood** or **Sheet good**).
-      no_typed_materials_in_selection: The selection does not use any defined material (**Solid wood** or **Sheet good**).
+      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good**).
+      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good**).
     tip:
       no_component: |
         The parts to be included in the *cutlist* must instances of a **component**.
         If you use only groups, convert them into components.
         When using components parts can be replicated without being copied.
-      no_typed_materials: Apply a material on the parts to be included in the cutlist and define the properties of this material (**Solid wood** or **Sheet good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
+      no_typed_materials: Apply a material on the parts to be included in the cutlist and define the properties of this material (**Solid Wood** or **Sheet Good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
   materials:
     label: Materials
     title: Materials
     type_0: Undefined
-    type_1: Solid wood
-    type_2: Sheet good
+    type_1: Solid Wood
+    type_2: Sheet Good
     tooltip:
-      type_0: Type de matière '$t(tab.materials.type_0)'
-      type_1: Type de matière '$t(tab.materials.type_1)'
-      type_2: Type de matière '$t(tab.materials.type_2)'
+      type_0: Material type '$t(tab.materials.type_0)'
+      type_1: Material type '$t(tab.materials.type_1)'
+      type_2: Material type '$t(tab.materials.type_2)'
     form:
-      title: Properties of Material
+      title: Material Properties
       name: Name
       type: Type
-      cut_options: Cut Options
-      length_increase: Length oversize
-      width_increase: Width oversize
-      thickness_increase: Thickness oversize
-      std_thicknesses: Standard thickness
+      cut_options: Cutlist Options
+      length_increase: Length Oversize
+      width_increase: Width Oversize
+      thickness_increase: Thickness Oversize
+      std_thicknesses: Standard Thickness
       std_thicknesses_help: Available raw thicknesses in mm.
     error:
       no_materials: Model does not contain any material.
