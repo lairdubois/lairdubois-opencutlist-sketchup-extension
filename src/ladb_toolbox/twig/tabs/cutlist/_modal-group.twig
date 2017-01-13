@@ -1,14 +1,45 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_group' %}
-{% set title = 'tab.cutlist.form.title'|i18next %}
+{% set title = 'tab.cutlist.edit_group.title'|i18next({ 'name':group.material_name~(group.material_type > 0 ? ' / '~group.raw_thickness : '') }) %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_cutlist_part_input_material" class="control-label col-xs-4">{{ 'tab.cutlist.form.material'|i18next }}</label>
+            <label for="ladb_cutlist_group_input_part_count" class="control-label col-xs-4">{{ 'tab.cutlist.edit_group.part_count'|i18next }}</label>
             <div class="col-xs-6">
-                <select class="form-control" id="ladb_cutlist_group_select_material_name"></select>
+                <input type="text" class="form-control" id="ladb_cutlist_group_input_part_count" value="{{ group.part_count }}" disabled>
+            </div>
+        </div>
+        {% if group.material_type > 0 %}
+            <div class="form-group">
+                <label for="ladb_cutlist_group_input_raw_thickness" class="control-label col-xs-4">{{ 'tab.cutlist.edit_group.raw_thickness'|i18next }}</label>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" id="ladb_cutlist_group_input_raw_thickness" value="{{ group.raw_thickness }}" disabled>
+                </div>
+            </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="ladb_cutlist_group_select_material_name" class="control-label col-xs-4">{{ 'tab.cutlist.edit_group.material'|i18next }}</label>
+            <div class="col-xs-6">
+                <select class="form-control" id="ladb_cutlist_group_select_material_name">
+                    {% include 'tabs/cutlist/_material-usages.twig' %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xs-10 col-xs-push-1">
+            <div class="alert alert-warning">
+                <div class="media">
+                    <div class="media-left">
+                        <i class="ladb-toolbox-icon-warning"></i>
+                    </div>
+                    <div class="media-body">
+                        <p>{{ 'tab.cutlist.edit_group.warning'|i18next }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

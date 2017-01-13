@@ -1,24 +1,28 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_part' %}
-{% set title = 'tab.cutlist.form.title'|i18next %}
+{% set title = 'tab.cutlist.edit_part.title'|i18next({ 'name':part.name }) %}
 
 {% block bodyInner %}
     <div class="ladb-part-thumbnail">
-        <img class="ladb-part-thumbnail" src="" width="256" height="256">
+        <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="256" height="256">
     </div>
     <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_cutlist_part_input_name" class="control-label col-xs-4">{{ 'tab.cutlist.form.name'|i18next }}</label>
+            <label for="ladb_cutlist_part_input_name" class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
             <div class="col-xs-6">
-                <input type="text" class="form-control" id="ladb_cutlist_part_input_name">
+                <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}">
             </div>
         </div>
         <div class="form-group">
-            <label for="ladb_cutlist_part_input_material" class="control-label col-xs-4">{{ 'tab.cutlist.form.material'|i18next }}</label>
+            <label for="ladb_cutlist_part_select_material_name" class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
             <div class="col-xs-6">
-                <select class="form-control" id="ladb_cutlist_part_select_material_name"></select>
-                <div class="ladb-material-origins help-block"></div>
+                <select class="form-control" id="ladb_cutlist_part_select_material_name">
+                    {% include 'tabs/cutlist/_material-usages.twig' %}
+                </select>
+                <div class="ladb-material-origins help-block">
+                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                </div>
             </div>
         </div>
     </div>

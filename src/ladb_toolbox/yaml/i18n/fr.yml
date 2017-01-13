@@ -39,10 +39,17 @@ tab:
       show_all_groups: Afficher tous les blocs
       hide_all_other_groups: Masquer tous les autres blocs
       edit_material: Editer la matière '{{ material }}'
-    form:
-      title: Propriétés d'une pièce
+      edit_group_properties: Editer les propriétés du bloc
+    edit_part:
+      title: Propriétés de la pièce '{{ name }}'
       name: Nom
       material: Matière
+    edit_group:
+      title: Propriétés du bloc '{{ name }}'
+      part_count: Nombre de pièces
+      raw_thickness: Epaisseur brute
+      material: Matière
+      warning: La modification de la matière sera répercutée sur toutes les pièces du bloc. Ce qui peut entraîner une nouvelle réorganisation des blocs.
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |

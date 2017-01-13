@@ -35,6 +35,10 @@ module Ladb
           part_update_command(part_data)
         end
 
+        @plugin.register_command("cutlist_group_update") do |group_data|
+          group_update_command(group_data)
+        end
+
       end
 
       private
@@ -316,6 +320,38 @@ module Ladb
                 entity.material = material
               end
             end
+          }
+
+        end
+
+      end
+
+      def group_update_command(group_data)
+
+        # Extract parameters
+        id = group_data['id']
+        material_name = group_data['material_name']
+        parts = group_data['parts']
+        component_ids = []
+
+        model = Sketchup.active_model
+
+        # Update component instance material
+        materials = model.materials
+        if material_name == nil or material_name.empty? or (material = materials[material_name])
+
+          parts.each { |part_data|
+            component_ids = part_data['component_ids']
+            component_ids.each { |component_id|
+              entity = model.find_entity_by_id(component_id)
+              if entity
+                if material_name == nil or material_name.empty?
+                  entity.material = nil
+                elsif entity.material != material
+                  entity.material = material
+                end
+              end
+            }
           }
 
         end

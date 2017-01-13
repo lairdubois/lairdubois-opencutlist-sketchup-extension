@@ -85,7 +85,7 @@ module Ladb
           Dir["#{__dir__}/../js/i18n/*.js"].each { |file|
             available_translations.push(File.basename(file, File.extname(file)))
           }
-          language = Sketchup.get_locale.split('-')[0]
+          language = Sketchup.get_locale.split('-')[0].downcase
           if available_translations.include? language
             @language = language   # Uses SU locale only if translation is available
           end
