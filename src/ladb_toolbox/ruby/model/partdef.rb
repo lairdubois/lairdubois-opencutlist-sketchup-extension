@@ -1,12 +1,13 @@
+require 'digest'
+
 module Ladb
   module Toolbox
     class PartDef
 
       attr_accessor :definition_id, :name, :count, :raw_size, :size, :material_name, :material_origins
-      attr_reader :id, :component_ids
+      attr_reader :entity_ids
 
-      def initialize(id)
-        @id = id
+      def initialize()
         @definition_id = ''
         @name = ''
         @count = 0
@@ -14,7 +15,7 @@ module Ladb
         @size = Size.new
         @material_name = ''
         @material_origins = []
-        @component_ids = []
+        @entity_ids = []
       end
 
       # -----
@@ -66,8 +67,14 @@ module Ladb
 
       # -----
 
-      def add_component_id(component_id)
-        @component_ids.push(component_id)
+      def id
+        Digest::SHA1.hexdigest(@entity_ids.join(','))   # ParfDef ID is generated according to its entity list
+      end
+
+      def add_entity_id(entity_id)
+        unless @entity_ids.include? entity_id   # Because of groups and components, multiple entity can have the same ID
+          @entity_ids.push(entity_id)
+        end
       end
 
     end

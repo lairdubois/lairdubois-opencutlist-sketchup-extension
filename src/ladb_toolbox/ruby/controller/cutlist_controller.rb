@@ -98,10 +98,10 @@ module Ladb
         # Populate cutlist
         component_paths.each { |component_path|
 
-          component = component_path.last
+          entity = component_path.last
 
           material, material_origin = _get_material(component_path, smart_material)
-          definition = component.definition
+          definition = entity.definition
 
           material_name = material ? material.name : ''
           material_attributes = MaterialAttributes.new(material)
@@ -139,11 +139,10 @@ module Ladb
 
           end
 
-          part_id = Digest::SHA1.hexdigest("#{definition.entityID}")
           part_def = group_def.get_part_def(definition.name)
           unless part_def
 
-            part_def = PartDef.new(part_id)
+            part_def = PartDef.new()
             part_def.definition_id = definition.name
             part_def.name = definition.name
             part_def.raw_size = raw_size
@@ -157,7 +156,7 @@ module Ladb
             part_def.material_origins.push(material_origin)
           end
           part_def.count += 1
-          part_def.add_component_id(component.entityID)
+          part_def.add_entity_id(entity.entityID)
 
           group_def.part_count += 1
 
@@ -248,7 +247,7 @@ module Ladb
                                    :number => part_number,
                                    :material_name => part_def.material_name,
                                    :material_origins => part_def.material_origins,
-                                   :component_ids => part_def.component_ids
+                                   :entity_ids => part_def.entity_ids
                                }
             )
             part_number = part_number.succ
@@ -296,7 +295,7 @@ module Ladb
         definition_id = part_data['definition_id']
         name = part_data['name']
         material_name = part_data['material_name']
-        component_ids = part_data['component_ids']
+        entity_ids = part_data['entity_ids']
 
         model = Sketchup.active_model
 
@@ -311,8 +310,8 @@ module Ladb
         materials = model.materials
         if material_name == nil or material_name.empty? or (material = materials[material_name])
 
-          component_ids.each { |component_id|
-            entity = model.find_entity_by_id(component_id)
+          entity_ids.each { |entity_id|
+            entity = model.find_entity_by_id(entity_id)
             if entity
               if material_name == nil or material_name.empty?
                 entity.material = nil
@@ -332,7 +331,6 @@ module Ladb
         id = group_data['id']
         material_name = group_data['material_name']
         parts = group_data['parts']
-        component_ids = []
 
         model = Sketchup.active_model
 
@@ -341,8 +339,8 @@ module Ladb
         if material_name == nil or material_name.empty? or (material = materials[material_name])
 
           parts.each { |part_data|
-            component_ids = part_data['component_ids']
-            component_ids.each { |component_id|
+            entity_ids = part_data['entity_ids']
+            entity_ids.each { |component_id|
               entity = model.find_entity_by_id(component_id)
               if entity
                 if material_name == nil or material_name.empty?
@@ -367,14 +365,14 @@ module Ladb
 
             # Entity is a group : check its children
             entity.entities.each { |child_entity|
-              child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [entity ])
+              child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [ entity ])
             }
 
           elsif entity.is_a? Sketchup::ComponentInstance
 
             # Entity is a component : check its children
             entity.definition.entities.each { |child_entity|
-              child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [entity ])
+              child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [ entity ])
             }
 
             # Considere component if it contains faces

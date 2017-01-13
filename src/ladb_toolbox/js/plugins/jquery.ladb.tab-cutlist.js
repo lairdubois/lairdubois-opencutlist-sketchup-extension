@@ -272,8 +272,11 @@
                         that.generateCutlist(function() {
 
                             // Try to scroll to the edited part's row
-                            var $part = $('#ladb_part_' + partId).effect("highlight", {}, 1500);
-                            $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
+                            var $part = $('#ladb_part_' + partId);
+                            if ($part.length > 0) {
+                                $part.effect("highlight", {}, 1500);
+                                $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
+                            }
 
                         });
 
