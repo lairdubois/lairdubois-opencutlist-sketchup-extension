@@ -8,7 +8,7 @@ default:
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
-  options: Optionen
+  options: Einstellungen
   caution: Vorsicht
   help: Hilfe
   error: Fehler
@@ -36,8 +36,8 @@ tab:
       material_origin_2: Das Material dieses Stücks wird von einem übergeordneten Stück geerbt.
       material_origin_3: Das Material dieses Stücks wird aus einem enthaltenen Teil extrahiert
     menu:
-      show_all_groups: Afficher tous les blocs
-      hide_all_other_groups: Masquer tous les autres blocs
+      show_all_groups: Alle Abschnitte anzeigen
+      hide_all_other_groups: Alle anderen Abschnitte ausblenden
     form:
       title: Eigenschaften eines Stücks
       name: Name
@@ -57,12 +57,12 @@ tab:
       part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
       part_number_sequence_by_group: Aufzählung bei jedem Abschnitt reinitialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
-      hide_untyped_material_dimensions: Abmessungen für Stücke ohne Typ maskieren
+      hide_untyped_material_dimensions: Abmessungen für Stücke ohne Material ausblenden
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Stücke ohne definiertes Material (**Massivholz** oder **Platten**) nicht angezeigt.
-      hide_raw_dimensions: Ausblenden der Rohmasse
-      hide_raw_dimensions_help: Ist diese Option aktiv, werden die Rohmasse nicht angezeigt.
-      hide_final_dimensions: Masquer les dimensions finies
-      hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
+      hide_raw_dimensions: Rohmasse ausblenden
+      hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
+      hide_final_dimensions: Fertigmasse ausblenden
+      hide_final_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
       part_order_strategy: Sortierfolge der Stücke
       part_order_strategy_help: |
         Die Sortierfolge der Stücke wird durch die Reihenfolge der folgenden Zeilen definiert.
@@ -71,8 +71,8 @@ tab:
       property_length: Länge
       property_width: Breite
       property_name: Bezeichnung
-      property_count: Stk.
-      reset: Zurücksetzen auf Standardwerte
+      property_count: Menge
+      reset: Einstellungen zurücksetzen
     list:
       summary: Zusammenfassung
       type: Art
@@ -82,7 +82,7 @@ tab:
       volume: Volumen
       number: Nr.
       name: Bezeichnung
-      count: Stk.
+      count: Menge
       raw: Rohmass
       final: Fertigmass
       length_short: L
@@ -93,8 +93,8 @@ tab:
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
     warning:
-      partial_cutlist: Diese Stückliste ist nur eine Teildarstellung ihres Modells, da sie lediglich eine Auswahl berücksichtigt.
-      no_typed_materials_in_model: Ihr Modell verwenden kein definiertes Material (**Solid wood** oder **Sheet good**).
+      partial_cutlist: Diese Stückliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
+      no_typed_materials_in_model: Ihr Modell verwenden kein definiertes Material (**Massivholz** oder **Platten**).
       no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**Massivholz** oder **Platten**).
     tip:
       no_component: |
@@ -109,17 +109,17 @@ tab:
     type_1: Massivholz
     type_2: Platten
     tooltip:
-      type_0: Type de matière '$t(tab.materials.type_0)'
-      type_1: Type de matière '$t(tab.materials.type_1)'
-      type_2: Type de matière '$t(tab.materials.type_2)'
+      type_0: Materialart '$t(tab.materials.type_0)'
+      type_1: Materialart '$t(tab.materials.type_1)'
+      type_2: Materialart '$t(tab.materials.type_2)'
     form:
       title: Eigenschaften des Materials
       name: Bezeichnung
       type: Art
-      cut_options: Stücklistoptionen
-      length_increase: Längenübermass
-      width_increase: Breitenübermass
-      thickness_increase: Dickenübermass
+      cut_options: Stücklisteneinstellungen
+      length_increase: Längenzumass
+      width_increase: Breitenzumass
+      thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
       std_thicknesses_help: Rohmass der verfügbaren Dicken in mm.
     error:
