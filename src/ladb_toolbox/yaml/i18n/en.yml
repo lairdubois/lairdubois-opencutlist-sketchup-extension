@@ -62,7 +62,7 @@ tab:
       hide_raw_dimensions: Hide raw dimensions
       hide_raw_dimensions_help: If this option is selected, the **raw** dimensions of parts will not be displayed.
       hide_final_dimensions: Hide final dimensions
-      hide_final_dimensions_help: If this option is selected, the **final** dimensions will not be displayed.
+      hide_final_dimensions_help: If this option is selected, the **final** dimensions of parts will not be displayed.
       part_order_strategy: Sort Order Of Parts
       part_order_strategy_help: |
         Define the sort order of parts by reorganizing the following lines.
