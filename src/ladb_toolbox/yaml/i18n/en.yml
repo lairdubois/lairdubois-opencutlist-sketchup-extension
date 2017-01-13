@@ -45,11 +45,11 @@ tab:
       name: Name
       material: Material
     edit_group:
-      title: Propriétés du bloc '{{ name }}'
+      title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
       raw_thickness: Epaisseur brute
       material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du bloc. Ce qui peut entraîner une nouvelle réorganisation des blocs.
+      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |

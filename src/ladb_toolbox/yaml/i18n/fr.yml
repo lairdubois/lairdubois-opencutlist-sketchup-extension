@@ -29,27 +29,27 @@ tab:
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     tooltip:
-      show_hide_block: Afficher / Masquer ce bloc
-      scroll_to_block: Défiler vers le bloc
+      show_hide_block: Afficher / Masquer ce groupe
+      scroll_to_block: Défiler vers le groupe
       edit_part_properties: Editer les propriétés de la pièce
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite des ses éléments enfants
     menu:
-      show_all_groups: Afficher tous les blocs
-      hide_all_other_groups: Masquer tous les autres blocs
+      show_all_groups: Afficher tous les groupes
+      hide_all_other_groups: Masquer tous les autres groupes
       edit_material: Editer la matière '{{ material }}'
-      edit_group_properties: Editer les propriétés du bloc
+      edit_group_properties: Editer les propriétés du groupe
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       name: Nom
       material: Matière
     edit_group:
-      title: Propriétés du bloc '{{ name }}'
+      title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
       raw_thickness: Epaisseur brute
       material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du bloc. Ce qui peut entraîner une nouvelle réorganisation des blocs.
+      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -63,8 +63,8 @@ tab:
       smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
       part_number_with_letters_help: Si cette option est active, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Réinitialiser les numéros de pièce par bloc
-      part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque bloc (groupe de pièces de même matière et épaisseur brute).
+      part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
+      part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
       hide_raw_dimensions: Masquer les dimensions brutes
