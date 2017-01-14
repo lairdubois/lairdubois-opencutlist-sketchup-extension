@@ -45,7 +45,7 @@ tab:
       name: Name
       material: Material
     edit_group:
-      title: Eigenschafte der Gruppe '{{ name }}'
+      title: Eigenschafte des Abschnittes '{{ name }}'
       part_count: Anzahl Stücke
       raw_thickness: Rohdicke
       material: Material
