@@ -16,9 +16,10 @@
     "markdown-it": "^8.2.2",
     "markdown-it-external-links": "0.0.6",
     "merge": "^1.2.0",
+    "slash": "^1.0.0",
     "through2": "^2.0.3",
     "twig": "^0.10.3",
-    "slash": "^1.0.0"
+    "vinyl-file": "^3.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
