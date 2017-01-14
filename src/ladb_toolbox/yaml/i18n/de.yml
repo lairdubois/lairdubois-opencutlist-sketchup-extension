@@ -29,27 +29,27 @@ tab:
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     tooltip:
-      show_hide_block: Anzeigen / Ausblenden
+      show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zum Abschnitt blättern
-      edit_part_properties: Eigenschaften editieren
+      edit_part_properties: Eigenschaften bearbeiten
       material_origin_1: Das Material dieses Stücks ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Stücks wird von einem übergeordneten Stück geerbt.
       material_origin_3: Das Material dieses Stücks wird aus einem enthaltenen Teil extrahiert
     menu:
-      show_all_groups: Alle Abschnitte anzeigen
+      show_all_groups: Alle Abschnitte einblenden
       hide_all_other_groups: Alle anderen Abschnitte ausblenden
-      edit_material: Editer la matière '{{ material }}'
-      edit_group_properties: Editer les propriétés du bloc
+      edit_material: Bearbeiten des Materials '{{ material }}'
+      edit_group_properties: Eigenschaften dieses Abschnittes bearbeiten
     edit_part:
       title: Eigenschaften eines Stücks '{{ name }}'
       name: Name
       material: Material
     edit_group:
-      title: Propriétés du groupe '{{ name }}'
-      part_count: Nombre de pièces
-      raw_thickness: Epaisseur brute
-      material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
+      title: Eigenschafte des Abschnittes '{{ name }}'
+      part_count: Anzahl Stücke
+      raw_thickness: Rohdicke
+      material: Material
+      warning: Die Veränderung des Materials wird auf alle Teile des Abschnittes übertragen. Dies kann zu einer Neuorganisation der Abschnitte führen.
     option:
       auto_orient: Automatische Orientierung der Stücke
       auto_orient_help: |
