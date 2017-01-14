@@ -2,6 +2,7 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var yaml = require('js-yaml');
 var merge = require('merge');
+var twig = require('twig').twig;
 
 var markdownIt = require('markdown-it');
 var externalLinks = require('markdown-it-external-links');
@@ -44,14 +45,14 @@ module.exports = function (opt) {
             markownValues(ymlDocument);
 
             var filename = file.path.substr(file.base.length);
-            var locale = filename.substr(0, filename.length - '.yml'.length);
+            var language = filename.substr(0, filename.length - '.yml'.length);
 
             var resources = {};
-            resources[locale] = {
+            resources[language] = {
                 translation: ymlDocument
             };
             var i18nextOptions = {
-                lng: locale,
+                lng: language,
                 resources: resources
             };
 
@@ -62,7 +63,7 @@ module.exports = function (opt) {
         }
 
         file.contents = new Buffer(data);
-        file.path = file.base + locale + '.js';
+        file.path = file.base + language + '.js';
 
         cb(null, file);
     }

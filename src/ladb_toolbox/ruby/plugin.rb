@@ -177,7 +177,7 @@ module Ladb
           end
 
           # Setup dialog page
-          @dialog.set_file("#{__dir__}/../html/dialog.html")
+          @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
 
           # Set dialog size
           @dialog.set_size(DIALOG_MINIMIZED_WIDTH, !@html_dialog_compatible && @current_os == :MAC ? DIALOG_MAXIMIZED_HEIGHT : DIALOG_MINIMIZED_HEIGHT)

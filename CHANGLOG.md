@@ -13,7 +13,7 @@ in 0.x versions.
   * Cutlist hidden_group_ids
   * Cutlist edit groups
   * Materials improve std_thickness input field
-  * i18n init bug fix on slow computer
+  * i18n staticly loaded in html to avoid dynamic loading file on runtine (not allowed on all platforms)
   
 * 0.4.4 (2017-01-05)
 

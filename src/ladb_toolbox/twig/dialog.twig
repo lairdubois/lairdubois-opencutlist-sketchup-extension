@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-tokenfield.min.css">
+    <link rel="stylesheet" href="../css/ladb-toolbox.css">
+    <link rel="stylesheet" href="../css/ladb-icons.css">
+</head>
+<body>
+<script type="text/javascript">
+    window.onerror = function (errorMsg, url, lineNumber) {
+        alert('Error: ' + errorMsg + '\n Script: ' + url + '\n Line: ' + lineNumber);
+    };
+</script>
+<script src="../js/lib/jquery-3.1.1.min.js"></script>
+<script src="../js/lib/jquery-ui.min.js"></script>
+<script src="../js/lib/bootstrap.min.js"></script>
+<script src="../js/lib/bootstrap-select.min.js"></script>
+<script src="../js/lib/bootstrap-tokenfield.min.js"></script>
+<script src="../js/lib/twig.min.js"></script>
+<script src="../js/lib/base64.min.js"></script>
+<script src="../js/lib/i18next.min.js"></script>
+<script src="../js/plugins/jquery.ladb.toolbox.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-cutlist.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-about.js"></script>
+<script src="../js/templates/twig-templates.js"></script>
+<script src="../js/i18n/{{ language }}.js"></script>
+<script type="text/javascript">
+
+    // JS -> Ruby interactions
+
+    var commandId = 0;
+    var commandCallbacks = {};
+    var commandCallStack = [];
+    var commandRunning = false;
+
+    function rubyCallCommand(command, params, callback) {
+        var call = {
+            id: commandId,
+            command: command,
+            params: params
+        };
+        commandCallbacks[commandId] = callback;
+        commandId++;
+        commandCallStack.push(call);
+        popCommandCallStack();
+    }
+
+    function rubyCommandCallback(id, encodedData) {
+        var callback = commandCallbacks[id];
+        if (callback && typeof callback == 'function') {
+            var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
+            callback(data);
+            commandCallbacks[id] = null;
+        }
+        commandRunning = false;
+        popCommandCallStack();
+    }
+
+    function popCommandCallStack() {
+        if (!commandRunning) {
+            var call = commandCallStack.pop();
+            if (call) {
+                commandRunning = true;
+                window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);
+            }
+        }
+    }
+
+    // Ready !
+
+    $(document).ready(function () {
+        rubyCallCommand('core_dialog_loaded', null, function(data) {
+            $('body').ladbToolbox(data);
+        });
+    });
+
+</script>
+</body>
+</html>
