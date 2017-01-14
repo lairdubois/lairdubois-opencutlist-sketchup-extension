@@ -25,31 +25,31 @@ tab:
     title: Cutlist
     help: |
       Select the root of the cutlist in your scene then click on the **Generate** button.
-      If the selection is empty, all visible components of the scene will be considered to compute the cutlist.
+      If the selection is empty, all visible components of the scene will be included in the cutlist.
     material_unknow: Material Type Undefined
     not_available_thickness: Thickness not available
     tooltip:
       show_hide_block: Show / Hide
-      scroll_to_block: Scroll to block
+      scroll_to_block: Scroll to section
       edit_part_properties: Edit properties
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
     menu:
-      show_all_groups: Show all blocks
-      hide_all_other_groups: Hide all other blocks
-      edit_material: Editer la matière '{{ material }}'
-      edit_group_properties: Editer les propriétés du bloc
+      show_all_groups: Show all sections
+      hide_all_other_groups: Hide all other sections
+      edit_material: Edit Material '{{ material }}'
+      edit_group_properties: Edit the properties of this section
     edit_part:
-      title: Properties of part '{{ name }}'
-      name: Name
+      title: Properties Of Part '{{ name }}'
+      name: Description
       material: Material
     edit_group:
-      title: Propriétés du groupe '{{ name }}'
-      part_count: Nombre de pièces
-      raw_thickness: Epaisseur brute
-      material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
+      title: Properties Of The Section '{{ name }}'
+      part_count: Number Of Parts
+      raw_thickness: Raw Thickness
+      material: Material
+      warning: A modification of the material will be applied to all parts of the section. The sections may therefore be reorganized.
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
@@ -63,8 +63,8 @@ tab:
       smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Reinitialize the enumeration of parts by block
-      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each block (groups of parts with the same material thickness).
+      part_number_sequence_by_group: Reinitialize the enumeration of parts by section
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each section (groups of parts with the same material thickness).
       hide_untyped_material_dimensions: Hide the dimensions for parts without type
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts without defined material type (**Solid Wood** or **Sheet Good**) will not be displayed.
       hide_raw_dimensions: Hide raw dimensions
