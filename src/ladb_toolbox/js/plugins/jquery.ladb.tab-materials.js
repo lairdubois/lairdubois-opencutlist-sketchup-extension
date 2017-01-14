@@ -1,6 +1,19 @@
 +function ($) {
     'use strict';
 
+    // CONSTANTS
+    // ======================
+
+    // Options keys
+
+    var SETTING_KEY_OPTION_PREFIX = 'materials_option_';
+    var SETTING_KEY_OPTION_PREFIX_TYPE = SETTING_KEY_OPTION_PREFIX + 'type_';
+
+    var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
+    var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
+    var SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE = '_thickness_increase';
+    var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
+
     // CLASS DEFINITION
     // ======================
 
@@ -162,18 +175,18 @@
                 defaultStdThicknesses = '4mm;8mm;10mm;15mm;18mm;22mm';
                 break;
         }
-        this.$inputLengthIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_length_increase', defaultLengthIncrease));
-        this.$inputWidthIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_width_increase', defaultWidthIncrease));
-        this.$inputThicknessIncrease.val(this.toolbox.getSetting('materials_type_' + type + '_thickness_increase', defaultThicknessIncrease));
-        this.$inputStdThicknesses.tokenfield('setTokens', this.toolbox.getSetting('materials_type_' + type + '_std_thicknesses', defaultStdThicknesses));
+        this.$inputLengthIncrease.val(this.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
+        this.$inputWidthIncrease.val(this.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
+        this.$inputThicknessIncrease.val(this.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
+        this.$inputStdThicknesses.tokenfield('setTokens', this.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
     };
 
     LadbTabMaterials.prototype.storeDefaultCutOptionsFormSectionByType = function (type) {
         this.toolbox.setSettings([
-            { key:'materials_type_' + type + '_length_increase', value:this.$inputLengthIncrease.val() },
-            { key:'materials_type_' + type + '_width_increase', value:this.$inputWidthIncrease.val() },
-            { key:'materials_type_' + type + '_thickness_increase', value:this.$inputThicknessIncrease.val() },
-            { key:'materials_type_' + type + '_std_thicknesses', value:this.$inputStdThicknesses.val() }
+            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:this.$inputLengthIncrease.val() },
+            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:this.$inputWidthIncrease.val() },
+            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:this.$inputThicknessIncrease.val() },
+            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:this.$inputStdThicknesses.val() }
         ]);
     };
 
@@ -224,20 +237,15 @@
     LadbTabMaterials.prototype.init = function () {
         var that = this;
 
-        this.toolbox.pullSettings([
-            'materials_type_0_length_increase',
-            'materials_type_1_length_increase',
-            'materials_type_2_length_increase',
-            'materials_type_0_width_increase',
-            'materials_type_1_width_increase',
-            'materials_type_2_width_increase',
-            'materials_type_0_thickness_increase',
-            'materials_type_1_thickness_increase',
-            'materials_type_2_thickness_increase',
-            'materials_type_0_std_thickness',
-            'materials_type_1_std_thickness',
-            'materials_type_2_std_thickness'
-        ], function() {
+        var settingsKeys = [];
+        for (var type = 0; type <= 2; type++) {
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES);
+        }
+
+        this.toolbox.pullSettings(settingsKeys, function() {
 
             // Init selects
             that.$selectType.selectpicker({
