@@ -1,36 +1,58 @@
-Development environement setup instructions
-===========================================
+# Development Environment Setup Instructions
 
-To be able to rebuild the plugin *.rbz* archive, you need to install some tools.
+To be able to rebuild the plugin, you will need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive, `dist/ladb_toolbox.rbz`, is built by a **gulp** task.
 
-The plugin *.rbz* archive is build by a **Glup** task. Then first, you need to install **Glup** and some dependencies.
+The required tools and steps for successfuly building this plugin are described hereafter.
 
-## 1. Install [Node.js](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/) - *The package manager for JavaScript*
+## Get **Node.js** and **npm**
 
-The way to do this depend of your OS. See the [Doc](https://docs.npmjs.com/getting-started/installing-node)
+Download and install [Node.js](https://nodejs.org/en/download/) - *the asynchronous event driven JavaScript runtime*. This will include [npm](https://www.npmjs.com/) - *the package manager for JavaScript*. Depending on your OS, you will have to download a Windows Installer, a macOS Installer, Linux Binaries or the source code.
 
-## 2. Install dependencies
+Read this short note about [Installing Node](https://docs.npmjs.com/getting-started/installing-node) and make sure you have the latest version of **npm**:
+
+``` bash
+      $ node -v
+      v7.4.0
+      $ npm -v
+      4.0.5
+      $ npm install npm@latest -g
+      $ npm -v
+      4.1.1
+```
+
+On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
+
+``` bash
+     $ npm install gulp-cli -g
+```
+
+## Get The Source Code
+
+Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/releases) or do a `git clone`.
+
+## Install Dependencies
+
+Change to the `build/` directory. We have placed a `package.json` file telling **npm** which dependencies to install.
 
 ``` bash
     $ cd build
     $ npm install
 ```
 
-## 3. Run tasks !
+## Compile Templates And Distribution Archive
 
-Now you are ready to run tasks.
-
-If you only want to compile less, yaml and twig :
+Templates in the `src/ladb_toolbox/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates:
 
 ``` bash
     $ cd build
     $ gulp compile
 ```
 
-If you want to build the .rbz archive. It creates the [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz) archive.
+If you wish to build the archive [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz), then:
 
 ``` bash
     $ cd build
     $ gulp build
 ```
 
+The default behaviour of the **gulp** task is to *compile* and then *build*.

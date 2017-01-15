@@ -1,6 +1,5 @@
-Getting started with L'Air du Bois : Sketchup Toolbox
-=====================================================
+# Getting Started with L'Air du Bois : Sketchup Toolbox
 
-## Development environement
+## Development Environment
 
-[See the development environement setup instructions](01-development.md)
+[See the development environment setup instructions](01-development.md)
