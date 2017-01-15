@@ -8,7 +8,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.4.5'
+      VERSION = '0.4.6'
 
       DEFAULT_KEY_SECTION = 'ladb_toolbox'
 
