@@ -1,12 +1,12 @@
 # Development Environment Setup Instructions
 
-To be able to rebuild the plugin, you will need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive, `dist/ladb_toolbox.rbz`, is built by a **gulp** task.
+To be able to rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive `dist/ladb_toolbox.rbz` is built by a **gulp** task.
 
-The required tools and steps for successfuly building this plugin are described hereafter.
+The required tools and steps for successfully building this plugin are described hereafter.
 
 ## Get **Node.js** and **npm**
 
-Download and install [Node.js](https://nodejs.org/en/download/) - *the asynchronous event driven JavaScript runtime*. This will include [npm](https://www.npmjs.com/) - *the package manager for JavaScript*. Depending on your OS, you will have to download a Windows Installer, a macOS Installer, Linux Binaries or the source code.
+Download and install [Node.js](https://nodejs.org/en/download/) - *the asynchronous event driven JavaScript runtime*. This will include [npm](https://www.npmjs.com/) - *the package manager for JavaScript*.
 
 Read this short note about [Installing Node](https://docs.npmjs.com/getting-started/installing-node) and make sure you have the latest version of **npm**:
 
@@ -55,4 +55,4 @@ If you wish to build the archive [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz), t
     $ gulp build
 ```
 
-The default behaviour of the **gulp** task is to *compile* and then *build*.
+The default behaviour of the **gulp** task (without argument) is to *compile* and then *build*.
