@@ -205,19 +205,19 @@
 
                 that.editedMaterial.display_name = $inputName.val();
                 that.editedMaterial.attributes.type = $selectType.val();
-                that.editedMaterial.attributes.length_increase = $inputLengthIncrease.val();
-                that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
-                that.editedMaterial.attributes.thickness_increase = $inputThicknessIncrease.val();
-                that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
+                that.editedMaterial.attributes.length_increase = that.sanitizeSizeInput($inputLengthIncrease.val());
+                that.editedMaterial.attributes.width_increase = that.sanitizeSizeInput($inputWidthIncrease.val());
+                that.editedMaterial.attributes.thickness_increase = that.sanitizeSizeInput($inputThicknessIncrease.val());
+                that.editedMaterial.attributes.std_thicknesses = that.sanitizeSizeInput($inputStdThicknesses.val());
 
                 rubyCallCommand('materials_update', that.editedMaterial, function() {
 
-                    // Update default cut options to last used
+                    // Update default cut options to last used -- FIX -- silent update is not optimal
                     that.toolbox.setSettings([
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:$inputLengthIncrease.val() },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:$inputWidthIncrease.val() },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:$inputThicknessIncrease.val() },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:$inputStdThicknesses.val() }
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:that.sanitizeSizeInput($inputLengthIncrease.val()) },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:that.sanitizeSizeInput($inputWidthIncrease.val()) },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:that.sanitizeSizeInput($inputThicknessIncrease.val()) },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:that.sanitizeSizeInput($inputStdThicknesses.val()) }
                     ]);
 
                     // Reset edited material
@@ -238,6 +238,12 @@
 
         }
     };
+
+    LadbTabMaterials.prototype.sanitizeSizeInput = function (val) {
+        // -- FIX -- should replace sanitizing with a better heuristic
+        //           make sure that input is meaningful to Sketchup Size
+        return val.replace(/\s+/g, '');
+    }
 
     LadbTabMaterials.prototype.bind = function () {
         var that = this;
