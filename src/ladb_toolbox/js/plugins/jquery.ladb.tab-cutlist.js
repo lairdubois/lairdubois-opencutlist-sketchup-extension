@@ -533,6 +533,11 @@
             // Hide modal
             $modal.modal('hide');
 
+            // Refresh the list if it has already been generated
+            if (that.groups.length > 0) {
+                that.generateCutlist();
+            }
+
         });
 
         // Populate inputs
