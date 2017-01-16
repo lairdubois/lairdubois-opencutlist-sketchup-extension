@@ -212,12 +212,12 @@
 
                 rubyCallCommand('materials_update', that.editedMaterial, function() {
 
-                    // Update default cut options to last used -- FIX -- silent update is not optimal
+                    // Update default cut options for specific type to last used
                     that.toolbox.setSettings([
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:that.sanitizeSizeInput($inputLengthIncrease.val()) },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:that.sanitizeSizeInput($inputWidthIncrease.val()) },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:that.sanitizeSizeInput($inputThicknessIncrease.val()) },
-                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:that.sanitizeSizeInput($inputStdThicknesses.val()) }
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:that.editedMaterial.attributes.length_increase },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:that.editedMaterial.attributes.width_increase },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:that.editedMaterial.attributes.thickness_increase },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:that.editedMaterial.attributes.std_thicknesses }
                     ]);
 
                     // Reset edited material
