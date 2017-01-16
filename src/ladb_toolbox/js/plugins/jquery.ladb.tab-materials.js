@@ -34,6 +34,7 @@
         this.materials = [];
         this.editedMaterial = null;
 
+        this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$element);
         this.$btnList = $('#ladb_btn_list', this.$element);
 
@@ -90,6 +91,9 @@
 
             // Restore button state
             that.$btnList.prop('disabled', false);
+
+            // Stick header
+            that.$header.stick_in_parent();
 
         });
 

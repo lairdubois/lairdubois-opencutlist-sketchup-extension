@@ -52,6 +52,7 @@
         this.editedPart = null;
         this.editedGroup = null;
 
+        this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$element);
         this.$btnGenerate = $('#ladb_btn_generate', this.$element);
         this.$btnPrint = $('#ladb_btn_print', this.$element);
@@ -149,7 +150,7 @@
             });
             $('a.ladb-btn-scrollto', that.$page).on('click', function() {
                 var target = $(this).attr('href');
-                $('html, body').animate({ scrollTop: $(target).offset().top - 20 }, 200).promise().then(function() {
+                $('html, body').animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
                     $(target).effect("highlight", {}, 1500);
                 });
                 $(this).blur();
@@ -167,7 +168,7 @@
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                $('html, body').animate({ scrollTop: $group.offset().top - 20 }, 200).promise();
+                $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
                 $(this).blur();
             });
             $('a.ladb-btn-edit-part', that.$page).on('click', function() {
@@ -179,6 +180,9 @@
 
             // Restore button state
             that.$btnGenerate.prop('disabled', false);
+
+            // Stick header
+            that.$header.stick_in_parent();
 
             // Callback
             if (callback && typeof callback == 'function') {
