@@ -120,8 +120,8 @@ tab:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
       type_2: Material type '$t(tab.materials.type_2)'
-    form:
-      title: Material Properties
+    edit_material:
+      title: Properties Of Material '{{ name }}'
       name: Name
       type: Type
       cut_options: Cutlist Options

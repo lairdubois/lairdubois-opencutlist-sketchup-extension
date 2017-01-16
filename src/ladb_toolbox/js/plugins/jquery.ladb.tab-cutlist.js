@@ -27,7 +27,7 @@
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = true;
+    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
     // Select picker options
@@ -535,7 +535,11 @@
 
         });
 
+        // Populate inputs
         populateOptionsInputs(that.generateOptions, that.uiOptions);
+
+        // Setup popovers
+        this.toolbox.setupPopovers();
 
         // Show modal
         $modal.modal('show');

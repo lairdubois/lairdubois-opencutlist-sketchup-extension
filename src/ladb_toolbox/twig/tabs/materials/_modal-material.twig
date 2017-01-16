@@ -1,18 +1,18 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_materials_modal_material' %}
-{% set title = 'tab.materials.form.title'|i18next %}
+{% set title = 'tab.materials.edit_material.title'|i18next({ 'name':material.name }) %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_materials_input_name" class="control-label col-xs-4">{{ 'tab.materials.form.name'|i18next }}</label>
+            <label for="ladb_materials_input_name" class="control-label col-xs-4">{{ 'tab.materials.edit_material.name'|i18next }}</label>
             <div class="col-xs-8">
                 <input type="text" class="form-control" id="ladb_materials_input_name" value="{{ material.name }}">
             </div>
         </div>
         <div class="form-group">
-            <label for="ladb_materials_input_type" class="control-label col-xs-4">{{ 'tab.materials.form.type'|i18next }}</label>
+            <label for="ladb_materials_input_type" class="control-label col-xs-4">{{ 'tab.materials.edit_material.type'|i18next }}</label>
             <div class="col-xs-8">
                 <select class="form-control" id="ladb_materials_input_type">
                     <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.materials.type_0'|i18next }}</span>"{% if material.attributes.type == 0 %} selected{% endif %}>0</option>
@@ -22,30 +22,30 @@
             </div>
         </div>
         <section{% if material.attributes.type == 0 %} style="display: none;"{% endif %}>
-            <h4 class="text-center">{{ 'tab.materials.form.cut_options'|i18next }}</h4>
+            <h4 class="text-center">{{ 'tab.materials.edit_material.cut_options'|i18next }}</h4>
             <div class="form-group">
-                <label for="ladb_materials_input_length_increase" class="control-label col-xs-4">{{ 'tab.materials.form.length_increase'|i18next }}</label>
+                <label for="ladb_materials_input_length_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.length_increase'|i18next }}</label>
                 <div class="col-xs-8">
                     <input type="text" class="form-control" id="ladb_materials_input_length_increase" value="{{ material.attributes.length_increase }}">
                 </div>
             </div>
             <div class="form-group">
-                <label for="ladb_materials_input_width_increase" class="control-label col-xs-4">{{ 'tab.materials.form.width_increase'|i18next }}</label>
+                <label for="ladb_materials_input_width_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.width_increase'|i18next }}</label>
                 <div class="col-xs-8">
                     <input type="text" class="form-control" id="ladb_materials_input_width_increase" value="{{ material.attributes.width_increase }}">
                 </div>
             </div>
             <div class="form-group">
-                <label for="ladb_materials_input_thickness_increase" class="control-label col-xs-4">{{ 'tab.materials.form.thickness_increase'|i18next }}</label>
+                <label for="ladb_materials_input_thickness_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.thickness_increase'|i18next }}</label>
                 <div class="col-xs-8">
                     <input type="text" class="form-control" id="ladb_materials_input_thickness_increase" value="{{ material.attributes.thickness_increase }}">
                 </div>
             </div>
             <div class="form-group">
-                <label for="ladb_materials_input_std_thicknesses" class="control-label col-xs-4">{{ 'tab.materials.form.std_thicknesses'|i18next }}</label>
+                <label for="ladb_materials_input_std_thicknesses" class="control-label col-xs-4">{{ 'tab.materials.edit_material.std_thicknesses'|i18next }}</label>
                 <div class="col-xs-8">
                     <input type="text" class="form-control" id="ladb_materials_input_std_thicknesses" value="{{ material.attributes.std_thicknesses }}">
-                    <span class="help-block"><small>{{ 'tab.materials.form.std_thicknesses_help'|i18next }}</small></span>
+                    <span class="help-block"><small>{{ 'tab.materials.edit_material.std_thicknesses_help'|i18next }}</small></span>
                 </div>
             </div>
         </section>
