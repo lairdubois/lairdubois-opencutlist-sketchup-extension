@@ -73,7 +73,7 @@ tab:
       hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir la stratégie de tri.
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
         Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
       property_thickness: Epaisseur
       property_length: Longeur

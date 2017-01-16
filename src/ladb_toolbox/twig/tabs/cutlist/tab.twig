@@ -8,7 +8,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li class="disabled"><a id="ladb_item_show_all_groups" href="#"><i class="ladb-toolbox-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
             <li role="separator" class="divider"></li>
-            <li><a id="ladb_item_options" href="#" data-toggle="modal" data-target="#ladb_cutlist_modal_options"><i class="ladb-toolbox-icon-settings"></i> {{ 'default.options'|i18next }}</a></li>
+            <li><a id="ladb_item_options" href="#"><i class="ladb-toolbox-icon-settings"></i> {{ 'default.options'|i18next }}</a></li>
         </ul>
     </div>
 {% endblock %}
@@ -17,5 +17,4 @@
     {% include 'tabs/cutlist/_panel-help.twig' with { 'classes':'no-print' } %}
     {{ parent() }}
     <div class="ladb-page"></div>
-    {% include 'tabs/cutlist/_modal-options.twig' with { 'classes':'no-print' } %}
 {% endblock %}

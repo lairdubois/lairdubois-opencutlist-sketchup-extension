@@ -39,14 +39,6 @@
 
         this.$page = $('.ladb-page', this.$element);
 
-        this.$modalEditPart = $('#materials_modal', this.$element);
-        this.$inputName = $('#ladb_materials_input_name', this.$modalEditPart);
-        this.$selectType = $('#ladb_materials_input_type', this.$modalEditPart);
-        this.$inputLengthIncrease = $('#ladb_materials_input_length_increase', this.$modalEditPart);
-        this.$inputWidthIncrease = $('#ladb_materials_input_width_increase', this.$modalEditPart);
-        this.$inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', this.$modalEditPart);
-        this.$inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', this.$modalEditPart);
-        this.$btnMaterialUpdate = $('#ladb_materials_update', this.$modalEditPart);
     };
 
     LadbTabMaterials.DEFAULTS = {};
@@ -131,17 +123,17 @@
             }));
 
             // Fetch UI elements
-            var $modalEditMaterial = $('#ladb_materials_modal_material', this.$element);
-            var $inputName = $('#ladb_materials_input_name', $modalEditMaterial);
-            var $selectType = $('#ladb_materials_input_type', $modalEditMaterial);
-            var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modalEditMaterial);
-            var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modalEditMaterial);
-            var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modalEditMaterial);
-            var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modalEditMaterial);
-            var $btnMaterialUpdate = $('#ladb_materials_update', $modalEditMaterial);
+            var $modal = $('#ladb_materials_modal_material', this.$element);
+            var $inputName = $('#ladb_materials_input_name', $modal);
+            var $selectType = $('#ladb_materials_input_type', $modal);
+            var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
+            var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
+            var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
+            var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
+            var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Bind modal
-            $modalEditMaterial.on('hidden.bs.modal', function () {
+            $modal.on('hidden.bs.modal', function () {
                 $(this)
                     .data('bs.modal', null)
                     .remove();
@@ -209,7 +201,7 @@
             });
 
             // Bind buttons
-            $btnMaterialUpdate.on('click', function () {
+            $btnUpdate.on('click', function () {
 
                 that.editedMaterial.display_name = $inputName.val();
                 that.editedMaterial.attributes.type = $selectType.val();
@@ -221,13 +213,18 @@
                 rubyCallCommand('materials_update', that.editedMaterial, function() {
 
                     // Update default cut options to last used
-                    that.storeDefaultCutOptionsFormSectionByType(that.editedMaterial.attributes.type);
+                    that.toolbox.setSettings([
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:$inputLengthIncrease.val() },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:$inputWidthIncrease.val() },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:$inputThicknessIncrease.val() },
+                        { key:SETTING_KEY_OPTION_PREFIX_TYPE + that.editedMaterial.attributes.type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:$inputStdThicknesses.val() }
+                    ]);
 
                     // Reset edited material
                     that.editedMaterial = null;
 
                     // Hide modal
-                    $modalEditMaterial.modal('hide');
+                    $modal.modal('hide');
 
                     // Refresh the list
                     that.loadList();
@@ -237,18 +234,9 @@
             });
 
             // Show modal
-            $modalEditMaterial.modal('show');
+            $modal.modal('show');
 
         }
-    };
-
-    LadbTabMaterials.prototype.storeDefaultCutOptionsFormSectionByType = function (type) {
-        this.toolbox.setSettings([
-            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:this.$inputLengthIncrease.val() },
-            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:this.$inputWidthIncrease.val() },
-            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:this.$inputThicknessIncrease.val() },
-            { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:this.$inputStdThicknesses.val() }
-        ]);
     };
 
     LadbTabMaterials.prototype.bind = function () {
