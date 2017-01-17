@@ -79,12 +79,16 @@ module Ladb
 
         # Errors & tips
         if component_paths.length == 0
-          if use_selection
-            cutlist.add_error("tab.cutlist.error.no_component_in_selection")
-          else
-            cutlist.add_error("tab.cutlist.error.no_component_in_model")
+          if model.entities.length == 0
+            cutlist.add_error("tab.cutlist.error.no_entities")
+            else
+              if use_selection
+              cutlist.add_error("tab.cutlist.error.no_component_in_selection")
+            else
+              cutlist.add_error("tab.cutlist.error.no_component_in_model")
+            end
+            cutlist.add_tip("tab.cutlist.tip.no_component")
           end
-          cutlist.add_tip("tab.cutlist.tip.no_component")
         end
 
         # Materials usages

@@ -11,8 +11,8 @@ default:
   options: Options
   caution: Attention
   help: Aide
-  error: Erreur
-  warning: Avertissement
+  error: Zut !
+  warning: Attention
   tip: Astuce
 core:
   warning:
@@ -98,6 +98,7 @@ tab:
       thickness: Epaisseur
       thickness_short: Ep.
     error:
+      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
     warning:

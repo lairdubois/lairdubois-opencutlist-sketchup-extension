@@ -98,6 +98,7 @@ tab:
       thickness: Thickness
       thickness_short: T
     error:
+      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
     warning:

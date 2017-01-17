@@ -49,7 +49,9 @@
         </tbody>
     </table>
 {% endif %}
-<hr>
+{% if groups.length > 0 %}
+    <hr>
+{% endif %}
 {% for group in groups %}
 
     {% set showRawDimensions = group.material_type > 0 and not uiOptions.hide_raw_dimensions %}

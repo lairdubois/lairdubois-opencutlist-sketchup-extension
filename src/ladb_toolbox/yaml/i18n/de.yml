@@ -98,6 +98,7 @@ tab:
       thickness: Dicke
       thickness_short: D
     error:
+      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
     warning:
