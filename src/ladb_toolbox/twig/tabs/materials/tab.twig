@@ -4,6 +4,12 @@
 
 {% block headerToolsInner %}
     <button id="ladb_btn_list" class="btn btn-primary"><i class="ladb-toolbox-icon-refresh"></i>  {{ 'default.refresh'|i18next }}</button>
+    <div class="btn-group">
+        <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li class="disabled"><a id="ladb_item_purge_unused" href="#"><i class="ladb-toolbox-icon-trash"></i> {{ 'tab.materials.menu.purge_unused'|i18next }}</a></li>
+        </ul>
+    </div>
 {% endblock %}
 
 {% block containerInner %}

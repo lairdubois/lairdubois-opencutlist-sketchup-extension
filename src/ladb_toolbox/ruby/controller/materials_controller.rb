@@ -17,6 +17,9 @@ module Ladb
         @plugin.register_command("materials_list") do ||
           list_command
         end
+        @plugin.register_command("materials_purge_unused") do ||
+          purge_unused_command
+        end
         @plugin.register_command("materials_update") do |material_data|
           update_command(material_data)
         end
@@ -88,6 +91,13 @@ module Ladb
         data[:materials].sort_by! { |v| [v[:display_name]] }
 
         data
+      end
+
+      def purge_unused_command()
+
+        materials = Sketchup.active_model.materials
+        materials.purge_unused
+
       end
 
       def update_command(material_data)

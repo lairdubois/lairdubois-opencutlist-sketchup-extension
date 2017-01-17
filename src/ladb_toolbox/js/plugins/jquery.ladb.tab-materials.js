@@ -35,8 +35,9 @@
         this.editedMaterial = null;
 
         this.$header = $('.ladb-header', this.$element);
-        this.$fileTabs = $('.ladb-file-tabs', this.$element);
-        this.$btnList = $('#ladb_btn_list', this.$element);
+        this.$fileTabs = $('.ladb-file-tabs', this.$header);
+        this.$btnList = $('#ladb_btn_list', this.$header);
+        this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
 
@@ -69,6 +70,9 @@
                 filename: filename
             }));
 
+            // Update items state
+            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials.length == 0);
+
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
@@ -95,6 +99,15 @@
             // Stick header
             that.$header.stick_in_parent();
 
+        });
+
+    };
+
+    LadbTabMaterials.prototype.purgeUnused = function () {
+        var that = this;
+
+        rubyCallCommand('materials_purge_unused', null, function(data) {
+            that.loadList();
         });
 
     };
@@ -249,6 +262,10 @@
         // Bind buttons
         this.$btnList.on('click', function () {
             that.loadList();
+            this.blur();
+        });
+        this.$itemPurgeUnused.on('click', function () {
+            that.purgeUnused();
             this.blur();
         });
 

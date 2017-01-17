@@ -53,13 +53,13 @@
         this.editedGroup = null;
 
         this.$header = $('.ladb-header', this.$element);
-        this.$fileTabs = $('.ladb-file-tabs', this.$element);
-        this.$btnGenerate = $('#ladb_btn_generate', this.$element);
-        this.$btnPrint = $('#ladb_btn_print', this.$element);
-        this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$element);
-        this.$itemOptions = $('#ladb_item_options', this.$element);
-        this.$panelHelp = $('.ladb-panel-help', this.$element);
+        this.$fileTabs = $('.ladb-file-tabs', this.$header);
+        this.$btnGenerate = $('#ladb_btn_generate', this.$header);
+        this.$btnPrint = $('#ladb_btn_print', this.$header);
+        this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
+        this.$itemOptions = $('#ladb_item_options', this.$header);
 
+        this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
 
     };

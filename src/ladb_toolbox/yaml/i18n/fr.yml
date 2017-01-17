@@ -120,6 +120,8 @@ tab:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
       type_2: Type de matière '$t(tab.materials.type_2)'
+    menu:
+      purge_unused: Purger les matières inutilisées
     edit_material:
       title: Propriétés de la matière '{{ name }}'
       name: Nom

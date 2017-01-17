@@ -25,6 +25,8 @@
 
         this.settings = {};
 
+        this.maximized = false;
+
         this.activeTabName = null;
         this.tabs = {};
         this.tabBtns = {};
@@ -102,20 +104,26 @@
 
     LadbToolbox.prototype.minimize = function () {
         var that = this;
-        rubyCallCommand('core_dialog_minimize', null, function() {
-            that.$wrapper.hide();
-            that.$btnMinimize.hide();
-            that.$btnMaximize.show();
-        });
+        if (that.maximized) {
+            rubyCallCommand('core_dialog_minimize', null, function () {
+                that.$wrapper.hide();
+                that.$btnMinimize.hide();
+                that.$btnMaximize.show();
+                that.maximized = false;
+            });
+        }
     };
 
     LadbToolbox.prototype.maximize = function () {
         var that = this;
-        rubyCallCommand('core_dialog_maximize', null, function() {
-            that.$wrapper.show();
-            that.$btnMinimize.show();
-            that.$btnMaximize.hide();
-        });
+        if (!that.maximized) {
+            rubyCallCommand('core_dialog_maximize', null, function() {
+                that.$wrapper.show();
+                that.$btnMinimize.show();
+                that.$btnMaximize.hide();
+                that.maximized = true;
+            });
+        }
     };
 
     LadbToolbox.prototype.unselectActiveTab = function () {

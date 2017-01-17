@@ -28,8 +28,8 @@ i, span.ladb-toolbox-icon {
   opacity: 0.3;
 }
 
-.ladb-toolbox-icon-menu:before {
-  content: "\e91a";
+.ladb-toolbox-icon-trash:before {
+  content: "\e91b";
 }
 .ladb-toolbox-icon-sort-asc:before {
   content: "\e915";
@@ -109,4 +109,5 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-chevron-left:before {
   content: "\e905";
 }
+
 
