@@ -9,8 +9,8 @@
 {% if groups|length > 0 %}
     <table id="ladb_group_summary" data-group-id="summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
         <thead>
-        <tr style="background-color: #eee;">
-            <td colspan="5" style="line-height: 20px;">
+        <tr>
+            <td colspan="5">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
@@ -19,7 +19,7 @@
                     </ul>
                 </div>
                 <div>
-                    <span style=" line-height: 25px; font-size: 18px;">{{ 'tab.cutlist.list.summary'|i18next }}</span>
+                    <span class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</span>
                 </div>
             </td>
         </tr>
@@ -33,7 +33,7 @@
             <td class="text-center" width="15%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
         </tr>
         {% for group in groups %}
-            <tr style="font-size: 120%;">
+            <tr class="ladb-cutlist-row">
                 <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %}</td>
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
@@ -50,7 +50,7 @@
     </table>
 {% endif %}
 {% if groups.length > 0 %}
-    <hr>
+    <hr class="no-print">
 {% endif %}
 {% for group in groups %}
 
@@ -66,8 +66,8 @@
 
     <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
         <thead>
-        <tr style="background-color: #eee;">
-            <td colspan="{{ colspan }}" style="line-height: 20px;">
+        <tr>
+            <td colspan="{{ colspan }}">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-close"></i></button>
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
@@ -81,7 +81,7 @@
                     </ul>
                 </div>
                 <div>
-                    <span style=" line-height: 25px; font-size: 18px;">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
+                    <span class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>
             </td>
         </tr>
@@ -117,7 +117,7 @@
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
                 </tr>
             {% endif %}
-            <tr style="font-size: 120%;" id="ladb_part_{{ part.id }}">
+            <tr id="ladb_part_{{ part.id }}" class="ladb-cutlist-row">
                 <td class="text-center" style="color: red;">{{ part.number }}</td>
                 <td>
                     {{ part.name|escape }}

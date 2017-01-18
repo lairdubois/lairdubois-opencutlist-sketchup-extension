@@ -82,7 +82,7 @@ tab:
       property_count: Quantité
       reset: Restaurer les valeurs par défaut
     list:
-      summary: Résumé
+      summary: Récapitulatif
       type: Type
       material_thickness: Matière / Epaisseur
       part_count: Nb. pièces

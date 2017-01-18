@@ -1,12 +1,12 @@
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
+ * Copyright 2011-2017 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
 /*!
- * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=d6681afbfb0f62501a513999fb6858b6)
- * Config saved to config.json and https://gist.github.com/d6681afbfb0f62501a513999fb6858b6
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=8db8852aca3047654f0cf7cde51d426a)
+ * Config saved to config.json and https://gist.github.com/8db8852aca3047654f0cf7cde51d426a
  */
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
@@ -424,7 +424,7 @@ p {
   font-weight: 300;
   line-height: 1.4;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .lead {
     font-size: 21px;
   }
@@ -580,7 +580,7 @@ dt {
 dd {
   margin-left: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .dl-horizontal dt {
     float: left;
     width: 160px;
@@ -716,19 +716,19 @@ pre code {
   padding-left: 10px;
   padding-right: 10px;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .container {
-    width: 740px;
+    width: 770px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 1100px) {
   .container {
-    width: 960px;
+    width: 970px;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .container {
-    width: 1160px;
+    width: 1170px;
   }
 }
 .container-fluid {
@@ -903,7 +903,7 @@ pre code {
 .col-xs-offset-0 {
   margin-left: 0%;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
     float: left;
   }
@@ -1061,7 +1061,7 @@ pre code {
     margin-left: 0%;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 1100px) {
   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left;
   }
@@ -1219,7 +1219,7 @@ pre code {
     margin-left: 0%;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
     float: left;
   }
@@ -1572,7 +1572,7 @@ table th[class*="col-"] {
   overflow-x: auto;
   min-height: 0.01%;
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 899px) {
   .table-responsive {
     width: 100%;
     margin-bottom: 15px;
@@ -2041,7 +2041,7 @@ select[multiple].input-lg {
   margin-bottom: 10px;
   color: #737373;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .form-inline .form-group {
     display: inline-block;
     margin-bottom: 0;
@@ -2107,7 +2107,7 @@ select[multiple].input-lg {
   margin-left: -10px;
   margin-right: -10px;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .form-horizontal .control-label {
     text-align: right;
     margin-bottom: 0;
@@ -2117,13 +2117,13 @@ select[multiple].input-lg {
 .form-horizontal .has-feedback .form-control-feedback {
   right: 10px;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .form-horizontal .form-group-lg .control-label {
     padding-top: 11px;
     font-size: 18px;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .form-horizontal .form-group-sm .control-label {
     padding-top: 6px;
     font-size: 12px;
@@ -2761,7 +2761,7 @@ tbody.collapse.in {
   bottom: 100%;
   margin-bottom: 2px;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .navbar-right .dropdown-menu {
     left: auto;
     right: 0;
@@ -3184,7 +3184,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   top: auto;
   left: auto;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .nav-tabs.nav-justified > li {
     display: table-cell;
     width: 1%;
@@ -3202,7 +3202,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-tabs.nav-justified > .active > a:focus {
   border: 1px solid #dddddd;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .nav-tabs.nav-justified > li > a {
     border-bottom: 1px solid #dddddd;
     border-radius: 0 0 0 0;
@@ -3249,7 +3249,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   top: auto;
   left: auto;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .nav-justified > li {
     display: table-cell;
     width: 1%;
@@ -3270,7 +3270,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-tabs-justified > .active > a:focus {
   border: 1px solid #dddddd;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .nav-tabs-justified > li > a {
     border-bottom: 1px solid #dddddd;
     border-radius: 0 0 0 0;
@@ -4353,7 +4353,7 @@ button.close {
   height: 50px;
   overflow: scroll;
 }
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .modal-dialog {
     width: 600px;
     margin: 30px auto;
@@ -4366,7 +4366,7 @@ button.close {
     width: 300px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 1100px) {
   .modal-lg {
     width: 900px;
   }
@@ -4714,7 +4714,7 @@ button.close {
 .visible-lg-inline-block {
   display: none !important;
 }
-@media (max-width: 767px) {
+@media (max-width: 899px) {
   .visible-xs {
     display: block !important;
   }
@@ -4729,22 +4729,22 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 899px) {
   .visible-xs-block {
     display: block !important;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 899px) {
   .visible-xs-inline {
     display: inline !important;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 899px) {
   .visible-xs-inline-block {
     display: inline-block !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 900px) and (max-width: 1099px) {
   .visible-sm {
     display: block !important;
   }
@@ -4759,22 +4759,22 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 900px) and (max-width: 1099px) {
   .visible-sm-block {
     display: block !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 900px) and (max-width: 1099px) {
   .visible-sm-inline {
     display: inline !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 900px) and (max-width: 1099px) {
   .visible-sm-inline-block {
     display: inline-block !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (min-width: 1100px) and (max-width: 1299px) {
   .visible-md {
     display: block !important;
   }
@@ -4789,22 +4789,22 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (min-width: 1100px) and (max-width: 1299px) {
   .visible-md-block {
     display: block !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (min-width: 1100px) and (max-width: 1299px) {
   .visible-md-inline {
     display: inline !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (min-width: 1100px) and (max-width: 1299px) {
   .visible-md-inline-block {
     display: inline-block !important;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .visible-lg {
     display: block !important;
   }
@@ -4819,37 +4819,37 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .visible-lg-block {
     display: block !important;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .visible-lg-inline {
     display: inline !important;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .visible-lg-inline-block {
     display: inline-block !important;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 899px) {
   .hidden-xs {
     display: none !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 900px) and (max-width: 1099px) {
   .hidden-sm {
     display: none !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
+@media (min-width: 1100px) and (max-width: 1299px) {
   .hidden-md {
     display: none !important;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .hidden-lg {
     display: none !important;
   }
