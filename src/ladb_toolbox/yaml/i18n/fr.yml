@@ -132,7 +132,7 @@ tab:
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
       std_thicknesses: Epaisseurs disponibles
-      std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle qui sera prise en compte.
+      std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.
     error:
       no_materials: Votre modèle ne contient aucune matière.
   about:
