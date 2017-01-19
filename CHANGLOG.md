@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
+* 0.4.6
+
+  * Saving Dialog's size
+
 * 0.4.5 (2017-01-14)
 
   * Cutlist part_order_strategy option

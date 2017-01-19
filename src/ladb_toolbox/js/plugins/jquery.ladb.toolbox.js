@@ -105,6 +105,10 @@
     LadbToolbox.prototype.minimize = function () {
         var that = this;
         if (that.maximized) {
+
+            // Unbind window
+            window.onresize = undefined;
+
             rubyCallCommand('core_dialog_minimize', null, function () {
                 that.$wrapper.hide();
                 that.$btnMinimize.hide();
@@ -122,6 +126,19 @@
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
                 that.maximized = true;
+
+                // Bind window
+                window.onresize = function () {
+                    var windowWidth = $(window).width();
+                    var windowHeight = $(window).height();
+                    if (windowWidth > 0 && windowHeight > 0) {
+                        rubyCallCommand('core_dialog_resized', {
+                            width: windowWidth + that.frameBorderW,
+                            height: windowHeight + that.frameBorderH
+                        });
+                    }
+                };
+
             });
         }
     };
@@ -226,6 +243,10 @@
 
     LadbToolbox.prototype.init = function () {
         var that = this;
+
+        // Compute dialog frame borders
+        this.frameBorderW = Math.max(0, this.options.dialog_startup_size.width - $(window).width());
+        this.frameBorderH = Math.max(0, this.options.dialog_startup_size.height - $(window).height());
 
         this.pullSettings([
             SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
