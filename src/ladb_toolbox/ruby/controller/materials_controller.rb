@@ -37,9 +37,10 @@ module Ladb
 
         temp_dir = @plugin.temp_dir
         material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
-        unless Dir.exist?(material_thumbnails_dir)
-          Dir.mkdir(material_thumbnails_dir)
+        if Dir.exist?(material_thumbnails_dir)
+          FileUtils.remove_dir(material_thumbnails_dir, true)   # Temp dir exists we clean it
         end
+        Dir.mkdir(material_thumbnails_dir)
 
         data = {
             :errors => [],
