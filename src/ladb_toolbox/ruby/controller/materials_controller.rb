@@ -50,9 +50,9 @@ module Ladb
             :unknow_material_count => 0,
             :materials => []
         }
-        materials.each_with_index { |material, index|
+        materials.each { |material|
 
-          thumbnail_file = File.join(material_thumbnails_dir, "#{index}.png")
+          thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
           material.write_thumbnail(thumbnail_file, 128)
 
           material_attributes = MaterialAttributes.new(material)
