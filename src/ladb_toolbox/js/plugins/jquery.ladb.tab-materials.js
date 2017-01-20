@@ -222,10 +222,10 @@
 
                 that.editedMaterial.display_name = $inputName.val();
                 that.editedMaterial.attributes.type = $selectType.val();
-                that.editedMaterial.attributes.length_increase = $inputLengthIncrease.val();
-                that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
-                that.editedMaterial.attributes.thickness_increase = $inputThicknessIncrease.val();
-                that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
+                that.editedMaterial.attributes.length_increase = that.sanitizeSizeInput($inputLengthIncrease.val());
+                that.editedMaterial.attributes.width_increase = that.sanitizeSizeInput($inputWidthIncrease.val());
+                that.editedMaterial.attributes.thickness_increase = that.sanitizeSizeInput($inputThicknessIncrease.val());
+                that.editedMaterial.attributes.std_thicknesses = that.sanitizeSizeInput($inputStdThicknesses.val());
 
                 rubyCallCommand('materials_update', that.editedMaterial, function() {
 
@@ -255,6 +255,12 @@
 
         }
     };
+
+    LadbTabMaterials.prototype.sanitizeSizeInput = function (val) {
+        // -- FIX -- should replace sanitizing with a better heuristic
+        //           make sure that input is meaningful to Sketchup Size
+        return val.replace(/\s+/g, '');
+    }
 
     LadbTabMaterials.prototype.bind = function () {
         var that = this;
