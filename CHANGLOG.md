@@ -6,7 +6,8 @@ in 0.x versions.
 
 * 0.4.6
 
-  * Saving Dialog's size
+  * Saving Dialog's size (SU 17 only)
+  * Sticky tab header
 
 * 0.4.5 (2017-01-14)
 

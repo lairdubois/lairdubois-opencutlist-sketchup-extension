@@ -106,7 +106,7 @@
         var that = this;
         if (that.maximized) {
 
-            // Unbind window
+            // Unbind window.onresize
             window.onresize = undefined;
 
             rubyCallCommand('core_dialog_minimize', null, function () {
@@ -127,17 +127,21 @@
                 that.$btnMaximize.hide();
                 that.maximized = true;
 
-                // Bind window
-                window.onresize = function () {
-                    var windowWidth = $(window).width();
-                    var windowHeight = $(window).height();
-                    if (windowWidth > 0 && windowHeight > 0) {
-                        rubyCallCommand('core_dialog_resized', {
-                            width: windowWidth + that.frameBorderW,
-                            height: windowHeight + that.frameBorderH
-                        });
-                    }
-                };
+                if (that.capabilities.htmlDialogCompatible) {
+
+                    // Bind window.onresize
+                    window.onresize = function () {
+                        var windowWidth = $(window).width();
+                        var windowHeight = $(window).height();
+                        if (windowWidth > 0 && windowHeight > 0) {
+                            rubyCallCommand('core_dialog_resized', {
+                                width: windowWidth + that.frameBorderW,
+                                height: windowHeight + that.frameBorderH
+                            });
+                        }
+                    };
+
+                }
 
             });
         }

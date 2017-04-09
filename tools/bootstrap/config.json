@@ -118,13 +118,13 @@
     "@screen-xs": "480px",
     "@screen-xs-min": "@screen-xs",
     "@screen-phone": "@screen-xs-min",
-    "@screen-sm": "900px",
+    "@screen-sm": "850px",
     "@screen-sm-min": "@screen-sm",
     "@screen-tablet": "@screen-sm-min",
-    "@screen-md": "1100px",
+    "@screen-md": "1050px",
     "@screen-md-min": "@screen-md",
     "@screen-desktop": "@screen-md-min",
-    "@screen-lg": "1300px",
+    "@screen-lg": "1250px",
     "@screen-lg-min": "@screen-lg",
     "@screen-lg-desktop": "@screen-lg-min",
     "@screen-xs-max": "(@screen-sm-min - 1)",
@@ -132,7 +132,7 @@
     "@screen-md-max": "(@screen-lg-min - 1)",
     "@grid-columns": "12",
     "@grid-gutter-width": "20px",
-    "@grid-float-breakpoint": "@screen-sm-min",
+    "@grid-float-breakpoint": "@screen-lg-min",
     "@grid-float-breakpoint-max": "(@grid-float-breakpoint - 1)",
     "@container-tablet": "(@screen-tablet - @grid-gutter-width * 2 - 90px)",
     "@container-sm": "@container-tablet",
@@ -418,5 +418,5 @@
     "tab.js",
     "transition.js"
   ],
-  "customizerUrl": "http://getbootstrap.com/customize/?id=8db8852aca3047654f0cf7cde51d426a"
+  "customizerUrl": "http://getbootstrap.com/customize/?id=c9ae12d210956f55d49a6d3fc99d0eb5"
 }

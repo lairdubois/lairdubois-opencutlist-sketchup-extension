@@ -102,14 +102,6 @@ module Ladb
             @html_dialog_compatible = false
           end
 
-          # Special case for SU 2016 and lower on MacOS
-          if !@html_dialog_compatible && @current_os == :MAC
-            @dialog_min_size[:height] = DIALOG_MAXIMIZED_HEIGHT
-          end
-          if @current_os == :WIN
-            @dialog_min_size[:width] = 116
-          end
-
           # -- Observers --
 
           # TODO : Sketchup.add_observer(AppObserver.new(self))
@@ -168,12 +160,12 @@ module Ladb
                     :preferences_key => DIALOG_PREF_KEY,
                     :scrollable => true,
                     :resizable => true,
-                    :width => @dialog_min_size[:width],
-                    :height => @dialog_min_size[:height],
+                    :width => DIALOG_MINIMIZED_WIDTH,
+                    :height => DIALOG_MINIMIZED_HEIGHT,
                     :left => DIALOG_LEFT,
                     :top => DIALOG_TOP,
-                    :min_width => @dialog_min_size[:width],
-                    :min_height => @dialog_min_size[:height],
+                    :min_width => DIALOG_MINIMIZED_WIDTH,
+                    :min_height => DIALOG_MINIMIZED_HEIGHT,
                     :style => UI::HtmlDialog::STYLE_DIALOG
                 })
           else
@@ -181,21 +173,21 @@ module Ladb
                 dialog_title,
                 true,
                 DIALOG_PREF_KEY,
-                @dialog_min_size[:width],
-                @dialog_min_size[:height],
+                DIALOG_MINIMIZED_WIDTH,
+                DIALOG_MINIMIZED_HEIGHT,
                 DIALOG_LEFT,
                 DIALOG_TOP,
                 true
             )
-            @dialog.min_width = @dialog_min_size[:width]
-            @dialog.min_height = @dialog_min_size[:height]
+            @dialog.min_width = DIALOG_MINIMIZED_WIDTH
+            @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
           end
 
           # Setup dialog page
           @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
 
           # Set dialog size
-          @dialog.set_size(@dialog_min_size[:width], @dialog_min_size[:height])
+          dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
 
           # Setup dialog actions
           @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
@@ -220,6 +212,16 @@ module Ladb
       end
 
       private
+
+      def dialog_set_size(width, height)
+        if @dialog
+          if @current_os == :MAC && !@html_dialog_compatible
+            @dialog.execute_script("window.resizeTo(#{width},#{height})")
+          else
+            @dialog.set_size(width, height)
+          end
+        end
+      end
 
       # -- Commands ---
 
@@ -258,16 +260,20 @@ module Ladb
 
       def dialog_minimize_command
         if @dialog
-          @dialog.set_size(DIALOG_MINIMIZED_WIDTH, !@html_dialog_compatible && @current_os == :MAC ? DIALOG_MAXIMIZED_HEIGHT : DIALOG_MINIMIZED_HEIGHT)
+          dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         end
       end
 
       def dialog_maximize_command
         if @dialog
-          @dialog.set_size(
-              Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_WIDTH),
-              Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_MAXIMIZED_HEIGHT)
-          )
+          if @html_dialog_compatible
+            @dialog.set_size(
+                Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_WIDTH),
+                Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_MAXIMIZED_HEIGHT)
+            )
+          else
+            dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
+          end
         end
       end
 

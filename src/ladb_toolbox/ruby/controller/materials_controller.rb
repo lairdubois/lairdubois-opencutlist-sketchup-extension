@@ -46,9 +46,9 @@ module Ladb
             :errors => [],
             :warnings => [],
             :filename => Pathname.new(model.path).basename,
-            :hardwood_material_count => 0,
-            :plywood_material_count => 0,
-            :unknow_material_count => 0,
+            :solidwood_material_count => 0,
+            :sheetgood_material_count => 0,
+            :untyped_material_count => 0,
             :materials => []
         }
         materials.each { |material|
@@ -75,11 +75,11 @@ module Ladb
 
           case material_attributes.type
             when MaterialAttributes::TYPE_SOLID_WOOD
-              data[:hardwood_material_count] += 1
+              data[:solidwood_material_count] += 1
             when MaterialAttributes::TYPE_SHEET_GOOD
-              data[:plywood_material_count] += 1
+              data[:sheetgood_material_count] += 1
             else
-              data[:unknow_material_count] += 1
+              data[:untyped_material_count] += 1
           end
         }
 
