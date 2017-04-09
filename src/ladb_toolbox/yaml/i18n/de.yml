@@ -11,8 +11,8 @@ default:
   options: Einstellungen
   caution: Vorsicht
   help: Hilfe
-  error: Fehler
-  warning: Warnung
+  error: Verflixt!
+  warning: Achtung
   tip: Tipp
 core:
   warning:
@@ -21,76 +21,76 @@ core:
       Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
 tab:
   cutlist:
-    label: Stückliste
-    title: Stückliste
+    label: Holzliste
+    title: Holzliste
     help: |
-      Wählen Sie die Basis ihrer Stückliste in der Szene aus und klicken dann auf **Generieren**.
-      Werden keine Komponenten ausgewählt, verwendet die Stückliste alle sichtbaren Komponenten der Szene.
+      Wählen Sie die Basis ihrer Holzliste in der Szene aus und klicken dann auf **Generieren**.
+      Ist die Auswahl leer, verwendet das Plugin alle sichtbaren Komponenten der Szene zur Berechnung der Holzliste.
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     tooltip:
       show_hide_block: Einblenden / Ausblenden
-      scroll_to_block: Zum Abschnitt blättern
+      scroll_to_block: Zur Gruppe blättern
       edit_part_properties: Eigenschaften bearbeiten
-      material_origin_1: Das Material dieses Stücks ist auf einer Instanz definiert
-      material_origin_2: Das Material dieses Stücks wird von einem übergeordneten Stück geerbt.
-      material_origin_3: Das Material dieses Stücks wird aus einem enthaltenen Teil extrahiert
+      material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
+      material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt.
+      material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
     menu:
-      show_all_groups: Alle Abschnitte einblenden
-      hide_all_other_groups: Alle anderen Abschnitte ausblenden
+      show_all_groups: Alle Gruppen einblenden
+      hide_all_other_groups: Alle anderen Gruppen ausblenden
       edit_material: Bearbeiten des Materials '{{ material }}'
-      edit_group_properties: Eigenschaften dieses Abschnittes bearbeiten
+      edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:
-      title: Eigenschaften eines Stücks '{{ name }}'
-      name: Name
+      title: Eigenschaften des Teils '{{ name }}'
+      name: Bezeichnung
       material: Material
     edit_group:
-      title: Eigenschafte des Abschnittes '{{ name }}'
-      part_count: Anzahl Stücke
+      title: Eigenschafte der Gruppe '{{ name }}'
+      part_count: Anzahl Teile
       raw_thickness: Rohdicke
       material: Material
-      warning: Die Veränderung des Materials wird auf alle Teile des Abschnittes übertragen. Dies kann zu einer Neuorganisation der Abschnitte führen.
+      warning: Die Veränderung des Materials wird auf alle Teile der Gruppe übertragen. Die aktuelle Gruppeneinteilung könnte sich deshalb verändern.
     option:
-      auto_orient: Automatische Orientierung der Stücke
+      auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
         Ist diese Option aktiv, werden die Masse sortiert, so dass der grösste Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
-      
+
         Ansonsten werden die Masse der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
         - die *Breite* auf der <span style='color:red'>grünen</span> Achse ist, und
         - die *Dicke* auf der <span style='color:red'>blauen</span> Achse ist
       smart_material: "*intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
-      part_number_with_letters: Buchstaben zur Nummerierung verwenden
-      part_number_with_letters_help: Ist diese Option aktiv, werden Stücke mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
-      part_number_sequence_by_group: Aufzählung bei jedem Abschnitt reinitialisieren
+      part_number_with_letters: Buchstaben zur Aufzählung verwenden
+      part_number_with_letters_help: Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
+      part_number_sequence_by_group: Aufzählung der Teile für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
-      hide_untyped_material_dimensions: Abmessungen für Stücke ohne Material ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Stücke ohne definiertes Material (**Massivholz** oder **Platten**) nicht angezeigt.
+      hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
+      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz** oder **Platten**) nicht angezeigt.
       hide_raw_dimensions: Rohmasse ausblenden
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_final_dimensions: Fertigmasse ausblenden
       hide_final_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
-      part_order_strategy: Sortierfolge der Stücke
+      part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
-        Die Sortierfolge der Stücke wird durch die Reihenfolge der folgenden Zeilen definiert.
-        Jede Eigenschaft kann <i class="ladb-toolbox-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-toolbox-icon-sort-desc"></i> *absteigend* sortiert werden.
+        Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
+        Die Teile können für jede Eigenschaft <i class="ladb-toolbox-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-toolbox-icon-sort-desc"></i> *absteigend* geordnet werden.
       property_thickness: Dicke
       property_length: Länge
       property_width: Breite
       property_name: Bezeichnung
-      property_count: Menge
+      property_count: Anzahl
       reset: Einstellungen zurücksetzen
     list:
-      summary: Zusammenfassung
-      type: Art
+      summary: Übersicht
+      type: Typ
       material_thickness: Material / Dicke
-      part_count: Menge
+      part_count: Anzahl
       area: Fläche
       volume: Volumen
       number: Nr.
       name: Bezeichnung
-      count: Menge
+      count: Anzahl
       raw: Rohmass
       final: Fertigmass
       length_short: L
@@ -98,19 +98,19 @@ tab:
       thickness: Dicke
       thickness_short: D
     error:
-      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
+      no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
     warning:
-      partial_cutlist: Diese Stückliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
-      no_typed_materials_in_model: Ihr Modell verwenden kein definiertes Material (**Massivholz** oder **Platten**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**Massivholz** oder **Platten**).
+      partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
+      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten**).
     tip:
       no_component: |
-        Zur Berücksichtigung in der *Stückliste* müssen die Teile Instanzen einer **Komponente** sein.
-        Wenn Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
-        Durch die Verwendung von Komponenten können Stücke repliziert werden ohne sie zu kopieren.
-      no_typed_materials: Übertragen Sie ein Material auf die Stücke, die Sie in der Stückliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-toolbox-icon-materials"></i> *Materialien*.
+        Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
+        Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
+        Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
+      no_typed_materials: Übertragen Sie ein Material auf die Teile, die Sie in der Holzliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-toolbox-icon-materials"></i> *Materialien*.
   materials:
     label: Materialien
     title: Materialien
@@ -118,21 +118,21 @@ tab:
     type_1: Massivholz
     type_2: Platten
     tooltip:
-      type_0: Materialart '$t(tab.materials.type_0)'
-      type_1: Materialart '$t(tab.materials.type_1)'
-      type_2: Materialart '$t(tab.materials.type_2)'
+      type_0: Materialtyp '$t(tab.materials.type_0)'
+      type_1: Materialtyp '$t(tab.materials.type_1)'
+      type_2: Materialtyp '$t(tab.materials.type_2)'
     menu:
-      purge_unused: Purger les matières inutilisées
+      purge_unused: Nicht verwendete Materialien löschen
     edit_material:
-      title: Eigenschaften eines Material '{{ name }}'
+      title: Eigenschaften des Materials '{{ name }}'
       name: Bezeichnung
-      type: Art
-      cut_options: Stücklisteneinstellungen
+      type: Typ
+      cut_options: Schnittparameter
       length_increase: Längenzumass
       width_increase: Breitenzumass
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
-      std_thicknesses_help: Rohmass der verfügbaren Dicken in mm.
+      std_thicknesses_help: Rohmasse der verfügbaren Dicken. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
     error:
       no_materials: Ihr Modell enthält keine Materialien.
   about:
@@ -141,11 +141,11 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_description: |
-      Das Plugin *L'Air du Bois : Werkzeugkiste für Sketchup* wird von [Boris Beaulant](https://www.lairdubois.fr/zeloko) und [Mitwirkende](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) entwickelt. 
+      Das Plugin *L'Air du Bois : Werkzeugkiste für Sketchup* wird von [Boris Beaulant](https://www.lairdubois.fr/zeloko) und [Mitwirkende](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/graphs/contributors) entwickelt.
       Es ist mit einer Open Source Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin) verfügbar.
     credits_runtime: Laufzeit
     credits_development: Entwicklung
     credits_vendors:  |
-      Dieses Abenteuer wäre nicht möglich ohne die Autoren der folgenden Open Source Komponenten:
+      Dieses Abenteuer wäre nicht möglich ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
-      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).  
+      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
