@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 0.x versions.
 
-* 0.4.6
+* 0.4.6 (2017-04-09)
 
   * Saving Dialog's size (SU 17 only)
   * Sticky tab header
