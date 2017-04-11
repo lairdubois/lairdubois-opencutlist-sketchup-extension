@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.0.1 (2017-04-11)
+
+  * I18n bugfix
+
 * 1.0.0 (2017-04-11)
 
   * Add ruby access to i18n files

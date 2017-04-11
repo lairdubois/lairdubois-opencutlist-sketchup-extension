@@ -55,11 +55,11 @@ gulp.task('rbz_create', function () {
 
             '!../src/**/*.twig',
             '!../src/**/twig/**',
-            '!../src/**/twig/',
+            '!../src/**/twig/'//,
 
-            '!../src/**/*.yml',
-            '!../src/**/yaml/**',
-            '!../src/**/yaml/'
+            // '!../src/**/*.yml',
+            // '!../src/**/yaml/**',
+            // '!../src/**/yaml/'
 
         ])
         .pipe(zip('ladb_toolbox.rbz'))
