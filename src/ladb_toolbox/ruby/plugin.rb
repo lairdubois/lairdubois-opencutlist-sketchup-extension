@@ -9,7 +9,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup'
-      VERSION = '1.0.1'
+      VERSION = '1.0.2'
 
       DEFAULT_SECTION = 'ladb_toolbox'
       DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH = 'core_dialog_maximized_width'
@@ -64,7 +64,7 @@ module Ladb
           return @language
         end
         available_translations = []
-        Dir["#{__dir__}/../js/i18n/*.js"].each { |file|
+        Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
           available_translations.push(File.basename(file, File.extname(file)))
         }
         language = Sketchup.get_locale.split('-')[0].downcase
@@ -76,26 +76,20 @@ module Ladb
         @language
       end
 
-      def get_i18n_strings
+      def get_i18n_string(path_key)
+
         unless @i18n_strings
           begin
             yaml_file = "#{__dir__}/../yaml/i18n/#{language}.yml"
             @i18n_strings = YAML::load_file(yaml_file)
           rescue
-            raise "Error loading i18n file (file='#{yaml_file}'."
+            raise "Error loading i18n file (file='#{yaml_file}')."
           end
         end
-        @i18n_strings
-      end
-
-      def get_i18n_string(path_key)
-
-        # Load values from YAML
-        i18n_strings = get_i18n_strings
 
         # Iterate over values
         begin
-          i18n_string = path_key.split('.').inject(i18n_strings) { |hash, key| hash[key] }
+          i18n_string = path_key.split('.').inject(@i18n_strings) { |hash, key| hash[key] }
         rescue
           puts "I18n value not found (key=#{path_key})."
         end
