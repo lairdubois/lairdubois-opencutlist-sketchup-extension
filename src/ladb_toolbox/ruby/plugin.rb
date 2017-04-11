@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'yaml'
 require_relative 'observer/app_observer'
 require_relative 'controller/cutlist_controller'
 require_relative 'controller/materials_controller'
@@ -7,8 +8,8 @@ module Ladb
   module Toolbox
     class Plugin
 
-      NAME = 'L\'Air du Bois - Boîte à outils Sketchup [BETA]'
-      VERSION = '0.4.6'
+      NAME = 'L\'Air du Bois - Boîte à outils Sketchup'
+      VERSION = '1.0.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
       DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH = 'core_dialog_maximized_width'
@@ -37,7 +38,7 @@ module Ladb
         @commands = {}
         @controllers = []
         @current_os = :OTHER
-        @language = 'en'
+        @language = nil
         @html_dialog_compatible = false
         @dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
         @started = false
@@ -56,6 +57,55 @@ module Ladb
         end
         Dir.mkdir(dir)
         @temp_dir = dir
+      end
+
+      def language
+        if @language
+          return @language
+        end
+        available_translations = []
+        Dir["#{__dir__}/../js/i18n/*.js"].each { |file|
+          available_translations.push(File.basename(file, File.extname(file)))
+        }
+        language = Sketchup.get_locale.split('-')[0].downcase
+        if available_translations.include? language
+          @language = language   # Uses SU locale only if translation is available
+        else
+          @language = 'en'
+        end
+        @language
+      end
+
+      def get_i18n_strings
+        unless @i18n_strings
+          begin
+            yaml_file = "#{__dir__}/../yaml/i18n/#{language}.yml"
+            @i18n_strings = YAML::load_file(yaml_file)
+          rescue
+            raise "Error loading i18n file (file='#{yaml_file}'."
+          end
+        end
+        @i18n_strings
+      end
+
+      def get_i18n_string(path_key)
+
+        # Load values from YAML
+        i18n_strings = get_i18n_strings
+
+        # Iterate over values
+        begin
+          i18n_string = path_key.split('.').inject(i18n_strings) { |hash, key| hash[key] }
+        rescue
+          puts "I18n value not found (key=#{path_key})."
+        end
+
+        if i18n_string
+          i18n_string
+        else
+          path_key
+        end
+
       end
 
       # -----
@@ -84,15 +134,8 @@ module Ladb
           # Fetch OS
           @current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
 
-          # Locale
-          available_translations = []
-          Dir["#{__dir__}/../js/i18n/*.js"].each { |file|
-            available_translations.push(File.basename(file, File.extname(file)))
-          }
-          language = Sketchup.get_locale.split('-')[0].downcase
-          if available_translations.include? language
-            @language = language   # Uses SU locale only if translation is available
-          end
+          # Determine current language
+          language
 
           # Check compatibility (If we can we use the HtmlDialog class - new in Sketchup 2017)
           @html_dialog_compatible = true
@@ -142,60 +185,76 @@ module Ladb
 
       end
 
-      def toggle_dialog()
-        if @dialog and @dialog.visible?
-          @dialog.close
-          @dialog = nil
+      def create_dialog
+
+        # Start
+        start
+
+        # Create dialog instance
+        dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION
+        if @html_dialog_compatible
+          @dialog = UI::HtmlDialog.new(
+              {
+                  :dialog_title => dialog_title,
+                  :preferences_key => DIALOG_PREF_KEY,
+                  :scrollable => true,
+                  :resizable => true,
+                  :width => DIALOG_MINIMIZED_WIDTH,
+                  :height => DIALOG_MINIMIZED_HEIGHT,
+                  :left => DIALOG_LEFT,
+                  :top => DIALOG_TOP,
+                  :min_width => DIALOG_MINIMIZED_WIDTH,
+                  :min_height => DIALOG_MINIMIZED_HEIGHT,
+                  :style => UI::HtmlDialog::STYLE_DIALOG
+              })
+        else
+          @dialog = UI::WebDialog.new(
+              dialog_title,
+              true,
+              DIALOG_PREF_KEY,
+              DIALOG_MINIMIZED_WIDTH,
+              DIALOG_MINIMIZED_HEIGHT,
+              DIALOG_LEFT,
+              DIALOG_TOP,
+              true
+          )
+          @dialog.min_width = DIALOG_MINIMIZED_WIDTH
+          @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
+        end
+
+        # Setup dialog page
+        @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
+
+        # Set dialog size
+        dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+
+        # Setup dialog actions
+        @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
+          call = JSON.parse(call_json)
+          result = execute_command(call['command'], call['params'])
+          script = "rubyCommandCallback(#{call['id']}, '#{result.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(result))) : ''}');"
+          @dialog.execute_script(script)
+        end
+
+      end
+
+      def show_dialog(tab_name = nil)
+
+        unless @dialog
+          create_dialog
+        end
+
+        if @dialog.visible?
+
+          if tab_name
+            # Startup tab name is defined call JS to select it
+            @dialog.execute_script("$('body').ladbToolbox('selectTab', '#{tab_name}');")
+          end
+
         else
 
-          # Start
-          start
-
-          # Create dialog instance
-          dialog_title = NAME + ' - ' + VERSION
-          if @html_dialog_compatible
-            @dialog = UI::HtmlDialog.new(
-                {
-                    :dialog_title => dialog_title,
-                    :preferences_key => DIALOG_PREF_KEY,
-                    :scrollable => true,
-                    :resizable => true,
-                    :width => DIALOG_MINIMIZED_WIDTH,
-                    :height => DIALOG_MINIMIZED_HEIGHT,
-                    :left => DIALOG_LEFT,
-                    :top => DIALOG_TOP,
-                    :min_width => DIALOG_MINIMIZED_WIDTH,
-                    :min_height => DIALOG_MINIMIZED_HEIGHT,
-                    :style => UI::HtmlDialog::STYLE_DIALOG
-                })
-          else
-            @dialog = UI::WebDialog.new(
-                dialog_title,
-                true,
-                DIALOG_PREF_KEY,
-                DIALOG_MINIMIZED_WIDTH,
-                DIALOG_MINIMIZED_HEIGHT,
-                DIALOG_LEFT,
-                DIALOG_TOP,
-                true
-            )
-            @dialog.min_width = DIALOG_MINIMIZED_WIDTH
-            @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
-          end
-
-          # Setup dialog page
-          @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
-
-          # Set dialog size
-          dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
-
-          # Setup dialog actions
-          @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
-            call = JSON.parse(call_json)
-            result = execute_command(call['command'], call['params'])
-            script = "rubyCommandCallback(#{call['id']}, '#{result.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(result))) : ''}');"
-            @dialog.execute_script(script)
-          end
+          # Store the startup tab name
+          @dialog_startup_tab_name = tab_name
 
           # Show dialog
           if @html_dialog_compatible
@@ -208,6 +267,23 @@ module Ladb
             end
           end
 
+        end
+
+      end
+
+      def hide_dialog
+        if @dialog
+          @dialog.close
+          @dialog = nil
+          true
+        else
+          false
+        end
+      end
+
+      def toggle_dialog
+        unless hide_dialog
+          show_dialog
         end
       end
 
@@ -254,7 +330,8 @@ module Ladb
             :locale => Sketchup.get_locale,
             :language => @language,
             :html_dialog_compatible => @html_dialog_compatible,
-            :dialog_startup_size => @dialog_min_size
+            :dialog_startup_size => @dialog_min_size,
+            :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
         }
       end
 

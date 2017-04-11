@@ -202,6 +202,9 @@
 
             }
         }
+
+        // By default maximize the dialog
+        this.maximize();
     };
 
     // Internals /////
@@ -281,6 +284,10 @@
             }
 
             that.bind();
+
+            if (that.options.dialog_startup_tab_name) {
+                that.selectTab(that.options.dialog_startup_tab_name);
+            }
 
         });
 
