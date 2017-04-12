@@ -8,6 +8,7 @@ default:
   refresh: Refresh
   generate: Generate
   print: Print
+  export: Export
   options: Options
   caution: Caution
   help: Help
@@ -111,6 +112,9 @@ tab:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good**).
       no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good**).
+      export_empty: Votre export ne contient aucune pièce.
+    success:
+      exported_to: Export réussi vers {{ export_path }}.
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.

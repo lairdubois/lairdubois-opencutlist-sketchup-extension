@@ -8,6 +8,7 @@ default:
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
+  export: Export
   options: Einstellungen
   caution: Vorsicht
   help: Hilfe
@@ -107,10 +108,14 @@ tab:
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
+      failed_to_write_export_file: Echec de l'écriture du fichier d'export.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten**).
       no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten**).
+      export_empty: Votre export ne contient aucune pièce.
+    success:
+      exported_to: Export réussi vers {{ export_path }}.
     tip:
       no_component: |
         Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.

@@ -209,6 +209,25 @@
 
     // Internals /////
 
+    LadbToolbox.prototype.notify = function(text, type, buttons) {
+        if (type == undefined) {
+            type = 'alert';
+        }
+        if (buttons == undefined) {
+            buttons = [];
+        }
+        var n = new Noty({
+            type: type,
+            layout: 'bottomRight',
+            theme: 'bootstrap-v3',
+            text: text,
+            timeout: 3000,
+            buttons: buttons
+        }).show();
+
+        return n;
+    };
+
     LadbToolbox.prototype.setupTooltips = function() {
         $('[data-toggle="tooltip"]').tooltip({
             container: 'body'

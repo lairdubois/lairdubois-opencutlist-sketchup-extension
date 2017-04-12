@@ -8,6 +8,7 @@ default:
   refresh: Rafraichir
   generate: Générer
   print: Imprimer
+  export: Exporter
   options: Options
   caution: Attention
   help: Aide
@@ -103,14 +104,20 @@ tab:
       width_short: Larg.
       thickness: Epaisseur
       thickness_short: Ep.
+    export:
+      blop: Vous êtes sur le point d'exporter votre fiche de débit sous forme d'un fichier [CSV](https://wikipedia.org/wiki/Comma-separated_values).
     error:
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
+      failed_to_write_export_file: Echec de l'écriture du fichier d'export.
     warning:
       partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
       no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (**Bois massif** ou **Bois panneau**).
       no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (**Bois massif** ou **Bois panneau**).
+      export_empty: Votre export ne contient aucune pièce.
+    success:
+      exported_to: Export réussi vers {{ export_path }}.
     tip:
       no_component: |
         Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.

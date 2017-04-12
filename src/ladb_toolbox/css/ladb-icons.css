@@ -28,6 +28,10 @@ i, span.ladb-toolbox-icon {
   opacity: 0.3;
 }
 
+
+.ladb-toolbox-icon-export:before {
+  content: "\e91a";
+}
 .ladb-toolbox-icon-trash:before {
   content: "\e91b";
 }

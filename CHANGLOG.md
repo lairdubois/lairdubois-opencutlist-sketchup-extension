@@ -6,6 +6,8 @@ in 1.x and 0.x versions.
 
 * 1.0.2
 
+  * Add Cutlist export to CSV
+
 * 1.0.1 (2017-04-11)
 
   * I18n bugfix

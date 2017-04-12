@@ -1,0 +1,13 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_export' %}
+{% set title = 'default.export'|i18next %}
+
+{% block bodyInner %}
+    {{ 'tab.cutlist.export.blop'|i18next }}
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button type="button" class="btn btn-primary" id="ladb_cutlist_export">{{ 'default.export'|i18next }}</button>
+{% endblock %}

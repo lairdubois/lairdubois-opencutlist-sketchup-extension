@@ -56,6 +56,7 @@
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
+        this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
 
@@ -101,6 +102,7 @@
 
             // Update buttons and items state
             that.$btnPrint.prop('disabled', groups.length == 0);
+            that.$btnExport.prop('disabled', groups.length == 0);
             that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
 
             // Update page
@@ -187,6 +189,38 @@
             // Callback
             if (callback && typeof callback == 'function') {
                 callback();
+            }
+
+        });
+
+    };
+
+    LadbTabCutlist.prototype.exportCutlist = function () {
+        var that = this;
+
+        rubyCallCommand('cutlist_export', {
+            hidden_group_ids: this.uiOptions.hidden_group_ids
+        }, function(data) {
+
+            var i;
+
+            if (data.errors) {
+                for (i = 0; i < data.errors.length; i++) {
+                    that.toolbox.notify(i18next.t(data.errors[i]), 'error');
+                }
+            }
+            if (data.warnings) {
+                for (i = 0; i < data.warnings.length; i++) {
+                    that.toolbox.notify(i18next.t(data.warnings[i]), 'warning');
+                }
+            }
+            if (data.export_path) {
+                var n = that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: data.export_path }), 'success', [
+                    Noty.button('Ouvrir', 'btn btn-default', function () {
+                        window.open('file://' + data.export_path, '_blank');
+                        n.close();
+                    })
+                ]);
             }
 
         });
@@ -397,11 +431,11 @@
         });
     };
 
-    LadbTabCutlist.prototype.hideAllGroups = function (exceptGroupId) {
+    LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId) {
         var that = this;
         $('.ladb-cutlist-group', this.$page).each(function() {
             var groupId = $(this).data('group-id');
-            if (exceptGroupId && groupId != exceptGroupId) {
+            if (exceptedGroupId && groupId != exceptedGroupId) {
                 that.hideGroup($(this));
             }
         });
@@ -567,6 +601,37 @@
         });
         this.$btnPrint.on('click', function () {
             window.print();
+            this.blur();
+        });
+        this.$btnExport.on('click', function () {
+
+            // Render modal
+            that.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-export.twig"}).render({
+            }));
+
+            // Fetch UI elements
+            var $modal = $('#ladb_cutlist_modal_export', that.$element);
+            var $btnExport = $('#ladb_cutlist_export', $modal);
+
+            // Bind modal
+            $modal.on('hidden.bs.modal', function () {
+                $(this)
+                    .data('bs.modal', null)
+                    .remove();
+            });
+
+            // Bind buttons
+            $btnExport.on('click', function() {
+                that.exportCutlist();
+
+                // Hide modal
+                $modal.modal('hide');
+
+            });
+
+            // Show modal
+            $modal.modal('show');
+
             this.blur();
         });
         this.$itemShowAllGroups.on('click', function () {

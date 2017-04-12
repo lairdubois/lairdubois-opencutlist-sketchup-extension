@@ -1,6 +1,6 @@
 module Ladb
   module Toolbox
-    class Cutlist
+    class CutlistDef
 
       attr_accessor :filename, :page_label
       attr_reader :errors, :warnings, :tips, :material_usages, :group_defs

@@ -2,7 +2,7 @@ require 'pathname'
 require 'digest'
 require_relative 'controller'
 require_relative '../model/size'
-require_relative '../model/cutlist'
+require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
 require_relative '../model/material_usage'
@@ -25,6 +25,10 @@ module Ladb
         # Setup toolbox dialog actions
         @plugin.register_command("cutlist_generate") do |settings|
           generate_command(settings)
+        end
+
+        @plugin.register_command("cutlist_export") do |settings|
+          export_command(settings)
         end
 
         @plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
@@ -74,20 +78,20 @@ module Ladb
         filename = Pathname.new(model.path).basename
         page_label = (model.pages and model.pages.selected_page) ? model.pages.selected_page.label : ''
 
-        # Create cut list
-        cutlist = Cutlist.new(filename, page_label)
+        # Create cut list def
+        cutlist_def = CutlistDef.new(filename, page_label)
 
         # Errors & tips
         if component_paths.length == 0
           if model.entities.length == 0
-            cutlist.add_error("tab.cutlist.error.no_entities")
+            cutlist_def.add_error("tab.cutlist.error.no_entities")
             else
               if use_selection
-              cutlist.add_error("tab.cutlist.error.no_component_in_selection")
+              cutlist_def.add_error("tab.cutlist.error.no_component_in_selection")
             else
-              cutlist.add_error("tab.cutlist.error.no_component_in_model")
+              cutlist_def.add_error("tab.cutlist.error.no_component_in_model")
             end
-            cutlist.add_tip("tab.cutlist.tip.no_component")
+            cutlist_def.add_tip("tab.cutlist.tip.no_component")
           end
         end
 
@@ -96,7 +100,7 @@ module Ladb
         materials.each { |material|
           material_attributes = MaterialAttributes.new(material)
           material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type)
-          cutlist.set_material_usage(material.name, material_usage)
+          cutlist_def.set_material_usage(material.name, material_usage)
         }
 
         # Populate cutlist
@@ -111,7 +115,7 @@ module Ladb
           material_attributes = MaterialAttributes.new(material)
 
           if material
-            material_usage = cutlist.get_material_usage(material.name)
+            material_usage = cutlist_def.get_material_usage(material.name)
             if material_usage
               material_usage.use_count += 1
             end
@@ -130,7 +134,7 @@ module Ladb
           )
 
           group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
-          group_def = cutlist.get_group_def(group_id)
+          group_def = cutlist_def.get_group_def(group_id)
           unless group_def
 
             group_def = GroupDef.new(group_id)
@@ -139,7 +143,7 @@ module Ladb
             group_def.raw_thickness = raw_size.thickness
             group_def.raw_thickness_available = std_thickness[:available]
 
-            cutlist.set_group_def(group_id, group_def)
+            cutlist_def.set_group_def(group_id, group_def)
 
           end
 
@@ -169,11 +173,11 @@ module Ladb
         # Warnings & tips
         if component_paths.length > 0
           if use_selection
-            cutlist.add_warning("tab.cutlist.warning.partial_cutlist")
+            cutlist_def.add_warning("tab.cutlist.warning.partial_cutlist")
           end
           hardwood_material_count = 0
           plywood_material_count = 0
-          cutlist.material_usages.each { |key, material_usage|
+          cutlist_def.material_usages.each { |key, material_usage|
             if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
               hardwood_material_count += material_usage.use_count
             elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -181,8 +185,8 @@ module Ladb
             end
           }
           if hardwood_material_count == 0 and plywood_material_count == 0
-            cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
-            cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
+            cutlist_def.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
+            cutlist_def.add_tip("tab.cutlist.tip.no_typed_materials")
           end
         end
 
@@ -190,17 +194,17 @@ module Ladb
         # ----
 
         data = {
-            :errors => cutlist.errors,
-            :warnings => cutlist.warnings,
-            :tips => cutlist.tips,
-            :filename => cutlist.filename,
-            :page_label => cutlist.page_label,
+            :errors => cutlist_def.errors,
+            :warnings => cutlist_def.warnings,
+            :tips => cutlist_def.tips,
+            :filename => cutlist_def.filename,
+            :page_label => cutlist_def.page_label,
             :material_usages => [],
             :groups => []
         }
 
         # Sort and browse material usages
-        cutlist.material_usages.sort_by { |k, v| [v.display_name.downcase] }.each { |key, material_usage|
+        cutlist_def.material_usages.sort_by { |k, v| [v.display_name.downcase] }.each { |key, material_usage|
           data[:material_usages].push({
                                           :name => material_usage.name,
                                           :display_name => material_usage.display_name,
@@ -211,7 +215,7 @@ module Ladb
 
         # Sort and browse groups
         part_number = part_number_with_letters ? 'A' : '1'
-        cutlist.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.raw_thickness] }.each { |key, group_def|
+        cutlist_def.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.raw_thickness] }.each { |key, group_def|
 
           if part_number_sequence_by_group
             part_number = part_number_with_letters ? 'A' : '1'    # Reset code increment on each group
@@ -258,6 +262,60 @@ module Ladb
           }
 
         }
+
+        # Keep generated cutlist
+        @cutlist = data
+
+        data
+      end
+
+      def export_command(settings)
+
+        # Check settings
+        hidden_group_ids = settings['hidden_group_ids']
+
+        data = {
+            :warnings => [],
+            :errors => [],
+            :export_path => ''
+        }
+
+        if @cutlist and @cutlist[:groups]
+
+          # Ask for export file path
+          export_path = UI.savepanel('Export CutList', '', File.basename(@cutlist[:filename], '.skp') + '.csv')
+          if export_path
+
+            # Build file content
+            content = ''
+            @cutlist[:groups].each { |group|
+              next if hidden_group_ids.include? group[:id]
+              group[:parts].each { |part|
+                content += "\"#{part[:name]}\"; \"#{part[:length]}\"; \"#{part[:width]}\"; \"#{part[:thickness]}\"; \"#{part[:count]}\"; \"#{part[:material_name]}\"\n"
+              }
+            }
+
+            if content.empty?
+              data[:warnings].push('tab.cutlist.warning.export_empty')
+            end
+
+            content = "name; length; width; thickness; count; material_name\n" + content
+
+            begin
+
+              # Write to file
+              File.open(export_path, 'w:UTF-8') { |file| file.write(content) }
+
+              # Populate response
+              data[:export_path] = export_path
+
+            rescue
+              data[:errors].push('tab.cutlist.error.failed_to_write_export_file')
+            end
+
+          end
+
+        end
 
         data
       end
