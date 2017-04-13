@@ -3,7 +3,7 @@ default:
   maximize: Maximieren
   cancel: Abbrechen
   validate: Bestätigen
-  open: Ouvrir
+  open: Öffnen
   close: Schliessen
   empty_filename: ohne Titel
   refresh: Aktualisieren
@@ -41,9 +41,9 @@ tab:
       scroll_to_block: Zur Gruppe blättern
       edit_part_properties: Eigenschaften bearbeiten
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
-      material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt.
+      material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
       material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
-      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
+      orientation_locked_on_axis: Die Orientierung des Teils ist an sein Koordinatensystem gebunden
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -53,21 +53,21 @@ tab:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung
       material: Material
-      cumulable: Cumulable
-      cumulable_0: Non cumulable
-      cumulable_1: Cumulable sur la longueur
-      cumulable_2: Cumulable sur la largeur
-      orientation: Orientation
-      orientation_locked_on_axis: Vérouiller sur le repère
+      cumulable: Kumulierbar
+      cumulable_0: Nicht Kumulierbar cumulable
+      cumulable_1: Kumulierbar über die Längsachse
+      cumulable_2: Kumulierbar über die Breiteachse
+      orientation: Ausrichtung
+      orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
-        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
 
-        Et donc,
-        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+        Es gilt somit,
+        - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
+        - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
+        - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
     edit_group:
-      title: Eigenschafte der Gruppe '{{ name }}'
+      title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
       raw_thickness: Rohdicke
       material: Material
@@ -120,32 +120,32 @@ tab:
       thickness: Dicke
       thickness_short: D
     export:
-      title: Exporter au format CSV
+      title: CSV Format exportieren
       info: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://wikipedia.org/wiki/Comma-separated_values).
+        Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
 
-        <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
-      name: Désignation
-      raw_length: Longueur brute
-      raw_width: Largeur brute
-      raw_thickness: Epaisseur brute
-      length: Longueur finie
-      width: Largeur finie
-      thickness: Epaisseur finie
-      count: Quantité
-      material_name: Matière
+        <i class="ladb-toolbox-icon-warning"></i> *Die in maskierten Gruppen enthaltenen Teile werden nicht exportiert*.
+      name: Bezeichnung
+      raw_length: Länge - roh
+      raw_width: Breite - roh
+      raw_thickness: Dicke - roh
+      length: Länge - fertig
+      width: Breite - fertig
+      thickness: Dicke - fertig
+      count: Anzahl
+      material_name: Material
     error:
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
-      failed_to_write_export_file: Echec de l'écriture du fichier d'export.
+      failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten**).
       no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten**).
-      export_empty: Votre export ne contient aucune pièce.
+      export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
-      exported_to: Export réussi vers {{ export_path }}.
+      exported_to: Export in Datei {{ export_path }} erfolgreich.
     tip:
       no_component: |
         Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.

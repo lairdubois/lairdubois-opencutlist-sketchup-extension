@@ -3,7 +3,7 @@ default:
   maximize: Maximize
   cancel: Cancel
   validate: Apply
-  open: Ouvrir
+  open: Open
   close: Close
   empty_filename: Untitled
   refresh: Refresh
@@ -43,7 +43,7 @@ tab:
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
-      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
+      orientation_locked_on_axis: The orientation of this part is locked to its coordinate system
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -53,19 +53,19 @@ tab:
       title: Properties of Part '{{ name }}'
       name: Description
       material: Material
-      cumulable: Cumulable
-      cumulable_0: Non cumulable
-      cumulable_1: Cumulable sur la longueur
-      cumulable_2: Cumulable sur la largeur
+      cumulable: Summable
+      cumulable_0: Not summable
+      cumulable_1: Summable over length
+      cumulable_2: Summable over width
       orientation: Orientation
-      orientation_locked_on_axis: Vérouiller sur le repère
+      orientation_locked_on_axis: Lock orientation on axes
       orientation_locked_on_axis_help: |
-        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+        If this option is selected, the option *Automatic orientation of parts* will have no effect on this part,
 
-        Et donc,
-        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+        hence, in the local coordinate system:
+        - *length* is on the <span style='color:red'>red</span> axis
+        - *width* is on the <span style='color:green'>green</span> axis
+        - *thickness* is on the <span style='color:blue'>blue</span> axis
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -77,7 +77,7 @@ tab:
       auto_orient_help: |
         If this option is selected, the 3 dimensions of a part are sorted such that the largest represents the *length* and the smallest represents the *thickness*.
 
-        If this option is left unselected, the local axes of the part define the dimensions as follows:
+        If this option is left unselected, the local axes of the part define the dimensions as follows
          - *length* is on the <span style='color:red'>red</span> axis
          - *width* is on the <span style='color:green'>green</span> axis
          - *thickness* is on the <span style='color:blue'>blue</span> axis
@@ -120,31 +120,32 @@ tab:
       thickness: Thickness
       thickness_short: T
     export:
-      title: Exporter au format CSV
+      title: CSV formatted Export
       info: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://wikipedia.org/wiki/Comma-separated_values).
+        With this function you can export the *parts list* into a [CSV](https://wikipedia.org/wiki/Comma-separated_values) file.
 
-        <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
-      name: Désignation
-      raw_length: Longueur brute
-      raw_width: Largeur brute
-      raw_thickness: Epaisseur brute
-      length: Longueur finie
-      width: Largeur finie
-      thickness: Epaisseur finie
-      count: Quantité
-      material_name: Matière
+        <i class="ladb-toolbox-icon-warning"></i> *Parts inside of hidden groups of your parts list are not exported*.
+      name: Description
+      raw_length: Length - raw
+      raw_width: Width - raw
+      raw_thickness: Thickness - raw
+      length: Length - final
+      width: Width - final
+      thickness: Thickness - final
+      count: Quantity
+      material_name: Material
     error:
       no_entities: Your model is empty. You will need to give me more information ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
+      failed_to_write_export_file: Failed to write the export file.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good**).
       no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good**).
-      export_empty: Votre export ne contient aucune pièce.
+      export_empty: Your export does not contain any part.
     success:
-      exported_to: Export réussi vers {{ export_path }}.
+      exported_to: Export to {{ export_path }} succeeded.
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
