@@ -42,7 +42,7 @@ tab:
       edit_part_properties: Editer les propriétés de la pièce
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
-      material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite des ses éléments enfants
+      material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
       orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
     menu:
       show_all_groups: Afficher tous les groupes
@@ -122,7 +122,7 @@ tab:
     export:
       title: Exporter au format CSV
       info: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://wikipedia.org/wiki/Comma-separated_values).
+        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
 
         <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       name: Désignation
