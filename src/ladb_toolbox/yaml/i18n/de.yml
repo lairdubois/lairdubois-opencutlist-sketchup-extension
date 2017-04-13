@@ -3,6 +3,7 @@ default:
   maximize: Maximieren
   cancel: Abbrechen
   validate: Bestätigen
+  open: Ouvrir
   close: Schliessen
   empty_filename: ohne Titel
   refresh: Aktualisieren
@@ -42,6 +43,7 @@ tab:
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt.
       material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
+      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -51,6 +53,19 @@ tab:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung
       material: Material
+      cumulable: Cumulable
+      cumulable_0: Non cumulable
+      cumulable_1: Cumulable sur la longueur
+      cumulable_2: Cumulable sur la largeur
+      orientation: Orientation
+      orientation_locked_on_axis: Vérouiller sur le repère
+      orientation_locked_on_axis_help: |
+        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+
+        Et donc,
+        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
+        - la *largeur* sur le <span style='color:green'>vert</span>
+        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
     edit_group:
       title: Eigenschafte der Gruppe '{{ name }}'
       part_count: Anzahl Teile

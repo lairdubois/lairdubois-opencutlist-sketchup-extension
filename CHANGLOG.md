@@ -7,10 +7,12 @@ in 1.x and 0.x versions.
 * 1.1.0
 
   * Add Cutlist export to CSV
+  * Add Cumulable feature on parts
+  * Add Orientation locked on axis on parts
 
 * 1.0.1 (2017-04-11)
 
-  * I18n bugfix
+  * I18n loading bugfix
 
 * 1.0.0 (2017-04-11)
 

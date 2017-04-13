@@ -7,6 +7,8 @@ require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
 require_relative '../model/material_usage'
+require_relative '../model/material_attributes'
+require_relative '../model/definition_attributes'
 
 module Ladb
   module Toolbox
@@ -76,11 +78,11 @@ module Ladb
           _fetch_useful_component_paths(entity, component_paths, path)
         }
 
-        filename = Pathname.new(model.path).basename
+        dir, filename = File.split(model.path)
         page_label = (model.pages and model.pages.selected_page) ? model.pages.selected_page.label : ''
 
         # Create cut list def
-        cutlist_def = CutlistDef.new(filename, page_label)
+        cutlist_def = CutlistDef.new(dir, filename, page_label)
 
         # Errors & tips
         if component_paths.length == 0
@@ -112,6 +114,8 @@ module Ladb
           material, material_origin = _get_material(component_path, smart_material)
           definition = entity.definition
 
+          definition_attributes = DefinitionAttributes.new(definition)
+
           material_name = material ? material.name : ''
           material_attributes = MaterialAttributes.new(material)
 
@@ -122,7 +126,7 @@ module Ladb
             end
           end
 
-          size = _size_from_bounds(_compute_faces_bounds(definition), auto_orient)
+          size = _size_from_bounds(_compute_faces_bounds(definition), auto_orient && !definition_attributes.orientation_locked_on_axis)
           std_thickness = _find_std_thickness(
               (size.thickness + material_attributes.l_thickness_increase).to_l,
               material_attributes.l_std_thicknesses,
@@ -151,12 +155,14 @@ module Ladb
           part_def = group_def.get_part_def(definition.name)
           unless part_def
 
-            part_def = PartDef.new()
+            part_def = PartDef.new
             part_def.definition_id = definition.name
             part_def.name = definition.name
             part_def.raw_size = raw_size
             part_def.size = size
             part_def.material_name = material_name
+            part_def.cumulable = definition_attributes.cumulable
+            part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
 
             group_def.set_part_def(definition.name, part_def)
 
@@ -198,6 +204,7 @@ module Ladb
             :errors => cutlist_def.errors,
             :warnings => cutlist_def.warnings,
             :tips => cutlist_def.tips,
+            :dir => cutlist_def.dir,
             :filename => cutlist_def.filename,
             :page_label => cutlist_def.page_label,
             :material_usages => [],
@@ -253,9 +260,13 @@ module Ladb
                                    :count => part_def.count,
                                    :raw_length => part_def.raw_size.length,
                                    :raw_width => part_def.raw_size.width,
+                                   :cumulative_raw_length => part_def.cumulative_raw_length,
+                                   :cumulative_raw_width => part_def.cumulative_raw_width,
                                    :number => part_number,
                                    :material_name => part_def.material_name,
                                    :material_origins => part_def.material_origins,
+                                   :cumulable => part_def.cumulable,
+                                   :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
                                    :entity_ids => part_def.entity_ids
                                }
             )
@@ -286,7 +297,7 @@ module Ladb
         if @cutlist and @cutlist[:groups]
 
           # Ask for export file path
-          export_path = UI.savepanel('Export CutList', '', File.basename(@cutlist[:filename], '.skp') + '.csv')
+          export_path = UI.savepanel('Export CutList', @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
           if export_path
 
             File.open(export_path, "w+:UTF-16LE:UTF-8") do |f|
@@ -395,6 +406,8 @@ module Ladb
         definition_id = part_data['definition_id']
         name = part_data['name']
         material_name = part_data['material_name']
+        cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
+        orientation_locked_on_axis = part_data['orientation_locked_on_axis']
         entity_ids = part_data['entity_ids']
 
         model = Sketchup.active_model
@@ -404,6 +417,13 @@ module Ladb
         definition = definitions[definition_id]
         if definition and definition.name != name
           definition.name = name
+        end
+
+        definition_attributes = DefinitionAttributes.new(definition)
+        if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis
+          definition_attributes.cumulable = cumulable
+          definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
+          definition_attributes.write_to_attributes
         end
 
         # Update component instance material

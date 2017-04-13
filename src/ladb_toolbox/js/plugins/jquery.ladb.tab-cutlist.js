@@ -214,7 +214,7 @@
             }
             if (response.export_path) {
                 that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
-                    Noty.button('Ouvrir', 'btn btn-default', function () {
+                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                         rubyCallCommand('core_open_external_file', {
                             path: response.export_path
@@ -267,6 +267,8 @@
                 var $modal = $('#ladb_cutlist_modal_part', that.$element);
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
+                var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
+                var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Bind modal
@@ -279,12 +281,16 @@
                 // Bind select
                 $selectMaterialName.val(part.material_name);
                 $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectCumulable.val(part.cumulable);
+                $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind buttons
                 $btnUpdate.on('click', function () {
 
                     that.editedPart.name = $inputName.val();
                     that.editedPart.material_name = $selectMaterialName.val();
+                    that.editedPart.cumulable = $selectCumulable.val();
+                    that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function() {
 
@@ -312,6 +318,9 @@
                     });
 
                 });
+
+                // Setup popovers
+                that.toolbox.setupPopovers();
 
                 // Show modal
                 $modal.modal('show');

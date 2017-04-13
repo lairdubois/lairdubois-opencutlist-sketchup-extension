@@ -3,6 +3,7 @@ default:
   maximize: Maximize
   cancel: Cancel
   validate: Apply
+  open: Ouvrir
   close: Close
   empty_filename: Untitled
   refresh: Refresh
@@ -42,6 +43,7 @@ tab:
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
+      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -51,6 +53,19 @@ tab:
       title: Properties of Part '{{ name }}'
       name: Description
       material: Material
+      cumulable: Cumulable
+      cumulable_0: Non cumulable
+      cumulable_1: Cumulable sur la longueur
+      cumulable_2: Cumulable sur la largeur
+      orientation: Orientation
+      orientation_locked_on_axis: Vérouiller sur le repère
+      orientation_locked_on_axis_help: |
+        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+
+        Et donc,
+        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
+        - la *largeur* sur le <span style='color:green'>vert</span>
+        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts

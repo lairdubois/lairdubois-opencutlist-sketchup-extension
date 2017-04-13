@@ -4,7 +4,7 @@ module Ladb
   module Toolbox
     class PartDef
 
-      attr_accessor :definition_id, :name, :count, :raw_size, :size, :material_name, :material_origins
+      attr_accessor :definition_id, :name, :count, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
       attr_reader :entity_ids
 
       def initialize()
@@ -15,6 +15,8 @@ module Ladb
         @size = Size.new
         @material_name = ''
         @material_origins = []
+        @cumulable = DefinitionAttributes::CUMULABLE_NONE
+        @orientation_locked_on_axis = false
         @entity_ids = []
       end
 
@@ -36,11 +38,11 @@ module Ladb
             end
             case property
               when 'length'
-                a_value = part_def_a.size.length
-                b_value = part_def_b.size.length
+                a_value = part_def_a.cumulative_raw_length
+                b_value = part_def_b.cumulative_raw_length
               when 'width'
-                a_value = part_def_a.size.width
-                b_value = part_def_b.size.width
+                a_value = part_def_a.cumulative_raw_width
+                b_value = part_def_b.cumulative_raw_width
               when 'thickness'
                 a_value = part_def_a.size.thickness
                 b_value = part_def_b.size.thickness
@@ -69,6 +71,22 @@ module Ladb
 
       def id
         Digest::SHA1.hexdigest(@entity_ids.join(','))   # ParfDef ID is generated according to its entity list
+      end
+
+      def cumulative_raw_length
+        if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
+          (@raw_size.length.to_f * @count).to_l
+        else
+          @raw_size.length
+        end
+      end
+
+      def cumulative_raw_width
+        if (@count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH)
+          (@raw_size.width.to_f * @count).to_l
+        else
+          @raw_size.width
+        end
       end
 
       def add_entity_id(entity_id)

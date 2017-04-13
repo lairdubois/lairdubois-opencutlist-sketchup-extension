@@ -122,14 +122,15 @@
                 <td>
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
+                        {% if part.orientation_locked_on_axis %}<a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.orientation_locked_on_axis')|i18next }}"><i class="ladb-toolbox-icon-orientation-locked-on-axis"></i></a>{% endif %}
                         {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}
                         &nbsp;<a class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-toolbox-icon-edit"></i></a>
                     </div>
                 </td>
                 <td class="text-center">x {{ part.count }}</td>
                 {% if showRawDimensions %}
-                    <td class="text-right" style="color: red;">{{ part.raw_length }}</td>
-                    <td class="text-right" style="color: red;">{{ part.raw_width }}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_length }}{% if part.count > 1 and part.cumulable == 1 %}<br><small>&Sigma;&nbsp;=&nbsp;<em>{{part.cumulative_raw_length}}</em></small>{% endif %}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_width }}{% if part.count > 1 and part.cumulable == 2 %}<br><small>&Sigma;&nbsp;=&nbsp;<em>{{ part.cumulative_raw_width}}</em></small>{% endif %}</td>
                 {% endif %}
                 {% if showFinalDimensions %}
                     <td class="text-right">{{ part.length }}</td>

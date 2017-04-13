@@ -29,6 +29,9 @@ i, span.ladb-toolbox-icon {
 }
 
 
+.ladb-toolbox-icon-orientation-locked-on-axis:before {
+  content: "\e91c";
+}
 .ladb-toolbox-icon-export:before {
   content: "\e91a";
 }

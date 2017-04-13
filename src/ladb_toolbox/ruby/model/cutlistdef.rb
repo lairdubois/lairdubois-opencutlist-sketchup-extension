@@ -2,13 +2,14 @@ module Ladb
   module Toolbox
     class CutlistDef
 
-      attr_accessor :filename, :page_label
+      attr_accessor :dir, :filename, :page_label
       attr_reader :errors, :warnings, :tips, :material_usages, :group_defs
 
-      def initialize(filename, page_label)
+      def initialize(dir, filename, page_label)
         @errors = []
         @warnings = []
         @tips = []
+        @dir = dir
         @filename = filename
         @page_label = page_label
         @material_usages = {}
