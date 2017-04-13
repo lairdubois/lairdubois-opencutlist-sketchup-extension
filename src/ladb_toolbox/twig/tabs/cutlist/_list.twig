@@ -129,8 +129,8 @@
                 </td>
                 <td class="text-center">x {{ part.count }}</td>
                 {% if showRawDimensions %}
-                    <td class="text-right" style="color: red;">{{ part.raw_length }}{% if part.count > 1 and part.cumulable == 1 %}<br><small>&Sigma;&nbsp;=&nbsp;<em>{{part.cumulative_raw_length}}</em></small>{% endif %}</td>
-                    <td class="text-right" style="color: red;">{{ part.raw_width }}{% if part.count > 1 and part.cumulable == 2 %}<br><small>&Sigma;&nbsp;=&nbsp;<em>{{ part.cumulative_raw_width}}</em></small>{% endif %}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_length }}{% if part.count > 1 and part.cumulable == 1 %}<br><small title="{{ part.count }} x {{ part.raw_length }} = {{ part.cumulative_raw_length }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{part.cumulative_raw_length}}</em></small>{% endif %}</td>
+                    <td class="text-right" style="color: red;">{{ part.raw_width }}{% if part.count > 1 and part.cumulable == 2 %}<br><small title="{{ part.count }} x {{ part.raw_width }}  = {{ part.cumulative_raw_width }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part.cumulative_raw_width}}</em></small>{% endif %}</td>
                 {% endif %}
                 {% if showFinalDimensions %}
                     <td class="text-right">{{ part.length }}</td>
