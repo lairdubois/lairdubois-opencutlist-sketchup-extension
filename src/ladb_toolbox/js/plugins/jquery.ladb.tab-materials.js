@@ -54,12 +54,12 @@
         this.$page.empty();
         this.$btnList.prop('disabled', true);
 
-        rubyCallCommand('materials_list', null, function(data) {
+        rubyCallCommand('materials_list', null, function(response) {
 
-            var errors = data.errors;
-            var warnings = data.warnings;
-            var filename = data.filename;
-            var materials = data.materials;
+            var errors = response.errors;
+            var warnings = response.warnings;
+            var filename = response.filename;
+            var materials = response.materials;
 
             // Keep useful data
             that.materials = materials;
@@ -106,7 +106,7 @@
     LadbTabMaterials.prototype.purgeUnused = function () {
         var that = this;
 
-        rubyCallCommand('materials_purge_unused', null, function(data) {
+        rubyCallCommand('materials_purge_unused', null, function() {
             that.loadList();
         });
 

@@ -1,5 +1,6 @@
 require 'pathname'
 require 'digest'
+require 'csv'
 require_relative 'controller'
 require_relative '../model/size'
 require_relative '../model/cutlistdef'
@@ -190,10 +191,10 @@ module Ladb
           end
         end
 
-        # Data
-        # ----
+        # Response
+        # --------
 
-        data = {
+        response = {
             :errors => cutlist_def.errors,
             :warnings => cutlist_def.warnings,
             :tips => cutlist_def.tips,
@@ -205,7 +206,7 @@ module Ladb
 
         # Sort and browse material usages
         cutlist_def.material_usages.sort_by { |k, v| [v.display_name.downcase] }.each { |key, material_usage|
-          data[:material_usages].push({
+          response[:material_usages].push({
                                           :name => material_usage.name,
                                           :display_name => material_usage.display_name,
                                           :type => material_usage.type,
@@ -232,7 +233,7 @@ module Ladb
               :raw_volume_m3 => 0,
               :parts => []
           }
-          data[:groups].push(group)
+          response[:groups].push(group)
 
           # Sort and browse parts
           group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
@@ -264,17 +265,19 @@ module Ladb
         }
 
         # Keep generated cutlist
-        @cutlist = data
+        @cutlist = response
 
-        data
+        response
       end
 
       def export_command(settings)
 
         # Check settings
+        hide_raw_dimensions = settings['hide_raw_dimensions']
+        hide_final_dimensions = settings['hide_final_dimensions']
         hidden_group_ids = settings['hidden_group_ids']
 
-        data = {
+        response = {
             :warnings => [],
             :errors => [],
             :export_path => ''
@@ -286,43 +289,78 @@ module Ladb
           export_path = UI.savepanel('Export CutList', '', File.basename(@cutlist[:filename], '.skp') + '.csv')
           if export_path
 
-            # Build file content
-            content = ''
-            @cutlist[:groups].each { |group|
-              next if hidden_group_ids.include? group[:id]
-              group[:parts].each { |part|
-                content += "\"#{part[:name]}\"; \"#{part[:length]}\"; \"#{part[:width]}\"; \"#{part[:thickness]}\"; \"#{part[:count]}\"; \"#{part[:material_name]}\"\n"
-              }
-            }
+            File.open(export_path, "w+:UTF-16LE:UTF-8") do |f|
+              csv_file = CSV.generate({ :col_sep => "\t" }) do |csv|
 
-            if content.empty?
-              data[:warnings].push('tab.cutlist.warning.export_empty')
-            end
+                # Header row
+                header = []
+                header.push(@plugin.get_i18n_string('tab.cutlist.export.name'))
+                unless hide_raw_dimensions
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_length'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_width'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
+                end
+                unless hide_final_dimensions
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.length'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.width'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.thickness'))
+                end
+                header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
+                header.push(@plugin.get_i18n_string('tab.cutlist.export.material_name'))
 
-            content = "name; length; width; thickness; count; material_name\n" + content
+                csv << header
 
-            begin
+                # Content rows
+                @cutlist[:groups].each { |group|
+                  next if hidden_group_ids.include? group[:id]
+                  group[:parts].each { |part|
 
-              # Write to file
-              File.open(export_path, 'w:UTF-8') { |file| file.write(content) }
+                    row = []
+                    row.push(part[:name])
+                    unless hide_raw_dimensions
+                      row.push(part[:raw_length])
+                      row.push(part[:raw_width])
+                      row.push(group[:raw_thickness])
+                    end
+                    unless hide_final_dimensions
+                      row.push(part[:length])
+                      row.push(part[:width])
+                      row.push(part[:thickness])
+                    end
+                    row.push(part[:count])
+                    row.push(part[:material_name])
 
-              # Populate response
-              data[:export_path] = export_path
+                    csv << row
+                  }
+                }
 
-            rescue
-              data[:errors].push('tab.cutlist.error.failed_to_write_export_file')
+              end
+
+              begin
+
+                # Write file
+                f.write "\xEF\xBB\xBF" #Byte Order Mark
+                f.write(csv_file)
+
+                # Populate response
+                response[:export_path] = export_path
+
+              rescue
+                response[:errors].push('tab.cutlist.error.failed_to_write_export_file')
+              end
+
             end
 
           end
 
         end
 
-        data
+        response
       end
 
       def part_get_thumbnail_command(part_data)
 
-        data = {
+        response = {
             :thumbnail_file => ''
         }
 
@@ -345,10 +383,10 @@ module Ladb
           thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
           definition.save_thumbnail(thumbnail_file)
 
-          data[:thumbnail_file] = thumbnail_file
+          response[:thumbnail_file] = thumbnail_file
         end
 
-        data
+        response
       end
 
       def part_update_command(part_data)

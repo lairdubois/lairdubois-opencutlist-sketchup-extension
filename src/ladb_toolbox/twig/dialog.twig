@@ -52,11 +52,11 @@
         popCommandCallStack();
     }
 
-    function rubyCommandCallback(id, encodedData) {
+    function rubyCommandCallback(id, encodedResponse) {
         var callback = commandCallbacks[id];
         if (callback && typeof callback == 'function') {
-            var data = encodedData ? JSON.parse(decodeURIComponent(Base64.decode(encodedData))) : {};
-            callback(data);
+            var response = encodedResponse ? JSON.parse(decodeURIComponent(Base64.decode(encodedResponse))) : {};
+            callback(response);
             commandCallbacks[id] = null;
         }
         commandRunning = false;
@@ -76,8 +76,8 @@
     // Ready !
 
     $(document).ready(function () {
-        rubyCallCommand('core_dialog_loaded', null, function(data) {
-            $('body').ladbToolbox(data);
+        rubyCallCommand('core_dialog_loaded', null, function(response) {
+            $('body').ladbToolbox(response);
         });
     });
 

@@ -76,15 +76,15 @@
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
 
-        rubyCallCommand('cutlist_generate', this.generateOptions, function(data) {
+        rubyCallCommand('cutlist_generate', this.generateOptions, function(response) {
 
-            var errors = data.errors;
-            var warnings = data.warnings;
-            var tips = data.tips;
-            var filename = data.filename;
-            var pageLabel = data.page_label;
-            var materialUsages = data.material_usages;
-            var groups = data.groups;
+            var errors = response.errors;
+            var warnings = response.warnings;
+            var tips = response.tips;
+            var filename = response.filename;
+            var pageLabel = response.page_label;
+            var materialUsages = response.material_usages;
+            var groups = response.groups;
 
             // Keep usefull data
             that.groups = groups;
@@ -198,27 +198,28 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        rubyCallCommand('cutlist_export', {
-            hidden_group_ids: this.uiOptions.hidden_group_ids
-        }, function(data) {
+        rubyCallCommand('cutlist_export', this.uiOptions, function(response) {
 
             var i;
 
-            if (data.errors) {
-                for (i = 0; i < data.errors.length; i++) {
-                    that.toolbox.notify(i18next.t(data.errors[i]), 'error');
+            if (response.errors) {
+                for (i = 0; i < response.errors.length; i++) {
+                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
                 }
             }
-            if (data.warnings) {
-                for (i = 0; i < data.warnings.length; i++) {
-                    that.toolbox.notify(i18next.t(data.warnings[i]), 'warning');
+            if (response.warnings) {
+                for (i = 0; i < response.warnings.length; i++) {
+                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
                 }
             }
-            if (data.export_path) {
-                var n = that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: data.export_path }), 'success', [
+            if (response.export_path) {
+                that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
                     Noty.button('Ouvrir', 'btn btn-default', function () {
-                        window.open('file://' + data.export_path, '_blank');
-                        n.close();
+
+                        rubyCallCommand('core_open_external_file', {
+                            path: response.export_path
+                        });
+
                     })
                 ]);
             }
@@ -248,9 +249,9 @@
         var part = this.findPartById(id);
         if (part) {
 
-            rubyCallCommand('cutlist_part_get_thumbnail', part, function(data) {
+            rubyCallCommand('cutlist_part_get_thumbnail', part, function(response) {
 
-                var thumbnailFile = data['thumbnail_file'];
+                var thumbnailFile = response['thumbnail_file'];
 
                 // Keep the edited part
                 that.editedPart = part;

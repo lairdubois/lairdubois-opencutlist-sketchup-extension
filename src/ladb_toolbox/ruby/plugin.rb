@@ -9,7 +9,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Boîte à outils Sketchup'
-      VERSION = '1.0.2'
+      VERSION = '1.1.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
       DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH = 'core_dialog_maximized_width'
@@ -168,6 +168,9 @@ module Ladb
           register_command('core_dialog_resized') do |params|
             dialog_resized_command(params)
           end
+          register_command('core_open_external_file') do |params|
+            open_external_file_command(params)
+          end
 
           @controllers.each { |controller|
             controller.setup_commands
@@ -225,8 +228,8 @@ module Ladb
         # Setup dialog actions
         @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
           call = JSON.parse(call_json)
-          result = execute_command(call['command'], call['params'])
-          script = "rubyCommandCallback(#{call['id']}, '#{result.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(result))) : ''}');"
+          response = execute_command(call['command'], call['params'])
+          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(response))) : ''}');"
           @dialog.execute_script(script)
         end
 
@@ -349,8 +352,24 @@ module Ladb
       end
 
       def dialog_resized_command(params)    # Waiting params = { width: DIALOG_WIDTH, height: DIALOG_HEIGHT }
-        Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, [@dialog_min_size[:width], params['width']].max)
-        Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, [@dialog_min_size[:height], params['height']].max)
+        width = params['width']
+        height = params['height']
+        if width and height
+          Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, [@dialog_min_size[:width], width].max)
+          Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, [@dialog_min_size[:height], height].max)
+        end
+      end
+
+      def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
+        path = params['path']
+        puts "open_external_file_command #{path}"
+        if path
+          if @current_os == :WIN
+            system %{cmd /c "start #{path}"}
+          elsif @current_os == :MAC
+            system %{open "#{path}"}
+          end
+        end
       end
 
     end

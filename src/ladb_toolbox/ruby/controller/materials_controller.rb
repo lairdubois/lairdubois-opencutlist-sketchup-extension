@@ -42,7 +42,7 @@ module Ladb
         end
         Dir.mkdir(material_thumbnails_dir)
 
-        data = {
+        response = {
             :errors => [],
             :warnings => [],
             :filename => Pathname.new(model.path).basename,
@@ -58,7 +58,7 @@ module Ladb
 
           material_attributes = MaterialAttributes.new(material)
 
-          data[:materials].push({
+          response[:materials].push({
                                     :id => material.entityID,
                                     :name => material.name,
                                     :display_name => material.display_name,
@@ -75,23 +75,23 @@ module Ladb
 
           case material_attributes.type
             when MaterialAttributes::TYPE_SOLID_WOOD
-              data[:solidwood_material_count] += 1
+              response[:solidwood_material_count] += 1
             when MaterialAttributes::TYPE_SHEET_GOOD
-              data[:sheetgood_material_count] += 1
+              response[:sheetgood_material_count] += 1
             else
-              data[:untyped_material_count] += 1
+              response[:untyped_material_count] += 1
           end
         }
 
         # Errors
         if materials.count == 0
-          data[:errors].push('tab.materials.error.no_materials')
+          response[:errors].push('tab.materials.error.no_materials')
         end
 
         # Sort materials by type ASC, display_name ASC
-        data[:materials].sort_by! { |v| [v[:display_name]] }
+        response[:materials].sort_by! { |v| [v[:display_name]] }
 
-        data
+        response
       end
 
       def purge_unused_command()

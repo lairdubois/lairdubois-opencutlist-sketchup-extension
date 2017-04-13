@@ -105,7 +105,20 @@ tab:
       thickness: Epaisseur
       thickness_short: Ep.
     export:
-      blop: Vous êtes sur le point d'exporter votre fiche de débit sous forme d'un fichier [CSV](https://wikipedia.org/wiki/Comma-separated_values).
+      title: Exporter au format CSV
+      info: |
+        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://wikipedia.org/wiki/Comma-separated_values).
+
+        <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportés*.
+      name: Désignation
+      raw_length: Longueur brute
+      raw_width: Largeur brute
+      raw_thickness: Epaisseur brute
+      length: Longueur finie
+      width: Largeur finie
+      thickness: Epaisseur finie
+      count: Quantité
+      material_name: Matière
     error:
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
