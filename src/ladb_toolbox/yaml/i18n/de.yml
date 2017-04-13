@@ -109,7 +109,7 @@ tab:
       info: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://wikipedia.org/wiki/Comma-separated_values).
 
-        <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportés*.
+        <i class="ladb-toolbox-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       name: Désignation
       raw_length: Longueur brute
       raw_width: Largeur brute
