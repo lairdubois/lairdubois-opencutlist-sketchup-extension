@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.1.0
+* 1.1.0 (2017-04-14)
 
   * Add Cutlist export to CSV
   * Add Cumulable feature on parts
