@@ -353,7 +353,7 @@ module Ladb
       def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
         path = params['path']
         if path
-          UI.openURL("file://#{path}")
+          UI.openURL("file:///#{path}")
         end
       end
 
