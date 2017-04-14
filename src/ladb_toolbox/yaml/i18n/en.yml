@@ -81,7 +81,7 @@ tab:
          - *length* is on the <span style='color:red'>red</span> axis
          - *width* is on the <span style='color:green'>green</span> axis
          - *thickness* is on the <span style='color:blue'>blue</span> axis
-      smart_material:  "*Intelligent* assignment of material"
+      smart_material: "*Intelligent* assignment of material"
       smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).

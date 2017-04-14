@@ -12,14 +12,12 @@ module Ladb
       VERSION = '1.1.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
-      DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH = 'core_dialog_maximized_width'
-      DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT = 'core_dialog_maximized_height'
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
       DIALOG_MINIMIZED_WIDTH = 90
       DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 2    # = 2 Tab buttons
-      DIALOG_LEFT = 200
+      DIALOG_LEFT = 100
       DIALOG_TOP = 100
       DIALOG_PREF_KEY = 'fr.lairdubois.toolbox'
 
@@ -165,9 +163,6 @@ module Ladb
           register_command('core_dialog_maximize') do |params|
             dialog_maximize_command
           end
-          register_command('core_dialog_resized') do |params|
-            dialog_resized_command(params)
-          end
           register_command('core_open_external_file') do |params|
             open_external_file_command(params)
           end
@@ -222,8 +217,9 @@ module Ladb
         # Setup dialog page
         @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
 
-        # Set dialog size
+        # Set dialog size and position
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+        dialog_set_position(DIALOG_LEFT, DIALOG_TOP)
 
         # Setup dialog actions
         @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
@@ -296,6 +292,16 @@ module Ladb
         end
       end
 
+      def dialog_set_position(left, top)
+        if @dialog
+          if @current_os == :MAC && !@html_dialog_compatible
+            @dialog.execute_script("window.moveTo(#{left},#{top})")
+          else
+            @dialog.set_position(left, top)
+          end
+        end
+      end
+
       # -- Commands ---
 
       def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ] }
@@ -340,23 +346,7 @@ module Ladb
 
       def dialog_maximize_command
         if @dialog
-          if @html_dialog_compatible
-            @dialog.set_size(
-                Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_WIDTH),
-                Sketchup.read_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_MAXIMIZED_HEIGHT)
-            )
-          else
-            dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
-          end
-        end
-      end
-
-      def dialog_resized_command(params)    # Waiting params = { width: DIALOG_WIDTH, height: DIALOG_HEIGHT }
-        width = params['width']
-        height = params['height']
-        if width and height
-          Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_WIDTH, [@dialog_min_size[:width], width].max)
-          Sketchup.write_default(DEFAULT_SECTION, DEFAULT_KEY_DIALOG_MAXIMIZED_HEIGHT, [@dialog_min_size[:height], height].max)
+          dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
         end
       end
 

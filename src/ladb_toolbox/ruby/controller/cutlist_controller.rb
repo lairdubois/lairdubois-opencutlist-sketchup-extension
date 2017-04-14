@@ -297,57 +297,57 @@ module Ladb
         if @cutlist and @cutlist[:groups]
 
           # Ask for export file path
-          export_path = UI.savepanel('Export CutList', @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
+          export_path = UI.savepanel(@plugin.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
           if export_path
 
-            File.open(export_path, "w+:UTF-16LE:UTF-8") do |f|
-              csv_file = CSV.generate({ :col_sep => "\t" }) do |csv|
+            begin
 
-                # Header row
-                header = []
-                header.push(@plugin.get_i18n_string('tab.cutlist.export.name'))
-                unless hide_raw_dimensions
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_length'))
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_width'))
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
-                end
-                unless hide_final_dimensions
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.length'))
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.width'))
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.thickness'))
-                end
-                header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
-                header.push(@plugin.get_i18n_string('tab.cutlist.export.material_name'))
+              File.open(export_path, "w+:UTF-16LE:UTF-8") do |f|
+                csv_file = CSV.generate({ :col_sep => "\t" }) do |csv|
 
-                csv << header
+                  # Header row
+                  header = []
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.name'))
+                  unless hide_raw_dimensions
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_length'))
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_width'))
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
+                  end
+                  unless hide_final_dimensions
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.length'))
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.width'))
+                    header.push(@plugin.get_i18n_string('tab.cutlist.export.thickness'))
+                  end
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.material_name'))
 
-                # Content rows
-                @cutlist[:groups].each { |group|
-                  next if hidden_group_ids.include? group[:id]
-                  group[:parts].each { |part|
+                  csv << header
 
-                    row = []
-                    row.push(part[:name])
-                    unless hide_raw_dimensions
-                      row.push(part[:raw_length])
-                      row.push(part[:raw_width])
-                      row.push(group[:raw_thickness])
-                    end
-                    unless hide_final_dimensions
-                      row.push(part[:length])
-                      row.push(part[:width])
-                      row.push(part[:thickness])
-                    end
-                    row.push(part[:count])
-                    row.push(part[:material_name])
+                  # Content rows
+                  @cutlist[:groups].each { |group|
+                    next if hidden_group_ids.include? group[:id]
+                    group[:parts].each { |part|
 
-                    csv << row
+                      row = []
+                      row.push(part[:name])
+                      unless hide_raw_dimensions
+                        row.push(part[:raw_length])
+                        row.push(part[:raw_width])
+                        row.push(group[:raw_thickness])
+                      end
+                      unless hide_final_dimensions
+                        row.push(part[:length])
+                        row.push(part[:width])
+                        row.push(part[:thickness])
+                      end
+                      row.push(part[:count])
+                      row.push(part[:material_name])
+
+                      csv << row
+                    }
                   }
-                }
 
-              end
-
-              begin
+                end
 
                 # Write file
                 f.write "\xEF\xBB\xBF" #Byte Order Mark
@@ -356,10 +356,10 @@ module Ladb
                 # Populate response
                 response[:export_path] = export_path
 
-              rescue
-                response[:errors].push('tab.cutlist.error.failed_to_write_export_file')
               end
 
+            rescue
+              response[:errors].push('tab.cutlist.error.failed_to_write_export_file')
             end
 
           end
