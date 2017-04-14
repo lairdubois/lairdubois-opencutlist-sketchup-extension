@@ -352,13 +352,8 @@ module Ladb
 
       def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
         path = params['path']
-        puts "open_external_file_command #{path}"
         if path
-          if @current_os == :WIN
-            system %{cmd /c "start #{path}"}
-          elsif @current_os == :MAC
-            system %{open "#{path}"}
-          end
+          UI.openURL("file://#{path}")
         end
       end
 

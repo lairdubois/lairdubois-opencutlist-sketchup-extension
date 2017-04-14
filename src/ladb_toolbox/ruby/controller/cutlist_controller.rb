@@ -354,7 +354,7 @@ module Ladb
                 f.write(csv_file)
 
                 # Populate response
-                response[:export_path] = export_path
+                response[:export_path] = export_path.tr("\\", '/')
 
               end
 

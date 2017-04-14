@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.1.1
+
+  * Cutlist export bugfix when export path contains spaces
+
 * 1.1.0 (2017-04-14)
 
   * Add Cutlist export to CSV
