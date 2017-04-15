@@ -286,6 +286,7 @@ module Ladb
         # Check settings
         hide_raw_dimensions = settings['hide_raw_dimensions']
         hide_final_dimensions = settings['hide_final_dimensions']
+        hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
         hidden_group_ids = settings['hidden_group_ids']
 
         response = {
@@ -328,17 +329,20 @@ module Ladb
                     next if hidden_group_ids.include? group[:id]
                     group[:parts].each { |part|
 
+                      no_raw_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW
+                      no_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW && hide_untyped_material_dimensions
+
                       row = []
                       row.push(part[:name])
                       unless hide_raw_dimensions
-                        row.push(part[:raw_length])
-                        row.push(part[:raw_width])
-                        row.push(group[:raw_thickness])
+                        row.push(no_raw_dimensions ? '' : part[:raw_length])
+                        row.push(no_raw_dimensions ? '' : part[:raw_width])
+                        row.push(no_raw_dimensions ? '' : group[:raw_thickness])
                       end
                       unless hide_final_dimensions
-                        row.push(part[:length])
-                        row.push(part[:width])
-                        row.push(part[:thickness])
+                        row.push(no_dimensions ? '' : part[:length])
+                        row.push(no_dimensions ? '' : part[:width])
+                        row.push(no_dimensions ? '' : part[:thickness])
                       end
                       row.push(part[:count])
                       row.push(part[:material_name])
@@ -350,11 +354,11 @@ module Ladb
                 end
 
                 # Write file
-                f.write "\xEF\xBB\xBF" #Byte Order Mark
+                f.write "\xEF\xBB\xBF" # Byte Order Mark
                 f.write(csv_file)
 
                 # Populate response
-                response[:export_path] = export_path.tr("\\", '/')
+                response[:export_path] = export_path.tr("\\", '/')  # Standardize path by replacing \ by /
 
               end
 

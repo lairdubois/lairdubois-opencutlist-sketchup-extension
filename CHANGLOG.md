@@ -7,6 +7,8 @@ in 1.x and 0.x versions.
 * 1.1.1
 
   * Cutlist export bugfix when export path contains spaces
+  * Cutlist export dimensions improvments
+  * Remove "x" before quantity in cutlist
 
 * 1.1.0 (2017-04-14)
 
