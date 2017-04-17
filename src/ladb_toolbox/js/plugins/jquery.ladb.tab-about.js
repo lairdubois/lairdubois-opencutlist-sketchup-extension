@@ -9,12 +9,29 @@
         this.$element = $(element);
         this.toolbox = toolbox;
 
+        this.$btnCheckForUpdate = $('#ladb_btn_check_for_update', this.$header);
+        this.$btnUpgrade = $('#ladb_btn_upgrade', this.$header);
+
     };
 
     LadbTabAbout.DEFAULTS = {};
 
     LadbTabAbout.prototype.bind = function () {
         var that = this;
+
+        // Bind buttons
+        this.$btnCheckForUpdate.on('click', function () {
+
+            rubyCallCommand('check_for_update', {}, function(response) {});
+
+            this.blur();
+        });
+        this.$btnUpgrade.on('click', function () {
+
+            rubyCallCommand('upgrade', {}, function(response) {});
+
+            this.blur();
+        });
 
     };
 

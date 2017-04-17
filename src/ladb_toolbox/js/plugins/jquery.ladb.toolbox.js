@@ -16,6 +16,7 @@
         this.capabilities = {
             version: options.version,
             sketchupVersion: options.sketchup_version,
+            ruby_version: options.ruby_version,
             currentOS: options.current_os,
             userAgent: window.navigator.userAgent,
             locale: options.locale,

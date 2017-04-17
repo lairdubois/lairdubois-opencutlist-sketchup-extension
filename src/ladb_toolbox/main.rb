@@ -1,5 +1,4 @@
 require 'sketchup.rb'
-require 'json'
 require_relative 'ruby/plugin.rb'
 
 module Ladb

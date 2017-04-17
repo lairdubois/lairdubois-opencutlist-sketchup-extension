@@ -1,5 +1,8 @@
 require 'fileutils'
+require 'json'
 require 'yaml'
+require 'net/http'
+require 'uri'
 require_relative 'observer/app_observer'
 require_relative 'controller/cutlist_controller'
 require_relative 'controller/materials_controller'
@@ -8,8 +11,8 @@ module Ladb
   module Toolbox
     class Plugin
 
-      NAME = 'L\'Air du Bois - Boîte à outils Sketchup'
-      VERSION = '1.1.0'
+      NAME = 'L\'Air du Bois - Sketchup Toolbox'
+      VERSION = '1.1.1'
 
       DEFAULT_SECTION = 'ladb_toolbox'
 
@@ -162,6 +165,12 @@ module Ladb
           end
           register_command('core_dialog_maximize') do |params|
             dialog_maximize_command
+          end
+          register_command('check_for_update') do |params|
+            check_for_update_command
+          end
+          register_command('upgrade') do |params|
+            upgrade_command
           end
           register_command('core_open_external_file') do |params|
             open_external_file_command(params)
@@ -329,6 +338,7 @@ module Ladb
         {
             :version => VERSION,
             :sketchup_version => Sketchup.version.to_s,
+            :ruby_version => RUBY_VERSION,
             :current_os => "#{@current_os}",
             :locale => Sketchup.get_locale,
             :language => @language,

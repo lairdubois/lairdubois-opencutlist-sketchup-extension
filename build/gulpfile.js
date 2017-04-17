@@ -1,10 +1,13 @@
 var gulp = require('gulp');
+var fs = require('fs');
+var gutil = require('gulp-util');
 var ladb_twig_compile = require('./plugins/gulp-ladb-twig-compile');
 var ladb_i18n_compile = require('./plugins/gulp-ladb-i18n-compile');
 var ladb_i18n_dialog_compile = require('./plugins/gulp-ladb-i18n-dialog-compile');
 var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
+var replace = require('gulp-replace');
 
 // Convert less to .css files
 gulp.task('less_compile', function () {
@@ -66,7 +69,39 @@ gulp.task('rbz_create', function () {
         .pipe(gulp.dest('../dist'));
 });
 
+// Version
+
+gulp.task('version', function () {
+
+    // Retrive version from package.json
+    var pkg = JSON.parse(fs.readFileSync('./package.json'));
+    var version = pkg.version;
+
+    // Update version property in plugin.rb
+    gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
+        .pipe(replace(/VERSION = '[0-9.]+'/g, "VERSION = '" + version + "'"))
+        .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
+
+    // Update VERSION file in dist folder
+    function writeStringToFile(filename, string) {
+        var src = require('stream').Readable({ objectMode: true });
+        src._read = function () {
+            this.push(new gutil.File({
+                cwd: "",
+                base: "",
+                path: filename,
+                contents: new Buffer(string)
+            }));
+            this.push(null)
+        };
+        return src
+    }
+
+    return writeStringToFile("VERSION", pkg.version)
+        .pipe(gulp.dest('../dist'))
+});
+
 gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);
-gulp.task('build', ['compile', 'rbz_create']);
+gulp.task('build', ['compile', 'version', 'rbz_create']);
 
 gulp.task('default', ['build']);
