@@ -34,6 +34,14 @@ module Ladb
           export_command(settings)
         end
 
+        @plugin.register_command("cutlist_numbers_save") do |settings|
+          numbers_save
+        end
+
+        @plugin.register_command("cutlist_numbers_reset") do |settings|
+          numbers_reset
+        end
+
         @plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
           part_get_thumbnail_command(part_data)
         end
@@ -53,6 +61,9 @@ module Ladb
       # -- Commands --
 
       def generate_command(settings)
+
+        # Clear previously generated cutlist
+        @cutlist = nil
 
         # Check settings
         auto_orient = settings['auto_orient']
@@ -138,7 +149,7 @@ module Ladb
               std_thickness[:value]
           )
 
-          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
+         group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
           group_def = cutlist_def.get_group_def(group_id)
           unless group_def
 
@@ -152,11 +163,37 @@ module Ladb
 
           end
 
+          number = nil
+          if definition_attributes.number
+            if part_number_with_letters
+              if definition_attributes.number.is_a? String
+                number = definition_attributes.number
+              end
+            else
+              if definition_attributes.number.is_a? Numeric
+                number = definition_attributes.number
+              end
+            end
+          end
+          if number
+            if part_number_sequence_by_group
+              if group_def.include_number? number
+                number = nil
+              end
+            else
+              if cutlist_def.include_number? number
+                number = nil
+              end
+            end
+          end
+
           part_def = group_def.get_part_def(definition.name)
           unless part_def
 
             part_def = PartDef.new
             part_def.definition_id = definition.name
+            part_def.number = number
+            part_def.saved_number = definition_attributes.number
             part_def.name = definition.name
             part_def.raw_size = raw_size
             part_def.size = size
@@ -165,6 +202,30 @@ module Ladb
             part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
 
             group_def.set_part_def(definition.name, part_def)
+
+            if number
+
+              # Update max_number in group_def
+              if group_def.max_number
+                if number > group_def.max_number
+                  group_def.max_number = number
+                end
+              else
+                group_def.max_number = number
+              end
+
+              # Update max_number in cutlist_def
+              if group_def.max_number
+                if cutlist_def.max_number
+                  if group_def.max_number > cutlist_def.max_number
+                    cutlist_def.max_number = group_def.max_number
+                  end
+                else
+                  cutlist_def.max_number = group_def.max_number
+                end
+              end
+
+            end
 
           end
           unless part_def.material_origins.include? material_origin
@@ -221,12 +282,13 @@ module Ladb
                                       })
         }
 
+        part_number = cutlist_def.max_number ? cutlist_def.max_number.succ : (part_number_with_letters ? 'A' : '1')
+
         # Sort and browse groups
-        part_number = part_number_with_letters ? 'A' : '1'
         cutlist_def.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.raw_thickness] }.each { |key, group_def|
 
           if part_number_sequence_by_group
-            part_number = part_number_with_letters ? 'A' : '1'    # Reset code increment on each group
+            part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
           end
 
           group = {
@@ -262,7 +324,8 @@ module Ladb
                                    :raw_width => part_def.raw_size.width.to_s,
                                    :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
                                    :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
-                                   :number => part_number,
+                                   :number => part_def.number ? part_def.number : part_number,
+                                   :saved_number => part_def.saved_number,
                                    :material_name => part_def.material_name,
                                    :material_origins => part_def.material_origins,
                                    :cumulable => part_def.cumulable,
@@ -270,7 +333,9 @@ module Ladb
                                    :entity_ids => part_def.entity_ids
                                }
             )
-            part_number = part_number.succ
+            unless part_def.number
+              part_number = part_number.succ
+            end
           }
 
         }
@@ -371,6 +436,52 @@ module Ladb
         end
 
         response
+      end
+
+      def numbers_save
+        if @cutlist
+
+          model = Sketchup.active_model
+          definitions = model.definitions
+
+          @cutlist[:groups].each { |group|
+            group[:parts].each { |part|
+
+              definition = definitions[part[:definition_id]]
+              if definition
+
+                definition_attributes = DefinitionAttributes.new(definition)
+                definition_attributes.number = part[:number]
+                definition_attributes.write_to_attributes
+
+              end
+
+            }
+          }
+        end
+      end
+
+      def numbers_reset
+        if @cutlist
+
+          model = Sketchup.active_model
+          definitions = model.definitions
+
+          @cutlist[:groups].each { |group|
+            group[:parts].each { |part|
+
+              definition = definitions[part[:definition_id]]
+              if definition
+
+                definition_attributes = DefinitionAttributes.new(definition)
+                definition_attributes.number = nil
+                definition_attributes.write_to_attributes
+
+              end
+
+            }
+          }
+        end
       end
 
       def part_get_thumbnail_command(part_data)

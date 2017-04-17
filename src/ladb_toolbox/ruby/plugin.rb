@@ -12,7 +12,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Sketchup Toolbox'
-      VERSION = '1.1.1'
+      VERSION = '1.2.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
 

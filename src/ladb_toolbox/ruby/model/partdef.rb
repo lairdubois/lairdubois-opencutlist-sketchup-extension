@@ -4,11 +4,13 @@ module Ladb
   module Toolbox
     class PartDef
 
-      attr_accessor :definition_id, :name, :count, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
+      attr_accessor :definition_id, :number, :saved_number, :name, :count, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
       attr_reader :entity_ids
 
       def initialize()
         @definition_id = ''
+        @number = nil
+        @saved_number = nil
         @name = ''
         @count = 0
         @raw_size = Size.new
@@ -82,7 +84,7 @@ module Ladb
       end
 
       def cumulative_raw_width
-        if (@count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH)
+        if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH
           (@raw_size.width.to_f * @count).to_l
         else
           @raw_size.width

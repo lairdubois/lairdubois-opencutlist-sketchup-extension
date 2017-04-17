@@ -8,11 +8,12 @@ module Ladb
       CUMULABLE_LENGTH = 1
       CUMULABLE_WIDTH = 2
 
-      attr_accessor :cumulable, :orientation_locked_on_axis
+      attr_accessor :number,:cumulable, :orientation_locked_on_axis
       attr_reader :definition
 
       def initialize(definition)
         @definition = definition
+        @number = nil
         @cumulable = CUMULABLE_NONE
         @orientation_locked_on_axis = false
         read_from_attributes
@@ -36,6 +37,7 @@ module Ladb
 
       def read_from_attributes
         if @definition
+          @number = @definition.get_attribute(ATTRIBUTE_DICTIONARY, 'number', nil)
           @cumulable = @definition.get_attribute(ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
           @orientation_locked_on_axis = @definition.get_attribute(ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         end
@@ -43,6 +45,7 @@ module Ladb
 
       def write_to_attributes
         if @definition
+          @definition.set_attribute(ATTRIBUTE_DICTIONARY, 'number', @number)
           @definition.set_attribute(ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
           @definition.set_attribute(ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         end

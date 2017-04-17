@@ -44,9 +44,14 @@ tab:
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
       material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
       orientation_locked_on_axis: Die Orientierung des Teils ist an sein Koordinatensystem gebunden
+      number_saved: Le numéro de cette pièce est enregistré
+      number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
+      number_generated: Le numéro de cette pièce est généré automatiquement
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
+      numbers_save: Enregistrer les numéros de pièce
+      numbers_reset: Réinitialiser les numéros de pièce
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:

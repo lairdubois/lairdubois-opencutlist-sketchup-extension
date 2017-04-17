@@ -44,9 +44,14 @@ tab:
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
       orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
+      number_saved: Le numéro de cette pièce est enregistré
+      number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
+      number_generated: Le numéro de cette pièce est généré automatiquement
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
+      numbers_save: Enregistrer les numéros de pièce
+      numbers_reset: Réinitialiser les numéros de pièce
       edit_material: Editer la matière '{{ material }}'
       edit_group_properties: Editer les propriétés du groupe
     edit_part:

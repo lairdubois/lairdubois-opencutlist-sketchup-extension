@@ -2,7 +2,7 @@ module Ladb
   module Toolbox
     class CutlistDef
 
-      attr_accessor :dir, :filename, :page_label
+      attr_accessor :dir, :filename, :page_label, :max_number
       attr_reader :errors, :warnings, :tips, :material_usages, :group_defs
 
       def initialize(dir, filename, page_label)
@@ -12,6 +12,7 @@ module Ladb
         @dir = dir
         @filename = filename
         @page_label = page_label
+        @max_number = nil
         @material_usages = {}
         @group_defs = {}
       end
@@ -48,6 +49,15 @@ module Ladb
           return @group_defs[key]
         end
         nil
+      end
+
+      def include_number?(number)
+        @group_defs.each { |key, group_def|
+          if group_def.include_number? number
+            return true
+          end
+        }
+        false
       end
 
     end

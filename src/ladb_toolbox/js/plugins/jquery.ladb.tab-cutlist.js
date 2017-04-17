@@ -58,6 +58,8 @@
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
+        this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
+        this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
 
         this.$panelHelp = $('.ladb-panel-help', this.$element);
@@ -104,6 +106,8 @@
             that.$btnPrint.prop('disabled', groups.length == 0);
             that.$btnExport.prop('disabled', groups.length == 0);
             that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
+            that.$itemNumbersSave.closest('li').toggleClass('disabled', groups.length == 0);
+            that.$itemNumbersReset.closest('li').toggleClass('disabled', groups.length == 0);
 
             // Update page
             that.$page.empty();
@@ -451,6 +455,26 @@
         });
     };
 
+    // Numbers /////
+
+    LadbTabCutlist.prototype.numbersSave = function () {
+        var that = this;
+
+        rubyCallCommand('cutlist_numbers_save', {}, function() {
+            that.generateCutlist();
+        });
+
+    };
+
+    LadbTabCutlist.prototype.numbersReset = function () {
+        var that = this;
+
+        rubyCallCommand('cutlist_numbers_reset', {}, function() {
+            that.generateCutlist();
+        });
+
+    };
+
     // Options /////
 
     LadbTabCutlist.prototype.editOptions = function () {
@@ -646,6 +670,14 @@
         });
         this.$itemShowAllGroups.on('click', function () {
             that.showAllGroups();
+            this.blur();
+        });
+        this.$itemNumbersSave.on('click', function () {
+            that.numbersSave();
+            this.blur();
+        });
+        this.$itemNumbersReset.on('click', function () {
+            that.numbersReset();
             this.blur();
         });
         this.$itemOptions.on('click', function () {
