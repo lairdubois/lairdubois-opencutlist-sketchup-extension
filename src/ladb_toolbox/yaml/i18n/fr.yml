@@ -165,7 +165,7 @@ tab:
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
       no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet <i class="ladb-toolbox-icon-materials"></i> **Matières**.
-    outdated_base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
+    outdated_base: Pour rester synchronisé, vous devez re-générer la fiche de débit.
   materials:
     label: Matières
     title: Matières
@@ -197,7 +197,7 @@ tab:
         reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Votre modèle ne contient aucune matière.
-    outdated_base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
+    outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
   about:
     label: A propos
     title: A propos

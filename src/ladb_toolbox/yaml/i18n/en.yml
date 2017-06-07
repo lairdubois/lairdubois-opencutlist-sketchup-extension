@@ -29,9 +29,9 @@ core:
       You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
       To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
   event:
-    model_change: Le modèle actif a changé.
-    material_change: Au moins une matière a été modifiée.
-    selection_change: La sélection dans le modèle actif a changée.
+    model_change: The active model has been changed.
+    material_change: At least one material has been changed.
+    selection_change: The selection of the active model has been changed.
 tab:
   cutlist:
     label: Parts List
@@ -49,16 +49,16 @@ tab:
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
       orientation_locked_on_axis: The orientation of this part is locked to its coordinate system
-      number_saved: Le numéro de cette pièce est enregistré
-      number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
-      number_generated: Le numéro de cette pièce est généré automatiquement
+      number_saved: The number of this part will be saved
+      number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
+      number_generated: The number of this part is automatically generated
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
-      numbers_save: Enregistrer les numéros de pièce
-      numbers_reset: Réinitialiser les numéros de pièce
-      group_numbers_save: Mémoriser les numéros de pièce du groupe
-      group_numbers_reset: Oublier les numéros de pièce du groupe
+      numbers_save: Save the part numbers
+      numbers_reset: Reinitialize the part numbers
+      group_numbers_save: Save the part numbers of this group
+      group_numbers_reset: Forget the part numbers of this group
       edit_material: Edit Material '{{ material }}'
       edit_group_properties: Edit properties of this group
     edit_part:
@@ -147,7 +147,7 @@ tab:
       count: Quantity
       material_name: Material
     error:
-      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
@@ -165,7 +165,7 @@ tab:
         If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
-    outdated_base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
+    outdated_base: To remain synchronized, you must regenerate the parts list.
   materials:
     label: Materials
     title: Materials
@@ -189,15 +189,15 @@ tab:
       std_thicknesses: Available Thicknesses
       std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
       cut_options_defaults:
-        manage_help: Gestion des *Options de débit* par défaut
-        save: Enregistrer comme valeurs par défaut
+        manage_help: Administration of the default *Cutting Parameters*
+        save: Save as default values
         save_success: |
           **{{ type_name }}**
-          *Options de débit* par défaut enregistrées
-        reset: Restaurer aux valeurs par défaut
+          default *Cutting Parameters* saved
+        reset: Restore to default values
     error:
       no_materials: Model does not contain any material.
-    outdated_base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
+    outdated_base: To remain synchronized, you must refresh the material list.
   about:
     label: About
     title: About
