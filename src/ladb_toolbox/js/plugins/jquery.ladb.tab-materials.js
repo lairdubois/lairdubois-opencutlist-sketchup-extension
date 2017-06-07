@@ -27,13 +27,11 @@
     // ======================
 
     var LadbTabMaterials = function (element, options, toolbox) {
-        this.options = options;
-        this.$element = $(element);
-        this.toolbox = toolbox;
+        LadbAbstractTab.call(this, element, options, toolbox);
 
-        this.loadedAt = null;
         this.materials = [];
         this.editedMaterial = null;
+        this.ignoreNextMaterialChangeEvent = false;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -43,6 +41,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
+    LadbTabMaterials.prototype = new LadbAbstractTab;
 
     LadbTabMaterials.DEFAULTS = {};
 
@@ -56,8 +55,6 @@
         this.$btnList.prop('disabled', true);
 
         rubyCallCommand('materials_list', null, function(response) {
-
-            that.loadedAt = new Date().getTime() / 1000;
 
             var errors = response.errors;
             var warnings = response.warnings;
@@ -137,13 +134,11 @@
             // Keep the edited material
             this.editedMaterial = material;
 
-            // Render modal
-            this.$element.append(Twig.twig({ref: "tabs/materials/_modal-material.twig"}).render({
+            var $modal = this.showModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-material.twig', {
                 material: material
-            }));
+            });
 
             // Fetch UI elements
-            var $modal = $('#ladb_materials_modal_material', this.$element);
             var $inputName = $('#ladb_materials_input_name', $modal);
             var $selectType = $('#ladb_materials_input_type', $modal);
             var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
@@ -156,14 +151,7 @@
             var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
-            // Bind modal
-            $modal.on('hidden.bs.modal', function () {
-                $(this)
-                    .data('bs.modal', null)
-                    .remove();
-            });
-
-            // Field visibility function
+            // Define usefull functions
             var computeFieldsVisibility = function(type) {
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
@@ -273,6 +261,9 @@
                 that.editedMaterial.attributes.thickness_increase = $inputThicknessIncrease.val();
                 that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
 
+                // Flag to ignore next material change event
+                that.ignoreNextMaterialChangeEvent = true;
+
                 rubyCallCommand('materials_update', that.editedMaterial, function() {
 
                     // Reset edited material
@@ -288,9 +279,6 @@
 
             });
 
-            // Show modal
-            $modal.modal('show');
-
         }
     };
 
@@ -299,38 +287,18 @@
     LadbTabMaterials.prototype.showOutdated = function (messageI18nKey) {
         var that = this;
 
-        // Hide previously opened modal
-        $('#ladb_materials_modal_outdated', this.$element).modal('hide');
-
-        // Render modal
-        this.$element.append(Twig.twig({ref: "tabs/materials/_modal-outdated.twig"}).render({
+        var $modal = this.showModalInside('ladb_materials_modal_outdated', 'tabs/materials/_modal-outdated.twig', {
             messageI18nKey: messageI18nKey
-        }));
+        });
 
         // Fetch UI elements
-        var $modal = $('#ladb_materials_modal_outdated', this.$element);
         var $btnRefresh = $('#ladb_materials_outdated_refresh', $modal);
-
-        // Bind modal
-        $modal.on('hidden.bs.modal', function () {
-            $(this)
-                .data('bs.modal', null)
-                .remove();
-        });
 
         // Bind buttons
         $btnRefresh.on('click', function () {
             $modal.modal('hide');
             that.loadList();
         });
-
-        // Show modal
-        $modal.modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-        $('body > .modal-backdrop').appendTo(this.$element);
-        $('body').removeClass('modal-open');
 
     };
 
@@ -350,8 +318,12 @@
         // Events
 
         addEventCallback([ 'on_new_model', 'on_activate_model' ], function(params) {
-            if (that.loadedAt) {
-                that.showOutdated('tab.cutlist.outdated.model');
+            that.showOutdated('core.event.model_change');
+        });
+        addEventCallback('on_material_change', function() {
+            if (!that.ignoreNextMaterialChangeEvent) {
+                that.showOutdated('core.event.material_change');
+                that.ignoreNextMaterialChangeEvent = false;
             }
         });
 
@@ -377,10 +349,6 @@
             }, 500);
 
         });
-
-        addEventCallback('on_material_add', function(params) {
-            alert('on_material_add ' + params.material_name);
-        })
 
     };
 

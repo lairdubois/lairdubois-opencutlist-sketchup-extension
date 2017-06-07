@@ -28,6 +28,10 @@ core:
     old_su: |
       Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
       Pour profiter pleinement de ce plugin, il est préconisé d'utiliser **Sketchup 2017**.
+  event:
+    model_change: Le modèle actif a changé.
+    material_change: Au moins une matière a été modifiée.
+    selection_change: La sélection dans le modèle actif a changée.
 tab:
   cutlist:
     label: Débit
@@ -161,16 +165,13 @@ tab:
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
       no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet <i class="ladb-toolbox-icon-materials"></i> **Matières**.
-    outdated:
-      base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
-      selection: La sélection dans le modèle actif a changée.
-      model: Le modèle actif a changé.
+    outdated_base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
   materials:
     label: Matières
     title: Matières
     type_0: Non défini
     type_1: Bois massif
-    type_2: Bois panneau
+    type_2: Panneau
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
@@ -196,9 +197,7 @@ tab:
         reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Votre modèle ne contient aucune matière.
-    outdated:
-      base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
-      model: Le modèle actif a changé.
+    outdated_base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
   about:
     label: A propos
     title: A propos

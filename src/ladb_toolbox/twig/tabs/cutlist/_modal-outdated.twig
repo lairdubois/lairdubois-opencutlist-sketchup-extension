@@ -1,7 +1,6 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_outdated' %}
-{% set classes = 'modal-inside' %}
 
 {% block header %}{% endblock %}
 
@@ -13,7 +12,7 @@
         <div class="media-body">
             <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
             {{ messageI18nKey|i18next() }}<br>
-            {{ 'tab.cutlist.outdated.base'|i18next() }}
+            {{ 'tab.cutlist.outdated_base'|i18next() }}
         </div>
     </div>
 {% endblock %}

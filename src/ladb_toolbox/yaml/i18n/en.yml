@@ -28,6 +28,10 @@ core:
     old_su: |
       You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
       To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
+  event:
+    model_change: Le modèle actif a changé.
+    material_change: Au moins une matière a été modifiée.
+    selection_change: La sélection dans le modèle actif a changée.
 tab:
   cutlist:
     label: Parts List
@@ -161,10 +165,7 @@ tab:
         If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
-    outdated:
-      base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
-      selection: La sélection dans le modèle actif a changée.
-      model: Le modèle actif a changé.
+    outdated_base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
   materials:
     label: Materials
     title: Materials
@@ -196,6 +197,7 @@ tab:
         reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Model does not contain any material.
+    outdated_base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
   about:
     label: About
     title: About

@@ -5,10 +5,9 @@
     // ======================
 
     var LadbTabAbout = function (element, options, toolbox) {
-        this.options = options;
-        this.$element = $(element);
-        this.toolbox = toolbox;
+        LadbAbstractTab.call(this, element, options, toolbox);
     };
+    LadbTabAbout.prototype = new LadbAbstractTab;
 
     LadbTabAbout.DEFAULTS = {};
 

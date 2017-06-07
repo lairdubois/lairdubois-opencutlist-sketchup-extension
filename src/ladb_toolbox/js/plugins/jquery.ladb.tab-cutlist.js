@@ -43,9 +43,7 @@
     // ======================
 
     var LadbTabCutlist = function (element, options, toolbox) {
-        this.options = options;
-        this.$element = $(element);
-        this.toolbox = toolbox;
+        LadbAbstractTab.call(this, element, options, toolbox);
 
         this.generateAt = null;
         this.filename = null;
@@ -68,6 +66,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
+    LadbTabCutlist.prototype = new LadbAbstractTab;
 
     LadbTabCutlist.DEFAULTS = {};
 
@@ -284,27 +283,18 @@
                 // Keep the edited part
                 that.editedPart = part;
 
-                // Render modal
-                that.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-part.twig"}).render({
+                var $modal = that.showModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     part: part,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages
-                }));
+                });
 
                 // Fetch UI elements
-                var $modal = $('#ladb_cutlist_modal_part', that.$element);
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
-
-                // Bind modal
-                $modal.on('hidden.bs.modal', function () {
-                    $(this)
-                        .data('bs.modal', null)
-                        .remove();
-                });
 
                 // Bind select
                 $selectMaterialName.val(part.material_name);
@@ -350,9 +340,6 @@
                 // Setup popovers
                 that.toolbox.setupPopovers();
 
-                // Show modal
-                $modal.modal('show');
-
             });
 
         }
@@ -379,23 +366,14 @@
             // Keep the edited group
             that.editedGroup = group;
 
-            // Render modal
-            that.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-group.twig"}).render({
+            var $modal = that.showModalInside('ladb_cutlist_modal_group', 'tabs/cutlist/_modal-group.twig', {
                 group: group,
                 materialUsages: that.materialUsages
-            }));
+            });
 
             // Fetch UI elements
-            var $modal = $('#ladb_cutlist_modal_group', that.$element);
             var $selectMaterialName = $('#ladb_cutlist_group_select_material_name', $modal);
             var $btnUpdate = $('#ladb_cutlist_group_update', $modal);
-
-            // Bind modal
-            $modal.on('hidden.bs.modal', function () {
-                $(this)
-                    .data('bs.modal', null)
-                    .remove();
-            });
 
             // Bind select
             $selectMaterialName.val(group.material_name);
@@ -421,9 +399,6 @@
                 });
 
             });
-
-            // Show modal
-            $modal.modal('show');
 
         }
     };
@@ -504,12 +479,9 @@
     LadbTabCutlist.prototype.editOptions = function () {
         var that = this;
 
-        // Render modal
-        this.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-options.twig"}).render({
-        }));
+        var $modal = that.showModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
 
         // Fetch UI elements
-        var $modal = $('#ladb_cutlist_modal_options', that.$element);
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
         var $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
         var $inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', $modal);
@@ -521,13 +493,7 @@
         var $btnReset = $('#ladb_cutlist_options_reset', $modal);
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
-        // Bind modal
-        $modal.on('hidden.bs.modal', function () {
-            $(this)
-                .data('bs.modal', null)
-                .remove();
-        });
-
+        // Define useful functions
         var populateOptionsInputs = function (generateOptions, uiOptions) {
 
             // Checkboxes
@@ -642,9 +608,6 @@
         // Setup popovers
         this.toolbox.setupPopovers();
 
-        // Show modal
-        $modal.modal('show');
-
     };
 
     // Internals /////
@@ -652,38 +615,18 @@
     LadbTabCutlist.prototype.showOutdated = function (messageI18nKey) {
         var that = this;
 
-        // Hide previously opened modal
-        $('#ladb_cutlist_modal_outdated', this.$element).modal('hide');
-
-        // Render modal
-        this.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-outdated.twig"}).render({
+        var $modal = this.showModalInside('ladb_cutlist_modal_outdated', 'tabs/cutlist/_modal-outdated.twig', {
             messageI18nKey: messageI18nKey
-        }));
+        });
 
         // Fetch UI elements
-        var $modal = $('#ladb_cutlist_modal_outdated', this.$element);
         var $btnGenerate = $('#ladb_cutlist_outdated_generate', $modal);
-
-        // Bind modal
-        $modal.on('hidden.bs.modal', function () {
-            $(this)
-                .data('bs.modal', null)
-                .remove();
-        });
 
         // Bind buttons
         $btnGenerate.on('click', function () {
             $modal.modal('hide');
             that.generateCutlist();
         });
-
-        // Show modal
-        $modal.modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-        $('body > .modal-backdrop').appendTo(this.$element);
-        $('body').removeClass('modal-open');
 
     };
 
@@ -701,20 +644,10 @@
         });
         this.$btnExport.on('click', function () {
 
-            // Render modal
-            that.$element.append(Twig.twig({ref: "tabs/cutlist/_modal-export.twig"}).render({
-            }));
+            var $modal = that.showModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
             // Fetch UI elements
-            var $modal = $('#ladb_cutlist_modal_export', that.$element);
             var $btnExport = $('#ladb_cutlist_export', $modal);
-
-            // Bind modal
-            $modal.on('hidden.bs.modal', function () {
-                $(this)
-                    .data('bs.modal', null)
-                    .remove();
-            });
 
             // Bind buttons
             $btnExport.on('click', function() {
@@ -724,9 +657,6 @@
                 $modal.modal('hide');
 
             });
-
-            // Show modal
-            $modal.modal('show');
 
             this.blur();
         });
@@ -751,13 +681,17 @@
 
         addEventCallback([ 'on_new_model', 'on_activate_model' ], function(params) {
             if (that.generateAt) {
-                that.showOutdated('tab.cutlist.outdated.model');
+                that.showOutdated('core.event.model_change');
             }
         });
-
+        addEventCallback('on_material_change', function() {
+            if (that.generateAt) {
+                that.showOutdated('core.event.material_change');
+            }
+        });
         addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function() {
             if (that.generateAt) {
-                that.showOutdated('tab.cutlist.outdated.selection');
+                that.showOutdated('core.event.selection_change');
             }
         });
 
