@@ -19,11 +19,11 @@ default:
   date_format: Y-m-d G:i
 core:
   menu:
-    submenu: L'Air du Bois - Sketchup Toolbox
+    submenu: L'Air du Bois - Woodworking Toolbox
   toolbar:
     command: Toolbox
   dialog:
-    title: L'Air du Bois - Sketchup Toolbox
+    title: L'Air du Bois - Woodworking Toolbox
   warning:
     old_su: |
       Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
