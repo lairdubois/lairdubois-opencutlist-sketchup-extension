@@ -679,7 +679,7 @@
 
         // Events
 
-        addEventCallback([ 'on_new_model', 'on_activate_model' ], function(params) {
+        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function(params) {
             if (that.generateAt) {
                 that.showOutdated('core.event.model_change');
             }
