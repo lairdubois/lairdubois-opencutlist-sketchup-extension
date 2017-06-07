@@ -16,7 +16,7 @@ default:
   error: Zut !
   warning: Attention
   tip: Astuce
-  date_format: d/m/Y g:i
+  date_format: d/m/Y G:i
 core:
   menu:
     submenu: L'Air du Bois - Boîte à outils Sketchup

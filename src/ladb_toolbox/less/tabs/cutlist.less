@@ -23,7 +23,7 @@
 
     .ladb-heading {
       line-height: 30px;
-      font-size: 18px;
+      font-size: 130%;
     }
 
   }
@@ -73,4 +73,19 @@
 
   }
 
+}
+
+// Print /////
+
+@media print {
+  .ladb-cutlist-group {
+
+    thead tr {
+
+      .ladb-heading {
+        line-height: 20px;
+      }
+
+    }
+  }
 }
