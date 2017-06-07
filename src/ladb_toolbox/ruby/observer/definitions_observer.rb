@@ -9,7 +9,8 @@ module Ladb
       end
 
       def onComponentAdded(definitions, definition)
-        puts "onComponentAdded: #{definition.name}"
+        # puts "onComponentAdded: #{definition.name}"
+        @plugin.trigger_event('on_component_added', nil)
       end
 
     end

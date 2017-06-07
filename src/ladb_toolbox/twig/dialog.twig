@@ -36,6 +36,8 @@
 
     // JS -> Ruby interactions
 
+    // -- Commands
+
     var commandId = 0;
     var commandCallbacks = {};
     var commandCallStack = [];
@@ -70,6 +72,39 @@
             if (call) {
                 commandRunning = true;
                 window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);
+            }
+        }
+    }
+
+    // -- Events
+
+    var eventCallbacks = {};
+
+    function addEventCallback(event, callback) {
+        if (typeof callback == 'function') {
+            var events;
+            if ($.isArray(event)) {
+                events = event;
+            } else {
+                events = [ event ];
+            }
+            for (var i = 0; i < events.length; i++) {
+                var callbacks = eventCallbacks[events[i]];
+                if (!callbacks) {
+                    callbacks = [];
+                    eventCallbacks[events[i]] = callbacks;
+                }
+                callbacks.push(callback);
+            }
+        }
+    }
+
+    function triggerEvent(event, encodedParams) {
+        var callbacks = eventCallbacks[event];
+        if (callbacks) {
+            var params = encodedParams ? JSON.parse(decodeURIComponent(Base64.decode(encodedParams))) : {};
+            for (var i = 0; i < callbacks.length; i++) {
+                callbacks[i](params);
             }
         }
     }

@@ -16,6 +16,7 @@ default:
   error: Verflixt!
   warning: Achtung
   tip: Tipp
+  date_format: m/d/Y g:ia
 core:
   menu:
     submenu: L'Air du Bois - Sketchup Toolbox
@@ -52,6 +53,8 @@ tab:
       hide_all_other_groups: Alle anderen Gruppen ausblenden
       numbers_save: Enregistrer les numéros de pièce
       numbers_reset: Réinitialiser les numéros de pièce
+      group_numbers_save: Mémoriser les numéros de pièce du groupe
+      group_numbers_reset: Oublier les numéros de pièce du groupe
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:
@@ -140,6 +143,7 @@ tab:
       count: Anzahl
       material_name: Material
     error:
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
@@ -157,6 +161,10 @@ tab:
         Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
       no_typed_materials: Übertragen Sie ein Material auf die Teile, die Sie in der Holzliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-toolbox-icon-materials"></i> *Materialien*.
+    outdated:
+      base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
+      selection: La sélection dans le modèle actif a changée.
+      model: Le modèle actif a changé.
   materials:
     label: Materialien
     title: Materialien
@@ -179,6 +187,13 @@ tab:
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
       std_thicknesses_help: Rohmasse der verfügbaren Dicken. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
+      cut_options_defaults:
+        manage_help: Gestion des *Options de débit* par défaut
+        save: Enregistrer comme valeurs par défaut
+        save_success: |
+          **{{ type_name }}**
+          *Options de débit* par défaut enregistrées
+        reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Ihr Modell enthält keine Materialien.
   about:

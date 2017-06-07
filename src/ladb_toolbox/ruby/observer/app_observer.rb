@@ -1,66 +1,68 @@
 require_relative 'definitions_observer'
 require_relative 'materials_observer'
+require_relative 'selection_observer'
 
 module Ladb
   module Toolbox
     class AppObserver < Sketchup::AppObserver
 
       @plugin
-      @active_model
       @definitions_observer
       @materials_observer
 
       def initialize(plugin)
         @plugin = plugin
-        @active_model = Sketchup.active_model
         @definitions_observer = DefinitionsObserver.new(plugin)
         @materials_observer = MaterialsObserver.new(plugin)
-        add_model_observers
+        @selection_observer = SelectionObserver.new(plugin)
+        add_model_observers(Sketchup.active_model)
       end
 
       # -----
 
       def onNewModel(model)
-        puts "onNewModel: #{model}"
-        remove_model_observers
-        @active_model = model
-        add_model_observers
+        # puts "onNewModel: #{model}"
+        @plugin.trigger_event('on_new_model', nil)
+        add_model_observers(model)
       end
 
       def onOpenModel(model)
-        puts "onOpenModel: #{model}"
-        remove_model_observers
-        @active_model = model
-        add_model_observers
+        # puts "onOpenModel: #{model}"
+        @plugin.trigger_event('on_open_model', { :name => model.name })
+        add_model_observers(model)
       end
 
       def onActivateModel(model)
-        puts "onActivateModel: #{model}"
-        remove_model_observers
-        @active_model = model
-        add_model_observers
+        # puts "onActivateModel: #{model}"
+        @plugin.trigger_event('on_activate_model', { :name => model.name })
       end
 
       # -----
 
-      def remove_model_observers
-        if @active_model
-          if @active_model.definitions
-            @active_model.definitions.remove_observer(@definitions_observer)
+      def remove_model_observers(model)
+        if model
+          if model.definitions
+            model.definitions.remove_observer(@definitions_observer)
           end
-          if @active_model.materials
-            @active_model.materials.remove_observer(@materials_observer)
+          if model.materials
+            model.materials.remove_observer(@materials_observer)
+          end
+          if model.selection
+            model.selection.remove_observer(@selection_observer)
           end
         end
       end
 
-      def add_model_observers
-        if @active_model
-          if @active_model.definitions
-            @active_model.definitions.add_observer(@definitions_observer)
+      def add_model_observers(model)
+        if model
+          if model.definitions
+            model.definitions.add_observer(@definitions_observer)
           end
-          if @active_model.materials
-            @active_model.materials.add_observer(@materials_observer)
+          if model.materials
+            model.materials.add_observer(@materials_observer)
+          end
+          if model.selection
+            model.selection.add_observer(@selection_observer)
           end
         end
       end

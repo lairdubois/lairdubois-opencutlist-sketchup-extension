@@ -1,8 +1,6 @@
 require 'fileutils'
 require 'json'
 require 'yaml'
-require 'net/http'
-require 'uri'
 require_relative 'observer/app_observer'
 require_relative 'controller/cutlist_controller'
 require_relative 'controller/materials_controller'
@@ -11,7 +9,7 @@ module Ladb
   module Toolbox
     class Plugin
 
-      NAME = 'L\'Air du Bois - Sketchup Toolbox'
+      NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.2.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
@@ -109,12 +107,18 @@ module Ladb
         @commands[command] = block
       end
 
-      def execute_command(command, params)
+      def execute_command(command, params = nil)
         if @commands.has_key? command
-          command = @commands[command]
-          return command.call(params)
+          block = @commands[command]
+          return block.call(params)
         end
         raise "Command '#{command}' not found"
+      end
+
+      # -----
+
+      def trigger_event(event, params)
+        @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
       end
 
       # -----
@@ -142,7 +146,7 @@ module Ladb
 
           # -- Observers --
 
-          # TODO : Sketchup.add_observer(AppObserver.new(self))
+          Sketchup.add_observer(AppObserver.new(self))
 
           # -- Controllers --
 
@@ -165,12 +169,6 @@ module Ladb
           end
           register_command('core_dialog_maximize') do |params|
             dialog_maximize_command
-          end
-          register_command('check_for_update') do |params|
-            check_for_update_command
-          end
-          register_command('upgrade') do |params|
-            upgrade_command
           end
           register_command('core_open_external_file') do |params|
             open_external_file_command(params)

@@ -16,6 +16,7 @@ default:
   error: Darn!
   warning: Warning
   tip: Tip
+  date_format: m/d/Y g:ia
 core:
   menu:
     submenu: L'Air du Bois - Sketchup Toolbox
@@ -52,6 +53,8 @@ tab:
       hide_all_other_groups: Hide all other groups
       numbers_save: Enregistrer les numéros de pièce
       numbers_reset: Réinitialiser les numéros de pièce
+      group_numbers_save: Mémoriser les numéros de pièce du groupe
+      group_numbers_reset: Oublier les numéros de pièce du groupe
       edit_material: Edit Material '{{ material }}'
       edit_group_properties: Edit properties of this group
     edit_part:
@@ -140,6 +143,7 @@ tab:
       count: Quantity
       material_name: Material
     error:
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Your model is empty. You will need to give me more information ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
@@ -157,6 +161,10 @@ tab:
         If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
+    outdated:
+      base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
+      selection: La sélection dans le modèle actif a changée.
+      model: Le modèle actif a changé.
   materials:
     label: Materials
     title: Materials
@@ -179,6 +187,13 @@ tab:
       thickness_increase: Thickness Oversize
       std_thicknesses: Available Thicknesses
       std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
+      cut_options_defaults:
+        manage_help: Gestion des *Options de débit* par défaut
+        save: Enregistrer comme valeurs par défaut
+        save_success: |
+          **{{ type_name }}**
+          *Options de débit* par défaut enregistrées
+        reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Model does not contain any material.
   about:

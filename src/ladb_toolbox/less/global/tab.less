@@ -3,6 +3,7 @@
 //
 
 .ladb-tab {
+  position: relative;
 
   .ladb-header {
     background-color: #ededed;
@@ -26,10 +27,28 @@
       border-bottom: none;
     }
 
+    .ladb-file-tabs time {
+      font-size: 80%;
+      margin-left: 10px;
+      border-left: 1px solid @ladb-global-border;
+      padding-left: 10px;
+    }
+
   }
 
   .ladb-container {
     padding: 20px 10px;
+  }
+
+  .modal.modal-inside, .modal-backdrop {
+    margin-left: @ladb-leftbar-width;
+    margin-bottom: @ladb-bottombar-height;
+  }
+
+  .modal-backdrop {
+    background: @ladb-global-bg;
+    overflow: hidden;
+    z-index: 1000;
   }
 
 }
@@ -37,7 +56,11 @@
 /* Print */
 
 @media print {
-  .ladb-tab .ladb-header {
-    border-bottom: none;
+  .ladb-tab {
+
+    .ladb-header {
+      border-bottom: none;
+    }
+
   }
 }

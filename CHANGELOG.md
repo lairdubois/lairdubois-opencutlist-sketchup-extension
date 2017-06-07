@@ -4,6 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.2.0
+
+  * Sanitize length values in cutlist export by removing the ~ 
+  * Add generatedAt on cutlit print
+  * Add model and selection observers
+  * Manual material cut list options defaults save
+
 * 1.1.1 (2017-04-17)
 
   * Cutlist export bugfix when export path contains spaces

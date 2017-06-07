@@ -35,11 +35,11 @@ module Ladb
         end
 
         @plugin.register_command("cutlist_numbers_save") do |settings|
-          numbers_save
+          numbers_command(settings, false)
         end
 
         @plugin.register_command("cutlist_numbers_reset") do |settings|
-          numbers_reset
+          numbers_command(settings, true)
         end
 
         @plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
@@ -74,43 +74,52 @@ module Ladb
 
         # Retrieve selected entities or all if no selection
         model = Sketchup.active_model
-        if model.selection.empty?
-          entities = model.active_entities
-          use_selection = false
+        if model
+          if model.selection.empty?
+            entities = model.active_entities
+            use_selection = false
+          else
+            entities = model.selection
+            use_selection = true
+          end
         else
-          entities = model.selection
-          use_selection = true
+          entities = []
+          use_selection = false
         end
 
         # Fetch components in given entities
         component_paths = []
-        path = model.active_path ? model.active_path : []
+        path = model && model.active_path ? model.active_path : []
         entities.each { |entity|
           _fetch_useful_component_paths(entity, component_paths, path)
         }
 
-        dir, filename = File.split(model.path)
-        page_label = (model.pages and model.pages.selected_page) ? model.pages.selected_page.label : ''
+        dir, filename = File.split(model ? model.path : '')
+        page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
         # Create cut list def
         cutlist_def = CutlistDef.new(dir, filename, page_label)
 
         # Errors & tips
         if component_paths.length == 0
-          if model.entities.length == 0
-            cutlist_def.add_error("tab.cutlist.error.no_entities")
-            else
-              if use_selection
-              cutlist_def.add_error("tab.cutlist.error.no_component_in_selection")
-            else
-              cutlist_def.add_error("tab.cutlist.error.no_component_in_model")
+          if model
+            if entities.length == 0
+              cutlist_def.add_error("tab.cutlist.error.no_entities")
+              else
+                if use_selection
+                cutlist_def.add_error("tab.cutlist.error.no_component_in_selection")
+              else
+                cutlist_def.add_error("tab.cutlist.error.no_component_in_model")
+              end
+              cutlist_def.add_tip("tab.cutlist.tip.no_component")
             end
-            cutlist_def.add_tip("tab.cutlist.tip.no_component")
+          else
+            cutlist_def.add_error("tab.cutlist.error.no_model")
           end
         end
 
         # Materials usages
-        materials = model.materials
+        materials = model ? model.materials : []
         materials.each { |material|
           material_attributes = MaterialAttributes.new(material)
           material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type)
@@ -389,6 +398,10 @@ module Ladb
 
                   csv << header
 
+                  def sanitize_length_string(length)
+                    length.gsub(/~/, '')
+                  end
+
                   # Content rows
                   @cutlist[:groups].each { |group|
                     next if hidden_group_ids.include? group[:id]
@@ -400,14 +413,14 @@ module Ladb
                       row = []
                       row.push(part[:name])
                       unless hide_raw_dimensions
-                        row.push(no_raw_dimensions ? '' : part[:raw_length])
-                        row.push(no_raw_dimensions ? '' : part[:raw_width])
-                        row.push(no_raw_dimensions ? '' : group[:raw_thickness])
+                        row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_length]))
+                        row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_width]))
+                        row.push(no_raw_dimensions ? '' : sanitize_length_string(group[:raw_thickness]))
                       end
                       unless hide_final_dimensions
-                        row.push(no_dimensions ? '' : part[:length])
-                        row.push(no_dimensions ? '' : part[:width])
-                        row.push(no_dimensions ? '' : part[:thickness])
+                        row.push(no_dimensions ? '' : sanitize_length_string(part[:length]))
+                        row.push(no_dimensions ? '' : sanitize_length_string(part[:width]))
+                        row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
                       end
                       row.push(part[:count])
                       row.push(part[:material_name])
@@ -438,43 +451,28 @@ module Ladb
         response
       end
 
-      def numbers_save
+      def numbers_command(settings, reset)
         if @cutlist
+
+          # Check settings
+          group_id = settings['group_id']
 
           model = Sketchup.active_model
           definitions = model.definitions
 
           @cutlist[:groups].each { |group|
+
+            if group_id && group[:id] != group_id
+              next
+            end
+
             group[:parts].each { |part|
 
               definition = definitions[part[:definition_id]]
               if definition
 
                 definition_attributes = DefinitionAttributes.new(definition)
-                definition_attributes.number = part[:number]
-                definition_attributes.write_to_attributes
-
-              end
-
-            }
-          }
-        end
-      end
-
-      def numbers_reset
-        if @cutlist
-
-          model = Sketchup.active_model
-          definitions = model.definitions
-
-          @cutlist[:groups].each { |group|
-            group[:parts].each { |part|
-
-              definition = definitions[part[:definition_id]]
-              if definition
-
-                definition_attributes = DefinitionAttributes.new(definition)
-                definition_attributes.number = nil
+                definition_attributes.number = reset ? nil : part[:number]
                 definition_attributes.write_to_attributes
 
               end

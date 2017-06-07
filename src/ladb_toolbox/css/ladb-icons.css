@@ -29,6 +29,15 @@ i, span.ladb-toolbox-icon {
 }
 
 
+.ladb-toolbox-icon-save:before {
+  content: "\e91f";
+}
+.ladb-toolbox-icon-numbers-reset:before {
+  content: "\e91d";
+}
+.ladb-toolbox-icon-numbers-save:before {
+  content: "\e91e";
+}
 .ladb-toolbox-icon-orientation-locked-on-axis:before {
   content: "\e91c";
 }

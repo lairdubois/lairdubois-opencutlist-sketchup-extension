@@ -9,15 +9,18 @@ module Ladb
       end
 
       def onMaterialAdd(materials, material)
-        puts "onMaterialAdd: #{material}"
+        # puts "onMaterialAdd: #{material}"
+        @plugin.trigger_event('on_material_add', { :material_name => material.name })
       end
 
       def onMaterialRemove(materials, material)
-        puts "onMaterialRemove: #{material}"
+        # puts "onMaterialRemove: #{material}"
+        @plugin.trigger_event('on_material_remove', { :material_name => material.name })
       end
 
       def onMaterialChange(materials, material)
-        puts "onMaterialChange: #{material}"
+        # puts "onMaterialChange: #{material}"
+        @plugin.trigger_event('on_material_change', { :material_name => material.name })
       end
 
     end

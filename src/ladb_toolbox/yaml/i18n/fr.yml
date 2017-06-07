@@ -16,6 +16,7 @@ default:
   error: Zut !
   warning: Attention
   tip: Astuce
+  date_format: d/m/Y g:i
 core:
   menu:
     submenu: L'Air du Bois - Boîte à outils Sketchup
@@ -50,8 +51,10 @@ tab:
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
-      numbers_save: Enregistrer les numéros de pièce
-      numbers_reset: Réinitialiser les numéros de pièce
+      numbers_save: Mémoriser les numéros de pièce
+      numbers_reset: Oublier les numéros de pièce
+      group_numbers_save: Mémoriser les numéros de pièce du groupe
+      group_numbers_reset: Oublier les numéros de pièce du groupe
       edit_material: Editer la matière '{{ material }}'
       edit_group_properties: Editer les propriétés du groupe
     edit_part:
@@ -107,7 +110,7 @@ tab:
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
-      reset: Restaurer les valeurs par défaut
+      reset: Restaurer aux valeurs par défaut
     list:
       summary: Récapitulatif
       type: Type
@@ -140,6 +143,7 @@ tab:
       count: Quantité
       material_name: Matière
     error:
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
@@ -157,6 +161,10 @@ tab:
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
       no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Bois panneau**) dans l'onglet <i class="ladb-toolbox-icon-materials"></i> **Matières**.
+    outdated:
+      base: Pour rester synchronisé, vous devevez re-générer la fiche de débit.
+      selection: La sélection dans le modèle actif a changée.
+      model: Le modèle actif a changé.
   materials:
     label: Matières
     title: Matières
@@ -179,8 +187,18 @@ tab:
       thickness_increase: Surcote d'épaisseur
       std_thicknesses: Epaisseurs disponibles
       std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.
+      cut_options_defaults:
+        manage_help: Gestion des *Options de débit* par défaut
+        save: Enregistrer comme valeurs par défaut
+        save_success: |
+          **{{ type_name }}**
+          *Options de débit* par défaut enregistrées
+        reset: Restaurer aux valeurs par défaut
     error:
       no_materials: Votre modèle ne contient aucune matière.
+    outdated:
+      base: Pour rester synchronisé, vous devevez rafraichir la liste de matières.
+      model: Le modèle actif a changé.
   about:
     label: A propos
     title: A propos

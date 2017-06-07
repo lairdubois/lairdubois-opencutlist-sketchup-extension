@@ -189,19 +189,22 @@
 
     // Internals /////
 
-    LadbToolbox.prototype.notify = function(text, type, buttons) {
-        if (type == undefined) {
+    LadbToolbox.prototype.notify = function(text, type, buttons, timeout) {
+        if (undefined === type) {
             type = 'alert';
         }
-        if (buttons == undefined) {
+        if (undefined === buttons) {
             buttons = [];
+        }
+        if (undefined === timeout) {
+            timeout = 3000;
         }
         var n = new Noty({
             type: type,
             layout: 'bottomRight',
             theme: 'bootstrap-v3',
             text: text,
-            timeout: 3000,
+            timeout: timeout,
             buttons: buttons
         }).show();
 
