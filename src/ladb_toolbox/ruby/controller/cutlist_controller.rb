@@ -399,7 +399,7 @@ module Ladb
                   csv << header
 
                   def sanitize_length_string(length)
-                    length.gsub(/~/, '')
+                    length.gsub(/^~ /, '')
                   end
 
                   # Content rows
