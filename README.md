@@ -4,6 +4,12 @@
 
 ![L'Air du Bois Sketchup Toolbox](docs/img/capture.jpg)
 
+## Download and Install
+
+You can download and install the ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en)'s page :
+
+https://extensions.sketchup.com/en/content/lair-du-bois-sketchup-toolbox-0
+
 ## License
 
 This code is under the **GNU GPLv3 license**.
