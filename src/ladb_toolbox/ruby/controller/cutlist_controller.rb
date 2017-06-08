@@ -25,6 +25,7 @@ module Ladb
 
       EXPORT_OPTION_ENCODING_UTF8 = 0
       EXPORT_OPTION_ENCODING_UTF16LE = 1
+      EXPORT_OPTION_ENCODING_UTF16BE = 2
 
       def initialize(plugin)
         super(plugin, 'cutlist')
@@ -403,8 +404,12 @@ module Ladb
               case encoding.to_i
                 when EXPORT_OPTION_ENCODING_UTF16LE
                   with_bom = true
-                  bom = "\xFE\xFF".force_encoding('utf-16le')
-                  encoding = ':UTF-16LE:UTF-8'
+                  bom = "\xFF\xFE".force_encoding('utf-16le')
+                  encoding = ':UTF-16LE'
+                when EXPORT_OPTION_ENCODING_UTF16BE
+                  with_bom = true
+                  bom = "\xFE\xFF".force_encoding('utf-16be')
+                  encoding = ':UTF-16BE'
                 else
                   with_bom = true
                   bom = "\xEF\xBB\xBF"
