@@ -10,6 +10,7 @@ in 1.x and 0.x versions.
   * Add generatedAt on cutlit print
   * Add model and selection observers
   * Manual material cut list options defaults save
+  * Export options
 
 * 1.1.1 (2017-04-17)
 

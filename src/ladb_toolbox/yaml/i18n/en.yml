@@ -137,6 +137,12 @@ tab:
         With this function you can export the *parts list* into a [CSV](https://wikipedia.org/wiki/Comma-separated_values) file.
 
         <i class="ladb-toolbox-icon-warning"></i> *Parts inside of hidden groups of your parts list are not exported*.
+      options: Options d'export
+      option_col_sep: Séparateur
+      option_col_sep_tab: Tabulation
+      option_col_sep_comma: Virgule
+      option_col_sep_semicolon: Point virgule
+      option_encoding: Encodage
       name: Description
       raw_length: Length - raw
       raw_width: Width - raw

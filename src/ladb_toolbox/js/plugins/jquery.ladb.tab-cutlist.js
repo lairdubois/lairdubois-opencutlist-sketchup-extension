@@ -12,6 +12,9 @@
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
 
+    var SETTING_KEY_OPTION_COL_SEP = 'cutlist_option_col_sep';
+    var SETTING_KEY_OPTION_ENCODING = 'cutlist_option_encoding';
+
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
@@ -24,6 +27,9 @@
     var OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS = true;
     var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
+
+    var OPTION_DEFAULT_COL_SEP = 0;     // \t
+    var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
@@ -225,31 +231,61 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        rubyCallCommand('cutlist_export', this.uiOptions, function(response) {
+        var $modal = that.showModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
-            var i;
+        // Fetch UI elements
+        var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
+        var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+        var $btnExport = $('#ladb_cutlist_export', $modal);
 
-            if (response.errors) {
-                for (i = 0; i < response.errors.length; i++) {
-                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+        // Bind select
+        $selectColSep.val(that.exportOptions.col_sep);
+        $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectEncoding.val(that.exportOptions.encoding);
+        $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+
+        // Bind buttons
+        $btnExport.on('click', function() {
+
+            that.exportOptions.col_sep = $selectColSep.val();
+            that.exportOptions.encoding = $selectEncoding.val();
+
+            // Store options
+            that.toolbox.setSettings([
+                { key:SETTING_KEY_OPTION_COL_SEP, value:that.exportOptions.col_sep },
+                { key:SETTING_KEY_OPTION_ENCODING, value:that.exportOptions.encoding }
+            ]);
+
+            rubyCallCommand('cutlist_export', $.extend(that.exportOptions, that.uiOptions), function(response) {
+
+                var i;
+
+                if (response.errors) {
+                    for (i = 0; i < response.errors.length; i++) {
+                        that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                    }
                 }
-            }
-            if (response.warnings) {
-                for (i = 0; i < response.warnings.length; i++) {
-                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
+                if (response.warnings) {
+                    for (i = 0; i < response.warnings.length; i++) {
+                        that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
+                    }
                 }
-            }
-            if (response.export_path) {
-                that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
-                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                if (response.export_path) {
+                    that.toolbox.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                        Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
-                        rubyCallCommand('core_open_external_file', {
-                            path: response.export_path
-                        });
+                            rubyCallCommand('core_open_external_file', {
+                                path: response.export_path
+                            });
 
-                    })
-                ]);
-            }
+                        })
+                    ]);
+                }
+
+            });
+
+            // Hide modal
+            $modal.modal('hide');
 
         });
 
@@ -643,21 +679,7 @@
             this.blur();
         });
         this.$btnExport.on('click', function () {
-
-            var $modal = that.showModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
-
-            // Fetch UI elements
-            var $btnExport = $('#ladb_cutlist_export', $modal);
-
-            // Bind buttons
-            $btnExport.on('click', function() {
-                that.exportCutlist();
-
-                // Hide modal
-                $modal.modal('hide');
-
-            });
-
+            that.exportCutlist();
             this.blur();
         });
         this.$itemShowAllGroups.on('click', function () {
@@ -708,6 +730,9 @@
             SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
             SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
 
+            SETTING_KEY_OPTION_COL_SEP,
+            SETTING_KEY_OPTION_ENCODING,
+
             SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
             SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
             SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
@@ -721,6 +746,11 @@
                 part_number_with_letters: that.toolbox.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
                 part_number_sequence_by_group: that.toolbox.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                 part_order_strategy: that.toolbox.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
+            };
+
+            that.exportOptions = {
+                col_sep: that.toolbox.getSetting(SETTING_KEY_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
+                encoding: that.toolbox.getSetting(SETTING_KEY_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
             };
 
             that.uiOptions = {

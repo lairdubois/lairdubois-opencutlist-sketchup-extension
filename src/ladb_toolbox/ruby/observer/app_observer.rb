@@ -41,9 +41,9 @@ module Ladb
 
       def remove_model_observers(model)
         if model
-          if model.definitions
-            model.definitions.remove_observer(@definitions_observer)
-          end
+          # if model.definitions
+          #   model.definitions.remove_observer(@definitions_observer)
+          # end
           if model.materials
             model.materials.remove_observer(@materials_observer)
           end
@@ -55,9 +55,9 @@ module Ladb
 
       def add_model_observers(model)
         if model
-          if model.definitions
-            model.definitions.add_observer(@definitions_observer)
-          end
+          # if model.definitions
+          #   model.definitions.add_observer(@definitions_observer)
+          # end
           if model.materials
             model.materials.add_observer(@materials_observer)
           end

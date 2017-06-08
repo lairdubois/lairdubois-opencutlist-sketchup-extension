@@ -19,6 +19,13 @@ module Ladb
       MATERIAL_ORIGIN_INHERITED = 2
       MATERIAL_ORIGIN_CHILD = 3
 
+      EXPORT_OPTION_COL_SEP_TAB = 0
+      EXPORT_OPTION_COL_SEP_COMMA = 1
+      EXPORT_OPTION_COL_SEP_SEMICOLON = 2
+
+      EXPORT_OPTION_ENCODING_UTF8 = 0
+      EXPORT_OPTION_ENCODING_UTF16LE = 1
+
       def initialize(plugin)
         super(plugin, 'cutlist')
       end
@@ -358,6 +365,8 @@ module Ladb
       def export_command(settings)
 
         # Check settings
+        col_sep = settings['col_sep']
+        encoding = settings['encoding']
         hide_raw_dimensions = settings['hide_raw_dimensions']
         hide_final_dimensions = settings['hide_final_dimensions']
         hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
@@ -377,8 +386,31 @@ module Ladb
 
             begin
 
-              File.open(export_path, "w+:UTF-16LE:UTF-8") do |f|
-                csv_file = CSV.generate({ :col_sep => "\t" }) do |csv|
+              # Convert col_sep
+              case col_sep.to_i
+                when EXPORT_OPTION_COL_SEP_COMMA
+                  col_sep = ','
+                  force_quotes = true
+                when EXPORT_OPTION_COL_SEP_SEMICOLON
+                  col_sep = ';'
+                  force_quotes = false
+                else
+                  col_sep = "\t"
+                  force_quotes = false
+              end
+
+              # Convert col_sep
+              case encoding.to_i
+                when EXPORT_OPTION_ENCODING_UTF16LE
+                  with_bom = true
+                  encoding = 'UTF-16LE:UTF-8'
+                else
+                  with_bom = false
+                  encoding = 'UTF-8'
+              end
+
+              File.open(export_path, "w+#{encoding}") do |f|
+                csv_file = CSV.generate({ :col_sep => col_sep, :force_quotes => force_quotes }) do |csv|
 
                   # Header row
                   header = []
@@ -432,7 +464,9 @@ module Ladb
                 end
 
                 # Write file
-                f.write "\xEF\xBB\xBF" # Byte Order Mark
+                if with_bom
+                  f.write "\xEF\xBB\xBF" # UTF-8 Byte Order Mark
+                end
                 f.write(csv_file)
 
                 # Populate response

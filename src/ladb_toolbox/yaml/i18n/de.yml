@@ -137,6 +137,12 @@ tab:
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
 
         <i class="ladb-toolbox-icon-warning"></i> *Die in maskierten Gruppen enthaltenen Teile werden nicht exportiert*.
+      options: Options d'export
+      option_col_sep: Séparateur
+      option_col_sep_tab: Tabulation
+      option_col_sep_comma: Virgule
+      option_col_sep_semicolon: Point virgule
+      option_encoding: Encodage
       name: Bezeichnung
       raw_length: Länge - roh
       raw_width: Breite - roh
