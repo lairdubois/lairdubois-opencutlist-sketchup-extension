@@ -403,13 +403,15 @@ module Ladb
               case encoding.to_i
                 when EXPORT_OPTION_ENCODING_UTF16LE
                   with_bom = true
-                  encoding = 'UTF-16LE:UTF-8'
+                  bom = "\xFE\xFF".force_encoding('utf-16le')
+                  encoding = ':UTF-16LE:UTF-8'
                 else
-                  with_bom = false
-                  encoding = 'UTF-8'
+                  with_bom = true
+                  bom = "\xEF\xBB\xBF"
+                  encoding = ':UTF-8'
               end
 
-              File.open(export_path, "w+#{encoding}") do |f|
+              File.open(export_path, "wb+#{encoding}") do |f|
                 csv_file = CSV.generate({ :col_sep => col_sep, :force_quotes => force_quotes }) do |csv|
 
                   # Header row
@@ -465,7 +467,7 @@ module Ladb
 
                 # Write file
                 if with_bom
-                  f.write "\xEF\xBB\xBF" # UTF-8 Byte Order Mark
+                  f.write(bom)
                 end
                 f.write(csv_file)
 
