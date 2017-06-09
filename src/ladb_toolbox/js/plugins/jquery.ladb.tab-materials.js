@@ -104,12 +104,7 @@
     };
 
     LadbTabMaterials.prototype.purgeUnused = function () {
-        var that = this;
-
-        rubyCallCommand('materials_purge_unused', null, function() {
-            that.loadList();
-        });
-
+        rubyCallCommand('materials_purge_unused');
     };
 
     // Material /////
@@ -320,7 +315,7 @@
         addEventCallback([ 'on_new_model', 'on_activate_model' ], function(params) {
             that.showOutdated('core.event.model_change');
         });
-        addEventCallback('on_material_change', function() {
+        addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function() {
             if (!that.ignoreNextMaterialChangeEvent) {
                 that.showOutdated('core.event.material_change');
                 that.ignoreNextMaterialChangeEvent = false;
