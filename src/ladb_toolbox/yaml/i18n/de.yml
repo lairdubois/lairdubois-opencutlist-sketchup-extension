@@ -58,7 +58,7 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       group_numbers_save: Nummern der Gruppenteile speichern
-      group_numbers_reset: Nummern der Gruppenteile verwerfen
+      group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:
