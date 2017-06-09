@@ -4,13 +4,14 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.2.0
+* 1.2.0 (2017-06-09)
 
-  * Sanitize length values in cutlist export by removing the ~ 
+  * Add 'Save part numbers' feature
   * Add generatedAt on cutlit print
-  * Add model and selection observers
-  * Manual material cut list options defaults save
+  * Add model, selection and materials observers
+  * Manual material cutlist options defaults save
   * Export options
+  * Sanitize length values in cutlist export by removing the ~ 
 
 * 1.1.1 (2017-04-17)
 
