@@ -129,7 +129,7 @@
             // Keep the edited material
             this.editedMaterial = material;
 
-            var $modal = this.showModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-material.twig', {
+            var $modal = this.appendModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-material.twig', {
                 material: material
             });
 
@@ -274,6 +274,9 @@
 
             });
 
+            // Show modal
+            $modal.modal('show');
+
         }
     };
 
@@ -282,7 +285,7 @@
     LadbTabMaterials.prototype.showOutdated = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.showModalInside('ladb_materials_modal_outdated', 'tabs/materials/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_materials_modal_outdated', 'tabs/materials/_modal-outdated.twig', {
             messageI18nKey: messageI18nKey
         });
 
@@ -294,6 +297,9 @@
             $modal.modal('hide');
             that.loadList();
         });
+
+        // Show modal
+        $modal.modal('show');
 
     };
 

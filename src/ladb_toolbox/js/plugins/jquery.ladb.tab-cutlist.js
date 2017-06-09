@@ -231,7 +231,7 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        var $modal = that.showModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
+        var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
         // Fetch UI elements
         var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
@@ -289,6 +289,9 @@
 
         });
 
+        // Show modal
+        $modal.modal('show');
+
     };
 
     // Parts /////
@@ -319,7 +322,7 @@
                 // Keep the edited part
                 that.editedPart = part;
 
-                var $modal = that.showModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
+                var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     part: part,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages
@@ -373,6 +376,9 @@
 
                 });
 
+                // Show modal
+                $modal.modal('show');
+
                 // Setup popovers
                 that.toolbox.setupPopovers();
 
@@ -402,7 +408,7 @@
             // Keep the edited group
             that.editedGroup = group;
 
-            var $modal = that.showModalInside('ladb_cutlist_modal_group', 'tabs/cutlist/_modal-group.twig', {
+            var $modal = that.appendModalInside('ladb_cutlist_modal_group', 'tabs/cutlist/_modal-group.twig', {
                 group: group,
                 materialUsages: that.materialUsages
             });
@@ -435,6 +441,9 @@
                 });
 
             });
+
+            // Show modal
+            $modal.modal('show');
 
         }
     };
@@ -515,7 +524,7 @@
     LadbTabCutlist.prototype.editOptions = function () {
         var that = this;
 
-        var $modal = that.showModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
+        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
 
         // Fetch UI elements
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
@@ -641,6 +650,9 @@
         // Populate inputs
         populateOptionsInputs(that.generateOptions, that.uiOptions);
 
+        // Show modal
+        $modal.modal('show');
+
         // Setup popovers
         this.toolbox.setupPopovers();
 
@@ -651,7 +663,7 @@
     LadbTabCutlist.prototype.showOutdated = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.showModalInside('ladb_cutlist_modal_outdated', 'tabs/cutlist/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_cutlist_modal_outdated', 'tabs/cutlist/_modal-outdated.twig', {
             messageI18nKey: messageI18nKey
         });
 
@@ -663,6 +675,9 @@
             $modal.modal('hide');
             that.generateCutlist();
         });
+
+        // Show modal
+        $modal.modal('show');
 
     };
 

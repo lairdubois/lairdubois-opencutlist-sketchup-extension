@@ -10,7 +10,8 @@ function LadbAbstractTab(element, options, toolbox) {
 
 // Modal /////
 
-LadbAbstractTab.prototype.showModalInside = function(id, twigFile, renderParams) {
+LadbAbstractTab.prototype.appendModalInside = function(id, twigFile, renderParams) {
+    var that = this;
 
     // Hide previously opened modal
     if (this._$modal) {
@@ -27,18 +28,17 @@ LadbAbstractTab.prototype.showModalInside = function(id, twigFile, renderParams)
     this._$modal.addClass('modal-inside');
 
     // Bind modal
+    this._$modal.on('shown.bs.modal', function () {
+        $('body > .modal-backdrop').first().appendTo(that.$element);
+        $('body')
+            .removeClass('modal-open')
+            .css('padding-right', 0);
+    });
     this._$modal.on('hidden.bs.modal', function () {
         $(this)
             .data('bs.modal', null)
             .remove();
     });
-
-    // Show modal
-    this._$modal.modal('show');
-    $('body > .modal-backdrop').first().appendTo(this.$element);
-    $('body')
-        .removeClass('modal-open')
-        .css('padding-right', 0);
 
     return this._$modal;
 };
