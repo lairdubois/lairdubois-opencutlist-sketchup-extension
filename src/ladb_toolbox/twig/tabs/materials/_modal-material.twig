@@ -58,6 +58,8 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-danger pull-left" id="ladb_materials_remove"><i class="ladb-toolbox-icon ladb-toolbox-icon-trash"></i> {{ 'default.remove'|i18next }}</button>
+    <button type="button" class="btn btn-default pull-left" id="ladb_materials_export_to_skm"><i class="ladb-toolbox-icon ladb-toolbox-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_materials_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

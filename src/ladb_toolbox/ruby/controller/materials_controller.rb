@@ -23,6 +23,15 @@ module Ladb
         @plugin.register_command("materials_update") do |material_data|
           update_command(material_data)
         end
+        @plugin.register_command("materials_remove") do |material_data|
+          remove_command(material_data)
+        end
+        @plugin.register_command("materials_import_from_skm") do ||
+          import_from_skm_command
+        end
+        @plugin.register_command("materials_export_to_skm") do |material_data|
+          export_to_skm_command(material_data)
+        end
 
       end
 
@@ -133,6 +142,89 @@ module Ladb
 
         end
 
+      end
+
+      def remove_command(material_data)
+
+        name = material_data['name']
+        display_name = material_data['display_name']
+
+        # Fetch material
+        model = Sketchup.active_model
+        materials = model.materials
+        material = materials[name]
+
+        response = {
+            :errors => [],
+        }
+
+        if material
+
+          begin
+            materials.remove(material)
+          rescue
+            response[:errors].push('tab.materials.error.failed_removing_material')
+          end
+
+        end
+
+        response
+      end
+
+      def import_from_skm_command
+
+        # Fetch material
+        model = Sketchup.active_model
+        materials = model.materials
+
+        response = {
+            :errors => [],
+        }
+
+        dir, filename = File.split(model ? model.path : '')
+        path = UI.openpanel(@plugin.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
+        if path
+          begin
+            materials.load(path)
+          rescue
+            response[:errors].push('tab.materials.error.failed_import_skm_file')
+          end
+
+        end
+
+        response
+      end
+
+      def export_to_skm_command(material_data)
+
+        name = material_data['name']
+        display_name = material_data['display_name']
+
+        # Fetch material
+        model = Sketchup.active_model
+        materials = model.materials
+        material = materials[name]
+
+        response = {
+            :errors => [],
+        }
+
+        if material
+
+          dir, filename = File.split(model ? model.path : '')
+          path = UI.savepanel(@plugin.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
+          if path
+            begin
+              material.save_as(path)
+              response[:export_path] = path;
+            rescue
+              response[:errors].push('tab.materials.error.failed_export_skm_file')
+            end
+          end
+
+        end
+
+        response
       end
 
     end

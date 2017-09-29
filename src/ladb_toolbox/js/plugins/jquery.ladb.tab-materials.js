@@ -36,6 +36,7 @@
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnList = $('#ladb_btn_list', this.$header);
+        this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
@@ -103,6 +104,98 @@
 
     };
 
+    LadbTabMaterials.prototype.remove = function (material) {
+        var that = this;
+
+        var $modal = this.appendModalInside('ladb_materials_modal_remove', 'tabs/materials/_modal-remove.twig', {
+            material: material
+        });
+
+        // Fetch UI elements
+        var $btnRemove = $('#ladb_materials_remove', $modal);
+
+        // Bind buttons
+        $btnRemove.on('click', function() {
+
+            // Flag to ignore next material change event
+            that.ignoreNextMaterialChangeEvent = true;
+
+            rubyCallCommand('materials_remove', {
+                name: material.name,
+                display_name: material.display_name
+            }, function(response) {
+
+                if (response.errors && response.errors.length > 0) {
+
+                    // Flag to stop ignoring next material change event
+                    that.ignoreNextMaterialChangeEvent = false;
+
+                    for (var i = 0; i < response.errors.length; i++) {
+                        that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                    }
+
+                } else {
+                    that.loadList();
+                }
+
+            });
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbTabMaterials.prototype.importFromSkm = function () {
+        var that = this;
+
+        // Flag to ignore next material change event
+        that.ignoreNextMaterialChangeEvent = true;
+
+        rubyCallCommand('materials_import_from_skm', null, function(response) {
+
+            if (response.errors && response.errors.length > 0) {
+
+                // Flag to stop ignoring next material change event
+                that.ignoreNextMaterialChangeEvent = false;
+
+                for (var i = 0; i < response.errors.length; i++) {
+                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                }
+
+            } else {
+                that.loadList();
+            }
+
+        });
+    };
+
+    LadbTabMaterials.prototype.exportToSkm = function (material) {
+        var that = this;
+
+        rubyCallCommand('materials_export_to_skm', {
+            name: material.name,
+            display_name: material.display_name
+        }, function(response) {
+
+            var i;
+
+            if (response.errors) {
+                for (i = 0; i < response.errors.length; i++) {
+                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                }
+            }
+            if (response.export_path) {
+                that.toolbox.notify(i18next.t('tab.materials.success.exported_to', { export_path: response.export_path }), 'success');
+            }
+
+        });
+    };
+
     LadbTabMaterials.prototype.purgeUnused = function () {
         rubyCallCommand('materials_purge_unused');
     };
@@ -144,9 +237,14 @@
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
             var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
             var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
+            var $btnRemove = $('#ladb_materials_remove', $modal);
+            var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Define usefull functions
+            var disableBtnExport = function() {
+                $btnExportToSkm.prop('disabled', true);
+            };
             var computeFieldsVisibility = function(type) {
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
@@ -205,10 +303,16 @@
                 $inputStdThicknesses.tokenfield('setTokens', that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
             };
 
+            // Bing change
+            $('input', $modal).on('change', function() {
+                disableBtnExport();
+            });
+
             // Bind select
             $selectType.on('change', function () {
                 var type = parseInt($(this).val());
 
+                disableBtnExport();
                 computeFieldsVisibility(type);
                 setFiledValuesToDefaults(type);
 
@@ -246,6 +350,14 @@
 
                 setFiledValuesToDefaults(type);
 
+            });
+            $btnRemove.on('click', function () {
+                that.remove(that.editedMaterial);
+                this.blur();
+            });
+            $btnExportToSkm.on('click', function () {
+                that.exportToSkm(that.editedMaterial);
+                this.blur();
             });
             $btnUpdate.on('click', function () {
 
@@ -309,6 +421,10 @@
         // Bind buttons
         this.$btnList.on('click', function () {
             that.loadList();
+            this.blur();
+        });
+        this.$itemImportFromSkm.on('click', function () {
+            that.importFromSkm();
             this.blur();
         });
         this.$itemPurgeUnused.on('click', function () {
