@@ -12,6 +12,7 @@ default:
   export: Export
   options: Options
   caution: Caution
+  remove: Supprimer
   help: Help
   error: Darn!
   warning: Warning
@@ -183,6 +184,7 @@ tab:
       type_1: Material type '$t(tab.materials.type_1)'
       type_2: Material type '$t(tab.materials.type_2)'
     menu:
+      import_from_skm: Importer une matière (.skm)
       purge_unused: Purge unused materials
     edit_material:
       title: Properties of Material '{{ name }}'
@@ -201,8 +203,22 @@ tab:
           **{{ type_name }}**
           default *Cutting Parameters* saved
         reset: Restore to default values
+      export_to_skm: Exporter (.skm)
+    import_from_skm:
+      title: Importer un fichier .skm
+    export_to_skm:
+      title: Exporter un fichier .skm
+    remove:
+      message: |
+        Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
+        Confirmez pour continuer.
     error:
       no_materials: Model does not contain any material.
+      failed_import_skm_file: Une erreur s'est produite lors de l'importation du fichier .skm.
+      failed_export_skm_file: Une erreur s'est produite lors de l'exportation du fichier .skm.
+      failed_removing_material: Une erreur s'est produite lors de la suppression de la matière.
+    success:
+      exported_to: Export réussi vers {{ export_path }}.
     outdated_base: To remain synchronized, you must refresh the material list.
   about:
     label: About
