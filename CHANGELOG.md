@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.2.1 (2017-09-30)
+
+  * Add 'Import', 'Export' material to .skm files capabilities
+  * Add 'Remove' button on material panel 
+
 * 1.2.0 (2017-06-09)
 
   * Add 'Save part numbers' feature
