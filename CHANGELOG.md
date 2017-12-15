@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.2.2 (2017-12-15)
+
+  * Fix material name update bug on SU 2018
+
 * 1.2.1 (2017-09-30)
 
   * Add 'Import', 'Export' material to .skm files capabilities
