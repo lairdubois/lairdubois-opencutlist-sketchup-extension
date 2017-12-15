@@ -129,7 +129,9 @@ module Ladb
         if material
 
           # Update properties
-          material.name = display_name
+          if display_name != material.name
+            material.name = display_name
+          end
 
           # Update attributes
           material_attributes = MaterialAttributes.new(material)
