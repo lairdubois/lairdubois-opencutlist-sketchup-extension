@@ -110,9 +110,9 @@ tab:
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.
         Properties can be sorted in <i class="ladb-toolbox-icon-sort-asc"></i> *ascending* or <i class="ladb-toolbox-icon-sort-desc"></i> *descending* order.
-      dimension_column_order_strategy: Ordre des colonnes
+      dimension_column_order_strategy: Dimension Column Order
       dimension_column_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir l'ordre d'affichage des colonnes de dimension.
+        Reorganize the following dimension properties to define the order of the columns.
       property_thickness: Thickness
       property_length: Length
       property_width: Width
