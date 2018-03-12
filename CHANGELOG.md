@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.2.3 (2018-03-12)
+
+  * Add dimension column order strategy option in cutlist tab
+
 * 1.2.2 (2017-12-15)
 
   * Fix material name update bug on SU 2018

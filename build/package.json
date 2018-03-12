@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-toolbox-sketchup-plugin",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "L'Air du Bois : Woodworking Toolbox ================================",
   "main": "index.js",
   "directories": {
@@ -29,7 +29,7 @@
     "type": "git",
     "url": "git+https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin.git"
   },
-  "author": "Boris Beaulant",
+  "author": "Boris Beaulant and contributors",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/issues"

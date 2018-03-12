@@ -110,6 +110,9 @@ tab:
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
         Chaque propriété peut être triée de façon <i class="ladb-toolbox-icon-sort-asc"></i> *croissante* ou <i class="ladb-toolbox-icon-sort-desc"></i> *décroissante*.
+      dimension_column_order_strategy: Ordre des colonnes
+      dimension_column_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir l'ordre d'affichage des colonnes de dimension.
       property_thickness: Epaisseur
       property_length: Longeur
       property_width: Largeur

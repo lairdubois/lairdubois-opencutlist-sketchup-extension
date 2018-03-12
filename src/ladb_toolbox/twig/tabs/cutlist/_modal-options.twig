@@ -64,15 +64,28 @@
             </div>
         </div>
         <br>
-        <section>
-            <h4 class="text-center">{{ 'tab.cutlist.option.part_order_strategy'|i18next }}</h4>
-            <p class="help-block text-center"><small>{{ 'tab.cutlist.option.part_order_strategy_help'|i18next }}</small></p>
-            <div class="row">
-                <div  class="col-xs-offset-2 col-xs-8">
-                    <ul id="ladb_sortable_part_order_strategy"></ul>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
+            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <p class="help-block text-center"><small>{{ 'tab.cutlist.option.part_order_strategy_help'|i18next }}</small></p>
+                <div class="row">
+                    <div  class="col-xs-offset-2 col-xs-8">
+                        <ul id="ladb_sortable_part_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
                 </div>
             </div>
-        </section>
+            <div role="tabpanel" class="tab-pane" id="profile">
+                <p class="help-block text-center"><small>{{ 'tab.cutlist.option.dimension_column_order_strategy_help'|i18next }}</small></p>
+                <div class="row">
+                    <div  class="col-xs-offset-2 col-xs-8">
+                        <ul id="ladb_sortable_dimension_column_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

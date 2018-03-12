@@ -19,6 +19,7 @@
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
     var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist_option_hidden_group_ids';
+    var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist_option_dimension_column_order_strategy';
 
     // Options defaults
 
@@ -35,6 +36,7 @@
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
+    var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
 
     // Select picker options
 
@@ -124,6 +126,7 @@
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
                 showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
+                dimensionColumnOrderStrategy: that.uiOptions.dimension_column_order_strategy.split('>'),
                 uiOptions: that.uiOptions,
                 errors: errors,
                 warnings: warnings,
@@ -535,6 +538,7 @@
         var $inputHideFinalDimensions = $('#ladb_input_hide_final_dimensions', $modal);
         var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
+        var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
         var $btnReset = $('#ladb_cutlist_options_reset', $modal);
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
@@ -553,12 +557,16 @@
                 .prop('checked', uiOptions.hide_untyped_material_dimensions)
                 .prop('disabled', uiOptions.hide_final_dimensions);
 
+            // Sortables
+            
+            var properties, property, i;
+            
             // Part order sortables
 
-            var properties = generateOptions.part_order_strategy.split('>');
+            properties = generateOptions.part_order_strategy.split('>');
             $sortablePartOrderStrategy.empty();
-            for (var i = 0; i < properties.length; i++) {
-                var property = properties[i];
+            for (i = 0; i < properties.length; i++) {
+                property = properties[i];
                 $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
                     order: property.startsWith('-') ? '-' : '',
                     property: property.startsWith('-') ? property.substr(1) : property
@@ -584,6 +592,21 @@
                 handle: '.ladb-handle'
             });
 
+            // Dimension column order sortables
+
+            properties = uiOptions.dimension_column_order_strategy.split('>');
+            $sortableDimensionColumnOrderStrategy.empty();
+            for (i = 0; i < properties.length; i++) {
+                property = properties[i];
+                $sortableDimensionColumnOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_option-dimension-column-order-strategy-property.twig"}).render({
+                    property: property
+                }));
+            }
+            $sortableDimensionColumnOrderStrategy.sortable({
+                cursor: 'ns-resize',
+                handle: '.ladb-handle'
+            });
+
         };
 
         // Bind inputs
@@ -603,7 +626,8 @@
             var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_raw_dimensions: OPTION_DEFAULT_HIDE_RAW_DIMENSIONS,
                 hide_final_dimensions: OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS,
-                hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS
+                hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
+                dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY
             });
             populateOptionsInputs(generateOptions, uiOptions);
         });
@@ -625,6 +649,12 @@
             });
             that.generateOptions.part_order_strategy = properties.join('>');
 
+            properties = [];
+            $sortableDimensionColumnOrderStrategy.children('li').each(function () {
+                properties.push($(this).data('property'));
+            });
+            that.uiOptions.dimension_column_order_strategy = properties.join('>');
+
             // Store options
             that.toolbox.setSettings([
                 { key:SETTING_KEY_OPTION_AUTO_ORIENT, value:that.generateOptions.auto_orient },
@@ -634,7 +664,8 @@
                 { key:SETTING_KEY_OPTION_PART_ORDER_STRATEGY, value:that.generateOptions.part_order_strategy },
                 { key:SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, value:that.uiOptions.hide_raw_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS, value:that.uiOptions.hide_final_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.uiOptions.hide_untyped_material_dimensions }
+                { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.uiOptions.hide_untyped_material_dimensions },
+                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.uiOptions.dimension_column_order_strategy }
             ]);
 
             // Hide modal
@@ -751,7 +782,8 @@
             SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
             SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
             SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
-            SETTING_KEY_OPTION_HIDDEN_GROUP_IDS
+            SETTING_KEY_OPTION_HIDDEN_GROUP_IDS,
+            SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY
 
         ], function() {
 
@@ -772,7 +804,8 @@
                 hide_raw_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, OPTION_DEFAULT_HIDE_RAW_DIMENSIONS),
                 hide_final_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS, OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS),
                 hide_untyped_material_dimensions: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
-                hidden_group_ids: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
+                hidden_group_ids: that.toolbox.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS),
+                dimension_column_order_strategy: that.toolbox.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY)
             };
 
             that.bind();

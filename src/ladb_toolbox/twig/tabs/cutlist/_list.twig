@@ -103,13 +103,14 @@
         </tr>
         <tr>
             {% if showRawDimensions %}
-                <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
-                <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                {% endfor %}
             {% endif %}
             {% if showFinalDimensions %}
-                <td class="text-center" width="10%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
-                <td class="text-center" width="10%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
-                <td class="text-center" width="10%">{{ 'tab.cutlist.list.thickness_short'|i18next }}</td>
+                {% for property in dimensionColumnOrderStrategy %}
+                    <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                {% endfor %}
             {% endif %}
         </tr>
         {% set thickness = 0 %}
@@ -133,13 +134,14 @@
                 </td>
                 <td class="text-center">{{ part.count }}</td>
                 {% if showRawDimensions %}
-                    <td class="text-right" style="color: red;">{{ part.raw_length }}{% if part.count > 1 and part.cumulable == 1 %}<br><small title="{{ part.count }} x {{ part.raw_length }} = {{ part.cumulative_raw_length }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{part.cumulative_raw_length}}</em></small>{% endif %}</td>
-                    <td class="text-right" style="color: red;">{{ part.raw_width }}{% if part.count > 1 and part.cumulable == 2 %}<br><small title="{{ part.count }} x {{ part.raw_width }}  = {{ part.cumulative_raw_width }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part.cumulative_raw_width}}</em></small>{% endif %}</td>
+                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                        <td class="text-right" style="color: red;">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
+                    {% endfor %}
                 {% endif %}
                 {% if showFinalDimensions %}
-                    <td class="text-right">{{ part.length }}</td>
-                    <td class="text-right">{{ part.width }}</td>
-                    <td class="text-right">{{ part.thickness }}</td>
+                    {% for property in dimensionColumnOrderStrategy %}
+                        <td class="text-right">{{ part[property] }}</td>
+                    {% endfor %}
                 {% endif %}
             </tr>
         {% endfor %}
