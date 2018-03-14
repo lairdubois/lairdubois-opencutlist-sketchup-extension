@@ -53,6 +53,7 @@ tab:
       number_saved: Le numéro de cette pièce est enregistré
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
+      resized: Attention, cette pièce a été redimentionnée par rapport à sa définition de composant
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes

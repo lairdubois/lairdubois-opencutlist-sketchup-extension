@@ -1,6 +1,6 @@
 module Ladb
   module Toolbox
-    class Size
+    class Size3d
 
       attr_accessor :length, :width, :thickness
 
@@ -16,6 +16,10 @@ module Ladb
 
       def volume_m3
         area_m2 * @thickness.to_m
+      end
+
+      def to_s
+        '(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ', ' + @thickness.to_l.to_s + ')'
       end
 
     end

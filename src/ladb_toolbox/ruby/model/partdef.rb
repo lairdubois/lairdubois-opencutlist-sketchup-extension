@@ -4,7 +4,7 @@ module Ladb
   module Toolbox
     class PartDef
 
-      attr_accessor :definition_id, :number, :saved_number, :name, :count, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
+      attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
       attr_reader :entity_ids
 
       def initialize()
@@ -13,8 +13,9 @@ module Ladb
         @saved_number = nil
         @name = ''
         @count = 0
-        @raw_size = Size.new
-        @size = Size.new
+        @raw_size = Size3d.new
+        @size = Size3d.new
+        @scale = Scale3d.new
         @material_name = ''
         @material_origins = []
         @cumulable = DefinitionAttributes::CUMULABLE_NONE

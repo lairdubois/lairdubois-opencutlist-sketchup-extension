@@ -2,7 +2,8 @@ require 'pathname'
 require 'digest'
 require 'csv'
 require_relative 'controller'
-require_relative '../model/size'
+require_relative '../model/scale3d'
+require_relative '../model/size3d'
 require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
@@ -72,6 +73,9 @@ module Ladb
 
         # Clear previously generated cutlist
         @cutlist = nil
+
+        # Setup definition bounds cache
+        @definition_bounds_cache = {}
 
         # Check settings
         auto_orient = settings['auto_orient']
@@ -154,19 +158,24 @@ module Ladb
             end
           end
 
-          size = _size_from_bounds(_compute_faces_bounds(definition), auto_orient && !definition_attributes.orientation_locked_on_axis)
+          scale = _compute_global_scale(component_path)
+          size = _size_from_bounds(
+              _compute_faces_bounds(definition),
+              scale,
+              auto_orient && !definition_attributes.orientation_locked_on_axis
+          )
           std_thickness = _find_std_thickness(
               (size.thickness + material_attributes.l_thickness_increase).to_l,
               material_attributes.l_std_thicknesses,
               material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
           )
-          raw_size = Size.new(
+          raw_size = Size3d.new(
               (size.length + material_attributes.l_length_increase).to_l,
               (size.width + material_attributes.l_width_increase).to_l,
               std_thickness[:value]
           )
 
-         group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
+          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
           group_def = cutlist_def.get_group_def(group_id)
           unless group_def
 
@@ -204,7 +213,9 @@ module Ladb
             end
           end
 
-          part_def = group_def.get_part_def(definition.name)
+          # Include size into key to separate instences with the same definition, but different scale
+          key = definition.name + '|' + size.length.to_s + '|' + size.width.to_s + '|' + size.thickness.to_s
+          part_def = group_def.get_part_def(key)
           unless part_def
 
             part_def = PartDef.new
@@ -212,13 +223,14 @@ module Ladb
             part_def.number = number
             part_def.saved_number = definition_attributes.number
             part_def.name = definition.name
+            part_def.scale = scale
             part_def.raw_size = raw_size
             part_def.size = size
             part_def.material_name = material_name
             part_def.cumulable = definition_attributes.cumulable
             part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
 
-            group_def.set_part_def(definition.name, part_def)
+            group_def.set_part_def(key, part_def)
 
             if number
 
@@ -333,6 +345,7 @@ module Ladb
                                    :id => part_def.id,
                                    :definition_id => part_def.definition_id,
                                    :name => part_def.name,
+                                   :resized => !part_def.scale.identity?,
                                    :length => part_def.size.length.to_s,
                                    :width => part_def.size.width.to_s,
                                    :thickness => part_def.size.thickness.to_s,
@@ -359,6 +372,9 @@ module Ladb
 
         # Keep generated cutlist
         @cutlist = response
+
+        # Clear cache
+        @definition_bounds_cache = nil
 
         response
       end
@@ -663,26 +679,61 @@ module Ladb
         child_face_count
       end
 
+      # -- Scale 3D utils --
+
+      def _compute_local_scale(entity)
+        transformation_a = entity.transformation.to_a
+        vx = Geom::Vector3d.new(transformation_a[0], transformation_a[1], transformation_a[2])
+        vy = Geom::Vector3d.new(transformation_a[4], transformation_a[5], transformation_a[6])
+        vz = Geom::Vector3d.new(transformation_a[8], transformation_a[9], transformation_a[10])
+        Scale3d.new(vx.length, vy.length, vz.length)
+      end
+
+      def _compute_global_scale(path)
+        global_scale = Scale3d.new
+        path.each { |entity|
+          global_scale.mult(_compute_local_scale(entity))
+        }
+        global_scale
+      end
+
       # -- Bounds utils --
 
-      def _compute_faces_bounds(definition)
+      def _compute_faces_bounds(definition, transformation = nil)
+
+        # Try to retrive from cache
+        if @definition_bounds_cache.has_key? definition.name
+          return @definition_bounds_cache[definition.name]
+        end
+
         bounds = Geom::BoundingBox.new
         definition.entities.each { |entity|
           if entity.is_a? Sketchup::Face
-            bounds.add(entity.bounds)
+            face_bounds = entity.bounds
+            if transformation
+              min = face_bounds.min.transform(transformation)
+              max = face_bounds.max.transform(transformation)
+              face_bounds = Geom::BoundingBox.new
+              face_bounds.add(min, max)
+            end
+            bounds.add(face_bounds)
           elsif entity.is_a? Sketchup::Group
-            bounds.add(_compute_faces_bounds(entity))
+            bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
           end
         }
+
+        # Store to cache
+        @definition_bounds_cache[definition.name] = bounds
+
         bounds
       end
 
-      def _size_from_bounds(bounds, auto_orient = true)
+      def _size_from_bounds(bounds, scale, auto_orient = true)
         if auto_orient
-          ordered = [bounds.width, bounds.height, bounds.depth].sort
-          Size.new(ordered[2], ordered[1], ordered[0])
+          ordered = [(bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l].sort
+          Size3d.new(ordered[2], ordered[1], ordered[0])
         else
-          Size.new(bounds.width, bounds.height, bounds.depth)
+          Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)
         end
       end
 

@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.3.0 (2018-03-14)
+
+  * Add dynamic components support !
+  * Fix part size calculation when a component contains multiples child groups
+
 * 1.2.3 (2018-03-12)
 
   * Add dimension column order strategy option in cutlist tab

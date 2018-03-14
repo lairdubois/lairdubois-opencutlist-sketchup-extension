@@ -126,6 +126,7 @@
                 <td>
                     {{ part.name|escape }}
                     <div class="ladb-minitools no-print">
+                        {% if part.resized %}<a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.resized')|i18next }}"><i class="ladb-toolbox-icon-resized text-danger"></i></a>{% endif %}
                         {% if part.orientation_locked_on_axis %}<a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.orientation_locked_on_axis')|i18next }}"><i class="ladb-toolbox-icon-orientation-locked-on-axis"></i></a>{% endif %}
                         {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}
                         <span class="ladb-separator"></span>

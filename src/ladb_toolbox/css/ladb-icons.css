@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'ladb_toolbox';
-  src:  url('../fonts/ladb_toolbox.eot?y3si8u');
-  src:  url('../fonts/ladb_toolbox.eot?y3si8u#iefix') format('embedded-opentype'),
-  url('../fonts/ladb_toolbox.ttf?y3si8u') format('truetype'),
-  url('../fonts/ladb_toolbox.woff?y3si8u') format('woff'),
-  url('../fonts/ladb_toolbox.svg?y3si8u#ladb_toolbox') format('svg');
+  src:  url('../fonts/ladb_toolbox.eot?2pkrjj');
+  src:  url('../fonts/ladb_toolbox.eot?2pkrjj#iefix') format('embedded-opentype'),
+  url('../fonts/ladb_toolbox.ttf?2pkrjj') format('truetype'),
+  url('../fonts/ladb_toolbox.woff?2pkrjj') format('woff'),
+  url('../fonts/ladb_toolbox.svg?2pkrjj#ladb_toolbox') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -29,6 +29,9 @@ i, span.ladb-toolbox-icon {
 }
 
 
+.ladb-toolbox-icon-resized:before {
+  content: "\e921";
+}
 .ladb-toolbox-icon-import:before {
   content: "\e91a";
 }
@@ -128,4 +131,3 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-chevron-left:before {
   content: "\e905";
 }
-
