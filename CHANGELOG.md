@@ -8,6 +8,8 @@ in 1.x and 0.x versions.
 
   * Add dynamic components support !
   * Fix part size calculation when a component contains multiples child groups
+  * Exclude always_face_camera component from cutlist
+  * Treat cuts_opening components has groups
 
 * 1.2.3 (2018-03-12)
 

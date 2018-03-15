@@ -158,6 +158,8 @@ module Ladb
             end
           end
 
+          # Compute scale and sizes
+
           scale = _compute_global_scale(component_path)
           size = _size_from_bounds(
               _compute_faces_bounds(definition),
@@ -174,6 +176,8 @@ module Ladb
               (size.width + material_attributes.l_width_increase).to_l,
               std_thickness[:value]
           )
+
+          # Define group
 
           group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
           group_def = cutlist_def.get_group_def(group_id)
@@ -212,6 +216,8 @@ module Ladb
               end
             end
           end
+
+          # Define part
 
           # Include size into key to separate instences with the same definition, but different scale
           key = definition.name + '|' + size.length.to_s + '|' + size.width.to_s + '|' + size.thickness.to_s
@@ -655,10 +661,20 @@ module Ladb
 
           elsif entity.is_a? Sketchup::ComponentInstance
 
+            # Exclude special behavior components
+            if entity.definition.behavior.always_face_camera?
+              return 0
+            end
+
             # Entity is a component : check its children
             entity.definition.entities.each { |child_entity|
               child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [ entity ])
             }
+
+            # Treat cuts_opening behavior components as group
+            if entity.definition.behavior.cuts_opening?
+              return child_face_count
+            end
 
             # Considere component if it contains faces
             if child_face_count > 0
@@ -719,6 +735,8 @@ module Ladb
             bounds.add(face_bounds)
           elsif entity.is_a? Sketchup::Group
             bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
+          elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
+            bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
           end
         }
 
