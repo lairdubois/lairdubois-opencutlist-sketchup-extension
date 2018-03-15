@@ -53,7 +53,7 @@ tab:
       number_saved: Die Nummer dieses Teils wird gespeichert
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
-      resized: Achtung, dieses Teil wurde verändert im Bezug zur ursprünglichen Definition als Komponente
+      resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente verändert
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
