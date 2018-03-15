@@ -53,7 +53,7 @@ tab:
       number_saved: The number of this part is saved
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
-      resized: Attention, cette pièce a été redimensionnée par rapport à sa définition de composant
+      resized: Warning, this piece was resized with respect to its component definition
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
