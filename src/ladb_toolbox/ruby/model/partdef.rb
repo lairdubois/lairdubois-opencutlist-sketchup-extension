@@ -5,7 +5,7 @@ module Ladb
     class PartDef
 
       attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
-      attr_reader :entity_ids
+      attr_reader :entity_ids, :entity_names, :contains_blank_entity_names
 
       def initialize()
         @definition_id = ''
@@ -21,6 +21,8 @@ module Ladb
         @cumulable = DefinitionAttributes::CUMULABLE_NONE
         @orientation_locked_on_axis = false
         @entity_ids = []
+        @entity_names = []
+        @contains_blank_entity_names = false
       end
 
       # -----
@@ -92,9 +94,25 @@ module Ladb
         end
       end
 
+      def add_material_origin(material_origin)
+        unless @material_origins.include? material_origin
+          @material_origins.push(material_origin)
+        end
+      end
+
       def add_entity_id(entity_id)
         unless @entity_ids.include? entity_id   # Because of groups and components, multiple entity can have the same ID
           @entity_ids.push(entity_id)
+        end
+      end
+
+      def add_entity_name(entity_name)
+        if entity_name.empty?
+          @contains_blank_entity_names = true
+        else
+          unless @entity_names.include? entity_name
+            @entity_names.push(entity_name)
+          end
         end
       end
 

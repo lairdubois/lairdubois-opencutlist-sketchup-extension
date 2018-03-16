@@ -4,9 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.3.0 (2018-03-14)
+* 1.3.0 (2018-03-16)
 
   * Add dynamic components support !
+  * Add instance names (if exit) in cutlist part rows
   * Fix part size calculation when a component contains multiples child groups
   * Exclude always_face_camera component from cutlist
   * Treat cuts_opening components has groups

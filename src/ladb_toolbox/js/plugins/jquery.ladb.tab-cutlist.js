@@ -331,6 +331,14 @@
                     materialUsages: that.materialUsages
                 });
 
+                var isOwnedMaterial = true;
+                for (var i = 0; i < part.material_origins.length; i++) {
+                    if (part.material_origins[i] != 1) {    // 1 = MATERIAL_ORIGIN_OWNED
+                        isOwnedMaterial = false;
+                        break;
+                    }
+                }
+
                 // Fetch UI elements
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
@@ -339,7 +347,9 @@
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Bind select
-                $selectMaterialName.val(part.material_name);
+                if (isOwnedMaterial) {
+                    $selectMaterialName.val(part.material_name);
+                }
                 $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectCumulable.val(part.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
