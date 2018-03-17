@@ -7,10 +7,11 @@ in 1.x and 0.x versions.
 * 1.3.0 (2018-03-16)
 
   * Add dynamic components support !
-  * Add instance names (if exit) in cutlist part rows
+  * Add instance names (if exits) in cutlist part rows
   * Fix part size calculation when a component contains multiples child groups
-  * Exclude always_face_camera component from cutlist
-  * Treat cuts_opening components has groups
+  * Exclude _always_face_camera_ component from cutlist
+  * Treat _cuts_opening_ components has groups
+  * Add CHANGELOG link in about tab
 
 * 1.2.3 (2018-03-12)
 
