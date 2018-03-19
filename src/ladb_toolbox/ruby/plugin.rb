@@ -10,7 +10,7 @@ module Ladb
     class Plugin
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
-      VERSION = '1.3.0-alpha'
+      VERSION = '1.3.0'
 
       DEFAULT_SECTION = 'ladb_toolbox'
 
