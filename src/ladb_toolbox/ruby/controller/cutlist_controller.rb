@@ -531,14 +531,17 @@ module Ladb
           end
           hardwood_material_count = 0
           plywood_material_count = 0
+          bar_material_count = 0
           cutlist_def.material_usages.each { |key, material_usage|
             if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
               hardwood_material_count += material_usage.use_count
             elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
               plywood_material_count += material_usage.use_count
+            elsif material_usage.type == MaterialAttributes::TYPE_BAR
+              bar_material_count += material_usage.use_count
             end
           }
-          if hardwood_material_count == 0 and plywood_material_count == 0
+          if hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
             cutlist_def.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
             cutlist_def.add_tip("tab.cutlist.tip.no_typed_materials")
           end
@@ -596,7 +599,7 @@ module Ladb
           group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
             if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
               if group_def.material_type == MaterialAttributes::TYPE_BAR
-                group[:raw_length] += part_def.raw_size.length * part_def.count
+                group[:raw_length] += (is_metric ? part_def.raw_size.length.to_m : part_def.raw_size.length) * part_def.count
               end
               if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
                 group[:raw_area] += (is_metric ? part_def.raw_size.area_m2 : part_def.raw_size.area) * part_def.count

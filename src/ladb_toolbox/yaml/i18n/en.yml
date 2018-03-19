@@ -166,8 +166,8 @@ tab:
       failed_to_write_export_file: Failed to write the export file.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
-      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good**).
-      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good**).
+      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
+      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
       export_empty: Your export does not contain any part.
     success:
       exported_to: Export to {{ export_path }} succeeded.
@@ -176,7 +176,7 @@ tab:
         The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
-      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
+      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Bar**) on the tab <i class="ladb-toolbox-icon-materials"></i> **Materials**.
     outdated_base: To remain synchronized, you must regenerate the parts list.
   materials:
     label: Materials

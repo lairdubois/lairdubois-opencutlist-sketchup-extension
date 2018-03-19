@@ -166,8 +166,8 @@ tab:
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
-      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten**).
+      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten** oder **Bar**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten** oder **Bar**).
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: Export in Datei {{ export_path }} erfolgreich.
