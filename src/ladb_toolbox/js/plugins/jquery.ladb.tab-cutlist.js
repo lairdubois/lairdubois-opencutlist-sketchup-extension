@@ -94,6 +94,7 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var tips = response.tips;
+            var is_metric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var materialUsages = response.material_usages;
@@ -131,6 +132,7 @@
                 errors: errors,
                 warnings: warnings,
                 tips: tips,
+                is_metric: is_metric,
                 groups: groups
             }));
 

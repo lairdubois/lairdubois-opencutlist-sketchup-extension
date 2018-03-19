@@ -10,6 +10,14 @@ module Ladb
         @thickness = thickness
       end
 
+      def area
+        @length * @width
+      end
+
+      def volume
+        area * @thickness
+      end
+
       def area_m2
         @length.to_m * @width.to_m
       end

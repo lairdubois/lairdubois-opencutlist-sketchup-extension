@@ -7,6 +7,7 @@ module Ladb
       TYPE_UNKNOW = 0
       TYPE_SOLID_WOOD = 1
       TYPE_SHEET_GOOD = 2
+      TYPE_BAR = 3
 
       DEFAULTS = {
           TYPE_UNKNOW => {
@@ -26,6 +27,12 @@ module Ladb
               :width_increase => '10mm',
               :thickness_increase => '0',
               :std_thicknesses => '5mm;15mm;18mm;22mm'
+          },
+          TYPE_BAR => {
+              :length_increase => '50mm',
+              :width_increase => '0',
+              :thickness_increase => '0',
+              :std_thicknesses => '20mm'
           },
       }
 
@@ -47,7 +54,7 @@ module Ladb
       def self.valid_type(type)
         if type
           i_type = type.to_i
-          if i_type < TYPE_UNKNOW or i_type > TYPE_SHEET_GOOD
+          if i_type < TYPE_UNKNOW or i_type > TYPE_BAR
             TYPE_UNKNOW
           end
           i_type
@@ -62,6 +69,8 @@ module Ladb
             1
           when TYPE_SHEET_GOOD
             2
+          when TYPE_BAR
+            3
           else
             99
         end
@@ -71,7 +80,7 @@ module Ladb
 
       def length_increase
         case @type
-          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_BAR
             @length_increase
           else
             get_default(:length_increase)
@@ -110,7 +119,7 @@ module Ladb
 
       def std_thicknesses
         case @type
-          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_BAR
             @std_thicknesses
           else
             get_default(:std_thicknesses)

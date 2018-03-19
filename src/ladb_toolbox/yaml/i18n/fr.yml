@@ -125,6 +125,7 @@ tab:
       type: Type
       material_thickness: Matière / Epaisseur
       part_count: Nb. pièces
+      length: Longueur
       area: Surface
       volume: Volume
       number: N°
@@ -183,10 +184,12 @@ tab:
     type_0: Non défini
     type_1: Bois massif
     type_2: Panneau
+    type_3: Barre
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
       type_2: Type de matière '$t(tab.materials.type_2)'
+      type_3: Type de matière '$t(tab.materials.type_3)'
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées

@@ -125,6 +125,7 @@ tab:
       type: Typ
       material_thickness: Material / Dicke
       part_count: Anzahl
+      length: Länge
       area: Fläche
       volume: Volumen
       number: Nr.
@@ -183,10 +184,12 @@ tab:
     type_0: Unbekannt
     type_1: Massivholz
     type_2: Platten
+    type_3: Barre
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
       type_2: Materialtyp '$t(tab.materials.type_2)'
+      type_3: Materialtyp '$t(tab.materials.type_3)'
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen

@@ -92,6 +92,9 @@ i, span.ladb-toolbox-icon {
 .ladb-toolbox-icon-cutlist:before {
   content: "\e900";
 }
+.ladb-toolbox-icon-bar:before {
+  content: "\e922";
+}
 .ladb-toolbox-icon-save:before {
   content: "\e91f";
 }

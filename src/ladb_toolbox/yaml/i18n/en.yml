@@ -125,6 +125,7 @@ tab:
       type: Type
       material_thickness: Material / Thickness
       part_count: Quantity
+      length: Length
       area: Area
       volume: Volume
       number: No.
@@ -183,10 +184,12 @@ tab:
     type_0: Undefined
     type_1: Solid Wood
     type_2: Sheet Good
+    type_3: Barre
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
       type_2: Material type '$t(tab.materials.type_2)'
+      type_3: Material type '$t(tab.materials.type_3)'
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials

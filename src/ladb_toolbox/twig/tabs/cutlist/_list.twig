@@ -1,5 +1,6 @@
 {# set errors #}
 {# set warnings #}
+{# set is_metric #}
 {# set groups #}
 
 {% include 'core/_alert-errors.twig' %}
@@ -10,7 +11,7 @@
     <table id="ladb_group_summary" data-group-id="summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
         <thead>
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-toolbox-icon-eye-open"></i></button>
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
@@ -27,10 +28,11 @@
         <tbody>
         <tr>
             <td class="text-center" width="5%">{{ 'tab.cutlist.list.type'|i18next }}</td>
-            <td class="text-center" width="55%">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+            <td class="text-center" width="49%">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
             <td class="text-center" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
-            <td class="text-center" width="15%">{{ 'tab.cutlist.list.area'|i18next }}</td>
-            <td class="text-center" width="15%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
+            <td class="text-center" width="12%">{{ 'tab.cutlist.list.length'|i18next }}</td>
+            <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
+            <td class="text-center" width="12%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
         </tr>
         {% for group in groups %}
             <tr class="ladb-cutlist-row">
@@ -42,8 +44,15 @@
                     </div>
                 </td>
                 <td class="text-center">x {{ group.part_count }}</td>
-                <td class="text-right">{% if group.raw_area_m2 == 0 %}-{% else %}{{ group.raw_area_m2|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
-                <td class="text-right">{% if group.raw_volume_m3 == 0 %}-{% else %}{{ group.raw_volume_m3|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
+                {% if is_metric %}
+                    <td class="text-right">{% if group.raw_length == 0 %}-{% else %}{{ group.raw_length|number_format(3, ',', ' ') }}m{% endif %}</td>
+                    <td class="text-right">{% if group.raw_area == 0 %}-{% else %}{{ group.raw_area|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
+                    <td class="text-right">{% if group.raw_volume == 0 %}-{% else %}{{ group.raw_area|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
+                {% else %}
+                    <td class="text-right">{% if group.raw_length == 0 %}-{% else %}{{ group.raw_length|number_format(2, '.', ',') }}ft{% endif %}</td>
+                    <td class="text-right">{% if group.raw_area == 0 %}-{% else %}{{ group.raw_area|number_format(2, '.', ',') }}ft<sup>2</sup>{% endif %}</td>
+                    <td class="text-right">{% if group.raw_volume == 0 %}-{% else %}{{ group.raw_volume|number_format(2, '.', ',') }}bft{% endif %}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
@@ -55,9 +64,14 @@
 {% for group in groups %}
 
     {% set showRawDimensions = group.material_type > 0 and not uiOptions.hide_raw_dimensions %}
+    {% set showRawWidth = showRawDimensions and group.material_type < 3 %}  {# 3 = TYPE_BAR #}
     {% set showFinalDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_final_dimensions %}
     {% set colspan = 8 %}
-    {% if not showRawDimensions %}
+    {% if showRawDimensions %}
+        {% if not showRawWidth %}
+            {% set colspan = colspan - 1 %}
+        {% endif %}
+    {% else %}
         {% set colspan = colspan - 2 %}
     {% endif %}
     {% if not showFinalDimensions %}
@@ -95,7 +109,7 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showRawDimensions %}
-                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.raw'|i18next }}</td>
+                <td class="text-center" colspan="{% if showRawWidth %}2{% else %}1{% endif %}">{{ 'tab.cutlist.list.raw'|i18next }}</td>
             {% endif %}
             {% if showFinalDimensions %}
                 <td class="text-center" colspan="3">{{ 'tab.cutlist.list.final'|i18next }}</td>
@@ -103,7 +117,7 @@
         </tr>
         <tr>
             {% if showRawDimensions %}
-                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                {% for property in dimensionColumnOrderStrategy if property != 'thickness' and (showRawWidth or property != 'width') %}
                     <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
@@ -138,7 +152,7 @@
                 </td>
                 <td class="text-center">{{ part.count }}</td>
                 {% if showRawDimensions %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' and (showRawWidth or property != 'width') %}
                         <td class="text-right" style="color: red;">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
                     {% endfor %}
                 {% endif %}

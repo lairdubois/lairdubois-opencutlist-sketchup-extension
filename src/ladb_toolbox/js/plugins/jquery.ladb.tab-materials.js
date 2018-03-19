@@ -235,6 +235,7 @@
             var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
             var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
+            var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
             var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
             var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
             var $btnRemove = $('#ladb_materials_remove', $modal);
@@ -258,6 +259,7 @@
                         $inputStdThicknesses.closest('.form-group').show();
                         $spanCutOptionsDefaultsType1.show();
                         $spanCutOptionsDefaultsType2.hide();
+                        $spanCutOptionsDefaultsType3.hide();
                         break;
                     case 2:   // TYPE_SHEET_GOOD
                         $inputLengthIncrease.closest('section').show();
@@ -267,6 +269,17 @@
                         $inputStdThicknesses.closest('.form-group').show();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.show();
+                        $spanCutOptionsDefaultsType3.hide();
+                        break;
+                    case 3:   // TYPE_BAR
+                        $inputLengthIncrease.closest('section').show();
+                        $inputLengthIncrease.closest('.form-group').show();
+                        $inputWidthIncrease.closest('.form-group').hide();
+                        $inputThicknessIncrease.closest('.form-group').hide();
+                        $inputStdThicknesses.closest('.form-group').show();
+                        $spanCutOptionsDefaultsType1.hide();
+                        $spanCutOptionsDefaultsType2.hide();
+                        $spanCutOptionsDefaultsType3.show();
                         break;
                 }
             };
@@ -295,6 +308,12 @@
                         defaultWidthIncrease = '10mm';
                         defaultThicknessIncrease = '0';
                         defaultStdThicknesses = '4mm;8mm;10mm;15mm;18mm;22mm';
+                        break;
+                    case 3:   // TYPE_BAR
+                        defaultLengthIncrease = '50mm';
+                        defaultWidthIncrease = '0';
+                        defaultThicknessIncrease = '0';
+                        defaultStdThicknesses = '20mm';
                         break;
                 }
                 $inputLengthIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
