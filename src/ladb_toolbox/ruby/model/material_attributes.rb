@@ -38,7 +38,7 @@ module Ladb
               :width_increase => '0',
               :thickness_increase => '0',
               :std_thicknesses => '',
-              :std_sections => '38mmx38mm'
+              :std_sections => '30mmx40mm'
           },
       }
 

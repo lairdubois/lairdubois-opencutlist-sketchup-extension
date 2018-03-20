@@ -323,7 +323,7 @@
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
                         defaultStdThicknesses = '20mm';
-                        defaultStdSections = '38mmx38mm';
+                        defaultStdSections = '30mmx40mm';
                         break;
                 }
                 $inputLengthIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));

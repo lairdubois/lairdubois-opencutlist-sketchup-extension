@@ -204,6 +204,9 @@ tab:
       thickness_increase: Thickness Oversize
       std_thicknesses: Available Thicknesses
       std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
+      std_sections: Sections disponibles
+      std_sections_help: |
+        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values

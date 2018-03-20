@@ -204,6 +204,9 @@ tab:
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
       std_thicknesses_help: Rohmasse der verfügbaren Dicken. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
+      std_sections: Sections disponibles
+      std_sections_help: |
+        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern

@@ -205,7 +205,8 @@ tab:
       std_thicknesses: Epaisseurs disponibles
       std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.
       std_sections: Sections disponibles
-      std_sections_help: Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+      std_sections_help: |
+        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
         save: Enregistrer comme valeurs par défaut
