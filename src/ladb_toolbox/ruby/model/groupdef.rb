@@ -2,14 +2,18 @@ module Ladb
   module Toolbox
     class GroupDef
 
-      attr_accessor :material_name, :material_type, :part_count, :raw_thickness, :raw_thickness_available, :max_number
+      attr_accessor :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number
       attr_reader :id, :part_defs
 
       def initialize(id)
         @id = id
         @material_name = ''
         @material_type = MaterialAttributes::TYPE_UNKNOW
-        @raw_thickness = 0
+        @std_dimension = ''
+        @std_available = true,
+        @std_availability_message = ''
+        @std_width = 0
+        @std_thickness = 0
         @max_number = nil
         @part_count = 0
         @part_defs = {}

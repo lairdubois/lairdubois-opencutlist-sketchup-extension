@@ -207,7 +207,7 @@ module Ladb
           end
         end
 
-        # -- Thickness utils --
+        # -- Std utils --
 
         def _find_std_thickness(thickness, std_thicknesses, nearest_highest)
           std_thicknesses.each { |std_thickness|
@@ -228,6 +228,21 @@ module Ladb
           {
               :available => false,
               :value => thickness
+          }
+        end
+
+        def _find_std_section(width, thickness, std_sections)
+          std_sections.each { |std_section|
+            if width == std_section.width && thickness == std_section.height || width == std_section.height && thickness == std_section.width
+              return {
+                  :available => true,
+                  :value => std_section
+              }
+            end
+          }
+          {
+              :available => false,
+              :value => Section.new(width, thickness)
           }
         end
 
@@ -418,28 +433,69 @@ module Ladb
               scale,
               auto_orient && !definition_attributes.orientation_locked_on_axis
           )
-          std_thickness = _find_std_thickness(
-              (size.thickness + material_attributes.l_thickness_increase).to_l,
-              material_attributes.l_std_thicknesses,
-              material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
-          )
-          raw_size = Size3d.new(
-              (size.length + material_attributes.l_length_increase).to_l,
-              (size.width + material_attributes.l_width_increase).to_l,
-              std_thickness[:value]
-          )
+          case material_attributes.type
+            when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
+              std_thickness_info = _find_std_thickness(
+                  (size.thickness + material_attributes.l_thickness_increase).to_l,
+                  material_attributes.l_std_thicknesses,
+                  material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
+              )
+              std_info = {
+                  :available => std_thickness_info[:available],
+                  :availability_mesage => std_thickness_info[:available] ? '' : 'tab.cutlist.not_available_thickness',
+                  :dimension => std_thickness_info[:value].to_s,
+                  :width => 0,
+                  :thickness => std_thickness_info[:value],
+                  :raw_size => Size3d.new(
+                      (size.length + material_attributes.l_length_increase).to_l,
+                      (size.width + material_attributes.l_width_increase).to_l,
+                      std_thickness_info[:value]
+                  )
+              }
+            when MaterialAttributes::TYPE_BAR
+              std_section_info = _find_std_section(
+                  size.width,
+                  size.thickness,
+                  material_attributes.l_std_sections
+              )
+              std_info = {
+                  :available => std_section_info[:available],
+                  :availability_mesage => std_section_info[:available] ? '' : 'tab.cutlist.not_available_section',
+                  :dimension => std_section_info[:value].to_s,
+                  :width => std_section_info[:value].width,
+                  :thickness => std_section_info[:value].height,
+                  :raw_size => Size3d.new(
+                      (size.length + material_attributes.l_length_increase).to_l,
+                      std_section_info[:value].width,
+                      std_section_info[:value].height
+                  )
+              }
+            else
+              std_info = {
+                  :available => true,
+                  :availability_mesage => '',
+                  :dimension => '',
+                  :width => 0,
+                  :thickness => 0,
+                  :raw_size => size
+              }
+          end
+          raw_size = std_info[:raw_size]
 
           # Define group
 
-          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + raw_size.thickness.to_s : ''}")
+          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + std_info[:dimension] : ''}")
           group_def = cutlist_def.get_group_def(group_id)
           unless group_def
 
             group_def = GroupDef.new(group_id)
             group_def.material_name = material_name
             group_def.material_type = material_attributes.type
-            group_def.raw_thickness = raw_size.thickness
-            group_def.raw_thickness_available = std_thickness[:available]
+            group_def.std_dimension = std_info[:dimension]
+            group_def.std_available = std_info[:available]
+            group_def.std_availability_message = std_info[:availability_mesage]
+            group_def.std_width = std_info[:width]
+            group_def.std_thickness = std_info[:thickness]
 
             cutlist_def.set_group_def(group_id, group_def)
 
@@ -575,7 +631,7 @@ module Ladb
         part_number = cutlist_def.max_number ? cutlist_def.max_number.succ : (part_number_with_letters ? 'A' : '1')
 
         # Sort and browse groups
-        cutlist_def.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.raw_thickness] }.each { |key, group_def|
+        cutlist_def.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.std_width, -v.std_thickness] }.each { |key, group_def|
 
           if part_number_sequence_by_group
             part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
@@ -586,8 +642,9 @@ module Ladb
               :material_name => group_def.material_name,
               :material_type => group_def.material_type,
               :part_count => group_def.part_count,
-              :raw_thickness => group_def.raw_thickness.to_s,
-              :raw_thickness_available => group_def.raw_thickness_available,
+              :std_dimension => group_def.std_dimension,
+              :std_available => group_def.std_available,
+              :std_availability_message => group_def.std_availability_message,
               :raw_length => 0,
               :raw_area => 0,
               :raw_volume => 0,

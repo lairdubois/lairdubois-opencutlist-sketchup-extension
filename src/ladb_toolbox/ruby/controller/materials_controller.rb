@@ -57,6 +57,7 @@ module Ladb
             :filename => Pathname.new(model.path).basename,
             :solidwood_material_count => 0,
             :sheetgood_material_count => 0,
+            :bar_material_count => 0,
             :untyped_material_count => 0,
             :materials => []
         }
@@ -78,7 +79,8 @@ module Ladb
                                         :length_increase => material_attributes.length_increase,
                                         :width_increase => material_attributes.width_increase,
                                         :thickness_increase => material_attributes.thickness_increase,
-                                        :std_thicknesses => material_attributes.std_thicknesses
+                                        :std_thicknesses => material_attributes.std_thicknesses,
+                                        :std_sections => material_attributes.std_sections
                                     }
                                 })
 
@@ -87,6 +89,8 @@ module Ladb
               response[:solidwood_material_count] += 1
             when MaterialAttributes::TYPE_SHEET_GOOD
               response[:sheetgood_material_count] += 1
+            when MaterialAttributes::TYPE_BAR
+              response[:bar_material_count] += 1
             else
               response[:untyped_material_count] += 1
           end
@@ -120,6 +124,7 @@ module Ladb
         width_increase = attributes['width_increase']
         thickness_increase = attributes['thickness_increase']
         std_thicknesses = attributes['std_thicknesses']
+        std_sections = attributes['std_sections']
 
         # Fetch material
         model = Sketchup.active_model
@@ -140,6 +145,7 @@ module Ladb
           material_attributes.width_increase = width_increase
           material_attributes.thickness_increase = thickness_increase
           material_attributes.std_thicknesses = std_thicknesses
+          material_attributes.std_sections = std_sections
           material_attributes.write_to_attributes
 
         end

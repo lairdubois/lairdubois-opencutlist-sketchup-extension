@@ -1,3 +1,5 @@
+require_relative '../model/section'
+
 module Ladb
   module Toolbox
     class MaterialAttributes
@@ -14,29 +16,33 @@ module Ladb
               :length_increase => '0',
               :width_increase => '0',
               :thickness_increase => '0',
-              :std_thicknesses => ''
+              :std_thicknesses => '',
+              :std_sections => ''
           },
           TYPE_SOLID_WOOD => {
               :length_increase => '50mm',
               :width_increase => '5mm',
               :thickness_increase => '5mm',
-              :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm'
+              :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm',
+              :std_sections => ''
           },
           TYPE_SHEET_GOOD => {
               :length_increase => '10mm',
               :width_increase => '10mm',
               :thickness_increase => '0',
-              :std_thicknesses => '5mm;15mm;18mm;22mm'
+              :std_thicknesses => '5mm;15mm;18mm;22mm',
+              :std_sections => ''
           },
           TYPE_BAR => {
               :length_increase => '50mm',
               :width_increase => '0',
               :thickness_increase => '0',
-              :std_thicknesses => '20mm'
+              :std_thicknesses => '',
+              :std_sections => '38mmx38mm'
           },
       }
 
-      attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses
+      attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections
       attr_reader :material
 
       def initialize(material)
@@ -46,6 +52,7 @@ module Ladb
         @width_increase = get_default(:width_increase)
         @thickness_increase = get_default(:thickness_increase)
         @std_thicknesses = get_default(:std_thicknesses)
+        @std_sections = get_default(:std_sections)
         read_from_attributes
       end
 
@@ -119,7 +126,7 @@ module Ladb
 
       def std_thicknesses
         case @type
-          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_BAR
+          when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
             @std_thicknesses
           else
             get_default(:std_thicknesses)
@@ -135,6 +142,23 @@ module Ladb
         a
       end
 
+      def std_sections
+        case @type
+          when TYPE_BAR
+            @std_sections
+          else
+            get_default(:std_sections)
+        end
+      end
+
+      def l_std_sections
+        a = []
+        @std_sections.split(';').each { |std_section|
+          a.push(Section.new(std_section))
+        }
+        a
+      end
+
       # -----
 
       def read_from_attributes
@@ -144,6 +168,7 @@ module Ladb
           @width_increase = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'width_increase', get_default(:width_increase))
           @thickness_increase = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'thickness_increase', get_default(:thickness_increase))
           @std_thicknesses = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'std_thicknesses', get_default(:std_thicknesses))
+          @std_sections = @material.get_attribute(ATTRIBUTE_DICTIONARY, 'std_sections', get_default(:std_sections))
         end
       end
 
@@ -154,6 +179,7 @@ module Ladb
           @material.set_attribute(ATTRIBUTE_DICTIONARY, 'width_increase', @width_increase)
           @material.set_attribute(ATTRIBUTE_DICTIONARY, 'thickness_increase', @thickness_increase)
           @material.set_attribute(ATTRIBUTE_DICTIONARY, 'std_thicknesses', @std_thicknesses)
+          @material.set_attribute(ATTRIBUTE_DICTIONARY, 'std_sections', @std_sections)
         end
       end
 

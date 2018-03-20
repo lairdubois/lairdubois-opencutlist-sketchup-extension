@@ -13,6 +13,7 @@
     var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
     var SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE = '_thickness_increase';
     var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
+    var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
 
     // Select picker options
 
@@ -233,6 +234,7 @@
             var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
             var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
             var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
+            var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
             var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
             var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
@@ -257,6 +259,7 @@
                         $inputWidthIncrease.closest('.form-group').show();
                         $inputThicknessIncrease.closest('.form-group').show();
                         $inputStdThicknesses.closest('.form-group').show();
+                        $inputStdSections.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.show();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.hide();
@@ -267,6 +270,7 @@
                         $inputWidthIncrease.closest('.form-group').show();
                         $inputThicknessIncrease.closest('.form-group').hide();
                         $inputStdThicknesses.closest('.form-group').show();
+                        $inputStdSections.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.show();
                         $spanCutOptionsDefaultsType3.hide();
@@ -276,7 +280,8 @@
                         $inputLengthIncrease.closest('.form-group').show();
                         $inputWidthIncrease.closest('.form-group').hide();
                         $inputThicknessIncrease.closest('.form-group').hide();
-                        $inputStdThicknesses.closest('.form-group').show();
+                        $inputStdThicknesses.closest('.form-group').hide();
+                        $inputStdSections.closest('.form-group').show();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.show();
@@ -289,37 +294,43 @@
                 var defaultLengthIncrease,
                     defaultWidthIncrease,
                     defaultThicknessIncrease,
-                    defaultStdThicknesses;
+                    defaultStdThicknesses,
+                    defaultStdSections;
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
                         defaultLengthIncrease = '0';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
                         defaultStdThicknesses = '';
+                        defaultStdSections = '';
                         break;
                     case 1:   // TYPE_SOLID_WOOD
                         defaultLengthIncrease = '50mm';
                         defaultWidthIncrease = '5mm';
                         defaultThicknessIncrease = '5mm';
                         defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
+                        defaultStdSections = '';
                         break;
                     case 2:   // TYPE_SHEET_GOOD
                         defaultLengthIncrease = '10mm';
                         defaultWidthIncrease = '10mm';
                         defaultThicknessIncrease = '0';
                         defaultStdThicknesses = '4mm;8mm;10mm;15mm;18mm;22mm';
+                        defaultStdSections = '';
                         break;
                     case 3:   // TYPE_BAR
                         defaultLengthIncrease = '50mm';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
                         defaultStdThicknesses = '20mm';
+                        defaultStdSections = '38mmx38mm';
                         break;
                 }
                 $inputLengthIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
                 $inputWidthIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
                 $inputThicknessIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
                 $inputStdThicknesses.tokenfield('setTokens', that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
+                $inputStdSections.tokenfield('setTokens', that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
             };
 
             // Bing change
@@ -340,7 +351,12 @@
 
             // Init tokenfield
             $inputStdThicknesses.tokenfield({
-                delimiter: ';'
+                delimiter: ';',
+                createTokensOnBlur: true
+            });
+            $inputStdSections.tokenfield({
+                delimiter: ';',
+                createTokensOnBlur: true
             });
 
             // Bind buttons
@@ -351,13 +367,15 @@
                 var width_increase = $inputWidthIncrease.val();
                 var thickness_increase = $inputThicknessIncrease.val();
                 var std_thicknesses = $inputStdThicknesses.val();
+                var std_sections = $inputStdSections.val();
 
                 // Update default cut options for specific type to last used
                 that.toolbox.setSettings([
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:length_increase },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:width_increase },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:thickness_increase },
-                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses }
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses },
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections }
                 ]);
 
                 that.toolbox.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
@@ -386,6 +404,7 @@
                 that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
                 that.editedMaterial.attributes.thickness_increase = $inputThicknessIncrease.val();
                 that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
+                that.editedMaterial.attributes.std_sections = $inputStdSections.val();
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialChangeEvent = true;
@@ -474,6 +493,7 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS);
         }
 
         this.toolbox.pullSettings(settingsKeys, function() {

@@ -42,6 +42,7 @@ tab:
       If the selection is empty, all visible components of the scene will be included in the parts list.
     material_unknow: Material Type Undefined
     not_available_thickness: Thickness not available
+    not_available_section: Section non disponible
     tooltip:
       show_hide_block: Show / Hide
       scroll_to_block: Scroll to group

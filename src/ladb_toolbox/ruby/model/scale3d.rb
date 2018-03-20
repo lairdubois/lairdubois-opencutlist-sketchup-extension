@@ -33,7 +33,7 @@ module Ladb
       end
 
       def to_s
-        '(' + @x.to_f.to_s + ', ' + @y.to_f.to_s + ', ' + @z.to_f.to_s + ')'
+        'Scale3d(' + @x.to_f.to_s + ', ' + @y.to_f.to_s + ', ' + @z.to_f.to_s + ')'
       end
 
     end

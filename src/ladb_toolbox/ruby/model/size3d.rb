@@ -27,7 +27,7 @@ module Ladb
       end
 
       def to_s
-        '(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ', ' + @thickness.to_l.to_s + ')'
+        'Size3d(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ', ' + @thickness.to_l.to_s + ')'
       end
 
     end

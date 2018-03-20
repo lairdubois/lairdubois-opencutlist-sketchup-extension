@@ -42,6 +42,7 @@ tab:
       Ist die Auswahl leer, verwendet das Plugin alle sichtbaren Komponenten der Szene zur Berechnung der Holzliste.
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
+    not_available_section: Section non disponible
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern

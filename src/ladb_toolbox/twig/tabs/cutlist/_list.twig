@@ -64,17 +64,21 @@
 {% for group in groups %}
 
     {% set showRawDimensions = group.material_type > 0 and not uiOptions.hide_raw_dimensions %}
-    {% set showRawWidth = showRawDimensions and group.material_type < 3 %}  {# 3 = TYPE_BAR #}
     {% set showFinalDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_final_dimensions %}
+    {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
     {% set colspan = 8 %}
     {% if showRawDimensions %}
-        {% if not showRawWidth %}
+        {% if showLengthOnly %}
             {% set colspan = colspan - 1 %}
         {% endif %}
     {% else %}
         {% set colspan = colspan - 2 %}
     {% endif %}
-    {% if not showFinalDimensions %}
+    {% if showFinalDimensions %}
+        {% if showLengthOnly %}
+            {% set colspan = colspan - 2 %}
+        {% endif %}
+    {% else %}
         {% set colspan = colspan - 3 %}
     {% endif %}
 
@@ -109,20 +113,20 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showRawDimensions %}
-                <td class="text-center" colspan="{% if showRawWidth %}2{% else %}1{% endif %}">{{ 'tab.cutlist.list.raw'|i18next }}</td>
+                <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}2{% endif %}">{{ 'tab.cutlist.list.raw'|i18next }}</td>
             {% endif %}
             {% if showFinalDimensions %}
-                <td class="text-center" colspan="3">{{ 'tab.cutlist.list.final'|i18next }}</td>
+                <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}3{% endif %}">{{ 'tab.cutlist.list.final'|i18next }}</td>
             {% endif %}
         </tr>
         <tr>
             {% if showRawDimensions %}
-                {% for property in dimensionColumnOrderStrategy if property != 'thickness' and (showRawWidth or property != 'width') %}
+                {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
                     <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
             {% if showFinalDimensions %}
-                {% for property in dimensionColumnOrderStrategy %}
+                {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
                     <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
@@ -152,12 +156,12 @@
                 </td>
                 <td class="text-center">{{ part.count }}</td>
                 {% if showRawDimensions %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' and (showRawWidth or property != 'width') %}
+                    {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
                         <td class="text-right" style="color: red;">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showFinalDimensions %}
-                    {% for property in dimensionColumnOrderStrategy %}
+                    {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
                         <td class="text-right">{{ part[property] }}</td>
                     {% endfor %}
                 {% endif %}
