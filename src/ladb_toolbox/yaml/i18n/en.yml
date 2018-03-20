@@ -84,7 +84,7 @@ tab:
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
-      raw_thickness: Rough Thickness
+      std_dimension: Dimension brute
       material: Material
       warning: A modification of the material will be applied to all parts of the group. Current groups may therefore change.
     option:

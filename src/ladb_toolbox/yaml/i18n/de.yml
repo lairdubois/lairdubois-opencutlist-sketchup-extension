@@ -84,7 +84,7 @@ tab:
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
-      raw_thickness: Rohdicke
+      std_dimension: Dimension brute
       material: Material
       warning: Die Veränderung des Materials wird auf alle Teile der Gruppe übertragen. Die aktuelle Gruppeneinteilung könnte sich deshalb verändern.
     option:

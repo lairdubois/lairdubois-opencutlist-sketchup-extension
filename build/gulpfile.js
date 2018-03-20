@@ -79,7 +79,7 @@ gulp.task('version', function () {
 
     // Update version property in plugin.rb
     gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
-        .pipe(replace(/VERSION = '[0-9.]+(-alpha|-beta)?'/g, "VERSION = '" + version + "'"))
+        .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
         .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
 
     // Update VERSION file in dist folder

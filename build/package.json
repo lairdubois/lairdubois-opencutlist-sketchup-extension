@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-toolbox-sketchup-plugin",
-  "version": "1.4.0",
+  "version": "1.4.0-dev",
   "description": "L'Air du Bois : Woodworking Toolbox ================================",
   "main": "index.js",
   "directories": {
