@@ -1,4 +1,6 @@
 var gulp = require('gulp');
+var gulpif = require('gulp-if');
+var minimist = require('minimist');
 var fs = require('fs');
 var gutil = require('gulp-util');
 var ladb_twig_compile = require('./plugins/gulp-ladb-twig-compile');
@@ -8,6 +10,13 @@ var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
 var replace = require('gulp-replace');
+
+var knownOptions = {
+    string: 'env',
+    default: { env: process.env.NODE_ENV || 'prod' }
+};
+
+var options = minimist(process.argv.slice(2), knownOptions);
 
 // Convert less to .css files
 gulp.task('less_compile', function () {
@@ -58,14 +67,10 @@ gulp.task('rbz_create', function () {
 
             '!../src/**/*.twig',
             '!../src/**/twig/**',
-            '!../src/**/twig/'//,
-
-            // '!../src/**/*.yml',
-            // '!../src/**/yaml/**',
-            // '!../src/**/yaml/'
+            '!../src/**/twig/'
 
         ])
-        .pipe(zip('ladb_toolbox.rbz'))
+        .pipe(gulpif(options.env === 'prod', zip('ladb_toolbox.rbz'), zip('ladb_toolbox-' + options.env + '.rbz')))
         .pipe(gulp.dest('../dist'));
 });
 
@@ -78,27 +83,27 @@ gulp.task('version', function () {
     var version = pkg.version;
 
     // Update version property in plugin.rb
-    gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
+    return gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
         .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
         .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
 
     // Update VERSION file in dist folder
-    function writeStringToFile(filename, string) {
-        var src = require('stream').Readable({ objectMode: true });
-        src._read = function () {
-            this.push(new gutil.File({
-                cwd: "",
-                base: "",
-                path: filename,
-                contents: new Buffer(string)
-            }));
-            this.push(null)
-        };
-        return src
-    }
-
-    return writeStringToFile("VERSION", pkg.version)
-        .pipe(gulp.dest('../dist'))
+    // function writeStringToFile(filename, string) {
+    //     var src = require('stream').Readable({ objectMode: true });
+    //     src._read = function () {
+    //         this.push(new gutil.File({
+    //             cwd: "",
+    //             base: "",
+    //             path: filename,
+    //             contents: new Buffer(string)
+    //         }));
+    //         this.push(null)
+    //     };
+    //     return src
+    // }
+    //
+    // return writeStringToFile("VERSION", pkg.version)
+    //     .pipe(gulp.dest('../dist'))
 });
 
 gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);

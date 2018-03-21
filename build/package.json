@@ -10,6 +10,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
+    "gulp-if": "^2.0.2",
     "gulp-less": "^3.5.0",
     "gulp-replace": "^0.5.4",
     "gulp-zip": "^3.2.0",
@@ -17,6 +18,7 @@
     "markdown-it": "^8.4.1",
     "markdown-it-external-links": "0.0.6",
     "merge": "^1.2.0",
+    "minimist": "^1.2.0",
     "slash": "^1.0.0",
     "through2": "^2.0.3",
     "twig": "^1.10.5",
