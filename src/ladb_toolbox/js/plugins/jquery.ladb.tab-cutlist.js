@@ -346,6 +346,7 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+                var $btnSelect = $('#ladb_cutlist_part_select', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Bind select
@@ -357,6 +358,14 @@
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind buttons
+                $btnSelect.on('click', function () {
+                    this.blur();
+
+                    rubyCallCommand('cutlist_part_select', that.editedPart, function() {
+                        that.toolbox.minimize();
+                    });
+
+                });
                 $btnUpdate.on('click', function () {
 
                     that.editedPart.name = $inputName.val();

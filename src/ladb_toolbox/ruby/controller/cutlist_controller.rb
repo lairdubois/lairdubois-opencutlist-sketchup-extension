@@ -55,6 +55,10 @@ module Ladb
           part_get_thumbnail_command(part_data)
         end
 
+        @plugin.register_command("cutlist_part_select") do |part_data|
+          part_select_command(part_data)
+        end
+
         @plugin.register_command("cutlist_part_update") do |part_data|
           part_update_command(part_data)
         end
@@ -898,6 +902,20 @@ module Ladb
         end
 
         response
+      end
+
+      def part_select_command(part_data)
+
+        # Extract parameters
+        entity_ids = part_data['entity_ids']
+
+        model = Sketchup.active_model
+        entity = model.find_entity_by_id(entity_ids.first)
+
+        selection = model.selection
+        selection.clear
+        selection.add(entity)
+
       end
 
       def part_update_command(part_data)

@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.4.0 (DEV)
+
+  * Add new marerial type : Bar
+  * Add "select on part" in part edit modal  
+
 * 1.3.0 (2018-03-16)
 
   * Add dynamic components support !

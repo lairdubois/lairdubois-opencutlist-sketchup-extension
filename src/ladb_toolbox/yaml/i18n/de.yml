@@ -81,6 +81,8 @@ tab:
         - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
+      select_part: Sélectionner la pièce
+      select_first_part: Sélectionner la première pièce
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile

@@ -81,6 +81,8 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
+      select_part: Sélectionner la pièce
+      select_first_part: Sélectionner la première pièce
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
