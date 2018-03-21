@@ -322,8 +322,8 @@
                         defaultLengthIncrease = '50mm';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
-                        defaultStdThicknesses = '20mm';
-                        defaultStdSections = '30mmx40mm';
+                        defaultStdThicknesses = '';
+                        defaultStdSections = '30mmx40mm;40mmx50mm';
                         break;
                 }
                 $inputLengthIncrease.val(that.toolbox.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
@@ -352,10 +352,12 @@
             // Init tokenfield
             $inputStdThicknesses.tokenfield({
                 delimiter: ';',
+                beautify: false,
                 createTokensOnBlur: true
             });
             $inputStdSections.tokenfield({
                 delimiter: ';',
+                beautify: false,
                 createTokensOnBlur: true
             });
 
@@ -488,7 +490,7 @@
         var that = this;
 
         var settingsKeys = [];
-        for (var type = 0; type <= 2; type++) {
+        for (var type = 0; type <= 3; type++) {     // 3 = TYPE_BAR
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE);
