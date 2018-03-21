@@ -86,24 +86,6 @@ gulp.task('version', function () {
     return gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
         .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
         .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
-
-    // Update VERSION file in dist folder
-    // function writeStringToFile(filename, string) {
-    //     var src = require('stream').Readable({ objectMode: true });
-    //     src._read = function () {
-    //         this.push(new gutil.File({
-    //             cwd: "",
-    //             base: "",
-    //             path: filename,
-    //             contents: new Buffer(string)
-    //         }));
-    //         this.push(null)
-    //     };
-    //     return src
-    // }
-    //
-    // return writeStringToFile("VERSION", pkg.version)
-    //     .pipe(gulp.dest('../dist'))
 });
 
 gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);
