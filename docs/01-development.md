@@ -55,4 +55,11 @@ If you wish to build the archive [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz), t
     $ gulp build
 ```
 
+If you wish to build the archive [ladb_toolbox-dev.rbz](../dist/ladb_toolbox-dev.rbz), then:
+
+``` bash
+    $ cd build
+    $ gulp build --env=dev
+```
+
 The default behaviour of the **gulp** task (without argument) is to *compile* and then *build*.
