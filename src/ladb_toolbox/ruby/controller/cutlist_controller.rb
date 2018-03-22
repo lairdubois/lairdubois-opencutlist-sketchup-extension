@@ -906,16 +906,28 @@ module Ladb
 
       def part_select_command(part_data)
 
+        response = {
+            :success => false
+        }
+
         # Extract parameters
         entity_ids = part_data['entity_ids']
 
         model = Sketchup.active_model
-        entity = model.find_entity_by_id(entity_ids.first)
+        entity = _find_entity_by_id(model, entity_ids.first)
 
-        selection = model.selection
-        selection.clear
-        selection.add(entity)
+        if entity
 
+          # Select entity
+          selection = model.selection
+          selection.clear
+          selection.add(entity)
+
+          response[:success] = true
+
+        end
+
+        response
       end
 
       def part_update_command(part_data)
@@ -949,7 +961,7 @@ module Ladb
         if material_name == nil or material_name.empty? or (material = materials[material_name])
 
           entity_ids.each { |entity_id|
-            entity = model.find_entity_by_id(entity_id)
+            entity = _find_entity_by_id(model, entity_id)
             if entity
               if material_name == nil or material_name.empty?
                 entity.material = nil
@@ -979,7 +991,7 @@ module Ladb
           parts.each { |part_data|
             entity_ids = part_data['entity_ids']
             entity_ids.each { |component_id|
-              entity = model.find_entity_by_id(component_id)
+              entity = _find_entity_by_id(model, component_id)
               if entity
                 if material_name == nil or material_name.empty?
                   entity.material = nil
@@ -992,6 +1004,21 @@ module Ladb
 
         end
 
+      end
+
+      private
+
+      def _find_entity_by_id(model, entity_id)
+        if Sketchup.version_number >= 15000000
+          return model.find_entity_by_id(entity_id)
+        else
+          model.entities.each { |entity|
+            if entity.entityID == entity_id
+              return entity
+            end
+          }
+        end
+        nil
       end
 
     end

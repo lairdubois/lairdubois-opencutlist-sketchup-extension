@@ -361,8 +361,16 @@
                 $btnSelect.on('click', function () {
                     this.blur();
 
-                    rubyCallCommand('cutlist_part_select', that.editedPart, function() {
-                        that.toolbox.minimize();
+                    rubyCallCommand('cutlist_part_select', that.editedPart, function(response) {
+
+                        var success = response['success'];
+
+                        if (success) {
+                            that.toolbox.minimize();
+                        } else {
+                            that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t('tab.cutlist.edit_part.select_error', { 'name':that.editedPart.name }), 'error');
+                        }
+
                     });
 
                 });
