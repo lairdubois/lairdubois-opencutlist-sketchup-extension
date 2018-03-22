@@ -83,6 +83,7 @@ tab:
         - *thickness* is on the <span style='color:blue'>blue</span> axis
       select_part: Select the piece
       select_first_part: Select the first piece
+      select_error: Part '{{ name }}' was not found in the model
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
