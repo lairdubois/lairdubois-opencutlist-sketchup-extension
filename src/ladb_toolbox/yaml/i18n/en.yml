@@ -42,7 +42,7 @@ tab:
       If the selection is empty, all visible components of the scene will be included in the parts list.
     material_unknow: Material Type Undefined
     not_available_thickness: Thickness not available
-    not_available_section: Section non disponible
+    not_available_section: Cross Section not available
     tooltip:
       show_hide_block: Show / Hide
       scroll_to_block: Scroll to group
@@ -81,8 +81,8 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
-      select_part: Sélectionner la pièce
-      select_first_part: Sélectionner la première pièce
+      select_part: Select the piece
+      select_first_part: Select the first piece
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -187,7 +187,7 @@ tab:
     type_0: Undefined
     type_1: Solid Wood
     type_2: Sheet Good
-    type_3: Barre
+    type_3: Dimensional
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -206,9 +206,9 @@ tab:
       thickness_increase: Thickness Oversize
       std_thicknesses: Available Thicknesses
       std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
-      std_sections: Sections disponibles
+      std_sections: Available Cross Sections
       std_sections_help: |
-        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes). Sizes without units are considered to be in model units.
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values

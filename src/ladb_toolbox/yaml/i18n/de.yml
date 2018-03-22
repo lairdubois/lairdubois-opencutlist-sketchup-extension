@@ -42,7 +42,7 @@ tab:
       Ist die Auswahl leer, verwendet das Plugin alle sichtbaren Komponenten der Szene zur Berechnung der Holzliste.
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
-    not_available_section: Section non disponible
+    not_available_section: Querschnitt nicht verfügbar
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -81,8 +81,8 @@ tab:
         - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
-      select_part: Sélectionner la pièce
-      select_first_part: Sélectionner la première pièce
+      select_part: Teil selektieren
+      select_first_part: Erstes Teil selektieren
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -187,7 +187,7 @@ tab:
     type_0: Unbekannt
     type_1: Massivholz
     type_2: Platten
-    type_3: Barre
+    type_3: Stangenware
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
@@ -208,7 +208,7 @@ tab:
       std_thicknesses_help: Rohmasse der verfügbaren Dicken. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
       std_sections: Sections disponibles
       std_sections_help: |
-        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+        Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern
