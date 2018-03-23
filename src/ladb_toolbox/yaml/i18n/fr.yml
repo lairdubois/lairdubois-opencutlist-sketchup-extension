@@ -83,6 +83,7 @@ tab:
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       select_part: Sélectionner la pièce
       select_first_part: Sélectionner la première pièce
+      select_error: Pièce '{{ name }}' est introuvable dans le modèle
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
