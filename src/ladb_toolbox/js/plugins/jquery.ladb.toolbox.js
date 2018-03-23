@@ -15,6 +15,7 @@
 
         this.capabilities = {
             version: options.version,
+            build: options.build,
             sketchupVersion: options.sketchup_version,
             ruby_version: options.ruby_version,
             currentOS: options.current_os,

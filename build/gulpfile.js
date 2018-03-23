@@ -82,9 +82,14 @@ gulp.task('version', function () {
     var pkg = JSON.parse(fs.readFileSync('./package.json'));
     var version = pkg.version;
 
+    // Compute build from current date
+    var nowISO = (new Date()).toISOString();
+    var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
+
     // Update version property in plugin.rb
     return gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
         .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
+        .pipe(replace(/BUILD = '[0-9.]{12}?'/g, "BUILD = '" + build + "'"))
         .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
 });
 

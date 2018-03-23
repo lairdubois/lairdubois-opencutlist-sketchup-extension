@@ -11,6 +11,7 @@ module Ladb
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
+      BUILD = '201803231927'
 
       DEFAULT_SECTION = 'ladb_toolbox'
 
@@ -335,6 +336,7 @@ module Ladb
       def dialog_loaded_command
         {
             :version => VERSION,
+            :build => BUILD,
             :sketchup_version => Sketchup.version.to_s,
             :ruby_version => RUBY_VERSION,
             :current_os => "#{@current_os}",

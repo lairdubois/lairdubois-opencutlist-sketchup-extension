@@ -5,7 +5,7 @@
 
 {% block containerInner %}
     <h3>{{ 'tab.about.version'|i18next }}</h3>
-    <p><strong>{{ capabilities.version }}</strong> {{ capabilities.language|upper }} <em>( SU {{ capabilities.sketchupVersion }} - Ruby {{ capabilities.ruby_version }} - {{ capabilities.currentOS }} - {{ capabilities.locale }} )</em> (<a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/CHANGELOG.md" target="_blank">CHANGELOG</a>)</p>
+    <p><strong>{{ capabilities.version }}</strong> {{ capabilities.language|upper }} <small class="text-muted">build: {{ capabilities.build }}</small> - <em>( SU {{ capabilities.sketchupVersion }} - Ruby {{ capabilities.ruby_version }} - {{ capabilities.currentOS }} - {{ capabilities.locale }} )</em> - <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/CHANGELOG.md" target="_blank">CHANGELOG</a></p>
     <p><em><small>{{ capabilities.userAgent }}</small></em></p>
     <h3>{{ 'tab.about.credits'|i18next }}</h3>
     <p>{{ 'tab.about.credits_description'|i18next }}</p>
