@@ -6,8 +6,9 @@ in 1.x and 0.x versions.
 
 * 1.4.0 (DEV)
 
-  * Add new marerial type : Bar
-  * Add "select on part" in part edit modal  
+  * Add new marerial type : *Bar*
+  * Add "*Select one part*" button in part edit modal  
+  * Add "*Edit 'XXX' material*" button in cutlist's group context menu   
 
 * 1.3.0 (2018-03-16)
 

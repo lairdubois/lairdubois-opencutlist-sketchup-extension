@@ -69,7 +69,7 @@
         commandCallbacks[commandId] = callback;
         commandId++;
         commandCallStack.push(call);
-        popCommandCallStack();
+        shiftCommandCallStack();
     }
 
     function rubyCommandCallback(id, encodedResponse) {
@@ -80,12 +80,12 @@
             commandCallbacks[id] = null;
         }
         commandRunning = false;
-        popCommandCallStack();
+        shiftCommandCallStack();
     }
 
-    function popCommandCallStack() {
+    function shiftCommandCallStack() {
         if (!commandRunning) {
-            var call = commandCallStack.pop();
+            var call = commandCallStack.shift();
             if (call) {
                 commandRunning = true;
                 window.location.href = "skp:ladb_toolbox_command@" + JSON.stringify(call);

@@ -419,6 +419,7 @@ module Ladb
 
           definition_attributes = _get_definition_attributes(definition)
 
+          material_id = material ? material.entityID : ''
           material_name = material ? material.name : ''
           material_attributes = _get_material_attributes(material)
 
@@ -493,6 +494,7 @@ module Ladb
           unless group_def
 
             group_def = GroupDef.new(group_id)
+            group_def.material_id = material_id
             group_def.material_name = material_name
             group_def.material_type = material_attributes.type
             group_def.std_dimension = std_info[:dimension]
@@ -643,6 +645,7 @@ module Ladb
 
           group = {
               :id => group_def.id,
+              :material_id => group_def.material_id,
               :material_name => group_def.material_name,
               :material_type => group_def.material_type,
               :part_count => group_def.part_count,

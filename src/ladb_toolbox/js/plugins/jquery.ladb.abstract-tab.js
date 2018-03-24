@@ -5,6 +5,8 @@ function LadbAbstractTab(element, options, toolbox) {
     this.$element = $(element);
     this.toolbox = toolbox;
 
+    this._commands = {};
+
     this._$modal = null;
 }
 
@@ -41,4 +43,33 @@ LadbAbstractTab.prototype.appendModalInside = function(id, twigFile, renderParam
     });
 
     return this._$modal;
+};
+
+// Action /////
+
+LadbAbstractTab.prototype.registerCommand = function(command, block) {
+    if (typeof(block) == 'function') {
+        this._commands[command] = block;
+    } else {
+        alert('Action\'s block must be a function');
+    }
+};
+
+LadbAbstractTab.prototype.executeCommand = function(command, parameters, callback) {
+    if (this._commands.hasOwnProperty(command)) {
+
+        // Retrieve action block
+        var block = this._commands[command];
+
+        // Execute action block with parameters
+        block(parameters);
+
+        // Invoke the callback
+        if (typeof(callback) == 'function') {
+            callback();
+        }
+
+    } else {
+        alert('Command ' + command + ' not found');
+    }
 };

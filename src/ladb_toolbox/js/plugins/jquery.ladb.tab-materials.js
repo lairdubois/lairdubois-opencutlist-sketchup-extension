@@ -49,7 +49,7 @@
 
     // List /////
 
-    LadbTabMaterials.prototype.loadList = function () {
+    LadbTabMaterials.prototype.loadList = function (callback) {
         var that = this;
 
         this.materials = [];
@@ -100,6 +100,11 @@
 
             // Stick header
             that.$header.stick_in_parent();
+
+            // Callback
+            if (callback && typeof callback == 'function') {
+                callback();
+            }
 
         });
 
@@ -429,6 +434,8 @@
             // Show modal
             $modal.modal('show');
 
+        } else {
+            alert('Material not found (id=' + id + ')');
         }
     };
 
@@ -486,9 +493,20 @@
 
     };
 
-    LadbTabMaterials.prototype.init = function () {
+    LadbTabMaterials.prototype.init = function (initializedCallback) {
         var that = this;
 
+        // Register commands
+        this.registerCommand('edit_material', function(parameters) {
+            var materialId = parameters.material_id;
+            setTimeout(function() {     // Use setTimer to give time tu UI to refresh
+                that.loadList(function() {
+                    that.editMaterial(materialId);
+                });
+            }, 1);
+        });
+
+        // Load settings
         var settingsKeys = [];
         for (var type = 0; type <= 3; type++) {     // 3 = TYPE_BAR
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
@@ -502,9 +520,13 @@
 
             that.bind();
 
-            setTimeout(function() {
-                that.loadList();
-            }, 500);
+            if (initializedCallback && typeof(initializedCallback) == 'function') {
+                initializedCallback(that.$element);
+            } else {
+                setTimeout(function() {     // Use setTimer to give time tu UI to refresh
+                    that.loadList();
+                }, 1);
+            }
 
         });
 
@@ -529,7 +551,7 @@
             if (typeof option == 'string') {
                 data[option](params);
             } else {
-                data.init();
+                data.init(option.initializedCallback);
             }
         })
     }

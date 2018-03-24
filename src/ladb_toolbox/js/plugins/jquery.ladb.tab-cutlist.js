@@ -178,6 +178,14 @@
                 $(this).blur();
             });
             $('a.ladb-item-edit-material', that.$page).on('click', function() {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                var group = that.findGroupById(groupId);
+                if (group) {
+                    that.toolbox.executeCommandOnTab('materials', 'edit_material', {
+                        material_id: group.material_id
+                    });
+                }
                 $(this).blur();
             });
             $('a.ladb-item-edit-group', that.$page).on('click', function() {
@@ -794,7 +802,7 @@
 
     };
 
-    LadbTabCutlist.prototype.init = function () {
+    LadbTabCutlist.prototype.init = function (initializedCallback) {
         var that = this;
 
         this.toolbox.pullSettings([
@@ -838,6 +846,12 @@
             };
 
             that.bind();
+
+            // Callback
+            if (initializedCallback && typeof(initializedCallback) == 'function') {
+                initializedCallback(that.$element);
+            }
+
         });
 
     };
@@ -861,7 +875,7 @@
             if (typeof option == 'string') {
                 data[option](params);
             } else {
-                data.init();
+                data.init(option.initializedCallback);
             }
         })
     }

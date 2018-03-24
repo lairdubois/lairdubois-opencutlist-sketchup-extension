@@ -11,7 +11,13 @@
 
     LadbTabAbout.DEFAULTS = {};
 
-    LadbTabAbout.prototype.init = function () {
+    LadbTabAbout.prototype.init = function (initializedCallback) {
+
+        // Callback
+        if (initializedCallback && typeof(initializedCallback) == 'function') {
+            initializedCallback(that.$element);
+        }
+
     };
 
 
@@ -33,7 +39,7 @@
             if (typeof option == 'string') {
                 data[option](params);
             } else {
-                data.init();
+                data.init(option.initializedCallback);
             }
         })
     }

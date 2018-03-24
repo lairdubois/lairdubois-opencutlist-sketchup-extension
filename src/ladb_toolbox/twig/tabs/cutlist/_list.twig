@@ -93,10 +93,10 @@
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-toolbox-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        {#{% if group.material_name is not empty %}#}
-                            {#<li><a href="#" class="ladb-item-edit-material"><i class="ladb-toolbox-icon-edit"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</a></li>#}
-                        {#{% endif %}#}
                         <li><a href="#" class="ladb-item-edit-group"><i class="ladb-toolbox-icon-edit"></i> {{ 'tab.cutlist.menu.edit_group_properties'|i18next }}</a></li>
+                        {% if group.material_name is not empty %}
+                            <li><a href="#" class="ladb-item-edit-material"><i class="ladb-toolbox-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</a></li>
+                        {% endif %}
                         <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-toolbox-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li role="separator" class="divider"></li>

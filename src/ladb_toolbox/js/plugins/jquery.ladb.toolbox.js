@@ -140,22 +140,24 @@
         }
     };
 
-    LadbToolbox.prototype.selectTab = function (tabName) {
+    LadbToolbox.prototype.selectTab = function (tabName, callback) {
+        var $tab = null;
+        var $freshTab = false;
         if (tabName != this.activeTabName) {
             if (this.activeTabName) {
                 this.unselectActiveTab();
             }
-            var $tab = this.tabs[tabName];
+            $tab = this.tabs[tabName];
             if ($tab) {
+
+                $freshTab = false;
 
                 // Display tab
                 $tab.show();
 
-                // Flag tab as active
-                this.tabBtns[tabName].addClass('ladb-active');
-                this.activeTabName = tabName;
-
             } else {
+
+                $freshTab = true;
 
                 // Render and append tab
                 this.$wrapper.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
@@ -168,7 +170,10 @@
 
                 // Initialize tab (with its jQuery plugin)
                 var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
-                $tab[jQueryPluginFn]({ toolbox: this });
+                $tab[jQueryPluginFn]({
+                    toolbox: this,
+                    initializedCallback: callback
+                });
 
                 // Setup tooltips & popovers
                 this.setupTooltips();
@@ -177,15 +182,42 @@
                 // Cache tab
                 this.tabs[tabName] = $tab;
 
-                // Flag tab as active
-                this.tabBtns[tabName].addClass('ladb-active');
-                this.activeTabName = tabName;
-
             }
+
+            // Flag tab as active
+            this.tabBtns[tabName].addClass('ladb-active');
+            this.activeTabName = tabName;
+
+        } else {
+            alert('Failed to select tab : Undefined tab (' + tabName + ')')
         }
 
         // By default maximize the dialog
         this.maximize();
+
+        // If fresh tab, callback is invoke through 'initializedCallback'
+        if (!$freshTab) {
+
+            // Callback
+            if (callback && typeof(callback) == 'function') {
+                callback($tab);
+            }
+
+        }
+
+        return $tab;
+    };
+
+    LadbToolbox.prototype.executeCommandOnTab = function(tabName, command, parameters, callback) {
+
+        // Select tab and execute command
+        this.selectTab(tabName, function($tab) {
+            var jQueryPlugin = $tab.data('ladb.tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+            if (jQueryPlugin) {
+                jQueryPlugin.executeCommand(command, parameters, callback);
+            }
+        });
+
     };
 
     // Internals /////
