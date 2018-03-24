@@ -789,6 +789,11 @@
                 that.showOutdated('core.event.model_change');
             }
         });
+        addEventCallback('on_options_provider_changed', function() {
+            if (that.generateAt) {
+                that.showOutdated('core.event.options_change');
+            }
+        });
         addEventCallback('on_material_change', function() {
             if (that.generateAt) {
                 that.showOutdated('core.event.material_change');

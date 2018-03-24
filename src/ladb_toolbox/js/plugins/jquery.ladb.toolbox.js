@@ -188,8 +188,6 @@
             this.tabBtns[tabName].addClass('ladb-active');
             this.activeTabName = tabName;
 
-        } else {
-            alert('Failed to select tab : Undefined tab (' + tabName + ')')
         }
 
         // By default maximize the dialog

@@ -31,6 +31,7 @@ core:
       Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
   event:
     model_change: Das aktive Modell wurde verändert.
+    options_change: Les options du modèle ont été modifiées.
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
 tab:

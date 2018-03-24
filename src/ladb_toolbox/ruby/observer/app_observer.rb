@@ -1,3 +1,4 @@
+require_relative 'options_provider_observer'
 require_relative 'definitions_observer'
 require_relative 'materials_observer'
 require_relative 'selection_observer'
@@ -12,6 +13,7 @@ module Ladb
 
       def initialize(plugin)
         @plugin = plugin
+        @options_provider_observer = OptionsProviderObserver.new(plugin)
         @definitions_observer = DefinitionsObserver.new(plugin)
         @materials_observer = MaterialsObserver.new(plugin)
         @selection_observer = SelectionObserver.new(plugin)
@@ -39,30 +41,36 @@ module Ladb
 
       # -----
 
-      def remove_model_observers(model)
-        if model
-          # if model.definitions
-          #   model.definitions.remove_observer(@definitions_observer)
-          # end
-          if model.materials
-            model.materials.remove_observer(@materials_observer)
-          end
-          if model.selection
-            model.selection.remove_observer(@selection_observer)
-          end
-        end
-      end
-
       def add_model_observers(model)
         if model
           # if model.definitions
           #   model.definitions.add_observer(@definitions_observer)
           # end
+          if model.options['UnitsOptions']
+            model.options['UnitsOptions'].add_observer(@options_provider_observer)
+          end
           if model.materials
             model.materials.add_observer(@materials_observer)
           end
           if model.selection
             model.selection.add_observer(@selection_observer)
+          end
+        end
+      end
+
+      def remove_model_observers(model)
+        if model
+          # if model.definitions
+          #   model.definitions.remove_observer(@definitions_observer)
+          # end
+          if model.options['UnitsOptions']
+            model.options['UnitsOptions'].remove_observer(@options_provider_observer)
+          end
+          if model.materials
+            model.materials.remove_observer(@materials_observer)
+          end
+          if model.selection
+            model.selection.remove_observer(@selection_observer)
           end
         end
       end

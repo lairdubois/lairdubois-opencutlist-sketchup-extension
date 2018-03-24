@@ -9,6 +9,7 @@ in 1.x and 0.x versions.
   * Add new marerial type : *Bar*
   * Add "*Select one part*" button in part edit modal  
   * Add "*Edit 'XXX' material*" button in cutlist's group context menu   
+  * Add unit options observer   
 
 * 1.3.0 (2018-03-16)
 
