@@ -207,6 +207,9 @@ module Ladb
                   :min_height => DIALOG_MINIMIZED_HEIGHT,
                   :style => UI::HtmlDialog::STYLE_DIALOG
               })
+          @dialog.set_on_closed {
+            @dialog = nil
+          }
         else
           @dialog = UI::WebDialog.new(
               dialog_title,
@@ -220,6 +223,9 @@ module Ladb
           )
           @dialog.min_width = DIALOG_MINIMIZED_WIDTH
           @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
+          @dialog.set_on_close {
+            @dialog = nil
+          }
         end
 
         # Setup dialog page
