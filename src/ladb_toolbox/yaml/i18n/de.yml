@@ -18,11 +18,11 @@ default:
   warning: Achtung
   tip: Tipp
   date_format: Y-m-d G:i
-  unit_0: Pouces
-  unit_1: Pieds
-  unit_2: Millimètres
-  unit_3: Centimètres
-  unit_4: Mètres
+  unit_0: Zoll
+  unit_1: Fuss
+  unit_2: Millimeter
+  unit_3: Centimeter
+  unit_4: Meter
 core:
   menu:
     submenu: L'Air du Bois - Woodworking Toolbox
@@ -36,7 +36,7 @@ core:
       Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
   event:
     model_change: Das aktive Modell wurde verändert.
-    options_change: Les options du modèle ont été modifiées.
+    options_change: Die Optionen des Modells wurden verändert.
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
 tab:
@@ -93,7 +93,7 @@ tab:
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
-      std_dimension: Dimension brute
+      std_dimension: Rohmass
       material: Material
       warning: Die Veränderung des Materials wird auf alle Teile der Gruppe übertragen. Die aktuelle Gruppeneinteilung könnte sich deshalb verändern.
     option:
@@ -213,7 +213,7 @@ tab:
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
       std_thicknesses_help: Rohmasse der verfügbaren Dicken. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
-      std_sections: Sections disponibles
+      std_sections: Verfügbare Querschnitte
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
       cut_options_defaults:

@@ -18,11 +18,11 @@ default:
   warning: Warning
   tip: Tip
   date_format: m/d/Y g:ia
-  unit_0: Pouces
-  unit_1: Pieds
-  unit_2: Millimètres
-  unit_3: Centimètres
-  unit_4: Mètres
+  unit_0: Inches
+  unit_1: Feet
+  unit_2: Millimeter
+  unit_3: Centimeter
+  unit_4: Meter
 core:
   menu:
     submenu: L'Air du Bois - Woodworking Toolbox
@@ -36,7 +36,7 @@ core:
       To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
   event:
     model_change: The active model has been changed.
-    options_change: Les options du modèle ont été modifiées.
+    options_change: Options in the model have changed.
     material_change: At least one material has been changed.
     selection_change: The selection of the active model has been changed.
 tab:
@@ -93,7 +93,7 @@ tab:
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
-      std_dimension: Dimension brute
+      std_dimension: Rough Dimension
       material: Material
       warning: A modification of the material will be applied to all parts of the group. Current groups may therefore change.
     option:
