@@ -124,7 +124,9 @@ module Ladb
       # -----
 
       def trigger_event(event, params)
-        @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
+        if @dialog
+          @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
+        end
       end
 
       # -----

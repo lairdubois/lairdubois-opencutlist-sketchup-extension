@@ -101,8 +101,6 @@
             var materialUsages = response.material_usages;
             var groups = response.groups;
 
-            console.log('length_unit', length_unit);
-
             // Keep usefull data
             that.filename = filename;
             that.groups = groups;
@@ -846,8 +844,13 @@
             if (that.generateAt) {
                 that.showOutdated('core.event.model_change');
             }
+
+            // Hide edit option model (if it exists)
             $('#ladb_cutlist_modal_options').modal('hide');
+
+            // Reload options (from new active model)
             that.loadOptions();
+
         });
         addEventCallback('on_options_provider_changed', function() {
             if (that.generateAt) {

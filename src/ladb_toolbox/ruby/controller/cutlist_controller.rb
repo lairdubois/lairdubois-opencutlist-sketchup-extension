@@ -650,6 +650,8 @@ module Ladb
               :material_type => group_def.material_type,
               :part_count => group_def.part_count,
               :std_dimension => group_def.std_dimension,
+              :std_width => group_def.std_width,
+              :std_thickness => group_def.std_thickness,
               :std_available => group_def.std_available,
               :std_availability_message => group_def.std_availability_message,
               :raw_length => 0,
@@ -683,6 +685,7 @@ module Ladb
                                    :count => part_def.count,
                                    :raw_length => part_def.raw_size.length.to_s,
                                    :raw_width => part_def.raw_size.width.to_s,
+                                   :raw_thickness => part_def.raw_size.thickness.to_s,
                                    :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
                                    :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
                                    :number => part_def.number ? part_def.number : part_number,
@@ -806,17 +809,17 @@ module Ladb
 
                       row = []
                       row.push(part[:name])
+                      row.push(part[:count])
                       unless hide_raw_dimensions
                         row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_length]))
                         row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_width]))
-                        row.push(no_raw_dimensions ? '' : sanitize_length_string(group[:raw_thickness]))
+                        row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_thickness]))
                       end
                       unless hide_final_dimensions
                         row.push(no_dimensions ? '' : sanitize_length_string(part[:length]))
                         row.push(no_dimensions ? '' : sanitize_length_string(part[:width]))
                         row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
                       end
-                      row.push(part[:count])
                       row.push(part[:material_name])
 
                       csv << row
