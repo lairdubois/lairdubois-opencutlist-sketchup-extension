@@ -780,6 +780,7 @@ module Ladb
                   # Header row
                   header = []
                   header.push(@plugin.get_i18n_string('tab.cutlist.export.name'))
+                  header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
                   unless hide_raw_dimensions
                     header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_length'))
                     header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_width'))
@@ -790,7 +791,6 @@ module Ladb
                     header.push(@plugin.get_i18n_string('tab.cutlist.export.width'))
                     header.push(@plugin.get_i18n_string('tab.cutlist.export.thickness'))
                   end
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
                   header.push(@plugin.get_i18n_string('tab.cutlist.export.material_name'))
 
                   csv << header
