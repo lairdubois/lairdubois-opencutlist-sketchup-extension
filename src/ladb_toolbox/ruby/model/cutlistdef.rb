@@ -2,14 +2,14 @@ module Ladb
   module Toolbox
     class CutlistDef
 
-      attr_accessor :is_metric, :dir, :filename, :page_label, :max_number
+      attr_accessor :length_unit, :dir, :filename, :page_label, :max_number
       attr_reader :errors, :warnings, :tips, :material_usages, :group_defs
 
-      def initialize(is_metric, dir, filename, page_label)
+      def initialize(length_unit, dir, filename, page_label)
         @errors = []
         @warnings = []
         @tips = []
-        @is_metric = is_metric
+        @length_unit = length_unit
         @dir = dir
         @filename = filename
         @page_label = page_label
@@ -50,6 +50,10 @@ module Ladb
           return @group_defs[key]
         end
         nil
+      end
+
+      def is_metric?
+        @length_unit == Length::Millimeter || @length_unit == Length::Centimeter ||@length_unit == Length::Meter
       end
 
       def include_number?(number)

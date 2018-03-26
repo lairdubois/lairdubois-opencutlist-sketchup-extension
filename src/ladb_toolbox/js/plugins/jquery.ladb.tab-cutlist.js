@@ -94,11 +94,14 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var tips = response.tips;
+            var length_unit = response.length_unit;
             var is_metric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var materialUsages = response.material_usages;
             var groups = response.groups;
+
+            console.log('length_unit', length_unit);
 
             // Keep usefull data
             that.filename = filename;
@@ -110,7 +113,8 @@
             that.$fileTabs.append(Twig.twig({ ref: "tabs/cutlist/_file-tab.twig" }).render({
                 filename: filename,
                 pageLabel: pageLabel,
-                generateAt: that.generateAt
+                generateAt: that.generateAt,
+                length_unit: length_unit
             }));
 
             // Hide help panel

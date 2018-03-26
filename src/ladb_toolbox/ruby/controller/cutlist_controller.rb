@@ -376,12 +376,11 @@ module Ladb
         }
 
         length_unit = model.options["UnitsOptions"]["LengthUnit"]
-        is_metric = length_unit == Length::Millimeter || length_unit == Length::Centimeter ||length_unit == Length::Meter
         dir, filename = File.split(model ? model.path : '')
         page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
         # Create cut list def
-        cutlist_def = CutlistDef.new(is_metric, dir, filename, page_label)
+        cutlist_def = CutlistDef.new(length_unit, dir, filename, page_label)
 
         # Errors & tips
         if component_paths.length == 0
@@ -616,7 +615,8 @@ module Ladb
             :errors => cutlist_def.errors,
             :warnings => cutlist_def.warnings,
             :tips => cutlist_def.tips,
-            :is_metric => cutlist_def.is_metric,
+            :length_unit => cutlist_def.length_unit,
+            :is_metric => cutlist_def.is_metric?,
             :dir => cutlist_def.dir,
             :filename => cutlist_def.filename,
             :page_label => cutlist_def.page_label,
@@ -663,13 +663,13 @@ module Ladb
           group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
             if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
               if group_def.material_type == MaterialAttributes::TYPE_BAR
-                group[:raw_length] += (is_metric ? part_def.raw_size.length.to_m : part_def.raw_size.length) * part_def.count
+                group[:raw_length] += (cutlist_def.is_metric? ? part_def.raw_size.length.to_m : part_def.raw_size.length) * part_def.count
               end
               if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-                group[:raw_area] += (is_metric ? part_def.raw_size.area_m2 : part_def.raw_size.area) * part_def.count
+                group[:raw_area] += (cutlist_def.is_metric? ? part_def.raw_size.area_m2 : part_def.raw_size.area) * part_def.count
               end
               if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD
-                group[:raw_volume] += (is_metric ? part_def.raw_size.volume_m3 : part_def.raw_size.volume) * part_def.count
+                group[:raw_volume] += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume) * part_def.count
               end
             end
             group[:parts].push({
@@ -702,7 +702,7 @@ module Ladb
           }
 
           # Compute imperial group's raw dimensions
-          unless is_metric
+          unless cutlist_def.is_metric?
             group[:raw_length] = group[:raw_length].to_feet
             group[:raw_area] = group[:raw_area] / 144
             group[:raw_volume] = group[:raw_volume] / 144

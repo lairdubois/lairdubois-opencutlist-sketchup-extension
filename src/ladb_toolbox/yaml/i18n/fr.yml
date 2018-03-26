@@ -18,6 +18,11 @@ default:
   warning: Attention
   tip: Astuce
   date_format: d/m/Y G:i
+  unit_0: Pouces
+  unit_1: Pieds
+  unit_2: Millimètres
+  unit_3: Centimètres
+  unit_4: Mètres
 core:
   menu:
     submenu: L'Air du Bois - Boîte à outils Sketchup

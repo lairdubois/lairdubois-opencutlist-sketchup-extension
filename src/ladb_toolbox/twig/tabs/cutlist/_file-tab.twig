@@ -1,3 +1,5 @@
+{# set generateAt #}
+
 {% extends 'tabs/base-file-tab.twig' %}
 
-{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}<time>{{ generateAt|date(('default.date_format'|i18next())) }}</time>{% endblock %}
+{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}<span class="ladb-time">{{ generateAt|date(('default.date_format'|i18next())) }}</span><span class="ladb-unit">{{ ('default.unit_'~length_unit)|i18next() }}</span>{% endblock %}
