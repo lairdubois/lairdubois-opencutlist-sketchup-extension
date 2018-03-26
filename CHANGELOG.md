@@ -10,7 +10,8 @@ in 1.x and 0.x versions.
   * Add "*Select one part*" button in part edit modal  
   * Add "*Edit 'XXX' material*" button in cutlist's group context menu   
   * Add unit options observer  
-  * Show length unit in cut list header 
+  * Show length unit in cut list header
+  * Cutlist options are stored into model attributes (and SU defaults). It permits to keep cutlist option in SKP file. 
 
 * 1.3.0 (2018-03-16)
 

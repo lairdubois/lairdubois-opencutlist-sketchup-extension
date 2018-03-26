@@ -11,9 +11,14 @@ module Ladb
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
-      BUILD = '201803260844'
+      BUILD = '201803261314'
 
-      DEFAULT_SECTION = 'ladb_toolbox'
+      DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
+
+      SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults
+      SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes
+      SETTINGS_RW_STRATEGY_MODEL = 2                # Read/Write settings from/to active model attributes
+      SETTINGS_RW_STRATEGY_MODEL_GLOBAL = 3         # Read/Write settings from/to active model attributes and (if undefined from)/to global Sketchup defaults
 
       DIALOG_MAXIMIZED_WIDTH = 1100
       DIALOG_MAXIMIZED_HEIGHT = 800
@@ -318,24 +323,49 @@ module Ladb
 
       # -- Commands ---
 
-      def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ] }
+      def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
         keys = params['keys']
+        strategy = params['strategy']   # Strategy used to read settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
         values = []
         keys.each { |key|
+
+          value = nil
+          if strategy && Sketchup.active_model
+
+            if strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+                value = Sketchup.read_default(DEFAULT_SECTION, key)
+                if value == nil
+                  value = Sketchup.active_model.get_attribute(DEFAULT_DICTIONARY, key)
+                end
+            elsif strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
+                value = Sketchup.active_model.get_attribute(DEFAULT_DICTIONARY, key)
+            end
+
+          end
+          if value == nil
+            value = Sketchup.read_default(DEFAULT_SECTION, key)
+          end
+
           values.push({
                           :key => key,
-                          :value => Sketchup.read_default(DEFAULT_SECTION, key)
+                          :value => value
                       })
         }
         { :values => values }
       end
 
-      def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
+      def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
         settings = params['settings']
+        strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
         settings.each { |setting|
           key = setting['key']
           value = setting['value']
-          Sketchup.write_default(DEFAULT_SECTION, key, value)
+          if strategy != nil || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+            Sketchup.write_default(DEFAULT_SECTION, key, value)
+          end
+          if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
+            Sketchup.active_model.set_attribute(DEFAULT_DICTIONARY, key, value)
+          end
         }
       end
 

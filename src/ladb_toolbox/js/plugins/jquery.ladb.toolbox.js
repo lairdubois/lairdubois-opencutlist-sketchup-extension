@@ -62,10 +62,11 @@
 
     // Settings /////
 
-    LadbToolbox.prototype.pullSettings = function (keys, callback) {
+    LadbToolbox.prototype.pullSettings = function (keys, strategy, callback) {
         var that = this;
 
-        rubyCallCommand('core_read_settings', { keys: keys }, function(data) {          // Read settings values from SU default
+        // Read settings values from SU default or Model attributes according to the strategy
+        rubyCallCommand('core_read_settings', { keys: keys, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ }, function(data) {
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
@@ -77,16 +78,17 @@
         });
     };
 
-    LadbToolbox.prototype.setSettings = function (settings) {
+    LadbToolbox.prototype.setSettings = function (settings, strategy) {
         for (var i = 0; i < settings.length; i++) {
             var setting = settings[i];
             this.settings[setting.key] = setting.value;
         }
-        rubyCallCommand('core_write_settings', { settings: settings });                 // Write settings values to SU default
+        // Write settings values to SU default or Model attributes according to the strategy
+        rubyCallCommand('core_write_settings', { settings: settings, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ });
     };
 
-    LadbToolbox.prototype.setSetting = function (key, value) {
-        this.setSettings([ { key: key, value: value } ]);
+    LadbToolbox.prototype.setSetting = function (key, value, strategy) {
+        this.setSettings([ { key: key, value: value } ], strategy);
     };
 
     LadbToolbox.prototype.getSetting = function (key, defaultValue) {
@@ -285,40 +287,42 @@
         var that = this;
 
         this.pullSettings([
-            SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
-        ], function() {
+                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
+            ],
+            0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
+            function () {
 
-            that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+                that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
 
-            // Add i18next twig filter
-            Twig.extendFilter("i18next", function(value, options) {
-                return i18next.t(value, options ? options[0] : {});
+                // Add i18next twig filter
+                Twig.extendFilter("i18next", function (value, options) {
+                    return i18next.t(value, options ? options[0] : {});
+                });
+
+                // Render and append layout template
+                that.$element.append(Twig.twig({ref: "core/layout.twig"}).render({
+                    capabilities: that.capabilities,
+                    compatibilityAlertHidden: that.compatibilityAlertHidden,
+                    tabDefs: that.options.tabDefs
+                }));
+
+                // Fetch usefull elements
+                that.$wrapper = $('#ladb_wrapper', that.$element);
+                that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
+                that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+                that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
+                for (var i = 0; i < that.options.tabDefs.length; i++) {
+                    var tabDef = that.options.tabDefs[i];
+                    that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+                }
+
+                that.bind();
+
+                if (that.options.dialog_startup_tab_name) {
+                    that.selectTab(that.options.dialog_startup_tab_name);
+                }
+
             });
-
-            // Render and append layout template
-            that.$element.append(Twig.twig({ ref: "core/layout.twig" }).render({
-                capabilities: that.capabilities,
-                compatibilityAlertHidden: that.compatibilityAlertHidden,
-                tabDefs: that.options.tabDefs
-            }));
-
-            // Fetch usefull elements
-            that.$wrapper = $('#ladb_wrapper', that.$element);
-            that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
-            that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
-            that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
-            for (var i = 0; i < that.options.tabDefs.length; i++) {
-                var tabDef = that.options.tabDefs[i];
-                that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
-            }
-
-            that.bind();
-
-            if (that.options.dialog_startup_tab_name) {
-                that.selectTab(that.options.dialog_startup_tab_name);
-            }
-
-        });
 
     };
 
