@@ -7,7 +7,7 @@ in 1.x and 0.x versions.
 * 1.4.0 (DEV)
 
   * Add new marerial type : *Bar*
-  * Add "*Select one part*" button in part edit modal  
+  * Add "*Highlight part in model*" button in part's row and edit modal  
   * Add "*Edit 'XXX' material*" button in cutlist's group context menu   
   * Add unit options observer  
   * Show length unit in cut list header

@@ -5,7 +5,7 @@
 
 {% block containerInner %}
     <h3>{{ 'tab.about.version'|i18next }}</h3>
-    <p><strong>{{ capabilities.version }}</strong>&nbsp;&nbsp;{{ capabilities.language|upper }}&nbsp;&nbsp;<small class="text-muted">build: {{ capabilities.build }}</small> - <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/CHANGELOG.md" target="_blank">CHANGELOG</a></p>
+    <p><strong>{{ capabilities.version }}</strong>&nbsp;&nbsp;{{ capabilities.language|upper }}&nbsp;&nbsp;<small class="text-muted">( build: {{ capabilities.build }} )</small> - <a href="https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/blob/master/CHANGELOG.md" target="_blank">CHANGELOG</a></p>
     <p>
         <em>SU {{ capabilities.sketchupVersion }} - Ruby {{ capabilities.ruby_version }} - {{ capabilities.currentOS }} - {{ capabilities.locale }}</em>
         <br>

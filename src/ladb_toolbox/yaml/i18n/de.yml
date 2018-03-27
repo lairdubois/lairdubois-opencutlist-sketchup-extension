@@ -49,9 +49,12 @@ tab:
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
+    highlight_part: Voir la pièce dans le modèle
+    highlight_error: Teil '{{ name }}' wurde im Model nicht gefunden
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
+      highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Eigenschaften bearbeiten
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
@@ -87,9 +90,6 @@ tab:
         - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
-      select_part: Teil selektieren
-      select_first_part: Erstes Teil selektieren
-      select_error: Teil '{{ name }}' wurde im Model nicht gefunden
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile

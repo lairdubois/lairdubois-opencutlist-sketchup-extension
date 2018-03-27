@@ -49,9 +49,12 @@ tab:
     material_unknow: Matière non définie
     not_available_thickness: Epaisseur non disponible
     not_available_section: Section non disponible
+    highlight_part: Voir la pièce dans le modèle
+    highlight_error: Pièce '{{ name }}' est introuvable dans le modèle
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
+      highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Editer les propriétés de la pièce
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
@@ -87,9 +90,6 @@ tab:
         - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
-      select_part: Sélectionner la pièce
-      select_first_part: Sélectionner la première pièce
-      select_error: Pièce '{{ name }}' est introuvable dans le modèle
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces

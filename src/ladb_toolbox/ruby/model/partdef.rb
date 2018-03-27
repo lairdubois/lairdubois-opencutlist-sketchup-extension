@@ -5,7 +5,7 @@ module Ladb
     class PartDef
 
       attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
-      attr_reader :entity_ids, :entity_names, :contains_blank_entity_names
+      attr_reader :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names
 
       def initialize()
         @definition_id = ''
@@ -20,8 +20,9 @@ module Ladb
         @material_origins = []
         @cumulable = DefinitionAttributes::CUMULABLE_NONE
         @orientation_locked_on_axis = false
-        @entity_ids = []
-        @entity_names = []
+        @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
+        @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
+        @entity_names = []                  # All non empty entity instance names (array count could be smaller than @count)
         @contains_blank_entity_names = false
       end
 
@@ -106,11 +107,15 @@ module Ladb
         end
       end
 
+      def add_entity_serialized_path(entity_serialized_path)
+        @entity_serialized_paths.push(entity_serialized_path)
+      end
+
       def add_entity_name(entity_name)
         if entity_name.empty?
           @contains_blank_entity_names = true
         else
-          unless @entity_names.include? entity_name
+          unless @entity_names.include? entity_name   # Because instance name could be defined several times
             @entity_names.push(entity_name)
           end
         end

@@ -11,7 +11,7 @@ module Ladb
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
-      BUILD = '201803261446'
+      BUILD = '201803271237'
 
       DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
 
@@ -336,7 +336,7 @@ module Ladb
 
             if strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
                 value = Sketchup.read_default(DEFAULT_SECTION, key)
-                if value == nil
+                if value.nil?
                   value = Sketchup.active_model.get_attribute(DEFAULT_DICTIONARY, key)
                 end
             elsif strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
@@ -344,7 +344,7 @@ module Ladb
             end
 
           end
-          if value == nil
+          if value.nil?
             value = Sketchup.read_default(DEFAULT_SECTION, key)
           end
 
@@ -362,7 +362,7 @@ module Ladb
         settings.each { |setting|
           key = setting['key']
           value = setting['value']
-          if strategy != nil || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+          if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
             Sketchup.write_default(DEFAULT_SECTION, key, value)
           end
           if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)

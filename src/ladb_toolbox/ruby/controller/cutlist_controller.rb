@@ -7,9 +7,14 @@ require_relative '../model/size3d'
 require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
+require_relative '../model/instancedef'
 require_relative '../model/material_usage'
 require_relative '../model/material_attributes'
 require_relative '../model/definition_attributes'
+require_relative '../utils/model_utils'
+require_relative '../utils/path_utils'
+require_relative '../utils/transformation_utils'
+require_relative '../tool/highlight_part_tool'
 
 module Ladb
   module Toolbox
@@ -55,8 +60,8 @@ module Ladb
           part_get_thumbnail_command(part_data)
         end
 
-        @plugin.register_command("cutlist_part_select") do |part_data|
-          part_select_command(part_data)
+        @plugin.register_command("cutlist_part_highlight") do |part_data|
+          part_highlight_command(part_data)
         end
 
         @plugin.register_command("cutlist_part_update") do |part_data|
@@ -79,9 +84,10 @@ module Ladb
         @cutlist = nil
 
         # Setup caches
-        @material_attributes_cache = {}
-        @definition_attributes_cache = {}
-        @definition_bounds_cache = {}
+        @material_attributes_cache = {}     # Cleared after response
+        @definition_attributes_cache = {}   # Cleared after response
+        @definition_bounds_cache = {}       # Cleared after response
+        @path_transformations_cache = {}
 
         # [BEGIN] -- Utils definitions --
 
@@ -151,22 +157,25 @@ module Ladb
           child_face_count
         end
 
-        # -- Scale 3D utils --
+        # -- Transformation utils --
 
-        def _compute_local_scale(entity)
-          transformation_a = entity.transformation.to_a
-          vx = Geom::Vector3d.new(transformation_a[0], transformation_a[1], transformation_a[2])
-          vy = Geom::Vector3d.new(transformation_a[4], transformation_a[5], transformation_a[6])
-          vz = Geom::Vector3d.new(transformation_a[8], transformation_a[9], transformation_a[10])
-          Scale3d.new(vx.length, vy.length, vz.length)
-        end
+        def _compute_path_transformation(path)  # path is Array<ComponentInstance>
 
-        def _compute_global_scale(path)
-          global_scale = Scale3d.new
+          serialized_path = PathUtils::serialize_path(path)
+
+          if @path_transformations_cache.has_key? serialized_path
+            return @path_transformations_cache[serialized_path]
+          end
+
+          transformation = Geom::Transformation.new
           path.each { |entity|
-            global_scale.mult(_compute_local_scale(entity))
+            transformation *= entity.transformation
           }
-          global_scale
+
+          # Store to cache
+          @path_transformations_cache[serialized_path] = transformation
+
+          return serialized_path, transformation
         end
 
         # -- Bounds Utils --
@@ -413,11 +422,10 @@ module Ladb
 
           entity = component_path.last
 
-          material, material_origin = _get_material(component_path, smart_material)
           definition = entity.definition
-
           definition_attributes = _get_definition_attributes(definition)
 
+          material, material_origin = _get_material(component_path, smart_material)
           material_id = material ? material.entityID : ''
           material_name = material ? material.name : ''
           material_attributes = _get_material_attributes(material)
@@ -429,9 +437,10 @@ module Ladb
             end
           end
 
-          # Compute scale and sizes
+          # Compute transformation, scale and sizes
 
-          scale = _compute_global_scale(component_path)
+          serialized_path, transformation = _compute_path_transformation(component_path)
+          scale = TransformationUtils::get_scale3d(transformation)
           size = _size_from_bounds(
               _compute_faces_bounds(definition),
               scale,
@@ -532,7 +541,7 @@ module Ladb
 
           # Define part
 
-          # Include size into key to separate instences with the same definition, but different scale
+          # Include size into key to separate instances with the same definition, but different scale
           key = definition.name + '|' + size.length.to_s + '|' + size.width.to_s + '|' + size.thickness.to_s
           part_def = group_def.get_part_def(key)
           unless part_def
@@ -579,6 +588,7 @@ module Ladb
           part_def.count += 1
           part_def.add_material_origin(material_origin)
           part_def.add_entity_id(entity.entityID)
+          part_def.add_entity_serialized_path(serialized_path)
           part_def.add_entity_name(entity.name)
 
           group_def.part_count += 1
@@ -695,6 +705,7 @@ module Ladb
                                    :cumulable => part_def.cumulable,
                                    :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
                                    :entity_ids => part_def.entity_ids,
+                                   :entity_serialized_paths => part_def.entity_serialized_paths,
                                    :entity_names => part_def.entity_names.sort,
                                    :contains_blank_entity_names => part_def.contains_blank_entity_names
                                }
@@ -910,24 +921,33 @@ module Ladb
         response
       end
 
-      def part_select_command(part_data)
+      def part_highlight_command(part_data)
 
         response = {
             :success => false
         }
 
         # Extract parameters
-        entity_ids = part_data['entity_ids']
+        name = part_data['name']
+        length = part_data['length']
+        width = part_data['width']
+        thickness = part_data['thickness']
+        entity_serialized_paths = part_data['entity_serialized_paths']
 
-        model = Sketchup.active_model
-        entity = _find_entity_by_id(model, entity_ids.first)
+        # Populate instance defs
+        instance_defs = []
+        entity_serialized_paths.each { |entity_serialized_path|
+          entity = PathUtils.get_leaf_entity(entity_serialized_path)
+          unless entity.nil?
+            instance_defs.push(InstanceDef.new(entity, @path_transformations_cache[entity_serialized_path]))
+          end
+        }
 
-        if entity
+        unless instance_defs.empty?
 
-          # Select entity
-          selection = model.selection
-          selection.clear
-          selection.add(entity)
+          # Create and activate highlight part tool
+          highlight_tool = HighlightPartTool.new(name, length, width, thickness, instance_defs)
+          Sketchup.active_model.select_tool(highlight_tool)
 
           response[:success] = true
 
@@ -964,12 +984,12 @@ module Ladb
 
         # Update component instance material
         materials = model.materials
-        if material_name == nil or material_name.empty? or (material = materials[material_name])
+        if material_name.nil? or material_name.empty? or (material = materials[material_name])
 
           entity_ids.each { |entity_id|
-            entity = _find_entity_by_id(model, entity_id)
+            entity = ModelUtils::find_entity_by_id(model, entity_id)
             if entity
-              if material_name == nil or material_name.empty?
+              if material_name.nil? or material_name.empty?
                 entity.material = nil
               elsif entity.material != material
                 entity.material = material
@@ -992,14 +1012,14 @@ module Ladb
 
         # Update component instance material
         materials = model.materials
-        if material_name == nil or material_name.empty? or (material = materials[material_name])
+        if material_name.nil? or material_name.empty? or (material = materials[material_name])
 
           parts.each { |part_data|
             entity_ids = part_data['entity_ids']
             entity_ids.each { |component_id|
-              entity = _find_entity_by_id(model, component_id)
+              entity = ModelUtils::find_entity_by_id(model, component_id)
               if entity
-                if material_name == nil or material_name.empty?
+                if material_name.nil? or material_name.empty?
                   entity.material = nil
                 elsif entity.material != material
                   entity.material = material
@@ -1010,21 +1030,6 @@ module Ladb
 
         end
 
-      end
-
-      private
-
-      def _find_entity_by_id(model, entity_id)
-        if Sketchup.version_number >= 15000000
-          return model.find_entity_by_id(entity_id)
-        else
-          model.entities.each { |entity|
-            if entity.entityID == entity_id
-              return entity
-            end
-          }
-        end
-        nil
       end
 
     end

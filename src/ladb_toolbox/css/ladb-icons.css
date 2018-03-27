@@ -29,9 +29,6 @@ i, span.ladb-toolbox-icon {
 }
 
 
-.ladb-toolbox-icon-cursor:before {
-  content: "\e923";
-}
 .ladb-toolbox-icon-resized:before {
   content: "\e921";
 }
@@ -73,6 +70,9 @@ i, span.ladb-toolbox-icon {
 }
 .ladb-toolbox-icon-edit:before {
   content: "\e90d";
+}
+.ladb-toolbox-icon-magnifier:before {
+  content: "\e924";
 }
 .ladb-toolbox-icon-arrow-circle-down:before {
   content: "\e90f";

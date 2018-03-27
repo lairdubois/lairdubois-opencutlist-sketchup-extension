@@ -221,6 +221,12 @@
                 $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
                 $(this).blur();
             });
+            $('a.ladb-btn-highlight-part', that.$page).on('click', function() {
+                var partId = $(this).data('part-id');
+                that.highlightPart(partId);
+                $(this).blur();
+                return false;
+            });
             $('a.ladb-btn-edit-part', that.$page).on('click', function() {
                 var partId = $(this).data('part-id');
                 that.editPart(partId);
@@ -324,6 +330,28 @@
         return null;
     };
 
+    LadbTabCutlist.prototype.highlightPart = function (id) {
+        var that = this;
+
+        var part = this.findPartById(id);
+        if (part) {
+
+            rubyCallCommand('cutlist_part_highlight', part, function (response) {
+
+                var success = response['success'];
+
+                if (success) {
+                    that.toolbox.minimize();
+                } else {
+                    that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t('tab.cutlist.highlight_error', {'name': part.name}), 'error');
+                }
+
+            });
+
+        }
+
+    };
+
     LadbTabCutlist.prototype.editPart = function (id) {
         var that = this;
 
@@ -356,7 +384,7 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $btnSelect = $('#ladb_cutlist_part_select', $modal);
+                var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Bind select
@@ -368,21 +396,10 @@
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind buttons
-                $btnSelect.on('click', function () {
+                $btnHighlight.on('click', function () {
+                    that.highlightPart(id);
                     this.blur();
-
-                    rubyCallCommand('cutlist_part_select', that.editedPart, function(response) {
-
-                        var success = response['success'];
-
-                        if (success) {
-                            that.toolbox.minimize();
-                        } else {
-                            that.toolbox.notify('<i class="ladb-toolbox-icon-warning"></i> ' + i18next.t('tab.cutlist.edit_part.select_error', { 'name':that.editedPart.name }), 'error');
-                        }
-
-                    });
-
+                    return false;
                 });
                 $btnUpdate.on('click', function () {
 
