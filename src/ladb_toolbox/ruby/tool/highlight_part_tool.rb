@@ -5,9 +5,9 @@ module Ladb
       COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
       COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
 
-      def initialize(name, length, width, thickness, instance_defs)
-        @name = name
-        @dimensions = '(' + length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s + ')'
+      def initialize(text_line_1, text_line_2, instance_defs)
+        @text_line_1 = text_line_1
+        @text_line_2 = text_line_2
         @face_triangles_cache = []
         model = Sketchup.active_model
         if model
@@ -37,8 +37,8 @@ module Ladb
       def draw(view)
         view.drawing_color = COLOR_FACE
         view.draw(GL_TRIANGLES, @face_triangles_cache)
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 50, 0), @name, color: COLOR_TEXT, size: 20, align: TextAlignCenter)
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 25, 0), @dimensions, color: COLOR_TEXT, size: 15, align: TextAlignCenter)
+        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 50, 0), @text_line_1, color: COLOR_TEXT, size: 20, align: TextAlignCenter)
+        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 25, 0), @text_line_2, color: COLOR_TEXT, size: 15, align: TextAlignCenter)
       end
 
       def onLButtonUp(flags, x, y, view)

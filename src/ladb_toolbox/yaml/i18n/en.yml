@@ -23,6 +23,8 @@ default:
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
+  part_single: part
+  part_plural: parts
 core:
   menu:
     submenu: L'Air du Bois - Woodworking Toolbox

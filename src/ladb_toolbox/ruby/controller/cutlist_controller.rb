@@ -932,6 +932,7 @@ module Ladb
         length = part_data['length']
         width = part_data['width']
         thickness = part_data['thickness']
+        material_name = part_data['material_name']
         entity_serialized_paths = part_data['entity_serialized_paths']
 
         # Populate instance defs
@@ -945,8 +946,14 @@ module Ladb
 
         unless instance_defs.empty?
 
+          # Compute text infos
+          text_line_1 = name
+          text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
+              ' | ' + instance_defs.length.to_s + ' ' + @plugin.get_i18n_string(instance_defs.length > 1 ? 'default.part_plural' : 'default.part_single') +
+              ' | ' + material_name
+
           # Create and activate highlight part tool
-          highlight_tool = HighlightPartTool.new(name, length, width, thickness, instance_defs)
+          highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_defs)
           Sketchup.active_model.select_tool(highlight_tool)
 
           response[:success] = true

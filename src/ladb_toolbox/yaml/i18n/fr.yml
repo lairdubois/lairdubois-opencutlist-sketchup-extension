@@ -23,6 +23,8 @@ default:
   unit_2: Millimètres
   unit_3: Centimètres
   unit_4: Mètres
+  part_single: pièce
+  part_plural: pièces
 core:
   menu:
     submenu: L'Air du Bois - Boîte à outils Sketchup
