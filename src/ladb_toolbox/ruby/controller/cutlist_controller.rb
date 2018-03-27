@@ -927,6 +927,10 @@ module Ladb
             :success => false
         }
 
+        model = Sketchup.active_model
+
+        return response unless model
+
         # Extract parameters
         name = part_data['name']
         length = part_data['length']
@@ -953,8 +957,8 @@ module Ladb
               ' | ' + material_name
 
           # Create and activate highlight part tool
-          highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_defs)
-          Sketchup.active_model.select_tool(highlight_tool)
+          highlight_tool = HighlightPartTool.new(@plugin, text_line_1, text_line_2, instance_defs)
+          model.select_tool(highlight_tool)
 
           response[:success] = true
 

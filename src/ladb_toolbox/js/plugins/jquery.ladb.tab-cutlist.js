@@ -222,9 +222,9 @@
                 $(this).blur();
             });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function() {
+                $(this).blur();
                 var partId = $(this).data('part-id');
                 that.highlightPart(partId);
-                $(this).blur();
                 return false;
             });
             $('a.ladb-btn-edit-part', that.$page).on('click', function() {
@@ -397,8 +397,8 @@
 
                 // Bind buttons
                 $btnHighlight.on('click', function () {
-                    that.highlightPart(id);
                     this.blur();
+                    that.highlightPart(id);
                     return false;
                 });
                 $btnUpdate.on('click', function () {
