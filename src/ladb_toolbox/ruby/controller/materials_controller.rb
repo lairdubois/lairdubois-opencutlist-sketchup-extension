@@ -42,7 +42,7 @@ module Ladb
       def list_command()
 
         model = Sketchup.active_model
-        materials = model.materials
+        materials = model ? model.materials : []
 
         temp_dir = @plugin.temp_dir
         material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
@@ -54,7 +54,7 @@ module Ladb
         response = {
             :errors => [],
             :warnings => [],
-            :filename => Pathname.new(model.path).basename,
+            :filename => model ? Pathname.new(model.path).basename : '',
             :solidwood_material_count => 0,
             :sheetgood_material_count => 0,
             :bar_material_count => 0,
@@ -97,8 +97,12 @@ module Ladb
         }
 
         # Errors
-        if materials.count == 0
-          response[:errors].push('tab.materials.error.no_materials')
+        if model
+          if materials.count == 0
+            response[:errors].push('tab.materials.error.no_materials')
+          end
+        else
+          response[:errors].push("tab.materials.error.no_model")
         end
 
         # Sort materials by type ASC, display_name ASC

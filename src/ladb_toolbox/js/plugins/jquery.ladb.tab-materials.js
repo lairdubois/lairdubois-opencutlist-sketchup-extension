@@ -481,7 +481,7 @@
 
         // Events
 
-        addEventCallback([ 'on_new_model', 'on_activate_model' ], function(params) {
+        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function(params) {
             that.showOutdated('core.event.model_change');
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function() {

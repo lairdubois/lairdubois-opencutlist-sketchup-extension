@@ -11,7 +11,7 @@ module Ladb
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
-      BUILD = '201803271412'
+      BUILD = '201803271450'
 
       DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
 

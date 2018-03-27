@@ -384,7 +384,7 @@ module Ladb
           _fetch_useful_component_paths(entity, component_paths, path)
         }
 
-        length_unit = model.options["UnitsOptions"]["LengthUnit"]
+        length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
         dir, filename = File.split(model ? model.path : '')
         page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 

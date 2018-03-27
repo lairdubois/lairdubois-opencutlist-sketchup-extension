@@ -235,6 +235,7 @@ tab:
         Sie sind gerade dabei das Material **{{ material_name }}** aus Ihrem Model zu löschen.
         Vorgang bestätigen.
     error:
+      no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_materials: Ihr Modell enthält keine Materialien.
       failed_import_skm_file: Ein Fehler ist beim Importieren aus .skm Datei aufgetreten.
       failed_export_skm_file: Ein Fehler ist beim Exportieren nach .skm aufgetreten.

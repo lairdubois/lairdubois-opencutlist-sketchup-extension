@@ -235,6 +235,7 @@ tab:
         You are about to suppress the material **{{ material_name }}** from your model.
         Confirm to continue.
     error:
+      no_model: No model is open. You will need to give me more information ;)
       no_materials: Model does not contain any material.
       failed_import_skm_file: An error happened while importing from .skm file.
       failed_export_skm_file: An error happened while exporting to .skm file.
