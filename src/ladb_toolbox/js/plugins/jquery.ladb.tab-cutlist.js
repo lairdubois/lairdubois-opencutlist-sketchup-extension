@@ -178,6 +178,7 @@
                     $(target).effect("highlight", {}, 1500);
                 });
                 $(this).blur();
+                return false;
             });
             $('a.ladb-item-edit-material', that.$page).on('click', function() {
                 var $group = $(this).closest('.ladb-cutlist-group');
@@ -230,6 +231,11 @@
             $('a.ladb-btn-edit-part', that.$page).on('click', function() {
                 var partId = $(this).data('part-id');
                 that.editPart(partId);
+                $(this).blur();
+                return false;
+            });
+            $('.ladb-cutlist-row', that.$page).on('click', function() {
+                $('.ladb-click-tool', $(this)).click();
                 $(this).blur();
                 return false;
             });

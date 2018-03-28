@@ -16,8 +16,11 @@
     text-align: center;
     display: inline-block;
 
+    &[href]:hover, &[href]:focus {
+      color: #888;
+    }
+
     &:hover, &:focus {
-      color: @ladb-global-light-color;
       text-decoration: none;
     }
 
