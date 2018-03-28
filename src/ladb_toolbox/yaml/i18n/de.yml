@@ -48,7 +48,7 @@ tab:
     help: |
       Wählen Sie die Basis ihrer Holzliste in der Szene aus und klicken dann auf **Generieren**.
       Ist die Auswahl leer, verwendet das Plugin alle sichtbaren Komponenten der Szene zur Berechnung der Holzliste.
-    material_unknow: Material nicht definiert
+    material_undefined: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben

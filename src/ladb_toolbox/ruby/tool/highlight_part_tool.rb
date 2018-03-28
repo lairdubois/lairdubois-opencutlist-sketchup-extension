@@ -1,6 +1,5 @@
 require_relative 'tool'
 require_relative '../gl/gl_button'
-require_relative '../gl/gl_button'
 
 module Ladb
   module Toolbox
@@ -8,42 +7,63 @@ module Ladb
 
       COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
       COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
-      COLOR_BORDER = Sketchup::Color.new(0, 0, 0, 255).freeze
-      COLOR_FILL = Sketchup::Color.new(255, 255, 255, 128).freeze
 
-      def initialize(plugin, text_line_1, text_line_2, instance_defs)
+      FONT_TEXT = 'Verdana'
+
+      def initialize(plugin, line_1_text, line_2_text, instance_defs)
         super(plugin)
-        @text_line_1 = text_line_1
-        @text_line_2 = text_line_2
+        @line_1_text = line_1_text
+        @line_2_text = line_2_text
         @instance_defs = instance_defs
+
+        # Define text options
+        @line_1_text_options = {
+            color: COLOR_TEXT,
+            font: FONT_TEXT,
+            size: @plugin.current_os == :MAC ? 20 : 15,
+            align: TextAlignCenter
+        }
+        @line_2_text_options = {
+            color: COLOR_TEXT,
+            font: FONT_TEXT,
+            size: @plugin.current_os == :MAC ? 15 : 10,
+            align: TextAlignCenter
+        }
+        button_text_options = {
+            color: COLOR_TEXT,
+            font: FONT_TEXT,
+            size: @plugin.current_os == :MAC ? 15 : 12,
+            align: TextAlignCenter
+        }
 
         model = Sketchup.active_model
 
         @initial_model_transparency = model ? model.rendering_options["ModelTransparency"] : false
 
-        # Setup
         @face_triangles_cache = []
         @buttons = []
         if model
 
           view = model.active_view
 
+          # Compute instance faces triangles
           instance_defs.each { |instance_def|
             _compute_children_faces_tirangles(view, instance_def.entity.definition.entities, instance_def.transformation)
           }
 
           # Define buttons
-          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40) do |flags, x, y, view|
+          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
             view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
           end)
-          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40) do |flags, x, y, view|
+          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
             view.zoom_extents
           end)
 
         end
 
-
       end
+
+      # -- Tool stuff --
 
       def activate
         model = Sketchup.active_model
@@ -65,12 +85,16 @@ module Ladb
       def draw(view)
         view.drawing_color = COLOR_FACE
         view.draw(GL_TRIANGLES, @face_triangles_cache)
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 53, 0), @text_line_1, color: COLOR_TEXT, size: 20, align: TextAlignCenter)
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 28, 0), @text_line_2, color: COLOR_TEXT, size: 15, align: TextAlignCenter)
-        @buttons.each { |button|
-          button.draw(view)
-        }
+        if Sketchup.version_number >= 16000000
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 60, 0), @line_1_text, @line_1_text_options)
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @line_2_text, @line_2_text_options)
+          @buttons.each { |button|
+            button.draw(view)
+          }
+        end
       end
+
+      # -- Events --
 
       def onLButtonDown(flags, x, y, view)
         @buttons.each { |button|
@@ -100,26 +124,6 @@ module Ladb
       end
 
       private
-
-      def _draw_button(view, x, y, width, height, text = nil, border_color = nil, fill_color = nil)
-        points = [
-            Geom::Point3d.new(x         , y         , 0),
-            Geom::Point3d.new(x + width , y         , 0),
-            Geom::Point3d.new(x + width , y + height, 0),
-            Geom::Point3d.new(x         , y + height, 0)
-        ]
-        unless fill_color.nil?
-          view.drawing_color = fill_color
-          view.draw2d(GL_QUADS, points)
-        end
-        unless border_color.nil?
-          view.drawing_color = border_color
-          view.draw2d(GL_LINE_LOOP, points)
-        end
-        unless text.nil?
-          view.draw_text(Geom::Point3d.new(x + width / 2, y + (height - 20) / 2, 0), text, color: COLOR_TEXT, size: 15, align: TextAlignCenter)
-        end
-      end
 
       def _compute_children_faces_tirangles(view, entities, transformation = nil)
         entities.each { |entity|

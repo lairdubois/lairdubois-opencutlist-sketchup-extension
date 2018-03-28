@@ -11,7 +11,7 @@ module Ladb
 
       NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
-      BUILD = '201803271756'
+      BUILD = '201803280830'
 
       DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
 
@@ -28,7 +28,7 @@ module Ladb
       DIALOG_TOP = 100
       DIALOG_PREF_KEY = 'fr.lairdubois.toolbox'
 
-      attr_accessor :dialog
+      attr_accessor :dialog, :current_os
 
       @commands
       @controllers

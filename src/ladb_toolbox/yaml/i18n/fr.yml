@@ -48,7 +48,7 @@ tab:
     help: |
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
-    material_unknow: Matière non définie
+    material_undefined: Matière non définie
     not_available_thickness: Epaisseur non disponible
     not_available_section: Section non disponible
     highlight_part: Voir la pièce dans le modèle

@@ -954,7 +954,7 @@ module Ladb
           text_line_1 = name
           text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
               ' | ' + instance_defs.length.to_s + ' ' + @plugin.get_i18n_string(instance_defs.length > 1 ? 'default.part_plural' : 'default.part_single') +
-              ' | ' + material_name
+              ' | ' + (material_name.empty? ? @plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
 
           # Create and activate highlight part tool
           highlight_tool = HighlightPartTool.new(@plugin, text_line_1, text_line_2, instance_defs)
