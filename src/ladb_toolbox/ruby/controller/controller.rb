@@ -5,11 +5,9 @@ module Ladb
   module Toolbox
     class Controller
 
-      @plugin
       @tab_name
 
-      def initialize(plugin, tab_name)
-        @plugin = plugin
+      def initialize(tab_name)
         @tab_name = tab_name
       end
 

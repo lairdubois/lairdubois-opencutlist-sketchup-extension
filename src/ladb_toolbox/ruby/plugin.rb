@@ -9,9 +9,9 @@ module Ladb
   module Toolbox
     class Plugin
 
-      NAME = 'L\'Air du Bois - Woodworking Toolbox'
+      NAME = 'OpenCutList'
       VERSION = '1.4.0-dev'
-      BUILD = '201803280926'
+      BUILD = '201803282314'
 
       DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
 
@@ -28,45 +28,38 @@ module Ladb
       DIALOG_TOP = 100
       DIALOG_PREF_KEY = 'fr.lairdubois.toolbox'
 
-      attr_accessor :dialog, :current_os
+      @@temp_dir = nil
+      @@language = nil
+      @@current_os = nil
+      @@i18n_strings = nil
+      @@html_dialog_compatible = nil
 
-      @commands
-      @controllers
-      @current_os
-      @language
-      @html_dialog_compatible
-      @dialog_min_size
-      @started
-      @temp_dir
+      @@commands = {}
+      @@controllers = []
 
-      def initialize()
-        @commands = {}
-        @controllers = []
-        @current_os = :OTHER
-        @language = nil
-        @html_dialog_compatible = false
-        @dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
-        @started = false
-        @temp_dir = nil
-      end
+      @@started = false
+
+      @@dialog = nil
+      @@dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
+      @@dialog_startup_tab_name = nil
 
       # -----
 
-      def temp_dir
-        if @temp_dir
-          return @temp_dir
+      def self.temp_dir
+        if @@temp_dir
+          return @@temp_dir
         end
         dir = File.join(Sketchup.temp_dir, "ladb_toolbox")
         if Dir.exist?(dir)
           FileUtils.remove_dir(dir, true)   # Temp dir exists we clean it
         end
         Dir.mkdir(dir)
-        @temp_dir = dir
+        @@temp_dir = dir
       end
 
-      def language
-        if @language
-          return @language
+      def self.language
+        if @@language
+          return @@language
         end
         available_translations = []
         Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
@@ -74,19 +67,26 @@ module Ladb
         }
         language = Sketchup.get_locale.split('-')[0].downcase
         if available_translations.include? language
-          @language = language   # Uses SU locale only if translation is available
+          @@language = language   # Uses SU locale only if translation is available
         else
-          @language = 'en'
+          @@language = 'en'
         end
-        @language
+        @@language
       end
 
-      def get_i18n_string(path_key)
+      def self.current_os
+        if @@current_os
+          return @@current_os
+        end
+        @@current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
+      end
 
-        unless @i18n_strings
+      def self.get_i18n_string(path_key)
+
+        unless @@i18n_strings
           begin
             yaml_file = "#{__dir__}/../yaml/i18n/#{language}.yml"
-            @i18n_strings = YAML::load_file(yaml_file)
+            @@i18n_strings = YAML::load_file(yaml_file)
           rescue
             raise "Error loading i18n file (file='#{yaml_file}')."
           end
@@ -94,7 +94,7 @@ module Ladb
 
         # Iterate over values
         begin
-          i18n_string = path_key.split('.').inject(@i18n_strings) { |hash, key| hash[key] }
+          i18n_string = path_key.split('.').inject(@@i18n_strings) { |hash, key| hash[key] }
         rescue
           puts "I18n value not found (key=#{path_key})."
         end
@@ -107,15 +107,27 @@ module Ladb
 
       end
 
-      # -----
-
-      def register_command(command, &block)
-        @commands[command] = block
+      def self.html_dialog_compatible
+        if @@html_dialog_compatible
+          return @@html_dialog_compatible
+        end
+        begin
+          @@html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
+        rescue NameError
+          @@html_dialog_compatible = false
+        end
+        @@html_dialog_compatible
       end
 
-      def execute_command(command, params = nil)
-        if @commands.has_key? command
-          block = @commands[command]
+      # -----
+
+      def self.register_command(command, &block)
+        @@commands[command] = block
+      end
+
+      def self.execute_command(command, params = nil)
+        if @@commands.has_key? command
+          block = @@commands[command]
           return block.call(params)
         end
         raise "Command '#{command}' not found"
@@ -123,43 +135,27 @@ module Ladb
 
       # -----
 
-      def trigger_event(event, params)
-        if @dialog
-          @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
+      def self.trigger_event(event, params)
+        if @@dialog
+          @@dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
         end
       end
 
       # -----
 
-      def start
+      def self.start
 
         # To minimize plugin initialization, start setup is called only once
-        unless @started
-
-          # -- Check --
-
-          # Fetch OS
-          @current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
-
-          # Determine current language
-          language
-
-          # Check compatibility (If we can we use the HtmlDialog class - new in Sketchup 2017)
-          @html_dialog_compatible = true
-          begin
-            Object.const_defined?('UI::HtmlDialog')
-          rescue NameError
-            @html_dialog_compatible = false
-          end
+        unless @@started
 
           # -- Observers --
 
-          Sketchup.add_observer(AppObserver.new(self))
+          Sketchup.add_observer(AppObserver.new())
 
           # -- Controllers --
 
-          @controllers.push(CutlistController.new(self))
-          @controllers.push(MaterialsController.new(self))
+          @@controllers.push(CutlistController.new())
+          @@controllers.push(MaterialsController.new())
 
           # -- Commands --
 
@@ -182,25 +178,25 @@ module Ladb
             open_external_file_command(params)
           end
 
-          @controllers.each { |controller|
+          @@controllers.each { |controller|
             controller.setup_commands
           }
 
-          @started = true
+          @@started = true
 
         end
 
       end
 
-      def create_dialog
+      def self.create_dialog
 
         # Start
         start
 
         # Create dialog instance
         dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION
-        if @html_dialog_compatible
-          @dialog = UI::HtmlDialog.new(
+        if html_dialog_compatible
+          @@dialog = UI::HtmlDialog.new(
               {
                   :dialog_title => dialog_title,
                   :preferences_key => DIALOG_PREF_KEY,
@@ -214,11 +210,11 @@ module Ladb
                   :min_height => DIALOG_MINIMIZED_HEIGHT,
                   :style => UI::HtmlDialog::STYLE_DIALOG
               })
-          @dialog.set_on_closed {
-            @dialog = nil
+          @@dialog.set_on_closed {
+            @@dialog = nil
           }
         else
-          @dialog = UI::WebDialog.new(
+          @@dialog = UI::WebDialog.new(
               dialog_title,
               true,
               DIALOG_PREF_KEY,
@@ -228,56 +224,56 @@ module Ladb
               DIALOG_TOP,
               true
           )
-          @dialog.min_width = DIALOG_MINIMIZED_WIDTH
-          @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
-          @dialog.set_on_close {
-            @dialog = nil
+          @@dialog.min_width = DIALOG_MINIMIZED_WIDTH
+          @@dialog.min_height = DIALOG_MINIMIZED_HEIGHT
+          @@dialog.set_on_close {
+            @@dialog = nil
           }
         end
 
         # Setup dialog page
-        @dialog.set_file("#{__dir__}/../html/dialog-#{@language}.html")
+        @@dialog.set_file("#{__dir__}/../html/dialog-#{language}.html")
 
         # Set dialog size and position
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         dialog_set_position(DIALOG_LEFT, DIALOG_TOP)
 
         # Setup dialog actions
-        @dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
+        @@dialog.add_action_callback("ladb_toolbox_command") do |action_context, call_json|
           call = JSON.parse(call_json)
           response = execute_command(call['command'], call['params'])
           script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(response))) : ''}');"
-          @dialog.execute_script(script)
+          @@dialog.execute_script(script)
         end
 
       end
 
-      def show_dialog(tab_name = nil)
+      def self.show_dialog(tab_name = nil)
 
-        unless @dialog
+        unless @@dialog
           create_dialog
         end
 
-        if @dialog.visible?
+        if @@dialog.visible?
 
           if tab_name
             # Startup tab name is defined call JS to select it
-            @dialog.execute_script("$('body').ladbToolbox('selectTab', '#{tab_name}');")
+            @@dialog.execute_script("$('body').ladbToolbox('selectTab', '#{tab_name}');")
           end
 
         else
 
           # Store the startup tab name
-          @dialog_startup_tab_name = tab_name
+          @@dialog_startup_tab_name = tab_name
 
           # Show dialog
-          if @html_dialog_compatible
-            @dialog.show
+          if html_dialog_compatible
+            @@dialog.show
           else
-            if @current_os == :MAC
-              @dialog.show_modal
+            if current_os == :MAC
+              @@dialog.show_modal
             else
-              @dialog.show
+              @@dialog.show
             end
           end
 
@@ -285,17 +281,17 @@ module Ladb
 
       end
 
-      def hide_dialog
-        if @dialog
-          @dialog.close
-          @dialog = nil
+      def self.hide_dialog
+        if @@dialog
+          @@dialog.close
+          @@dialog = nil
           true
         else
           false
         end
       end
 
-      def toggle_dialog
+      def self.toggle_dialog
         unless hide_dialog
           show_dialog
         end
@@ -303,29 +299,29 @@ module Ladb
 
       private
 
-      def dialog_set_size(width, height)
-        if @dialog
-          if @current_os == :MAC && !@html_dialog_compatible
-            @dialog.execute_script("window.resizeTo(#{width},#{height})")
+      def self.dialog_set_size(width, height)
+        if @@dialog
+          if current_os == :MAC && !html_dialog_compatible
+            @@dialog.execute_script("window.resizeTo(#{width},#{height})")
           else
-            @dialog.set_size(width, height)
+            @@dialog.set_size(width, height)
           end
         end
       end
 
-      def dialog_set_position(left, top)
-        if @dialog
-          if @current_os == :MAC && !@html_dialog_compatible
-            @dialog.execute_script("window.moveTo(#{left},#{top})")
+      def self.dialog_set_position(left, top)
+        if @@dialog
+          if current_os == :MAC && !html_dialog_compatible
+            @@dialog.execute_script("window.moveTo(#{left},#{top})")
           else
-            @dialog.set_position(left, top)
+            @@dialog.set_position(left, top)
           end
         end
       end
 
       # -- Commands ---
 
-      def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
+      def self.read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
         keys = params['keys']
         strategy = params['strategy']   # Strategy used to read settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
         values = []
@@ -356,7 +352,7 @@ module Ladb
         { :values => values }
       end
 
-      def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
+      def self.write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
         settings = params['settings']
         strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
         settings.each { |setting|
@@ -371,34 +367,34 @@ module Ladb
         }
       end
 
-      def dialog_loaded_command
+      def self.dialog_loaded_command
         {
             :version => VERSION,
             :build => BUILD,
             :sketchup_version => Sketchup.version.to_s,
             :ruby_version => RUBY_VERSION,
-            :current_os => "#{@current_os}",
+            :current_os => "#{current_os}",
             :locale => Sketchup.get_locale,
-            :language => @language,
-            :html_dialog_compatible => @html_dialog_compatible,
-            :dialog_startup_size => @dialog_min_size,
-            :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
+            :language => Plugin.language,
+            :html_dialog_compatible => html_dialog_compatible,
+            :dialog_startup_size => @@dialog_min_size,
+            :dialog_startup_tab_name => @@dialog_startup_tab_name  # nil if none
         }
       end
 
-      def dialog_minimize_command
-        if @dialog
+      def self.dialog_minimize_command
+        if @@dialog
           dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         end
       end
 
-      def dialog_maximize_command
-        if @dialog
+      def self.dialog_maximize_command
+        if @@dialog
           dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
         end
       end
 
-      def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
+      def self.open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
         path = params['path']
         if path
           UI.openURL("file:///#{path}")

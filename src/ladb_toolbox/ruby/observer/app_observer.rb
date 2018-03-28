@@ -7,16 +7,14 @@ module Ladb
   module Toolbox
     class AppObserver < Sketchup::AppObserver
 
-      @plugin
       @definitions_observer
       @materials_observer
 
-      def initialize(plugin)
-        @plugin = plugin
-        @options_provider_observer = OptionsProviderObserver.new(plugin)
-        @definitions_observer = DefinitionsObserver.new(plugin)
-        @materials_observer = MaterialsObserver.new(plugin)
-        @selection_observer = SelectionObserver.new(plugin)
+      def initialize()
+        @options_provider_observer = OptionsProviderObserver.new
+        @definitions_observer = DefinitionsObserver.new
+        @materials_observer = MaterialsObserver.new
+        @selection_observer = SelectionObserver.new
         add_model_observers(Sketchup.active_model)
       end
 
@@ -24,19 +22,19 @@ module Ladb
 
       def onNewModel(model)
         # puts "onNewModel: #{model}"
-        @plugin.trigger_event('on_new_model', nil)
+        Plugin.trigger_event('on_new_model', nil)
         add_model_observers(model)
       end
 
       def onOpenModel(model)
         # puts "onOpenModel: #{model}"
-        @plugin.trigger_event('on_open_model', { :name => model.name })
+        Plugin.trigger_event('on_open_model', { :name => model.name })
         add_model_observers(model)
       end
 
       def onActivateModel(model)
         # puts "onActivateModel: #{model}"
-        @plugin.trigger_event('on_activate_model', { :name => model.name })
+        Plugin.trigger_event('on_activate_model', { :name => model.name })
       end
 
       # -----

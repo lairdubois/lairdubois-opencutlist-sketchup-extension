@@ -33,42 +33,42 @@ module Ladb
       EXPORT_OPTION_ENCODING_UTF16LE = 1
       EXPORT_OPTION_ENCODING_UTF16BE = 2
 
-      def initialize(plugin)
-        super(plugin, 'cutlist')
+      def initialize()
+        super('cutlist')
       end
 
       def setup_commands()
 
         # Setup toolbox dialog actions
-        @plugin.register_command("cutlist_generate") do |settings|
+        Plugin.register_command("cutlist_generate") do |settings|
           generate_command(settings)
         end
 
-        @plugin.register_command("cutlist_export") do |settings|
+        Plugin.register_command("cutlist_export") do |settings|
           export_command(settings)
         end
 
-        @plugin.register_command("cutlist_numbers_save") do |settings|
+        Plugin.register_command("cutlist_numbers_save") do |settings|
           numbers_command(settings, false)
         end
 
-        @plugin.register_command("cutlist_numbers_reset") do |settings|
+        Plugin.register_command("cutlist_numbers_reset") do |settings|
           numbers_command(settings, true)
         end
 
-        @plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
+        Plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
           part_get_thumbnail_command(part_data)
         end
 
-        @plugin.register_command("cutlist_part_highlight") do |part_data|
+        Plugin.register_command("cutlist_part_highlight") do |part_data|
           part_highlight_command(part_data)
         end
 
-        @plugin.register_command("cutlist_part_update") do |part_data|
+        Plugin.register_command("cutlist_part_update") do |part_data|
           part_update_command(part_data)
         end
 
-        @plugin.register_command("cutlist_group_update") do |group_data|
+        Plugin.register_command("cutlist_group_update") do |group_data|
           group_update_command(group_data)
         end
 
@@ -754,7 +754,7 @@ module Ladb
         if @cutlist and @cutlist[:groups]
 
           # Ask for export file path
-          export_path = UI.savepanel(@plugin.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
+          export_path = UI.savepanel(Plugin.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
           if export_path
 
             begin
@@ -790,19 +790,19 @@ module Ladb
 
                   # Header row
                   header = []
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.name'))
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.count'))
+                  header.push(Plugin.get_i18n_string('tab.cutlist.export.name'))
+                  header.push(Plugin.get_i18n_string('tab.cutlist.export.count'))
                   unless hide_raw_dimensions
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_length'))
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_width'))
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_length'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_width'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
                   end
                   unless hide_final_dimensions
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.length'))
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.width'))
-                    header.push(@plugin.get_i18n_string('tab.cutlist.export.thickness'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.length'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.width'))
+                    header.push(Plugin.get_i18n_string('tab.cutlist.export.thickness'))
                   end
-                  header.push(@plugin.get_i18n_string('tab.cutlist.export.material_name'))
+                  header.push(Plugin.get_i18n_string('tab.cutlist.export.material_name'))
 
                   csv << header
 
@@ -906,7 +906,7 @@ module Ladb
 
           definition.refresh_thumbnail
 
-          temp_dir = @plugin.temp_dir
+          temp_dir = Plugin.temp_dir
           component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
           unless Dir.exist?(component_thumbnails_dir)
             Dir.mkdir(component_thumbnails_dir)
@@ -953,11 +953,11 @@ module Ladb
           # Compute text infos
           text_line_1 = name
           text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
-              ' | ' + instance_defs.length.to_s + ' ' + @plugin.get_i18n_string(instance_defs.length > 1 ? 'default.part_plural' : 'default.part_single') +
-              ' | ' + (material_name.empty? ? @plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
+              ' | ' + instance_defs.length.to_s + ' ' + Plugin.get_i18n_string(instance_defs.length > 1 ? 'default.part_plural' : 'default.part_single') +
+              ' | ' + (material_name.empty? ? Plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
 
           # Create and activate highlight part tool
-          highlight_tool = HighlightPartTool.new(@plugin, text_line_1, text_line_2, instance_defs)
+          highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_defs)
           model.select_tool(highlight_tool)
 
           response[:success] = true

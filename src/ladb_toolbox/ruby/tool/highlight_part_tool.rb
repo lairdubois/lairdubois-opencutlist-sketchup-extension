@@ -1,17 +1,15 @@
-require_relative 'tool'
 require_relative '../gl/gl_button'
 
 module Ladb
   module Toolbox
-    class HighlightPartTool < Tool
+    class HighlightPartTool
 
       COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
       COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
 
       FONT_TEXT = 'Verdana'
 
-      def initialize(plugin, line_1_text, line_2_text, instance_defs)
-        super(plugin)
+      def initialize(line_1_text, line_2_text, instance_defs)
         @line_1_text = line_1_text
         @line_2_text = line_2_text
         @instance_defs = instance_defs
@@ -20,19 +18,19 @@ module Ladb
         @line_1_text_options = {
             color: COLOR_TEXT,
             font: FONT_TEXT,
-            size: @plugin.current_os == :MAC ? 20 : 15,
+            size: Plugin.current_os == :MAC ? 20 : 15,
             align: TextAlignCenter
         }
         @line_2_text_options = {
             color: COLOR_TEXT,
             font: FONT_TEXT,
-            size: @plugin.current_os == :MAC ? 15 : 10,
+            size: Plugin.current_os == :MAC ? 15 : 10,
             align: TextAlignCenter
         }
         button_text_options = {
             color: COLOR_TEXT,
             font: FONT_TEXT,
-            size: @plugin.current_os == :MAC ? 15 : 12,
+            size: Plugin.current_os == :MAC ? 15 : 12,
             align: TextAlignCenter
         }
 
@@ -52,10 +50,10 @@ module Ladb
           }
 
           # Define buttons
-          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
+          @buttons.push(GLButton.new(view, Plugin.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
             view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
           end)
-          @buttons.push(GLButton.new(view, @plugin.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
+          @buttons.push(GLButton.new(view, Plugin.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
             view.zoom_extents
           end)
 
@@ -138,6 +136,8 @@ module Ladb
       end
 
       def _compute_face_triangles(view, face, transformation = nil)
+
+        # Thank you @thomthom for this piece of code ;)
 
         if face.deleted?
           return false

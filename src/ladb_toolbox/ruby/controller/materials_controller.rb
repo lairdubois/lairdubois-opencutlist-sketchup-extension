@@ -7,29 +7,29 @@ module Ladb
   module Toolbox
     class MaterialsController < Controller
 
-      def initialize(plugin)
-        super(plugin, 'materials')
+      def initialize()
+        super('materials')
       end
 
       def setup_commands()
 
         # Setup toolbox dialog actions
-        @plugin.register_command("materials_list") do ||
+        Plugin.register_command("materials_list") do ||
           list_command
         end
-        @plugin.register_command("materials_purge_unused") do ||
+        Plugin.register_command("materials_purge_unused") do ||
           purge_unused_command
         end
-        @plugin.register_command("materials_update") do |material_data|
+        Plugin.register_command("materials_update") do |material_data|
           update_command(material_data)
         end
-        @plugin.register_command("materials_remove") do |material_data|
+        Plugin.register_command("materials_remove") do |material_data|
           remove_command(material_data)
         end
-        @plugin.register_command("materials_import_from_skm") do ||
+        Plugin.register_command("materials_import_from_skm") do ||
           import_from_skm_command
         end
-        @plugin.register_command("materials_export_to_skm") do |material_data|
+        Plugin.register_command("materials_export_to_skm") do |material_data|
           export_to_skm_command(material_data)
         end
 
@@ -44,7 +44,7 @@ module Ladb
         model = Sketchup.active_model
         materials = model ? model.materials : []
 
-        temp_dir = @plugin.temp_dir
+        temp_dir = Plugin.temp_dir
         material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
         if Dir.exist?(material_thumbnails_dir)
           FileUtils.remove_dir(material_thumbnails_dir, true)   # Temp dir exists we clean it
@@ -194,7 +194,7 @@ module Ladb
         }
 
         dir, filename = File.split(model ? model.path : '')
-        path = UI.openpanel(@plugin.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
+        path = UI.openpanel(Plugin.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
         if path
           begin
             materials.load(path)
@@ -224,7 +224,7 @@ module Ladb
         if material
 
           dir, filename = File.split(model ? model.path : '')
-          path = UI.savepanel(@plugin.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
+          path = UI.savepanel(Plugin.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
           if path
             begin
               material.save_as(path)
