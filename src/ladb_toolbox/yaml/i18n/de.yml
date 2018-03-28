@@ -23,8 +23,8 @@ default:
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
-  part_single: pièce
-  part_plural: pièces
+  part_single: Teil
+  part_plural: Teile
 core:
   menu:
     submenu: L'Air du Bois - Woodworking Toolbox
@@ -51,8 +51,8 @@ tab:
     material_unknow: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
-    highlight_part: Voir la pièce dans le modèle
-    highlight_error: Teil '{{ name }}' wurde im Model nicht gefunden
+    highlight_part: Das Teil im Modell hervorheben
+    highlight_error: Teil '{{ name }}' wurde im Modell nicht gefunden
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -259,5 +259,5 @@ tab:
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
 tool:
   highlight:
-    transparency: Transparence
-    zoom_extents: Voir tout
+    transparency: Transparenz
+    zoom_extents: Alles sehen

@@ -24,7 +24,7 @@ default:
   unit_3: Centimeter
   unit_4: Meter
   part_single: part
-  part_plural: parts
+  part_plural: arts
 core:
   menu:
     submenu: L'Air du Bois - Woodworking Toolbox
@@ -51,7 +51,7 @@ tab:
     material_unknow: Material Type Undefined
     not_available_thickness: Thickness not available
     not_available_section: Cross Section not available
-    highlight_part: Voir la pièce dans le modèle
+    highlight_part: Highlight the part in the model
     highlight_error: Part '{{ name }}' was not found in the model
     tooltip:
       show_hide_block: Show / Hide
@@ -259,5 +259,5 @@ tab:
       A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
 tool:
   highlight:
-    transparency: Transparence
-    zoom_extents: Voir tout
+    transparency: Transparency
+    zoom_extents: See All
