@@ -1,5 +1,4 @@
 require 'pathname'
-require 'digest'
 require 'csv'
 require_relative 'controller'
 require_relative '../model/scale3d'
@@ -140,6 +139,9 @@ module Ladb
 
               # Considere component if it contains faces
               if child_face_count > 0
+
+                puts "#{entity.definition.name} : Volume = #{entity.volume}, child_face_count = #{child_face_count}"
+
                 bounds = _compute_faces_bounds(entity.definition)
                 if bounds.width > 0 and bounds.height > 0 and bounds.depth > 0
                   component_paths.push(path + [ entity ])
@@ -180,15 +182,17 @@ module Ladb
 
         # -- Bounds Utils --
 
-        def _compute_faces_bounds(definition, transformation = nil)
+        def _compute_faces_bounds(definition_or_group, transformation = nil, no_cache = false)
 
           # Try to retrive from cache
-          if @definition_bounds_cache.has_key? definition.name
-            return @definition_bounds_cache[definition.name]
+          unless no_cache
+            if @definition_bounds_cache.has_key? definition_or_group.name
+              return @definition_bounds_cache[definition_or_group.name]
+            end
           end
 
           bounds = Geom::BoundingBox.new
-          definition.entities.each { |entity|
+          definition_or_group.entities.each { |entity|
             if entity.is_a? Sketchup::Face
               face_bounds = entity.bounds
               if transformation
@@ -199,14 +203,16 @@ module Ladb
               end
               bounds.add(face_bounds)
             elsif entity.is_a? Sketchup::Group
-              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
+              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation, true))
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
+              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation, true))
             end
           }
 
           # Store to cache
-          @definition_bounds_cache[definition.name] = bounds
+          unless no_cache
+            @definition_bounds_cache[definition_or_group.name] = bounds
+          end
 
           bounds
         end
@@ -497,7 +503,7 @@ module Ladb
 
           # Define group
 
-          group_id = Digest::SHA1.hexdigest("#{material_name}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? ':' + std_info[:dimension] : ''}")
+          group_id = GroupDef.generate_group_id(material, material_attributes, std_info)
           group_def = cutlist_def.get_group_def(group_id)
           unless group_def
 
@@ -541,12 +547,11 @@ module Ladb
 
           # Define part
 
-          # Include size into key to separate instances with the same definition, but different scale
-          key = definition.name + '|' + size.length.to_s + '|' + size.width.to_s + '|' + size.thickness.to_s
-          part_def = group_def.get_part_def(key)
+          part_id = PartDef.generate_part_id(group_id, definition, size)
+          part_def = group_def.get_part_def(part_id)
           unless part_def
 
-            part_def = PartDef.new
+            part_def = PartDef.new(part_id)
             part_def.definition_id = definition.name
             part_def.number = number
             part_def.saved_number = definition_attributes.number
@@ -558,7 +563,7 @@ module Ladb
             part_def.cumulable = definition_attributes.cumulable
             part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
 
-            group_def.set_part_def(key, part_def)
+            group_def.set_part_def(part_id, part_def)
 
             if number
 

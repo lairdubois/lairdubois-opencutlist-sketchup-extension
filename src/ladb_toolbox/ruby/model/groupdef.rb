@@ -1,3 +1,5 @@
+require 'digest'
+
 module Ladb
   module Toolbox
     class GroupDef
@@ -19,6 +21,14 @@ module Ladb
         @part_count = 0
         @part_defs = {}
       end
+
+      # -----
+
+      def self.generate_group_id(material, material_attributes, std_info)
+        Digest::MD5.hexdigest("#{material.nil? ? 0 : material.entityID}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? '|' + std_info[:dimension] : ''}")
+      end
+
+      # -----
 
       def set_part_def(key, part_def)
         @part_defs.store(key, part_def)

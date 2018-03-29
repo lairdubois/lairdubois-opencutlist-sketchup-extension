@@ -18,7 +18,7 @@
                 </div>
             </div>
         {% else %}
-            <a data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ materialOrigin }}"></i></a>
+            <a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-toolbox-icon-material-origin-{{ materialOrigin }}"></i></a>
         {% endif %}
     {% endif %}
 {% endfor %}

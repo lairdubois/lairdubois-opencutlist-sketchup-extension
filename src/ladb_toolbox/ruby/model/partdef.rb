@@ -5,9 +5,10 @@ module Ladb
     class PartDef
 
       attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
-      attr_reader :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names
+      attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names
 
-      def initialize()
+      def initialize(id)
+        @id = id
         @definition_id = ''
         @number = nil
         @saved_number = nil
@@ -27,6 +28,11 @@ module Ladb
       end
 
       # -----
+
+      def self.generate_part_id(group_id, definition, size)
+        # Include size into part_id to separate instances with the same definition, but different scale
+        Digest::MD5.hexdigest("#{group_id}|#{definition.entityID}|#{size.length.inspect}|#{size.width.inspect}|#{size.thickness.inspect}")
+      end
 
       def self.part_order(part_def_a, part_def_b, strategy)
         a_values = []
@@ -75,9 +81,9 @@ module Ladb
 
       # -----
 
-      def id
-        Digest::SHA1.hexdigest(@entity_ids.join(','))   # ParfDef ID is generated according to its entity list
-      end
+      # def id
+      #   Digest::SHA1.hexdigest(@entity_ids.join(','))   # ParfDef ID is generated according to its entity list
+      # end
 
       def cumulative_raw_length
         if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
