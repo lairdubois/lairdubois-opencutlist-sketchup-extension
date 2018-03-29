@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_group' %}
-{% set title = 'tab.cutlist.edit_group.title'|i18next({ 'name':group.material_name~(group.material_type > 0 ? ' / '~group.raw_thickness : '') }) %}
+{% set title = 'tab.cutlist.edit_group.title'|i18next({ 'name':group.material_name~(group.material_type > 0 ? ' / '~group.std_dimension : '') }) %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
