@@ -3,6 +3,7 @@ require 'csv'
 require_relative 'controller'
 require_relative '../model/scale3d'
 require_relative '../model/size3d'
+require_relative '../model/entity_info'
 require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
@@ -79,6 +80,8 @@ module Ladb
 
       def generate_command(settings)
 
+        SKETCHUP_CONSOLE.clear
+
         # Clear previously generated cutlist
         @cutlist = nil
 
@@ -110,53 +113,77 @@ module Ladb
 
         # -- Components utils --
 
-        def _fetch_useful_component_paths(entity, component_paths, path)
-          child_face_count = 0
+        def _fetch_useful_entity_infos(entity, component_paths, path)
+          face_count = 0
+          volume = 0
+          volume_error_count = 0
           if entity.visible? and entity.layer.visible?
             if entity.is_a? Sketchup::Group
 
               # Entity is a group : check its children
               entity.entities.each { |child_entity|
-                child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [ entity ])
+                child_face_count, child_volume, child_volume_error_count = _fetch_useful_entity_infos(child_entity, component_paths, path + [entity ])
+                face_count += child_face_count
+                volume += child_volume
+                volume_error_count += child_volume_error_count
               }
+
+              # Add volume if not null
+              entity_volume = entity.volume
+              if entity_volume < 0
+                volume_error_count += 1
+              else
+                volume += entity_volume
+              end
 
             elsif entity.is_a? Sketchup::ComponentInstance
 
               # Exclude special behavior components
               if entity.definition.behavior.always_face_camera?
-                return 0
+                return 0, 0, 0
               end
 
               # Entity is a component : check its children
               entity.definition.entities.each { |child_entity|
-                child_face_count += _fetch_useful_component_paths(child_entity, component_paths, path + [ entity ])
+                child_face_count, child_volume, child_volume_error_count = _fetch_useful_entity_infos(child_entity, component_paths, path + [entity ])
+                face_count += child_face_count
+                volume += child_volume
+                volume_error_count += child_volume_error_count
               }
+
+              # Add volume if not null
+              entity_volume = entity.volume
+              if entity_volume < 0
+                volume_error_count += 1
+              else
+                volume += entity_volume
+              end
 
               # Treat cuts_opening behavior components as group
               if entity.definition.behavior.cuts_opening?
-                return child_face_count
+                return face_count, volume, volume_error_count
               end
 
               # Considere component if it contains faces
-              if child_face_count > 0
-
-                puts "#{entity.definition.name} : Volume = #{entity.volume}, child_face_count = #{child_face_count}"
-
+              if face_count > 0
                 bounds = _compute_faces_bounds(entity.definition)
-                if bounds.width > 0 and bounds.height > 0 and bounds.depth > 0
-                  component_paths.push(path + [ entity ])
-                  child_face_count = 0 # Do not propagate face count to parent
+                unless bounds.empty?
+                  component_paths.push(EntityInfo.new(path + [ entity ], volume_error_count > 0 ? -1 : volume, bounds))
+                  # component_paths.push(path + [ entity ])
+                  face_count = 0            # Do not propagate face count to parent
+                  volume = 0                # Do not propagate volume to parent
+                  volume_error_count = 0    # Do not propagate volume to parent
                 end
               end
 
             elsif entity.is_a? Sketchup::Face
 
               # Entity is a face : return 1
-              child_face_count = 1
+              face_count = 1
 
             end
           end
-          child_face_count
+          return face_count, volume, volume_error_count
         end
 
         # -- Transformation utils --
@@ -182,12 +209,14 @@ module Ladb
 
         # -- Bounds Utils --
 
-        def _compute_faces_bounds(definition_or_group, transformation = nil, no_cache = false)
+        def _compute_faces_bounds(definition_or_group, transformation = nil)
+
+          use_cache = transformation.nil? and definition_or_group.is_a? Sketchup::ComponentDefinition
 
           # Try to retrive from cache
-          unless no_cache
-            if @definition_bounds_cache.has_key? definition_or_group.name
-              return @definition_bounds_cache[definition_or_group.name]
+          if use_cache
+            if @definition_bounds_cache.has_key? definition_or_group.entityID
+              return @definition_bounds_cache[definition_or_group.entityID]
             end
           end
 
@@ -203,15 +232,15 @@ module Ladb
               end
               bounds.add(face_bounds)
             elsif entity.is_a? Sketchup::Group
-              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation, true))
+              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation, true))
+              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
             end
           }
 
           # Store to cache
-          unless no_cache
-            @definition_bounds_cache[definition_or_group.name] = bounds
+          if use_cache
+            @definition_bounds_cache[definition_or_group.entityID] = bounds
           end
 
           bounds
@@ -272,9 +301,6 @@ module Ladb
             return nil, MATERIAL_ORIGIN_UNKNOW
           end
           entity = path.last
-          unless entity
-            return nil, MATERIAL_ORIGIN_UNKNOW
-          end
           unless entity.is_a? Sketchup::Drawingelement
             return nil, MATERIAL_ORIGIN_UNKNOW
           end
@@ -346,9 +372,6 @@ module Ladb
             return nil
           end
           entity = path.last
-          unless entity
-            return nil
-          end
           unless entity.is_a? Sketchup::Drawingelement
             return nil
           end
@@ -384,10 +407,10 @@ module Ladb
         end
 
         # Fetch components in given entities
-        component_paths = []
+        entity_infos = []
         path = model && model.active_path ? model.active_path : []
         entities.each { |entity|
-          _fetch_useful_component_paths(entity, component_paths, path)
+          _fetch_useful_entity_infos(entity, entity_infos, path)
         }
 
         length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
@@ -398,7 +421,7 @@ module Ladb
         cutlist_def = CutlistDef.new(length_unit, dir, filename, page_label)
 
         # Errors & tips
-        if component_paths.length == 0
+        if entity_infos.length == 0
           if model
             if entities.length == 0
               cutlist_def.add_error("tab.cutlist.error.no_entities")
@@ -424,14 +447,16 @@ module Ladb
         }
 
         # Populate cutlist
-        component_paths.each { |component_path|
+        entity_infos.each { |entity_info|
 
-          entity = component_path.last
+          # puts "#{entity_info.entity.definition.name}\n\t volume = #{entity_info.volume}\n\t bounds-volume = #{entity_info.bounds.width * entity_info.bounds.height * entity_info.bounds.depth}"
+
+          entity = entity_info.entity
 
           definition = entity.definition
           definition_attributes = _get_definition_attributes(definition)
 
-          material, material_origin = _get_material(component_path, smart_material)
+          material, material_origin = _get_material(entity_info.path, smart_material)
           material_id = material ? material.entityID : ''
           material_name = material ? material.name : ''
           material_attributes = _get_material_attributes(material)
@@ -445,7 +470,7 @@ module Ladb
 
           # Compute transformation, scale and sizes
 
-          serialized_path, transformation = _compute_path_transformation(component_path)
+          serialized_path, transformation = _compute_path_transformation(entity_info.path)
           scale = TransformationUtils::get_scale3d(transformation)
           size = _size_from_bounds(
               _compute_faces_bounds(definition),
@@ -601,7 +626,7 @@ module Ladb
         }
 
         # Warnings & tips
-        if component_paths.length > 0
+        if entity_infos.length > 0
           if use_selection
             cutlist_def.add_warning("tab.cutlist.warning.partial_cutlist")
           end
