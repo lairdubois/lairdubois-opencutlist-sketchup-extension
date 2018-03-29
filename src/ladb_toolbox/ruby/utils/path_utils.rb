@@ -6,6 +6,8 @@ module Ladb
 
       SEPARATOR = '>'
 
+      # -- Serialization --
+
       def self.serialize_path(path)  # path is Array<ComponentInstance>
         return nil if path.nil?
         entity_ids = []
@@ -29,8 +31,20 @@ module Ladb
         path
       end
 
+      # -- Manipulation --
+
       def self.get_leaf_entity(serialized_path)
         ModelUtils::find_entity_by_id(Sketchup.active_model, serialized_path.split(SEPARATOR).last.to_i)
+      end
+
+      # -- Geom --
+
+      def self.get_transformation(path)
+        transformation = Geom::Transformation.new
+        path.each { |entity|
+          transformation *= entity.transformation
+        }
+        transformation
       end
 
     end

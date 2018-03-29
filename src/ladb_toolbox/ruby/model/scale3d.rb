@@ -10,6 +10,8 @@ module Ladb
         @z = z.to_l
       end
 
+      # -----
+
       def x
         @x.to_l
       end
@@ -22,8 +24,10 @@ module Ladb
         @z.to_l
       end
 
+      # -----
+
       def identity?
-        self.x == 1.to_l && self.y == 1.to_l && self.z == 1.to_l
+        self.x == 1.to_l and self.y == 1.to_l and self.z == 1.to_l
       end
 
       def mult(scale)
@@ -31,6 +35,8 @@ module Ladb
         @y = self.y * scale.y
         @z = self.z * scale.z
       end
+
+      # -----
 
       def to_s
         'Scale3d(' + @x.to_f.to_s + ', ' + @y.to_f.to_s + ', ' + @z.to_f.to_s + ')'

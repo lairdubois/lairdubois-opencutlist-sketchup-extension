@@ -9,10 +9,10 @@ module Ladb
 
       FONT_TEXT = 'Verdana'
 
-      def initialize(line_1_text, line_2_text, instance_defs)
+      def initialize(line_1_text, line_2_text, entity_infos)
         @line_1_text = line_1_text
         @line_2_text = line_2_text
-        @instance_defs = instance_defs
+        @entity_infos = entity_infos
 
         # Define text options
         @line_1_text_options = {
@@ -45,8 +45,8 @@ module Ladb
           view = model.active_view
 
           # Compute instance faces triangles
-          instance_defs.each { |instance_def|
-            _compute_children_faces_tirangles(view, instance_def.entity.definition.entities, instance_def.transformation)
+          entity_infos.each { |entity_info|
+            _compute_children_faces_tirangles(view, entity_info.entity.definition.entities, entity_info.transformation)
           }
 
           # Define buttons

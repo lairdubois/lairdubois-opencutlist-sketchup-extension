@@ -3,11 +3,10 @@ require 'csv'
 require_relative 'controller'
 require_relative '../model/scale3d'
 require_relative '../model/size3d'
-require_relative '../model/entity_info'
+require_relative '../model/instance_info'
 require_relative '../model/cutlistdef'
 require_relative '../model/groupdef'
 require_relative '../model/partdef'
-require_relative '../model/instancedef'
 require_relative '../model/material_usage'
 require_relative '../model/material_attributes'
 require_relative '../model/definition_attributes'
@@ -80,16 +79,15 @@ module Ladb
 
       def generate_command(settings)
 
-        SKETCHUP_CONSOLE.clear
-
         # Clear previously generated cutlist
         @cutlist = nil
+
+        # Clear previously generated entity infos
+        @instance_infos_cache = {}
 
         # Setup caches
         @material_attributes_cache = {}     # Cleared after response
         @definition_attributes_cache = {}   # Cleared after response
-        @definition_bounds_cache = {}       # Cleared after response
-        @path_transformations_cache = {}
 
         # [BEGIN] -- Utils definitions --
 
@@ -113,113 +111,62 @@ module Ladb
 
         # -- Components utils --
 
-        def _fetch_useful_entity_infos(entity, component_paths, path)
+        def _fetch_useful_instance_infos(entity, path, auto_orient)
           face_count = 0
-          volume = 0
-          volume_error_count = 0
           if entity.visible? and entity.layer.visible?
             if entity.is_a? Sketchup::Group
 
               # Entity is a group : check its children
               entity.entities.each { |child_entity|
-                child_face_count, child_volume, child_volume_error_count = _fetch_useful_entity_infos(child_entity, component_paths, path + [entity ])
-                face_count += child_face_count
-                volume += child_volume
-                volume_error_count += child_volume_error_count
+                face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
               }
-
-              # Add volume if not null
-              entity_volume = entity.volume
-              if entity_volume < 0
-                volume_error_count += 1
-              else
-                volume += entity_volume
-              end
 
             elsif entity.is_a? Sketchup::ComponentInstance
 
               # Exclude special behavior components
               if entity.definition.behavior.always_face_camera?
-                return 0, 0, 0
+                return 0
               end
 
-              # Entity is a component : check its children
+              # Entity is a component instance : check its children
               entity.definition.entities.each { |child_entity|
-                child_face_count, child_volume, child_volume_error_count = _fetch_useful_entity_infos(child_entity, component_paths, path + [entity ])
-                face_count += child_face_count
-                volume += child_volume
-                volume_error_count += child_volume_error_count
+                face_count = _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
               }
 
-              # Add volume if not null
-              entity_volume = entity.volume
-              if entity_volume < 0
-                volume_error_count += 1
-              else
-                volume += entity_volume
-              end
-
-              # Treat cuts_opening behavior components as group
+              # Treat cuts_opening behavior component instances as group
               if entity.definition.behavior.cuts_opening?
                 return face_count, volume, volume_error_count
               end
 
-              # Considere component if it contains faces
+              # Considere component instance if it contains faces
               if face_count > 0
+
                 bounds = _compute_faces_bounds(entity.definition)
                 unless bounds.empty?
-                  component_paths.push(EntityInfo.new(path + [ entity ], volume_error_count > 0 ? -1 : volume, bounds))
-                  # component_paths.push(path + [ entity ])
-                  face_count = 0            # Do not propagate face count to parent
-                  volume = 0                # Do not propagate volume to parent
-                  volume_error_count = 0    # Do not propagate volume to parent
+
+                  # Create the instance info
+                  instance_info = InstanceInfo.new(path + [entity ])
+                  instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
+
+                  @instance_infos_cache[instance_info.serialized_path] = instance_info
+
+                  return 0
                 end
               end
 
             elsif entity.is_a? Sketchup::Face
 
               # Entity is a face : return 1
-              face_count = 1
+              return 1
 
             end
           end
-          return face_count, volume, volume_error_count
-        end
-
-        # -- Transformation utils --
-
-        def _compute_path_transformation(path)  # path is Array<ComponentInstance>
-
-          serialized_path = PathUtils::serialize_path(path)
-
-          if @path_transformations_cache.has_key? serialized_path
-            return @path_transformations_cache[serialized_path]
-          end
-
-          transformation = Geom::Transformation.new
-          path.each { |entity|
-            transformation *= entity.transformation
-          }
-
-          # Store to cache
-          @path_transformations_cache[serialized_path] = transformation
-
-          return serialized_path, transformation
+          face_count
         end
 
         # -- Bounds Utils --
 
         def _compute_faces_bounds(definition_or_group, transformation = nil)
-
-          use_cache = transformation.nil? and definition_or_group.is_a? Sketchup::ComponentDefinition
-
-          # Try to retrive from cache
-          if use_cache
-            if @definition_bounds_cache.has_key? definition_or_group.entityID
-              return @definition_bounds_cache[definition_or_group.entityID]
-            end
-          end
-
           bounds = Geom::BoundingBox.new
           definition_or_group.entities.each { |entity|
             if entity.is_a? Sketchup::Face
@@ -237,22 +184,7 @@ module Ladb
               bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
             end
           }
-
-          # Store to cache
-          if use_cache
-            @definition_bounds_cache[definition_or_group.entityID] = bounds
-          end
-
           bounds
-        end
-
-        def _size_from_bounds(bounds, scale, auto_orient = true)
-          if auto_orient
-            ordered = [(bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l].sort
-            Size3d.new(ordered[2], ordered[1], ordered[0])
-          else
-            Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)
-          end
         end
 
         # -- Std utils --
@@ -406,13 +338,13 @@ module Ladb
           use_selection = false
         end
 
-        # Fetch components in given entities
-        entity_infos = []
+        # Fetch component instances in given entities
         path = model && model.active_path ? model.active_path : []
         entities.each { |entity|
-          _fetch_useful_entity_infos(entity, entity_infos, path)
+          _fetch_useful_instance_infos(entity, path, auto_orient)
         }
 
+        # Retrieve model infos
         length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
         dir, filename = File.split(model ? model.path : '')
         page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
@@ -421,7 +353,7 @@ module Ladb
         cutlist_def = CutlistDef.new(length_unit, dir, filename, page_label)
 
         # Errors & tips
-        if entity_infos.length == 0
+        if @instance_infos_cache.length == 0
           if model
             if entities.length == 0
               cutlist_def.add_error("tab.cutlist.error.no_entities")
@@ -447,16 +379,14 @@ module Ladb
         }
 
         # Populate cutlist
-        entity_infos.each { |entity_info|
+        @instance_infos_cache.each { |key, instance_info|
 
-          # puts "#{entity_info.entity.definition.name}\n\t volume = #{entity_info.volume}\n\t bounds-volume = #{entity_info.bounds.width * entity_info.bounds.height * entity_info.bounds.depth}"
-
-          entity = entity_info.entity
+          entity = instance_info.entity
 
           definition = entity.definition
           definition_attributes = _get_definition_attributes(definition)
 
-          material, material_origin = _get_material(entity_info.path, smart_material)
+          material, material_origin = _get_material(instance_info.path, smart_material)
           material_id = material ? material.entityID : ''
           material_name = material ? material.name : ''
           material_attributes = _get_material_attributes(material)
@@ -470,13 +400,7 @@ module Ladb
 
           # Compute transformation, scale and sizes
 
-          serialized_path, transformation = _compute_path_transformation(entity_info.path)
-          scale = TransformationUtils::get_scale3d(transformation)
-          size = _size_from_bounds(
-              _compute_faces_bounds(definition),
-              scale,
-              auto_orient && !definition_attributes.orientation_locked_on_axis
-          )
+          size = instance_info.size
           case material_attributes.type
             when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
               std_thickness_info = _find_std_thickness(
@@ -581,7 +505,7 @@ module Ladb
             part_def.number = number
             part_def.saved_number = definition_attributes.number
             part_def.name = definition.name
-            part_def.scale = scale
+            part_def.scale = instance_info.scale
             part_def.raw_size = raw_size
             part_def.size = size
             part_def.material_name = material_name
@@ -618,7 +542,7 @@ module Ladb
           part_def.count += 1
           part_def.add_material_origin(material_origin)
           part_def.add_entity_id(entity.entityID)
-          part_def.add_entity_serialized_path(serialized_path)
+          part_def.add_entity_serialized_path(instance_info.serialized_path)
           part_def.add_entity_name(entity.name)
 
           group_def.part_count += 1
@@ -626,7 +550,7 @@ module Ladb
         }
 
         # Warnings & tips
-        if entity_infos.length > 0
+        if @instance_infos_cache.length > 0
           if use_selection
             cutlist_def.add_warning("tab.cutlist.warning.partial_cutlist")
           end
@@ -760,7 +684,6 @@ module Ladb
         # Clear caches
         @material_attributes_cache = nil
         @definition_attributes_cache = nil
-        @definition_bounds_cache = nil
 
         response
       end
@@ -969,25 +892,26 @@ module Ladb
         material_name = part_data['material_name']
         entity_serialized_paths = part_data['entity_serialized_paths']
 
+
         # Populate instance defs
-        instance_defs = []
+        entity_infos = []
         entity_serialized_paths.each { |entity_serialized_path|
-          entity = PathUtils.get_leaf_entity(entity_serialized_path)
-          unless entity.nil?
-            instance_defs.push(InstanceDef.new(entity, @path_transformations_cache[entity_serialized_path]))
+          entity_info = @instance_infos_cache[entity_serialized_path]
+          unless entity_info.nil?
+            entity_infos.push(entity_info)
           end
         }
 
-        unless instance_defs.empty?
+        unless entity_infos.empty?
 
           # Compute text infos
           text_line_1 = name
           text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
-              ' | ' + instance_defs.length.to_s + ' ' + Plugin.get_i18n_string(instance_defs.length > 1 ? 'default.part_plural' : 'default.part_single') +
+              ' | ' + entity_infos.length.to_s + ' ' + Plugin.get_i18n_string(entity_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
               ' | ' + (material_name.empty? ? Plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
 
           # Create and activate highlight part tool
-          highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_defs)
+          highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, entity_infos)
           model.select_tool(highlight_tool)
 
           response[:success] = true
