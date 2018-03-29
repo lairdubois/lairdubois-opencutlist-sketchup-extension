@@ -26,12 +26,14 @@ default:
   part_single: Teil
   part_plural: Teile
 core:
+  extension:
+    description: Générateur de fiche de débit.
   menu:
-    submenu: L'Air du Bois - Woodworking Toolbox
+    submenu: L'Air du Bois - OpenCutList
   toolbar:
-    command: Toolbox
+    command: OpenCutList
   dialog:
-    title: L'Air du Bois - Woodworking Toolbox
+    title: L'Air du Bois - OpenCutList
   warning:
     old_su: |
       Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.

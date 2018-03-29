@@ -8,10 +8,10 @@ module Ladb
     # Create and Register extension
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new(Plugin::NAME, 'ladb_toolbox/main')
-      ex.description = 'Boîte à outils pour les boiseux - Générateur de fiche de débit.'
+      ex.description = Plugin.get_i18n_string('core.extension.description')
       ex.version     = Plugin::VERSION
-      ex.copyright   = 'L\'Air du Bois © 2016-2018 - GPL'
-      ex.creator     = 'Boris Beaulant www.lairdubois.fr'
+      ex.copyright   = '2016-2018 - GNU GPL'
+      ex.creator     = 'L\'Air du Bois www.lairdubois.fr'
       Sketchup.register_extension(ex, true)
       file_loaded(__FILE__)
     end

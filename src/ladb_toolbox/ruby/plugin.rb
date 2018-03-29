@@ -9,9 +9,9 @@ module Ladb
   module Toolbox
     class Plugin
 
-      NAME = 'OpenCutList'
+      NAME = 'L\'Air du Bois - Woodworking Toolbox'
       VERSION = '1.4.0-dev'
-      BUILD = '201803292014'
+      BUILD = '201803292147'
 
       DEFAULT_SECTION = DEFAULT_DICTIONARY = 'ladb_toolbox'
 
