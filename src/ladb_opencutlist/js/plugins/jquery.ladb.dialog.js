@@ -17,7 +17,7 @@
             version: options.version,
             build: options.build,
             sketchupVersion: options.sketchup_version,
-            rubyVersion: options.rubyVersion,
+            rubyVersion: options.ruby_version,
             currentOS: options.current_os,
             userAgent: window.navigator.userAgent,
             locale: options.locale,
