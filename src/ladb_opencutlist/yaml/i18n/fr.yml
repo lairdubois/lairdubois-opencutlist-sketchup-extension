@@ -29,11 +29,11 @@ core:
   extension:
     description: Générateur de fiche de débit.
   menu:
-    submenu: L'Air du Bois - OpenCutList
+    submenu: OpenCutList
   toolbar:
     command: OpenCutList
   dialog:
-    title: L'Air du Bois - OpenCutList
+    title: OpenCutList by L'Air du Bois
   warning:
     old_su: |
       Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.

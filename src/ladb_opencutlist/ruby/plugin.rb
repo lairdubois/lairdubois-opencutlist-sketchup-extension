@@ -13,7 +13,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.4.0-dev'.freeze
-    BUILD = '201803292343'.freeze
+    BUILD = '201803300127'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -273,7 +273,7 @@ module Ladb::OpenCutList
 
         if tab_name
           # Startup tab name is defined call JS to select it
-          @@dialog.execute_script("$('body').ladbOpencutlist('selectTab', '#{tab_name}');")
+          @@dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
         end
 
       else
@@ -377,7 +377,7 @@ module Ladb::OpenCutList
           Sketchup.write_default(DEFAULT_SECTION, key, value)
         end
         if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
-          Sketchup.active_model.set_attribute(DEFAULT_DICTIONARY, key, value)
+          Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
         end
       }
     end

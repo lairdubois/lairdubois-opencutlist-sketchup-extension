@@ -1,9 +1,9 @@
-require 'sketchup.rb'
-require 'extensions.rb'
-require_relative 'ladb_opencutlist/ruby/plugin.rb'
-
 module Ladb
   module OpenCutList
+
+    require 'sketchup.rb'
+    require 'extensions.rb'
+    require_relative 'ladb_opencutlist/ruby/plugin.rb'
 
     # Create and Register extension
     unless file_loaded?(__FILE__)

@@ -57,20 +57,17 @@ gulp.task('rbz_create', function () {
     return gulp.src(
         [
 
-            '../src/ladb_opencutlist.rb',
-            '../src/ladb_opencutlist/css/*',
-            '../src/ladb_opencutlist/font/*',
-            '../src/ladb_opencutlist/html/*',
-            '../src/ladb_opencutlist/img/*',
-            '../src/ladb_opencutlist/ruby/*',
-            '../src/ladb_opencutlist/yaml/*',
+            '../src/**/*',
 
-            '../src/ladb_opencutlist/js/i18n/*',
-            '../src/ladb_opencutlist/js/lib/*.min.js',
-            '../src/ladb_opencutlist/js/plugins/*',
-            '../src/ladb_opencutlist/js/templates/*',
+            '!../src/**/.DS_store',
 
-            '!../src/**/.DS_store'
+            '!../src/**/*.less',
+            '!../src/**/less/**',
+            '!../src/**/less/',
+
+            '!../src/**/*.twig',
+            '!../src/**/twig/**',
+            '!../src/**/twig/'
 
         ])
         .pipe(gulpif(options.env === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env + '.rbz')))
