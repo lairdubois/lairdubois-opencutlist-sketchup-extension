@@ -28,7 +28,7 @@ On Windows you may also have to install `gulp-cli` to be able to run **gulp** fr
 
 ## Get The Source Code
 
-Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/releases) or do a `git clone`.
+Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases) or do a `git clone`.
 
 ## Install Dependencies
 
@@ -41,21 +41,21 @@ Change to the `build/` directory. We have placed a `package.json` file telling *
 
 ## Compile Templates And Distribution Archive
 
-Templates in the `src/ladb_toolbox/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates:
+Templates in the `src/ladb_opencutlist/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates:
 
 ``` bash
     $ cd build
     $ gulp compile
 ```
 
-If you wish to build the archive [ladb_toolbox.rbz](../dist/ladb_toolbox.rbz), then:
+If you wish to build the archive [ladb_opencutlist.rbz](../dist/ladb_opencutlist.rbz), then:
 
 ``` bash
     $ cd build
     $ gulp build
 ```
 
-If you wish to build the archive [ladb_toolbox-dev.rbz](../dist/ladb_toolbox-dev.rbz), then:
+If you wish to build the archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencutlist-dev.rbz), then:
 
 ``` bash
     $ cd build

@@ -1196,7 +1196,7 @@
   ],
   "height": 1024,
   "metadata": {
-    "name": "ladb_toolbox"
+    "name": "ladb_opencutlist"
   },
   "preferences": {
     "showGlyphs": true,
@@ -1205,9 +1205,9 @@
     "showQuickUse2": true,
     "showSVGs": true,
     "fontPref": {
-      "prefix": "ladb-toolbox-icon-",
+      "prefix": "ladb-opencutlist-icon-",
       "metadata": {
-        "fontFamily": "ladb_toolbox",
+        "fontFamily": "ladb_opencutlist",
         "majorVersion": 1,
         "minorVersion": 0
       },
@@ -1223,7 +1223,9 @@
       "selector": "i",
       "showMetrics": true,
       "showMetadata": false,
-      "showVersion": false
+      "showVersion": false,
+      "noie8": true,
+      "ie7": false
     },
     "imagePref": {
       "prefix": "icon-",

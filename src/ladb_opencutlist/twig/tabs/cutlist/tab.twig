@@ -1,0 +1,24 @@
+{% extends 'tabs/base-tab.twig' %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_generate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
+    <button id="ladb_btn_print" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_export" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>
+    <div class="btn-group">
+        <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li class="disabled"><a id="ladb_item_show_all_groups" href="#"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="disabled"><a id="ladb_item_numbers_save" href="#"><i class="ladb-opencutlist-icon-save"></i> {{ 'tab.cutlist.menu.numbers_save'|i18next }}</a></li>
+            <li class="disabled"><a id="ladb_item_numbers_reset" href="#"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.numbers_reset'|i18next }}</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="ladb_item_options" href="#"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.options'|i18next }}</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block containerInner %}
+    {% include 'tabs/cutlist/_panel-help.twig' with { 'classes':'no-print' } %}
+    {{ parent() }}
+    <div class="ladb-page"></div>
+{% endblock %}

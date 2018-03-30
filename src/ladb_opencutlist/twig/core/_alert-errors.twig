@@ -1,0 +1,19 @@
+{# set errors #}
+
+{% if errors and errors|length > 0 %}
+    <div class="no-print alert alert-danger ladb-alert-errors">
+        <div class="media">
+            <div class="media-left">
+                <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{ 'default.error'|i18next }}</h4>
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error|i18next }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}

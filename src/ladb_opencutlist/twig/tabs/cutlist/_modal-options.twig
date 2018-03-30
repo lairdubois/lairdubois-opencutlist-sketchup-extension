@@ -1,0 +1,96 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_options' %}
+{% set title = 'default.options'|i18next %}
+
+{% block bodyInner %}
+    <div class="form form-horizontal">
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.auto_orient_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_auto_orient"> {{ 'tab.cutlist.option.auto_orient'|i18next }}
+                </label>
+            </div>
+        </div>
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.smart_material_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_smart_material"> {{ 'tab.cutlist.option.smart_material'|i18next }}
+                </label>
+            </div>
+        </div>
+        <br>
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.part_number_with_letters_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_part_number_with_letters"> {{ 'tab.cutlist.option.part_number_with_letters'|i18next }}
+                </label>
+            </div>
+        </div>
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.part_number_sequence_by_group_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_part_number_sequence_by_group"> {{ 'tab.cutlist.option.part_number_sequence_by_group'|i18next }}
+                </label>
+            </div>
+        </div>
+        <br>
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_raw_dimensions_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_hide_raw_dimensions"> {{ 'tab.cutlist.option.hide_raw_dimensions'|i18next }}
+                </label>
+            </div>
+        </div>
+        <div class="checkbox">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_final_dimensions_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_hide_final_dimensions"> {{ 'tab.cutlist.option.hide_final_dimensions'|i18next }}
+                </label>
+            </div>
+        </div>
+        <div class="checkbox" style="padding-left: 10px;">
+            <div class="col-xs-offset-1 col-xs-10">
+                <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.option.hide_untyped_material_dimensions_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label>
+                    <input type="checkbox" id="ladb_input_hide_untyped_material_dimensions"> <span>{{ 'tab.cutlist.option.hide_untyped_material_dimensions'|i18next }}</span>
+                </label>
+            </div>
+        </div>
+        <br>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
+            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <p class="help-block text-center"><small>{{ 'tab.cutlist.option.part_order_strategy_help'|i18next }}</small></p>
+                <div class="row">
+                    <div  class="col-xs-offset-2 col-xs-8">
+                        <ul id="ladb_sortable_part_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="profile">
+                <p class="help-block text-center"><small>{{ 'tab.cutlist.option.dimension_column_order_strategy_help'|i18next }}</small></p>
+                <div class="row">
+                    <div  class="col-xs-offset-2 col-xs-8">
+                        <ul id="ladb_sortable_dimension_column_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" id="ladb_cutlist_options_reset">{{ 'tab.cutlist.option.reset'|i18next }}</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+    <button type="button" class="btn btn-primary" id="ladb_cutlist_options_update">{{ 'default.validate'|i18next }}</button>
+{% endblock %}

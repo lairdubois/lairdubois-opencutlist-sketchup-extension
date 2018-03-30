@@ -1,0 +1,141 @@
+{% extends 'tabs/base-tab.twig' %}
+
+{% block headerToolsInner %}
+{% endblock %}
+
+{% block containerInner %}
+    <h3>{{ 'tab.about.version'|i18next }}</h3>
+    <p><strong>{{ capabilities.version }}</strong>&nbsp;&nbsp;{{ capabilities.language|upper }}&nbsp;&nbsp;<small class="text-muted">( build: {{ capabilities.build }} )</small> - <a href="https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/CHANGELOG.md" target="_blank">CHANGELOG</a></p>
+    <p>
+        <em>SU {{ capabilities.sketchupVersion }} - Ruby {{ capabilities.rubyVersion }} - {{ capabilities.currentOS }} - {{ capabilities.locale }}</em>
+        <br>
+        <em><small>{{ capabilities.userAgent }}</small></em>
+    </p>
+    <h3>{{ 'tab.about.credits'|i18next }}</h3>
+    <p>{{ 'tab.about.credits_description'|i18next }}</p>
+    <p>{{ 'tab.about.credits_vendors'|i18next }}</p>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{ 'tab.about.credits_runtime'|i18next }}
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            <a href="https://jquery.com/" target="_blank">jQuery</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://jqueryui.com/" target="_blank">jQuery UI</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a>
+                            <span class="label label-default">JS</span>
+                            <span class="label label-default">CSS</span>
+                        </li>
+                        <li>
+                            <a href="https://silviomoreto.github.io/bootstrap-select/"
+                               target="_blank">Bootstrap-select</a>
+                            <span class="label label-default">JS</span>
+                            <span class="label label-default">CSS</span>
+                        </li>
+                        <li>
+                            <a href="http://sliptree.github.io/bootstrap-tokenfield"
+                               target="_blank">Bootstrap-tokenfield</a>
+                            <span class="label label-default">JS</span>
+                            <span class="label label-default">CSS</span>
+                        </li>
+                        <li>
+                            <a href="https://github.com/twigjs/twig.js" target="_blank">twig.js</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://github.com/dankogai/js-base64" target="_blank">base64.js</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="http://i18next.com/" target="_blank">i18next</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="http://leafo.net/sticky-kit/" target="_blank">Sticky-kit</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="http://ned.im/noty/" target="_blank">Noty</a>
+                            <span class="label label-default">JS</span>
+                            <span class="label label-default">CSS</span>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{ 'tab.about.credits_development'|i18next }}
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            <a href="http://gulpjs.com/" target="_blank">gulp.js</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/gulp-concat-js" target="_blank">gulp-concat</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/gulp-if" target="_blank">gulp-if</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/gulp-less" target="_blank">gulp-less</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/gulp-zip" target="_blank">gulp-zip</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/js-yaml" target="_blank">js-yaml</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/markdown-it" target="_blank">markdown-it</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/markdown-it-external-links" target="_blank">markdown-it-external-links</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/merge" target="_blank">merge</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/minimist" target="_blank">minimist</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/through2" target="_blank">through2</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/twig" target="_blank">twig</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                        <li>
+                            <a href="https://www.npmjs.com/package/slash" target="_blank">slash</a>
+                            <span class="label label-default">JS</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>{{ 'tab.about.credits_thanks'|i18next }}</p>
+{% endblock %}

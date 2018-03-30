@@ -1,4 +1,4 @@
-# Getting Started with L'Air du Bois : Woodworking Toolbox
+# Getting Started with L'Air du Bois : OpenCutList
 
 ## Development Environment
 

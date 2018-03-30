@@ -1,0 +1,56 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_part' %}
+{% set title = 'tab.cutlist.edit_part.title'|i18next({ 'name':part.name }) %}
+
+{% block bodyInner %}
+    <div class="ladb-part-thumbnail">
+        <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="256" height="256">
+    </div>
+    <div class="form form-horizontal">
+        <div class="form-group">
+            <label for="ladb_cutlist_part_input_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
+            <div class="col-xs-7">
+                <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_cutlist_part_select_material_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
+            <div class="col-xs-7">
+                <select class="form-control" id="ladb_cutlist_part_select_material_name">
+                    {% include 'tabs/cutlist/_material-usages.twig' %}
+                </select>
+                <div class="ladb-material-origins help-block">
+                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_cutlist_part_select_cumulable" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.cumulable'|i18next }}</label>
+            <div class="col-xs-7">
+                <select class="form-control" id="ladb_cutlist_part_select_cumulable">
+                    <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.cumulable_0'|i18next }}</span>">0</option>
+                    <option value="1" data-content="{{ 'tab.cutlist.edit_part.cumulable_1'|i18next }}">1</option>
+                    <option value="2" data-content="{{ 'tab.cutlist.edit_part.cumulable_2'|i18next }}">2</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>
+            <div class="col-xs-7">
+                <div class="checkbox">
+                    <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label>
+                        <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ ('tab.cutlist.highlight_part')|i18next }}</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button type="button" class="btn btn-primary" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
+{% endblock %}

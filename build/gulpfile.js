@@ -20,9 +20,9 @@ var options = minimist(process.argv.slice(2), knownOptions);
 
 // Convert less to .css files
 gulp.task('less_compile', function () {
-    return gulp.src('../src/ladb_toolbox/less/ladb-toolbox.less')
+    return gulp.src('../src/ladb_opencutlist/less/ladb-opencutlist.less')
         .pipe(less())
-        .pipe(gulp.dest('../src/ladb_toolbox/css'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
 // Convert twig runtime templates to .js precompiled files
@@ -30,26 +30,26 @@ gulp.task('twig_compile', function () {
     'use strict';
     return gulp.src(
         [
-            '../src/ladb_toolbox/twig/**/*.twig',
-            '!../src/ladb_toolbox/twig/dialog.twig'     // dialog.twig is used on build time then it is excluded from this task.
+            '../src/ladb_opencutlist/twig/**/*.twig',
+            '!../src/ladb_opencutlist/twig/dialog.twig'     // dialog.twig is used on build time then it is excluded from this task.
         ])
         .pipe(ladb_twig_compile())
         .pipe(concat('twig-templates.js'))
-        .pipe(gulp.dest('../src/ladb_toolbox/js/templates'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
 });
 
 // Convert yaml i18n to .js files
 gulp.task('i18n_compile', function () {
-    return gulp.src('../src/ladb_toolbox/yaml/i18n/*.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
         .pipe(ladb_i18n_compile())
-        .pipe(gulp.dest('../src/ladb_toolbox/js/i18n'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
 // Compile dialog.twig to dialog-XX.html files - this permits to avoid dynamic loading on runtime
 gulp.task('i18n_dialog_compile', function () {
-    return gulp.src('../src/ladb_toolbox/yaml/i18n/*.yml')
-        .pipe(ladb_i18n_dialog_compile('../src/ladb_toolbox/twig/dialog.twig'))
-        .pipe(gulp.dest('../src/ladb_toolbox/html'));
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
+        .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog.twig'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
 
 // Create the .rbz archive
@@ -57,20 +57,23 @@ gulp.task('rbz_create', function () {
     return gulp.src(
         [
 
-            '../src/**/*',
+            '../src/ladb_opencutlist.rb',
+            '../src/ladb_opencutlist/css/*',
+            '../src/ladb_opencutlist/font/*',
+            '../src/ladb_opencutlist/html/*',
+            '../src/ladb_opencutlist/img/*',
+            '../src/ladb_opencutlist/ruby/*',
+            '../src/ladb_opencutlist/yaml/*',
 
-            '!../src/**/.DS_store',
+            '../src/ladb_opencutlist/js/i18n/*',
+            '../src/ladb_opencutlist/js/lib/*.min.js',
+            '../src/ladb_opencutlist/js/plugins/*',
+            '../src/ladb_opencutlist/js/templates/*',
 
-            '!../src/**/*.less',
-            '!../src/**/less/**',
-            '!../src/**/less/',
-
-            '!../src/**/*.twig',
-            '!../src/**/twig/**',
-            '!../src/**/twig/'
+            '!../src/**/.DS_store'
 
         ])
-        .pipe(gulpif(options.env === 'prod', zip('ladb_toolbox.rbz'), zip('ladb_toolbox-' + options.env + '.rbz')))
+        .pipe(gulpif(options.env === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env + '.rbz')))
         .pipe(gulp.dest('../dist'));
 });
 
@@ -87,10 +90,10 @@ gulp.task('version', function () {
     var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
 
     // Update version property in plugin.rb
-    return gulp.src('../src/ladb_toolbox/ruby/plugin.rb')
+    return gulp.src('../src/ladb_opencutlist/ruby/plugin.rb')
         .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
         .pipe(replace(/BUILD = '[0-9.]{12}?'/g, "BUILD = '" + build + "'"))
-        .pipe(gulp.dest('../src/ladb_toolbox/ruby'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/ruby'));
 });
 
 gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);

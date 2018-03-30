@@ -1,0 +1,138 @@
+@font-face {
+  font-family: 'ladb_opencutlist';
+  src:
+    url('../fonts/ladb_opencutlist.ttf?it9gv4') format('truetype'),
+    url('../fonts/ladb_opencutlist.woff?it9gv4') format('woff'),
+    url('../fonts/ladb_opencutlist.svg?it9gv4#ladb_opencutlist') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+i, span.ladb-opencutlist-icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'ladb_opencutlist' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ladb-opencutlist-icon-unknow:before {
+  opacity: 0.3;
+}
+
+
+.ladb-opencutlist-icon-resized:before {
+  content: "\e921";
+}
+.ladb-opencutlist-icon-import:before {
+  content: "\e91a";
+}
+.ladb-opencutlist-icon-export:before {
+  content: "\e920";
+}
+.ladb-opencutlist-icon-numbers-reset:before {
+  content: "\e91d";
+}
+.ladb-opencutlist-icon-numbers-save:before {
+  content: "\e91e";
+}
+.ladb-opencutlist-icon-orientation-locked-on-axis:before {
+  content: "\e91c";
+}
+.ladb-opencutlist-icon-trash:before {
+  content: "\e91b";
+}
+.ladb-opencutlist-icon-sort-asc:before {
+  content: "\e915";
+}
+.ladb-opencutlist-icon-sort-desc:before {
+  content: "\e916";
+}
+.ladb-opencutlist-icon-reorder:before {
+  content: "\e917";
+}
+.ladb-opencutlist-icon-material-origin-1:before {
+  content: "\e913";
+}
+.ladb-opencutlist-icon-material-origin-3:before {
+  content: "\e911";
+}
+.ladb-opencutlist-icon-material-origin-2:before {
+  content: "\e912";
+}
+.ladb-opencutlist-icon-edit:before {
+  content: "\e90d";
+}
+.ladb-opencutlist-icon-magnifier:before {
+  content: "\e924";
+}
+.ladb-opencutlist-icon-arrow-circle-down:before {
+  content: "\e90f";
+}
+.ladb-opencutlist-icon-arrow-circle-up:before {
+  content: "\e910";
+}
+.ladb-opencutlist-icon-settings:before {
+  content: "\e907";
+}
+.ladb-opencutlist-icon-warning:before {
+  content: "\e908";
+}
+.ladb-opencutlist-icon-help:before {
+  content: "\e909";
+}
+.ladb-opencutlist-icon-print:before {
+  content: "\e906";
+}
+.ladb-opencutlist-icon-cutlist:before {
+  content: "\e900";
+}
+.ladb-opencutlist-icon-bar:before {
+  content: "\e922";
+}
+.ladb-opencutlist-icon-save:before {
+  content: "\e91f";
+}
+.ladb-opencutlist-icon-refresh:before {
+  content: "\e918";
+}
+.ladb-opencutlist-icon-tick:before {
+  content: "\e90e";
+}
+.ladb-opencutlist-icon-link:before {
+  content: "\e90c";
+}
+.ladb-opencutlist-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-opencutlist-icon-eye-open:before {
+  content: "\e90b";
+}
+.ladb-opencutlist-icon-tip:before {
+  content: "\e914";
+}
+.ladb-opencutlist-icon-solid-wood:before {
+  content: "\e903";
+}
+.ladb-opencutlist-icon-materials:before {
+  content: "\e901";
+}
+.ladb-opencutlist-icon-unknow:before {
+  content: "\e919";
+}
+.ladb-opencutlist-icon-sheet-good:before {
+  content: "\e902";
+}
+.ladb-opencutlist-icon-chevron-right:before {
+  content: "\e904";
+}
+.ladb-opencutlist-icon-chevron-left:before {
+  content: "\e905";
+}

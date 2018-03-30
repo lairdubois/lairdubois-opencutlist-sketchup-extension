@@ -1,0 +1,265 @@
+default:
+  minimize: Minimize
+  maximize: Maximize
+  cancel: Cancel
+  validate: Apply
+  open: Open
+  close: Close
+  empty_filename: Untitled
+  refresh: Refresh
+  generate: Generate
+  print: Print
+  export: Export
+  options: Options
+  caution: Caution
+  remove: Remove
+  help: Help
+  error: Darn!
+  warning: Warning
+  tip: Tip
+  date_format: m/d/Y g:ia
+  unit_0: Inches
+  unit_1: Feet
+  unit_2: Millimeter
+  unit_3: Centimeter
+  unit_4: Meter
+  part_single: part
+  part_plural: arts
+core:
+  extension:
+    description: Générateur de fiche de débit.
+  menu:
+    submenu: L'Air du Bois - OpenCutList
+  toolbar:
+    command: OpenCutList
+  dialog:
+    title: L'Air du Bois - OpenCutList
+  warning:
+    old_su: |
+      You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
+      To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
+  event:
+    model_change: The active model has been changed.
+    options_change: Options in the model have changed.
+    material_change: At least one material has been changed.
+    selection_change: The selection of the active model has been changed.
+tab:
+  cutlist:
+    label: Parts List
+    title: Parts List
+    help: |
+      Select the root of the parts list in your scene then click on the **Generate** button.
+      If the selection is empty, all visible components of the scene will be included in the parts list.
+    material_undefined: Material Undefined
+    not_available_thickness: Thickness not available
+    not_available_section: Cross Section not available
+    highlight_part: Highlight the part in the model
+    highlight_error: Part '{{ name }}' was not found in the model
+    tooltip:
+      show_hide_block: Show / Hide
+      scroll_to_block: Scroll to group
+      highlight_part: $t(tab.cutlist.highlight_part)
+      edit_part_properties: Edit properties
+      material_origin_1: The material of this part is defined on its instances
+      material_origin_2: The material of this part is inherited from one of its parent elements
+      material_origin_3: The material of this part is extracted from one its child elements
+      orientation_locked_on_axis: The orientation of this part is locked to its coordinate system
+      number_saved: The number of this part is saved
+      number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
+      number_generated: The number of this part is automatically generated
+      resized: Warning, this piece was resized with respect to its component definition
+    menu:
+      show_all_groups: Show all groups
+      hide_all_other_groups: Hide all other groups
+      numbers_save: Save the part numbers
+      numbers_reset: Reinitialize the part numbers
+      group_numbers_save: Save the part numbers of this group
+      group_numbers_reset: Reinitialize the part numbers of this group
+      edit_material: Edit Material '{{ material }}'
+      edit_group_properties: Edit properties of this group
+    edit_part:
+      title: Properties of Part '{{ name }}'
+      name: Description
+      material: Material
+      cumulable: Summable
+      cumulable_0: Not summable
+      cumulable_1: Summable over length
+      cumulable_2: Summable over width
+      orientation: Orientation
+      orientation_locked_on_axis: Lock orientation on axes
+      orientation_locked_on_axis_help: |
+        If this option is selected, the option *Automatic orientation of parts* will have no effect on this part,
+
+        hence, in the local coordinate system:
+        - *length* is on the <span style='color:red'>red</span> axis
+        - *width* is on the <span style='color:green'>green</span> axis
+        - *thickness* is on the <span style='color:blue'>blue</span> axis
+    edit_group:
+      title: Properties of Group '{{ name }}'
+      part_count: Number of Parts
+      std_dimension: Rough Dimension
+      material: Material
+      warning: A modification of the material will be applied to all parts of the group. Current groups may therefore change.
+    option:
+      auto_orient: Automatic orientation of parts
+      auto_orient_help: |
+        If this option is selected, the 3 dimensions of a part are sorted such that the largest represents the *length* and the smallest represents the *thickness*.
+
+        If this option is left unselected, the local axes of the part define the dimensions as follows
+         - *length* is on the <span style='color:red'>red</span> axis
+         - *width* is on the <span style='color:green'>green</span> axis
+         - *thickness* is on the <span style='color:blue'>blue</span> axis
+      smart_material: "*Intelligent* assignment of material"
+      smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
+      part_number_with_letters: Use letters to enumerate parts
+      part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
+      hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
+      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood** or **Sheet Good**) will be hidden.
+      hide_raw_dimensions: Hide rough dimensions
+      hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
+      hide_final_dimensions: Hide finished dimensions
+      hide_final_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
+      part_order_strategy: Sorting of Parts
+      part_order_strategy_help: |
+        Reorganize the following properties to define the sort order within each group.
+        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
+      dimension_column_order_strategy: Dimension Column Order
+      dimension_column_order_strategy_help: |
+        Reorganize the following dimension properties to define the order of the columns.
+      property_thickness: Thickness
+      property_length: Length
+      property_width: Width
+      property_name: Description
+      property_count: Quantity
+      reset: Restore Default Values
+    list:
+      summary: Summary
+      type: Type
+      material_thickness: Material / Thickness
+      part_count: Quantity
+      length: Length
+      area: Area
+      volume: Volume
+      number: No.
+      name: Description
+      count: Qty
+      raw: Rough
+      final: Finished
+      length_short: L
+      width_short: W
+      thickness: Thickness
+      thickness_short: T
+    export:
+      title: CSV formatted Export
+      info: |
+        With this function you can export the *parts list* into a [CSV](https://wikipedia.org/wiki/Comma-separated_values) file.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *Parts inside of hidden groups of your parts list are not exported*.
+      options: Export Options
+      option_col_sep: Separator
+      option_col_sep_tab: Tabulator
+      option_col_sep_comma: Comma
+      option_col_sep_semicolon: Semicolon
+      option_encoding: Endoding
+      name: Description
+      raw_length: Length - raw
+      raw_width: Width - raw
+      raw_thickness: Thickness - raw
+      length: Length - final
+      width: Width - final
+      thickness: Thickness - final
+      count: Quantity
+      material_name: Material
+    error:
+      no_model: No model is open. You will need to give me more information ;)
+      no_entities: Your model is empty. You will need to give me more information ;)
+      no_component_in_selection: No instance of a visible component was detected in your selection.
+      no_component_in_model: No instance of a visible component was detected in your scene.
+      failed_to_write_export_file: Failed to write the export file.
+    warning:
+      partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
+      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
+      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
+      export_empty: Your export does not contain any part.
+    success:
+      exported_to: Export to {{ export_path }} succeeded.
+    tip:
+      no_component: |
+        The parts to be included in the *parts list* must be instances of a **component**.
+        If you use only groups, convert them into components.
+        By using components for parts, they can be replicated without being duplicated.
+      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Bar**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+    outdated_base: To remain synchronized, you must regenerate the parts list.
+  materials:
+    label: Materials
+    title: Materials
+    type_0: Undefined
+    type_1: Solid Wood
+    type_2: Sheet Good
+    type_3: Dimensional
+    tooltip:
+      type_0: Material type '$t(tab.materials.type_0)'
+      type_1: Material type '$t(tab.materials.type_1)'
+      type_2: Material type '$t(tab.materials.type_2)'
+      type_3: Material type '$t(tab.materials.type_3)'
+    menu:
+      import_from_skm: Import material (.skm)
+      purge_unused: Purge unused materials
+    edit_material:
+      title: Properties of Material '{{ name }}'
+      name: Name
+      type: Type
+      cut_options: Cutting Parameters
+      length_increase: Length Oversize
+      width_increase: Width Oversize
+      thickness_increase: Thickness Oversize
+      std_thicknesses: Available Thicknesses
+      std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
+      std_sections: Available Cross Sections
+      std_sections_help: |
+        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes). Sizes without units are considered to be in model units.
+      cut_options_defaults:
+        manage_help: Administration of the default *Cutting Parameters*
+        save: Save as default values
+        save_success: |
+          **{{ type_name }}**
+          default *Cutting Parameters* saved
+        reset: Restore to default values
+      export_to_skm: Export (.skm)
+    import_from_skm:
+      title: Import .skm file
+    export_to_skm:
+      title: Export to .skm file
+    remove:
+      message: |
+        You are about to suppress the material **{{ material_name }}** from your model.
+        Confirm to continue.
+    error:
+      no_model: No model is open. You will need to give me more information ;)
+      no_materials: Model does not contain any material.
+      failed_import_skm_file: An error happened while importing from .skm file.
+      failed_export_skm_file: An error happened while exporting to .skm file.
+      failed_removing_material: An error happened while suppressing this material.
+    success:
+      exported_to: Export successful to {{ export_path }}.
+    outdated_base: To remain synchronized, you must refresh the material list.
+  about:
+    label: About
+    title: About
+    version: Version
+    credits: Technical Credits
+    credits_description: |
+      The plugin *L'Air du Bois : Toolbox for Sketchup* is being developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and [Contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors).
+      It is available under Open Source licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Runtime
+    credits_development: Development
+    credits_vendors: |
+      The adventure would not be possible without the work of the authors of the following Open Source components:
+    credits_thanks: |
+      A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+tool:
+  highlight:
+    transparency: Transparency
+    zoom_extents: See All

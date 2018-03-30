@@ -1,0 +1,19 @@
+{# set tips #}
+
+{% if tips and tips|length > 0 %}
+    <div class="no-print alert alert-info ladb-alert-tips">
+        <div class="media">
+            <div class="media-left">
+                <i class="ladb-opencutlist-icon-tip" style="font-size: 150%;"></i>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{ 'default.tip'|i18next }}</h4>
+                <ul>
+                    {% for tip in tips %}
+                        <li>{{ tip|i18next }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}

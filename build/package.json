@@ -1,7 +1,7 @@
 {
-  "name": "lairdubois-toolbox-sketchup-plugin",
+  "name": "lairdubois-opencutlist-sketchup-extension",
   "version": "1.4.0-dev",
-  "description": "L'Air du Bois : Woodworking Toolbox ================================",
+  "description": "L'Air du Bois : OpenCutList ========================================",
   "main": "index.js",
   "directories": {
     "doc": "../docs"
@@ -29,12 +29,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin.git"
+    "url": "git+https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension.git"
   },
   "author": "Boris Beaulant and contributors",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/issues"
+    "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues"
   },
-  "homepage": "https://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin#readme"
+  "homepage": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension#readme"
 }

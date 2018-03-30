@@ -1,0 +1,19 @@
+{# set warnings #}
+
+{% if warnings and warnings|length > 0 %}
+    <div class="no-print alert alert-warning ladb-alert-warnings">
+        <div class="media">
+            <div class="media-left">
+                <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{ 'default.warning'|i18next }}</h4>
+                <ul>
+                    {% for warning in warnings %}
+                        <li>{{ warning|i18next }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}
