@@ -13,6 +13,25 @@
 }
 
 .ladb-capabilities-host-infos {
-  white-space: nowrap;
-  color: @ladb-global-lighter-color;
+  color: @ladb-global-light-color;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    line-height: 30px;
+
+    li {
+      display: inline;
+      margin: 0 0 0 10px;
+      border-left: 1px solid @ladb-global-border;
+      padding: 0 0 0 10px;
+
+      &:first-child {
+        border: none;
+      }
+
+    }
+
+  }
+
 }

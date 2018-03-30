@@ -16,9 +16,11 @@
         this.capabilities = {
             version: options.version,
             build: options.build,
+            sketchupIsPro: options.sketchup_is_pro,
             sketchupVersion: options.sketchup_version,
             rubyVersion: options.ruby_version,
             currentOS: options.current_os,
+            is64bit: options.is_64bit,
             userAgent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,

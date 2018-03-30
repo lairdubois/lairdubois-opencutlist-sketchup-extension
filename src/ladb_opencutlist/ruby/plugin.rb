@@ -13,7 +13,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.4.0-dev'.freeze
-    BUILD = '201803301134'.freeze
+    BUILD = '201803301557'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -386,9 +386,11 @@ module Ladb::OpenCutList
       {
           :version => VERSION,
           :build => BUILD,
+          :sketchup_is_pro => Sketchup.is_pro?,
           :sketchup_version => Sketchup.version.to_s,
           :ruby_version => RUBY_VERSION,
           :current_os => "#{current_os}",
+          :is_64bit => Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
           :language => Plugin.language,
           :html_dialog_compatible => html_dialog_compatible,
