@@ -1,8 +1,8 @@
 # L'Air du Bois : Sketchup Toolbox
 
-**L'Air du Bois : Sketchup Toolbox** is a [SketchUp](http://www.sketchup.com) Plugin for automating the generation of cut lists for woodworking projects.
+**L'Air du Bois : OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of cut lists for woodworking projects.
 
-![L'Air du Bois Sketchup Toolbox](docs/img/capture.jpg)
+![OpenCutList](docs/img/capture.jpg)
 
 ## Download and Install
 
@@ -22,4 +22,4 @@ This code is under the **GNU GPLv3 license**.
 
 ## Authors
 
-See the list of [contributors](http://github.com/lairdubois/lairdubois-toolbox-sketchup-plugin/contributors).
+See the list of [contributors](http://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/contributors).
