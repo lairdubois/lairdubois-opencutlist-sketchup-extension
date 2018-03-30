@@ -27,7 +27,7 @@ default:
   part_plural: arts
 core:
   extension:
-    description: Générateur de fiche de débit.
+    description: Générateur de fiche de débit pour les boiseaux. Open Source et facile à utiliser ;)
   menu:
     submenu: OpenCutList
   toolbar:
@@ -251,7 +251,7 @@ tab:
     version: Version
     credits: Technical Credits
     credits_description: |
-      The plugin *L'Air du Bois : Toolbox for Sketchup* is being developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and [Contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors).
+      *OpenCutList by L'Air du Bois* is being developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) et translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). See [Contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors).
       It is available under Open Source licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Runtime
     credits_development: Development

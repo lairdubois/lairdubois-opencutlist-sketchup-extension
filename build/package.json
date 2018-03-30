@@ -1,7 +1,7 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
   "version": "1.4.0-dev",
-  "description": "L'Air du Bois : OpenCutList ========================================",
+  "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {
     "doc": "../docs"
@@ -31,7 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension.git"
   },
-  "author": "Boris Beaulant and contributors",
+  "author": "L'Air du Bois",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues"
