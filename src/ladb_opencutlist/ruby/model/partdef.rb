@@ -31,7 +31,7 @@ module Ladb::OpenCutList
 
     def self.generate_part_id(group_id, definition, size)
       # Include size into part_id to separate instances with the same definition, but different scale
-      Digest::MD5.hexdigest("#{group_id}|#{definition.entityID}|#{size.length.inspect}|#{size.width.inspect}|#{size.thickness.inspect}")
+      Digest::MD5.hexdigest("#{group_id}|#{definition.entityID}|#{size.length.to_s}|#{size.width.to_s}|#{size.thickness.to_s}")
     end
 
     def self.part_order(part_def_a, part_def_b, strategy)
