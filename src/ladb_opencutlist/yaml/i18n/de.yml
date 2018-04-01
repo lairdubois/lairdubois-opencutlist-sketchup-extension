@@ -27,7 +27,7 @@ default:
   part_plural: Teile
 core:
   extension:
-    description: Générateur de fiche de débit pour les boiseaux. Open Source et facile à utiliser ;)
+    description: Holzlistengenerator für Tischler/Schreiner. Open Source und einfach anzuwenden ;)
   menu:
     submenu: OpenCutList
   toolbar:
@@ -48,8 +48,8 @@ tab:
     label: Holzliste
     title: Holzliste
     help: |
-      Wählen Sie die Basis ihrer Holzliste in der Szene aus und klicken dann auf **Generieren**.
-      Ist die Auswahl leer, verwendet das Plugin alle sichtbaren Komponenten der Szene zur Berechnung der Holzliste.
+      Wählen Sie die Teile ihrer Holzliste in der Szene aus und klicken Sie auf **Generieren**.
+      Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
     material_undefined: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
@@ -67,7 +67,7 @@ tab:
       number_saved: Die Nummer dieses Teils wird gespeichert
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
-      resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Grösse angepasst
+      resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -81,10 +81,10 @@ tab:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung
       material: Material
-      cumulable: Kumulierbar
-      cumulable_0: Nicht Kumulierbar
-      cumulable_1: Kumulierbar über die Längsachse
-      cumulable_2: Kumulierbar über die Breiteachse
+      cumulable: Summierbar
+      cumulable_0: Nicht Summierbar
+      cumulable_1: Summierbar über die Längsachse
+      cumulable_2: Summierbar über die Breiteachse
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -107,8 +107,8 @@ tab:
 
         Ansonsten werden die Masse der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
-        - die *Breite* auf der <span style='color:red'>grünen</span> Achse ist, und
-        - die *Dicke* auf der <span style='color:red'>blauen</span> Achse ist
+        - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
+        - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       smart_material: "*intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
       part_number_with_letters: Buchstaben zur Aufzählung verwenden
@@ -251,14 +251,14 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_authors: |
-      *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et traduit par [Martin Müller](https://www.lairdubois.fr/mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/zeloko) entwickelt und von [Martin Müller](https://www.lairdubois.fr/mobilarte) übersetzt. *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
     credits_description: |
-      Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
-      Et à ce titre, il est également *Open Source* et disponible sous lience [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+      Die Entwicklung dieser Erweiterung fügt sich in den Rahmen der Austauschplattform [L'Air du Bois](https://www.lairdubois.fr).
+      In diesem Sinn ist diese Erweiterung auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
     credits_runtime: Laufzeit
     credits_development: Entwicklung
     credits_vendors:  |
-      Dieses Abenteuer wäre nicht möglich ohne die Arbeit der Autoren folgender Open Source Komponenten:
+      Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
 tool:
