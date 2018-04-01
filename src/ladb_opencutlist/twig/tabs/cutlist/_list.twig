@@ -155,18 +155,18 @@
                     </div>
                     {{ part.name|escape }}
                     {% if part.entity_names is not empty %}
-                        <span class="ladb-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name|escape }}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
+                        <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name|escape }}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
                     {% endif %}
                 </td>
                 <td class="text-center">{{ part.count }}</td>
                 {% if showRawDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
-                        <td class="text-right" style="color: red;">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
+                        <td class="ladb-cutlist-raw-dimension">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showFinalDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
-                        <td class="text-right">{{ part[property] }}</td>
+                        <td class="ladb-cutlist-final-dimension">{{ part[property] }}</td>
                     {% endfor %}
                 {% endif %}
             </tr>

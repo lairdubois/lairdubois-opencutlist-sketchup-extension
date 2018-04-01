@@ -36,8 +36,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
 
-      @initial_model_transparency = model ? model.rendering_options["ModelTransparency"] : false
-
+      @initial_model_transparency = false
       @face_triangles_cache = []
       @buttons = []
       if model
@@ -66,8 +65,13 @@ module Ladb::OpenCutList
     def activate
       model = Sketchup.active_model
       if model
-        view = model.active_view
-        view.invalidate
+
+        # Save the initial model transparency state
+        @initial_model_transparency = model.rendering_options["ModelTransparency"]
+
+        # Invalidate view
+        model.active_view.invalidate
+
       end
     end
 

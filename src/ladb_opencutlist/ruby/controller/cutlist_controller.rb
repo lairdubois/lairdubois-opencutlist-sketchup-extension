@@ -135,7 +135,7 @@ module Ladb::OpenCutList
 
             # Treat cuts_opening behavior component instances as group
             if entity.definition.behavior.cuts_opening?
-              return face_count, volume, volume_error_count
+              return face_count
             end
 
             # Considere component instance if it contains faces
