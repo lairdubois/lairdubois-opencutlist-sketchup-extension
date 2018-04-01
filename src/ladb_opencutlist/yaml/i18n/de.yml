@@ -81,10 +81,10 @@ tab:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung
       material: Material
-      cumulable: Kumulierbar
-      cumulable_0: Nicht Kumulierbar
-      cumulable_1: Kumulierbar über die Längsachse
-      cumulable_2: Kumulierbar über die Breiteachse
+      cumulable: Summierbar
+      cumulable_0: Nicht Summierbar
+      cumulable_1: Summierbar über die Längsachse
+      cumulable_2: Summierbar über die Breiteachse
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -107,8 +107,8 @@ tab:
 
         Ansonsten werden die Masse der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
-        - die *Breite* auf der <span style='color:red'>grünen</span> Achse ist, und
-        - die *Dicke* auf der <span style='color:red'>blauen</span> Achse ist
+        - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
+        - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       smart_material: "*intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
       part_number_with_letters: Buchstaben zur Aufzählung verwenden
