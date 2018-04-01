@@ -4,9 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.4.0 (DEV)
+* 1.4.0 (2018-04-01)
 
-  * Add new marerial type : *Bar*
+  * Add new marerial type : *Dimensional*
   * Add "*Highlight part in model*" button in part's row and edit modal  
   * Add "*Edit 'XXX' material*" button in cutlist's group context menu   
   * Add unit options observer  
