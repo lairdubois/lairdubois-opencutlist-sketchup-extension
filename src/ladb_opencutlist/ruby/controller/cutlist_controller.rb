@@ -130,7 +130,7 @@ module Ladb::OpenCutList
 
             # Entity is a component instance : check its children
             entity.definition.entities.each { |child_entity|
-              face_count = _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
+              face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
             }
 
             # Treat cuts_opening behavior component instances as group
