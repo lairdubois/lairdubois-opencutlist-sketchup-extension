@@ -253,7 +253,7 @@ tab:
     credits_authors: |
       *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_description: |
-      The developpment of this extension is linked to the sharin plateform project [L'Air du Bois](https://www.lairdubois.fr).
+      The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Runtime
     credits_development: Development
