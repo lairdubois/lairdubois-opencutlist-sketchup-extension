@@ -27,7 +27,7 @@ default:
   part_plural: pièces
 core:
   extension:
-    description: Générateur de fiche de débit pour les boiseaux. Open Source et facile à utiliser ;)
+    description: Générateur de fiche de débit pour les boiseux. Open Source et facile à utiliser ;)
   menu:
     submenu: OpenCutList
   toolbar:
