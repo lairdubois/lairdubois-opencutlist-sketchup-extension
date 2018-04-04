@@ -12,8 +12,8 @@ module Ladb::OpenCutList
   class Plugin
 
     NAME = 'OpenCutList'.freeze
-    VERSION = '1.4.0'.freeze
-    BUILD = '201804020624'.freeze
+    VERSION = '1.4.1-dev'.freeze
+    BUILD = '201804040550'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze

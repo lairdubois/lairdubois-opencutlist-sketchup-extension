@@ -50,7 +50,7 @@
                 {% if is_metric %}
                     <td class="text-right">{% if group.raw_length == 0 %}-{% else %}{{ group.raw_length|number_format(3, ',', ' ') }}m{% endif %}</td>
                     <td class="text-right">{% if group.raw_area == 0 %}-{% else %}{{ group.raw_area|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
-                    <td class="text-right">{% if group.raw_volume == 0 %}-{% else %}{{ group.raw_area|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
+                    <td class="text-right">{% if group.raw_volume == 0 %}-{% else %}{{ group.raw_volume|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>
                 {% else %}
                     <td class="text-right">{% if group.raw_length == 0 %}-{% else %}{{ group.raw_length|number_format(2, '.', ',') }}ft{% endif %}</td>
                     <td class="text-right">{% if group.raw_area == 0 %}-{% else %}{{ group.raw_area|number_format(2, '.', ',') }}ft<sup>2</sup>{% endif %}</td>
