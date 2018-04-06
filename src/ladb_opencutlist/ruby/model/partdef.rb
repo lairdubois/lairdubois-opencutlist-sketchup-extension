@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       @orientation_locked_on_axis = false
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
-      @entity_names = []                  # All non empty entity instance names (array count could be smaller than @count)
+      @entity_names = {}                  # All non empty entity instance names (key = name, value = count)
       @contains_blank_entity_names = false
     end
 
@@ -121,8 +121,10 @@ module Ladb::OpenCutList
       if entity_name.empty?
         @contains_blank_entity_names = true
       else
-        unless @entity_names.include? entity_name   # Because instance name could be defined several times
-          @entity_names.push(entity_name)
+        if @entity_names.has_key? entity_name
+          @entity_names[entity_name] += 1
+        else
+          @entity_names[entity_name] = 1
         end
       end
     end

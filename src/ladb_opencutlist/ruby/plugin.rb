@@ -13,7 +13,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.4.1-dev'.freeze
-    BUILD = '201804040550'.freeze
+    BUILD = '201804061110'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze

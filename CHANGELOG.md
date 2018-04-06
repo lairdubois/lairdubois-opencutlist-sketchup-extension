@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.4.1 (DEV)
+
+  * Fix cutlist volume summary
+  * Add instance identical names count
+
 * 1.4.0 (2018-04-01)
 
   * Add new marerial type : *Dimensional*

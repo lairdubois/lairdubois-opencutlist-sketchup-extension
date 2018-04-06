@@ -7,7 +7,6 @@ module Ladb::OpenCutList
     attr_accessor :size
     attr_reader :path
 
-    @crafted_volume
     @size
 
     def initialize(path = [])
