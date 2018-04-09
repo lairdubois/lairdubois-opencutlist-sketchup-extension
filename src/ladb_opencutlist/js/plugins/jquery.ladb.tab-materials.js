@@ -73,7 +73,7 @@
             }));
 
             // Update items state
-            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials.length == 0);
+            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials == null || materials.length == 0);
 
             // Update page
             that.$page.empty();
@@ -416,16 +416,24 @@
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialChangeEvent = true;
 
-                rubyCallCommand('materials_update', that.editedMaterial, function() {
+                rubyCallCommand('materials_update', that.editedMaterial, function(response) {
+
+                    if (response['errors']) {
+
+                        that.opencutlist.notifyErrors(response['errors']);
+
+                    } else {
+
+                        // Refresh the list
+                        that.loadList();
+
+                    }
 
                     // Reset edited material
                     that.editedMaterial = null;
 
                     // Hide modal
                     $modal.modal('hide');
-
-                    // Refresh the list
-                    that.loadList();
 
                 });
 

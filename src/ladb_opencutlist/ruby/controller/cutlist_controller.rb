@@ -356,17 +356,17 @@ module Ladb::OpenCutList
       if @instance_infos_cache.length == 0
         if model
           if entities.length == 0
-            cutlist_def.add_error("tab.cutlist.error.no_entities")
+            cutlist_def.add_error('tab.cutlist.error.no_entities')
             else
               if use_selection
-              cutlist_def.add_error("tab.cutlist.error.no_component_in_selection")
+              cutlist_def.add_error('tab.cutlist.error.no_component_in_selection')
             else
-              cutlist_def.add_error("tab.cutlist.error.no_component_in_model")
+              cutlist_def.add_error('tab.cutlist.error.no_component_in_model')
             end
-            cutlist_def.add_tip("tab.cutlist.tip.no_component")
+            cutlist_def.add_tip('tab.cutlist.tip.no_component')
           end
         else
-          cutlist_def.add_error("tab.cutlist.error.no_model")
+          cutlist_def.add_error('tab.cutlist.error.no_model')
         end
       end
 
@@ -819,7 +819,7 @@ module Ladb::OpenCutList
         group_id = settings['group_id']
 
         model = Sketchup.active_model
-        definitions = model.definitions
+        definitions = model ? model.definitions : []
 
         @cutlist[:groups].each { |group|
 
@@ -849,10 +849,12 @@ module Ladb::OpenCutList
           :thumbnail_file => ''
       }
 
+      model = Sketchup.active_model
+      return response unless model
+
       # Extract parameters
       definition_id = part_data['definition_id']
 
-      model = Sketchup.active_model
       definitions = model.definitions
       definition = definitions[definition_id]
       if definition
@@ -876,13 +878,8 @@ module Ladb::OpenCutList
 
     def part_highlight_command(part_data)
 
-      response = {
-          :success => false
-      }
-
       model = Sketchup.active_model
-
-      return response unless model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Extract parameters
       name = part_data['name']
@@ -891,7 +888,6 @@ module Ladb::OpenCutList
       thickness = part_data['thickness']
       material_name = part_data['material_name']
       entity_serialized_paths = part_data['entity_serialized_paths']
-
 
       # Populate instance defs
       entity_infos = []
@@ -914,14 +910,14 @@ module Ladb::OpenCutList
         highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, entity_infos)
         model.select_tool(highlight_tool)
 
-        response[:success] = true
-
       end
 
-      response
     end
 
     def part_update_command(part_data)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Extract parameters
       definition_id = part_data['definition_id']
@@ -931,36 +927,40 @@ module Ladb::OpenCutList
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
       entity_ids = part_data['entity_ids']
 
-      model = Sketchup.active_model
-
-      # Update definition's name
       definitions = model.definitions
       definition = definitions[definition_id]
-      if definition and definition.name != name
-        definition.name = name
-      end
 
-      definition_attributes = DefinitionAttributes.new(definition)
-      if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis
-        definition_attributes.cumulable = cumulable
-        definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
-        definition_attributes.write_to_attributes
-      end
+      if definition
 
-      # Update component instance material
-      materials = model.materials
-      if material_name.nil? or material_name.empty? or (material = materials[material_name])
+        # Update definition's name
+        if definition.name != name
+          definition.name = name
+        end
 
-        entity_ids.each { |entity_id|
-          entity = ModelUtils::find_entity_by_id(model, entity_id)
-          if entity
-            if material_name.nil? or material_name.empty?
-              entity.material = nil
-            elsif entity.material != material
-              entity.material = material
+        # Update definition's attributes
+        definition_attributes = DefinitionAttributes.new(definition)
+        if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis
+          definition_attributes.cumulable = cumulable
+          definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
+          definition_attributes.write_to_attributes
+        end
+
+        # Update component instance material
+        materials = model.materials
+        if material_name.nil? or material_name.empty? or (material = materials[material_name])
+
+          entity_ids.each { |entity_id|
+            entity = ModelUtils::find_entity_by_id(model, entity_id)
+            if entity
+              if material_name.nil? or material_name.empty?
+                entity.material = nil
+              elsif entity.material != material
+                entity.material = material
+              end
             end
-          end
-        }
+          }
+
+        end
 
       end
 
@@ -968,15 +968,16 @@ module Ladb::OpenCutList
 
     def group_update_command(group_data)
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
       # Extract parameters
-      id = group_data['id']
       material_name = group_data['material_name']
       parts = group_data['parts']
 
-      model = Sketchup.active_model
+      materials = model.materials
 
       # Update component instance material
-      materials = model.materials
       if material_name.nil? or material_name.empty? or (material = materials[material_name])
 
         parts.each { |part_data|

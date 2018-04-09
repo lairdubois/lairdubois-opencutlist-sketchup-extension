@@ -102,7 +102,7 @@ module Ladb::OpenCutList
           response[:errors].push('tab.materials.error.no_materials')
         end
       else
-        response[:errors].push("tab.materials.error.no_model")
+        response[:errors].push('tab.materials.error.no_model')
       end
 
       # Sort materials by type ASC, display_name ASC
@@ -113,12 +113,18 @@ module Ladb::OpenCutList
 
     def purge_unused_command()
 
-      materials = Sketchup.active_model.materials
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      materials = model.materials
       materials.purge_unused
 
     end
 
     def update_command(material_data)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       name = material_data['name']
       display_name = material_data['display_name']
@@ -131,7 +137,6 @@ module Ladb::OpenCutList
       std_sections = attributes['std_sections']
 
       # Fetch material
-      model = Sketchup.active_model
       materials = model.materials
       material = materials[name]
 
@@ -158,17 +163,18 @@ module Ladb::OpenCutList
 
     def remove_command(material_data)
 
-      name = material_data['name']
-      display_name = material_data['display_name']
-
-      # Fetch material
       model = Sketchup.active_model
-      materials = model.materials
-      material = materials[name]
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      name = material_data['name']
 
       response = {
-          :errors => [],
+          :errors => []
       }
+
+      # Fetch material
+      materials = model.materials
+      material = materials[name]
 
       if material
 
@@ -178,6 +184,8 @@ module Ladb::OpenCutList
           response[:errors].push('tab.materials.error.failed_removing_material')
         end
 
+      else
+        response[:errors].push('tab.materials.error.failed_removing_material')
       end
 
       response
@@ -185,17 +193,20 @@ module Ladb::OpenCutList
 
     def import_from_skm_command
 
-      # Fetch material
       model = Sketchup.active_model
-      materials = model.materials
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       response = {
-          :errors => [],
+          :errors => []
       }
 
-      dir, filename = File.split(model ? model.path : '')
+      # Fetch material
+      materials = model.materials
+
+      dir, filename = File.split(model.path)
       path = UI.openpanel(Plugin.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
+
         begin
           materials.load(path)
         rescue
@@ -209,31 +220,31 @@ module Ladb::OpenCutList
 
     def export_to_skm_command(material_data)
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
       name = material_data['name']
       display_name = material_data['display_name']
 
       # Fetch material
-      model = Sketchup.active_model
       materials = model.materials
       material = materials[name]
 
-      response = {
-          :errors => [],
-      }
-
       if material
 
-        dir, filename = File.split(model ? model.path : '')
+        dir, filename = File.split(model.path)
         path = UI.savepanel(Plugin.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
         if path
           begin
             material.save_as(path)
-            response[:export_path] = path;
+            response[:export_path] = path
           rescue
             response[:errors].push('tab.materials.error.failed_export_skm_file')
           end
         end
 
+      else
+        response[:errors].push('tab.materials.error.failed_export_skm_file')
       end
 
       response

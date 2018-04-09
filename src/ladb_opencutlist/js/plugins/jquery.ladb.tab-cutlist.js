@@ -344,12 +344,10 @@
 
             rubyCallCommand('cutlist_part_highlight', part, function (response) {
 
-                var success = response['success'];
-
-                if (success) {
-                    that.opencutlist.minimize();
-                } else {
+                if (response['errors']) {
                     that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t('tab.cutlist.highlight_error', {'name': part.name}), 'error');
+                } else {
+                    that.opencutlist.minimize();
                 }
 
             });
@@ -414,28 +412,36 @@
                     that.editedPart.cumulable = $selectCumulable.val();
                     that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
 
-                    rubyCallCommand('cutlist_part_update', that.editedPart, function() {
+                    rubyCallCommand('cutlist_part_update', that.editedPart, function(response) {
 
-                        var partId = that.editedPart.id;
-                        var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+                        if (response['errors']) {
+
+                            that.opencutlist.notifyErrors(response['errors']);
+
+                        } else {
+
+                            var partId = that.editedPart.id;
+                            var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+
+                            // Refresh the list
+                            that.generateCutlist(function() {
+
+                                // Try to scroll to the edited part's row
+                                var $part = $('#ladb_part_' + partId);
+                                if ($part.length > 0) {
+                                    $part.effect("highlight", {}, 1500);
+                                    $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                }
+
+                            });
+
+                        }
 
                         // Reset edited part
                         that.editedPart = null;
 
                         // Hide modal
                         $modal.modal('hide');
-
-                        // Refresh the list
-                        that.generateCutlist(function() {
-
-                            // Try to scroll to the edited part's row
-                            var $part = $('#ladb_part_' + partId);
-                            if ($part.length > 0) {
-                                $part.effect("highlight", {}, 1500);
-                                $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
-                            }
-
-                        });
 
                     });
 
@@ -492,16 +498,24 @@
                 // Fetch form values
                 that.editedGroup.material_name = $selectMaterialName.val();
 
-                rubyCallCommand('cutlist_group_update', that.editedGroup, function() {
+                rubyCallCommand('cutlist_group_update', that.editedGroup, function(response) {
+
+                    if (response['errors']) {
+
+                        that.opencutlist.notifyErrors(response['errors']);
+
+                    } else {
+
+                        // Refresh the list
+                        that.generateCutlist();
+
+                    }
 
                     // Reset edited group
                     that.editedGroup = null;
 
                     // Hide modal
                     $modal.modal('hide');
-
-                    // Refresh the list
-                    that.generateCutlist();
 
                 });
 

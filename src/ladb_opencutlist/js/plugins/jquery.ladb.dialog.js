@@ -246,6 +246,14 @@
         return n;
     };
 
+    LadbDialog.prototype.notifyErrors = function(errors) {
+        if (Array.isArray(errors)) {
+            for (var i = 0; i < errors.length; i++) {
+                this.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(errors[i]), 'error');
+            }
+        }
+    };
+
     LadbDialog.prototype.setupTooltips = function() {
         $('[data-toggle="tooltip"]').tooltip({
             container: 'body'
