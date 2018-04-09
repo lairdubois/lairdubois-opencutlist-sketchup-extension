@@ -226,6 +226,11 @@ module Ladb::OpenCutList
       name = material_data['name']
       display_name = material_data['display_name']
 
+      response = {
+          :errors => [],
+          :export_path => ''
+      }
+
       # Fetch material
       materials = model.materials
       material = materials[name]

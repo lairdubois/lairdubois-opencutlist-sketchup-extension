@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.4.1 (DEV)
+* 1.4.1 (2018-04-09)
 
   * Fix cutlist volume summary
   * Add instance identical names count
