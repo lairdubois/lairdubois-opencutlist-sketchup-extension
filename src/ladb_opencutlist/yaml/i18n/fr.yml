@@ -75,6 +75,7 @@ tab:
       numbers_reset: Réinitialiser les numéros de pièce
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
+      group_bin_packing: Calpinage
       edit_material: Editer la matière '{{ material }}'
       edit_group_properties: Editer les propriétés du groupe
     edit_part:

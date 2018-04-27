@@ -75,8 +75,10 @@ tab:
       numbers_reset: Nummern der Teile neu zuweisen
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
+      group_bin_packing: Calpinage
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
+      bin_packing: Calpinage
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung

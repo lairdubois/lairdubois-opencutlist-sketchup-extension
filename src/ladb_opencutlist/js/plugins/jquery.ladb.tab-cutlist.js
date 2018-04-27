@@ -197,6 +197,13 @@
                 that.editGroup(groupId);
                 $(this).blur();
             });
+            $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function() {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.hideAllGroups(groupId);
+                $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                $(this).blur();
+            });
             $('a.ladb-item-numbers-save', that.$page).on('click', function() {
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
@@ -215,11 +222,10 @@
                 });
                 $(this).blur();
             });
-            $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function() {
+            $('button.ladb-btn-bin-packing', that.$page).on('click', function() {
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
-                that.hideAllGroups(groupId);
-                $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                that.binPacking({ group_id: groupId });
                 $(this).blur();
             });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function() {
@@ -595,6 +601,12 @@
         rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function() {
             that.generateCutlist(callback);
         });
+
+    };
+
+    LadbTabCutlist.prototype.binPacking = function (params) {
+
+        rubyCallCommand('cutlist_bin_packing', params ? params : {});
 
     };
 

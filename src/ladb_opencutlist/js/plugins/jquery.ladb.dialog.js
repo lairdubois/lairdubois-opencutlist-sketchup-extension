@@ -45,14 +45,14 @@
         defaultTabName: 'cutlist',
         tabDefs: [
             {
-                name: 'cutlist',
-                bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-cutlist'
-            },
-            {
                 name: 'materials',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-materials'
+            },
+            {
+                name: 'cutlist',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-cutlist'
             },
             {
                 name: 'about',

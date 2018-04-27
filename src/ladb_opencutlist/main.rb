@@ -9,11 +9,11 @@ module Ladb
       # Setup Menu
       menu = UI.menu
       submenu = menu.add_submenu(Plugin.get_i18n_string('core.menu.submenu'))
-      submenu.add_item(Plugin.get_i18n_string('tab.cutlist.title')) {
-        Plugin.show_dialog('cutlist')
-      }
       submenu.add_item(Plugin.get_i18n_string('tab.materials.title')) {
         Plugin.show_dialog('materials')
+      }
+      submenu.add_item(Plugin.get_i18n_string('tab.cutlist.title')) {
+        Plugin.show_dialog('cutlist')
       }
 
       # Setup Toolbar

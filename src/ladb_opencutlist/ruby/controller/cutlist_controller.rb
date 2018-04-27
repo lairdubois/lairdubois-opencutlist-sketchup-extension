@@ -71,6 +71,10 @@ module Ladb::OpenCutList
         group_update_command(group_data)
       end
 
+      Plugin.register_command("cutlist_bin_packing") do |settings|
+        bin_packing_command(settings)
+      end
+
     end
 
     private
@@ -995,6 +999,11 @@ module Ladb::OpenCutList
         }
 
       end
+
+    end
+
+    def bin_packing_command(settings)
+
 
     end
 

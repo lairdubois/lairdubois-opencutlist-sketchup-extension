@@ -75,6 +75,7 @@ tab:
       numbers_reset: Reinitialize the part numbers
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
+      group_bin_packing: Calpinage
       edit_material: Edit Material '{{ material }}'
       edit_group_properties: Edit properties of this group
     edit_part:
