@@ -1003,8 +1003,24 @@ module Ladb::OpenCutList
     end
 
     def bin_packing_command(settings)
+      if @cutlist
 
+        # Check settings
+        group_id = settings['group_id']
 
+        @cutlist[:groups].each { |group|
+
+          if group_id && group[:id] != group_id
+            next
+          end
+
+          is_1d = group[:material_type] == MaterialAttributes::TYPE_BAR
+          is_2d = group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
+
+          # TODO ;)
+
+        }
+      end
     end
 
   end
