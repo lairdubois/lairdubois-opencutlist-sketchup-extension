@@ -1,4 +1,4 @@
-module Ladb::OpenCutList
+﻿module Ladb::OpenCutList
 
   require 'pathname'
   require 'csv'
@@ -1004,10 +1004,6 @@ module Ladb::OpenCutList
 
       end
 
-    end
-
-    def remove_tilde(l)
-      
     end
     
     def bin_packing_command(settings)
