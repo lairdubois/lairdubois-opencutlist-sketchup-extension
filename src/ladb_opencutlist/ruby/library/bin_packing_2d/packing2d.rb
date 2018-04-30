@@ -47,12 +47,12 @@
     
     # convert to model units
     def cu(l)
-      return "#{l}\"".to_l.to_s
+      return l.to_l.to_s
     end
     
     # convert to mm for html export
     def cmm(l)
-      return "#{l}\"".to_l.to_mm
+      return l.to_l.to_mm
     end
   end
 end
