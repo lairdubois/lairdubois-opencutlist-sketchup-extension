@@ -5,6 +5,7 @@ This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
 * 1.5.0 (DEV)
+  * Fixed conversion to local units
   * Added button for bin packing in groups of type dimensional and sheet good
   * Added 1D and 2D bin packing libraries
 

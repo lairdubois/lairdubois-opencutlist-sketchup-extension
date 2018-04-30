@@ -15,7 +15,7 @@
     
     # convert to model units
     def cu(l)
-      return "#{l}\"".to_l.to_s
+      return l.to_l.to_s
     end
   end
 end
