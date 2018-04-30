@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+        font-size: 12px;
+        font-family: Calibri, Verdana;
+      }
+
+      .bin {
+        position: relative;
+        margin: 20px;
+        border: 1px solid #000;
+        background: #eee;
+        page-break-after: always;
+      }
+
+      .label {
+        position: relative;
+        margin: 20px;
+        font-size: 14px;
+        display: block;
+      }
+      .box, .leftover {
+        position: absolute;
+        border: 1px solid #000;
+        background: #eaeaea;
+        box-sizing: border-box;
+      }
+      .leftover {
+        background: #fafafa;
+      }
+      .cut {
+        position: absolute;
+        border: 1px solid #f77f00;
+        background: #f77f00;
+        box-sizing: border-box;
+      }      
+      .fr {
+        position: absolute;
+        border: 1px solid white;
+        background: #ff0000;
+        box-sizing: border-box;      
+      }
+      .box .box-label {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        color: #0a0a0a;
+      }
+      .leftover .leftover-label {
+        position: absolute;
+        bottom: 2px;
+        left: 2px;
+        color: #0a0a0a;
+        font-style: italic;
+      }
+      .cut-label {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+    <% bins.each do |bin| %>
+        <div><span class="label"><%= bin.title %></span></div>
+        <div class="bin" style="width: <%= zoom(bin.length + 2*bin.cleancut) %>px; height: <%= zoom(bin.width + 2*bin.cleancut) %>px;">
+          <div>
+            
+            <% bin.cuts.each do |cut| %>
+            <%   if cut.horizontal then %>
+                   <div class="cut" style="width: <%= zoom(cut.length) %>px; height: <%= 2 %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+                   <span class="cut-label"><%= cut.label %></span>
+                   </div>
+            <%  else %>
+                    <div class="cut" style="width: <%= 2 %>px; height: <%= zoom(cut.length) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+                    <span class="cut-label"><%= cut.label %></span>
+                    </div>
+            <% end %>           
+            <% end %>
+            <% bin.boxes.each do |box| %>
+                    <div class="box" style="width: <%= zoom(box.length) %>px; height: <%= zoom(box.width) %>px; left: <%= zoom(box.x) %>px; top: <%= zoom(box.y) %>px;">
+                    <span class="box-label"><%= box.label %></span>
+                    </div>
+            <% end %>
+            <% bin.leftovers.each do |box| %>
+                    <div class="leftover" style="width: <%= zoom(box.length) %>px; height: <%= zoom(box.width) %>px; left: <%= zoom(box.x) %>px; top: <%= zoom(box.y) %>px;">
+                    <span class="leftover-label"><%= box.label %></span>
+                    </div>
+            <% end %>
+          </div>
+        </div>
+     <% end %>
+  </body>
+</html>
