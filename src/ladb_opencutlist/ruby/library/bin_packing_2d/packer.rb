@@ -49,6 +49,55 @@
       }
       return tmp_boxes
     end
+    
+    def preprocess_supergroups_length(boxes)
+      maxlength = @b_l - 2*@cleanup
+      sboxes = []
+      groups = boxes.group_by { |b| b.width }
+      groups.each do |k, v|
+        db "start of sb"
+        db "common width = #{'%6.0f' % k}"
+        nb = BinPacking2D::Box.new(0, k, "supergroup")
+        sboxes << nb
+        v = v.sort_by  { |b| [b.length]}.reverse
+        v.each do |box|
+          db "box #{'%6.0f' % box.length} #{'%6.0f' % box.width}"
+          if !nb.add(box, @sawkerf, maxlength)
+            nb = BinPacking2D::Box.new(0, k, "supergroup")
+            sboxes << nb
+            nb.add(box, @sawkerf, maxlength)
+          end
+        end
+      end
+      db "end of sb"
+      return sboxes
+    end
+
+    def postprocess_supergroups(sboxes) 
+      boxes = []
+      cuts = []
+      sboxes.each do |sbox|
+        x = sbox.x
+        y = sbox.y
+        db "sbox length : #{sbox.sboxes.length}"
+        cut_counts = sbox.sboxes.length() -1
+        sbox.sboxes.each do |b|
+          b.x = x
+          b.y = y
+          b.index = sbox.index
+          if sbox.rotated
+            b.rotate
+          end
+          x = x + b.length + @sawkerf
+          boxes << b
+          if cut_counts > 0
+            cuts << BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false)
+            cut_counts = cut_counts -1
+          end
+        end 
+      end
+      return boxes, cuts
+    end
  
     def pack(bins, boxes, score, split)
       s = BinPacking2D::Score.new
@@ -88,6 +137,18 @@
       end
       # sort boxes width/length decreasing (heuristic)
       boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
+      
+      # preprocess too large items
+      boxes.each_with_index do |box, i|
+        if !bins[0].encloses?(box)
+          @unplaced_boxes << box
+          boxes.delete_at(i)
+          db "too large deleted"
+        end
+      end
+
+      # preprocess super groups
+      boxes = preprocess_supergroups_length(boxes)
 
       until boxes.empty?
         db "- start placing box ->"
@@ -98,7 +159,7 @@
         # find best position for box in collection of bins
         i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
         if i == -1 
-          # check if box is larger than available standard bin
+          # check if box is larger than available standard bin, SHOULD NEVER HAPPEN!
           if box.too_large?(@b_l, @b_w, rotatable)
             @unplaced_boxes << box
             next
@@ -130,30 +191,34 @@
         if cs.split_horizontally_first?(box, @split)
           if box.width < cs.width # top, bottom
             cs, sb = cs.split_horizontally(box.width, sawkerf)
-            cuts << BinPacking2D::Cut.new(cs.x, cs.y + box.width, box.width, cs.length, true, cs.index)
+            cuts << BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true, cs.index)
             # leftover returns to bins
             bins << sb
           end
           if box.length < cs.length # left, right
               cs, sr = cs.split_vertically(box.length, sawkerf)
-              cuts << BinPacking2D::Cut.new(cs.x + box.length, cs.y, box.length, cs.width, false, cs.index)
+              cuts << BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false, cs.index)
               bins << sr
           end
         else
           if box.length < cs.length # left, right
             cs, sr = cs.split_vertically(box.length, sawkerf)
-            cuts << BinPacking2D::Cut.new(cs.x + box.length, cs.y, box.length, cs.width, false, cs.index)
+            cuts << BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false, cs.index)
             bins << sr
           end
           if box.width < cs.width # top, bottom
             cs, sb = cs.split_horizontally(box.width, sawkerf)
-            cuts << BinPacking2D::Cut.new(cs.x, cs.y + box.width, box.width, cs.length, true, cs.index)
+            cuts << BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true, cs.index)
             bins << sb
           end
         end
         db "- end placing box ->"
       end
 
+      # postprocess supergroups
+      placed_boxes, add_cuts = postprocess_supergroups(placed_boxes)
+      cuts.concat(add_cuts)
+      
       # collect stuff into a single object for reporting
       @original_bins.each_with_index do |bin, index|
         bin.strategy = get_strategy_str(@score, @split)

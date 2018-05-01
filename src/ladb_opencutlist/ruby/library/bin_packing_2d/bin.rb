@@ -22,6 +22,7 @@
       b = Bin.new(@length, @width, @x, @y, @index)
       b.cleaned = @cleaned
       b.cleancut = @cleancut
+      b.strategy = @strategy
       return b
     end
     
