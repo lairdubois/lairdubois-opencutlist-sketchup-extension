@@ -1,20 +1,29 @@
 ﻿module BinPacking2D
   class Box < Packing2D
-    attr_accessor :length, :width, :x, :y, :index, :rotated
+    attr_accessor :length, :width, :x, :y, :index, :rotated, :superbox, :sboxes
 
-    def initialize(length, width)
+    def initialize(length, width, number)
       @length = length
       @width = width
       @x = 0
       @y = 0
       @index = 0
       @rotated = false
+      @number = number
+      @sboxes = []
+      @superbox = false
     end
 
-    def clone
-      b = Box.new(length, width)
-      b.rotated = @rotated
-      return b
+    def add(box, sawkerf, maxlength)
+      if box.length + @length + sawkerf > maxlength
+        return false
+      else
+        @length += sawkerf if @length > 0
+        @length += box.length
+        @sboxes << box
+        @superbox = true
+        return true
+      end
     end
     
     def area
@@ -56,7 +65,7 @@
     def label
       length = cu(@length)
       width = cu(@width)
-      "#{length} x #{width}" + (@rotated ? " r" : "")
+      "#{length} x #{width} - #{@number}" + (@rotated ? " r" : "")
     end
   end
 end

@@ -1046,9 +1046,11 @@
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
             puts "start -> calepinage 2D"
             group[:parts].each { |part|
+              thickness = part[:thickness]
+              material_name = part[:material_name]
               i = 0
               while i < part[:count]
-                boxes << BinPacking2D::Box.new(part[:length].to_l.to_f, part[:width].to_l.to_f)
+                boxes << BinPacking2D::Box.new(part[:length].to_l.to_f, part[:width].to_l.to_f, part[:number])
                 i += 1
               end
             }
@@ -1056,8 +1058,8 @@
             sawkerf = "3mm".to_l.to_f
             cleanup = "10mm".to_l.to_f 
             rotatable = true
-            sheet_length = "2500mm".to_l.to_f
-            sheet_width = "1250mm".to_l.to_f
+            sheet_length = "2800mm".to_l.to_f
+            sheet_width = "2070mm".to_l.to_f
             
             # there may be more than one sheet, the first one will be replicated if more are needed
             sheet_index = 0
