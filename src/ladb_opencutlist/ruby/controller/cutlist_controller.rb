@@ -1027,6 +1027,7 @@
           if group_id && group[:id] != group_id
             next
           end
+
           if group[:material_type] == MaterialAttributes::TYPE_BAR
             puts "start -> calepinage 1D"
             group[:parts].each { |part|

@@ -603,7 +603,7 @@
         $btnCutdiagram.on('click', function() {
 
             rubyCallCommand('cutlist_group_cutdiagram', {
-                groupId: groupId,
+                group_id: groupId,
                 kerf: $inputKerf.val(),
                 trimming: $inputTrimming.val(),
                 base_sheet_length: $inputBaseSheetLength.val(),
