@@ -20,12 +20,22 @@
       end
     end
     
+    def get_v_cutlength
+      return length if !@horizontal
+      return 0
+    end
+
+    def get_h_cutlength
+      return length if @horizontal
+      return 0
+    end
+
     def label
-        #if @horizontal then
-        #  "#{@length} at [#{@x},#{@y}]"
-        #else
-        #  "#{@length} at [#{@x},#{@y}]"
-        #end
+      #if @horizontal then
+      #  "#{@length} at [#{@x},#{@y}]"
+      #else
+      #  "#{@length} at [#{@x},#{@y}]"
+      #end
     end
     
   end
