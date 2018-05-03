@@ -12,6 +12,7 @@
     LadbTabAbout.DEFAULTS = {};
 
     LadbTabAbout.prototype.init = function (initializedCallback) {
+        var that = this;
 
         // Callback
         if (initializedCallback && typeof(initializedCallback) == 'function') {

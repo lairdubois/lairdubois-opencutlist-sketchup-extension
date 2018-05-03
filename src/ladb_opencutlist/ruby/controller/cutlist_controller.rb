@@ -75,8 +75,8 @@
         group_update_command(group_data)
       end
 
-      Plugin.register_command("cutlist_bin_packing") do |settings|
-        bin_packing_command(settings)
+      Plugin.register_command("cutlist_group_cutdiagram") do |settings|
+        group_cutdiagram_command(settings)
       end
 
     end
@@ -553,6 +553,17 @@
         part_def.add_entity_serialized_path(instance_info.serialized_path)
         part_def.add_entity_name(entity.name)
 
+        if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
+          if group_def.material_type == MaterialAttributes::TYPE_BAR
+            group_def.raw_length += (cutlist_def.is_metric? ? part_def.raw_size.length.to_m : part_def.raw_size.length)
+          end
+          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            group_def.raw_area += (cutlist_def.is_metric? ? part_def.raw_size.area_m2 : part_def.raw_size.area)
+          end
+          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD
+            group_def.raw_volume += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume)
+          end
+        end
         group_def.part_count += 1
 
       }
@@ -626,26 +637,15 @@
             :std_thickness => group_def.std_thickness,
             :std_available => group_def.std_available,
             :std_availability_message => group_def.std_availability_message,
-            :raw_length => 0,
-            :raw_area => 0,
-            :raw_volume => 0,
+            :raw_length => group_def.raw_length,
+            :raw_area => group_def.raw_area,
+            :raw_volume => group_def.raw_volume,
             :parts => []
         }
         response[:groups].push(group)
 
         # Sort and browse parts
         group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
-          if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
-            if group_def.material_type == MaterialAttributes::TYPE_BAR
-              group[:raw_length] += (cutlist_def.is_metric? ? part_def.raw_size.length.to_m : part_def.raw_size.length) * part_def.count
-            end
-            if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-              group[:raw_area] += (cutlist_def.is_metric? ? part_def.raw_size.area_m2 : part_def.raw_size.area) * part_def.count
-            end
-            if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD
-              group[:raw_volume] += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume) * part_def.count
-            end
-          end
           group[:parts].push({
                                  :id => part_def.id,
                                  :definition_id => part_def.definition_id,
@@ -897,7 +897,7 @@
       material_name = part_data['material_name']
       entity_serialized_paths = part_data['entity_serialized_paths']
 
-      # Populate instance defs
+      # Populate entity infos
       entity_infos = []
       entity_serialized_paths.each { |entity_serialized_path|
         entity_info = @instance_infos_cache[entity_serialized_path]
@@ -1006,11 +1006,18 @@
 
     end
     
-    def bin_packing_command(settings)
+    def group_cutdiagram_command(settings)
       if @cutlist
 
         # Check settings
         group_id = settings['group_id']
+        kerf = settings['kerf']
+        trimming = settings['trimming']
+        base_sheet_length = settings['base_sheet_length']
+        base_sheet_width = settings['base_sheet_width']
+        rotatable = settings['rotatable']
+        stacking = settings['stacking']
+        stacking_horizontally = settings['stacking_horizontally']
 
         boxes = []
         bins = []
@@ -1030,8 +1037,8 @@
               end
             }
             # the dimensions need to be in Sketchup internal dimensions AND float
-            sawkerf = "3mm".to_l.to_f
-            cleanup = "10mm".to_l.to_f
+            sawkerf = kerf.to_l.to_f
+            cleanup = trimming.to_l.to_f
             sheet_length = "5000mm".to_l.to_f
                        
             # there may be more than one sheet, the first one will be replicated if more are needed
@@ -1042,7 +1049,7 @@
             p.pack(bins, boxes)
             p.print_result
             puts "end -> calepinage 1D"
-            
+
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
             puts "start -> calepinage 2D"
             group[:parts].each { |part|
@@ -1058,19 +1065,19 @@
             # the dimensions need to be in Sketchup internal units AND float
 
             options = {
-              :kerf => "3mm".to_l.to_f,
-              :trimming => "10mm".to_l.to_f,
-              :rotatable => false,
-              :stacking => false,
-              :stacking_horizontally => true,
-              :base_sheet_length => "2800mm".to_l.to_f,
-              :base_sheet_width => "2070mm".to_l.to_f,
+              :kerf => kerf.to_l.to_f,
+              :trimming => trimming.to_l.to_f,
+              :rotatable => rotatable,
+              :stacking => stacking,
+              :stacking_horizontally => stacking_horizontally,
+              :base_sheet_length => base_sheet_length.to_l.to_f,
+              :base_sheet_width => base_sheet_width.to_l.to_f,
               :debugging => false
             }
 
             bins = [] # run will create a first bin if this is empty
             e = BinPacking2D::PackEngine.new(bins, boxes)
-                
+
             # create this directory to put html files into
             unless File.directory?("/tmp/lairdubois_test/")
               FileUtils.mkdir_p("/tmp/lairdubois_test/")

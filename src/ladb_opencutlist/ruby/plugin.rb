@@ -6,8 +6,9 @@ module Ladb::OpenCutList
   require 'base64'
   require 'uri'
   require_relative 'observer/app_observer'
-  require_relative 'controller/cutlist_controller'
   require_relative 'controller/materials_controller'
+  require_relative 'controller/cutlist_controller'
+  require_relative 'controller/cutdiagram_controller'
 
   class Plugin
 
@@ -165,12 +166,12 @@ module Ladb::OpenCutList
 
         # -- Observers --
 
-        Sketchup.add_observer(AppObserver.new())
+        Sketchup.add_observer(AppObserver.new)
 
         # -- Controllers --
 
-        @@controllers.push(CutlistController.new())
-        @@controllers.push(MaterialsController.new())
+        @@controllers.push(MaterialsController.new)
+        @@controllers.push(CutlistController.new)
 
         # -- Commands --
 

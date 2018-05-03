@@ -75,7 +75,7 @@ tab:
       numbers_reset: Réinitialiser les numéros de pièce
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
-      group_bin_packing: Calpinage
+      group_cutdiagram: Calpinage
       edit_material: Editer la matière '{{ material }}'
       edit_group_properties: Editer les propriétés du groupe
     edit_part:
@@ -173,6 +173,15 @@ tab:
       thickness: Epaisseur finie
       count: Quantité
       material_name: Matière
+    cutdiagram:
+      title: Calpinage
+      option_kerf: kerf
+      option_trimming: trimming
+      option_rotatable: rotatable
+      option_stacking: stacking
+      option_stacking_horizontally: stacking_horizontally
+      option_base_sheet_length: base_sheet_length
+      option_base_sheet_width: base_sheet_width
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
@@ -246,6 +255,9 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
+  cutdiagram:
+    label: Calpinage
+    title: Calpinage
   about:
     label: A propos
     title: A propos

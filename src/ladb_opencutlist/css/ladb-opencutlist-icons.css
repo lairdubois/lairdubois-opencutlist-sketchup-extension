@@ -28,7 +28,7 @@ i, span.ladb-opencutlist-icon {
 }
 
 
-.ladb-opencutlist-icon-bin-packing:before {
+.ladb-opencutlist-icon-cutdiagram:before {
   content: "\e923";
 }
 .ladb-opencutlist-icon-save:before {

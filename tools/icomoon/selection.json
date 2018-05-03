@@ -4,28 +4,25 @@
     {
       "icon": {
         "paths": [
-          "M0 0h256v384h-256v-384z",
-          "M384 0h256v384h-256v-384z",
-          "M768 0h256v768h-256v-768z",
-          "M0 512h640v256h-640v-256z",
-          "M-0 896h1024v128h-1024v-128z"
+          "M-0 128h256v384h-256v-384z",
+          "M384 128h256v384h-256v-384z",
+          "M768 128h256v768h-256v-768z",
+          "M-0 640h640v256h-640v-256z"
         ],
         "attrs": [
           {},
           {},
           {},
-          {},
           {}
         ],
-        "isMulticolor": false,
-        "isMulticolor2": false,
         "grid": 16,
         "tags": [
-          "bin-packing"
-        ]
+          "cutdiagram"
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false
       },
       "attrs": [
-        {},
         {},
         {},
         {},
@@ -34,8 +31,8 @@
       "properties": {
         "order": 298,
         "id": 55,
-        "name": "bin-packing",
-        "prevSize": 16,
+        "name": "cutdiagram",
+        "prevSize": 14,
         "code": 59683
       },
       "setIdx": 0,
@@ -65,7 +62,7 @@
         "order": 288,
         "id": 41,
         "name": "save",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59679
       },
       "setIdx": 0,
@@ -97,7 +94,7 @@
         "order": 262,
         "id": 29,
         "name": "refresh",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59672
       },
       "setIdx": 0,
@@ -130,7 +127,7 @@
         "order": 269,
         "id": 19,
         "name": "tick",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59662
       },
       "setIdx": 0,
@@ -166,7 +163,7 @@
         "order": 273,
         "id": 12,
         "name": "link",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59660
       },
       "setIdx": 0,
@@ -208,7 +205,7 @@
         "order": 274,
         "id": 10,
         "name": "eye-close",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59658
       },
       "setIdx": 0,
@@ -240,7 +237,7 @@
         "order": 275,
         "id": 11,
         "name": "eye-open",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59659
       },
       "setIdx": 0,
@@ -269,7 +266,7 @@
         "order": 279,
         "id": 23,
         "name": "tip",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59668
       },
       "setIdx": 0,
@@ -298,7 +295,7 @@
         "order": 284,
         "id": 17,
         "name": "solid-wood",
-        "prevSize": 16,
+        "prevSize": 14,
         "code": 59651
       },
       "setIdx": 0,

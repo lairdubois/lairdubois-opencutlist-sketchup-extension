@@ -222,10 +222,10 @@
                 });
                 $(this).blur();
             });
-            $('button.ladb-btn-bin-packing', that.$page).on('click', function() {
+            $('button.ladb-btn-group-cutdiagram', that.$page).on('click', function() {
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
-                that.binPacking({ group_id: groupId });
+                that.cutdiagramGroup(groupId);
                 $(this).blur();
             });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function() {
@@ -584,6 +584,45 @@
         });
     };
 
+    LadbTabCutlist.prototype.cutdiagramGroup = function (groupId) {
+        var that = this;
+
+        var $modal = that.appendModalInside('ladb_cutlist_modal_cutdiagram', 'tabs/cutlist/_modal-cutdiagram.twig');
+
+        // Fetch UI elements
+        var $inputKerf = $('#ladb_input_kerf', $modal);
+        var $inputTrimming = $('#ladb_input_trimming', $modal);
+        var $inputBaseSheetLength = $('#ladb_input_base_sheet_length', $modal);
+        var $inputBaseSheetWidth = $('#ladb_input_base_sheet_width', $modal);
+        var $inputRotatable = $('#ladb_input_rotatable', $modal);
+        var $inputStacking = $('#ladb_input_stacking', $modal);
+        var $inputStackingHorizontaly = $('#ladb_input_stacking_horizontally', $modal);
+        var $btnCutdiagram = $('#ladb_cutlist_cutdiagram', $modal);
+
+        // Bind buttons
+        $btnCutdiagram.on('click', function() {
+
+            rubyCallCommand('cutlist_group_cutdiagram', {
+                groupId: groupId,
+                kerf: $inputKerf.val(),
+                trimming: $inputTrimming.val(),
+                base_sheet_length: $inputBaseSheetLength.val(),
+                base_sheet_width: $inputBaseSheetWidth.val(),
+                rotatable: $inputRotatable.is(':checked'),
+                stacking: $inputStacking.is(':checked'),
+                stacking_horizontaly: $inputStackingHorizontaly.is(':checked')
+            });
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     // Numbers /////
 
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
@@ -601,12 +640,6 @@
         rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function() {
             that.generateCutlist(callback);
         });
-
-    };
-
-    LadbTabCutlist.prototype.binPacking = function (params) {
-
-        rubyCallCommand('cutlist_bin_packing', params ? params : {});
 
     };
 
