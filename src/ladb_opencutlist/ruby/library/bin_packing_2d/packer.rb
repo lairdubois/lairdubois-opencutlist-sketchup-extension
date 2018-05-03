@@ -1,19 +1,8 @@
 ﻿module BinPacking2D
-  
-  require_relative "packing2d"
-  require_relative "box"
-  require_relative "bin"
-  require_relative "cut"
-  require_relative "score"
-  require_relative "performance"
-  
-  # used just for html output
-  require_relative "export_binding"
-  require_relative "export"
-  require "erb"
     
   class Packer < Packing2D
-    attr_accessor :rotatable, :sawkerf, :cleanup, :original_bins, :unplaced_boxes, :cuts, :placed_boxes, :score, :split, :performance
+    attr_accessor :rotatable, :sawkerf, :cleanup, :original_bins, :unplaced_boxes, :cuts, :placed_boxes, 
+      :score, :split, :performance
 
     def initialize(rotatable, sawkerf, cleanup=5, debugging=false)
       @sawkerf = sawkerf
@@ -50,56 +39,132 @@
       return tmp_boxes
     end
     
-    def preprocess_supergroups_length(boxes)
-      maxlength = @b_l - 2*@cleanup
+    def preprocess_supergroups_length(boxes, stack_horizontally)
       sboxes = []
-      groups = boxes.group_by { |b| b.width }
-      groups.each do |k, v|
-        db "start of sb"
-        db "common width = #{'%6.0f' % k}"
-        nb = BinPacking2D::Box.new(0, k, "supergroup")
-        sboxes << nb
-        v = v.sort_by  { |b| [b.length]}.reverse
-        v.each do |box|
-          db "box #{'%6.0f' % box.length} #{'%6.0f' % box.width}"
-          if !nb.add(box, @sawkerf, maxlength)
-            nb = BinPacking2D::Box.new(0, k, "supergroup")
-            sboxes << nb
-            nb.add(box, @sawkerf, maxlength)
+      if stack_horizontally then
+        maxlength = @b_l - 2*@cleanup
+        width_groups = boxes.group_by { |b| [b.width, b.length] }
+        width_groups.each do |k, v|
+          db "start of sb"
+          nb = BinPacking2D::Box.new(0, k[0], "supergroup")
+          sboxes << nb
+          v = v.sort_by  { |b| [b.length]}.reverse
+          v.each do |box|
+            db "box #{'%6.0f' % box.length} #{'%6.0f' % box.width}"
+            if !nb.stack_length(box, @sawkerf, maxlength)
+              added = false
+              sboxes.each do |s|
+                if !added && s.stack_length(box, @sawkerf, maxlength)
+                  added = true
+                end
+              end
+              if !added
+                nb = BinPacking2D::Box.new(0, k[0], "supergroup")
+                sboxes << nb
+                nb.stack_length(box, @sawkerf, maxlength)
+              end            
+            end
+          end
+        end
+      else
+        maxwidth = @b_w - 2*@cleanup
+        length_groups = boxes.group_by { |b| [b.length, b.width] }
+        length_groups.each do |k, v|
+          db "start of sb"
+          nb = BinPacking2D::Box.new(k[0], 0, "supergroup")
+          sboxes << nb
+          v = v.sort_by  { |b| [b.width]}.reverse
+          v.each do |box|
+            db "box #{'%6.0f' % box.length} #{'%6.0f' % box.width}"
+            if !nb.stack_width(box, @sawkerf, maxwidth)
+              added = false
+              sboxes.each do |s|
+                if !added && s.stack_width(box, @sawkerf, maxwidth)
+                  added = true
+                end
+              end
+              if !added
+                nb = BinPacking2D::Box.new(k[0], 0, "supergroup")
+                sboxes << nb
+                nb.stack_width(box, @sawkerf, maxwidth)
+              end            
+            end
           end
         end
       end
       db "end of sb"
+      sboxes.each do |box|
+        db "#{box.length} #{box.width}"
+        box.sboxes.each do |b|
+          db "   #{b.length} #{b.width}"
+        end
+      end
       return sboxes
     end
-
-    def postprocess_supergroups(sboxes) 
+    
+    def postprocess_supergroups(sboxes, stack_horizontally) 
       boxes = []
       cuts = []
-      sboxes.each do |sbox|
-        x = sbox.x
-        y = sbox.y
-        db "sbox length : #{sbox.sboxes.length}"
-        cut_counts = sbox.sboxes.length() -1
-        sbox.sboxes.each do |b|
-          b.x = x
-          b.y = y
-          b.index = sbox.index
-          if sbox.rotated
-            b.rotate
-          end
-          x = x + b.length + @sawkerf
-          boxes << b
-          if cut_counts > 0
-            cuts << BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false)
-            cut_counts = cut_counts -1
-          end
-        end 
+
+      if stack_horizontally
+        sboxes.each do |sbox|
+          x = sbox.x
+          y = sbox.y
+          db "sbox length : #{sbox.sboxes.length}"
+          cut_counts = sbox.sboxes.length() -1
+          sbox.sboxes.each do |b|
+            b.x = x
+            b.y = y
+            b.index = sbox.index
+            if sbox.rotated
+              b.rotate
+              y = y + b.width + @sawkerf
+              if cut_counts > 0
+                cuts << BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, b.index, false)
+                cut_counts = cut_counts -1
+              end
+            else
+              x = x + b.length + @sawkerf
+              if cut_counts > 0
+                cuts << BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false)
+                cut_counts = cut_counts -1
+              end
+            end
+            boxes << b
+          end 
+        end
+      else
+        sboxes.each do |sbox|
+          x = sbox.x
+          y = sbox.y
+          db "sbox width : #{sbox.sboxes.length}"
+          cut_counts = sbox.sboxes.length() -1
+          sbox.sboxes.each do |b|
+            b.x = x
+            b.y = y
+            b.index = sbox.index
+            if sbox.rotated
+              b.rotate
+              y = y + b.length + @sawkerf
+              if cut_counts > 0
+                cuts << BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false)
+                cut_counts = cut_counts -1
+              end
+            else
+              y = y + b.width + @sawkerf
+              if cut_counts > 0
+                cuts << BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, b.index, false)
+                cut_counts = cut_counts -1
+              end
+            end
+            boxes << b
+          end 
+        end
       end
       return boxes, cuts
     end
  
-    def pack(bins, boxes, score, split)
+    def pack(bins, boxes, score, split, stacking, stack_horizontally)
       s = BinPacking2D::Score.new
       @score = score
       @split = split
@@ -135,8 +200,6 @@
       if @rotatable then
         boxes = preprocess_rotatable(boxes)
       end
-      # sort boxes width/length decreasing (heuristic)
-      boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
       
       # preprocess too large items
       boxes.each_with_index do |box, i|
@@ -148,8 +211,10 @@
       end
 
       # preprocess super groups
-      boxes = preprocess_supergroups_length(boxes)
-
+      boxes = preprocess_supergroups_length(boxes, stack_horizontally) if stacking
+      # sort boxes width/length decreasing (heuristic)
+      boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
+      
       until boxes.empty?
         db "- start placing box ->"
         
@@ -216,8 +281,10 @@
       end
 
       # postprocess supergroups
-      placed_boxes, add_cuts = postprocess_supergroups(placed_boxes)
-      cuts.concat(add_cuts)
+      if stacking
+        placed_boxes, add_cuts = postprocess_supergroups(placed_boxes, stack_horizontally)
+        cuts.concat(add_cuts)
+      end
       
       # collect stuff into a single object for reporting
       @original_bins.each_with_index do |bin, index|
@@ -237,7 +304,7 @@
             bin.leftovers << b
           end
         end
-      end # do
+      end
       @packed = true
       @performance = get_performance
     end
@@ -245,7 +312,6 @@
     def get_performance
       if @packed
         largest_bin = BinPacking2D::Bin.new(0, 0, 0, 0, 0)
-        cut_length = 0
            
         p = BinPacking2D::Performance.new(@score, @split)
         @original_bins.each do |bin|
@@ -255,12 +321,18 @@
               largest_bin = b
             end
           end
+          bin.boxes.each do |box|
+            p.h_length += box.length
+            p.v_length += box.width
+          end
           bin.cuts.each do |cut|
-            cut_length += cut.length
+            p.cutlength += cut.length
+            p.h_cutlength += cut.get_h_cutlength()
+            p.v_cutlength += cut.get_v_cutlength()
           end
         end
+
         p.largest_leftover = largest_bin
-        p.cut_length = cut_length
         p.nb_bins = @original_bins.length
         return p
       else
@@ -306,4 +378,3 @@
   end
 end
 
-# eof

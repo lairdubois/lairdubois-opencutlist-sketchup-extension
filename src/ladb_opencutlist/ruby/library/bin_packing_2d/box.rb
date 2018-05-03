@@ -1,6 +1,6 @@
 ﻿module BinPacking2D
   class Box < Packing2D
-    attr_accessor :length, :width, :x, :y, :index, :rotated, :superbox, :sboxes
+    attr_accessor :length, :width, :x, :y, :index, :rotated, :superbox, :sboxes, :stack_horizontal
 
     def initialize(length, width, number)
       @length = length
@@ -12,10 +12,39 @@
       @number = number
       @sboxes = []
       @superbox = false
+      @stack_horizontal = true
     end
-
+    
+    def stack_length(box, sawkerf, max)
+      return false if box.width != @width
+      
+      if box.length + @length > max
+        return false
+      else
+        @length += sawkerf if @length > 0
+        @length += box.length
+        @sboxes << box
+        @superbox = true
+        return true
+      end
+    end
+    
+    def stack_width(box, sawkerf, max)
+      return false if box.length != @length
+      
+      if box.width + @width > max
+        return false
+      else
+        @width += sawkerf if @width > 0
+        @width += box.width
+        @sboxes << box
+        @superbox = true
+        @stack_horizontal = false
+        return true
+      end
+    end
     def add(box, sawkerf, maxlength)
-      if box.length + @length + sawkerf > maxlength
+      if box.length + @length > maxlength
         return false
       else
         @length += sawkerf if @length > 0
@@ -33,12 +62,6 @@
     def rotate
       @width, @length = [@length, @width]
       @rotated = !@rotated
-      return self
-    end
-    
-    def flip
-      # flip is like rotated, but it does not mark the object as rotated
-      @width, @length = [@length, @width]
       return self
     end
 
@@ -67,5 +90,6 @@
       width = cu(@width)
       "#{length} x #{width} - #{@number}" + (@rotated ? " r" : "")
     end
+    
   end
 end

@@ -18,7 +18,7 @@
   require_relative '../tool/highlight_part_tool'
   
   require_relative '../library/bin_packing_1d/packer'
-  require_relative '../library/bin_packing_2d/packer'
+  require_relative '../library/bin_packing_2d/packengine'
   require 'fileutils'
   
   class CutlistController < Controller
@@ -1025,7 +1025,7 @@
             group[:parts].each { |part|
               i = 0
               while i < part[:count]
-                boxes << BinPacking1D::Box.new(part[:length].to_l.to_f)
+                boxes << BinPacking1D::Box.new(part[:length].to_l.to_f, part[:number])
                 i += 1
               end
             }
@@ -1042,7 +1042,7 @@
             p.pack(bins, boxes)
             p.print_result
             puts "end -> calepinage 1D"
-
+            
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
             puts "start -> calepinage 2D"
             group[:parts].each { |part|
@@ -1054,58 +1054,38 @@
                 i += 1
               end
             }
-            # the dimensions need to be in Sketchup internal dimensions AND float
-            sawkerf = "3mm".to_l.to_f
-            cleanup = "10mm".to_l.to_f 
-            rotatable = true
-            sheet_length = "2800mm".to_l.to_f
-            sheet_width = "2070mm".to_l.to_f
             
-            # there may be more than one sheet, the first one will be replicated if more are needed
-            sheet_index = 0
-            bins << BinPacking2D::Bin.new(sheet_length, sheet_width, 0, 0, sheet_index)
-            
-            zoom_factor = 0.4
-            
+            # the dimensions need to be in Sketchup internal units AND float
+
+            options = {
+              :kerf => "3mm".to_l.to_f,
+              :trimming => "10mm".to_l.to_f,
+              :rotatable => false,
+              :stacking => false,
+              :stacking_horizontally => true,
+              :base_sheet_length => "2800mm".to_l.to_f,
+              :base_sheet_width => "2070mm".to_l.to_f,
+              :debugging => false
+            }
+
+            bins = [] # run will create a first bin if this is empty
+            e = BinPacking2D::PackEngine.new(bins, boxes)
+                
             # create this directory to put html files into
             unless File.directory?("/tmp/lairdubois_test/")
               FileUtils.mkdir_p("/tmp/lairdubois_test/")
             end
-            p = BinPacking2D::Packer.new(rotatable, sawkerf, cleanup)
-            # boxes.each do |box|
-            # puts "box #{box.length} #{box.width}"
-            # end
-            packings = []
+            FileUtils.rm_f Dir.glob("/tmp/lairdubois_test/*")
             
-            (0..5).to_a.each do |score|
-              (0..5).to_a.each do |split|
-                copy_boxes = []
-                p = BinPacking2D::Packer.new(rotatable, sawkerf, cleanup, false)
-                boxes.each do |box|
-                  b = box.clone
-                  copy_boxes << b 
-                end
-                copy_bins = []
-                bins.each do |bin|
-                  b = bin.clone
-                  copy_bins << b 
-                end
-                p.pack(copy_bins, copy_boxes, score, split)
-                packings << p
-                # export the packing to a html file, takes 4-5 seconds for 90 pieces 
-                html = BinPacking2D::Export.new(p.original_bins).to_html(zoom: zoom_factor)
-                File.write("/tmp/lairdubois_test/sheet" + score.to_s + split.to_s + ".html", html)
-              end
-            end
-            packings = packings.sort_by { |p| [p.performance.nb_bins, 1/p.performance.largest_leftover.area(), p.performance.cut_length] }
-            puts "                     score / split             #sheets    leftover   cut length # leftover"
-            puts "                                                       largest widest                     "
-            packings.each do |p|
-              p.get_performance.print
-              # p.unplaced_boxes => array of boxes too large to fit a sheet
-            end
-            #html = BinPacking2D::Export.new(packings[0].original_bins).to_html(zoom: zoom_factor)
-            #File.write("/tmp/lairdubois_test/sheet" + packings[0].score.to_s + packings[0].split.to_s + ".html", html)
+            html = e.run(options)
+            File.write("/tmp/lairdubois_test/sheet_no_stacking.html", html)
+            options[:stacking] = true
+            html = e.run(options)
+            File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
+            options[:stacking_horizontally] = false
+            html = e.run(options)
+            File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
+
             puts "end -> calepinage 2D"
          end
         }          

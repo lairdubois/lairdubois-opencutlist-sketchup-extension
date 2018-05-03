@@ -36,7 +36,13 @@
         border: 1px solid #f77f00;
         background: #f77f00;
         box-sizing: border-box;
-      }      
+      }
+      .cut-secondary {
+          border: 1px solid #007ff7;
+          position: absolute;
+          background: #007ff7;
+          box-sizing: border-box;
+      }
       .fr {
         position: absolute;
         border: 1px solid white;
@@ -72,12 +78,17 @@
           <div>
             
             <% bin.cuts.each do |cut| %>
-            <%   if cut.horizontal then %>
-                   <div class="cut" style="width: <%= zoom(cut.length) %>px; height: <%= 2 %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+            <% if cut.primary
+                    c= "cut"
+               else
+                    c= "cut-secondary"
+               end
+               if cut.horizontal then %>
+                    <div class="<%= c %>" style="width: <%= zoom(cut.length) %>px; height: <%= 2 %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
                    <span class="cut-label"><%= cut.label %></span>
                    </div>
             <%  else %>
-                    <div class="cut" style="width: <%= 2 %>px; height: <%= zoom(cut.length) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+                    <div class="<%= c %>" style="width: <%= 2 %>px; height: <%= zoom(cut.length) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
                     <span class="cut-label"><%= cut.label %></span>
                     </div>
             <% end %>           

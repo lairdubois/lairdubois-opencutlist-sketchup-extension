@@ -146,9 +146,7 @@
     end 
     
     def label
-      length = cu(@length)
-      width = cu(@width)
-      return "#{length} x #{width}"
+      return "#{cu(@length)} x #{cu(@width)}"
     end
     
   end
