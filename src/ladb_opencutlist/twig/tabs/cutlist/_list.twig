@@ -94,7 +94,7 @@
                     {% if group.material_type == 2 or group.material_type == 3 %}
                         <button class="no-print btn btn-default btn-sm ladb-btn-group-cutdiagram"><i class="ladb-opencutlist-icon-cutdiagram"></i> {{ 'tab.cutlist.menu.group_cutdiagram'|i18next }}</button>
                     {% endif %}
-                    <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
+                    <button class="no-print btn btn-default btn-sm ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="#" class="ladb-item-edit-group"><i class="ladb-opencutlist-icon-edit"></i> {{ 'tab.cutlist.menu.edit_group_properties'|i18next }}</a></li>
                         {% if group.material_name is not empty %}

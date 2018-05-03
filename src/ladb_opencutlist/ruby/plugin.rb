@@ -8,7 +8,6 @@ module Ladb::OpenCutList
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
-  require_relative 'controller/cutdiagram_controller'
 
   class Plugin
 
