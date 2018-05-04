@@ -17,7 +17,7 @@
   require_relative '../utils/transformation_utils'
   require_relative '../tool/highlight_part_tool'
   
-  require_relative '../library/bin_packing_1d/packer'
+  require_relative '../library/bin_packing_1d/packengine'
   require_relative '../library/bin_packing_2d/packengine'
   require 'fileutils'
   
@@ -1020,7 +1020,6 @@
         stacking_horizontally = settings['stacking_horizontally']
 
         boxes = []
-        bins = []
 
         @cutlist[:groups].each { |group|
 
@@ -1037,18 +1036,21 @@
                 i += 1
               end
             }
+            
             # the dimensions need to be in Sketchup internal dimensions AND float
-            sawkerf = kerf.to_l.to_f
-            cleanup = trimming.to_l.to_f
-            sheet_length = "5000mm".to_l.to_f
+            
+            options = {
+              :kerf => kerf.to_l.to_f,
+              :trimming => trimming.to_l.to_f,
+              :base_sheet_length => base_sheet_length.to_l.to_f,
+              :debugging => false
+            }
                        
-            # there may be more than one sheet, the first one will be replicated if more are needed
-            sheet_index = 0
-            bins << BinPacking1D::Bin.new(sheet_length, 0, sheet_index)
-
-            p = BinPacking1D::Packer.new(sawkerf, cleanup)
-            p.pack(bins, boxes)
-            p.print_result
+            bins = [] # run will create a first bin if this is empty
+            
+            e = BinPacking1D::PackEngine.new(bins, boxes)
+            e.run(options)
+            
             puts "end -> calepinage 1D"
 
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
@@ -1088,8 +1090,10 @@
             html = e.run(options)
             File.write("/tmp/lairdubois_test/sheet_no_stacking.html", html)
             options[:stacking] = true
+            options[:stacking_horizontally] = true
             html = e.run(options)
             File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
+            options[:stacking] = true
             options[:stacking_horizontally] = false
             html = e.run(options)
             File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)

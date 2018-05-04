@@ -75,7 +75,7 @@ tab:
       numbers_reset: Reinitialize the part numbers
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
-      group_cutdiagram: Calpinage
+      group_cutdiagram: Cutting Diagram
       edit_material: Edit Material '{{ material }}'
       edit_group_properties: Edit properties of this group
     edit_part:
@@ -173,6 +173,15 @@ tab:
       thickness: Thickness - final
       count: Quantity
       material_name: Material
+    cutdiagram:
+       title: Cutting Diagram
+       option_kerf: Blade Thickness
+       option_trimming: Trimming Size
+       option_rotatable: Parts Can be Rotated
+       option_stacking: Stack Identical Parts
+       option_stacking_horizontally: Stack Parts Horizontally
+       option_base_sheet_length: Base Sheet Length
+       option_base_sheet_width: Base Sheet Width
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -247,8 +256,8 @@ tab:
       exported_to: Export to {{ export_path }} successful.
     outdated_base: To remain synchronized, you must refresh the material list.
   cutdiagram:
-    label: Calpinage
-    title: Calpinage
+    label: Cutting Diagram
+    title: Cutting Diagram
   about:
     label: About
     title: About

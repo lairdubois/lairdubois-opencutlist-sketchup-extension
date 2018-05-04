@@ -175,13 +175,13 @@ tab:
       material_name: Matière
     cutdiagram:
       title: Calpinage
-      option_kerf: kerf
-      option_trimming: trimming
-      option_rotatable: rotatable
-      option_stacking: stacking
-      option_stacking_horizontally: stacking_horizontally
-      option_base_sheet_length: base_sheet_length
-      option_base_sheet_width: base_sheet_width
+      option_kerf: Blade Width 
+      option_trimming: Trimming Size
+      option_rotatable: Parts Can be Rotated
+      option_stacking: Stack Identical Parts
+      option_stacking_horizontally: Stack Parts Horizontally
+      option_base_sheet_length: Base Sheet Length
+      option_base_sheet_width: Base Sheet Width
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
