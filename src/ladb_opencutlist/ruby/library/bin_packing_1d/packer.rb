@@ -1,11 +1,5 @@
 ﻿module BinPacking1D
 
-  require_relative "packing1d"
-  require_relative "box"
-  require_relative "bin"
-  require_relative "score"
-  require_relative "cut"
-
   class Packer < Packing1D
     attr_accessor :unplaced_boxes, :original_bins
 
@@ -22,11 +16,7 @@
       s = BinPacking1D::Score.new
       cuts = []
       placed_boxes = []
-      db "start -->"
       
-      # print bins & boxes for debugging
-      
-
       # remember original length of first bin, aka reference bin
       bin_index = bins.length
       @b_l = bins[0].length
@@ -99,10 +89,9 @@
     
     def print_result
       return if !@packed
-      pstr "results"
       if @unplaced_boxes.length != 0
         @unplaced_boxes.each do |box|
-          pstr "unplaced item #{'%10s' % cu(box.length)}"
+          pstr "unplaced item #{'%10s' % cu(box.length)} (#{'%3s' % box.number} ) "
         end
       end
       @original_bins.each do |bin|
@@ -112,7 +101,7 @@
         s += " tot = #{'%4d' % bin.boxes.length}, #{'%10s' % cu(l)} ->"
         groups = bin.boxes.group_by { |b| b.length }
         groups.each do |l, a|
-          s += "#{'%10s' % cu(l)} x #{a.length} |"
+          s += "#{'%10s' % cu(l)} x #{a.length} (#{'%3s' % a[0].number} ) |"
         end
         bin.leftovers = bin.leftovers.sort_by { |b| b.length }.reverse
         bin.leftovers.each do |b|

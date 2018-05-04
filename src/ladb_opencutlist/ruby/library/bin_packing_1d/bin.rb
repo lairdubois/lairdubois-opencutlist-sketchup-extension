@@ -13,7 +13,6 @@
       @cleaned = false
     end
     
-    #
     def encloses?(box)
       return @length >= box.length
     end
@@ -36,7 +35,7 @@
     
     def cut(length, sawkerf)
       cs = self.dup
-      if @length > length + sawkerf then
+      if @length > length + sawkerf
         cs.length -= length + sawkerf
         cs.x += length + sawkerf
       else
@@ -46,7 +45,8 @@
       return cs
     end
 
-    def print
+=begin
+def print
       f = '%6.0f'
       db "bin #{f % @x} #{f % @length} #{f % @index}"
     end
@@ -58,6 +58,7 @@
     def label
       return "#{'%6.0f' % @length}" 
     end
-    
+=end
+
   end
 end
