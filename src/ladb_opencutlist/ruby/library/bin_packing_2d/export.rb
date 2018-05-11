@@ -12,5 +12,6 @@
       html = ERB.new(template).result(binding.get_binding)
       html
     end
+    
   end
 end

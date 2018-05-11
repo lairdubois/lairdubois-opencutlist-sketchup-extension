@@ -15,19 +15,11 @@
       @h_length = 0
       @v_length = 0
     end
-    
-    def width
-      return @largest_leftover.width
-    end
-    
-    def length
-      return @largest_leftover.length
-    end
-
+   
     def print
       pstr "#{get_strategy_str(@score,@split)} #{'%3d' % nb_bins} #{cu(@largest_leftover.length)} " + \
         "#{cu(@largest_leftover.width)} #{cu(@cutlength)} #{cu(@h_cutlength)} " + \
-        "#{cu(@h_length)} #{cu(@v_cutlength)} #{cu(@v_length)} #{'%3d' % @nb_leftovers}"
+        "#{cu(@h_length)} #{cu(@v_cutlength)} #{cu(@v_length)} #{cu(@largest_leftover.area())}"
     end
       
   end

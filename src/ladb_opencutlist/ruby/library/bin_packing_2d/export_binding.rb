@@ -10,7 +10,7 @@
     end
 
     def zoom(value)
-      cmm(value * @zoom).round
+      cmm(value * @zoom).to_i
     end
 
     def get_binding
