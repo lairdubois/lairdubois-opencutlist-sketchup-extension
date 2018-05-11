@@ -1075,7 +1075,7 @@
               :stacking_horizontally => stacking_horizontally,
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
-              :zoom => 0.45,
+              :zoom => 1,
               :debugging => false
             }
 
@@ -1097,10 +1097,10 @@
               options[:stacking] = true
               options[:stacking_horizontally] = true
               html = e.run(options)
-              File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html', html))
               options[:stacking_horizontally] = false
               html = e.run(options)
-              File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html', html))
             end
 
             puts "end -> calepinage 2D"
