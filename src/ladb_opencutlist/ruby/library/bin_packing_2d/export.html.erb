@@ -33,15 +33,13 @@
       }
       .cut {
         position: absolute;
-        border: 1px solid #f77f00;
         background: #f77f00;
         box-sizing: border-box;
       }
       .cut-secondary {
-          border: 1px solid #007ff7;
-          position: absolute;
-          background: #007ff7;
-          box-sizing: border-box;
+        position: absolute;
+        background: #007ff7;
+        box-sizing: border-box;
       }
       .fr {
         position: absolute;
@@ -54,6 +52,16 @@
         top: 2px;
         left: 2px;
         color: #0a0a0a;
+      }
+      .box .box-number {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #0a0a0a;
+        font-size: 20px;
+        margin-top: -10px;
       }
       .leftover .leftover-label {
         position: absolute;
@@ -96,6 +104,7 @@
             <% bin.boxes.each do |box| %>
                     <div class="box" style="width: <%= zoom(box.length) %>px; height: <%= zoom(box.width) %>px; left: <%= zoom(box.x) %>px; top: <%= zoom(box.y) %>px;">
                     <span class="box-label"><%= box.label %></span>
+                    <span class="box-number"><%= box.number %></span>
                     </div>
             <% end %>
             <% bin.leftovers.each do |box| %>

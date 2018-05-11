@@ -65,7 +65,7 @@
         end
       end  
       # just for debugging - end
-      return BinPacking2D::Export.new(packings[0].original_bins).to_html(zoom: 0.4, kerf: options[:kerf])
+      return BinPacking2D::Export.new(packings[0].original_bins).to_html(options)
     end
     
   end

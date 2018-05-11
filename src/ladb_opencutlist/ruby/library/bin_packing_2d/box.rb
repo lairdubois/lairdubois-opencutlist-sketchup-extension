@@ -1,6 +1,6 @@
 ﻿module BinPacking2D
   class Box < Packing2D
-    attr_accessor :length, :width, :x, :y, :index, :rotated, :superbox, :sboxes, :stack_horizontal
+    attr_accessor :length, :width, :x, :y, :index, :rotated, :number, :superbox, :sboxes, :stack_horizontal
 
     def initialize(length, width, number)
       @length = length
@@ -88,7 +88,7 @@
     def label
       length = cu(@length)
       width = cu(@width)
-      "#{length} x #{width} - #{@number}" + (@rotated ? " r" : "")
+      "#{length} x #{width}" + (@rotated ? " r" : "")
     end
     
   end
