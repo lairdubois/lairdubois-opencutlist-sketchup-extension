@@ -78,7 +78,6 @@ tab:
       group_cutdiagram: Calpinage
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
-      bin_packing: Calpinage
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung
@@ -174,6 +173,15 @@ tab:
       thickness: Dicke - fertig
       count: Anzahl
       material_name: Material
+    cutdiagram:
+      title: Cutting Diagram
+      option_kerf: Blade Thickness
+      option_trimming: Trimming Size
+      option_rotatable: Parts Can be Rotated
+      option_stacking: Stack Identical Parts
+      option_stacking_horizontally: Stack Parts Horizontally
+      option_base_sheet_length: Base Sheet Length
+      option_base_sheet_width: Base Sheet Width
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -247,6 +255,9 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
+  cutdiagram:
+    label: Schnittplan
+    title: Schnittplan
   about:
     label: Über
     title: Über

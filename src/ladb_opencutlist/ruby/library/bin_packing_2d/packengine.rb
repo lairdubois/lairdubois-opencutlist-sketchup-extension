@@ -64,7 +64,6 @@
           #File.write("results/sheet" + p.score.to_s + p.split.to_s + ".html", html)
         end
       end  
-      puts "here"
       # just for debugging - end
       return BinPacking2D::Export.new(packings[0].original_bins).to_html(zoom: 0.4)
     end
