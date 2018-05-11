@@ -1060,7 +1060,7 @@
               material_name = part[:material_name]
               i = 0
               while i < part[:count]
-                boxes << BinPacking2D::Box.new(part[:length].to_l.to_f, part[:width].to_l.to_f, part[:number])
+                boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part[:number])
                 i += 1
               end
             }
