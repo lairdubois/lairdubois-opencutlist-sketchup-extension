@@ -317,6 +317,7 @@
         @original_bins.each do |bin|
           if @cleanup > 0
             bin.cleaned = true
+            bin.cleancut = @cleanup
           end
           p.nb_leftovers += bin.leftovers.size
           bin.leftovers.each do |b|
