@@ -3,6 +3,7 @@
   require_relative "packing2d"
   require_relative "box"
   require_relative "bin"
+#  require_relative "reader" # only for the standalone version
   require_relative "cut"
   require_relative "score"
   require_relative "performance"
@@ -27,7 +28,7 @@
       end
       
       packings = []
-      use_supergroups = true
+
       (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
           copy_boxes = []
@@ -46,7 +47,8 @@
           packings << p
         end
       end
-      packings = packings.sort_by { |p| [p.performance.nb_bins, 1/p.performance.largest_leftover.area(), p.performance.v_cutlength ] }
+      
+      packings = packings.sort_by { |p| [p.performance.nb_bins, p.performance.v_cutlength, 1/p.performance.largest_leftover.area()] }
       
       # just for debugging - start
       if !options[:stacking]
@@ -64,6 +66,7 @@
           #File.write("results/sheet" + p.score.to_s + p.split.to_s + ".html", html)
         end
       end  
+      
       # just for debugging - end
       return BinPacking2D::Export.new(packings[0].original_bins).to_html(options)
     end

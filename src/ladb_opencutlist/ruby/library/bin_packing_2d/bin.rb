@@ -29,11 +29,7 @@
     def encloses?(box)
       return @length >= box.length && @width >= box.width
     end
-    
-    def larger?(bin, rotate)
-      return (@length*@width) > (bin.length*bin.width)
-    end
-    
+
     def encloses_rotated?(box)
       return @length >= box.width && @width >= box.length
     end
@@ -56,7 +52,7 @@
       "Size: #{length} x #{width}   " +
       "Efficiency: #{'%3.2f' % efficiency}%   " +
       "Length of Cuts: #{l}   " +
-      "Cleaned: " + (@cleaned ? "#{@cleancut}" : "")
+      "Trimming: " + (@cleaned ? "#{@cleancut}" : "")
     end
     
     def area
@@ -91,7 +87,7 @@
     end
 
     def split_horizontally(h, sawkerf)
-      st = self.dup
+      st = self.clone
       st.width = h
       sb = self.clone
       if @width > h
@@ -129,8 +125,8 @@
       
       ab = box.length*w
       ar = l *box.width
-      db "ab = #{'%7.0f' % ab}"
-      db "ar = #{'%7.0f' % ar}"
+      db "area bottom = #{'%7.0f' % ab}"
+      db "area right = #{'%7.0f' % ar}"
       return decision
     end
     

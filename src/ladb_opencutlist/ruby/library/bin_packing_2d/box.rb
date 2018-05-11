@@ -43,17 +43,6 @@
         return true
       end
     end
-    def add(box, sawkerf, maxlength)
-      if box.length + @length > maxlength
-        return false
-      else
-        @length += sawkerf if @length > 0
-        @length += box.length
-        @sboxes << box
-        @superbox = true
-        return true
-      end
-    end
     
     def area
       return @length * @width
@@ -88,7 +77,7 @@
     def label
       length = cu(@length)
       width = cu(@width)
-      "#{length} x #{width}" + (@rotated ? " r" : "")
+      return "#{length} x #{width}" + (@rotated ? " r" : "")
     end
     
   end

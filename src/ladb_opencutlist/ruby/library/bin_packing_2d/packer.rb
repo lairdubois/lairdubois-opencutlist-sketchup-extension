@@ -1,5 +1,4 @@
 ﻿module BinPacking2D
-    
   class Packer < Packing2D
     attr_accessor :rotatable, :sawkerf, :cleanup, :original_bins, :unplaced_boxes, :cuts, :placed_boxes, 
       :score, :split, :performance
@@ -39,7 +38,7 @@
       return tmp_boxes
     end
     
-    def preprocess_supergroups_length(boxes, stack_horizontally)
+    def preprocess_supergroups(boxes, stack_horizontally)
       sboxes = []
       if stack_horizontally then
         maxlength = @b_l - 2*@cleanup
@@ -211,7 +210,7 @@
       end
 
       # preprocess super groups
-      boxes = preprocess_supergroups_length(boxes, stack_horizontally) if stacking
+      boxes = preprocess_supergroups(boxes, stack_horizontally) if stacking
       # sort boxes width/length decreasing (heuristic)
       boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
       
@@ -312,13 +311,19 @@
     def get_performance
       if @packed
         largest_bin = BinPacking2D::Bin.new(0, 0, 0, 0, 0)
-           
+        largest_area = 0
+    
         p = BinPacking2D::Performance.new(@score, @split)
         @original_bins.each do |bin|
+          if @cleanup > 0
+            bin.cleaned = true
+          end
           p.nb_leftovers += bin.leftovers.size
           bin.leftovers.each do |b|
-            if b.larger?(largest_bin, @rotatable) 
+            a = b.area
+            if a > largest_area
               largest_bin = b
+              largest_area = a
             end
           end
           bin.boxes.each do |box|
@@ -375,6 +380,7 @@
       end
       db "-cutlist--> in: sheet(_r).html"
     end
+    
   end
 end
 

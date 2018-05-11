@@ -1093,12 +1093,11 @@
             cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
             File.write(cutdiagram_path, html)
 
-            if options[:debugging]
+            if !options[:stacking] 
               options[:stacking] = true
               options[:stacking_horizontally] = true
               html = e.run(options)
               File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
-              options[:stacking] = true
               options[:stacking_horizontally] = false
               html = e.run(options)
               File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
