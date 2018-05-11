@@ -1089,15 +1089,19 @@
             FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
 
             html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_no_stacking.html", html)
-            options[:stacking] = true
-            options[:stacking_horizontally] = true
-            html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
-            options[:stacking] = true
-            options[:stacking_horizontally] = false
-            html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
+            cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
+            File.write(cutdiagram_path, html)
+
+            if options[:debugging]
+              options[:stacking] = true
+              options[:stacking_horizontally] = true
+              html = e.run(options)
+              File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
+              options[:stacking] = true
+              options[:stacking_horizontally] = false
+              html = e.run(options)
+              File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
+            end
 
             puts "end -> calepinage 2D"
 

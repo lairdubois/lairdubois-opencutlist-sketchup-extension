@@ -84,11 +84,11 @@
                     c= "cut-secondary"
                end
                if cut.horizontal then %>
-                    <div class="<%= c %>" style="width: <%= zoom(cut.length) %>px; height: <%= 2 %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+                    <div class="<%= c %>" style="width: <%= zoom(cut.length) %>px; height: <%= zoom(kerf) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
                    <span class="cut-label"><%= cut.label %></span>
                    </div>
             <%  else %>
-                    <div class="<%= c %>" style="width: <%= 2 %>px; height: <%= zoom(cut.length) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
+                    <div class="<%= c %>" style="width: <%= zoom(kerf) %>px; height: <%= zoom(cut.length) %>px; left: <%= zoom(cut.x) %>px; top: <%= zoom(cut.y) %>px;">
                     <span class="cut-label"><%= cut.label %></span>
                     </div>
             <% end %>           

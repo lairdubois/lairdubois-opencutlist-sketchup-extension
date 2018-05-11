@@ -8,7 +8,7 @@
     def to_html(options = {})
       template_path = File.expand_path("../export.html.erb", __FILE__)
       template = File.read(template_path)
-      binding = ExportBinding.new(@bins, options[:zoom] || 1)
+      binding = ExportBinding.new(@bins, options[:zoom] || 1, options[:kerf] || 2)
       html = ERB.new(template).result(binding.get_binding)
       html
     end
