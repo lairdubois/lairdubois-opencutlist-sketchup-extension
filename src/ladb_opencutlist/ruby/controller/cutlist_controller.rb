@@ -1094,7 +1094,7 @@
             options[:stacking_horizontally] = true
             html = e.run(options)
             File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
-            options[:stacking_horizontally] = false
+            options[:stacking] = true
             options[:stacking_horizontally] = false
             html = e.run(options)
             File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
