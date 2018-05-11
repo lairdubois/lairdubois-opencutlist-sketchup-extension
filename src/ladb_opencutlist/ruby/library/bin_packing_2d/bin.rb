@@ -52,7 +52,7 @@
       "Size: #{length} x #{width}   " +
       "Efficiency: #{'%3.2f' % efficiency}%   " +
       "Length of Cuts: #{l}   " +
-      "Trimming: " + (@cleaned ? "#{@cleancut}" : "")
+      "Trimming: " + (@cleaned ? "#{cu(@cleancut)}" : "")
     end
     
     def area

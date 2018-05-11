@@ -1017,7 +1017,7 @@
         base_sheet_width = settings['base_sheet_width']
         rotatable = settings['rotatable']
         stacking = settings['stacking']
-        stacking_horizontally = settings['stacking_horizontally']
+        stacking_horizontally = settings['stacking_horizontaly']
 
         boxes = []
 
