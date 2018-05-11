@@ -1075,7 +1075,7 @@
               :stacking_horizontally => stacking_horizontally,
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
-              :zoom => 0.45,
+              :zoom => 1,
               :debugging => false
             }
 
