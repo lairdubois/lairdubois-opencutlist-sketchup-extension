@@ -1080,22 +1080,36 @@
             e = BinPacking2D::PackEngine.new(bins, boxes)
 
             # create this directory to put html files into
-            unless File.directory?("/tmp/lairdubois_test/")
-              FileUtils.mkdir_p("/tmp/lairdubois_test/")
+            cutdiagram_dir = File.join(Plugin::temp_dir, 'cutdiagram')
+            unless Dir.exist?(cutdiagram_dir)
+              Dir.mkdir(cutdiagram_dir)
             end
-            FileUtils.rm_f Dir.glob("/tmp/lairdubois_test/*")
-            
+            FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
+
             html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_no_stacking.html", html)
-            options[:stacking] = true
-            html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_stacking_h.html", html)
-            options[:stacking_horizontally] = false
-            html = e.run(options)
-            File.write("/tmp/lairdubois_test/sheet_stacking_v.html", html)
+            cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
+            File.write(cutdiagram_path, html)
+
+            if options[:debugging]
+
+              options[:stacking] = true
+              html = e.run(options)
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html'), html)
+
+              options[:stacking_horizontally] = false
+              html = e.run(options)
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html'), html)
+
+            end
 
             puts "end -> calepinage 2D"
-         end
+
+            return {
+                :cutdiagram_path => cutdiagram_path,
+            }
+
+          end
+
         }          
       end
     end

@@ -15,6 +15,14 @@
     var SETTING_KEY_OPTION_COL_SEP = 'cutlist_option_col_sep';
     var SETTING_KEY_OPTION_ENCODING = 'cutlist_option_encoding';
 
+    var SETTING_KEY_OPTION_KERF = 'cutlist_option_kerf';
+    var SETTING_KEY_OPTION_TRIMMING = 'cutlist_option_trimming';
+    var SETTING_KEY_OPTION_BASE_SHEET_LENGTH = 'cutlist_option_base_sheet_length';
+    var SETTING_KEY_OPTION_BASE_SHEET_WIDTH = 'cutlist_option_base_sheet_width';
+    var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
+    var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
+    var SETTING_KEY_OPTION_STACKING_HORIZONTALY = 'cutlist_option_stacking_horizontaly';
+
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
@@ -31,6 +39,14 @@
 
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
     var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
+
+    var OPTION_DEFAULT_KERF = '3mm';
+    var OPTION_DEFAULT_TRIMMING = '10mm';
+    var OPTION_DEFAULT_BASE_SHEET_LENGTH = '2800mm';
+    var OPTION_DEFAULT_BASE_SHEET_WIDTH = '2070mm';
+    var OPTION_DEFAULT_ROTATABLE = false;
+    var OPTION_DEFAULT_STACKING = false;
+    var OPTION_DEFAULT_STACKING_HORIZONTALY = true;
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
@@ -279,6 +295,8 @@
 
         // Bind buttons
         $btnExport.on('click', function() {
+
+            // Fetch options
 
             that.exportOptions.col_sep = $selectColSep.val();
             that.exportOptions.encoding = $selectEncoding.val();
@@ -599,18 +617,52 @@
         var $inputStackingHorizontaly = $('#ladb_input_stacking_horizontally', $modal);
         var $btnCutdiagram = $('#ladb_cutlist_cutdiagram', $modal);
 
+        $inputKerf.val(that.cutdiagramOptions.kerf);
+        $inputTrimming.val(that.cutdiagramOptions.trimming);
+        $inputBaseSheetLength.val(that.cutdiagramOptions.base_sheet_length);
+        $inputBaseSheetWidth.val(that.cutdiagramOptions.base_sheet_width);
+        $inputRotatable.prop('checked', that.cutdiagramOptions.rotatable);
+        $inputStacking.prop('checked', that.cutdiagramOptions.stacking);
+        $inputStackingHorizontaly.prop('checked', that.cutdiagramOptions.stacking_horizontaly);
+
         // Bind buttons
         $btnCutdiagram.on('click', function() {
 
-            rubyCallCommand('cutlist_group_cutdiagram', {
-                group_id: groupId,
-                kerf: $inputKerf.val(),
-                trimming: $inputTrimming.val(),
-                base_sheet_length: $inputBaseSheetLength.val(),
-                base_sheet_width: $inputBaseSheetWidth.val(),
-                rotatable: $inputRotatable.is(':checked'),
-                stacking: $inputStacking.is(':checked'),
-                stacking_horizontaly: $inputStackingHorizontaly.is(':checked')
+            // Fetch options
+
+            that.cutdiagramOptions.kerf = $inputKerf.val();
+            that.cutdiagramOptions.trimming = $inputTrimming.val();
+            that.cutdiagramOptions.base_sheet_length = $inputBaseSheetLength.val();
+            that.cutdiagramOptions.base_sheet_width = $inputBaseSheetWidth.val();
+            that.cutdiagramOptions.rotatable = $inputRotatable.is(':checked');
+            that.cutdiagramOptions.stacking = $inputStacking.is(':checked');
+            that.cutdiagramOptions.stacking_horizontaly = $inputStackingHorizontaly.is(':checked');
+
+            // Store options
+            that.opencutlist.setSettings([
+                { key:SETTING_KEY_OPTION_KERF, value:that.cutdiagramOptions.kerf },
+                { key:SETTING_KEY_OPTION_TRIMMING, value:that.cutdiagramOptions.trimming },
+                { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:that.cutdiagramOptions.base_sheet_length },
+                { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:that.cutdiagramOptions.base_sheet_width },
+                { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cutdiagramOptions.rotatable },
+                { key:SETTING_KEY_OPTION_STACKING, value:that.cutdiagramOptions.stacking },
+                { key:SETTING_KEY_OPTION_STACKING_HORIZONTALY, value:that.cutdiagramOptions.stacking_horizontaly }
+            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
+
+            rubyCallCommand('cutlist_group_cutdiagram', $.extend({ group_id: groupId }, that.cutdiagramOptions, that.uiOptions), function (response) {
+
+                if (response.cutdiagram_path) {
+                    that.opencutlist.notify('DONE !', 'success', [
+                        Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                            rubyCallCommand('core_open_external_file', {
+                                path: response.cutdiagram_path
+                            });
+
+                        })
+                    ]);
+                }
+
             });
 
             // Hide modal
@@ -659,6 +711,14 @@
                 SETTING_KEY_OPTION_COL_SEP,
                 SETTING_KEY_OPTION_ENCODING,
 
+                SETTING_KEY_OPTION_KERF,
+                SETTING_KEY_OPTION_TRIMMING,
+                SETTING_KEY_OPTION_BASE_SHEET_LENGTH,
+                SETTING_KEY_OPTION_BASE_SHEET_WIDTH,
+                SETTING_KEY_OPTION_ROTATABLE,
+                SETTING_KEY_OPTION_STACKING,
+                SETTING_KEY_OPTION_STACKING_HORIZONTALY,
+
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
@@ -680,6 +740,16 @@
                 that.exportOptions = {
                     col_sep: that.opencutlist.getSetting(SETTING_KEY_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
                     encoding: that.opencutlist.getSetting(SETTING_KEY_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
+                };
+
+                that.cutdiagramOptions = {
+                    kerf: that.opencutlist.getSetting(SETTING_KEY_OPTION_KERF, OPTION_DEFAULT_KERF),
+                    trimming: that.opencutlist.getSetting(SETTING_KEY_OPTION_TRIMMING, OPTION_DEFAULT_TRIMMING),
+                    base_sheet_length: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_LENGTH, OPTION_DEFAULT_BASE_SHEET_LENGTH),
+                    base_sheet_width: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_WIDTH, OPTION_DEFAULT_BASE_SHEET_WIDTH),
+                    rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
+                    stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
+                    stacking_horizontaly: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING_HORIZONTALY, OPTION_DEFAULT_STACKING_HORIZONTALY)
                 };
 
                 that.uiOptions = {
