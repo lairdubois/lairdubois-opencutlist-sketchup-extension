@@ -1097,10 +1097,10 @@
               options[:stacking] = true
               options[:stacking_horizontally] = true
               html = e.run(options)
-              File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html', html))
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html'), html)
               options[:stacking_horizontally] = false
               html = e.run(options)
-              File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html', html))
+              File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html'), html)
             end
 
             puts "end -> calepinage 2D"
