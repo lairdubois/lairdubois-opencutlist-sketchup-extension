@@ -24,7 +24,7 @@
   <% bins.each do |bin| %>
   <div class="sheet">
     <div class="heading"><%= bin.title %></div>
-    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length + 2*bin.cleancut) %>" height="<%= zoom(bin.width + 2*bin.cleancut) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
+    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
     <script>
 
       var colored = true;
@@ -49,7 +49,15 @@
         ctx.fillStyle = "#000";
         ctx.font = "50px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("<%= '(' if box.rotated %><%= box.number %><%= ')' if box.rotated %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+        <% if box.rotated %>
+          ctx.save();
+          ctx.translate(<%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText("<%= box.number %>", 0, 0);
+          ctx.restore();
+        <% else %>
+          ctx.fillText("<%= box.number %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+        <% end %>
         ctx.font = "30px Arial";
         <% if orientedDimensions %>
           ctx.textAlign = "center";
