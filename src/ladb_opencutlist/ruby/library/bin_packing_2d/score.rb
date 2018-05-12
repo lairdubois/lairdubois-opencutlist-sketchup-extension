@@ -33,6 +33,10 @@
           return index, false
         end
         if bin.encloses?(box)
+          # let the decision be super greedy, first width match is always a winner
+          if box.width == bin.width 
+            return index, false
+          end
           score = score_by_heuristic(box, bin, heuristic) 
           if score < best_score 
             best_score = score
@@ -49,8 +53,11 @@
         if rotatable && bin.encloses_rotated?(box) 
           b = box.clone
           b.rotate
+          if b.width == bin.width
+            return index, true
+          end
           score = score_by_heuristic(b, bin, heuristic)
-        if score < best_score 
+          if score < best_score 
             best_score_r = score
             best_index_r = index
             using_rotated = true
