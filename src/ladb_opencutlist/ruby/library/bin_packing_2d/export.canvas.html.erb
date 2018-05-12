@@ -27,13 +27,10 @@
     <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
     <script>
 
-      var colored = false;
-      <% orientedDimensions = true %>
-
       var trimmingColor = '#d3d3d3';
-      var primaryCutColor = colored ? '#f77f00' : '#000';
-      var secondaryCutColor = colored ? '#007ff7' : '#000';
-      var boxColor = colored ? '#eee' : '#fff';
+      var primaryCutColor = '<%= options[:colored] ? '#f77f00' : '#000' %>';
+      var secondaryCutColor = '<%= options[:colored] ? '#007ff7' : '#000' %>';
+      var boxColor = '<%= options[:colored] ? '#eee' : '#fff' %>';
       var leftoverFillColor = '#fff';
       var leftoverStrokeColor = '#888';
 
@@ -59,7 +56,7 @@
           ctx.fillText("<%= box.number %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
         <% end %>
         ctx.font = "30px Arial";
-        <% if orientedDimensions %>
+        <% if options[:orientedDimensions] %>
           ctx.textAlign = "center";
           ctx.fillText("<%= zoom(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 30 %>);
           ctx.save();
@@ -86,7 +83,7 @@
         ctx.stroke();
         ctx.fillStyle = leftoverStrokeColor;
         ctx.font = "30px Arial";
-        <% if orientedDimensions %>
+        <% if options[:orientedDimensions] %>
           ctx.textAlign = "center";
           ctx.fillText("<%= zoom(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 30 %>);
           ctx.save();
@@ -107,9 +104,9 @@
           ctx.fillStyle = secondaryCutColor;
         <% end %>
         <% if cut.horizontal then %>
-          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(cut.length) %>, <%= zoom(kerf) %>);
+          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(cut.length) %>, <%= zoom(options[:kerf]) %>);
         <% else %>
-          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(kerf) %>, <%= zoom(cut.length) %>);
+          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(options[:kerf]) %>, <%= zoom(cut.length) %>);
         <% end %>
       <% end %>
 

@@ -182,6 +182,7 @@ tab:
       option_stacking_horizontally: Stack Parts Horizontally
       option_base_sheet_length: Base Sheet Length
       option_base_sheet_width: Base Sheet Width
+      option_colored: Colored
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)

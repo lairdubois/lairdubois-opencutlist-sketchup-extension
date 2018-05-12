@@ -1,12 +1,12 @@
 ﻿module BinPacking2D
   class ExportBinding < Packing2D
 
-    attr_reader :bins, :kerf
+    attr_reader :bins, :options
 
-    def initialize(bins, zoom, kerf)
+    def initialize(bins, options)
       @bins = bins
-      @zoom = zoom
-      @kerf = kerf
+      @options = options
+      @zoom = options[:zoom] || 1
     end
 
     def zoom(value)

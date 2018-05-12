@@ -1017,7 +1017,8 @@
         base_sheet_width = settings['base_sheet_width']
         rotatable = settings['rotatable']
         stacking = settings['stacking']
-        stacking_horizontally = settings['stacking_horizontaly']
+        stacking_horizontally = settings['stacking_horizontally']
+        colored = settings['colored']
 
         boxes = []
 
@@ -1075,6 +1076,8 @@
               :stacking_horizontally => stacking_horizontally,
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
+              :colored => colored,
+              :orientedDimensions => true,
               :zoom => 1,
               :debugging => false
             }
