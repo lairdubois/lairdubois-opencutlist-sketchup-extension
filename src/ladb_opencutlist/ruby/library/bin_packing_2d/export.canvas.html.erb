@@ -27,7 +27,7 @@
     <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
     <script>
 
-      var colored = true;
+      var colored = false;
       <% orientedDimensions = true %>
 
       var trimmingColor = '#d3d3d3';
@@ -51,7 +51,7 @@
         ctx.textAlign = "center";
         <% if box.rotated %>
           ctx.save();
-          ctx.translate(<%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+          ctx.translate(<%= zoom(box.x + box.length / 2) + 25 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= box.number %>", 0, 0);
           ctx.restore();
