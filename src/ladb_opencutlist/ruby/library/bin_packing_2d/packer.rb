@@ -312,29 +312,69 @@
       if @packed
         largest_bin = BinPacking2D::Bin.new(0, 0, 0, 0, 0)
         largest_area = 0
-    
+        
         p = BinPacking2D::Performance.new(@score, @split)
         @original_bins.each do |bin|
           if @cleanup > 0
             bin.cleaned = true
             bin.cleancut = @cleanup
           end
+          
+          max_x = 0
+          max_y = 0
+          bin.boxes.each do |box|
+            p.h_length += box.length
+            p.v_length += box.width
+            if box.x + box.length > max_x
+              max_x = box.x + box.length
+            end
+            if box.y + box.width > max_y
+              max_y = box.y + box.width
+            end
+          end
+
+          bin.cuts.each do |cut|
+            if cut.horizontal && cut.x + cut.length > max_x
+              cut.length = max_x - cut.x
+            end
+            if !cut.horizontal && cut.y + cut.length > max_y
+              cut.length = max_y - cut.y
+            end           
+            p.cutlength += cut.length
+            p.h_cutlength += cut.get_h_cutlength()
+            p.v_cutlength += cut.get_v_cutlength()
+          end
+          if max_y < bin.width
+            c = BinPacking2D::Cut.new(bin.x+bin.cleancut, max_y, bin.length-2*bin.cleancut, true, bin.index)
+            hl = BinPacking2D::Bin.new(bin.length-2*bin.cleancut, bin.width-max_y-@sawkerf-bin.cleancut, 
+              bin.x+bin.cleancut, max_y+@sawkerf, bin.index)
+            bin.cuts.unshift(c)
+          end 
+          if max_x < bin.length
+            c = BinPacking2D::Cut.new(max_x, bin.y+bin.cleancut, max_y - bin.cleancut, false, bin.index)
+            vl = BinPacking2D::Bin.new(bin.length-max_x-bin.cleancut-@sawkerf, max_y-bin.cleancut, 
+              max_x+@sawkerf, bin.y+bin.cleancut, bin.index)
+            bin.cuts.unshift(c)
+          end
           p.nb_leftovers += bin.leftovers.size
+          leftovers = []
+          bin.leftovers.each do |b|
+            b.crop(max_x, max_y)
+            if b.length > 0 && b.width > 0
+              leftovers << b
+            end
+          end
+          bin.leftovers = leftovers
+
+          bin.leftovers << vl if !vl.nil? && vl.length > 0 && vl.width > 0
+          bin.leftovers << hl if !hl.nil? && hl.length > 0 && hl.width > 0
+  
           bin.leftovers.each do |b|
             a = b.area
             if a > largest_area
               largest_bin = b
               largest_area = a
             end
-          end
-          bin.boxes.each do |box|
-            p.h_length += box.length
-            p.v_length += box.width
-          end
-          bin.cuts.each do |cut|
-            p.cutlength += cut.length
-            p.h_cutlength += cut.get_h_cutlength()
-            p.v_cutlength += cut.get_v_cutlength()
           end
         end
 

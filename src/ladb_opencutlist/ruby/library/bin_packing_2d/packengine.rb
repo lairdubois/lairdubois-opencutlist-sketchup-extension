@@ -58,14 +58,15 @@
       end
       min_nb_bins = packings[0].performance.nb_bins
       cut_length_ref = 0
+      p_optimized = []
       packings.each do |p|
-        if p.performance.nb_bins == min_nb_bins && p.performance.cutlength != cut_length_ref
+        if p.performance.nb_bins == min_nb_bins 
+          p_optimized << p
           cut_length_ref = p.performance.cutlength
           p.performance.print
-          #html = BinPacking2D::Export.new(p.original_bins).to_html(zoom: 0.4)
-          #File.write("results/sheet" + p.score.to_s + p.split.to_s + ".html", html)
         end
       end  
+      packings = p_optimized.sort_by {|p| [p.performance.largest_leftover.length, p.performance.largest_leftover.width]}.reverse
       
       # just for debugging - end
       return BinPacking2D::Export.new(packings[0].original_bins).to_html(options)

@@ -29,6 +29,15 @@
     def encloses?(box)
       return @length >= box.length && @width >= box.width
     end
+    
+    def crop(max_x, max_y)
+      if @x + @length > max_x
+        @length = max_x - @x
+      end
+      if @y + @width > max_y
+        @width = max_y - @y
+      end
+    end
 
     def encloses_rotated?(box)
       return @length >= box.width && @width >= box.length
@@ -45,11 +54,9 @@
       @cuts.each do |cut|
         l += cut.length
       end
-      length = cu(@length + 2 * @cleancut)
-      width = cu(@width + 2 * @cleancut)
       l = cu(l)
       "Sheet id #{@index} " + @strategy + "<br>" + 
-      "Size: #{length} x #{width}   " +
+      "Size: #{cu(@length)} x #{cu(@width)}   " +
       "Efficiency: #{'%3.2f' % efficiency}%   " +
       "Length of Cuts: #{l}   " +
       "Trimming: " + (@cleaned ? "#{cu(@cleancut)}" : "")
