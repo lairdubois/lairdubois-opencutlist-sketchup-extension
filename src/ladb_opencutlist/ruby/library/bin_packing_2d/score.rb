@@ -22,59 +22,53 @@
     end
     
     def find_position_for_box (box, bins, rotatable, heuristic)
-      best_score = MAX_INT
-      best_score_r = MAX_INT
-      best_bin = MAX_INT
-      best_index = -1
-      best_index_r = -1
-      using_rotated = false
+      scores = []
+      
       bins.each_with_index do |bin, index|
-        if  box.length == bin.length && box.width == bin.width
-          return index, false
-        end
+        r1 = MAX_INT
+        r2 = MAX_INT
+        perfect_match = false
+        match = false
+        perfect_match_rotated = false
+        match_rotated = false
         if bin.encloses?(box)
-          # let the decision be super greedy, first width match is always a winner
-          if box.width == bin.width 
-            return index, false
+          r1 = score_by_heuristic(box, bin, heuristic)
+          match = true
+          if box.width == bin.width || box.length == bin.length
+            r1 = 0
+            perfect_match = true
           end
-          score = score_by_heuristic(box, bin, heuristic) 
-          if score < best_score 
-            best_score = score
-            best_index = index
-            best_bin = bin.index
-          elsif score == best_score 
-            if bin.index < best_bin  
-              best_score = score
-              best_index = index
-              best_bin = bin.index
-            end
-          end
-        end    
+        end
         if rotatable && bin.encloses_rotated?(box) 
           b = box.clone
           b.rotate
-          if b.width == bin.width
-            return index, true
-          end
-          score = score_by_heuristic(b, bin, heuristic)
-          if score < best_score 
-            best_score_r = score
-            best_index_r = index
-            using_rotated = true
+          r2 = score_by_heuristic(b, bin, heuristic)
+          match_rotated = true
+          if b.width == bin.width || b.length == bin.length
+            r2 = 0
+            perfect_match_rotated = true
           end
         end
-      end
-      db "#{best_index} #{best_index_r} #{rotatable}"
-      if rotatable 
-        if best_index == best_index_r && best_index != -1 
-          db "found #{best_index} #{using_rotated}"
-          return best_index, false
-        elsif best_index == -1 && best_index_r != -1 
-          db "found #{best_index_r} #{using_rotated}"
-          return best_index_r, true
+        if perfect_match
+          s = [index, 0, false]
+        elsif perfect_match_rotated
+          s = [index, 0, true]
+        elsif match && match_rotated
+          if r1 < r2
+            s = [index, r1, false]
+          else
+            s = [index, r2, true]
+          end
+        elsif match
+          s = [index, r1, false]
+        else
+          s = [-1, r1, false]
         end
+        scores << s
       end
-      return best_index, false 
+      
+      scores = scores.sort_by { |e| [e[1], bins[e[0]].length] }
+      return scores[0][0],scores[0][2]
     end
     
   end
