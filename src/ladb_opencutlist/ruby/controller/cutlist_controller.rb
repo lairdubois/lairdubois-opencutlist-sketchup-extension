@@ -1074,6 +1074,8 @@
               :rotatable => rotatable,
               :stacking => stacking,
               :stacking_horizontally => stacking_horizontally,
+              :break_stacking_if_needed => true,
+              :presort => BinPacking2D::PRESORT_WIDTH_DECR, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
               :colored => colored,
@@ -1081,7 +1083,6 @@
               :zoom => 1,
               :debugging => false
             }
-
             bins = [] # run will create a first bin if this is empty
             e = BinPacking2D::PackEngine.new(bins, boxes)
 
@@ -1105,7 +1106,6 @@
               html = e.run(options)
               File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html'), html)
             end
-
             puts "end -> calepinage 2D"
 
             return {
@@ -1113,8 +1113,7 @@
             }
 
           end
-
-        }          
+        } 
       end
     end
 

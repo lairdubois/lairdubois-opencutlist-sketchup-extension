@@ -1,8 +1,9 @@
 ﻿module BinPacking2D
   class Box < Packing2D
-    attr_accessor :length, :width, :x, :y, :index, :rotated, :number, :superbox, :sboxes, :stack_horizontal
+  
+    attr_reader :rotated, :number, :is_superbox, :sboxes, :length, :width, :x, :y, :index
 
-    def initialize(length, width, number)
+    def initialize(length, width, number = "")
       @length = length
       @width = width
       @x = 0
@@ -11,67 +12,82 @@
       @rotated = false
       @number = number
       @sboxes = []
-      @superbox = false
-      @stack_horizontal = true
+      @is_superbox = false
+      @stack_is_horizontal = true
     end
-    
+
+    def set_position(x, y, index)
+      @x = x
+      @y = y
+      @index = index
+    end
+
+    # Stack box horizontally. The container box is the bounding
+    # box of the contained boxes in @sboxes
+    #
     def stack_length(box, sawkerf, max)
       return false if box.width != @width
-      
+
       if box.length + @length > max
         return false
       else
         @length += sawkerf if @length > 0
         @length += box.length
         @sboxes << box
-        @superbox = true
+        @is_superbox = true
         return true
       end
     end
-    
+
+    # Stack box vertically. The container box is the bounding
+    # box of the contained boxes in @sboxes
+    #
     def stack_width(box, sawkerf, max)
       return false if box.length != @length
-      
+
       if box.width + @width > max
         return false
       else
         @width += sawkerf if @width > 0
         @width += box.width
         @sboxes << box
-        @superbox = true
-        @stack_horizontal = false
+        @is_superbox = true
+        @stack_is_horizontal = false
         return true
       end
     end
-    
+
+    # Break up a superbox into its child boxes. When called, we know that
+    # it is a superbox, no need to check
+    #
+    def break_up_supergroup
+      boxes = []
+      @sboxes.each do |box|
+        boxes << box
+      end
+      return boxes
+    end
+
     def area
       return @length * @width
     end
 
+    # Rotate the box, used when grain direction does not matter
+    #
     def rotate
       @width, @length = [@length, @width]
       @rotated = !@rotated
       return self
     end
 
+    # Returns if box has been rotated
+    #
     def rotated?
       return @rotated
     end
 
-    def too_large?(l, w, rotatable)
-      if rotatable
-        return !((@length <= l && @width <= w) || (@length <= w && @width <= l))
-      end
-      return !(@length <= l && @width <= w)
-    end
-
     def print
       db ("box #{cu(@x)} #{cu(@y)} #{cu(@length)} #{cu(@width)}" + (@rotated ? " r" : ""))
-    end
-    
-    def print_without_position
-      f = '%6.0f'
-      db "box #{f % @length} #{f % @width}" + (@rotated ? " r" : "")
     end
 
     def label
@@ -79,6 +95,5 @@
       width = cu(@width)
       return "#{length} x #{width}" + (@rotated ? " r" : "")
     end
-    
   end
 end
