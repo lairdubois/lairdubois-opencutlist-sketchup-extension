@@ -1,42 +1,30 @@
 ﻿module BinPacking2D
   class Cut < Packing2D
-    attr_accessor :x, :y, :primary, :length, :horizontal, :index
+  
+    attr_accessor :x, :y, :length, :width, :is_horizontal, :index, :is_primary
 
-    def initialize(x, y, length, horizontal, index, primary=true)
+    def initialize(x, y, length, is_horizontal, index, is_primary = true)
       @x = x
       @y = y
       @length = length
-      @primary = primary
-      @horizontal = horizontal
+      @is_primary = is_primary
+      @is_horizontal = is_horizontal
       @index = index
     end
-    
-    def print
-      f = '%6.0f'
-      if @horizontal then
-        db "cut H #{f % @x} #{f % @y} l: #{f % @length} i: #{@index}"
-      else
-        db "cut V #{f % @x} #{f % @y} l: #{f % @length} i: #{@index}"
-      end
-    end
-    
+
     def get_v_cutlength
-      return length if !@horizontal
+      return length if !@is_horizontal
       return 0
     end
 
     def get_h_cutlength
-      return length if @horizontal
+      return length if @is_horizontal
       return 0
     end
 
     def label
-      #if @horizontal then
-      #  "#{@length} at [#{@x},#{@y}]"
-      #else
-      #  "#{@length} at [#{@x},#{@y}]"
-      #end
+      # not used
+      return ""
     end
-    
   end
 end

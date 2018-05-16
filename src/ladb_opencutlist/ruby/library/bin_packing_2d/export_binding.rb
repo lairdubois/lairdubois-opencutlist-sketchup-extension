@@ -12,6 +12,11 @@
     def zoom(value)
       cmm(value * @zoom).round
     end
+    
+    def dim(value)
+      str = cu(value)
+      str.sub(/\"/, '\\"')
+    end
 
     def get_binding
       binding
