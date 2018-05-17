@@ -172,6 +172,9 @@
     # This function trims the lower and right side of the bin by producing
     # a longest bottom part and a shorter vertical right side part
     #
+    # THIS is also a good place to remove too small boxes (< 2*sawkerf)
+    # which are really waste and not leftovers
+    #
     def postprocess_bounding_box(bins, box = nil)
       if !box.nil?
         # this will be used in the future to decide how to split the bottom/right
@@ -181,7 +184,7 @@
         goal_width = box.width
       end
       bins.each do |bin|
-        bin.crop_to_bounding_box(@sawkerf)
+        bin.crop_to_bounding_box(@sawkerf, @rotatable)
       end
     end
 

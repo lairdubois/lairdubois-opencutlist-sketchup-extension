@@ -1,4 +1,4 @@
-module BinPacking2D
+﻿module BinPacking2D
 
   # This class has two purposes:
   #
@@ -168,7 +168,7 @@ module BinPacking2D
     # This function assumes that leftovers have been assigned correctly
     # to the bin prior to calling it.
     #
-    def crop_to_bounding_box(sawkerf)
+    def crop_to_bounding_box(sawkerf, rotatable)
       if !@bbox_done
         # trim all cuts that go beyond max_y and max_y
         @cuts.each do |cut|
@@ -181,22 +181,50 @@ module BinPacking2D
         end
 
         leftovers = []
-        # add a new horizontal cut and make a new bottom leftover
-        if @max_y < @width
-          c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true, @index)
-          hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - sawkerf - @trimsize,
+        
+        sr = (@length - 2 * @trimsize - @max_x) * @width
+        sb = @length * (@width - 2 * @trimsize - @max_y)
+        
+        # Pick the cut sequence that will maximize area of larger leftover, but only
+        # if rotatable. Otherwise prefer longer leftovers.
+        # Probably needs to follow split strategy using score object, maybe later.
+        #
+        # This may also lead to degenerate pieces, will have to fix them in packer
+        #
+        if rotatable && sr > sb 
+          # add a new vertical cut and make a new right side vertical leftover
+          if @max_x <= @length 
+            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false, @index)
+            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - sawkerf, @width - 2 * @trimsize,
+                                       @max_x + sawkerf, @y + @trimsize, @index)
+            add_cut(c)
+            leftovers << vl if vl.length > 0 && vl.width > 0
+          end
+          if @max_y <= @width
+            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true, @index)
+            hl = BinPacking2D::Bin.new(@max_x  - @trimsize, @width - @max_y - sawkerf - @trimsize,
                                      @x + @trimsize, @max_y + sawkerf, @index)
-          add_cut(c)
-          leftovers << hl if hl.length > 0 && hl.width > 0
-        end
+            add_cut(c)
+            leftovers << hl if hl.length > 0 && hl.width > 0
+          end
+        else 
+          # add a new horizontal cut and make a new bottom leftover
+          if @max_y <= @width
+            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true, @index)
+            hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - sawkerf - @trimsize,
+                                       @x + @trimsize, @max_y + sawkerf, @index)
+            add_cut(c)
+            leftovers << hl if hl.length > 0 && hl.width > 0
+          end
 
-        # add a new vertical cut and make a new right side vertical leftover
-        if @max_x < @length
-          c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false, @index)
-          vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - sawkerf, @max_y - @trimsize,
-                                     @max_x + sawkerf, @y + @trimsize, @index)
-          add_cut(c)
-          leftovers << vl if vl.length > 0 && vl.width > 0
+          # add a new vertical cut and make a new right side vertical leftover
+          if @max_x <= @length
+            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false, @index)
+            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - sawkerf, @max_y - @trimsize,
+                                       @max_x + sawkerf, @y + @trimsize, @index)
+            add_cut(c)
+            leftovers << vl if vl.length > 0 && vl.width > 0
+          end
         end
 
         # crop the leftovers to the bounding box
