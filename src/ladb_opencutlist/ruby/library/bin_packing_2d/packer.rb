@@ -176,15 +176,11 @@
     # which are really waste and not leftovers
     #
     def postprocess_bounding_box(bins, box = nil)
-      if !box.nil?
-        # this will be used in the future to decide how to split the bottom/right
-        # part of the bounding box, depending on a next candidate box.
-        # UNUSED for now
-        goal_length = box.length
-        goal_width = box.width
-      end
+      # box is optional and will be used to decide how to split 
+      # the bottom/right part of the bounding box, depending on a 
+      # next candidate box.
       bins.each do |bin|
-        bin.crop_to_bounding_box(@sawkerf, @rotatable)
+        bin.crop_to_bounding_box(@sawkerf, @rotatable, box)
       end
     end
 
