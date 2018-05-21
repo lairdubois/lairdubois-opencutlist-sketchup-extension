@@ -168,7 +168,7 @@
     # This function assumes that leftovers have been assigned correctly
     # to the bin prior to calling it.
     #
-    def crop_to_bounding_box(sawkerf, rotatable, box)
+    def crop_to_bounding_box(sawkerf, box)
       if !@bbox_done
         # trim all cuts that go beyond max_y and max_y
         @cuts.each do |cut|
@@ -205,8 +205,7 @@
           cut_horizontal = false
         end
         
-        # Pick the cut sequence that will maximize area of larger leftover, but only
-        # if rotatable. Otherwise prefer longer leftovers.
+        # Pick the cut sequence that will maximize area of larger leftover area.
         # Probably needs to follow split strategy using score object, maybe later.
         #
         # This may also lead to degenerate pieces, will have to fix them in packer

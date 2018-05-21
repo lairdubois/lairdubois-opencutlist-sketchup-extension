@@ -180,7 +180,7 @@
       # the bottom/right part of the bounding box, depending on a 
       # next candidate box.
       bins.each do |bin|
-        bin.crop_to_bounding_box(@sawkerf, @rotatable, box)
+        bin.crop_to_bounding_box(@sawkerf, box)
       end
     end
 
