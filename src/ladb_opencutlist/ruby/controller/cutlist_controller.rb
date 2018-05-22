@@ -1018,6 +1018,7 @@
         rotatable = settings['rotatable']
         stacking = settings['stacking']
         stacking_horizontally = settings['stacking_horizontally']
+        presort = settings['presort']
         colored = settings['colored']
 
         boxes = []
@@ -1075,7 +1076,7 @@
               :stacking => stacking,
               :stacking_horizontally => stacking_horizontally,
               :break_stacking_if_needed => true,
-              :presort => BinPacking2D::PRESORT_WIDTH_DECR, # available options in packing2d.rb
+              :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
               :colored => colored,

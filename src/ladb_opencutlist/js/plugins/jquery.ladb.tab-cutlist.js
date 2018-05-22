@@ -22,6 +22,7 @@
     var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
     var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
     var SETTING_KEY_OPTION_STACKING_HORIZONTALLY = 'cutlist_option_stacking_horizontally';
+    var SETTING_KEY_OPTION_PRESORT = 'cutlist_option_presort';
     var SETTING_KEY_OPTION_COLORED = 'cutlist_option_colored';
 
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
@@ -48,6 +49,7 @@
     var OPTION_DEFAULT_ROTATABLE = false;
     var OPTION_DEFAULT_STACKING = false;
     var OPTION_DEFAULT_STACKING_HORIZONTALLY = true;
+    var OPTION_DEFAULT_PRESORT = 0;     // PRESORT_INPUT_ORDER
     var OPTION_DEFAULT_COLORED = true;
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
@@ -617,6 +619,7 @@
         var $inputRotatable = $('#ladb_input_rotatable', $modal);
         var $inputStacking = $('#ladb_input_stacking', $modal);
         var $inputStackingHorizontally = $('#ladb_input_stacking_horizontally', $modal);
+        var $selectPresort = $('#ladb_select_presort', $modal);
         var $inputColored = $('#ladb_input_colored', $modal);
         var $btnCutdiagram = $('#ladb_cutlist_cutdiagram', $modal);
 
@@ -627,7 +630,11 @@
         $inputRotatable.prop('checked', that.cutdiagramOptions.rotatable);
         $inputStacking.prop('checked', that.cutdiagramOptions.stacking);
         $inputStackingHorizontally.prop('checked', that.cutdiagramOptions.stacking_horizontally);
+        $selectPresort.val(that.cutdiagramOptions.presort);
         $inputColored.prop('checked', that.cutdiagramOptions.colored);
+
+        // Bind select
+        $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
 
         // Bind buttons
         $btnCutdiagram.on('click', function() {
@@ -641,6 +648,7 @@
             that.cutdiagramOptions.rotatable = $inputRotatable.is(':checked');
             that.cutdiagramOptions.stacking = $inputStacking.is(':checked');
             that.cutdiagramOptions.stacking_horizontally = $inputStackingHorizontally.is(':checked');
+            that.cutdiagramOptions.presort = $selectPresort.val();
             that.cutdiagramOptions.colored = $inputColored.is(':checked');
 
             // Store options
@@ -652,6 +660,7 @@
                 { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cutdiagramOptions.rotatable },
                 { key:SETTING_KEY_OPTION_STACKING, value:that.cutdiagramOptions.stacking },
                 { key:SETTING_KEY_OPTION_STACKING_HORIZONTALLY, value:that.cutdiagramOptions.stacking_horizontally },
+                { key:SETTING_KEY_OPTION_PRESORT, value:that.cutdiagramOptions.presort },
                 { key:SETTING_KEY_OPTION_COLORED, value:that.cutdiagramOptions.colored }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
@@ -724,6 +733,7 @@
                 SETTING_KEY_OPTION_ROTATABLE,
                 SETTING_KEY_OPTION_STACKING,
                 SETTING_KEY_OPTION_STACKING_HORIZONTALLY,
+                SETTING_KEY_OPTION_PRESORT,
                 SETTING_KEY_OPTION_COLORED,
 
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
@@ -757,6 +767,7 @@
                     rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
                     stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
                     stacking_horizontally: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING_HORIZONTALLY, OPTION_DEFAULT_STACKING_HORIZONTALLY),
+                    presort: that.opencutlist.getSetting(SETTING_KEY_OPTION_PRESORT, OPTION_DEFAULT_PRESORT),
                     colored: that.opencutlist.getSetting(SETTING_KEY_OPTION_COLORED, OPTION_DEFAULT_COLORED)
                 };
 

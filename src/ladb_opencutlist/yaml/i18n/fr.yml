@@ -180,9 +180,16 @@ tab:
       option_rotatable: Parts Can be Rotated
       option_stacking: Stack Identical Parts
       option_stacking_horizontally: Stack Parts Horizontally
+      option_presort: PRESORT
       option_base_sheet_length: Base Sheet Length
       option_base_sheet_width: Base Sheet Width
       option_colored: Colored
+      presort:
+        input_order: INPUT_ORDER
+        width_decr: WIDTH_DECR
+        length_decr: LENGTH_DECR
+        area_decr: AREA_DECR
+        perimeter_decr: PERIMETER_DECR
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
