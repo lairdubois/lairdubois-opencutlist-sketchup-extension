@@ -75,7 +75,7 @@ tab:
       numbers_reset: Nummern der Teile neu zuweisen
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
-      group_cutdiagram: Calpinage
+      group_cutdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:
@@ -174,22 +174,22 @@ tab:
       count: Anzahl
       material_name: Material
     cutdiagram:
-      title: Cutting Diagram
-      option_kerf: Blade Thickness
-      option_trimming: Trimming Size
-      option_rotatable: Parts Can be Rotated
-      option_stacking: Stack Identical Parts
-      option_stacking_horizontally: Stack Parts Horizontally
-      option_presort: PRESORT
-      option_base_sheet_length: Base Sheet Length
-      option_base_sheet_width: Base Sheet Width
-      option_colored: Colored
+      title: Schnittplan
+      option_kerf: Sägeblattdicke
+      option_trimming: Kantenabfallbreite
+      option_rotatable: Teile sind rotierbar
+      option_stacking: Identische Teile stapeln
+      option_stacking_horizontally: Teile horizontal stapeln
+      option_presort: Vorsortierung
+      option_base_sheet_length: Standard Plattenlänge
+      option_base_sheet_width: Standard Plattenbreite
+      option_colored: Darstellung farbig
       presort:
-        input_order: INPUT_ORDER
-        width_decr: WIDTH_DECR
-        length_decr: LENGTH_DECR
-        area_decr: AREA_DECR
-        perimeter_decr: PERIMETER_DECR
+        input_order: Nicht vorsortiert
+        width_decr: Abfallende Breiten
+        length_decr: Abfallende Längen
+        area_decr: Abfallende Flächen
+        perimeter_decr: Abfallende Perimeter
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
