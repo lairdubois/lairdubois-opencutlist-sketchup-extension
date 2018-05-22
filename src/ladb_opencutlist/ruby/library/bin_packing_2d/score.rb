@@ -4,6 +4,11 @@ module BinPacking2D
     # this may not be a good idea, verify please!
     MAX_INT = (2 ** (0.size * 8 - 2) - 1)
 
+    MATCH_PERFECT = 0
+    MATCH_W_OR_L = 1
+    MATCH_INSIDE = 2
+    NO_MATCH = 3
+    
     # Compute score by heuristic. The lower the score the better the fit
     #
     def score_by_heuristic(box, bin, score)
@@ -29,71 +34,50 @@ module BinPacking2D
       scores = []
 
       bins.each_with_index do |bin, index|
+
         r1 = MAX_INT
         r2 = MAX_INT
-        match = false
-        perfect_match = false
-        perfect_match_y = MAX_INT
-        perfect_match_i = -1
-        i = -1
+        match_score = NO_MATCH
         match_rotated = false
-        perfect_match_rotated = false
-        perfect_match_rotated_y = MAX_INT
-        perfect_match_rotated_i = -1
-        i_rotated = -1
+
         if bin.encloses?(box)
           r1 = score_by_heuristic(box, bin, score)
-          match = true
-          i = index
-          if box.width == bin.width || box.length == bin.length
-            r1 = 0
-            if bin.y < perfect_match_y 
-              perfect_match = true
-              perfect_match_y = bin.y
-              perfect_match_i = index
-            end
+          if box.width == bin.width && box.length == box.length
+            match_score = MATCH_PERFECT
+          elsif box.width == bin.width || box.length == bin.length
+            match_score = MATCH_W_OR_L
+          else
+            match_score = MATCH_INSIDE
           end
         elsif rotatable && bin.encloses_rotated?(box)
           b = box.clone
           b.rotate
           r2 = score_by_heuristic(b, bin, score)
           match_rotated = true
-          i_rotated = index
-          if (b.width == bin.width || b.length == bin.length)
-            r2 = 0
-            if bin.y < perfect_match_rotated_y
-              perfect_match_rotated = true
-              perfect_match_rotated_y = bin.y
-              perfect_match_rotated_i = index
-            end
-          end
-        else
-          db "not a perfect match - nothing to do"
-        end
-        if perfect_match
-          s = [perfect_match_i, r1, false]
-        elsif perfect_match_rotated
-          s = [perfect_match_rotated_i, r2, true]
-        elsif match && match_rotated
-          if r1 < r2
-            s = [perfect_match_i, r1, false]
+          if box.width == bin.width && box.length == box.length
+            match_score = MATCH_PERFECT
+          elsif box.width == bin.width || box.length == bin.length
+            match_score = MATCH_W_OR_L
           else
-            s = [perfect_match_rotated_i, r2, true]
+            match_score = MATCH_INSIDE
           end
-        elsif match
-          s = [i, r1, false]
-        elsif match_rotated
-          s = [i_rotated, r2, true]
         else
-          s = [-1, r1, false] # this means we have no match whatsoever for this bin
+          match_score = NO_MATCH
+        end
+        
+        if match_rotated
+          s = [index, r2, match_score, true]
+        elsif match_score != NO_MATCH
+          s = [index, r1, match_score, false]
+        else
+          s = [-1, r1, match_score, false]
         end
         scores << s
       end
 
-      # sort by best score ascending, length ascending
-      # width ascending could also be a legitimate choice
-      scores = scores.sort_by { |e| [e[1], bins[e[0]].length] }
-      return scores[0][0], scores[0][2]
+      # sort by best match score ascending, then heuristic score
+      scores = scores.sort_by { |e| [e[2], e[1]] }
+      return scores[0][0], scores[0][3]
     end
   end
 end
