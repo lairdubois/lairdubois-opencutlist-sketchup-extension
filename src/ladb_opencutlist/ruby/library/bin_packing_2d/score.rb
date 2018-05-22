@@ -31,51 +31,67 @@ module BinPacking2D
       bins.each_with_index do |bin, index|
         r1 = MAX_INT
         r2 = MAX_INT
-        perfect_match = false
         match = false
-        perfect_match_rotated = false
+        perfect_match = false
+        perfect_match_y = MAX_INT
+        perfect_match_i = -1
+        i = -1
         match_rotated = false
+        perfect_match_rotated = false
+        perfect_match_rotated_y = MAX_INT
+        perfect_match_rotated_i = -1
+        i_rotated = -1
         if bin.encloses?(box)
           r1 = score_by_heuristic(box, bin, score)
           match = true
+          i = index
           if box.width == bin.width || box.length == bin.length
             r1 = 0
-            perfect_match = true
-            s = [index, 0, false]
+            if bin.y < perfect_match_y 
+              perfect_match = true
+              perfect_match_y = bin.y
+              perfect_match_i = index
+            end
           end
         elsif rotatable && bin.encloses_rotated?(box)
           b = box.clone
           b.rotate
           r2 = score_by_heuristic(b, bin, score)
           match_rotated = true
+          i_rotated = index
           if (b.width == bin.width || b.length == bin.length)
             r2 = 0
-            perfect_match_rotated = true
-            s = [index, 0, true]
+            if bin.y < perfect_match_rotated_y
+              perfect_match_rotated = true
+              perfect_match_rotated_y = bin.y
+              perfect_match_rotated_i = index
+            end
           end
         else
           db "not a perfect match - nothing to do"
         end
         if perfect_match
-          s = [index, 0, false]
+          s = [perfect_match_i, r1, false]
         elsif perfect_match_rotated
-          s = [index, 0, true]
+          s = [perfect_match_rotated_i, r2, true]
         elsif match && match_rotated
           if r1 < r2
-            s = [index, r1, false]
+            s = [perfect_match_i, r1, false]
           else
-            s = [index, r2, true]
+            s = [perfect_match_rotated_i, r2, true]
           end
         elsif match
-          s = [index, r1, false]
+          s = [i, r1, false]
         elsif match_rotated
-          s = [index, r2, true]
+          s = [i_rotated, r2, true]
         else
           s = [-1, r1, false] # this means we have no match whatsoever for this bin
         end
         scores << s
       end
 
+      # sort by best score ascending, length ascending
+      # width ascending could also be a legitimate choice
       scores = scores.sort_by { |e| [e[1], bins[e[0]].length] }
       return scores[0][0], scores[0][2]
     end

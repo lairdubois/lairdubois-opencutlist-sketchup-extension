@@ -1093,13 +1093,18 @@
             end
             FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
 
+            if options[:stacking] && options[:stacking_horizontally]
+              options[:presort] = BinPacking2D::PRESORT_AREA_DECR
+            end
+            
             html = e.run(options)
             cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
             File.write(cutdiagram_path, html)
-
+            
             if !options[:stacking] 
               options[:stacking] = true
               options[:stacking_horizontally] = true
+              options[:presort] = BinPacking2D::PRESORT_AREA_DECR
               html = e.run(options)
               File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html'), html)
               options[:stacking_horizontally] = false
