@@ -1056,13 +1056,13 @@
             puts "end -> calepinage 1D"
 
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
-            puts "start -> calepinage 2D"
+
             group[:parts].each { |part|
               thickness = part[:thickness]
               material_name = part[:material_name]
               i = 0
               while i < part[:count]
-                boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part[:number])
+                boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
                 i += 1
               end
             }
@@ -1076,6 +1076,8 @@
               :stacking => stacking,
               :stacking_horizontally => stacking_horizontally,
               :break_stacking_if_needed => true,
+              :intermediary_bounding_box_optimization => true,
+              :final_bounding_box_optimization => true,
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
@@ -1085,7 +1087,7 @@
               :debugging => false
             }
             bins = [] # run will create a first bin if this is empty
-            e = BinPacking2D::PackEngine.new(bins, boxes)
+            e = BinPacking2D::PackEngine.new(bins, boxes, group)
 
             # create this directory to put html files into
             cutdiagram_dir = File.join(Plugin::temp_dir, 'cutdiagram')
@@ -1095,24 +1097,14 @@
             FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
 
             if options[:stacking] && options[:stacking_horizontally]
-              options[:presort] = BinPacking2D::PRESORT_AREA_DECR
+              options[:intermediary_bounding_box_optimization] = false
+              options[:final_bounding_box_optimization] = false
+              options[:break_stacking_if_needed] = false
             end
             
             html = e.run(options)
             cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
             File.write(cutdiagram_path, html)
-            
-            if !options[:stacking] 
-              options[:stacking] = true
-              options[:stacking_horizontally] = true
-              options[:presort] = BinPacking2D::PRESORT_AREA_DECR
-              html = e.run(options)
-              File.write(File.join(cutdiagram_dir, 'sheet_stacking_h.html'), html)
-              options[:stacking_horizontally] = false
-              html = e.run(options)
-              File.write(File.join(cutdiagram_dir, 'sheet_stacking_v.html'), html)
-            end
-            puts "end -> calepinage 2D"
 
             return {
                 :cutdiagram_path => cutdiagram_path,

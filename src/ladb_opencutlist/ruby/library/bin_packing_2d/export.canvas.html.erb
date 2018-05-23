@@ -15,7 +15,11 @@
         page-break-after: always;
       }
       .sheet .heading {
-        font-size: 14px;
+        font-size: 24px;
+      }
+      .title {
+        font-size: 28px;
+        margin-bottom: 25px;
       }
       pre {
         white-space: pre-wrap;
@@ -24,11 +28,29 @@
   </head>
   <body>
 
-  <% bins.each do |bin| %>
+  <div class="title">Title</div>
+  
+  <% if unplaced_boxes.length() > 0 %>
+    <h3>Parts too large to fit on one single sheet</h3>
+  <% end %>
+  <% unplaced_boxes.each do |box| %>
+    <pre>
+    <%= box.number[:number] %> <%= box.number[:name] %>, <%= box.number[:raw_length] %> x <%= box.number[:raw_width] %>
+    </pre>
+  <% end %>
+  <% 
+     if bins.length() > 0 && bins[0].boxes.length() > 0 then
+     i = 0
+     total = bins.length()
+     bins.each do |bin| 
+       i = i+1 %>
   <div class="sheet">
-    <div class="heading"><%= bin.title %></div>
-    <pre><%= options.to_s %></pre>
-    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
+    <div class="heading">Sheet <%= i %> of <%= total %>: <%= group[:material_name] %>/<%= group[:std_dimension] %></div>
+    <% bin.boxes.each do |box| %>
+       <pre> <%= box.number[:number] %> <%= box.number[:name] %>: <%= box.number[:raw_length] %> x <%= box.number[:raw_width] %></pre>
+    <% end %>
+
+    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 600px; max-width: <%= ((bin.length / bin.width) * 600).to_i %>px;"></canvas>
     <script>
 
       var trimmingColor = '#d3d3d3';
@@ -54,10 +76,10 @@
           ctx.save();
           ctx.translate(<%= zoom(box.x + box.length / 2) + 25 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
-          ctx.fillText("<%= box.number %>", 0, 0);
+          ctx.fillText("<%= box.number[:number] %>", 0, 0);
           ctx.restore();
         <% else %>
-          ctx.fillText("<%= box.number %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+          ctx.fillText("<%= box.number[:number] %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
         <% end %>
         ctx.font = "30px Arial";
         <% if options[:orientedDimensions] %>
@@ -116,6 +138,8 @@
 
     </script>
   </div>
-  <% end %>
+  <% end 
+   end
+  %>
   </body>
 </html>

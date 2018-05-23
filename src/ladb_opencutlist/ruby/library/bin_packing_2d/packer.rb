@@ -298,10 +298,12 @@
         # find best position for given box in collection of bins
         i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
         if i == -1
-          assign_leftovers_to_bins(bins, @original_bins)
-          postprocess_bounding_box(@original_bins, box)
-          bins = collect_leftovers(@original_bins)
-          i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
+          if options[:intermediary_bounding_box_optimization]
+            assign_leftovers_to_bins(bins, @original_bins)
+            postprocess_bounding_box(@original_bins, box)
+            bins = collect_leftovers(@original_bins)
+            i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
+          end
           if i == -1
             if options[:stacking] && options[:break_stacking_if_needed]
               # try to break up this box if it is a supergroup
@@ -369,8 +371,10 @@
       assign_leftovers_to_bins(bins, @original_bins)
 
       # compute the bounding box and fix bottom and right leftovers
-      postprocess_bounding_box(@original_bins)
-
+      if options[:final_bounding_box_optimization]
+        postprocess_bounding_box(@original_bins)
+      end
+      
       # need to put this somewhere
       @unplaced_boxes.each do |box|
         puts "unplaced box #{box.length} #{box.width}"
