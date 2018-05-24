@@ -19,6 +19,11 @@
   SPLIT_MAXIMIZE_AREA = 3
   SPLIT_SHORTER_AXIS = 4
   SPLIT_LONGER_AXIS = 5
+  
+  STACKING_NONE = 0
+  STACKING_LENGTH = 1
+  STACKING_WIDTH = 2
+    
 
   class Packing2D
     @@debugging = false
