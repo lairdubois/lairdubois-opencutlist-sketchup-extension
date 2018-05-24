@@ -46,7 +46,7 @@
     var OPTION_DEFAULT_BASE_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_BASE_SHEET_WIDTH = '2070mm';
     var OPTION_DEFAULT_ROTATABLE = false;
-    var OPTION_DEFAULT_PRESORT = 0;     // PRESORT_INPUT_ORDER
+    var OPTION_DEFAULT_PRESORT = 1;     // PRESORT_WIDTH_DECR
     var OPTION_DEFAULT_STACKING = 0;    // STACKING_NONE
     var OPTION_DEFAULT_COLORED = true;
 
@@ -815,9 +815,9 @@
                 .prop('disabled', uiOptions.hide_final_dimensions);
 
             // Sortables
-            
+
             var properties, property, i;
-            
+
             // Part order sortables
 
             properties = generateOptions.part_order_strategy.split('>');
