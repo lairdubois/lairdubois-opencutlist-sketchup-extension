@@ -1016,9 +1016,8 @@
         base_sheet_length = settings['base_sheet_length']
         base_sheet_width = settings['base_sheet_width']
         rotatable = settings['rotatable']
-        stacking = settings['stacking']
-        stacking_horizontally = settings['stacking_horizontally']
         presort = settings['presort']
+        stacking = settings['stacking']
         colored = settings['colored']
 
         boxes = []
@@ -1073,8 +1072,7 @@
               :kerf => kerf.to_l.to_f,
               :trimming => trimming.to_l.to_f,
               :rotatable => rotatable,
-              :stacking => stacking,
-              :stacking_horizontally => stacking_horizontally,
+              :stacking => stacking, # available options in packing2d.rb
               :break_stacking_if_needed => true,
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,
@@ -1096,7 +1094,7 @@
             end
             FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
 
-            if options[:stacking] && options[:stacking_horizontally]
+            if options[:stacking] != BinPacking2D::STACKING_NONE
               options[:intermediary_bounding_box_optimization] = false
               options[:final_bounding_box_optimization] = false
               options[:break_stacking_if_needed] = false

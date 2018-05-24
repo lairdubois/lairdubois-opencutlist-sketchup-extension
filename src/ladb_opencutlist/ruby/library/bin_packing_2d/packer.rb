@@ -26,14 +26,14 @@
     end
 
     # Preprocess boxes by turning them into supergroups, that is
-    # horizontal or vertical stripes of identical boxes up to the
+    # into length or width stripes of identical boxes up to the
     # maximum length of the standard bin
     #
-    def preprocess_supergroups(boxes, stack_horizontally)
+    def preprocess_supergroups(boxes, stack_length)
       sboxes = []
-      if stack_horizontally
+      if stack_length == STACKING_LENGTH
         maxlength = @b_l - 2 * @trimsize
-        # make groups of same width and stack them horizontally
+        # make groups of same width and stack them lengthwise
         # up to maxlength
         width_groups = boxes.group_by { |b| [b.width] }
         width_groups.each do |k, v|
@@ -62,7 +62,7 @@
         end
       else
         maxwidth = @b_w - 2 * @trimsize
-        # make groups of same length and stack them vertically
+        # make groups of same length and stack them widthwise
         # up to maxwidth
         length_groups = boxes.group_by { |b| [b.length, b.width] }
         length_groups.each do |k, v|
@@ -99,8 +99,8 @@
     # This function will change the instance variables
     # @cuts and @boxes from each bin in bins
     #
-    def postprocess_supergroups(bins, stack_horizontally)
-      if stack_horizontally
+    def postprocess_supergroups(bins, stack_length)
+      if stack_length == STACKING_LENGTH
         bins.each do |bin|
           new_boxes = []
           bin.boxes.each do |sbox|
@@ -167,10 +167,11 @@
       end
     end
 
-    # Postprocess bounding boxes because some horizontal/vertical may go
+    # Postprocess bounding boxes because some length/width cuts may go
     # through the entire bin, but are not necessary.
-    # This function trims the lower and right side of the bin by producing
-    # a longest bottom part and a shorter vertical right side part
+    # This function trims the lower/right side of the bin by producing
+    # a longer bottom part and a shorter vertical right side part or
+    # inversely. 
     #
     # THIS is also a good place to remove too small boxes (< 2*sawkerf)
     # which are really waste and not leftovers
@@ -271,7 +272,7 @@
       boxes = remove_too_large_boxes(boxes, bins)
 
       # preprocess supergroups
-      boxes = preprocess_supergroups(boxes, options[:stacking_horizontally]) if options[:stacking]
+      boxes = preprocess_supergroups(boxes, options[:stacking]) if options[:stacking] != STACKING_NONE
 
       # sort boxes width/length decreasing (other heuristics like
       # by decreasing area/perimeter would also be possible)
@@ -305,7 +306,7 @@
             i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
           end
           if i == -1
-            if options[:stacking] && options[:break_stacking_if_needed]
+            if options[:stacking] != STACKING_NONE && options[:break_stacking_if_needed]
               # try to break up this box if it is a supergroup
               if box.is_superbox
                 sboxes = box.break_up_supergroup
@@ -365,20 +366,16 @@
       end
 
       # postprocess supergroups: boxes in @original_bins.boxes
-      postprocess_supergroups(@original_bins, options[:stacking_horizontally]) if options[:stacking]
+      postprocess_supergroups(@original_bins, options[:stacking]) if options[:stacking] != STACKING_NONE
 
       # assign leftovers to the original bins, here mainly for drawing purpose
       assign_leftovers_to_bins(bins, @original_bins)
 
       # compute the bounding box and fix bottom and right leftovers
-      if options[:final_bounding_box_optimization]
-        postprocess_bounding_box(@original_bins)
-      end
+      postprocess_bounding_box(@original_bins) if options[:final_bounding_box_optimization]
       
-      # need to put this somewhere
-      @unplaced_boxes.each do |box|
-        puts "unplaced box #{box.length} #{box.width}"
-      end
+      # unpacked boxes are in @unpacked_boxes
+      
       @packed = true
       @performance = get_performance
     end
