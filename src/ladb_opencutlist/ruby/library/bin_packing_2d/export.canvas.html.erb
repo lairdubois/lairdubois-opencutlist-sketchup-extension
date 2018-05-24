@@ -75,27 +75,30 @@
         ctx.fillStyle = "#000";
         ctx.font = "50px Arial";
         ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         <% if box.rotated %>
           ctx.save();
-          ctx.translate(<%= zoom(box.x + box.length / 2) + 35 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= box.number[:number] %>", 0, 0);
           ctx.restore();
         <% else %>
-          ctx.fillText("<%= box.number[:number] %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 10%>);
+          ctx.fillText("<%= box.number[:number] %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) %>);
         <% end %>
         ctx.font = "30px Arial";
         <% if options[:orientedDimensions] %>
           ctx.textAlign = "center";
-          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 3) %>, <%= zoom(box.y) + 55 %>);
+          ctx.textBaseline = "top";
+          ctx.fillText("<%= dim(box.length) %>", <%= if zoom(box.width) < 100 then zoom(box.x + box.length / 3) else  zoom(box.x + box.length / 2) end %>, <%= zoom(box.y) + 10 %>);
           ctx.save();
-          ctx.translate(<%= zoom(box.x) + 55 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x) + 10 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= dim(box.width) %>", 0, 0);
           ctx.restore();
         <% else %>
           ctx.textAlign = "left";
-          ctx.fillText("<%= dim(box.length) %> x <%= dim(box.width) %>", <%= zoom(box.x) + 55 %>, <%= zoom(box.y) + 10 %>);
+          ctx.textBaseline = "top";
+          ctx.fillText("<%= dim(box.length) %> x <%= dim(box.width) %>", <%= zoom(box.x) + 10 %>, <%= zoom(box.y) + 10 %>);
         <% end %>
       <% end %>
 
@@ -114,9 +117,10 @@
         ctx.font = "30px Arial";
         <% if options[:colored] %>
           ctx.textAlign = "center";
-          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 55 %>);
+          ctx.textBaseline = "top";
+          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 10 %>);
           ctx.save();
-          ctx.translate(<%= zoom(box.x) + 55 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x) + 10 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= dim(box.width) %>", 0, 0);
           ctx.restore();
