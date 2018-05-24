@@ -178,9 +178,8 @@ tab:
       option_kerf: Sägeblattdicke
       option_trimming: Kantenabfallbreite
       option_rotatable: Teile sind rotierbar
-      option_stacking: Identische Teile stapeln
-      option_stacking_horizontally: Teile horizontal stapeln
       option_presort: Vorsortierung
+      option_stacking: Identische Teile stapeln
       option_base_sheet_length: Standard Plattenlänge
       option_base_sheet_width: Standard Plattenbreite
       option_colored: Darstellung farbig
@@ -190,6 +189,10 @@ tab:
         length_decr: Abfallende Längen
         area_decr: Abfallende Flächen
         perimeter_decr: Abfallende Perimeter
+      stacking:
+        none: NONE
+        length: LENGTH
+        width: WIDTH
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)

@@ -6,18 +6,6 @@
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_input_kerf" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_kerf'|i18next }}</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" id="ladb_input_kerf" value="3mm">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_trimming" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_trimming'|i18next }}</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" id="ladb_input_trimming" value="10mm">
-            </div>
-        </div>
-        <div class="form-group">
             <label for="ladb_input_base_sheet_length" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_base_sheet_length'|i18next }}</label>
             <div class="col-xs-6">
                 <input type="text" class="form-control" id="ladb_input_base_sheet_length" value="2800mm">
@@ -27,6 +15,19 @@
             <label for="ladb_input_base_sheet_width" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_base_sheet_width'|i18next }}</label>
             <div class="col-xs-6">
                 <input type="text" class="form-control" id="ladb_input_base_sheet_width" value="2070mm">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            <label for="ladb_input_kerf" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_kerf'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_input_kerf" value="3mm">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_input_trimming" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_trimming'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_input_trimming" value="10mm">
             </div>
         </div>
         <div class="form-group">
@@ -41,24 +42,20 @@
                 </select>
             </div>
         </div>
+        <div class="form-group">
+            <label for="ladb_select_stacking" class="control-label col-xs-4">{{ 'tab.cutlist.cutdiagram.option_stacking'|i18next }}</label>
+            <div class="col-xs-6">
+                <select class="form-control" id="ladb_select_stacking">
+                    <option value="0" data-content="{{ 'tab.cutlist.cutdiagram.stacking.none'|i18next }}">0</option>
+                    <option value="1" data-content="{{ 'tab.cutlist.cutdiagram.stacking.length'|i18next }}">1</option>
+                    <option value="2" data-content="{{ 'tab.cutlist.cutdiagram.stacking.width'|i18next }}">2</option>
+                </select>
+            </div>
+        </div>
         <div class="checkbox">
             <div class="col-xs-offset-4 col-xs-8">
                 <label>
                     <input type="checkbox" id="ladb_input_rotatable"> {{ 'tab.cutlist.cutdiagram.option_rotatable'|i18next }}
-                </label>
-            </div>
-        </div>
-        <div class="checkbox">
-            <div class="col-xs-offset-4 col-xs-8">
-                <label>
-                    <input type="checkbox" id="ladb_input_stacking"> {{ 'tab.cutlist.cutdiagram.option_stacking'|i18next }}
-                </label>
-            </div>
-        </div>
-        <div class="checkbox">
-            <div class="col-xs-offset-4 col-xs-8">
-                <label>
-                    <input type="checkbox" id="ladb_input_stacking_horizontally"> {{ 'tab.cutlist.cutdiagram.option_stacking_horizontally'|i18next }}
                 </label>
             </div>
         </div>

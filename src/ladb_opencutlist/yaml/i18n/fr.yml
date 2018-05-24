@@ -178,9 +178,8 @@ tab:
       option_kerf: Epaisseur de lame de scie
       option_trimming: Trimming Size
       option_rotatable: Les pièces peuvent être pivotées
-      option_stacking: Empiler les pièces identiques
-      option_stacking_horizontally: Empiler horizontalement
       option_presort: Ordre de tri des pièces
+      option_stacking: Empiler les pièces identiques
       option_base_sheet_length: Longueur du panneau de base
       option_base_sheet_width: Largeur du panneau de base
       option_colored: Schéma en couleur
@@ -190,6 +189,10 @@ tab:
         length_decr: Par longueur décroissante
         area_decr: Par superficie décroissante
         perimeter_decr: Par périmètre décroissant
+      stacking:
+        none: NONE
+        length: LENGTH
+        width: WIDTH
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

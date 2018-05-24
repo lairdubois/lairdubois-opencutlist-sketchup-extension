@@ -20,9 +20,8 @@
     var SETTING_KEY_OPTION_BASE_SHEET_LENGTH = 'cutlist_option_base_sheet_length';
     var SETTING_KEY_OPTION_BASE_SHEET_WIDTH = 'cutlist_option_base_sheet_width';
     var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
-    var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
-    var SETTING_KEY_OPTION_STACKING_HORIZONTALLY = 'cutlist_option_stacking_horizontally';
     var SETTING_KEY_OPTION_PRESORT = 'cutlist_option_presort';
+    var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
     var SETTING_KEY_OPTION_COLORED = 'cutlist_option_colored';
 
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
@@ -47,9 +46,8 @@
     var OPTION_DEFAULT_BASE_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_BASE_SHEET_WIDTH = '2070mm';
     var OPTION_DEFAULT_ROTATABLE = false;
-    var OPTION_DEFAULT_STACKING = false;
-    var OPTION_DEFAULT_STACKING_HORIZONTALLY = true;
     var OPTION_DEFAULT_PRESORT = 0;     // PRESORT_INPUT_ORDER
+    var OPTION_DEFAULT_STACKING = 0;    // STACKING_NONE
     var OPTION_DEFAULT_COLORED = true;
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
@@ -617,9 +615,8 @@
         var $inputBaseSheetLength = $('#ladb_input_base_sheet_length', $modal);
         var $inputBaseSheetWidth = $('#ladb_input_base_sheet_width', $modal);
         var $inputRotatable = $('#ladb_input_rotatable', $modal);
-        var $inputStacking = $('#ladb_input_stacking', $modal);
-        var $inputStackingHorizontally = $('#ladb_input_stacking_horizontally', $modal);
         var $selectPresort = $('#ladb_select_presort', $modal);
+        var $selectStacking = $('#ladb_select_stacking', $modal);
         var $inputColored = $('#ladb_input_colored', $modal);
         var $btnCutdiagram = $('#ladb_cutlist_cutdiagram', $modal);
 
@@ -628,13 +625,13 @@
         $inputBaseSheetLength.val(that.cutdiagramOptions.base_sheet_length);
         $inputBaseSheetWidth.val(that.cutdiagramOptions.base_sheet_width);
         $inputRotatable.prop('checked', that.cutdiagramOptions.rotatable);
-        $inputStacking.prop('checked', that.cutdiagramOptions.stacking);
-        $inputStackingHorizontally.prop('checked', that.cutdiagramOptions.stacking_horizontally);
         $selectPresort.val(that.cutdiagramOptions.presort);
+        $selectStacking.val(that.cutdiagramOptions.presort);
         $inputColored.prop('checked', that.cutdiagramOptions.colored);
 
         // Bind select
         $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
 
         // Bind buttons
         $btnCutdiagram.on('click', function() {
@@ -646,9 +643,8 @@
             that.cutdiagramOptions.base_sheet_length = $inputBaseSheetLength.val();
             that.cutdiagramOptions.base_sheet_width = $inputBaseSheetWidth.val();
             that.cutdiagramOptions.rotatable = $inputRotatable.is(':checked');
-            that.cutdiagramOptions.stacking = $inputStacking.is(':checked');
-            that.cutdiagramOptions.stacking_horizontally = $inputStackingHorizontally.is(':checked');
             that.cutdiagramOptions.presort = $selectPresort.val();
+            that.cutdiagramOptions.stacking = $selectStacking.val();
             that.cutdiagramOptions.colored = $inputColored.is(':checked');
 
             // Store options
@@ -658,9 +654,8 @@
                 { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:that.cutdiagramOptions.base_sheet_length },
                 { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:that.cutdiagramOptions.base_sheet_width },
                 { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cutdiagramOptions.rotatable },
-                { key:SETTING_KEY_OPTION_STACKING, value:that.cutdiagramOptions.stacking },
-                { key:SETTING_KEY_OPTION_STACKING_HORIZONTALLY, value:that.cutdiagramOptions.stacking_horizontally },
                 { key:SETTING_KEY_OPTION_PRESORT, value:that.cutdiagramOptions.presort },
+                { key:SETTING_KEY_OPTION_STACKING, value:that.cutdiagramOptions.stacking },
                 { key:SETTING_KEY_OPTION_COLORED, value:that.cutdiagramOptions.colored }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
@@ -731,9 +726,8 @@
                 SETTING_KEY_OPTION_BASE_SHEET_LENGTH,
                 SETTING_KEY_OPTION_BASE_SHEET_WIDTH,
                 SETTING_KEY_OPTION_ROTATABLE,
-                SETTING_KEY_OPTION_STACKING,
-                SETTING_KEY_OPTION_STACKING_HORIZONTALLY,
                 SETTING_KEY_OPTION_PRESORT,
+                SETTING_KEY_OPTION_STACKING,
                 SETTING_KEY_OPTION_COLORED,
 
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
@@ -765,9 +759,8 @@
                     base_sheet_length: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_LENGTH, OPTION_DEFAULT_BASE_SHEET_LENGTH),
                     base_sheet_width: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_WIDTH, OPTION_DEFAULT_BASE_SHEET_WIDTH),
                     rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
-                    stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
-                    stacking_horizontally: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING_HORIZONTALLY, OPTION_DEFAULT_STACKING_HORIZONTALLY),
                     presort: that.opencutlist.getSetting(SETTING_KEY_OPTION_PRESORT, OPTION_DEFAULT_PRESORT),
+                    stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
                     colored: that.opencutlist.getSetting(SETTING_KEY_OPTION_COLORED, OPTION_DEFAULT_COLORED)
                 };
 
