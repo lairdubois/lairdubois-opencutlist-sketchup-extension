@@ -1072,7 +1072,7 @@
               :kerf => kerf.to_l.to_f,
               :trimming => trimming.to_l.to_f,
               :rotatable => rotatable,
-              :stacking => stacking, # available options in packing2d.rb
+              :stacking => stacking.to_i, # available options in packing2d.rb
               :break_stacking_if_needed => true,
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,

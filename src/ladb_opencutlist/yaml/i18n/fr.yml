@@ -190,9 +190,9 @@ tab:
         area_decr: Par superficie décroissante
         perimeter_decr: Par périmètre décroissant
       stacking:
-        none: NONE
-        length: LENGTH
-        width: WIDTH
+        none: Non
+        length: Sur la longueur
+        width: Sur la largeur
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

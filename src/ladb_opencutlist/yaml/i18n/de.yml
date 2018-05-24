@@ -190,9 +190,9 @@ tab:
         area_decr: Abfallende Flächen
         perimeter_decr: Abfallende Perimeter
       stacking:
-        none: NONE
-        length: LENGTH
-        width: WIDTH
+        none: kein Stapeln
+        length: der Länge nach
+        width: der Breite nach
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
