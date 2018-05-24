@@ -15,7 +15,11 @@
         page-break-after: always;
       }
       .sheet .heading {
-        font-size: 14px;
+        font-size: 24px;
+      }
+      .title {
+        font-size: 28px;
+        margin-bottom: 25px;
       }
       pre {
         white-space: pre-wrap;
@@ -23,12 +27,31 @@
     </style>
   </head>
   <body>
-
-  <% bins.each do |bin| %>
+  
+  <% if unplaced_boxes.length() > 0 %>
+    <h3>Parts too large to fit on one single sheet</h3>
+  <% end %>
+  <% unplaced_boxes.each do |box| %>
+    <pre>
+    <%= box.number[:number] %> <%= box.number[:name] %>, <%= box.number[:raw_length] %> x <%= box.number[:raw_width] %>
+    </pre>
+  <% end %>
+  <% 
+     if bins.length() > 0 && bins[0].boxes.length() > 0 then
+     i = 0
+     total = bins.length()
+     bins.each do |bin| 
+       i = i+1 %>
   <div class="sheet">
-    <div class="heading"><%= bin.title %></div>
-    <pre><%= options.to_s %></pre>
-    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 700px; max-width: <%= ((bin.length / bin.width) * 700).to_i %>px;"></canvas>
+    <div class="heading"><%= group[:material_name] %>/<%= group[:std_dimension] %> : <%= i %> / <%= total %> --
+    <%= dim(bin.length) %> x <%= dim(bin.width) %></div>
+    <% 
+      b = bin.boxes.group_by {|e| e.number[:number]}
+      b.each do |k, v| %>
+       <pre> <%= v.length() %> x <%= k %> <%= v[0].number[:name] %>: <%= v[0].number[:raw_length] %> x <%= v[0].number[:raw_width] %></pre>
+    <% end %>
+
+    <canvas id="<%= bin.index %>_canvas" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" style="width: 100%; max-height: 750px; max-width: <%= ((bin.length / bin.width) * 750).to_i %>px;"></canvas>
     <script>
 
       var trimmingColor = '#d3d3d3';
@@ -42,62 +65,61 @@
       var ctx = c.getContext("2d");
 
       ctx.fillStyle = trimmingColor;
-      ctx.fillRect(0, 0, <%= zoom(bin.length + 2*bin.trimsize) %>, <%= zoom(bin.width + 2*bin.trimsize) %>);
+      ctx.fillRect(0, 0, <%= zoom(bin.length) %>, <%= zoom(bin.width) %>);
 
       <% bin.boxes.each do |box| %>
         ctx.fillStyle = boxColor;
-        ctx.fillRect(<%= zoom(box.x) %>, <%= zoom(box.y) %>, <%= zoom(box.length) %>, <%= zoom(box.width) %>);
+        ctx.fillRect(<%= zoom(box.x)+5 %>, <%= zoom(box.y)+5 %>, <%= zoom(box.length)-10 %>, <%= zoom(box.width)-10 %>);
+        ctx.rect(<%= zoom(box.x)+5 %>, <%= zoom(box.y)+5 %>, <%= zoom(box.length)-10 %>, <%= zoom(box.width)-10 %>);
+        ctx.stroke();
         ctx.fillStyle = "#000";
         ctx.font = "50px Arial";
         ctx.textAlign = "center";
         <% if box.rotated %>
           ctx.save();
-          ctx.translate(<%= zoom(box.x + box.length / 2) + 25 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x + box.length / 2) + 35 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
-          ctx.fillText("<%= box.number %>", 0, 0);
+          ctx.fillText("<%= box.number[:number] %>", 0, 0);
           ctx.restore();
         <% else %>
-          ctx.fillText("<%= box.number %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 25 %>);
+          ctx.fillText("<%= box.number[:number] %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width / 2) + 10%>);
         <% end %>
         ctx.font = "30px Arial";
         <% if options[:orientedDimensions] %>
           ctx.textAlign = "center";
-          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 30 %>);
+          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 3) %>, <%= zoom(box.y) + 55 %>);
           ctx.save();
-          ctx.translate(<%= zoom(box.x) + 30 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x) + 55 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= dim(box.width) %>", 0, 0);
           ctx.restore();
         <% else %>
           ctx.textAlign = "left";
-          ctx.fillText("<%= box.label %>", <%= zoom(box.x) + 5 %>, <%= zoom(box.y) + 35 %>);
+          ctx.fillText("<%= dim(box.length) %> x <%= dim(box.width) %>", <%= zoom(box.x) + 55 %>, <%= zoom(box.y) + 10 %>);
         <% end %>
       <% end %>
 
       <% bin.leftovers.each do |box| %>
         ctx.fillStyle = leftoverFillColor;
-        ctx.fillRect(<%= zoom(box.x) %>, <%= zoom(box.y) %>, <%= zoom(box.length) %>, <%= zoom(box.width) %>);
+        ctx.fillRect(<%= zoom(box.x)+5 %>, <%= zoom(box.y)+5 %>, <%= zoom(box.length)-10 %>, <%= zoom(box.width)-10 %>);
         ctx.lineWidth = 2;
         ctx.strokeStyle = leftoverStrokeColor;
         ctx.beginPath();
-        ctx.moveTo(<%= zoom(box.x) %>, <%= zoom(box.y) %>);
-        ctx.lineTo(<%= zoom(box.x + box.length) %>, <%= zoom(box.y + box.width) %>);
-        ctx.moveTo(<%= zoom(box.x + box.length) %>, <%= zoom(box.y) %>);
-        ctx.lineTo(<%= zoom(box.x) %>, <%= zoom(box.y + box.width) %>);
+        ctx.moveTo(<%= zoom(box.x)+5 %>, <%= zoom(box.y)+5 %>);
+        ctx.lineTo(<%= zoom(box.x + box.length)-5 %>, <%= zoom(box.y + box.width)-5 %>);
+        ctx.moveTo(<%= zoom(box.x + box.length)-5 %>, <%= zoom(box.y)+5 %>);
+        ctx.lineTo(<%= zoom(box.x)+5 %>, <%= zoom(box.y + box.width)-5 %>);
         ctx.stroke();
         ctx.fillStyle = leftoverStrokeColor;
         ctx.font = "30px Arial";
-        <% if options[:orientedDimensions] %>
+        <% if options[:colored] %>
           ctx.textAlign = "center";
-          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 30 %>);
+          ctx.fillText("<%= dim(box.length) %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y) + 55 %>);
           ctx.save();
-          ctx.translate(<%= zoom(box.x) + 30 %>, <%= zoom(box.y + box.width / 2) %>);
+          ctx.translate(<%= zoom(box.x) + 55 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);
           ctx.fillText("<%= dim(box.width) %>", 0, 0);
           ctx.restore();
-        <% else %>
-          ctx.textAlign = "center";
-          ctx.fillText("<%= box.label %>", <%= zoom(box.x + box.length / 2) %>, <%= zoom(box.y + box.width) - 10 %>);
         <% end %>
       <% end %>
 
@@ -108,14 +130,16 @@
           ctx.fillStyle = secondaryCutColor;
         <% end %>
         <% if cut.is_horizontal then %>
-          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(cut.length) %>, <%= zoom(options[:kerf]) %>);
+          ctx.fillRect(<%= zoom(cut.x)+1 %>, <%= zoom(cut.y)  %>, <%= zoom(cut.length) -2%>, <%= zoom(options[:kerf])+2 %>);
         <% else %>
-          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y) %>, <%= zoom(options[:kerf]) %>, <%= zoom(cut.length) %>);
+          ctx.fillRect(<%= zoom(cut.x) %>, <%= zoom(cut.y)+1 %>, <%= zoom(options[:kerf])+2 %>, <%= zoom(cut.length) -2%>);
         <% end %>
       <% end %>
 
     </script>
   </div>
-  <% end %>
+  <% end 
+   end
+  %>
   </body>
 </html>

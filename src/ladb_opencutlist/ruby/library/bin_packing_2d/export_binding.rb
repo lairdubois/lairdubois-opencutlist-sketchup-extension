@@ -1,11 +1,13 @@
 ﻿module BinPacking2D
   class ExportBinding < Packing2D
 
-    attr_reader :bins, :options
+    attr_reader :bins, :options, :unplaced_boxes, :group
 
-    def initialize(bins, options)
+    def initialize(bins, unplaced_boxes, group, options)
       @bins = bins
+      @unplaced_boxes = unplaced_boxes
       @options = options
+      @group = group
       @zoom = options[:zoom] || 1
     end
 

@@ -14,9 +14,11 @@
 
   class PackEngine < Packing2D
   
-    def initialize(bins, boxes)
+    def initialize(bins, boxes, group)
       @bins = bins
       @boxes = boxes
+      @group = group
+      @best_packing = nil
     end
 
     def run(options)
@@ -50,19 +52,23 @@
          p.performance.v_cutlength]
       }
 
-      # just for debugging - start
+=begin
+# just for debugging - start
       if !options[:stacking]
         puts "stacking: #{options[:stacking]}"
       else
         puts "stacking: #{options[:stacking]}, horizontally: #{options[:stacking_horizontally]}"
       end
+
       min_nb_bins = packings[0].performance.nb_bins
       packings.each do |p|
         if p.performance.nb_bins == min_nb_bins
           p.performance.print
         end
       end
-      return BinPacking2D::Export.new(packings[0].original_bins).to_html(options)
+=end
+      @best_packing = packings[0]
+      return BinPacking2D::Export.new(@best_packing.original_bins, @best_packing.unplaced_boxes, @group).to_html(options)
     end
   end
 end
