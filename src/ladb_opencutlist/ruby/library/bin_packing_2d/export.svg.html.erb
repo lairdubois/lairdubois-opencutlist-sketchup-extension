@@ -24,12 +24,23 @@
       /* SVG */
 
       svg {
-        border: 1px solid #555;
+        shape-rendering: geometricPrecision;
+        text-rendering: optimizeLegibility;
       }
 
-      svg .sheet {
+      /* .sheet */
+
+      svg .sheet-outer {
+        fill: #333;
+      }
+      svg .sheet-inner {
         fill: #d3d3d3;
       }
+      svg .sheet-dimension {
+        fill: #888;
+      }
+
+      /* .box */
 
       svg .box {
       }
@@ -52,6 +63,20 @@
         fill: #000;
       }
 
+      @media print {
+
+        svg .box-outer {
+          fill: #fff;
+        }
+
+        svg .box-inner {
+          fill: #fff;
+        }
+
+      }
+
+      /* .leftover */
+
       svg .leftover {
         fill: #fff;
       }
@@ -63,19 +88,13 @@
         stroke-width: 1px;
       }
 
+      /* .cut */
+
       svg .cut {
         fill: <%= options[:cut_color] %>;
       }
 
       @media print {
-
-        svg .box-outer {
-          fill: #fff;
-        }
-
-        svg .box-inner {
-          fill: #fff;
-        }
 
         svg .cut {
           fill: #000;
@@ -110,13 +129,21 @@
        <pre> <%= v.length() %> x <%= k %> <%= v[0].number[:name] %>: <%= v[0].number[:raw_length] %> x <%= v[0].number[:raw_width] %></pre>
     <% end %>
 
+    <% sheetDimensionFontSize = 20 %>
+    <% sheetDimensionOffset = 10 %>
     <% dimensionFontSize = 15 %>
     <% dimensionOffset = 3 %>
     <% numberFontSize = 28 %>
+    <% sheetOutlineWidth = 1 %>
     <% boxOutlineWidth = options[:box_outline_width] %>
 
-    <svg width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>" viewBox="0 0 <%= zoom(bin.length) %> <%= zoom(bin.width) %>">
-      <rect class="sheet" x="0" y="0" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>"></rect>
+    <svg width="<%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" height="<%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" viewBox="-<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> -<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>">
+      <text class="sheet-dimension" x="<%= zoom(bin.length / 2) %>" y="-<%= sheetOutlineWidth + sheetDimensionOffset %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic"><%= dim(bin.length) %></text>
+      <text class="sheet-dimension" x="-<%= sheetOutlineWidth + sheetDimensionOffset %>" y="<%= zoom(bin.width / 2) %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 <%= -sheetDimensionOffset  %>,<%= zoom(bin.width / 2) %>)"><%= dim(bin.width) %></text>
+      <g class="sheet">
+        <rect class="sheet-outer" x="-1" y="-1" width="<%= zoom(bin.length) + 2 %>" height="<%= zoom(bin.width) + 2 %>"></rect>
+        <rect class="sheet-inner" x="0" y="0" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>"></rect>
+      </g>
       <% bin.boxes.each do |box| %>
         <g class="box">
           <rect class="box-outer" x="<%= zoom(box.x) %>" y="<%= zoom(box.y) %>" width="<%= zoom(box.length) %>" height="<%= zoom(box.width) %>"></rect>
