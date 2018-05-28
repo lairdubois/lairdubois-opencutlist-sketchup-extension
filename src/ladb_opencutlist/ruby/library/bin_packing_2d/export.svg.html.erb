@@ -35,6 +35,7 @@
       }
       svg .sheet-inner {
         fill: #d3d3d3;
+        box-shadow: inset 0 0 10px #000000;
       }
       svg .sheet-dimension {
         fill: #888;
@@ -45,7 +46,7 @@
       svg .box {
       }
       svg .box-outer {
-        fill: <%= options[:box_outline_color] %>;
+        fill: #555;
       }
       svg .box:hover {
         cursor: pointer !important;
@@ -55,6 +56,10 @@
       }
       svg .box-inner {
         fill: #eee;
+      }
+      svg .box:hover .box-inner {
+        fill: #FED8B5;
+        filter: none;
       }
       svg .box-number {
         fill: #000;
@@ -91,7 +96,7 @@
       /* .cut */
 
       svg .cut {
-        fill: <%= options[:cut_color] %>;
+        fill: #5fc0dd;
       }
 
       @media print {
@@ -130,14 +135,37 @@
     <% end %>
 
     <% sheetDimensionFontSize = 20 %>
-    <% sheetDimensionOffset = 10 %>
     <% dimensionFontSize = 15 %>
-    <% dimensionOffset = 3 %>
     <% numberFontSize = 28 %>
+
+    <% dimensionOffset = 3 %>
+    <% sheetDimensionOffset = 10 %>
+
     <% sheetOutlineWidth = 1 %>
-    <% boxOutlineWidth = options[:box_outline_width] %>
+    <% boxOutlineWidth = 2 %>
 
     <svg width="<%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" height="<%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" viewBox="-<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> -<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>">
+
+      <defs>
+        <filter id="inner_white_shadow" x0="-50%" y0="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"></feGaussianBlur>
+          <feOffset dy="4" dx="4"></feOffset>
+          <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
+
+          <feFlood flood-color="#fff" flood-opacity="0.75"></feFlood>
+          <feComposite in2="shadowDiff" operator="in"></feComposite>
+          <feComposite in2="SourceGraphic" operator="over" result="firstfilter"></feComposite>
+
+          <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2"></feGaussianBlur>
+          <feOffset dy="-4" dx="-4"></feOffset>
+          <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
+
+          <feFlood flood-color="#fff" flood-opacity="0.75"></feFlood>
+          <feComposite in2="shadowDiff" operator="in"></feComposite>
+          <feComposite in2="firstfilter" operator="over"></feComposite>
+        </filter>
+      </defs>
+
       <text class="sheet-dimension" x="<%= zoom(bin.length / 2) %>" y="-<%= sheetOutlineWidth + sheetDimensionOffset %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic"><%= dim(bin.length) %></text>
       <text class="sheet-dimension" x="-<%= sheetOutlineWidth + sheetDimensionOffset %>" y="<%= zoom(bin.width / 2) %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 <%= -sheetDimensionOffset  %>,<%= zoom(bin.width / 2) %>)"><%= dim(bin.width) %></text>
       <g class="sheet">
@@ -147,7 +175,7 @@
       <% bin.boxes.each do |box| %>
         <g class="box">
           <rect class="box-outer" x="<%= zoom(box.x) %>" y="<%= zoom(box.y) %>" width="<%= zoom(box.length) %>" height="<%= zoom(box.width) %>"></rect>
-          <rect class="box-inner" x="<%= zoom(box.x) + boxOutlineWidth %>" y="<%= zoom(box.y) + boxOutlineWidth %>" width="<%= zoom(box.length) - boxOutlineWidth * 2 %>" height="<%= zoom(box.width) - boxOutlineWidth * 2 %>"></rect>
+          <rect class="box-inner" filter="url(#inner_white_shadow)" x="<%= zoom(box.x) + boxOutlineWidth %>" y="<%= zoom(box.y) + boxOutlineWidth %>" width="<%= zoom(box.length) - boxOutlineWidth * 2 %>" height="<%= zoom(box.width) - boxOutlineWidth * 2 %>"></rect>
           <text class="box-number" x="<%= zoom(box.x + box.length / 2) %>" y="<%= zoom(box.y + box.width / 2) %>" font-size="<%= numberFontSize %>px" text-anchor="middle" dominant-baseline="central"<% if box.rotated %> transform="rotate(-90 <%= zoom(box.x + box.length / 2) %>,<%= zoom(box.y + box.width / 2) %>)"<% end %>><%= box.number[:number] %></text>
           <% if options[:oriented_dimensions] %>
             <% centredLength = zoom(box.width) > (dimensionOffset + dimensionFontSize + numberFontSize) %>

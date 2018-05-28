@@ -1082,9 +1082,6 @@
               :oriented_dimensions => oriented_dimensions,
               :colored => true,
               :zoom => 1 / 3.0,   # 1px = 3mm
-              :box_outline_color => '#fff',
-              :box_outline_width => 3,
-              :cut_color => '#5fc0dd',
               :debugging => false
             }
             bins = [] # run will create a first bin if this is empty
