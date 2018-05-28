@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 20px;
+        font-size: 12px;
+        font-family: Calibri, Verdana;
+      }
+      canvas {
+        margin: 10px 0;
+        border: 1px solid #000;
+      }
+      .sheet {
+        page-break-after: always;
+      }
+      .sheet .heading {
+        font-size: 24px;
+      }
+      pre {
+        white-space: pre-wrap;
+      }
+
+      /* SVG */
+
+      svg {
+        border: 1px solid #000;
+      }
+
+      svg .sheet {
+        fill: #d3d3d3;
+      }
+
+      svg .box {
+        fill: #eee;
+        outline-color: #fff;
+        outline-style: solid;
+        outline-width: 3px;
+        outline-offset: -3px;
+      }
+      svg .box-number {
+        fill: #000;
+      }
+      svg .box-dimension {
+        fill: #000;
+      }
+
+      svg .leftover {
+        fill: #fff;
+      }
+      svg .leftover-dimension {
+        fill: #888;
+      }
+      svg .leftover-cross {
+        stroke: #ccc;
+        stroke-width: 1px;
+      }
+
+      svg .cut {
+        fill: #ff7700;
+      }
+
+      @media print {
+
+        svg .box {
+          fill: #fff;
+          outline: none;
+        }
+
+        svg .cut {
+          fill: #000;
+        }
+
+      }
+
+    </style>
+  </head>
+  <body>
+  <!-- <%= options %> -->
+  <% if unplaced_boxes.length() > 0 %>
+    <h3>Parts too large to fit on one single sheet</h3>
+  <% end %>
+  <% unplaced_boxes.each do |box| %>
+    <pre>
+    <%= box.number[:number] %> <%= box.number[:name] %>, <%= box.number[:raw_length] %> x <%= box.number[:raw_width] %>
+    </pre>
+  <% end %>
+  <% 
+     if bins.length() > 0 && bins[0].boxes.length() > 0 then
+     i = 0
+     total = bins.length()
+     bins.each do |bin| 
+       i = i+1 %>
+  <div class="sheet">
+    <div class="heading"><%= group[:material_name] %>/<%= group[:std_dimension] %> : <%= i %> / <%= total %> --
+    <%= dim(bin.length) %> x <%= dim(bin.width) %></div>
+    <% 
+      b = bin.boxes.group_by {|e| e.number[:number]}
+      b.each do |k, v| %>
+       <pre> <%= v.length() %> x <%= k %> <%= v[0].number[:name] %>: <%= v[0].number[:raw_length] %> x <%= v[0].number[:raw_width] %></pre>
+    <% end %>
+
+    <% dimensionFontSize = 30 %>
+    <% dimensionOffset = 5 %>
+    <% numberFontSize = 70 %>
+
+    <svg width="100%" viewBox="0 0 <%= zoom(bin.length) %> <%= zoom(bin.width) %>">
+      <rect class="sheet" x="0" y="0" width="<%= zoom(bin.length) %>" height="<%= zoom(bin.width) %>"></rect>
+      <% bin.boxes.each do |box| %>
+        <rect class="box" x="<%= zoom(box.x) %>" y="<%= zoom(box.y) %>" width="<%= zoom(box.length) %>" height="<%= zoom(box.width) %>"></rect>
+        <text class="box-number" x="<%= zoom(box.x + box.length / 2) %>" y="<%= zoom(box.y + box.width / 2) %>" font-size="<%= numberFontSize %>px" text-anchor="middle" dominant-baseline="central"<% if box.rotated %> transform="rotate(-90 <%= zoom(box.x + box.length / 2) %>,<%= zoom(box.y + box.width / 2) %>)"<% end %>><%= box.number[:number] %></text>
+        <% if options[:orientedDimensions] %>
+          <% centredLength = zoom(box.width) > (dimensionOffset + dimensionFontSize + numberFontSize) %>
+          <text class="box-dimension" x="<%= centredLength ? zoom(box.x + box.length / 2) : zoom(box.x) + dimensionOffset + dimensionFontSize + dimensionOffset %>" y="<%= zoom(box.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="<% if centredLength %>middle<% else %>start<% end %>" dominant-baseline="hanging"><%= dim(box.length) %></text>
+          <text class="box-dimension" x="<%= zoom(box.x) + dimensionOffset %>" y="<%= zoom(box.y + box.width / 2) %>" font-size="<%= dimensionFontSize %>px" text-anchor="middle" dominant-baseline="hanging" transform="rotate(-90 <%= zoom(box.x) + dimensionOffset %>,<%= zoom(box.y + box.width / 2) %>)"><%= dim(box.width) %></text>
+        <% else %>
+          <text class="box-dimension" x="<%= zoom(box.x) + dimensionOffset %>" y="<%= zoom(box.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="start" dominant-baseline="hanging"><%= dim(box.length) %> x <%= dim(box.width) %></text>
+        <% end %>
+      <% end %>
+      <% bin.leftovers.each do |leftover| %>
+        <% hideCross = zoom(leftover.length) < dimensionFontSize || zoom(leftover.width) < dimensionFontSize %>
+        <% hideDimensions = zoom(leftover.length) < (dimensionFontSize + dimensionOffset) || zoom(leftover.width) < (dimensionFontSize + dimensionOffset) %>
+        <rect class="leftover" x="<%= zoom(leftover.x) %>" y="<%= zoom(leftover.y) %>" width="<%= zoom(leftover.length) %>" height="<%= zoom(leftover.width) %>"></rect>
+        <% unless hideCross %>
+          <line class="leftover-cross" x1="<%= zoom(leftover.x + leftover.length) %>" y1="<%= zoom(leftover.y) %>" x2="<%= zoom(leftover.x) %>" y2="<%= zoom(leftover.y + leftover.width) %>"></line>
+        <% end %>
+        <% if options[:orientedDimensions] %>
+          <% unless hideCross %>
+            <line class="leftover-cross" x1="<%= zoom(leftover.x) %>" y1="<%= zoom(leftover.y) %>" x2="<%= zoom(leftover.x + leftover.length) %>" y2="<%= zoom(leftover.y + leftover.width) %>"></line>
+          <% end %>
+          <% unless hideDimensions %>
+            <text class="leftover-dimension" x="<%= zoom(leftover.x + leftover.length / 2) %>" y="<%= zoom(leftover.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="middle" dominant-baseline="hanging"><%= dim(leftover.length) %></text>
+            <text class="leftover-dimension" x="<%= zoom(leftover.x) + dimensionOffset %>" y="<%= zoom(leftover.y + leftover.width / 2) %>" font-size="<%= dimensionFontSize %>px" text-anchor="middle" dominant-baseline="hanging" transform="rotate(-90 <%= zoom(leftover.x) + dimensionOffset %>,<%= zoom(leftover.y + leftover.width / 2) %>)"><%= dim(leftover.width) %></text>
+          <% end %>
+        <% else %>
+          <% unless hideDimensions %>
+            <text class="leftover-dimension" x="<%= zoom(leftover.x) + dimensionOffset %>" y="<%= zoom(leftover.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="start" dominant-baseline="hanging"><%= dim(leftover.length) %> x <%= dim(leftover.width) %></text>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% bin.cuts.each do |cut| %>
+        <rect class="cut <%= cut.is_primary ? 'primary' : 'secondary' %>" x="<%= zoom(cut.x) %>" y="<%= zoom(cut.y) %>" width="<%= cut.is_horizontal ? zoom(cut.length) : zoom(options[:kerf]) %>" height="<%= cut.is_horizontal ? zoom(options[:kerf]) : zoom(cut.length) %>"></rect>
+      <% end %>
+    </svg>
+
+  </div>
+  <% end 
+   end
+  %>
+  </body>
+</html>

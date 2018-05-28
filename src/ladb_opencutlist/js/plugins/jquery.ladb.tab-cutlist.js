@@ -22,7 +22,7 @@
     var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
     var SETTING_KEY_OPTION_PRESORT = 'cutlist_option_presort';
     var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
-    var SETTING_KEY_OPTION_COLORED = 'cutlist_option_colored';
+    var SETTING_KEY_OPTION_ORIENTED_DIMENSIONS = 'cutlist_option_oriented_dimensions';
 
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
@@ -48,7 +48,7 @@
     var OPTION_DEFAULT_ROTATABLE = false;
     var OPTION_DEFAULT_PRESORT = 1;     // PRESORT_WIDTH_DECR
     var OPTION_DEFAULT_STACKING = 0;    // STACKING_NONE
-    var OPTION_DEFAULT_COLORED = true;
+    var OPTION_DEFAULT_ORIENTED_DIMENSIONS = true;
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
@@ -617,7 +617,7 @@
         var $inputRotatable = $('#ladb_input_rotatable', $modal);
         var $selectPresort = $('#ladb_select_presort', $modal);
         var $selectStacking = $('#ladb_select_stacking', $modal);
-        var $inputColored = $('#ladb_input_colored', $modal);
+        var $inputOrientedDimensions = $('#ladb_input_oriented_dimensions', $modal);
         var $btnCutdiagram = $('#ladb_cutlist_cutdiagram', $modal);
 
         $inputKerf.val(that.cutdiagramOptions.kerf);
@@ -626,8 +626,8 @@
         $inputBaseSheetWidth.val(that.cutdiagramOptions.base_sheet_width);
         $inputRotatable.prop('checked', that.cutdiagramOptions.rotatable);
         $selectPresort.val(that.cutdiagramOptions.presort);
-        $selectStacking.val(that.cutdiagramOptions.presort);
-        $inputColored.prop('checked', that.cutdiagramOptions.colored);
+        $selectStacking.val(that.cutdiagramOptions.stacking);
+        $inputOrientedDimensions.prop('checked', that.cutdiagramOptions.oriented_dimensions);
 
         // Bind select
         $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
@@ -645,7 +645,7 @@
             that.cutdiagramOptions.rotatable = $inputRotatable.is(':checked');
             that.cutdiagramOptions.presort = $selectPresort.val();
             that.cutdiagramOptions.stacking = $selectStacking.val();
-            that.cutdiagramOptions.colored = $inputColored.is(':checked');
+            that.cutdiagramOptions.oriented_dimensions = $inputOrientedDimensions.is(':checked');
 
             // Store options
             that.opencutlist.setSettings([
@@ -656,7 +656,7 @@
                 { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cutdiagramOptions.rotatable },
                 { key:SETTING_KEY_OPTION_PRESORT, value:that.cutdiagramOptions.presort },
                 { key:SETTING_KEY_OPTION_STACKING, value:that.cutdiagramOptions.stacking },
-                { key:SETTING_KEY_OPTION_COLORED, value:that.cutdiagramOptions.colored }
+                { key:SETTING_KEY_OPTION_ORIENTED_DIMENSIONS, value:that.cutdiagramOptions.oriented_dimensions }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
             rubyCallCommand('cutlist_group_cutdiagram', $.extend({ group_id: groupId }, that.cutdiagramOptions, that.uiOptions), function (response) {
@@ -728,7 +728,7 @@
                 SETTING_KEY_OPTION_ROTATABLE,
                 SETTING_KEY_OPTION_PRESORT,
                 SETTING_KEY_OPTION_STACKING,
-                SETTING_KEY_OPTION_COLORED,
+                SETTING_KEY_OPTION_ORIENTED_DIMENSIONS,
 
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
@@ -761,7 +761,7 @@
                     rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
                     presort: that.opencutlist.getSetting(SETTING_KEY_OPTION_PRESORT, OPTION_DEFAULT_PRESORT),
                     stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
-                    colored: that.opencutlist.getSetting(SETTING_KEY_OPTION_COLORED, OPTION_DEFAULT_COLORED)
+                    oriented_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_ORIENTED_DIMENSIONS, OPTION_DEFAULT_ORIENTED_DIMENSIONS)
                 };
 
                 that.uiOptions = {

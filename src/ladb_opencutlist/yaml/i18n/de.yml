@@ -182,7 +182,7 @@ tab:
       option_stacking: Identische Teile stapeln
       option_base_sheet_length: Standard Plattenlänge
       option_base_sheet_width: Standard Plattenbreite
-      option_colored: Darstellung farbig
+      option_oriented_dimensions: option_oriented_dimensions
       presort:
         input_order: Nicht vorsortiert
         width_decr: Abfallende Breiten

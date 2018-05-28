@@ -1018,7 +1018,7 @@
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
-        colored = settings['colored']
+        oriented_dimensions = settings['oriented_dimensions']
 
         boxes = []
 
@@ -1079,8 +1079,8 @@
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
-              :colored => colored,
-              :orientedDimensions => true,
+              :orientedDimensions => oriented_dimensions,
+              :colored => true,
               :zoom => 1,
               :debugging => false
             }

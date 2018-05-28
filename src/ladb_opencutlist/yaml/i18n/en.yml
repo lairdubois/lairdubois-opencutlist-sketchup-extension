@@ -182,7 +182,7 @@ tab:
       option_stacking: Stack Identical Parts
       option_base_sheet_length: Base Panel Length
       option_base_sheet_width: Base Panel Width
-      option_colored: Colored
+      option_oriented_dimensions: option_oriented_dimensions
       presort:
         input_order: None
         width_decr: Width Decreasing

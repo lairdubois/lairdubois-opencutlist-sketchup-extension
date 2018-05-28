@@ -89,7 +89,7 @@
         <% if options[:orientedDimensions] %>
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
-          ctx.fillText("<%= dim(box.length) %>", <%= if zoom(box.width) < 100 then zoom(box.x + box.length / 3) else  zoom(box.x + box.length / 2) end %>, <%= zoom(box.y) + 10 %>);
+          ctx.fillText("<%= dim(box.length) %>", <%= if zoom(box.width) < 160 then zoom(box.x + box.length / 3) else zoom(box.x + box.length / 2) end %>, <%= zoom(box.y) + 10 %>);
           ctx.save();
           ctx.translate(<%= zoom(box.x) + 10 %>, <%= zoom(box.y + box.width / 2) %>);
           ctx.rotate(-Math.PI / 2);

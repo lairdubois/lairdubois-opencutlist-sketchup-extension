@@ -8,7 +8,7 @@
     end
 
     def to_html(options = {})
-      template_path = File.expand_path("../export.canvas.html.erb", __FILE__)
+      template_path = File.expand_path("../export.svg.html.erb", __FILE__)
       template = File.read(template_path)
       binding = ExportBinding.new(@bins, @unplaced_boxes, @group, options)
       html = ERB.new(template).result(binding.get_binding)

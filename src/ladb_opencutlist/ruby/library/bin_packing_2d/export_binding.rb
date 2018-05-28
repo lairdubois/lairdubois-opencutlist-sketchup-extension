@@ -12,7 +12,7 @@
     end
 
     def zoom(value)
-      cmm(value * @zoom).round
+      cmm(value * @zoom)
     end
     
     def dim(value)
