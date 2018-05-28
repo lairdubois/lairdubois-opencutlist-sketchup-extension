@@ -1079,9 +1079,12 @@
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
-              :orientedDimensions => oriented_dimensions,
+              :oriented_dimensions => oriented_dimensions,
               :colored => true,
-              :zoom => 1,
+              :zoom => 1 / 3.0,   # 1px = 3mm
+              :box_outline_color => '#fff',
+              :box_outline_width => 3,
+              :cut_color => '#5fc0dd',
               :debugging => false
             }
             bins = [] # run will create a first bin if this is empty
