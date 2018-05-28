@@ -56,6 +56,13 @@
                     <span class="help-block"><small>{{ 'tab.materials.edit_material.std_sections_help'|i18next }}</small></span>
                 </div>
             </div>
+            <div class="form-group">
+                <label for="ladb_materials_input_std_sizes" class="control-label col-xs-4">{{ 'tab.materials.edit_material.std_sizes'|i18next }}</label>
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" id="ladb_materials_input_std_sizes" value="{{ material.attributes.std_sizes|escape('html') }}">
+                    <span class="help-block"><small>{{ 'tab.materials.edit_material.std_sizes_help'|i18next }}</small></span>
+                </div>
+            </div>
             <div class="text-center">
                 <p class="help-block">{{ 'tab.materials.edit_material.cut_options_defaults.manage_help'|i18next }} - <strong><span id="ladb_materials_span_cut_options_defaults_type_1">{{ 'tab.materials.type_1'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_2">{{ 'tab.materials.type_2'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_3">{{ 'tab.materials.type_3'|i18next }}</span></strong></p>
                 <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_save">{{ 'tab.materials.edit_material.cut_options_defaults.save'|i18next() }}</button>

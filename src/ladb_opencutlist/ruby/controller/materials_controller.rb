@@ -32,6 +32,9 @@ module Ladb::OpenCutList
       Plugin.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
+      Plugin.register_command("materials_get_std_sizes") do |material_id|
+        get_std_sizes_command(material_id)
+      end
 
     end
 
@@ -80,7 +83,8 @@ module Ladb::OpenCutList
                                       :width_increase => material_attributes.width_increase,
                                       :thickness_increase => material_attributes.thickness_increase,
                                       :std_thicknesses => material_attributes.std_thicknesses,
-                                      :std_sections => material_attributes.std_sections
+                                      :std_sections => material_attributes.std_sections,
+                                      :std_sizes => material_attributes.std_sizes
                                   }
                               })
 
@@ -135,6 +139,7 @@ module Ladb::OpenCutList
       thickness_increase = attributes['thickness_increase']
       std_thicknesses = attributes['std_thicknesses']
       std_sections = attributes['std_sections']
+      std_sizes = attributes['std_sizes']
 
       # Fetch material
       materials = model.materials
@@ -155,6 +160,7 @@ module Ladb::OpenCutList
         material_attributes.thickness_increase = thickness_increase
         material_attributes.std_thicknesses = std_thicknesses
         material_attributes.std_sections = std_sections
+        material_attributes.std_sizes = std_sizes
         material_attributes.write_to_attributes
 
       end
@@ -250,6 +256,37 @@ module Ladb::OpenCutList
 
       else
         response[:errors].push('tab.materials.error.failed_export_skm_file')
+      end
+
+      response
+    end
+
+    def get_std_sizes_command(material_data)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      name = material_data['name']
+
+      response = {
+          :errors => [],
+          :std_sizes => [],
+      }
+
+      # Fetch material
+      materials = model.materials
+      material = materials[name]
+
+      if material
+
+        material_attributes = MaterialAttributes.new(material)
+        material_attributes.l_std_sizes.each { |std_size|
+          response[:std_sizes].push({
+                                        :length => std_size.length,
+                                        :width => std_size.width,
+                                    })
+        }
+
       end
 
       response

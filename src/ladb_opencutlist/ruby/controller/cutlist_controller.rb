@@ -75,8 +75,8 @@
         group_update_command(group_data)
       end
 
-      Plugin.register_command("cutlist_group_cutdiagram") do |settings|
-        group_cutdiagram_command(settings)
+      Plugin.register_command("cutlist_group_cuttingdiagram") do |settings|
+        group_cuttingdiagram_command(settings)
       end
 
     end
@@ -1006,7 +1006,7 @@
 
     end
     
-    def group_cutdiagram_command(settings)
+    def group_cuttingdiagram_command(settings)
       if @cutlist
 
         # Check settings
@@ -1018,7 +1018,6 @@
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
-        oriented_dimensions = settings['oriented_dimensions']
 
         boxes = []
 
@@ -1079,20 +1078,19 @@
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length.to_l.to_f,
               :base_sheet_width => base_sheet_width.to_l.to_f,
-              :oriented_dimensions => oriented_dimensions,
               :colored => true,
-              :zoom => 1 / 3.0,   # 1px = 3mm
+              :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
               :debugging => false
             }
             bins = [] # run will create a first bin if this is empty
             e = BinPacking2D::PackEngine.new(bins, boxes, group)
 
             # create this directory to put html files into
-            cutdiagram_dir = File.join(Plugin::temp_dir, 'cutdiagram')
-            unless Dir.exist?(cutdiagram_dir)
-              Dir.mkdir(cutdiagram_dir)
+            cuttingdiagram_dir = File.join(Plugin::temp_dir, 'cuttingdiagram')
+            unless Dir.exist?(cuttingdiagram_dir)
+              Dir.mkdir(cuttingdiagram_dir)
             end
-            FileUtils.rm_f Dir.glob(File.join(cutdiagram_dir, '*'))
+            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))
 
             if options[:stacking] != BinPacking2D::STACKING_NONE
               options[:intermediary_bounding_box_optimization] = false
@@ -1101,11 +1099,11 @@
             end
             
             html = e.run(options)
-            cutdiagram_path = File.join(cutdiagram_dir, 'sheet.html')
-            File.write(cutdiagram_path, html)
+            cuttingdiagram_path = File.join(cuttingdiagram_dir, 'cuttingdiagram.html')
+            File.write(cuttingdiagram_path, html)
 
             return {
-                :cutdiagram_path => cutdiagram_path,
+                :cuttingdiagram_path => cuttingdiagram_path,
             }
 
           end

@@ -75,7 +75,7 @@ tab:
       numbers_reset: Nummern der Teile neu zuweisen
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
-      group_cutdiagram: Schnittplan
+      group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
     edit_part:
@@ -173,16 +173,16 @@ tab:
       thickness: Dicke - fertig
       count: Anzahl
       material_name: Material
-    cutdiagram:
+    cuttingdiagram:
       title: Schnittplan
       option_kerf: Sägeblattdicke
       option_trimming: Kantenabfallbreite
       option_rotatable: Teile sind rotierbar
       option_presort: Vorsortierung
       option_stacking: Identische Teile stapeln
+      option_base_sheet_size: Taille du panneau
       option_base_sheet_length: Standard Plattenlänge
       option_base_sheet_width: Standard Plattenbreite
-      option_oriented_dimensions: option_oriented_dimensions
       presort:
         input_order: Nicht vorsortiert
         width_decr: Abfallende Breiten
@@ -241,6 +241,9 @@ tab:
       std_sections: Verfügbare Querschnitte
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen. Masse ohne Einheit beziehen sich auf die Modellmasseinheit.
+      std_sizes: Tailles disponibles
+      std_sizes_help: |
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern
@@ -266,7 +269,7 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
-  cutdiagram:
+  cuttingdiagram:
     label: Schnittplan
     title: Schnittplan
   about:

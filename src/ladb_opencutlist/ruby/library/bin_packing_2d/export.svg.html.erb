@@ -2,6 +2,7 @@
 <html>
   <head>
     <style>
+
       body {
         margin: 20px;
         font-size: 12px;
@@ -26,6 +27,8 @@
       svg {
         shape-rendering: geometricPrecision;
         text-rendering: optimizeLegibility;
+        width: 100%;
+        height: auto;
       }
 
       /* .sheet */
@@ -35,7 +38,9 @@
       }
       svg .sheet-inner {
         fill: #d3d3d3;
-        box-shadow: inset 0 0 10px #000000;
+      }
+      svg .sheet-inner:hover {
+        fill: #ff7700;
       }
       svg .sheet-dimension {
         fill: #888;
@@ -82,26 +87,32 @@
 
       /* .leftover */
 
-      svg .leftover {
+      svg .leftover-inner {
         fill: #fff;
+      }
+      svg .leftover-cross {
+        stroke: #aaa;
+        stroke-width: 1px;
       }
       svg .leftover-dimension {
         fill: #888;
       }
-      svg .leftover-cross {
-        stroke: #ccc;
-        stroke-width: 1px;
-      }
 
       /* .cut */
 
-      svg .cut {
+      svg .cut-outer {
+        fill: rgba(0, 0, 0, 0.01);
+      }
+      svg .cut-inner {
         fill: #5fc0dd;
+      }
+      svg .cut:hover .cut-outer, svg .cut:hover .cut-inner {
+        fill: #ff7700;
       }
 
       @media print {
 
-        svg .cut {
+        svg .cut-inner {
           fill: #000;
         }
 
@@ -134,38 +145,18 @@
        <pre> <%= v.length() %> x <%= k %> <%= v[0].number[:name] %>: <%= v[0].number[:raw_length] %> x <%= v[0].number[:raw_width] %></pre>
     <% end %>
 
-    <% sheetDimensionFontSize = 20 %>
-    <% dimensionFontSize = 15 %>
-    <% numberFontSize = 28 %>
+    <% sheetDimensionFontSize = 18 %>
+    <% dimensionFontSize = 13 %>
+    <% numberFontSize = 26 %>
 
     <% dimensionOffset = 3 %>
     <% sheetDimensionOffset = 10 %>
 
     <% sheetOutlineWidth = 1 %>
     <% boxOutlineWidth = 2 %>
+    <% cutOutlineWidth = 2 %>
 
-    <svg width="<%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" height="<%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" viewBox="-<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> -<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>">
-
-      <defs>
-        <filter id="inner_white_shadow" x0="-50%" y0="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"></feGaussianBlur>
-          <feOffset dy="4" dx="4"></feOffset>
-          <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
-
-          <feFlood flood-color="#fff" flood-opacity="0.75"></feFlood>
-          <feComposite in2="shadowDiff" operator="in"></feComposite>
-          <feComposite in2="SourceGraphic" operator="over" result="firstfilter"></feComposite>
-
-          <feGaussianBlur in="firstfilter" stdDeviation="3" result="blur2"></feGaussianBlur>
-          <feOffset dy="-4" dx="-4"></feOffset>
-          <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
-
-          <feFlood flood-color="#fff" flood-opacity="0.75"></feFlood>
-          <feComposite in2="shadowDiff" operator="in"></feComposite>
-          <feComposite in2="firstfilter" operator="over"></feComposite>
-        </filter>
-      </defs>
-
+    <svg viewBox="-<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> -<%= sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.length) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %> <%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>" style="max-height: <%= zoom(bin.width) + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize %>px">
       <text class="sheet-dimension" x="<%= zoom(bin.length / 2) %>" y="-<%= sheetOutlineWidth + sheetDimensionOffset %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic"><%= dim(bin.length) %></text>
       <text class="sheet-dimension" x="-<%= sheetOutlineWidth + sheetDimensionOffset %>" y="<%= zoom(bin.width / 2) %>" font-size="<%= sheetDimensionFontSize %>px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 <%= -sheetDimensionOffset  %>,<%= zoom(bin.width / 2) %>)"><%= dim(bin.width) %></text>
       <g class="sheet">
@@ -175,26 +166,22 @@
       <% bin.boxes.each do |box| %>
         <g class="box">
           <rect class="box-outer" x="<%= zoom(box.x) %>" y="<%= zoom(box.y) %>" width="<%= zoom(box.length) %>" height="<%= zoom(box.width) %>"></rect>
-          <rect class="box-inner" filter="url(#inner_white_shadow)" x="<%= zoom(box.x) + boxOutlineWidth %>" y="<%= zoom(box.y) + boxOutlineWidth %>" width="<%= zoom(box.length) - boxOutlineWidth * 2 %>" height="<%= zoom(box.width) - boxOutlineWidth * 2 %>"></rect>
-          <text class="box-number" x="<%= zoom(box.x + box.length / 2) %>" y="<%= zoom(box.y + box.width / 2) %>" font-size="<%= numberFontSize %>px" text-anchor="middle" dominant-baseline="central"<% if box.rotated %> transform="rotate(-90 <%= zoom(box.x + box.length / 2) %>,<%= zoom(box.y + box.width / 2) %>)"<% end %>><%= box.number[:number] %></text>
-          <% if options[:oriented_dimensions] %>
-            <% centredLength = zoom(box.width) > (dimensionOffset + dimensionFontSize + numberFontSize) %>
-            <% centredWidth = zoom(box.length) > (dimensionOffset + dimensionFontSize + numberFontSize) %>
-            <text class="box-dimension" x="<%= centredLength ? zoom(box.x + box.length / 2) : zoom(box.x) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>" y="<%= zoom(box.y) + boxOutlineWidth + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="<% if centredLength %>middle<% else %>start<% end %>" dominant-baseline="hanging"><%= dim(box.length) %></text>
-            <text class="box-dimension" x="<%= zoom(box.x) + boxOutlineWidth + dimensionOffset %>" y="<%= centredWidth ? zoom(box.y + box.width / 2) : zoom(box.y) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="<% if centredWidth %>middle<% else %>end<% end %>" dominant-baseline="hanging" transform="rotate(-90 <%= zoom(box.x) + boxOutlineWidth + dimensionOffset %>,<%= centredWidth ? zoom(box.y + box.width / 2) : zoom(box.y) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>)"><%= dim(box.width) %></text>
-          <% else %>
-            <text class="box-dimension" x="<%= zoom(box.x) + boxOutlineWidth + dimensionOffset %>" y="<%= zoom(box.y) + boxOutlineWidth + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="start" dominant-baseline="hanging"><%= dim(box.length) %> x <%= dim(box.width) %></text>
-          <% end %>
+          <rect class="box-inner" x="<%= zoom(box.x) + boxOutlineWidth %>" y="<%= zoom(box.y) + boxOutlineWidth %>" width="<%= zoom(box.length) - boxOutlineWidth * 2 %>" height="<%= zoom(box.width) - boxOutlineWidth * 2 %>"></rect>
+          <text class="box-number" x="<%= zoom(box.x + box.length / 2) %>" y="<%= zoom(box.y + box.width / 2) %>" font-size="<%= [numberFontSize, zoom(box.length), zoom(box.width)].min  %>px" text-anchor="middle" dominant-baseline="central"<% if box.rotated %> transform="rotate(-90 <%= zoom(box.x + box.length / 2) %>,<%= zoom(box.y + box.width / 2) %>)"<% end %>><%= box.number[:number] %></text>
+          <% centredLength = zoom(box.width) > (dimensionOffset + dimensionFontSize + numberFontSize) %>
+          <% centredWidth = zoom(box.length) > (dimensionOffset + dimensionFontSize + numberFontSize) %>
+          <text class="box-dimension" x="<%= centredLength ? zoom(box.x + box.length / 2) : zoom(box.x) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>" y="<%= zoom(box.y) + boxOutlineWidth + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="<% if centredLength %>middle<% else %>start<% end %>" dominant-baseline="hanging"><%= dim(box.length) %></text>
+          <text class="box-dimension" x="<%= zoom(box.x) + boxOutlineWidth + dimensionOffset %>" y="<%= centredWidth ? zoom(box.y + box.width / 2) : zoom(box.y) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="<% if centredWidth %>middle<% else %>end<% end %>" dominant-baseline="hanging" transform="rotate(-90 <%= zoom(box.x) + boxOutlineWidth + dimensionOffset %>,<%= centredWidth ? zoom(box.y + box.width / 2) : zoom(box.y) + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset %>)"><%= dim(box.width) %></text>
         </g>
       <% end %>
       <% bin.leftovers.each do |leftover| %>
         <% hideCross = zoom(leftover.length) < dimensionFontSize || zoom(leftover.width) < dimensionFontSize %>
         <% hideDimensions = zoom(leftover.length) < (dimensionFontSize + dimensionOffset) || zoom(leftover.width) < (dimensionFontSize + dimensionOffset) %>
-        <rect class="leftover" x="<%= zoom(leftover.x) %>" y="<%= zoom(leftover.y) %>" width="<%= zoom(leftover.length) %>" height="<%= zoom(leftover.width) %>"></rect>
-        <% unless hideCross %>
-          <line class="leftover-cross" x1="<%= zoom(leftover.x + leftover.length) %>" y1="<%= zoom(leftover.y) %>" x2="<%= zoom(leftover.x) %>" y2="<%= zoom(leftover.y + leftover.width) %>"></line>
-        <% end %>
-        <% if options[:oriented_dimensions] %>
+        <g class="leftover">
+          <rect class="leftover-inner" x="<%= zoom(leftover.x) %>" y="<%= zoom(leftover.y) %>" width="<%= zoom(leftover.length) %>" height="<%= zoom(leftover.width) %>"></rect>
+          <% unless hideCross %>
+            <line class="leftover-cross" x1="<%= zoom(leftover.x + leftover.length) %>" y1="<%= zoom(leftover.y) %>" x2="<%= zoom(leftover.x) %>" y2="<%= zoom(leftover.y + leftover.width) %>"></line>
+          <% end %>
           <% unless hideCross %>
             <line class="leftover-cross" x1="<%= zoom(leftover.x) %>" y1="<%= zoom(leftover.y) %>" x2="<%= zoom(leftover.x + leftover.length) %>" y2="<%= zoom(leftover.y + leftover.width) %>"></line>
           <% end %>
@@ -202,14 +189,13 @@
             <text class="leftover-dimension" x="<%= zoom(leftover.x + leftover.length / 2) %>" y="<%= zoom(leftover.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="middle" dominant-baseline="hanging"><%= dim(leftover.length) %></text>
             <text class="leftover-dimension" x="<%= zoom(leftover.x) + dimensionOffset %>" y="<%= zoom(leftover.y + leftover.width / 2) %>" font-size="<%= dimensionFontSize %>px" text-anchor="middle" dominant-baseline="hanging" transform="rotate(-90 <%= zoom(leftover.x) + dimensionOffset %>,<%= zoom(leftover.y + leftover.width / 2) %>)"><%= dim(leftover.width) %></text>
           <% end %>
-        <% else %>
-          <% unless hideDimensions %>
-            <text class="leftover-dimension" x="<%= zoom(leftover.x) + dimensionOffset %>" y="<%= zoom(leftover.y) + dimensionOffset %>" font-size="<%= dimensionFontSize %>px" text-anchor="start" dominant-baseline="hanging"><%= dim(leftover.length) %> x <%= dim(leftover.width) %></text>
-          <% end %>
-        <% end %>
+        </g>
       <% end %>
       <% bin.cuts.each do |cut| %>
-        <rect class="cut <%= cut.is_primary ? 'primary' : 'secondary' %>" x="<%= zoom(cut.x) %>" y="<%= zoom(cut.y) %>" width="<%= cut.is_horizontal ? zoom(cut.length) : zoom(options[:kerf]) %>" height="<%= cut.is_horizontal ? zoom(options[:kerf]) : zoom(cut.length) %>"></rect>
+        <g class="cut <%= cut.is_primary ? 'primary' : 'secondary' %>">
+          <rect class="cut-outer" x="<%= zoom(cut.x) - cutOutlineWidth %>" y="<%= zoom(cut.y) - cutOutlineWidth %>" width="<%= (cut.is_horizontal ? zoom(cut.length) : zoom(options[:kerf])) + cutOutlineWidth * 2 %>" height="<%= (cut.is_horizontal ? zoom(options[:kerf]) : zoom(cut.length)) + cutOutlineWidth * 2 %>"></rect>
+          <rect class="cut-inner" x="<%= zoom(cut.x) %>" y="<%= zoom(cut.y) %>" width="<%= cut.is_horizontal ? zoom(cut.length) : zoom(options[:kerf]) %>" height="<%= cut.is_horizontal ? zoom(options[:kerf]) : zoom(cut.length) %>"></rect>
+        </g>
       <% end %>
     </svg>
 

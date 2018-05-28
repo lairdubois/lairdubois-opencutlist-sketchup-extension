@@ -75,7 +75,7 @@ tab:
       numbers_reset: Réinitialiser les numéros de pièce
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
-      group_cutdiagram: Calpinage
+      group_cuttingdiagram: Calpinage
       edit_material: Editer la matière '{{ material }}'
       edit_group_properties: Editer les propriétés du groupe
     edit_part:
@@ -173,16 +173,16 @@ tab:
       thickness: Epaisseur finie
       count: Quantité
       material_name: Matière
-    cutdiagram:
+    cuttingdiagram:
       title: Calpinage
       option_kerf: Epaisseur de lame de scie
       option_trimming: Trimming Size
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques
-      option_base_sheet_length: Longueur du panneau de base
-      option_base_sheet_width: Largeur du panneau de base
-      option_oriented_dimensions: option_oriented_dimensions
+      option_base_sheet_size: Taille du panneau
+      option_base_sheet_length: Longueur du panneau
+      option_base_sheet_width: Largeur du panneau
       presort:
         input_order: Pas de tri préalable
         width_decr: Par largeur décroissante
@@ -241,6 +241,9 @@ tab:
       std_sections: Sections disponibles
       std_sections_help: |
         Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+      std_sizes: Tailles disponibles
+      std_sizes_help: |
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
         save: Enregistrer comme valeurs par défaut
@@ -266,7 +269,7 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
-  cutdiagram:
+  cuttingdiagram:
     label: Calpinage
     title: Calpinage
   about:

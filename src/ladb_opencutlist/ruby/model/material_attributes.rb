@@ -15,32 +15,36 @@ module Ladb::OpenCutList
             :width_increase => '0',
             :thickness_increase => '0',
             :std_thicknesses => '',
-            :std_sections => ''
+            :std_sections => '',
+            :std_sizes => ''
         },
         TYPE_SOLID_WOOD => {
             :length_increase => '50mm',
             :width_increase => '5mm',
             :thickness_increase => '5mm',
             :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm',
-            :std_sections => ''
+            :std_sections => '',
+            :std_sizes => ''
         },
         TYPE_SHEET_GOOD => {
-            :length_increase => '10mm',
-            :width_increase => '10mm',
+            :length_increase => '0',
+            :width_increase => '0',
             :thickness_increase => '0',
-            :std_thicknesses => '5mm;15mm;18mm;22mm',
-            :std_sections => ''
+            :std_thicknesses => '5mm;8mm;10mm;15mm;18mm;22mm',
+            :std_sections => '',
+            :std_sizes => ''
         },
         TYPE_BAR => {
             :length_increase => '50mm',
             :width_increase => '0',
             :thickness_increase => '0',
             :std_thicknesses => '',
-            :std_sections => '30mmx40mm;40mmx50mm'
+            :std_sections => '30mmx40mm;40mmx50mm',
+            :std_sizes => ''
         },
     }
 
-    attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections
+    attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes
     attr_reader :material
 
     def initialize(material)
@@ -51,6 +55,7 @@ module Ladb::OpenCutList
       @thickness_increase = get_default(:thickness_increase)
       @std_thicknesses = get_default(:std_thicknesses)
       @std_sections = get_default(:std_sections)
+      @std_sizes = get_default(:@std_sizes)
       read_from_attributes
     end
 
@@ -157,6 +162,23 @@ module Ladb::OpenCutList
       a
     end
 
+    def std_sizes
+      case @type
+        when TYPE_SHEET_GOOD
+          @std_sizes
+        else
+          get_default(:@std_sizes)
+      end
+    end
+
+    def l_std_sizes
+      a = []
+      @std_sizes.split(';').each { |std_size|
+        a.push(Size2d.new(std_size))
+      }
+      a
+    end
+
     # -----
 
     def read_from_attributes
@@ -167,6 +189,7 @@ module Ladb::OpenCutList
         @thickness_increase = Plugin.get_attribute(@material, 'thickness_increase', get_default(:thickness_increase))
         @std_thicknesses = Plugin.get_attribute(@material, 'std_thicknesses', get_default(:std_thicknesses))
         @std_sections = Plugin.get_attribute(@material, 'std_sections', get_default(:std_sections))
+        @std_sizes = Plugin.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
       end
     end
 
@@ -178,6 +201,7 @@ module Ladb::OpenCutList
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', @thickness_increase)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', @std_thicknesses)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', @std_sections)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', @std_sizes)
       end
     end
 
