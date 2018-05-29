@@ -180,9 +180,10 @@ tab:
       option_rotatable: Teile sind rotierbar
       option_presort: Vorsortierung
       option_stacking: Identische Teile stapeln
-      option_base_sheet: Panneau de base
-      option_base_sheet_length: Standard Plattenlänge
-      option_base_sheet_width: Standard Plattenbreite
+      option_base_sheet: Standard Platte
+      option_custom_sheet: Spezielle Platte
+      option_base_sheet_length: Plattenlänge
+      option_base_sheet_width: Plattenbreite
       presort:
         input_order: Nicht vorsortiert
         width_decr: Abfallende Breiten
@@ -244,13 +245,13 @@ tab:
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
-      std_sizes: Tailles disponibles
+      std_sizes: Verfügbare Plattenmasse
       std_sizes_help: |
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      grained: Grain
-      grained_0: Pas de grain
-      grained_1: Le grain suit la longueur
+        Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+      grained: Faserrichtung
+      grained_0: keine Faserrichtung
+      grained_1: Faser in Längsrichtung
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern
