@@ -181,6 +181,7 @@ tab:
       option_presort: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques
       option_base_sheet: Panneau de base
+      options_custom_sheet: Personnalisée
       option_base_sheet_length: Longueur du panneau
       option_base_sheet_width: Largeur du panneau
       presort:
