@@ -10,11 +10,10 @@
             <div class="col-xs-6">
                 <select class="form-control" id="ladb_select_sizes">
                     {% if material_attributes.std_sizes|length > 0 %}
-                        <optgroup label="{{ group.material_name }}">
-                            {% for std_size in material_attributes.std_sizes %}
-                                <option value="{{ std_size.length }}x{{ std_size.width }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> {{ std_size.length }} x {{ std_size.width }}"></option>
-                            {% endfor %}
-                        </optgroup>
+                        {% for std_size in material_attributes.std_sizes %}
+                            <option value="{{ std_size.length }}x{{ std_size.width }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size.length }} x {{ std_size.width }}"></option>
+                        {% endfor %}
+                        <option data-divider="true"></option>
                     {% endif %}
                     <option value="0x0" data-content="Personnalisée">0x0</option>
                 </select>
