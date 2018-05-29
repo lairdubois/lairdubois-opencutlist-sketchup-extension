@@ -7,13 +7,13 @@
     <div class="form form-horizontal">
         <div class="form-group">
             <label for="ladb_materials_input_name" class="control-label col-xs-4">{{ 'tab.materials.edit_material.name'|i18next }}</label>
-            <div class="col-xs-8">
+            <div class="col-xs-7">
                 <input type="text" class="form-control" id="ladb_materials_input_name" value="{{ material.name }}">
             </div>
         </div>
         <div class="form-group">
             <label for="ladb_materials_input_type" class="control-label col-xs-4">{{ 'tab.materials.edit_material.type'|i18next }}</label>
-            <div class="col-xs-8">
+            <div class="col-xs-7">
                 <select class="form-control" id="ladb_materials_input_type">
                     <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.materials.type_0'|i18next }}</span>"{% if material.attributes.type == 0 %} selected{% endif %}>0</option>
                     <option value="1" data-content="<i class='ladb-opencutlist-icon-solid-wood'></i> {{ 'tab.materials.type_1'|i18next }}"{% if material.attributes.type == 1 %} selected{% endif %}>1</option>
@@ -26,41 +26,52 @@
             <h4 class="text-center">{{ 'tab.materials.edit_material.cut_options'|i18next }}</h4>
             <div class="form-group">
                 <label for="ladb_materials_input_length_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.length_increase'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_length_increase" value="{{ material.attributes.length_increase|escape('html') }}">
                 </div>
             </div>
             <div class="form-group">
                 <label for="ladb_materials_input_width_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.width_increase'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_width_increase" value="{{ material.attributes.width_increase|escape('html') }}">
                 </div>
             </div>
             <div class="form-group">
                 <label for="ladb_materials_input_thickness_increase" class="control-label col-xs-4">{{ 'tab.materials.edit_material.thickness_increase'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_thickness_increase" value="{{ material.attributes.thickness_increase|escape('html') }}">
                 </div>
             </div>
             <div class="form-group">
+                <div class="ladb-minitools pull-right" style="margin-right: 20px; font-size: 150%; height: 35px; line-height: 35px;"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_thicknesses_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <label for="ladb_materials_input_std_thicknesses" class="control-label col-xs-4">{{ 'tab.materials.edit_material.std_thicknesses'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_std_thicknesses" value="{{ material.attributes.std_thicknesses|escape('html') }}">
-                    <span class="help-block"><small>{{ 'tab.materials.edit_material.std_thicknesses_help'|i18next }}</small></span>
+                </div>
+                <div class="col-xs-1">
                 </div>
             </div>
             <div class="form-group">
+                <div class="ladb-minitools pull-right" style="margin-right: 20px; font-size: 150%; height: 35px; line-height: 35px;"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_sections_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <label for="ladb_materials_input_std_sections" class="control-label col-xs-4">{{ 'tab.materials.edit_material.std_sections'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_std_sections" value="{{ material.attributes.std_sections|escape('html') }}">
-                    <span class="help-block"><small>{{ 'tab.materials.edit_material.std_sections_help'|i18next }}</small></span>
                 </div>
             </div>
             <div class="form-group">
+                <div class="ladb-minitools pull-right" style="margin-right: 20px; font-size: 150%; height: 35px; line-height: 35px;"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_sizes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <label for="ladb_materials_input_std_sizes" class="control-label col-xs-4">{{ 'tab.materials.edit_material.std_sizes'|i18next }}</label>
-                <div class="col-xs-8">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_materials_input_std_sizes" value="{{ material.attributes.std_sizes|escape('html') }}">
-                    <span class="help-block"><small>{{ 'tab.materials.edit_material.std_sizes_help'|i18next }}</small></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ladb_materials_select_grained" class="control-label col-xs-4">{{ 'tab.materials.edit_material.grained'|i18next }}</label>
+                <div class="col-xs-7">
+                    <select class="form-control" id="ladb_materials_select_grained">
+                        <option value="0" data-content="<i class='ladb-opencutlist-icon-grained-0'></i> {{ 'tab.materials.edit_material.grained_0'|i18next }}"></option>
+                        <option value="1" data-content="<i class='ladb-opencutlist-icon-grained-1'></i> {{ 'tab.materials.edit_material.grained_1'|i18next }}"{% if material.attributes.grained %} selected{% endif %}></option>
+                    </select>
                 </div>
             </div>
             <div class="text-center">

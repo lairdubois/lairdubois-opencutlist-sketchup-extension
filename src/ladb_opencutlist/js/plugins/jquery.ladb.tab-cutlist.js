@@ -607,9 +607,9 @@
 
         var group = this.findGroupById(groupId);
 
-        rubyCallCommand('materials_get_std_sizes', { name: group.material_name }, function (response) {
+        rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram', 'tabs/cutlist/_modal-cuttingdiagram.twig', $.extend(response, { group: group }));
+            var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram', 'tabs/cutlist/_modal-cuttingdiagram.twig', $.extend({ material_attributes: response }, { group: group }));
 
             // Fetch UI elements
             var $selectSizes = $('#ladb_select_sizes', $modal);
@@ -622,11 +622,8 @@
             var $selectStacking = $('#ladb_select_stacking', $modal);
             var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
 
-            // $inputBaseSheetLength.val(that.cuttingdiagramOptions.base_sheet_length);
-            // $inputBaseSheetWidth.val(that.cuttingdiagramOptions.base_sheet_width);
             $inputKerf.val(that.cuttingdiagramOptions.kerf);
             $inputTrimming.val(that.cuttingdiagramOptions.trimming);
-            $inputRotatable.prop('checked', that.cuttingdiagramOptions.rotatable);
             $selectPresort.val(that.cuttingdiagramOptions.presort);
             $selectStacking.val(that.cuttingdiagramOptions.stacking);
 
@@ -638,14 +635,18 @@
             var fnSelectSize = function() {
                 var value = $selectSizes.val();
                 if (value == '0x0') {
-                    $('#ladb_base_sheet_size').show();
+                    $('#ladb_base_sheet_values').show();
                     $inputBaseSheetLength.val(that.cuttingdiagramOptions.base_sheet_length);
                     $inputBaseSheetWidth.val(that.cuttingdiagramOptions.base_sheet_width);
+                    $inputRotatable.prop('checked', that.cuttingdiagramOptions.rotatable);
                 } else {
-                    $('#ladb_base_sheet_size').hide();
-                    var size = value.split('x');
+                    $('#ladb_base_sheet_values').hide();
+                    var sizeAndGrained = value.split('|');
+                    var size = sizeAndGrained[0].split('x');
                     $inputBaseSheetLength.val(size[0]);
                     $inputBaseSheetWidth.val(size[1]);
+                    var grained = sizeAndGrained[1] === 'true';
+                    $inputRotatable.prop('checked', !grained);
                 }
             };
 

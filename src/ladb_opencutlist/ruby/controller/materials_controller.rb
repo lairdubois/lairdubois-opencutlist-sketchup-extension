@@ -32,8 +32,8 @@ module Ladb::OpenCutList
       Plugin.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
-      Plugin.register_command("materials_get_std_sizes") do |material_id|
-        get_std_sizes_command(material_id)
+      Plugin.register_command("materials_get_attributes_command") do |material_id|
+        get_attributes_command(material_id)
       end
 
     end
@@ -84,7 +84,8 @@ module Ladb::OpenCutList
                                       :thickness_increase => material_attributes.thickness_increase,
                                       :std_thicknesses => material_attributes.std_thicknesses,
                                       :std_sections => material_attributes.std_sections,
-                                      :std_sizes => material_attributes.std_sizes
+                                      :std_sizes => material_attributes.std_sizes,
+                                      :grained => material_attributes.grained,
                                   }
                               })
 
@@ -140,6 +141,7 @@ module Ladb::OpenCutList
       std_thicknesses = attributes['std_thicknesses']
       std_sections = attributes['std_sections']
       std_sizes = attributes['std_sizes']
+      grained = attributes['grained']
 
       # Fetch material
       materials = model.materials
@@ -161,6 +163,7 @@ module Ladb::OpenCutList
         material_attributes.std_thicknesses = std_thicknesses
         material_attributes.std_sections = std_sections
         material_attributes.std_sizes = std_sizes
+        material_attributes.grained = grained
         material_attributes.write_to_attributes
 
       end
@@ -261,7 +264,7 @@ module Ladb::OpenCutList
       response
     end
 
-    def get_std_sizes_command(material_data)
+    def get_attributes_command(material_data)
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
@@ -270,7 +273,13 @@ module Ladb::OpenCutList
 
       response = {
           :errors => [],
+          :length_increase => '',
+          :width_increase => '',
+          :thickness_increase => '',
+          :std_thicknesses => [],
+          :std_sections => [],
           :std_sizes => [],
+          :grained => false,
       }
 
       # Fetch material
@@ -280,12 +289,26 @@ module Ladb::OpenCutList
       if material
 
         material_attributes = MaterialAttributes.new(material)
+
+        response[:length_increase] = material_attributes.length_increase
+        response[:width_increase] = material_attributes.width_increase
+        response[:thickness_increase] = material_attributes.thickness_increase
+        material_attributes.l_std_thicknesses.each { |std_thickness|
+          response[:std_thicknesses].push(std_thickness)
+        }
+        material_attributes.l_std_sections.each { |std_section|
+          response[:std_section].push({
+                                        :width => std_section.width,
+                                        :height => std_section.height,
+                                    })
+        }
         material_attributes.l_std_sizes.each { |std_size|
           response[:std_sizes].push({
                                         :length => std_size.length,
                                         :width => std_size.width,
                                     })
         }
+        response[:grained] = material_attributes.grained
 
       end
 

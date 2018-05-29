@@ -6,13 +6,13 @@
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="form-group">
-            <label for="ladb_select_sizes" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet_size'|i18next }}</label>
+            <label for="ladb_select_sizes" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet'|i18next }}</label>
             <div class="col-xs-6">
                 <select class="form-control" id="ladb_select_sizes">
-                    {% if std_sizes|length > 0 %}
+                    {% if material_attributes.std_sizes|length > 0 %}
                         <optgroup label="{{ group.material_name }}">
-                            {% for std_size in std_sizes %}
-                                <option value="{{ std_size.length }}x{{ std_size.width }}" data-content="{{ std_size.length }} x {{ std_size.width }}"></option>
+                            {% for std_size in material_attributes.std_sizes %}
+                                <option value="{{ std_size.length }}x{{ std_size.width }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> {{ std_size.length }} x {{ std_size.width }}"></option>
                             {% endfor %}
                         </optgroup>
                     {% endif %}
@@ -20,7 +20,7 @@
                 </select>
             </div>
         </div>
-        <div id="ladb_base_sheet_size">
+        <div id="ladb_base_sheet_values">
             <div class="form-group">
                 <label for="ladb_input_base_sheet_length" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet_length'|i18next }}</label>
                 <div class="col-xs-6">
@@ -33,12 +33,12 @@
                     <input type="text" class="form-control" id="ladb_input_base_sheet_width">
                 </div>
             </div>
-        </div>
-        <div class="checkbox">
-            <div class="col-xs-offset-4 col-xs-8">
-                <label>
-                    <input type="checkbox" id="ladb_input_rotatable"> {{ 'tab.cutlist.cuttingdiagram.option_rotatable'|i18next }}
-                </label>
+            <div class="checkbox">
+                <div class="col-xs-offset-4 col-xs-8">
+                    <label>
+                        <input type="checkbox" id="ladb_input_rotatable"> {{ 'tab.cutlist.cuttingdiagram.option_rotatable'|i18next }}
+                    </label>
+                </div>
             </div>
         </div>
         <hr>

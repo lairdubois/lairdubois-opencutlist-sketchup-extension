@@ -28,6 +28,12 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-grained-0:before {
+  content: "\e925";
+}
+.ladb-opencutlist-icon-grained-1:before {
+  content: "\e926";
+}
 .ladb-opencutlist-icon-cuttingdiagram:before {
   content: "\e923";
 }

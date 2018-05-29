@@ -180,7 +180,7 @@ tab:
       option_rotatable: Parts Can be Rotated
       option_presort: Preordering of Parts
       option_stacking: Stack Identical Parts
-      option_base_sheet_size: Taille du panneau
+      option_base_sheet: Panneau de base
       option_base_sheet_length: Base Panel Length
       option_base_sheet_width: Base Panel Width
       presort:
@@ -237,13 +237,20 @@ tab:
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
       std_thicknesses: Available Thicknesses
-      std_thicknesses_help: Available rough thicknesses. Sizes without units are considered to be in model units.
+      std_thicknesses_help: |
+        Available rough thicknesses.
+        *Sizes without units are considered to be in model units.*
       std_sections: Available Cross Sections
       std_sections_help: |
-        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes). Sizes without units are considered to be in model units.
+        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes).
+        *Sizes without units are considered to be in model units.*
       std_sizes: Tailles disponibles
       std_sizes_help: |
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      grained: Grain
+      grained_0: Pas de grain
+      grained_1: Le grain suit la longueur
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values

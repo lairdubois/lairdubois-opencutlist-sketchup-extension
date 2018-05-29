@@ -15,6 +15,7 @@
     var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
     var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
     var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
+    var SETTING_KEY_OPTION_SUFFIX_GRAINED = '_grained';
 
     // Select picker options
 
@@ -242,6 +243,7 @@
             var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
             var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
             var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
+            var $selectGrained = $('#ladb_materials_select_grained', $modal);
             var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
             var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
@@ -268,6 +270,7 @@
                         $inputStdThicknesses.closest('.form-group').show();
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').hide();
+                        $selectGrained.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.show();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.hide();
@@ -280,6 +283,7 @@
                         $inputStdThicknesses.closest('.form-group').show();
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').show();
+                        $selectGrained.closest('.form-group').show();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.show();
                         $spanCutOptionsDefaultsType3.hide();
@@ -292,6 +296,7 @@
                         $inputStdThicknesses.closest('.form-group').hide();
                         $inputStdSections.closest('.form-group').show();
                         $inputStdSizes.closest('.form-group').hide();
+                        $selectGrained.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.show();
@@ -306,7 +311,8 @@
                     defaultThicknessIncrease,
                     defaultStdThicknesses,
                     defaultStdSections,
-                    defaultStdSizes;
+                    defaultStdSizes,
+                    defaultGrained;
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
                         defaultLengthIncrease = '0';
@@ -315,6 +321,7 @@
                         defaultStdThicknesses = '';
                         defaultStdSections = '';
                         defaultStdSizes = '';
+                        defaultGrained = false;
                         break;
                     case 1:   // TYPE_SOLID_WOOD
                         defaultLengthIncrease = '50mm';
@@ -323,6 +330,7 @@
                         defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
                         defaultStdSections = '';
                         defaultStdSizes = '';
+                        defaultGrained = true;
                         break;
                     case 2:   // TYPE_SHEET_GOOD
                         defaultLengthIncrease = '0';
@@ -331,6 +339,7 @@
                         defaultStdThicknesses = '5mm;8mm;10mm;15mm;18mm;22mm';
                         defaultStdSections = '';
                         defaultStdSizes = '';
+                        defaultGrained = false;
                         break;
                     case 3:   // TYPE_BAR
                         defaultLengthIncrease = '50mm';
@@ -339,6 +348,7 @@
                         defaultStdThicknesses = '';
                         defaultStdSections = '30mmx40mm;40mmx50mm';
                         defaultStdSizes = '';
+                        defaultGrained = false;
                         break;
                 }
                 $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
@@ -347,6 +357,7 @@
                 $inputStdThicknesses.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
                 $inputStdSections.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
                 $inputStdSizes.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
+                $selectGrained.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained));
             };
 
             // Bing change
@@ -364,6 +375,7 @@
 
             });
             $selectType.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
 
             // Init tokenfield
             $inputStdThicknesses.tokenfield({
@@ -392,6 +404,7 @@
                 var std_thicknesses = $inputStdThicknesses.val();
                 var std_sections = $inputStdSections.val();
                 var std_sizes = $inputStdSizes.val();
+                var grained = $selectGrained.val() === '1';
 
                 // Update default cut options for specific type to last used
                 that.opencutlist.setSettings([
@@ -400,7 +413,8 @@
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:thickness_increase },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections },
-                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes }
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes },
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained }
                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                 that.opencutlist.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
@@ -431,6 +445,7 @@
                 that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
                 that.editedMaterial.attributes.std_sections = $inputStdSections.val();
                 that.editedMaterial.attributes.std_sizes = $inputStdSizes.val();
+                that.editedMaterial.attributes.grained = $selectGrained.val() === '1';
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialChangeEvent = true;
@@ -460,6 +475,9 @@
 
             // Show modal
             $modal.modal('show');
+
+            // Setup popovers
+            this.opencutlist.setupPopovers();
 
         } else {
             alert('Material not found (id=' + id + ')');
@@ -542,6 +560,7 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED);
         }
 
         this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function() {

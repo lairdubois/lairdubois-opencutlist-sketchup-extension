@@ -16,7 +16,8 @@ module Ladb::OpenCutList
             :thickness_increase => '0',
             :std_thicknesses => '',
             :std_sections => '',
-            :std_sizes => ''
+            :std_sizes => '',
+            :grained => false,
         },
         TYPE_SOLID_WOOD => {
             :length_increase => '50mm',
@@ -24,7 +25,8 @@ module Ladb::OpenCutList
             :thickness_increase => '5mm',
             :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm',
             :std_sections => '',
-            :std_sizes => ''
+            :std_sizes => '',
+            :grained => true,
         },
         TYPE_SHEET_GOOD => {
             :length_increase => '0',
@@ -32,7 +34,8 @@ module Ladb::OpenCutList
             :thickness_increase => '0',
             :std_thicknesses => '5mm;8mm;10mm;15mm;18mm;22mm',
             :std_sections => '',
-            :std_sizes => ''
+            :std_sizes => '',
+            :grained => false,
         },
         TYPE_BAR => {
             :length_increase => '50mm',
@@ -40,11 +43,12 @@ module Ladb::OpenCutList
             :thickness_increase => '0',
             :std_thicknesses => '',
             :std_sections => '30mmx40mm;40mmx50mm',
-            :std_sizes => ''
+            :std_sizes => '',
+            :grained => false,
         },
     }
 
-    attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes
+    attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes, :grained
     attr_reader :material
 
     def initialize(material)
@@ -56,6 +60,7 @@ module Ladb::OpenCutList
       @std_thicknesses = get_default(:std_thicknesses)
       @std_sections = get_default(:std_sections)
       @std_sizes = get_default(:@std_sizes)
+      @grained = get_default(:@grained)
       read_from_attributes
     end
 
@@ -190,6 +195,7 @@ module Ladb::OpenCutList
         @std_thicknesses = Plugin.get_attribute(@material, 'std_thicknesses', get_default(:std_thicknesses))
         @std_sections = Plugin.get_attribute(@material, 'std_sections', get_default(:std_sections))
         @std_sizes = Plugin.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
+        @grained = Plugin.get_attribute(@material, 'grained', get_default(:grained))
       end
     end
 
@@ -202,6 +208,7 @@ module Ladb::OpenCutList
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', @std_thicknesses)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', @std_sections)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', @std_sizes)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
       end
     end
 

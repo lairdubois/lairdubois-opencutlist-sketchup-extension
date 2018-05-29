@@ -180,7 +180,7 @@ tab:
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques
-      option_base_sheet_size: Taille du panneau
+      option_base_sheet: Panneau de base
       option_base_sheet_length: Longueur du panneau
       option_base_sheet_width: Largeur du panneau
       presort:
@@ -237,13 +237,20 @@ tab:
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
       std_thicknesses: Epaisseurs disponibles
-      std_thicknesses_help: Epaisseurs brutes disponibles. Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.
+      std_thicknesses_help: |
+        Epaisseurs **brutes** disponibles.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_sections: Sections disponibles
       std_sections_help: |
-        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       std_sizes: Tailles disponibles
       std_sizes_help: |
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau. Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      grained: Grain
+      grained_0: Pas de grain
+      grained_1: Le grain suit la longueur
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
         save: Enregistrer comme valeurs par défaut
