@@ -177,7 +177,7 @@ tab:
       title: Cutting Diagram
       option_kerf: Blade Thickness
       option_trimming: Trimming Size
-      option_rotatable: Parts Can be Rotated
+      option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
       option_stacking: Stack Identical Parts
       option_base_sheet: Standard Panel

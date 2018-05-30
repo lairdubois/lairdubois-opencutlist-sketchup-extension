@@ -176,12 +176,12 @@ tab:
     cuttingdiagram:
       title: Calepinage
       option_kerf: Epaisseur de lame de scie
-      option_trimming: Trimming Size
+      option_trimming: Marge
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques
       option_base_sheet: Panneau de base
-      options_custom_sheet: Personnalisée
+      option_custom_sheet: Personnalisé
       option_base_sheet_length: Longueur du panneau
       option_base_sheet_width: Largeur du panneau
       presort:
