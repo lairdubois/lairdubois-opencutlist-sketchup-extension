@@ -7,6 +7,12 @@ module Ladb::OpenCutList
     attr_accessor :thickness
 
     def initialize(length = 0, width = 0, thickness = 0)
+      if length.is_a? String
+        s_length, s_width, s_thickness = StringUtils.split_dxdxd(length)
+        length = s_length.to_l
+        width = s_width.to_l
+        thickness = s_thickness.to_l
+      end
       super(length, width)
       @thickness = thickness
     end

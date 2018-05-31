@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../model/section'
+  require_relative '../model/size2d'
 
   class MaterialAttributes
 
