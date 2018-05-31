@@ -17,7 +17,8 @@
     
     def dim(value)
       str = cu(value)
-      str.sub(/\"/, '\\"')
+      str.sub(/\"/, '&#34;') # when displaying units in inches!
+      str.sub(/\'/, '&#39;') # when displaying units in feet!
     end
 
     def get_binding

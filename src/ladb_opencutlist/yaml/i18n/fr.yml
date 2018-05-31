@@ -176,7 +176,7 @@ tab:
     cuttingdiagram:
       title: Calepinage
       option_kerf: Epaisseur de lame de scie
-      option_trimming: Trimming Size
+      option_trimming: Marge
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques

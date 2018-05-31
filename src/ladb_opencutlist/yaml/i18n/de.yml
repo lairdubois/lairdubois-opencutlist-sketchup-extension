@@ -177,19 +177,19 @@ tab:
       title: Schnittplan
       option_kerf: Sägeblattdicke
       option_trimming: Kantenabfallbreite
-      option_rotatable: Teile sind rotierbar
-      option_presort: Vorsortierung
+      option_rotatable: keine Faserrichtung
+      option_presort: Vorsortierung der Teile
       option_stacking: Identische Teile stapeln
       option_base_sheet: Standard Platte
-      option_custom_sheet: Spezielle Platte
+      option_custom_sheet: Spezifische Platte
       option_base_sheet_length: Plattenlänge
       option_base_sheet_width: Plattenbreite
       presort:
-        input_order: Nicht vorsortiert
-        width_decr: Abfallende Breiten
-        length_decr: Abfallende Längen
-        area_decr: Abfallende Flächen
-        perimeter_decr: Abfallende Perimeter
+        input_order: nicht vorsortiert
+        width_decr: abnehmende Breiten
+        length_decr: abnehmende Längen
+        area_decr: abnehmende Flächen
+        perimeter_decr: abnehmende Perimeter
       stacking:
         none: kein Stapeln
         length: der Länge nach
