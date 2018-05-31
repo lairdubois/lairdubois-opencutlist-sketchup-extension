@@ -174,7 +174,7 @@ tab:
       count: Anzahl
       material_name: Material
     cuttingdiagram:
-      title: Schnittplan
+      title: Schnittplan {{ material_name }} / {{ std_dimension }}
       option_kerf: Sägeblattdicke
       option_trimming: Kantenabfallbreite
       option_rotatable: keine Faserrichtung
@@ -279,9 +279,6 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
-  cuttingdiagram:
-    label: Schnittplan
-    title: Schnittplan
   about:
     label: Über
     title: Über
