@@ -76,7 +76,7 @@ tab:
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
-      edit_material: Edit Material '{{ material }}'
+      edit_material: Edit Material '{{ material }}'...
       edit_group_properties: Edit properties of this group
     edit_part:
       title: Properties of Part '{{ name }}'
@@ -226,6 +226,8 @@ tab:
       type_1: Material type '$t(tab.materials.type_1)'
       type_2: Material type '$t(tab.materials.type_2)'
       type_3: Material type '$t(tab.materials.type_3)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials

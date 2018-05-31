@@ -15,7 +15,12 @@
                         <img src="{{ material.thumbnail_file }}">
                     </div>
                 </div>
-                <div class="ladb-overlay-caption">{{ material.display_name|escape }}</div>
+                <div class="ladb-overlay-caption">
+                    {% if material.attributes.type == 2 %}  {# 2 = TYPE_SHEET_GOOD #}
+                        <i class="ladb-opencutlist-icon-grained-{{ material.attributes.grained ? '1' : '0' }}" data-toggle='tooltip' title="{{ ('tab.materials.tooltip.grained_'~(material.attributes.grained ? '1' : '0'))|i18next }}"></i>
+                    {% endif %}
+                    {{ material.display_name|escape }}
+                </div>
                 <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type } %}</div>
             </div>
         </div>
