@@ -670,10 +670,10 @@
 
                 // Store options
                 that.opencutlist.setSettings([
-                    { key:SETTING_KEY_OPTION_KERF, value:'d:'+that.cuttingdiagramOptions.kerf },
-                    { key:SETTING_KEY_OPTION_TRIMMING, value:'d:'+that.cuttingdiagramOptions.trimming },
-                    { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:'d:'+that.cuttingdiagramOptions.base_sheet_length },
-                    { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:'d:'+that.cuttingdiagramOptions.base_sheet_width },
+                    { key:SETTING_KEY_OPTION_KERF, value:that.cuttingdiagramOptions.kerf },
+                    { key:SETTING_KEY_OPTION_TRIMMING, value:that.cuttingdiagramOptions.trimming },
+                    { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:that.cuttingdiagramOptions.base_sheet_length },
+                    { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:that.cuttingdiagramOptions.base_sheet_width },
                     { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cuttingdiagramOptions.rotatable },
                     { key:SETTING_KEY_OPTION_PRESORT, value:that.cuttingdiagramOptions.presort },
                     { key:SETTING_KEY_OPTION_STACKING, value:that.cuttingdiagramOptions.stacking }

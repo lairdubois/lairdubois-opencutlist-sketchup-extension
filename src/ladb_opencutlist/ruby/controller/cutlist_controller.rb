@@ -1009,14 +1009,12 @@
     def group_cuttingdiagram_command(settings)
       if @cutlist
 
-        du = DimensionUtils.new()
-
         # Check settings
         group_id = settings['group_id']
-        kerf = du.str_to_ifloat(settings['kerf']).to_f
-        trimming = du.str_to_ifloat(settings['trimming']).to_f
-        base_sheet_length = du.str_to_ifloat(settings['base_sheet_length']).to_f
-        base_sheet_width = du.str_to_ifloat(settings['base_sheet_width']).to_f
+        kerf = settings['kerf']
+        trimming = settings['trimming']
+        base_sheet_length = settings['base_sheet_length']
+        base_sheet_width = settings['base_sheet_width']
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
@@ -1078,8 +1076,8 @@
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,
               :presort => presort.to_i, # available options in packing2d.rb
-              :base_sheet_length => base_sheet_length,
-              :base_sheet_width => base_sheet_width,
+              :base_sheet_length => base_sheet_length.to_l.to_f,
+              :base_sheet_width => base_sheet_width.to_l.to_f,
               :colored => true,
               :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
               :debugging => false

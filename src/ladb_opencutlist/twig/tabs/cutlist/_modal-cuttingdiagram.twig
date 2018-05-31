@@ -1,4 +1,4 @@
-﻿{% extends 'core/_modal.twig' %}
+{% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram' %}
 {% set title = 'tab.cutlist.cuttingdiagram.title'|i18next %}
@@ -11,7 +11,7 @@
                 <select class="form-control" id="ladb_select_sizes">
                     {% if material_attributes.std_sizes|length > 0 %}
                         {% for std_size in material_attributes.std_sizes %}
-                            <option value="{{ std_size.orig_length|escape('html') }}x{{ std_size.orig_width|escape('html') }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size.orig_length|escape('html') }} x {{ std_size.orig_width|escape('html') }}"></option>
+                            <option value="{{ std_size.length }}x{{ std_size.width }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size.length }} x {{ std_size.width }}"></option>
                         {% endfor %}
                         <option data-divider="true"></option>
                     {% endif %}
