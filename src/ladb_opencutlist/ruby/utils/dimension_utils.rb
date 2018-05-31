@@ -188,7 +188,8 @@ i = i.to_f
           sum = 0 # garbage always becomes 0
         end
       end
-      return sum.to_s + '"'
+      sum = sum.to_s.sub(/\./, @separator)
+      return sum + '"'
     end
 
     # Takes a single number in a string and converts it to a string
