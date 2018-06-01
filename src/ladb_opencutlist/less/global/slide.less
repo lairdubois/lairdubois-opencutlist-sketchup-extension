@@ -1,0 +1,27 @@
+//
+// Screen
+//
+
+.ladb-slide {
+  position: absolute;
+  top: 0;
+  bottom: @ladb-bottombar-height;
+  left: @ladb-leftbar-width;
+  right: 0;
+  background: #fff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+@media print {
+
+  .ladb-slide {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    overflow: auto;
+  }
+
+}

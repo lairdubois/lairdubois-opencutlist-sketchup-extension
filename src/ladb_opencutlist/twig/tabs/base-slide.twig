@@ -1,0 +1,23 @@
+{# set id #}
+
+{% block screen %}
+<div{% block id %} id="{{ id }}"{% endblock %} class="ladb-slide">
+    <div class="ladb-header">
+        <div class="container">
+            {% block headerInner %}
+                {% block headerToolsOuter %}
+                    <div class="no-print ladb-header-tools">
+                        {% block headerToolsInner %}{% endblock %}
+                    </div>
+                {% endblock %}
+                <h1 class="ladb-heading">{% block headerHeadingInner %}{% endblock %}</h1>
+            {% endblock %}
+        </div>
+    </div>
+    <div class="ladb-container">
+        <div class="container">
+            {% block containerInner %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

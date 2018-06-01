@@ -8,7 +8,49 @@ function LadbAbstractTab(element, options, opencutlist) {
     this._commands = {};
 
     this._$modal = null;
+    this._$slides = [ $('.ladb-slide', this.$element).first() ];
 }
+
+// Screen /////
+
+LadbAbstractTab.prototype.pushSlide = function(id, twigFile, renderParams) {
+    var that = this;
+
+    var $topSlide = that._$slides[that._$slides.length - 1];
+
+    // Render slide
+    this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
+
+    // Fetch UI elements
+    var $pushedSlide = $('#' + id, this.$element);
+
+    var left = $pushedSlide.css('left');
+    $pushedSlide.css('left', '100%');
+
+    // Push in slides stack
+    this._$slides.push($pushedSlide);
+
+    // Animation
+    $pushedSlide.animate({ left: left }, {
+        duration: 300,
+        complete: function() {
+            $topSlide.hide();
+        }
+    });
+
+    return $pushedSlide;
+};
+
+LadbAbstractTab.prototype.popSlide = function() {
+    var $poppedSlide = this._$slides.pop();
+    this._$slides[this._$slides.length - 1].show();
+    $poppedSlide.animate({ left: '100%'}, {
+        duration: 300,
+        complete: function() {
+            $poppedSlide.remove();
+        }
+    });
+};
 
 // Modal /////
 

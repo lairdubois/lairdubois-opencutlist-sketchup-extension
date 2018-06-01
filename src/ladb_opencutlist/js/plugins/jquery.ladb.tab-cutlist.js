@@ -642,6 +642,7 @@
                     $inputRotatable.prop('checked', that.cuttingdiagramOptions.rotatable);
                 } else {
                     $('#ladb_base_sheet_values').hide();
+                    console.log(value);
                     var sizeAndGrained = value.split('|');
                     var size = sizeAndGrained[0].split('x');
                     $inputBaseSheetLength.val(size[0]);
@@ -687,19 +688,33 @@
 
                 rubyCallCommand('cutlist_group_cuttingdiagram', $.extend({ group_id: groupId }, that.cuttingdiagramOptions, that.uiOptions), function (response) {
 
-                    if (response.cuttingdiagram_path) {
-                        that.opencutlist.notify('DONE !', 'success', [
-                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                    var $slide = that.pushSlide('ladb_cutlist_slide_cuttingdiagram', 'tabs/cutlist/_slide-cuttingdiagram.twig', $.extend({ group: group }, response));
 
-                                rubyCallCommand('core_open_external_file', {
-                                    path: response.cuttingdiagram_path
-                                });
+                    var $page = $('.ladb-page', $slide);
+                    $page.load(response.cuttingdiagram_path);
 
-                            })
-                        ]);
-                    } else {
-                        alert('blop ?');
-                    }
+                    var $btnBack = $('#ladb_btn_back', $slide);
+                    $btnBack.on('click', function() {
+                        that.popSlide();
+                    });
+                    var $btnPrint = $('#ladb_btn_print', $slide);
+                    $btnPrint.on('click', function() {
+                        window.print();
+                    });
+
+                    // if (response.cuttingdiagram_path) {
+                    //     that.opencutlist.notify('DONE !', 'success', [
+                    //         Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                    //
+                    //             rubyCallCommand('core_open_external_file', {
+                    //                 path: response.cuttingdiagram_path
+                    //             });
+                    //
+                    //         })
+                    //     ]);
+                    // } else {
+                    //     alert('blop ?');
+                    // }
 
                 });
 
