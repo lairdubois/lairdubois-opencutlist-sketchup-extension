@@ -76,7 +76,7 @@ tab:
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
       group_cuttingdiagram: Calepinage
-      edit_material: Editer la matière '{{ material }}'
+      edit_material: Editer la matière '{{ material }}'...
       edit_group_properties: Editer les propriétés du groupe
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
@@ -174,7 +174,7 @@ tab:
       count: Quantité
       material_name: Matière
     cuttingdiagram:
-      title: Calepinage
+      title: Calepinage {{ material_name }} / {{ std_dimension }}
       option_kerf: Epaisseur de lame de scie
       option_trimming: Marge
       option_rotatable: Les pièces peuvent être pivotées
@@ -226,6 +226,8 @@ tab:
       type_1: Type de matière '$t(tab.materials.type_1)'
       type_2: Type de matière '$t(tab.materials.type_2)'
       type_3: Type de matière '$t(tab.materials.type_3)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
@@ -277,9 +279,6 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
-  cuttingdiagram:
-    label: Calepinage
-    title: Calepinage
   about:
     label: A propos
     title: A propos

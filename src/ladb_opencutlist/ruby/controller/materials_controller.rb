@@ -297,7 +297,7 @@ module Ladb::OpenCutList
           response[:std_thicknesses].push(std_thickness)
         }
         material_attributes.l_std_sections.each { |std_section|
-          response[:std_section].push({
+          response[:std_sections].push({
                                         :width => std_section.width,
                                         :height => std_section.height,
                                     })

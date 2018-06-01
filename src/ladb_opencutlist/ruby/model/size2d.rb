@@ -1,23 +1,19 @@
 module Ladb::OpenCutList
 
+  require_relative '../utils/string_utils'
+
   class Size2d
 
     attr_accessor :length, :width
 
     def initialize(length = 0, width = 0)
       if length.is_a? String
-        a = length.split('x')
-        if a.length == 2
-          @length = a[0].strip.to_l
-          @width = a[1].strip.to_l
-        else
-          @length = 0
-          @width = 0
-        end
-      else
-        @length = length
-        @width = width
+        s_length, s_width = StringUtils.split_dxd(length)
+        length = s_length.to_l
+        width = s_width.to_l
       end
+      @length = length
+      @width = width
     end
 
     # -----

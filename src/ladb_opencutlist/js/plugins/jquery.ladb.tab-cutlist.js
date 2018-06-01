@@ -620,6 +620,7 @@
             var $inputRotatable = $('#ladb_input_rotatable', $modal);
             var $selectPresort = $('#ladb_select_presort', $modal);
             var $selectStacking = $('#ladb_select_stacking', $modal);
+            var $btnEditMaterial = $('#ladb_edit_material', $modal);
             var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
 
             $inputKerf.val(that.cuttingdiagramOptions.kerf);
@@ -656,6 +657,11 @@
             fnSelectSize();
 
             // Bind buttons
+            $btnEditMaterial.on('click', function() {
+                that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                    material_id: group.material_id
+                });
+            });
             $btnCuttingdiagram.on('click', function() {
 
                 // Fetch options

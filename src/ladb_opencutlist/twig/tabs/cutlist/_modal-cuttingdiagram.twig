@@ -1,13 +1,13 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram' %}
-{% set title = 'tab.cutlist.cuttingdiagram.title'|i18next %}
+{% set title = 'tab.cutlist.cuttingdiagram.title'|i18next({ 'material_name':group.material_name, 'std_dimension':group.std_dimension }) %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="form-group">
             <label for="ladb_select_sizes" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet'|i18next }}</label>
-            <div class="col-xs-6">
+            <div class="col-xs-7">
                 <select class="form-control" id="ladb_select_sizes">
                     {% if material_attributes.std_sizes|length > 0 %}
                         {% for std_size in material_attributes.std_sizes %}
@@ -22,13 +22,13 @@
         <div id="ladb_base_sheet_values">
             <div class="form-group">
                 <label for="ladb_input_base_sheet_length" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet_length'|i18next }}</label>
-                <div class="col-xs-6">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_input_base_sheet_length">
                 </div>
             </div>
             <div class="form-group">
                 <label for="ladb_input_base_sheet_width" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_base_sheet_width'|i18next }}</label>
-                <div class="col-xs-6">
+                <div class="col-xs-7">
                     <input type="text" class="form-control" id="ladb_input_base_sheet_width">
                 </div>
             </div>
@@ -43,19 +43,19 @@
         <hr>
         <div class="form-group">
             <label for="ladb_input_kerf" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_kerf'|i18next }}</label>
-            <div class="col-xs-6">
+            <div class="col-xs-7">
                 <input type="text" class="form-control" id="ladb_input_kerf">
             </div>
         </div>
         <div class="form-group">
             <label for="ladb_input_trimming" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }}</label>
-            <div class="col-xs-6">
+            <div class="col-xs-7">
                 <input type="text" class="form-control" id="ladb_input_trimming">
             </div>
         </div>
         <div class="form-group">
             <label for="ladb_select_presort" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_presort'|i18next }}</label>
-            <div class="col-xs-6">
+            <div class="col-xs-7">
                 <select class="form-control" id="ladb_select_presort">
                     <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.presort.input_order'|i18next }}">0</option>
                     <option value="1" data-content="{{ 'tab.cutlist.cuttingdiagram.presort.width_decr'|i18next }}">1</option>
@@ -67,7 +67,7 @@
         </div>
         <div class="form-group">
             <label for="ladb_select_stacking" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_stacking'|i18next }}</label>
-            <div class="col-xs-6">
+            <div class="col-xs-7">
                 <select class="form-control" id="ladb_select_stacking">
                     <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.stacking.none'|i18next }}">0</option>
                     <option value="1" data-content="{{ 'tab.cutlist.cuttingdiagram.stacking.length'|i18next }}">1</option>
@@ -79,6 +79,7 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" id="ladb_edit_material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_cutlist_cuttingdiagram">{{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}</button>
 {% endblock %}
