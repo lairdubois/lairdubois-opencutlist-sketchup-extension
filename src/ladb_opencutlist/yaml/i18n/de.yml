@@ -180,6 +180,7 @@ tab:
       option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
       option_stacking: Identische Teile stapeln
+      option_bbox: Bounding Box Optimization
       option_base_sheet: Standard Platte
       option_custom_sheet: Spezifische Platte
       option_base_sheet_length: Plattenlänge
@@ -194,6 +195,10 @@ tab:
         none: kein Stapeln
         length: der Länge nach
         width: der Breite nach
+      bbox:
+        none: None
+        only_final: Only Final
+        full: Always
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)

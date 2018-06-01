@@ -1,4 +1,4 @@
-module Ladb::OpenCutList
+﻿module Ladb::OpenCutList
 
   require 'fileutils'
   require 'json'
@@ -14,7 +14,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201805311933'.freeze
+    BUILD = '201806010831'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -362,8 +362,8 @@ module Ladb::OpenCutList
         end
         
         if value.is_a?(String) && value.start_with?('d:')
-          value = value.sub('d:', '')
-          value = value.sub(/\\/, '"') # unescape inches units, feet unit is not a problem
+          du = DimensionUtils.new()
+          value = du.denormalize(value)
         end
 
         values.push({
@@ -382,11 +382,8 @@ module Ladb::OpenCutList
         value = setting['value']
 
         if value.is_a?(String) && value.start_with?('d:')
-          value = value.sub('d:', '')
           du = DimensionUtils.new()
-          value = du.str_add_units(value)
-          value = value.sub(/"/, '\"')
-          value = 'd:' + value
+          value = du.normalize(value)
         end
 
         if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL

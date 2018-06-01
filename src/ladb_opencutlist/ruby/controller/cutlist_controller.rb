@@ -1020,6 +1020,7 @@
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
+        bbox = settings['bbox']
 
         boxes = []
 
@@ -1074,7 +1075,7 @@
               :trimming => trimming.to_l.to_f,
               :rotatable => rotatable,
               :stacking => stacking.to_i, # available options in packing2d.rb
-              :break_stacking_if_needed => true,
+              :break_stacking_if_needed => false, # only valid if stacked!
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,
               :presort => presort.to_i, # available options in packing2d.rb
@@ -1092,14 +1093,20 @@
             unless Dir.exist?(cuttingdiagram_dir)
               Dir.mkdir(cuttingdiagram_dir)
             end
-            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))
-
-            if options[:stacking] != BinPacking2D::STACKING_NONE
+            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))       
+            
+            case bbox.to_i
+            when 1
+              options[:final_bounding_box_optimization] = true           
+              options[:intermediary_bounding_box_optimization] = false
+           when 2
+              options[:final_bounding_box_optimization] = true           
+              options[:intermediary_bounding_box_optimization] = true
+            else
               options[:intermediary_bounding_box_optimization] = false
               options[:final_bounding_box_optimization] = false
-              options[:break_stacking_if_needed] = false
-            end
-            
+            end            
+
             html = e.run(options)
             cuttingdiagram_path = File.join(cuttingdiagram_dir, 'cuttingdiagram.html')
             File.write(cuttingdiagram_path, html)

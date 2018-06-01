@@ -19,9 +19,7 @@ module Ladb::OpenCutList
       @separator = Sketchup::RegionalSettings.decimal_separator
       @length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
       @length_format = Sketchup.active_model.options['UnitsOptions']['LengthFormat']
-      #@separator = '.'
-      #@length_unit = length_unit
-      #@length_format = length_format
+
     end
 
     def from_fractional(i)
@@ -83,6 +81,10 @@ i = i.to_f
       return i.to_l     
     end
 
+    # Take a fraction and try to simplify it by turning:
+    # 1. x/0 into x
+    # 2. 0/x into 0
+    #
     def simplify(i)
       i = i.to_s
       if match = i.match(/^(\d*)\/(\d*)$/)
@@ -98,29 +100,29 @@ i = i.to_f
         return i
       end
     end
-
-    def is_fractional(i)
-    
-    end
     
     # Take a single dimension as a string and
     # 1. add units if none are present, assuming that no units means model units
-    # 2. convert fractional inches into decimal inches and add units if none
+    # 2. prepend zero if just unit given (may happen!)
+    # 3. convert fractional inches into decimal inches and add units if none
+    # 4. convert garbage into 0
     #
     def str_add_units(i)
-      return '' if i.nil?
+      return "0" + unit_sign if i.nil? || i.empty?
       i = i.strip
       nu = ""
       sum = 0
-      if i.class == String 
+      if i.is_a?(String) 
         if match = i.match(/^(~?\s*)(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
           one, two, three, four = match.captures
           if four.nil?
             nu = one + two + unit_sign
+          elsif one.nil? && two.nil? and three.nil?
+            nu = "0" + unit_sign
           else
             nu = one + two + four
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
-         end
+          end
         elsif match = i.match(/^~?\s*(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
@@ -139,7 +141,7 @@ i = i.to_f
         else
           nu = "0" + unit_sign # garbage becomes 0
         end
-      end
+      end 
       return nu
     end
 
@@ -150,7 +152,7 @@ i = i.to_f
      i = i.strip
      sum = 0
       # make sure the entry is a string and starts with the proper magic
-      if i.class == String #&& i.start_with?('d:')
+      if i.is_a?(String) 
         i = strip_marker(i)
         if match = i.match(/^(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
           one, two, three = match.captures
@@ -199,6 +201,10 @@ i = i.to_f
       return str_to_ifloat(i)
     end
 
+    # Splits a string in the form d;d;...
+    # into single d's and applies the function f to each element
+    # returns the concatenated string in the same format
+    #
     def dd_transform(i, f)
       return '' if i.nil?
       a = i.split(';')
@@ -217,25 +223,55 @@ i = i.to_f
       return dd_transform(i, :str_to_ifloat)
     end
 
+    # Splits a string in the form dxd;dxd;...
+    # into single d's and applies the function f to each element
+    # returns the concatenated string in the same format
+    #
     def dxd_transform(i, f)
       return '' if i.nil?
       a = i.split(';')
       r = []
       a.each do |e|
         ed = e.split('x')
-        ed[0] = '0' if ed[0] == '' || ed[0].nil?
-        ed[1] = '0' if ed[1] == '' || ed[1].nil?
+        ed[0] = '0' if ed[0].empty? || ed[0].nil?
+        ed[1] = '0' if ed[1].empty? || ed[1].nil?
         r << (send(f, ed[0]) + ' x ' + send(f, ed[1]))
       end
       return r.join(';')  
     end
 
+    # Take a string containing dimensions in the form dxd;dxd;dxd;...
+    # and make sure they all have units and are not empty
+    # without units, model units are assumed and added
+    #
     def dxd_add_units(i)
       return dxd_transform(i, :str_add_units)
     end
 
-    def dxd_to_ifloats(i)
+    # Take a string containing dimensions in the form dxd;dxd;dxd;...
+    # and convert them into a decimal inch number (Sketchup internal
+    # format)
+    # the number is returned as a string NOT a length or float
+    #
+    def dxd_to_ifloats_str(i)
       return dxd_transform(i, :str_to_ifloat)
+    end
+    
+    # Normalize value for entry into the registry
+    #
+    def normalize(i)
+      i = strip_marker(i)
+      i = str_add_units(i)        # add units
+      i = i.sub(/"/, '\"')        # escape double quote in string for registry
+      i = 'd:' + i                # prefix marker
+      return i
+    end
+    
+    # De-normalize value when reading from registry
+    def denormalize(i)
+      i = strip_marker(i)
+      i = i.sub(/\\/, '"')        # unescape double quote feet single quote unit is not a problem   
+      return i
     end
 
   end

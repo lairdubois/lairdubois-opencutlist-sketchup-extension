@@ -167,7 +167,7 @@
       du = DimensionUtils.new()
       a = []
       @std_sections.split(';').each { |std_section|
-        a.push(Section.new(du.dxd_to_ifloats(std_section)))
+        a.push(Section.new(du.dxd_to_ifloats_str(std_section)))
       }
       a
     end
@@ -185,7 +185,7 @@
       du = DimensionUtils.new()
       a = []
       @std_sizes.split(';').each { |std_size|
-        a.push(Size2d.new(du.dxd_to_ifloats(std_size)))
+        a.push(Size2d.new(du.dxd_to_ifloats_str(std_size)))
       }
       a
     end
