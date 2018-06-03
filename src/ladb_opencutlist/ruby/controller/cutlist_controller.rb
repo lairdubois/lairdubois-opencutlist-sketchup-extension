@@ -15,6 +15,7 @@
   require_relative '../utils/model_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
+  require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
   require_relative '../library/bin_packing_1d/packengine'
@@ -1009,15 +1010,18 @@
     def group_cuttingdiagram_command(settings)
       if @cutlist
 
+        du = DimensionUtils.new()
+        
         # Check settings
         group_id = settings['group_id']
-        kerf = settings['kerf']
-        trimming = settings['trimming']
-        base_sheet_length = settings['base_sheet_length']
-        base_sheet_width = settings['base_sheet_width']
+        kerf = du.str_to_ifloat(settings['kerf']).to_f
+        trimming = du.str_to_ifloat(settings['trimming']).to_f
+        base_sheet_length = du.str_to_ifloat(settings['base_sheet_length']).to_f
+        base_sheet_width = du.str_to_ifloat(settings['base_sheet_width']).to_f
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
+        bbox = settings['bbox']
 
         boxes = []
 
@@ -1068,20 +1072,21 @@
             # the dimensions need to be in Sketchup internal units AND float
 
             options = {
-              :kerf => kerf.to_l.to_f,
-              :trimming => trimming.to_l.to_f,
+              :kerf => kerf,
+              :trimming => trimming,
               :rotatable => rotatable,
               :stacking => stacking.to_i, # available options in packing2d.rb
-              :break_stacking_if_needed => true,
+              :break_stacking_if_needed => false, # only valid if stacked!
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,
               :presort => presort.to_i, # available options in packing2d.rb
-              :base_sheet_length => base_sheet_length.to_l.to_f,
-              :base_sheet_width => base_sheet_width.to_l.to_f,
+              :base_sheet_length => base_sheet_length,
+              :base_sheet_width => base_sheet_width,
               :colored => true,
               :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
               :debugging => false
             }
+
             bins = [] # run will create a first bin if this is empty
             e = BinPacking2D::PackEngine.new(bins, boxes, group)
 
@@ -1090,14 +1095,20 @@
             unless Dir.exist?(cuttingdiagram_dir)
               Dir.mkdir(cuttingdiagram_dir)
             end
-            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))
-
-            if options[:stacking] != BinPacking2D::STACKING_NONE
+            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))       
+            
+            case bbox.to_i
+            when 1
+              options[:final_bounding_box_optimization] = true           
+              options[:intermediary_bounding_box_optimization] = false
+            when 2
+              options[:final_bounding_box_optimization] = true           
+              options[:intermediary_bounding_box_optimization] = true
+            else
               options[:intermediary_bounding_box_optimization] = false
               options[:final_bounding_box_optimization] = false
-              options[:break_stacking_if_needed] = false
-            end
-            
+            end            
+
             html = e.run(options)
             cuttingdiagram_path = File.join(cuttingdiagram_dir, 'cuttingdiagram.html')
             File.write(cuttingdiagram_path, html)
