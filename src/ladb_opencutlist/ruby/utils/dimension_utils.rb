@@ -19,7 +19,6 @@
       @separator = Sketchup::RegionalSettings.decimal_separator
       @length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
       @length_format = Sketchup.active_model.options['UnitsOptions']['LengthFormat']
-
     end
 
     def from_fractional(i)
@@ -104,7 +103,7 @@ i = i.to_f
     # Take a single dimension as a string and
     # 1. add units if none are present, assuming that no units means model units
     # 2. prepend zero if just unit given (may happen!)
-    # 3. convert fractional inches into decimal inches and add units if none
+    # 3. add units if none
     # 4. convert garbage into 0
     #
     def str_add_units(i)
@@ -157,6 +156,7 @@ i = i.to_f
         if match = i.match(/^(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
+          one = one.sub(/#{Regexp.escape(@separator)}/, '.')
           one = one.to_f
           if three.nil?
             sum = model_units_to_inches(one) 
@@ -185,6 +185,7 @@ i = i.to_f
           else
             #puts "i = #{'%15s' % i} => feet+inch+fractional+unit:: #{'%7s' % three} #{five} #{'%7s' % seven}#{'%7s' % eight} #{nine}"
             sum = 12*three.to_f + six.to_f + from_fractional(eight)
+            sum = sum.to_f # force number to be a float, may not be necessary!
           end
         else
           sum = 0 # garbage always becomes 0
