@@ -175,16 +175,16 @@ i = i.to_f
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             #puts "i = #{'%15s' % i} => fractional+unit:: #{'%7s' % eight}  #{nine}"
-            sum = from_fractional(eight)
+            sum = from_fractional(eight).to_f
           elsif seven.nil? && five.nil?
             #puts "i = #{'%15s' % i} => inch+fractional+unit #{'%7s' % three} #{'%7s' % eight} #{nine}"
-            sum = three.to_f + from_fractional(eight)
+            sum = three.to_f + from_fractional(eight).to_f
           elsif seven.nil? && five == "'"
             #puts "i = #{'%15s' % i} => feet+fractional+unit:: #{'%7s' % three} #{four} #{'%7s' % seven} #{eight} #{nine}"
-            sum = 12*three.to_f + from_fractional(eight)
+            sum = 12*three.to_f + from_fractional(eight).to_f
           else
             #puts "i = #{'%15s' % i} => feet+inch+fractional+unit:: #{'%7s' % three} #{five} #{'%7s' % seven}#{'%7s' % eight} #{nine}"
-            sum = 12*three.to_f + six.to_f + from_fractional(eight)
+            sum = 12*three.to_f + six.to_f + from_fractional(eight).to_f
             sum = sum.to_f # force number to be a float, may not be necessary!
           end
         else
