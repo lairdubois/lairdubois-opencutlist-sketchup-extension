@@ -1014,10 +1014,10 @@
         
         # Check settings
         group_id = settings['group_id']
-        kerf = du.str_to_ifloat(settings['kerf']).to_f
-        trimming = du.str_to_ifloat(settings['trimming']).to_f
-        base_sheet_length = du.str_to_ifloat(settings['base_sheet_length']).to_f
-        base_sheet_width = du.str_to_ifloat(settings['base_sheet_width']).to_f
+        kerf = du.str_to_ifloat(settings['kerf']).to_l.to_f
+        trimming = du.str_to_ifloat(settings['trimming']).to_l.to_f
+        base_sheet_length = du.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
+        base_sheet_width = du.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
@@ -1086,7 +1086,7 @@
               :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
               :debugging => false
             }
-
+            
             bins = [] # run will create a first bin if this is empty
             e = BinPacking2D::PackEngine.new(bins, boxes, group)
 

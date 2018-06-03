@@ -1,4 +1,4 @@
-module Ladb::OpenCutList
+﻿module Ladb::OpenCutList
 
   require_relative '../model/section'
   require_relative '../model/size2d'
@@ -106,7 +106,7 @@ module Ladb::OpenCutList
 
     def l_length_increase
       du = DimensionUtils.new()
-      du.dd_to_ifloats(width_increase).to_l
+      du.dd_to_ifloats(length_increase).to_l
     end
 
     def width_increase
