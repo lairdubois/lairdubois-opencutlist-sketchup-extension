@@ -1076,7 +1076,7 @@
               :trimming => trimming,
               :rotatable => rotatable,
               :stacking => stacking.to_i, # available options in packing2d.rb
-              :break_stacking_if_needed => false, # only valid if stacked!
+              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small
               :intermediary_bounding_box_optimization => true,
               :final_bounding_box_optimization => true,
               :presort => presort.to_i, # available options in packing2d.rb
