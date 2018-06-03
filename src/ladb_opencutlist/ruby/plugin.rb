@@ -8,12 +8,13 @@ module Ladb::OpenCutList
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
+  require_relative 'utils/dimension_utils'
 
   class Plugin
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806031141'.freeze
+    BUILD = '201806031439'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -358,7 +359,12 @@ module Ladb::OpenCutList
         if value.nil?
           value = read_default(key)
         end
-
+        
+        if value.is_a?(String) && value.start_with?('d:')
+          du = DimensionUtils.new()
+          value = du.denormalize(value)
+        end
+        
         values.push({
                         :key => key,
                         :value => value
@@ -373,6 +379,12 @@ module Ladb::OpenCutList
       settings.each { |setting|
         key = setting['key']
         value = setting['value']
+
+        if value.is_a?(String) && value.start_with?('d:')
+          du = DimensionUtils.new()
+          value = du.normalize(value)
+        end
+
         if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
           Sketchup.write_default(DEFAULT_SECTION, key, value)
         end

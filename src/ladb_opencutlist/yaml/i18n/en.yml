@@ -180,6 +180,7 @@ tab:
       option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
       option_stacking: Stack Identical Parts
+      option_bbox: Bounding Box Optimization
       option_base_sheet: Standard Panel
       option_custom_sheet: Custom Panel
       option_base_sheet_length: Custom Panel Length
@@ -194,6 +195,10 @@ tab:
         none: None
         length: Lengthwise
         width: Widthwise
+      bbox:
+        none: None
+        only_final: Only Final
+        full: Always
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
