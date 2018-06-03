@@ -119,7 +119,8 @@
     end
 
     def l_width_increase
-      width_increase.to_l
+      du = DimensionUtils.new()
+      du.dd_to_ifloats(width_increase).to_l
     end
 
     def thickness_increase
