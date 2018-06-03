@@ -642,7 +642,6 @@
                     $inputRotatable.prop('checked', that.cuttingdiagramOptions.rotatable);
                 } else {
                     $('#ladb_base_sheet_values').hide();
-                    console.log(value);
                     var sizeAndGrained = value.split('|');
                     var size = sizeAndGrained[0].split('x');
                     $inputBaseSheetLength.val(size[0]);
