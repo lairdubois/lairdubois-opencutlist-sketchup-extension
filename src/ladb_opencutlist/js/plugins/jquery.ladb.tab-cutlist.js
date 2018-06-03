@@ -190,7 +190,7 @@
             });
             $('a.ladb-btn-scrollto', that.$page).on('click', function() {
                 var target = $(this).attr('href');
-                $('html, body').animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
+                that.$baseSlide.animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
                     $(target).effect("highlight", {}, 1500);
                 });
                 $(this).blur();
@@ -217,7 +217,7 @@
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                that.$baseSlide.animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
                 $(this).blur();
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function() {
@@ -225,7 +225,7 @@
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersSave({ group_id: groupId }, function() {
-                    $('html, body').animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    that.$baseSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                 });
                 $(this).blur();
             });
@@ -234,7 +234,7 @@
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersReset({ group_id: groupId }, function() {
-                    $('html, body').animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    that.$baseSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                 });
                 $(this).blur();
             });
@@ -454,7 +454,7 @@
                                 var $part = $('#ladb_part_' + partId);
                                 if ($part.length > 0) {
                                     $part.effect("highlight", {}, 1500);
-                                    $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                    that.$baseSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
                                 }
 
                             });
