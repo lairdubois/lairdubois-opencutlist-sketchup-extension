@@ -259,7 +259,7 @@ tab:
         save: Als vorgegebene Werte speichern
         save_success: |
           **{{ type_name }}**
-          *Schnittparameter* als vorgegebener Wert gespeichert
+          *Schnittparameter* als vorgegebene Werte gespeichert
         reset: Auf vorgegebene Werte zurücksetzen
       export_to_skm: Exportieren (.skm)
     import_from_skm:

@@ -5,9 +5,11 @@ module BinPacking2D
     MAX_INT = (2 ** (0.size * 8 - 2) - 1)
 
     MATCH_PERFECT = 0
-    MATCH_W_OR_L = 1
-    MATCH_INSIDE = 2
-    NO_MATCH = 3
+    MATCH_PERFECT_R = 1
+    MATCH_W_OR_L = 2
+    MATCH_W_OR_L_R = 3
+    MATCH_INSIDE = 4
+    NO_MATCH = 5
     
     # Compute score by heuristic. The lower the score the better the fit
     #
@@ -39,8 +41,11 @@ module BinPacking2D
         r2 = MAX_INT
         match_score = NO_MATCH
         match_rotated = false
+        match = false
+        s = [-1, r1, match_score, false]
 
         if bin.encloses?(box)
+          match = true
           r1 = score_by_heuristic(box, bin, score)
           if box.width == bin.width && box.length == box.length
             match_score = MATCH_PERFECT
@@ -49,28 +54,41 @@ module BinPacking2D
           else
             match_score = MATCH_INSIDE
           end
-        elsif rotatable && bin.encloses_rotated?(box)
+          s1  = [index, r1, match_score, false]
+        end
+        if rotatable && bin.encloses_rotated?(box)
           b = box.clone
           b.rotate
           r2 = score_by_heuristic(b, bin, score)
           match_rotated = true
-          if box.width == bin.width && box.length == box.length
-            match_score = MATCH_PERFECT
-          elsif box.width == bin.width || box.length == bin.length
-            match_score = MATCH_W_OR_L
+          if b.width == bin.width && b.length == bin.length
+            match_score = MATCH_PERFECT_R
+          elsif b.width == bin.width || b.length == bin.length
+            match_score = MATCH_W_OR_L_R
           else
             match_score = MATCH_INSIDE
           end
-        else
-          match_score = NO_MATCH
+          s2 = [index, r2, match_score, true]
         end
         
-        if match_rotated
-          s = [index, r2, match_score, true]
-        elsif match_score != NO_MATCH
-          s = [index, r1, match_score, false]
-        else
-          s = [-1, r1, match_score, false]
+        # we have two matches not rotated and rotated, therefore we have to decide
+        # which one is better based on the match type with lowest being better
+        if match && match_rotated
+          if s1[2] < s2[2] # match_score is strictly lower on not rotated
+            s = s1
+          elsif s1[2] == s2[2] # match_score is equal on not rotated and rotated
+            if s1[1] <= s2[1] # score is lower or equal on not rotated
+              s = s1
+            else
+              s = s2
+            end
+          elsif s1[2] > s2[2] # match score is strictly higher on not rotated
+            s = s2
+          end
+        elsif match
+          s = s1
+        elsif match_rotated 
+          s = s2
         end
         scores << s
       end
