@@ -64,7 +64,7 @@
         maxwidth = @b_w - 2 * @trimsize
         # make groups of same length and stack them widthwise
         # up to maxwidth
-        length_groups = boxes.group_by { |b| [b.length, b.width] }
+        length_groups = boxes.group_by { |b| [b.length] }
         length_groups.each do |k, v|
           if v.length() > 1
             nb = BinPacking2D::Box.new(k[0], 0)
