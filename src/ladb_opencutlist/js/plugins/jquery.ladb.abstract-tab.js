@@ -13,12 +13,19 @@ function LadbAbstractTab(element, options, opencutlist) {
     this._$slides = [ this.$baseSlide ];
 }
 
-// Screen /////
+// Slide /////
+
+LadbAbstractTab.prototype.topSlide = function() {
+    if (this._$slides.length > 0) {
+        return this._$slides[this._$slides.length - 1];
+    }
+    return null;
+};
 
 LadbAbstractTab.prototype.pushSlide = function(id, twigFile, renderParams) {
     var that = this;
 
-    var $topSlide = that._$slides[that._$slides.length - 1];
+    var $topSlide = this.topSlide();
 
     // Render slide
     this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
@@ -30,10 +37,15 @@ LadbAbstractTab.prototype.pushSlide = function(id, twigFile, renderParams) {
     this._$slides.push($pushedSlide);
 
     // Animation
+    $pushedSlide.addClass('animated');
     $pushedSlide.switchClass('out', 'in', {
         duration: 300,
         complete: function() {
-            $topSlide.hide();
+            $pushedSlide.removeClass('animated');
+            that.stickSlideHeader($pushedSlide);
+            if ($topSlide) {
+                $topSlide.hide();
+            }
         }
     });
 
@@ -42,13 +54,42 @@ LadbAbstractTab.prototype.pushSlide = function(id, twigFile, renderParams) {
 
 LadbAbstractTab.prototype.popSlide = function() {
     var $poppedSlide = this._$slides.pop();
-    this._$slides[this._$slides.length - 1].show();
+    var $topSlide = this.topSlide();
+    if ($topSlide) {
+        $topSlide.show();
+    }
+    this.unstickSlideHeader($poppedSlide);
+    $poppedSlide.addClass('animated');
     $poppedSlide.switchClass('in', 'out', {
         duration: 300,
         complete: function() {
+            $poppedSlide.removeClass('animated');
             $poppedSlide.remove();
         }
     });
+};
+
+LadbAbstractTab.prototype.stickSlideHeader = function($slide) {
+    var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
+    var $header = $('.ladb-header', $slide).first();
+    var $container = $('.ladb-container', $slide).first();
+    var outerWidth = $container.outerWidth();
+    var outerHeight = $header.outerHeight();
+    $headerWrapper
+        .css('height', outerHeight);
+    $header
+        .css('width', outerWidth)
+        .addClass('stuck');
+};
+
+LadbAbstractTab.prototype.unstickSlideHeader = function($slide) {
+    var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
+    var $header = $('.ladb-header', $slide).first();
+    $headerWrapper
+        .css('height', 'auto');
+    $header
+        .css('width', 'auto')
+        .removeClass('stuck');
 };
 
 // Modal /////
@@ -113,4 +154,27 @@ LadbAbstractTab.prototype.executeCommand = function(command, parameters, callbac
     } else {
         alert('Command ' + command + ' not found');
     }
+};
+
+// Bind /////
+
+LadbAbstractTab.prototype.bind = function() {
+    var that = this;
+
+    // Bind window resize event
+    $(window).on('resize', function() {
+
+        // Recompute stuck slides header width
+        $('.ladb-slide', that.$element).each(function(index) {
+            var $slide = $(this);
+            var $header = $('.ladb-header', $slide).first();
+            if ($header.hasClass('stuck')) {
+                var $container = $('.ladb-container', $slide).first();
+                $header
+                    .css('width', $container.outerWidth());
+            }
+        });
+
+    })
+
 };

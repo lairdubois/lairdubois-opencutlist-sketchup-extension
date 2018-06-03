@@ -10,6 +10,12 @@
     border-bottom: 1px solid #ddd;
     z-index: 1;
 
+    &.stuck {
+      position: fixed;
+      top: 0;
+      left: @ladb-leftbar-width;
+    }
+
     .ladb-heading {
       margin: 15px 0 15px 0;
       color: #333;
@@ -62,8 +68,20 @@
 @media print {
   .ladb-tab {
 
+    .ladb-header-wrapper {
+      height: auto !important;
+    }
+
     .ladb-header {
       border-bottom: none;
+
+      &.stuck {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: auto !important;
+      }
+
     }
 
   }
