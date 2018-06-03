@@ -700,13 +700,20 @@
                     var $page = $('.ladb-page', $slide);
                     $page.load(response.cuttingdiagram_path);
 
-                    var $btnBack = $('#ladb_btn_back', $slide);
-                    $btnBack.on('click', function() {
-                        that.popSlide();
-                    });
+                    // Fetch UI elements
+                    var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                     var $btnPrint = $('#ladb_btn_print', $slide);
+                    var $btnClose = $('#ladb_btn_close', $slide);
+
+                    // Bind buttons
+                    $btnCuttingDiagram.on('click', function() {
+                        that.cuttingdiagramGroup(groupId);
+                    });
                     $btnPrint.on('click', function() {
                         window.print();
+                    });
+                    $btnClose.on('click', function() {
+                        that.popSlide();
                     });
 
                     // if (response.cuttingdiagram_path) {

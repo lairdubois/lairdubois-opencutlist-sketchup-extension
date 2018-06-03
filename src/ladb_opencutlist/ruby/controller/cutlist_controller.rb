@@ -1114,6 +1114,11 @@
             File.write(cuttingdiagram_path, html)
 
             return {
+                :length_unit => @cutlist[:length_unit],
+                :is_metric => @cutlist[:is_metric],
+                :dir => @cutlist[:dir],
+                :filename => @cutlist[:filename],
+                :page_label => @cutlist[:page_label],
                 :cuttingdiagram_path => cuttingdiagram_path,
             }
 

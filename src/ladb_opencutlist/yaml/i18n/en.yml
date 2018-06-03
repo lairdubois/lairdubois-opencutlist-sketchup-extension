@@ -174,7 +174,7 @@ tab:
       count: Quantity
       material_name: Material
     cuttingdiagram:
-      title: Cutting Diagram {{ material_name }} / {{ std_dimension }}
+      title: Cutting Diagram
       option_kerf: Blade Thickness
       option_trimming: Trimming Size
       option_rotatable: No Grain Direction

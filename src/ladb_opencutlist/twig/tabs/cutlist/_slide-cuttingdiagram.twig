@@ -3,15 +3,22 @@
 {% set id = 'ladb_cutlist_slide_cuttingdiagram' %}
 {% set out = true %}
 
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs">
+        {% include 'tabs/cutlist/_file-tab.twig' with { 'generatedAt':'000' } %}
+    </ul>
+{% endblock %}
+
 {% block headerHeadingInner %}
-    {{ 'tab.cutlist.cuttingdiagram.title'|i18next({ 'material_name':group.material_name, 'std_dimension':group.std_dimension }) }}
+    {{ 'tab.cutlist.cuttingdiagram.title'|i18next}} <small>| {{ group.material_name }} / <strong>{{ group.std_dimension}}</strong></small>
 {% endblock %}
 
 {% block headerToolsInner %}
     {#<button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}</button>#}
     {#&nbsp;#}
     <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
-    <button id="ladb_btn_back" class="btn btn-default">{{ 'default.close'|i18next }} <i class="ladb-opencutlist-icon-chevron-right"></i></button>
+    <button id="ladb_btn_close" class="btn btn-default">{{ 'default.close'|i18next }} <i class="ladb-opencutlist-icon-chevron-right"></i></button>
 {% endblock %}
 
 {% block containerInner %}

@@ -174,7 +174,7 @@ tab:
       count: Quantité
       material_name: Matière
     cuttingdiagram:
-      title: Calepinage {{ material_name }} / {{ std_dimension }}
+      title: Calepinage
       option_kerf: Epaisseur de lame de scie
       option_trimming: Marge
       option_rotatable: Les pièces peuvent être pivotées

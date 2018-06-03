@@ -72,6 +72,8 @@
 
 }
 
+/* Print */
+
 @media print {
 
   .ladb-slide.in {
@@ -80,7 +82,25 @@
     bottom: auto;
     left: 0;
     right: 0;
-    overflow: auto;
+    height: auto;
+    overflow: hidden;
+
+    .ladb-header-wrapper {
+      height: auto !important;
+    }
+
+    .ladb-header {
+      border-bottom: none;
+
+      &.stuck {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: auto !important;
+      }
+
+    }
+
   }
 
 }

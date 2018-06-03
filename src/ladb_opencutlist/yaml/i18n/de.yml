@@ -174,7 +174,7 @@ tab:
       count: Anzahl
       material_name: Material
     cuttingdiagram:
-      title: Schnittplan {{ material_name }} / {{ std_dimension }}
+      title: Schnittplan
       option_kerf: Sägeblattdicke
       option_trimming: Kantenabfallbreite
       option_rotatable: keine Faserrichtung
