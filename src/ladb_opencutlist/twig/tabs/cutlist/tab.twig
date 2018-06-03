@@ -1,5 +1,7 @@
 {% extends 'tabs/base-tab.twig' %}
 
+{% block id %}{% endblock %}
+
 {% block headerToolsInner %}
     <button id="ladb_btn_generate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
     <button id="ladb_btn_print" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>

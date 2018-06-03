@@ -4,47 +4,6 @@
 
 .ladb-tab {
 
-  .ladb-header {
-    background-color: #ededed;
-    padding: 0 10px;
-    border-bottom: 1px solid #ddd;
-    z-index: 1;
-
-    .ladb-heading {
-      margin: 15px 0 15px 0;
-      color: #333;
-      line-height: 30px;
-      font-size: 2em;
-    }
-
-    .ladb-header-tools {
-      margin: 15px 0 15px 20px;
-      float: right;
-    }
-
-    .nav-tabs {
-      border-bottom: none;
-    }
-
-    .ladb-file-tabs {
-
-      .ladb-extra {
-        font-size: 80%;
-        margin-left: 10px;
-        border-left: 1px solid @ladb-global-border;
-        padding-left: 10px;
-        font-weight: normal !important;
-        white-space: nowrap;
-      }
-
-    }
-
-  }
-
-  .ladb-container {
-    padding: 20px 10px;
-  }
-
   .modal.modal-inside, .modal-backdrop {
     margin-left: @ladb-leftbar-width;
     margin-bottom: @ladb-bottombar-height;
@@ -62,8 +21,20 @@
 @media print {
   .ladb-tab {
 
+    .ladb-header-wrapper {
+      height: auto !important;
+    }
+
     .ladb-header {
       border-bottom: none;
+
+      &.stuck {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: auto !important;
+      }
+
     }
 
   }

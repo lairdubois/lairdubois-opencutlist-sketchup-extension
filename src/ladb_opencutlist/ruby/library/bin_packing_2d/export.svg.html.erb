@@ -1,127 +1,4 @@
-﻿<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <style>
-
-      body {
-        margin: 20px;
-        font-size: 12px;
-        font-family: Calibri, Verdana;
-      }
-      canvas {
-        margin: 10px 0;
-        border: 1px solid #000;
-      }
-      .sheet {
-        page-break-after: always;
-      }
-      .sheet .heading {
-        font-size: 24px;
-      }
-      pre {
-        white-space: pre-wrap;
-      }
-
-      /* SVG */
-
-      svg {
-        shape-rendering: geometricPrecision;
-        text-rendering: optimizeLegibility;
-        width: 100%;
-        height: auto;
-      }
-
-      /* .sheet */
-
-      svg .sheet-outer {
-        fill: #333;
-      }
-      svg .sheet-inner {
-        fill: #d3d3d3;
-      }
-      svg .sheet-inner:hover {
-        fill: #ff7700;
-      }
-      svg .sheet-dimension {
-        fill: #888;
-      }
-
-      /* .box */
-
-      svg .box {
-      }
-      svg .box-outer {
-        fill: #555;
-      }
-      svg .box:hover {
-        cursor: pointer !important;
-      }
-      svg .box:hover .box-outer {
-        fill: #ff7700;
-      }
-      svg .box-inner {
-        fill: #eee;
-      }
-      svg .box:hover .box-inner {
-        fill: #FED8B5;
-        filter: none;
-      }
-      svg .box-number {
-        fill: #000;
-      }
-      svg .box-dimension {
-        fill: #000;
-      }
-
-      @media print {
-
-        svg .box-outer {
-          fill: #fff;
-        }
-
-        svg .box-inner {
-          fill: #fff;
-        }
-
-      }
-
-      /* .leftover */
-
-      svg .leftover-inner {
-        fill: #fff;
-      }
-      svg .leftover-cross {
-        stroke: #aaa;
-        stroke-width: 1px;
-      }
-      svg .leftover-dimension {
-        fill: #888;
-      }
-
-      /* .cut */
-
-      svg .cut-outer {
-        fill: rgba(0, 0, 0, 0.01);
-      }
-      svg .cut-inner {
-        fill: #5fc0dd;
-      }
-      svg .cut:hover .cut-outer, svg .cut:hover .cut-inner {
-        fill: #ff7700;
-      }
-
-      @media print {
-
-        svg .cut-inner {
-          fill: #000;
-        }
-
-      }
-
-    </style>
-  </head>
-  <body>
+﻿<div>
   <!-- <%= options %> -->
   <% if unplaced_boxes.length() > 0 %>
     <h3>Parts too large to fit on one single sheet</h3>
@@ -137,14 +14,9 @@
      total = bins.length()
      bins.each do |bin| 
        i = i+1 %>
-  <div class="sheet">
+  <div class="ladb-cuttingdiagram-group">
     <div class="heading"><%= group[:material_name] %>/<%= group[:std_dimension] %> : <%= i %> / <%= total %> --
     <%= dim(bin.length) %> x <%= dim(bin.width) %></div>
-    <% 
-      b = bin.boxes.group_by {|e| e.number[:number]}
-      b.each do |k, v| %>
-       <pre> <%= v.length() %> x <%= k %> <%= v[0].number[:name] %>: <%= v[0].number[:raw_length] %> x <%= v[0].number[:raw_width] %></pre>
-    <% end %>
 
     <% sheetDimensionFontSize = 18 %>
     <% dimensionFontSize = 13 %>
@@ -204,5 +76,4 @@
   <% end 
    end
   %>
-  </body>
-</html>
+</div>

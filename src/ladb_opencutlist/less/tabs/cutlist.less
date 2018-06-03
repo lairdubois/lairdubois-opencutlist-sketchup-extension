@@ -8,7 +8,7 @@
   &.no-print {
     opacity: 0.5;
 
-    .ladb-btn-group-menu, .ladb-btn-group-cutdiagram {
+    .ladb-btn-group-menu, .ladb-btn-group-cuttingdiagram {
       display: none;
     }
 
@@ -103,9 +103,114 @@
 
 }
 
+// SVG
+
+.ladb-cuttingdiagram-group {
+  page-break-after: always;
+
+  svg {
+    shape-rendering: geometricPrecision;
+    text-rendering: optimizeLegibility;
+    width: 100%;
+    height: auto;
+
+    /* .sheet */
+
+    .sheet {
+
+      .sheet-outer {
+        fill: #333;
+      }
+      .sheet-inner {
+        fill: #d3d3d3;
+
+        &:hover {
+          fill: @ladb-brand-primary;
+        }
+
+      }
+      .sheet-dimension {
+        fill: #888;
+      }
+
+    }
+
+    /* .box */
+
+    .box {
+
+      &:hover {
+        cursor: pointer !important;
+
+        .box-outer {
+          fill: @ladb-brand-primary;
+        }
+        .box-inner {
+          fill: lighten(@ladb-brand-primary, 40%);
+          filter: none;
+        }
+
+      }
+
+      .box-outer {
+        fill: #555;
+      }
+      .box-inner {
+        fill: #eee;
+      }
+      .box-number {
+        fill: #000;
+      }
+      .box-dimension {
+        fill: #000;
+      }
+    }
+
+    /* .leftover */
+
+    .leftover {
+
+      .leftover-inner {
+        fill: #fff;
+      }
+      .leftover-cross {
+        stroke: #aaa;
+        stroke-width: 1px;
+      }
+      .leftover-dimension {
+        fill: #888;
+      }
+
+    }
+
+    /* .cut */
+
+    .cut {
+
+      &:hover {
+        .cut-outer, .cut-inner {
+          fill: @ladb-brand-primary;
+        }
+      }
+
+      .cut-outer {
+        fill: rgba(0, 0, 0, 0.01);
+      }
+      .cut-inner {
+        fill: #5fc0dd;
+      }
+
+    }
+
+  }
+
+}
+
+
 // Print /////
 
 @media print {
+
   .ladb-cutlist-group {
 
     thead tr {
@@ -116,4 +221,24 @@
 
     }
   }
+
+  .ladb-cuttingdiagram-group svg {
+
+    .box {
+      .box-outer {
+        fill: #fff;
+      }
+      .box-inner {
+        fill: #fff;
+      }
+    }
+
+    .cut {
+      .cut-inner {
+        fill: #000;
+      }
+    }
+
+  }
+
 }

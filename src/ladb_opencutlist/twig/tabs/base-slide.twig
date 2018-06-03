@@ -1,0 +1,26 @@
+{# set id #}
+{# set out (facultative) #}
+
+{% block screen %}
+<div{% block id %} id="{{ id }}"{% endblock %} class="ladb-slide {% if out|default(false) %}out{% else %}in{% endif %}">
+    <div class="ladb-header-wrapper">
+        <div class="ladb-header">
+            <div class="container">
+                {% block headerInner %}
+                    {% block headerToolsOuter %}
+                        <div class="no-print ladb-header-tools">
+                            {% block headerToolsInner %}{% endblock %}
+                        </div>
+                    {% endblock %}
+                    <h1 class="ladb-heading">{% block headerHeadingInner %}{% endblock %}</h1>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="ladb-container">
+        <div class="container">
+            {% block containerInner %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

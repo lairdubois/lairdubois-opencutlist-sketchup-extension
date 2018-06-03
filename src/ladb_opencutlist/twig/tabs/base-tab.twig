@@ -1,22 +1,16 @@
+{% extends 'tabs/base-slide.twig' %}
+
 {# set tabName #}
 
+{% block screen %}
 <div id="ladb_tab_{{ tabName }}" class="ladb-tab">
-    <div class="ladb-header">
-        <div class="container">
-            {% block headerInner %}
-                {% block headerToolsOuter %}
-                    <div class="no-print ladb-header-tools">
-                        {% block headerToolsInner %}{% endblock %}
-                    </div>
-                {% endblock %}
-                <h1 class="ladb-heading">{% block headerHeadingInner %}{{ ('tab.'~tabName~'.title')|i18next }}{% endblock %}</h1>
-                <ul class="ladb-file-tabs nav nav-tabs"></ul>
-            {% endblock %}
-        </div>
-    </div>
-    <div class="ladb-container">
-        <div class="container">
-            {% block containerInner %}{% endblock %}
-        </div>
-    </div>
+    {{ parent() }}
 </div>
+{% endblock %}
+
+{% block headerHeadingInner %}{{ ('tab.'~tabName~'.title')|i18next }}{% endblock %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs"></ul>
+{% endblock %}

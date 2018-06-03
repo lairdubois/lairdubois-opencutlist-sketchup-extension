@@ -1,0 +1,86 @@
+//
+// Screen
+//
+
+.ladb-slide {
+  position: absolute;
+  top: 0;
+  bottom: @ladb-bottombar-height;
+  right: 0;
+  background: #fff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  &.in {
+    left: @ladb-leftbar-width;
+  }
+
+  &.out {
+    left: 100%;
+  }
+
+  &.animated {
+    z-index: 2;
+  }
+
+  .ladb-header {
+    background-color: #ededed;
+    padding: 0 10px;
+    border-bottom: 1px solid #ddd;
+    z-index: 1;
+
+    &.stuck {
+      position: fixed;
+      top: 0;
+      left: @ladb-leftbar-width;
+    }
+
+    .ladb-heading {
+      margin: 15px 0 15px 0;
+      color: #333;
+      line-height: 30px;
+      font-size: 2em;
+    }
+
+    .ladb-header-tools {
+      margin: 15px 0 15px 20px;
+      float: right;
+    }
+
+    .nav-tabs {
+      border-bottom: none;
+    }
+
+    .ladb-file-tabs {
+
+      .ladb-extra {
+        font-size: 80%;
+        margin-left: 10px;
+        border-left: 1px solid @ladb-global-border;
+        padding-left: 10px;
+        font-weight: normal !important;
+        white-space: nowrap;
+      }
+
+    }
+
+  }
+
+  .ladb-container {
+    padding: 20px 10px;
+  }
+
+}
+
+@media print {
+
+  .ladb-slide.in {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    overflow: auto;
+  }
+
+}

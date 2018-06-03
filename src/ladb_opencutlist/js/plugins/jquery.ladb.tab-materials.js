@@ -101,7 +101,7 @@
             that.$btnList.prop('disabled', false);
 
             // Stick header
-            that.$header.stick_in_parent();
+            that.stickSlideHeader(that.$baseSlide);
 
             // Callback
             if (callback && typeof callback == 'function') {
@@ -508,6 +508,8 @@
     };
 
     LadbTabMaterials.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
         var that = this;
 
         // Bind buttons

@@ -190,7 +190,7 @@
             });
             $('a.ladb-btn-scrollto', that.$page).on('click', function() {
                 var target = $(this).attr('href');
-                $('html, body').animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
+                that.$baseSlide.animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
                     $(target).effect("highlight", {}, 1500);
                 });
                 $(this).blur();
@@ -217,7 +217,7 @@
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                $('html, body').animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                that.$baseSlide.animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
                 $(this).blur();
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function() {
@@ -225,7 +225,7 @@
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersSave({ group_id: groupId }, function() {
-                    $('html, body').animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    that.$baseSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                 });
                 $(this).blur();
             });
@@ -234,7 +234,7 @@
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersReset({ group_id: groupId }, function() {
-                    $('html, body').animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    that.$baseSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                 });
                 $(this).blur();
             });
@@ -266,7 +266,7 @@
             that.$btnGenerate.prop('disabled', false);
 
             // Stick header
-            that.$header.stick_in_parent();
+            that.stickSlideHeader(that.$baseSlide);
 
             // Callback
             if (callback && typeof callback == 'function') {
@@ -454,7 +454,7 @@
                                 var $part = $('#ladb_part_' + partId);
                                 if ($part.length > 0) {
                                     $part.effect("highlight", {}, 1500);
-                                    $('html, body').animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                    that.$baseSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
                                 }
 
                             });
@@ -642,6 +642,7 @@
                     $inputRotatable.prop('checked', that.cuttingdiagramOptions.rotatable);
                 } else {
                     $('#ladb_base_sheet_values').hide();
+                    console.log(value);
                     var sizeAndGrained = value.split('|');
                     var size = sizeAndGrained[0].split('x');
                     $inputBaseSheetLength.val(size[0]);
@@ -687,19 +688,33 @@
 
                 rubyCallCommand('cutlist_group_cuttingdiagram', $.extend({ group_id: groupId }, that.cuttingdiagramOptions, that.uiOptions), function (response) {
 
-                    if (response.cuttingdiagram_path) {
-                        that.opencutlist.notify('DONE !', 'success', [
-                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                    var $slide = that.pushSlide('ladb_cutlist_slide_cuttingdiagram', 'tabs/cutlist/_slide-cuttingdiagram.twig', $.extend({ group: group }, response));
 
-                                rubyCallCommand('core_open_external_file', {
-                                    path: response.cuttingdiagram_path
-                                });
+                    var $page = $('.ladb-page', $slide);
+                    $page.load(response.cuttingdiagram_path);
 
-                            })
-                        ]);
-                    } else {
-                        alert('blop ?');
-                    }
+                    var $btnBack = $('#ladb_btn_back', $slide);
+                    $btnBack.on('click', function() {
+                        that.popSlide();
+                    });
+                    var $btnPrint = $('#ladb_btn_print', $slide);
+                    $btnPrint.on('click', function() {
+                        window.print();
+                    });
+
+                    // if (response.cuttingdiagram_path) {
+                    //     that.opencutlist.notify('DONE !', 'success', [
+                    //         Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                    //
+                    //             rubyCallCommand('core_open_external_file', {
+                    //                 path: response.cuttingdiagram_path
+                    //             });
+                    //
+                    //         })
+                    //     ]);
+                    // } else {
+                    //     alert('blop ?');
+                    // }
 
                 });
 
@@ -998,6 +1013,8 @@
     };
 
     LadbTabCutlist.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
         var that = this;
 
         // Bind buttons
