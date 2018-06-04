@@ -16,14 +16,18 @@
        i = i+1 %>
   <div class="ladb-cuttingdiagram-group">
 
-    <table class="table table-bordered ladb-cutlist-group">
+    <table id="ladb_cuttingdiagram_group_<%= i %>" class="table table-bordered ladb-cutlist-group" data-group-id="<%= i %>">
       <thead>
       <tr>
         <td>
-<!--          <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>-->
+          <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
           <div>
             <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> <%= group[:material_name] %> / <strong><%= group[:std_dimension] %></strong> - <em><%= dim(bin.length) %> x <%= dim(bin.width) %></em></span>
-            <span class="ladb-heading pull-right" style="margin-right: 20px;"><strong><%= i %> / <%= total %></strong></span>
+            <div class="no-print btn-group pull-right" role="group">
+              <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" <% if i == 1 %>disabled<% end %>><i class="ladb-opencutlist-icon-chevron-left"></i></button>
+              <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" <% if i == total %>disabled<% end %>><i class="ladb-opencutlist-icon-chevron-right"></i></button>
+            </div>
+            <span class="ladb-heading pull-right" style="margin-right: 10px;"><strong><%= i %> / <%= total %></strong></span>
           </div>
         </td>
       </tr>

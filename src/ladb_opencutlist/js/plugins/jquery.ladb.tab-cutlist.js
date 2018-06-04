@@ -698,7 +698,45 @@
                     var $slide = that.pushSlide('ladb_cutlist_slide_cuttingdiagram', 'tabs/cutlist/_slide-cuttingdiagram.twig', $.extend({ group: group }, response));
 
                     var $page = $('.ladb-page', $slide);
-                    $page.load(response.cuttingdiagram_path);
+                    $page.load(response.cuttingdiagram_path, {}, function() {
+
+                        $('.ladb-btn-toggle-no-print', $slide).on('click', function() {
+                            var $btn = $(this);
+                            var $cuttingdiagramGroup = $btn.closest('.ladb-cutlist-group');
+                            var $i = $('i', $btn);
+                            if ($cuttingdiagramGroup.hasClass('no-print')) {
+                                $cuttingdiagramGroup.removeClass('no-print');
+                                $i.addClass('ladb-opencutlist-icon-eye-close');
+                                $i.removeClass('ladb-opencutlist-icon-eye-open');
+                            } else {
+                                $cuttingdiagramGroup.addClass('no-print');
+                                $i.addClass('ladb-opencutlist-icon-eye-open');
+                                $i.removeClass('ladb-opencutlist-icon-eye-close');
+                            }
+                            $btn.blur();
+                        });
+                        $('.ladb-btn-scrollto-prev-group', $slide).on('click', function() {
+                            var $cuttingdiagramGroup = $(this).closest('.ladb-cutlist-group');
+                            var groupId = $cuttingdiagramGroup.data('group-id');
+                            var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
+                            $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                            });
+                            $(this).blur();
+                            return false;
+                        });
+                        $('.ladb-btn-scrollto-next-group', $slide).on('click', function() {
+                            var $cuttingdiagramGroup = $(this).closest('.ladb-cutlist-group');
+                            var groupId = $cuttingdiagramGroup.data('group-id');
+                            var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
+                            $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                            });
+                            $(this).blur();
+                            return false;
+                        });
+
+                    });
 
                     // Fetch UI elements
                     var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);

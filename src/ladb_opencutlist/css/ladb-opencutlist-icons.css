@@ -28,11 +28,8 @@ i, span.ladb-opencutlist-icon {
 }
 
 
-.ladb-opencutlist-icon-grained-0:before {
-  content: "\e925";
-}
-.ladb-opencutlist-icon-grained-1:before {
-  content: "\e926";
+.ladb-opencutlist-icon-close:before {
+  content: "\e927";
 }
 .ladb-opencutlist-icon-cuttingdiagram:before {
   content: "\e923";
@@ -60,6 +57,12 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-solid-wood:before {
   content: "\e903";
+}
+.ladb-opencutlist-icon-grained-0:before {
+  content: "\e925";
+}
+.ladb-opencutlist-icon-grained-1:before {
+  content: "\e926";
 }
 .ladb-opencutlist-icon-resized:before {
   content: "\e921";
