@@ -1,12 +1,12 @@
 ﻿module Ladb::OpenCutList
 
-  # Format - will go away after testing and be replaced by Sketchup constants
+  # Format - just here for convenience
   DECIMAL       = Length::Decimal
   ARCHITECTURAL = Length::Architectural
   ENGINEERING   = Length::Engineering
   FRACTIONAL    = Length::Fractional
 
-  # Unit - will go away after testing and be replaced by Sketchup constants
+  # Unit - just here for convenience
   INCHES        = Length::Inches
   FEET          = Length::Feet
   MILLIMETER    = Length::Millimeter

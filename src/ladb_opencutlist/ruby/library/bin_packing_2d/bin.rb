@@ -29,6 +29,10 @@
       @strategy = ""
     end
 
+    def get_export
+      return cmm(@length), cmm(@width), cmm(@trimsize), efficiency
+    end
+    
     def get_copy
       b = Bin.new(@length, @width, @x, @y, @index)
       b.trimmed = @trimmed

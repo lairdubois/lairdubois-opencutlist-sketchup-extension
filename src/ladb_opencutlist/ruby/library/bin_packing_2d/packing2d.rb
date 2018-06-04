@@ -23,6 +23,10 @@
   STACKING_NONE = 0
   STACKING_LENGTH = 1
   STACKING_WIDTH = 2
+  
+  BBOX_NONE = 0
+  BBOX_ONLY_FINAL = 1
+  BBOX_ALWAYS = 2
     
 
   class Packing2D
