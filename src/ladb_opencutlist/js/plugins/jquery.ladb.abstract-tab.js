@@ -57,6 +57,7 @@ LadbAbstractTab.prototype.popSlide = function() {
     var $topSlide = this.topSlide();
     if ($topSlide) {
         $topSlide.show();
+        this.computeStuckSlideHeaderWidth($topSlide);
     }
     this.unstickSlideHeader($poppedSlide);
     $poppedSlide.addClass('animated');
@@ -90,6 +91,18 @@ LadbAbstractTab.prototype.unstickSlideHeader = function($slide) {
     $header
         .css('width', 'auto')
         .removeClass('stuck');
+};
+
+LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function($slide) {
+
+    // Compute stuck slide header width
+    var $header = $('.ladb-header', $slide).first();
+    if ($header.hasClass('stuck')) {
+        var $container = $('.ladb-container', $slide).first();
+        $header
+            .css('width', $container.outerWidth());
+    }
+
 };
 
 // Modal /////
@@ -161,20 +174,22 @@ LadbAbstractTab.prototype.executeCommand = function(command, parameters, callbac
 LadbAbstractTab.prototype.bind = function() {
     var that = this;
 
-    // Bind window resize event
-    $(window).on('resize', function() {
+    var fnComputeStuckSlideHeadersWidth = function(event) {
 
         // Recompute stuck slides header width
-        $('.ladb-slide', that.$element).each(function(index) {
-            var $slide = $(this);
-            var $header = $('.ladb-header', $slide).first();
-            if ($header.hasClass('stuck')) {
-                var $container = $('.ladb-container', $slide).first();
-                $header
-                    .css('width', $container.outerWidth());
-            }
+        $('.ladb-slide:visible', that.$element).each(function(index) {
+            that.computeStuckSlideHeaderWidth($(this));
         });
 
-    })
+    };
+
+    // Bind window resize event
+    $(window).on('resize', fnComputeStuckSlideHeadersWidth);
+
+    // Bind dialog maximized and minimized events
+    this.opencutlist.$element.on('maximized.ladb.dialog', fnComputeStuckSlideHeadersWidth);
+
+    // Bind tab shown events
+    this.$element.on('shown.ladb.tab', fnComputeStuckSlideHeadersWidth);
 
 };

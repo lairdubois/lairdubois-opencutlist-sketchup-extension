@@ -116,6 +116,7 @@
                 that.$btnMinimize.hide();
                 that.$btnMaximize.show();
                 that.maximized = false;
+                that.$element.trigger(jQuery.Event('minimized.ladb.dialog'));
             });
         }
     };
@@ -128,6 +129,7 @@
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
                 that.maximized = true;
+                that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
             });
         }
     };
@@ -206,6 +208,9 @@
             }
 
         }
+
+        // Trigger event
+        $tab.trigger(jQuery.Event('shown.ladb.tab'));
 
         return $tab;
     };
