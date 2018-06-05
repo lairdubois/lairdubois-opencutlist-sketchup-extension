@@ -16,6 +16,10 @@
       @stack_is_horizontal = true
     end
 
+    def get_export
+      return cmm(@x), cmm(@y), cmm(@length), cmm(@width), @rotated, @number
+    end
+    
     def set_position(x, y, index)
       @x = x
       @y = y

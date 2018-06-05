@@ -299,7 +299,7 @@
         # find best position for given box in collection of bins
         i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
         if i == -1
-          if options[:intermediary_bounding_box_optimization]
+          if options[:bbox_optimization] == BBOX_ALWAYS
             assign_leftovers_to_bins(bins, @original_bins)
             postprocess_bounding_box(@original_bins, box)
             bins = collect_leftovers(@original_bins)
@@ -372,7 +372,7 @@
       assign_leftovers_to_bins(bins, @original_bins)
 
       # compute the bounding box and fix bottom and right leftovers
-      postprocess_bounding_box(@original_bins) if options[:final_bounding_box_optimization]
+      postprocess_bounding_box(@original_bins) if options[:bbox_optimization] != BBOX_NONE
       
       # unpacked boxes are in @unpacked_boxes
       
@@ -411,5 +411,69 @@
         return nil
       end
     end
+    
+    def export(options)
+
+      response = {}
+      if @packed
+        response = {}
+        response[:error_code] = "no error"
+        response[:kerf] = cmm(options[:kerf])
+        response[:trimming] = cmm(options[:trimming])
+        response[:rotatable] = options[:rotatable]
+        response[:stacking] = options[:stacking]
+        response[:presort] = options[:presort]
+        response[:bbox_optimization] = options[:bbox_optimization]
+        
+        # the following two are NO options for now
+        #response[:break_stacking_if_needed] = options[:break_stacking_if_needed].to_s
+        #response[:preprocess_rotatable] = options[:preprocess_rotatable].to_s
+
+        # are these two needed anymore?
+        response[:colored] = options[:colored]
+
+        unplaced = []
+        @unplaced_boxes.each do |box|
+           unplaced << box
+        end
+        response[:unplaced] = unplaced
+
+        bins = []
+        index = 1
+        @original_bins.each do |bin|
+          bin_entry = {}
+          bin_entry[:index] = index
+          bin_entry[:bins] = bin.get_export
+
+          boxes = []
+          bin.boxes.each do |box|
+            boxes << box.get_export
+          end
+          bin_entry[:boxes] = boxes
+
+          leftovers = []
+          bin.leftovers.each do |box|
+            leftovers << box.get_export
+          end
+          bin_entry[:leftovers] = leftovers
+
+          cuts = []
+          bin.cuts.each do |cut|
+            cuts << cut.get_export
+          end
+          bin_entry[:cuts] = cuts
+
+          bins << bin_entry
+          index = index + 1
+        end
+
+        response[:cutdiagram] = bins
+
+      else
+        response[:error_code] = "nothing to display"
+      end
+      return response
+    end
+    
   end
 end

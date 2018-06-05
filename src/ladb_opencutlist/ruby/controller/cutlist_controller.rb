@@ -1076,9 +1076,8 @@
               :trimming => trimming,
               :rotatable => rotatable,
               :stacking => stacking.to_i, # available options in packing2d.rb
-              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small
-              :intermediary_bounding_box_optimization => true,
-              :final_bounding_box_optimization => true,
+              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
+              :bbox_optimization => bbox.to_i, # available options in packing2d.rb
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length,
               :base_sheet_width => base_sheet_width,
@@ -1095,19 +1094,7 @@
             unless Dir.exist?(cuttingdiagram_dir)
               Dir.mkdir(cuttingdiagram_dir)
             end
-            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))       
-            
-            case bbox.to_i
-            when 1
-              options[:final_bounding_box_optimization] = true           
-              options[:intermediary_bounding_box_optimization] = false
-            when 2
-              options[:final_bounding_box_optimization] = true           
-              options[:intermediary_bounding_box_optimization] = true
-            else
-              options[:intermediary_bounding_box_optimization] = false
-              options[:final_bounding_box_optimization] = false
-            end            
+            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))              
 
             html = e.run(options)
             cuttingdiagram_path = File.join(cuttingdiagram_dir, 'cuttingdiagram.html')
