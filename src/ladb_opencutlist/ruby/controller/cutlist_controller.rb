@@ -114,9 +114,6 @@ module Ladb::OpenCutList
       def _fetch_useful_instance_infos(entity, path, auto_orient)
         face_count = 0
         if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
-
-          puts entity
-
           if entity.is_a? Sketchup::Group
 
             # Entity is a group : check its children
