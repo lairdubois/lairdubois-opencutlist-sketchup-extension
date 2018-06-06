@@ -26,6 +26,13 @@
         showTick: true
     };
 
+    // Tokenfield options
+
+    var TOKENFIELD_OPTIONS = {
+        delimiter: ';',
+        createTokensOnBlur: true
+    };
+
     // CLASS DEFINITION
     // ======================
 
@@ -377,23 +384,6 @@
             $selectType.selectpicker(SELECT_PICKER_OPTIONS);
             $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
 
-            // Init tokenfield
-            $inputStdThicknesses.tokenfield({
-                delimiter: ';',
-                beautify: false,
-                createTokensOnBlur: true
-            });
-            $inputStdSections.tokenfield({
-                delimiter: ';',
-                beautify: false,
-                createTokensOnBlur: true
-            });
-            $inputStdSizes.tokenfield({
-                delimiter: ';',
-                beautify: false,
-                createTokensOnBlur: true
-            });
-
             // Bind buttons
             $btnCutOptionsDefaultsSave.on('click', function() {
 
@@ -475,6 +465,11 @@
 
             // Show modal
             $modal.modal('show');
+
+            // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+            $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
+            $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+            $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
 
             // Setup popovers
             this.opencutlist.setupPopovers();

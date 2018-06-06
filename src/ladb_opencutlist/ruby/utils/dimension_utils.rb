@@ -13,6 +13,18 @@
   CENTIMETER    = Length::Centimeter
   METER         = Length::Meter
 
+  # Unit signs
+  UNIT_SIGN_MILLIMETER = 'mm'
+  UNIT_SIGN_CENTIMETER = 'cm'
+  UNIT_SIGN_METER = 'm'
+  UNIT_SIGN_FEET = "'"
+  UNIT_SIGN_INCHES = '"'
+
+  # Marker
+  MARKER = 'd:'.freeze
+  LIST_SEPARATOR = ';'.freeze
+  DXD_SEPARATOR = 'x'.freeze
+
   class DimensionUtils
 
     def initialize ()
@@ -26,8 +38,12 @@
      return Rational(*input_split)
     end
 
+    def prefix_marker(i)
+      return MARKER + i
+    end
+
     def strip_marker(i)
-      return i.sub('d:', '')
+      return i.sub(MARKER, '')
     end
 
     def model_units_to_inches(i)
@@ -48,15 +64,15 @@
     def unit_sign
       case @length_unit
       when MILLIMETER
-        return "mm"
+        return UNIT_SIGN_MILLIMETER
       when CENTIMETER
-        return "cm"
+        return UNIT_SIGN_CENTIMETER
       when METER
-        return "m"
+        return UNIT_SIGN_METER
       when FEET
-        return "'"
+        return UNIT_SIGN_FEET
       else
-        return '"'
+        return UNIT_SIGN_INCHES
       end
     end
 
@@ -112,17 +128,17 @@ i = i.to_f
       nu = ""
       sum = 0
       if i.is_a?(String) 
-        if match = i.match(/^(~?\s*)(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
+        if match = i.match(/^(~?\s*)(\d*([#{Regexp.escape(@separator)}]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three, four = match.captures
           if four.nil?
             nu = one + two + unit_sign
-          elsif one.nil? && two.nil? and three.nil?
-            nu = "0" + unit_sign
+          elsif two.empty? and three.nil?  # two could not be nil
+            nu = one + "0" + four
           else
             nu = one + two + four
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
           end
-        elsif match = i.match(/^~?\s*(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
+        elsif match = i.match(/^~?\s*(((\d*([#{Regexp.escape(@separator)}]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             nu = simplify(from_fractional(eight)).to_s + '"'
@@ -160,15 +176,15 @@ i = i.to_f
           one = one.to_f
           if three.nil?
             sum = model_units_to_inches(one) 
-          elsif three == "mm"
+          elsif three == UNIT_SIGN_MILLIMETER
             sum = one/25.4
-          elsif three == "cm"
+          elsif three == UNIT_SIGN_CENTIMETER
             sum = one/2.54
-          elsif three == "m"
+          elsif three == UNIT_SIGN_METER
             sum = one/0.0254
-          elsif three == '"'
+          elsif three == UNIT_SIGN_FEET
             sum = one
-          elsif three == "'"
+          elsif three == UNIT_SIGN_INCHES
             sum = 12*one
           end
         elsif match = i.match(/^(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
@@ -192,7 +208,7 @@ i = i.to_f
         end
       end
       sum = sum.to_s.sub(/\./, @separator)
-      return sum + '"'
+      return sum + UNIT_SIGN_INCHES
     end
 
     # Takes a single number in a string and converts it to a string
@@ -208,12 +224,12 @@ i = i.to_f
     #
     def dd_transform(i, f)
       return '' if i.nil?
-      a = i.split(';')
+      a = i.split(LIST_SEPARATOR)
       r = []
       a.each do |e|
         r << send(f, e)
       end
-      return r.join(';')
+      return r.join(LIST_SEPARATOR)
     end
 
     def dd_add_units(i)
@@ -230,15 +246,15 @@ i = i.to_f
     #
     def dxd_transform(i, f)
       return '' if i.nil?
-      a = i.split(';')
+      a = i.split(LIST_SEPARATOR)
       r = []
       a.each do |e|
-        ed = e.split('x')
-        ed[0] = '0' if ed[0].empty? || ed[0].nil?
-        ed[1] = '0' if ed[1].empty? || ed[1].nil?
-        r << (send(f, ed[0]) + ' x ' + send(f, ed[1]))
+        ed = e.split(DXD_SEPARATOR)
+        ed[0] = '0' if ed[0].nil? || ed[0].empty?
+        ed[1] = '0' if ed[1].nil? || ed[1].empty?
+        r << (send(f, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(f, ed[1]))
       end
-      return r.join(';')  
+      return r.join(LIST_SEPARATOR)
     end
 
     # Take a string containing dimensions in the form dxd;dxd;dxd;...
@@ -264,7 +280,7 @@ i = i.to_f
       i = strip_marker(i)
       i = str_add_units(i)        # add units
       i = i.sub(/"/, '\"')        # escape double quote in string for registry
-      i = 'd:' + i                # prefix marker
+      i = prefix_marker(i)        # prefix marker
       return i
     end
     

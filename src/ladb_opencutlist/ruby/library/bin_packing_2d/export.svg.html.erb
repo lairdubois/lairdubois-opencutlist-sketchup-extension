@@ -1,14 +1,51 @@
 ﻿<div>
   <!-- <%= options %> -->
   <% if unplaced_boxes.length() > 0 %>
-    <h3>Parts too large to fit on one single sheet</h3>
+    <div class="ladb-cuttingdiagram-group">
+
+      <table class="table table-bordered ladb-cutlist-group">
+        <thead>
+        <tr>
+          <td colspan="4">
+            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+            <div>
+              <span class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> Parts too large to fit on one single sheet</span>
+            </div>
+          </td>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">N°</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">NAME</td>
+            <td class="text-center" colspan="2">RAW</td>
+          </tr>
+          <tr>
+            <td class="text-center" width="12%">RAW_LENGTH</td>
+            <td class="text-center" width="12%">RAW_WIDTH</td>
+          </tr>
+          <% unplaced_boxes.each do |box| %>
+          <tr class="ladb-cutlist-row">
+            <td class="text-center">
+              <%= box.number[:number] %>
+            </td>
+            <td>
+              <%= box.number[:name] %>
+            </td>
+            <td>
+              <%= box.number[:raw_length] %>
+            </td>
+            <td>
+              <%= box.number[:raw_width] %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+    </div>
   <% end %>
-  <% unplaced_boxes.each do |box| %>
-    <pre>
-    <%= box.number[:number] %> <%= box.number[:name] %>, <%= box.number[:raw_length] %> x <%= box.number[:raw_width] %>
-    </pre>
-  <% end %>
-  <% 
+  <%
      if bins.length() > 0 && bins[0].boxes.length() > 0 then
      i = 0
      total = bins.length()
@@ -19,10 +56,10 @@
     <table id="ladb_cuttingdiagram_group_<%= i %>" class="table table-bordered ladb-cutlist-group" data-group-id="<%= i %>">
       <thead>
       <tr>
-        <td>
+        <td colspan="2">
           <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
           <div>
-            <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> <%= group[:material_name] %> / <strong><%= group[:std_dimension] %></strong> - <em><%= dim(bin.length) %> x <%= dim(bin.width) %></em></span>
+            <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> <%= group[:material_name] %> / <strong><%= group[:std_dimension] %></strong> - <i class="ladb-opencutlist-icon-size"></i> <em><%= dim(bin.length) %> x <%= dim(bin.width) %></em></span>
             <div class="no-print btn-group pull-right" role="group">
               <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" <% if i == 1 %>disabled<% end %>><i class="ladb-opencutlist-icon-chevron-left"></i></button>
               <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" <% if i == total %>disabled<% end %>><i class="ladb-opencutlist-icon-chevron-right"></i></button>
@@ -34,7 +71,7 @@
       </thead>
       <tbody>
       <tr>
-        <td>
+        <td colspan="2">
 
     <% sheetDimensionFontSize = 18 %>
     <% dimensionFontSize = 13 %>
@@ -92,6 +129,10 @@
 
 
         </td>
+      </tr>
+      <tr>
+        <td><strong>TRIMMING : </strong><%= dim(options[:trimming]) %></td>
+        <td width="12%" style="white-space: nowrap;"><strong>EFFICIENCY : </strong><%= '%3.1f' % bin.efficiency %>%</td>
       </tr>
       </tbody>
     </table>

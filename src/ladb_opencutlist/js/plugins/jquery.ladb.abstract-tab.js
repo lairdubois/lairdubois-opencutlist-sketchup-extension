@@ -169,6 +169,24 @@ LadbAbstractTab.prototype.executeCommand = function(command, parameters, callbac
     }
 };
 
+// Helper /////
+
+LadbAbstractTab.prototype.tokenfieldValidatorFn_d = function (e) {
+    var re = /^([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))$/;
+    var valid = re.test(e.attrs.value);
+    if (!valid) {
+        $(e.relatedTarget).addClass('invalid')
+    }
+};
+
+LadbAbstractTab.prototype.tokenfieldValidatorFn_dxd = function (e) {
+    var re = /^([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))\s*x\s*([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))$/;
+    var valid = re.test(e.attrs.value);
+    if (!valid) {
+        $(e.relatedTarget).addClass('invalid')
+    }
+};
+
 // Bind /////
 
 LadbAbstractTab.prototype.bind = function() {
