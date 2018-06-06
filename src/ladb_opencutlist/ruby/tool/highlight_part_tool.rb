@@ -9,10 +9,10 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(line_1_text, line_2_text, entity_infos)
+    def initialize(line_1_text, line_2_text, instance_infos)
       @line_1_text = line_1_text
       @line_2_text = line_2_text
-      @entity_infos = entity_infos
+      @instance_infos = instance_infos
 
       # Define text options
       @line_1_text_options = {
@@ -44,8 +44,8 @@ module Ladb::OpenCutList
         view = model.active_view
 
         # Compute instance faces triangles
-        entity_infos.each { |entity_info|
-          _compute_children_faces_tirangles(view, entity_info.entity.definition.entities, entity_info.transformation)
+        instance_infos.each { |instance_info|
+          _compute_children_faces_tirangles(view, instance_info.entity.definition.entities, instance_info.transformation)
         }
 
         # Define buttons

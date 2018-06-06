@@ -899,24 +899,24 @@
       entity_serialized_paths = part_data['entity_serialized_paths']
 
       # Populate entity infos
-      entity_infos = []
+      instance_infos = []
       entity_serialized_paths.each { |entity_serialized_path|
-        entity_info = @instance_infos_cache[entity_serialized_path]
-        unless entity_info.nil?
-          entity_infos.push(entity_info)
+        instance_info = @instance_infos_cache[entity_serialized_path]
+        unless instance_info.nil?
+          instance_infos.push(instance_info)
         end
       }
 
-      unless entity_infos.empty?
+      unless instance_infos.empty?
 
         # Compute text infos
         text_line_1 = name
         text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
-            ' | ' + entity_infos.length.to_s + ' ' + Plugin.get_i18n_string(entity_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
+            ' | ' + instance_infos.length.to_s + ' ' + Plugin.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
             ' | ' + (material_name.empty? ? Plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
 
         # Create and activate highlight part tool
-        highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, entity_infos)
+        highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_infos)
         model.select_tool(highlight_tool)
 
       end

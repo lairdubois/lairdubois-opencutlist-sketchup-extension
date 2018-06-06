@@ -210,7 +210,9 @@
         }
 
         // Trigger event
-        $tab.trigger(jQuery.Event('shown.ladb.tab'));
+        if ($tab) {
+            $tab.trigger(jQuery.Event('shown.ladb.tab'));
+        }
 
         return $tab;
     };
