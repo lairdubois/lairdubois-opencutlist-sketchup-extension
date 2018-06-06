@@ -113,7 +113,10 @@ module Ladb::OpenCutList
 
       def _fetch_useful_instance_infos(entity, path, auto_orient)
         face_count = 0
-        if entity.visible? and entity.layer.visible?
+        if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+
+          puts entity
+
           if entity.is_a? Sketchup::Group
 
             # Entity is a group : check its children
@@ -169,19 +172,21 @@ module Ladb::OpenCutList
       def _compute_faces_bounds(definition_or_group, transformation = nil)
         bounds = Geom::BoundingBox.new
         definition_or_group.entities.each { |entity|
-          if entity.is_a? Sketchup::Face
-            face_bounds = entity.bounds
-            if transformation
-              min = face_bounds.min.transform(transformation)
-              max = face_bounds.max.transform(transformation)
-              face_bounds = Geom::BoundingBox.new
-              face_bounds.add(min, max)
+          if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+            if entity.is_a? Sketchup::Face
+              face_bounds = entity.bounds
+              if transformation
+                min = face_bounds.min.transform(transformation)
+                max = face_bounds.max.transform(transformation)
+                face_bounds = Geom::BoundingBox.new
+                face_bounds.add(min, max)
+              end
+              bounds.add(face_bounds)
+            elsif entity.is_a? Sketchup::Group
+              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
+            elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
+              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
             end
-            bounds.add(face_bounds)
-          elsif entity.is_a? Sketchup::Group
-            bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
-          elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-            bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
           end
         }
         bounds
