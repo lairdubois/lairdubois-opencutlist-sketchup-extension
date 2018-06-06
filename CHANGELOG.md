@@ -9,6 +9,10 @@ in 1.x and 0.x versions.
   * Added button for bin packing in groups of type dimensional and sheet good
   * Added 1D and 2D bin packing libraries
 
+* 1.4.2 (2018-06-06)
+
+  * Improve layer visibility managment in component faces detection
+
 * 1.4.1 (2018-04-09)
 
   * Fix cutlist volume summary
