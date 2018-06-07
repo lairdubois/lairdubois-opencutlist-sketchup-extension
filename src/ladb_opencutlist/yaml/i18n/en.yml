@@ -199,6 +199,15 @@ tab:
         none: None
         only_final: Only Final
         full: Always
+      list:
+        unplaced_boxes: Pièces non placées
+        number: N°
+        name: Désignation
+        raw: Brute
+        length: Longueur
+        width: Largeur
+        trimming: Marge
+        efficiency: Efficacité
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)

@@ -53,10 +53,11 @@
       }
 
       @best_packing = packings[0]
-      response = export(options, @best_packing)
+      # response = export(options, @best_packing)
       #response[:group] = @group
-      puts response
-     return BinPacking2D::Export.new(@best_packing.original_bins, @best_packing.unplaced_boxes, @group).to_html(options)
+      # puts response
+      # return BinPacking2D::Export.new(@best_packing.original_bins, @best_packing.unplaced_boxes, @group).to_html(options)
+      return @best_packing
     end
     
     def export(options, packing)

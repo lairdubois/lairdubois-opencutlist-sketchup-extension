@@ -1,6 +1,6 @@
 {# set errors #}
 {# set warnings #}
-{# set is_metric #}
+{# set isMetric #}
 {# set groups #}
 
 {% include 'core/_alert-errors.twig' %}
@@ -47,7 +47,7 @@
                     </div>
                 </td>
                 <td class="text-center">{{ group.part_count }}</td>
-                {% if is_metric %}
+                {% if isMetric %}
                     <td class="text-right">{% if group.raw_length == 0 %}-{% else %}{{ group.raw_length|number_format(3, ',', ' ') }}m{% endif %}</td>
                     <td class="text-right">{% if group.raw_area == 0 %}-{% else %}{{ group.raw_area|number_format(3, ',', ' ') }}m<sup>2</sup>{% endif %}</td>
                     <td class="text-right">{% if group.raw_volume == 0 %}-{% else %}{{ group.raw_volume|number_format(3, ',', ' ') }}m<sup>3</sup>{% endif %}</td>

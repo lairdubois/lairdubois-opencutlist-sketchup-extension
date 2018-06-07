@@ -1,0 +1,157 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_cuttingdiagram_2d' %}
+{% set out = true %}
+
+{% set sheetDimensionFontSize = 18 %}
+{% set dimensionFontSize = 13 %}
+{% set numberFontSize = 26 %}
+
+{% set dimensionOffset = 3 %}
+{% set sheetDimensionOffset = 10 %}
+
+{% set sheetOutlineWidth = 1 %}
+{% set boxOutlineWidth = 2 %}
+{% set cutOutlineWidth = 2 %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs">
+        {% include 'tabs/cutlist/_file-tab.twig' with { 'generatedAt':'000' } %}
+    </ul>
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.cuttingdiagram.title'|i18next}} <small>| {{ group.material_name }} / <strong>{{ group.std_dimension}}</strong></small>
+{% endblock %}
+
+{% block headerToolsInner %}
+    {#<button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}</button>#}
+    {#&nbsp;#}
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+        {% if unplaced_boxes|length > 0 %}
+            <div class="ladb-cuttingdiagram-group">
+
+                <table class="table table-bordered ladb-cutlist-group">
+                    <thead>
+                    <tr>
+                        <td colspan="4">
+                            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                            <div>
+                                <span class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_boxes'|i18next }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.number'|i18next }}</td>
+                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.name'|i18next }}</td>
+                        <td class="text-center" colspan="2">{{ 'tab.cutlist.cuttingdiagram.list.raw'|i18next }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
+                        <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
+                    </tr>
+                    {% for box in unplaced_boxes  %}
+                    <tr class="ladb-cutlist-row">
+                        <td class="text-center">
+                            {{ box.number }}
+                        </td>
+                        <td>
+                            {{ box.name }}
+                        </td>
+                        <td class="text-right">
+                            {{ box.length }}
+                        </td>
+                        <td class="text-right">
+                            {{ box.width }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        {% endif %}
+        {% for bin in bins %}
+            <div class="ladb-cuttingdiagram-group">
+                <table id="ladb_cuttingdiagram_group_{{ loop.index }}" class="table table-bordered ladb-cutlist-group" data-group-id="{{ loop.index }}">
+                    <thead>
+                    <tr>
+                        <td colspan="2">
+                            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                            <div>
+                                <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ bin.length }} x {{ bin.width }}</em></span>
+                                <div class="no-print btn-group pull-right" role="group">
+                                    <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>
+                                    <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
+                                </div>
+                                <span class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ bins|length }}</strong></span>
+                            </div>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="2">
+
+                            <svg viewBox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ bin.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }} {{ bin.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" style="max-height: {{ bin.px_width + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize }}px">
+                                <text class="sheet-dimension" x="{{ bin.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bin.length }}</text>
+                                <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ bin.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ bin.px_width / 2 }})">{{ bin.width }}</text>
+                                <g class="sheet">
+                                    <rect class="sheet-outer" x="-1" y="-1" width="{{ bin.px_length + 2 }}" height="{{ bin.px_width + 2 }}"></rect>
+                                    <rect class="sheet-inner" x="0" y="0" width="{{ bin.px_length }}" height="{{ bin.px_width }}"></rect>
+                                </g>
+                                {% for box in bin.boxes %}
+                                    <g class="box">
+                                        <rect class="box-outer" x="{{ box.px_x }}" y="{{ box.px_y }}" width="{{ box.px_length }}" height="{{ box.px_width }}"></rect>
+                                        <rect class="box-inner" x="{{ box.px_x + boxOutlineWidth }}" y="{{ box.px_y + boxOutlineWidth }}" width="{{ box.px_length - boxOutlineWidth * 2 }}" height="{{ box.px_width - boxOutlineWidth * 2 }}"></rect>
+                                        <text class="box-number" x="{{ box.px_x + box.px_length / 2 }}" y="{{ box.px_y + box.px_width / 2 }}" font-size="{{ min(numberFontSize, box.px_length, box.px_width)  }}px" text-anchor="middle" dominant-baseline="central"{% if box.rotated %} transform="rotate(-90 {{ box.px_x + box.px_length / 2 }},{{ box.px_y + box.px_width / 2 }})"{% endif %}>{{ box.number }}</text>
+                                        {% set centredLength = box.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
+                                        {% set centredWidth = box.px_length > (dimensionOffset + dimensionFontSize + numberFontSize) %}
+                                        <text class="box-dimension" x="{{ centredLength ? box.px_x + box.px_length / 2 : box.px_x + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ box.px_y + boxOutlineWidth + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}" dominant-baseline="hanging">{{ box.length }}</text>
+                                        <text class="box-dimension" x="{{ box.px_x + boxOutlineWidth + dimensionOffset }}" y="{{ centredWidth ? box.px_y + box.px_width / 2 : box.px_y + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredWidth %}middle{% else %}end{% endif %}" dominant-baseline="hanging" transform="rotate(-90 {{ box.px_x + boxOutlineWidth + dimensionOffset }},{{ centredWidth ? box.px_y + box.px_width / 2 : box.px_y + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }})">{{ box.width }}</text>
+                                    </g>
+                                {% endfor %}
+                                {% for leftover in bin.leftovers %}
+                                    {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
+                                    {% set hideDimensions = leftover.px_length < (dimensionFontSize + dimensionOffset) or leftover.px_width < (dimensionFontSize + dimensionOffset) %}
+                                    <g class="leftover">
+                                        <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
+                                        {% if not hideCross %}
+                                            <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
+                                            <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
+                                        {% endif %}
+                                        {% if not hideDimensions %}
+                                            <text class="leftover-dimension" x="{{ leftover.px_x + leftover.px_length / 2 }}" y="{{ leftover.px_y + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging">{{ leftover.length }}</text>
+                                            <text class="leftover-dimension" x="{{ leftover.px_x + dimensionOffset }}" y="{{ leftover.px_y + leftover.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging" transform="rotate(-90 {{ leftover.px_x + dimensionOffset }},{{ leftover.px_y + leftover.px_width / 2 }})">{{ leftover.width }}</text>
+                                        {% endif %}
+                                    </g>
+                                {% endfor %}
+                                {% for cut in bin.cuts %}
+                                    <g class="cut">
+                                        <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : px_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? px_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
+                                        <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : px_kerf }}" height="{{ cut.is_horizontal ? px_kerf : cut.px_length }}"></rect>
+                                    </g>
+                                {% endfor %}
+                            </svg>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ trimming }}</td>
+                        <td width="12%" style="white-space: nowrap;"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bin.efficiency }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -199,6 +199,15 @@ tab:
         none: Jamais
         only_final: Seulement à la fin
         full: Toujours
+      list:
+        unplaced_boxes: Pièces non placées
+        number: N°
+        name: Désignation
+        raw: Brute
+        length: Longueur
+        width: Largeur
+        trimming: Marge
+        efficiency: Efficacité
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

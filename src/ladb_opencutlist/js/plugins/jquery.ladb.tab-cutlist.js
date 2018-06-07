@@ -65,6 +65,13 @@
         showTick: true
     };
 
+    // Tokenfield options
+
+    var TOKENFIELD_OPTIONS = {
+        delimiter: ';',
+        createTokensOnBlur: true
+    };
+
     // CLASS DEFINITION
     // ======================
 
@@ -73,6 +80,8 @@
 
         this.generateAt = null;
         this.filename = null;
+        this.pageLabel = null;
+        this.lengthUnit = null;
         this.groups = [];
         this.materialUsages = [];
         this.editedPart = null;
@@ -112,8 +121,8 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var tips = response.tips;
-            var length_unit = response.length_unit;
-            var is_metric = response.is_metric;
+            var lengthUnit = response.length_unit;
+            var isMetric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var materialUsages = response.material_usages;
@@ -121,6 +130,8 @@
 
             // Keep usefull data
             that.filename = filename;
+            that.pageLabel = pageLabel;
+            that.lengthUnit = lengthUnit;
             that.groups = groups;
             that.materialUsages = materialUsages;
 
@@ -130,7 +141,7 @@
                 filename: filename,
                 pageLabel: pageLabel,
                 generateAt: that.generateAt,
-                length_unit: length_unit
+                lengthUnit: lengthUnit
             }));
 
             // Hide help panel
@@ -152,7 +163,7 @@
                 errors: errors,
                 warnings: warnings,
                 tips: tips,
-                is_metric: is_metric,
+                isMetric: isMetric,
                 groups: groups
             }));
 
@@ -611,7 +622,7 @@
 
         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram', 'tabs/cutlist/_modal-cuttingdiagram.twig', $.extend({ material_attributes: response }, { group: group }));
+            var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', $.extend({ material_attributes: response }, { group: group }));
 
             // Fetch UI elements
             var $selectSizes = $('#ladb_select_sizes', $modal);
@@ -693,12 +704,18 @@
 
                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                rubyCallCommand('cutlist_group_cuttingdiagram', $.extend({ group_id: groupId }, that.cuttingdiagramOptions, that.uiOptions), function (response) {
+                rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, that.cuttingdiagramOptions, that.uiOptions), function(response) {
 
-                    var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram', 'tabs/cutlist/_slide-cuttingdiagram.twig', $.extend({group: group}, response));
+                    var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
+                        filename: that.filename,
+                        pageLabel: that.pageLabel,
+                        lengthUnit: that.lengthUnit,
+                        generatedAt: new Date().getTime() / 1000,
+                        group: group
+                    }, response));
 
-                    var $page = $('.ladb-page', $slide);
-                    $page.load(response.cuttingdiagram_path, {}, function() {
+                    // var $page = $('.ladb-page', $slide);
+                    // $page.load(response.cuttingdiagram_path, {}, function() {
 
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function() {
                             var $btn = $(this);
@@ -736,7 +753,7 @@
                             return false;
                         });
 
-                    });
+                    // });
 
                     // Fetch UI elements
                     var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);

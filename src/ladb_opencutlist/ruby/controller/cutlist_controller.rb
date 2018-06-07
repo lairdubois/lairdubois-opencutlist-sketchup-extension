@@ -76,8 +76,8 @@
         group_update_command(group_data)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram") do |settings|
-        group_cuttingdiagram_command(settings)
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
+        group_cuttingdiagram_2d_command(settings)
       end
 
     end
@@ -1009,11 +1009,9 @@
 
     end
     
-    def group_cuttingdiagram_command(settings)
+    def group_cuttingdiagram_2d_command(settings)
       if @cutlist
 
-        puts settings['base_sheet_length'], settings['base_sheet_width']
-        
         # Check settings
         group_id = settings['group_id']
         kerf = DimensionUtils.instance.str_to_ifloat(settings['kerf']).to_l.to_f
@@ -1021,11 +1019,9 @@
         base_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
         base_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
         rotatable = settings['rotatable']
-        presort = settings['presort']
-        stacking = settings['stacking']
-        bbox = settings['bbox']
-
-        puts base_sheet_length, base_sheet_width
+        presort = settings['presort'].to_i
+        stacking = settings['stacking'].to_i
+        bbox = settings['bbox'].to_i
 
         boxes = []
 
@@ -1035,82 +1031,124 @@
             next
           end
 
-          if group[:material_type] == MaterialAttributes::TYPE_BAR
-            puts "start -> calepinage 1D"
-            group[:parts].each { |part|
-              i = 0
-              while i < part[:count]
-                boxes << BinPacking1D::Box.new(part[:length].to_l.to_f, part[:number])
-                i += 1
-              end
-            }
-
-            # the dimensions need to be in Sketchup internal dimensions AND float
-
-            options = {
-              :kerf => kerf.to_l.to_f,
-              :trimming => trimming.to_l.to_f,
-              :base_sheet_length => base_sheet_length.to_l.to_f,
-              :debugging => false
-            }
-                       
-            bins = [] # run will create a first bin if this is empty
-
-            e = BinPacking1D::PackEngine.new(bins, boxes)
-            e.run(options)
-
-            puts "end -> calepinage 1D"
-
-          elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
-
-            group[:parts].each { |part|
-              for i in 1..part[:count]
-                boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
-              end
-            }
-            
-            # the dimensions need to be in Sketchup internal units AND float
-
-            options = {
-              :kerf => kerf,
-              :trimming => trimming,
-              :rotatable => rotatable,
-              :stacking => stacking.to_i, # available options in packing2d.rb
-              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
-              :bbox_optimization => bbox.to_i, # available options in packing2d.rb
-              :presort => presort.to_i, # available options in packing2d.rb
-              :base_sheet_length => base_sheet_length,
-              :base_sheet_width => base_sheet_width,
-              :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
-              :debugging => false
-            }
-            
-            bins = [] # run will create a first bin if this is empty
-            e = BinPacking2D::PackEngine.new(bins, boxes, group)
-
-            # create this directory to put html files into
-            cuttingdiagram_dir = File.join(Plugin.instance.temp_dir, 'cuttingdiagram')
-            unless Dir.exist?(cuttingdiagram_dir)
-              Dir.mkdir(cuttingdiagram_dir)
+          group[:parts].each { |part|
+            for i in 1..part[:count]
+              boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
             end
-            FileUtils.rm_f Dir.glob(File.join(cuttingdiagram_dir, '*'))              
+          }
 
-            html = e.run(options)
-            cuttingdiagram_path = File.join(cuttingdiagram_dir, 'cuttingdiagram.html')
-            File.write(cuttingdiagram_path, html)
+          # the dimensions need to be in Sketchup internal units AND float
 
-            return {
-                :length_unit => @cutlist[:length_unit],
-                :is_metric => @cutlist[:is_metric],
-                :dir => @cutlist[:dir],
-                :filename => @cutlist[:filename],
-                :page_label => @cutlist[:page_label],
-                :cuttingdiagram_path => cuttingdiagram_path,
+          options = {
+            :kerf => kerf,
+            :trimming => trimming,
+            :rotatable => rotatable,
+            :stacking => stacking, # available options in packing2d.rb
+            :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
+            :bbox_optimization => bbox, # available options in packing2d.rb
+            :presort => presort, # available options in packing2d.rb
+            :base_sheet_length => base_sheet_length,
+            :base_sheet_width => base_sheet_width,
+            :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
+            :debugging => false
+          }
+
+          # Convert inch float value to pixel
+          def to_px(inch_value)
+            inch_value * 7.5 # 900px = 120" ~ 3m
+          end
+
+          bins = [] # run will create a first bin if this is empty
+          e = BinPacking2D::PackEngine.new(bins, boxes, group)
+
+          # Compute the cutting diagram
+          result = e.run(options)
+
+          response = {
+              :px_trimming => to_px(options[:trimming]),
+              :trimming => options[:trimming].to_l.to_s,
+              :px_kerf => to_px(options[:kerf]),
+              :kerf => options[:kerf].to_l.to_s,
+              :unplaced_boxes => [],
+              :bins => [],
+          }
+
+          # Unplaced boxes
+          result.unplaced_boxes.each { |box_def|
+            response[:unplaced_boxes].push(
+                {
+                    :number => box_def.number[:number],
+                    :name => box_def.number[:name],
+                    :length => box_def.length.to_l.to_s,
+                    :width => box_def.width.to_l.to_s,
+                }
+            )
+          }
+
+          # Bins
+          result.original_bins.each { |bin_def|
+
+            bin = {
+                :px_length => to_px(bin_def.length),
+                :px_width => to_px(bin_def.width),
+                :length => bin_def.length.to_l.to_s,
+                :width => bin_def.width.to_l.to_s,
+                :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
+                :boxes => [],
+                :leftovers => [],
+                :cuts => [],
+            }
+            response[:bins].push(bin)
+
+            # Boxes
+            bin_def.boxes.each { |box_def|
+              bin[:boxes].push(
+                  {
+                      :px_x => to_px(box_def.x),
+                      :px_y => to_px(box_def.y),
+                      :px_length => to_px(box_def.length),
+                      :px_width => to_px(box_def.width),
+                      :length => box_def.length.to_l.to_s,
+                      :width => box_def.width.to_l.to_s,
+                      :rotated => box_def.rotated,
+                      :number => box_def.number[:number],
+                  }
+              )
             }
 
-          end
-        } 
+            # Leftovers
+            bin_def.leftovers.each { |box_def|
+              bin[:leftovers].push(
+                  {
+                      :px_x => to_px(box_def.x),
+                      :px_y => to_px(box_def.y),
+                      :px_length => to_px(box_def.length),
+                      :px_width => to_px(box_def.width),
+                      :length => box_def.length.to_l.to_s,
+                      :width => box_def.width.to_l.to_s,
+                  }
+              )
+            }
+
+            # Cuts
+            bin_def.cuts.each { |cut_def|
+              bin[:cuts].push(
+                  {
+                      :px_x => to_px(cut_def.x),
+                      :px_y => to_px(cut_def.y),
+                      :px_length => to_px(cut_def.length),
+                      :is_horizontal => cut_def.is_horizontal,
+                  }
+              )
+            }
+
+          }
+
+          return response
+        }
+
       end
+
     end
 
   end

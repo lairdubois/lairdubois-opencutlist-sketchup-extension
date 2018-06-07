@@ -1,8 +1,7 @@
 ﻿module BinPacking2D
   class Packer < Packing2D
   
-    attr_accessor :sawkerf, :original_bins, :unplaced_boxes,
-      :score, :split, :performance
+    attr_accessor :sawkerf, :original_bins, :unplaced_boxes, :score, :split, :performance
 
     def initialize(options)
       @@debugging = options[:debugging]
