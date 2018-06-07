@@ -1,4 +1,4 @@
-﻿module Ladb::OpenCutList
+module Ladb::OpenCutList
 
   require 'singleton'
   require 'fileutils'
@@ -17,7 +17,7 @@
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806062343'.freeze
+    BUILD = '201806070739'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
