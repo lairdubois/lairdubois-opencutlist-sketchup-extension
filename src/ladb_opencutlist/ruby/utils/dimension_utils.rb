@@ -38,7 +38,11 @@
     @length_format
     
     def initialize
-      @separator = Sketchup::RegionalSettings.decimal_separator
+      begin
+        @separator = Object.const_defined?('Sketchup::RegionalSettings') ? Sketchup::RegionalSettings.decimal_separator : '.' # Sketchup::RegionalSettings is not defined prior Sketchup 2016
+      rescue NameError
+        @separator = '.'
+      end
       fetch_length_options
     end
 
