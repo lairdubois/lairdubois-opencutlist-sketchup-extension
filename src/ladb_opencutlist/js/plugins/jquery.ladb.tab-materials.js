@@ -108,7 +108,7 @@
             that.$btnList.prop('disabled', false);
 
             // Stick header
-            that.stickSlideHeader(that.$baseSlide);
+            that.stickSlideHeader(that.$rootSlide);
 
             // Callback
             if (callback && typeof callback == 'function') {

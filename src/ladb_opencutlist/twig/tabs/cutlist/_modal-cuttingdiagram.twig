@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram' %}
-{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~group.material_name~' / '~group.std_dimension %}
+{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~' '~group.material_name~' / '~group.std_dimension %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
@@ -10,8 +10,8 @@
             <div class="col-xs-7">
                 <select class="form-control" id="ladb_select_sizes">
                     {% if material_attributes.std_sizes|length > 0 %}
-                        {% for std_size in material_attributes.std_sizes %}
-                            <option value="{{ std_size.length|escape('html') }}x{{ std_size.width|escape('html') }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size.length|escape('html') }} x {{ std_size.width|escape('html') }}"></option>
+                        {% for std_size in material_attributes.std_sizes|split(';') %}
+                            <option value="{{ std_size|escape('html') }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size|escape('html') }}"></option>
                         {% endfor %}
                         <option data-divider="true"></option>
                     {% endif %}

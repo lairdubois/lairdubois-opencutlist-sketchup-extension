@@ -35,9 +35,9 @@ module Ladb::OpenCutList
 
     def read_from_attributes
       if @definition
-        @number = Plugin.get_attribute(@definition, 'number', nil)
-        @cumulable = Plugin.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
-        @orientation_locked_on_axis = Plugin.get_attribute(@definition, 'orientation_locked_on_axis', false)
+        @number = Plugin.instance.get_attribute(@definition, 'number', nil)
+        @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
+        @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
       end
     end
 

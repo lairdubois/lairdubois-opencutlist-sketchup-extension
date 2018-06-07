@@ -22,19 +22,22 @@ module Ladb::OpenCutList
 
     def onNewModel(model)
       # puts "onNewModel: #{model}"
-      Plugin.trigger_event('on_new_model', nil)
+      Plugin.instance.trigger_event('on_new_model', nil)
+      DimensionUtils.instance.fetch_length_options
       add_model_observers(model)
     end
 
     def onOpenModel(model)
       # puts "onOpenModel: #{model}"
-      Plugin.trigger_event('on_open_model', { :name => model.name })
+      Plugin.instance.trigger_event('on_open_model', { :name => model.name })
+      DimensionUtils.instance.fetch_length_options
       add_model_observers(model)
     end
 
     def onActivateModel(model)
       # puts "onActivateModel: #{model}"
-      Plugin.trigger_event('on_activate_model', { :name => model.name })
+      Plugin.instance.trigger_event('on_activate_model', { :name => model.name })
+      DimensionUtils.instance.fetch_length_options
     end
 
     # -----

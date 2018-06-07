@@ -18,19 +18,19 @@ module Ladb::OpenCutList
       @line_1_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.current_os == :MAC ? 20 : 15,
+          size: Plugin.instance.current_os == :MAC ? 20 : 15,
           align: TextAlignCenter
       }
       @line_2_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.current_os == :MAC ? 15 : 10,
+          size: Plugin.instance.current_os == :MAC ? 15 : 10,
           align: TextAlignCenter
       }
       button_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.current_os == :MAC ? 15 : 12,
+          size: Plugin.instance.current_os == :MAC ? 15 : 12,
           align: TextAlignCenter
       }
 
@@ -49,10 +49,10 @@ module Ladb::OpenCutList
         }
 
         # Define buttons
-        @buttons.push(GLButton.new(view, Plugin.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
           view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
         end)
-        @buttons.push(GLButton.new(view, Plugin.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
           view.zoom_extents
         end)
 

@@ -429,9 +429,6 @@
         #response[:break_stacking_if_needed] = options[:break_stacking_if_needed].to_s
         #response[:preprocess_rotatable] = options[:preprocess_rotatable].to_s
 
-        # are these two needed anymore?
-        response[:colored] = options[:colored]
-
         unplaced = []
         @unplaced_boxes.each do |box|
            unplaced << box

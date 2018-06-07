@@ -1,5 +1,6 @@
 ﻿module Ladb::OpenCutList
 
+  require 'singleton'
   require 'fileutils'
   require 'json'
   require 'yaml'
@@ -11,6 +12,8 @@
   require_relative 'utils/dimension_utils'
 
   class Plugin
+    
+    include Singleton
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
@@ -32,38 +35,59 @@
     DIALOG_TOP = 100
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
-    @@temp_dir = nil
-    @@language = nil
-    @@current_os = nil
-    @@i18n_strings = nil
-    @@html_dialog_compatible = nil
+    @temp_dir
+    @language
+    @current_os
+    @i18n_strings
+    @html_dialog_compatible
 
-    @@commands = {}
-    @@controllers = []
+    @commands
+    @controllers
 
-    @@started = false
+    @started
 
-    @@dialog = nil
-    @@dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
-    @@dialog_startup_tab_name = nil
+    @dialog
+    @dialog_min_size
+    @dialog_startup_tab_name
 
     # -----
 
-    def self.temp_dir
-      if @@temp_dir
-        return @@temp_dir
+    def initialize
+
+      @temp_dir = nil
+      @language = nil
+      @current_os = nil
+      @i18n_strings = nil
+      @html_dialog_compatible = nil
+
+      @commands = {}
+      @controllers = []
+
+      @started = false
+
+      @dialog = nil
+      @dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
+      @dialog_startup_tab_name = nil
+
+    end
+
+    # -----
+
+    def temp_dir
+      if @temp_dir
+        return @temp_dir
       end
       dir = File.join(Sketchup.temp_dir, "ladb_opencutlist")
       if Dir.exist?(dir)
         FileUtils.remove_dir(dir, true)   # Temp dir exists we clean it
       end
       Dir.mkdir(dir)
-      @@temp_dir = dir
+      @temp_dir = dir
     end
 
-    def self.language
-      if @@language
-        return @@language
+    def language
+      if @language
+        return @language
       end
       available_translations = []
       Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
@@ -71,26 +95,26 @@
       }
       language = Sketchup.get_locale.split('-')[0].downcase
       if available_translations.include? language
-        @@language = language   # Uses SU locale only if translation is available
+        @language = language   # Uses SU locale only if translation is available
       else
-        @@language = 'en'
+        @language = 'en'
       end
-      @@language
+      @language
     end
 
-    def self.current_os
-      if @@current_os
-        return @@current_os
+    def current_os
+      if @current_os
+        return @current_os
       end
-      @@current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
+      @current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
     end
 
-    def self.get_i18n_string(path_key)
+    def get_i18n_string(path_key)
 
-      unless @@i18n_strings
+      unless @i18n_strings
         begin
           yaml_file = "#{__dir__}/../yaml/i18n/#{language}.yml"
-          @@i18n_strings = YAML::load_file(yaml_file)
+          @i18n_strings = YAML::load_file(yaml_file)
         rescue
           raise "Error loading i18n file (file='#{yaml_file}')."
         end
@@ -98,7 +122,7 @@
 
       # Iterate over values
       begin
-        i18n_string = path_key.split('.').inject(@@i18n_strings) { |hash, key| hash[key] }
+        i18n_string = path_key.split('.').inject(@i18n_strings) { |hash, key| hash[key] }
       rescue
         puts "I18n value not found (key=#{path_key})."
       end
@@ -111,39 +135,39 @@
 
     end
 
-    def self.html_dialog_compatible
-      if @@html_dialog_compatible
-        return @@html_dialog_compatible
+    def html_dialog_compatible
+      if @html_dialog_compatible
+        return @html_dialog_compatible
       end
       begin
-        @@html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
+        @html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
       rescue NameError
-        @@html_dialog_compatible = false
+        @html_dialog_compatible = false
       end
-      @@html_dialog_compatible
+      @html_dialog_compatible
     end
 
     # -----
 
-    def self.get_attribute(entity, key, default_value = nil)
+    def get_attribute(entity, key, default_value = nil)
       # Try to retrieve entity attribute with Backward Compatibility with previous dictionary name
       entity.get_attribute(ATTRIBUTE_DICTIONARY, key, entity.get_attribute(BC_ATTRIBUTE_DICTIONARY, key, default_value))
     end
 
-    def self.read_default(key, default_value = nil)
+    def read_default(key, default_value = nil)
       # Try to retrieve default with Backward Compatibility with previous dictionary name
       Sketchup.read_default(DEFAULT_SECTION, key, Sketchup.read_default(BC_DEFAULT_SECTION, key, default_value))
     end
 
     # -----
 
-    def self.register_command(command, &block)
-      @@commands[command] = block
+    def register_command(command, &block)
+      @commands[command] = block
     end
 
-    def self.execute_command(command, params = nil)
-      if @@commands.has_key? command
-        block = @@commands[command]
+    def execute_command(command, params = nil)
+      if @commands.has_key? command
+        block = @commands[command]
         return block.call(params)
       end
       raise "Command '#{command}' not found"
@@ -151,18 +175,18 @@
 
     # -----
 
-    def self.trigger_event(event, params)
-      if @@dialog
-        @@dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
+    def trigger_event(event, params)
+      if @dialog
+        @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
       end
     end
 
     # -----
 
-    def self.start
+    def start
 
       # To minimize plugin initialization, start setup is called only once
-      unless @@started
+      unless @started
 
         # -- Observers --
 
@@ -170,8 +194,8 @@
 
         # -- Controllers --
 
-        @@controllers.push(MaterialsController.new)
-        @@controllers.push(CutlistController.new)
+        @controllers.push(MaterialsController.new)
+        @controllers.push(CutlistController.new)
 
         # -- Commands --
 
@@ -194,17 +218,17 @@
           open_external_file_command(params)
         end
 
-        @@controllers.each { |controller|
+        @controllers.each { |controller|
           controller.setup_commands
         }
 
-        @@started = true
+        @started = true
 
       end
 
     end
 
-    def self.create_dialog
+    def create_dialog
 
       # Start
       start
@@ -212,7 +236,7 @@
       # Create dialog instance
       dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION
       if html_dialog_compatible
-        @@dialog = UI::HtmlDialog.new(
+        @dialog = UI::HtmlDialog.new(
             {
                 :dialog_title => dialog_title,
                 :preferences_key => DIALOG_PREF_KEY,
@@ -226,11 +250,11 @@
                 :min_height => DIALOG_MINIMIZED_HEIGHT,
                 :style => UI::HtmlDialog::STYLE_DIALOG
             })
-        @@dialog.set_on_closed {
-          @@dialog = nil
+        @dialog.set_on_closed {
+          @dialog = nil
         }
       else
-        @@dialog = UI::WebDialog.new(
+        @dialog = UI::WebDialog.new(
             dialog_title,
             true,
             DIALOG_PREF_KEY,
@@ -240,56 +264,56 @@
             DIALOG_TOP,
             true
         )
-        @@dialog.min_width = DIALOG_MINIMIZED_WIDTH
-        @@dialog.min_height = DIALOG_MINIMIZED_HEIGHT
-        @@dialog.set_on_close {
-          @@dialog = nil
+        @dialog.min_width = DIALOG_MINIMIZED_WIDTH
+        @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
+        @dialog.set_on_close {
+          @dialog = nil
         }
       end
 
       # Setup dialog page
-      @@dialog.set_file("#{__dir__}/../html/dialog-#{language}.html")
+      @dialog.set_file("#{__dir__}/../html/dialog-#{language}.html")
 
       # Set dialog size and position
       dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
       dialog_set_position(DIALOG_LEFT, DIALOG_TOP)
 
       # Setup dialog actions
-      @@dialog.add_action_callback("ladb_opencutlist_command") do |action_context, call_json|
+      @dialog.add_action_callback("ladb_opencutlist_command") do |action_context, call_json|
         call = JSON.parse(call_json)
         response = execute_command(call['command'], call['params'])
         script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(response))) : ''}');"
-        @@dialog.execute_script(script)
+        @dialog.execute_script(script)
       end
 
     end
 
-    def self.show_dialog(tab_name = nil)
+    def show_dialog(tab_name = nil)
 
-      unless @@dialog
+      unless @dialog
         create_dialog
       end
 
-      if @@dialog.visible?
+      if @dialog.visible?
 
         if tab_name
           # Startup tab name is defined call JS to select it
-          @@dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
+          @dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
         end
 
       else
 
         # Store the startup tab name
-        @@dialog_startup_tab_name = tab_name
+        @dialog_startup_tab_name = tab_name
 
         # Show dialog
         if html_dialog_compatible
-          @@dialog.show
+          @dialog.show
         else
           if current_os == :MAC
-            @@dialog.show_modal
+            @dialog.show_modal
           else
-            @@dialog.show
+            @dialog.show
           end
         end
 
@@ -297,17 +321,17 @@
 
     end
 
-    def self.hide_dialog
-      if @@dialog
-        @@dialog.close
-        @@dialog = nil
+    def hide_dialog
+      if @dialog
+        @dialog.close
+        @dialog = nil
         true
       else
         false
       end
     end
 
-    def self.toggle_dialog
+    def toggle_dialog
       unless hide_dialog
         show_dialog
       end
@@ -315,29 +339,29 @@
 
     private
 
-    def self.dialog_set_size(width, height)
-      if @@dialog
+    def dialog_set_size(width, height)
+      if @dialog
         if current_os == :MAC && !html_dialog_compatible
-          @@dialog.execute_script("window.resizeTo(#{width},#{height})")
+          @dialog.execute_script("window.resizeTo(#{width},#{height})")
         else
-          @@dialog.set_size(width, height)
+          @dialog.set_size(width, height)
         end
       end
     end
 
-    def self.dialog_set_position(left, top)
-      if @@dialog
+    def dialog_set_position(left, top)
+      if @dialog
         if current_os == :MAC && !html_dialog_compatible
-          @@dialog.execute_script("window.moveTo(#{left},#{top})")
+          @dialog.execute_script("window.moveTo(#{left},#{top})")
         else
-          @@dialog.set_position(left, top)
+          @dialog.set_position(left, top)
         end
       end
     end
 
     # -- Commands ---
 
-    def self.read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
+    def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
       keys = params['keys']
       strategy = params['strategy']   # Strategy used to read settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
       values = []
@@ -359,9 +383,10 @@
         if value.nil?
           value = read_default(key)
         end
-        
-        if value.is_a?(String) && value.start_with?('d:')
-          value = DimensionUtils.denormalize(value)
+
+        # Denormalize value if dimension
+        if value.is_a? String and value.start_with?(DimensionUtils::MARKER)
+          value = DimensionUtils.instance.denormalize(value)
         end
         
         values.push({
@@ -372,15 +397,17 @@
       { :values => values }
     end
 
-    def self.write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
+    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
       settings = params['settings']
       strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
       settings.each { |setting|
+
         key = setting['key']
         value = setting['value']
 
-        if value.is_a?(String) && value.start_with?('d:')
-          value = DimensionUtils.normalize(value)
+        # Normalize value if dimension
+        if value.is_a? String and value.start_with?(DimensionUtils::MARKER)
+          value = DimensionUtils.instance.normalize(value)
         end
 
         if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
@@ -389,10 +416,11 @@
         if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
           Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
         end
+
       }
     end
 
-    def self.dialog_loaded_command
+    def dialog_loaded_command
       {
           :version => VERSION,
           :build => BUILD,
@@ -402,26 +430,26 @@
           :current_os => "#{current_os}",
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
-          :language => Plugin.language,
+          :language => Plugin.instance.language,
           :html_dialog_compatible => html_dialog_compatible,
-          :dialog_startup_size => @@dialog_min_size,
-          :dialog_startup_tab_name => @@dialog_startup_tab_name  # nil if none
+          :dialog_startup_size => @dialog_min_size,
+          :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
     end
 
-    def self.dialog_minimize_command
-      if @@dialog
+    def dialog_minimize_command
+      if @dialog
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
       end
     end
 
-    def self.dialog_maximize_command
-      if @@dialog
+    def dialog_maximize_command
+      if @dialog
         dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
       end
     end
 
-    def self.open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
+    def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
       path = params['path']
       if path
         UI.openURL("file:///#{path}")

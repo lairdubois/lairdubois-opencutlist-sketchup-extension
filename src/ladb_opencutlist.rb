@@ -8,7 +8,7 @@ module Ladb
     # Create and Register extension
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new(Plugin::NAME, 'ladb_opencutlist/main')
-      ex.description = Plugin.get_i18n_string('core.extension.description')
+      ex.description = Plugin.instance.get_i18n_string('core.extension.description')
       ex.version     = Plugin::VERSION
       ex.copyright   = '2016-2018 - GNU GPLv3'
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'

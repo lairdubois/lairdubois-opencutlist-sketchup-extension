@@ -44,39 +44,39 @@
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.register_command("cutlist_generate") do |settings|
+      Plugin.instance.register_command("cutlist_generate") do |settings|
         generate_command(settings)
       end
 
-      Plugin.register_command("cutlist_export") do |settings|
+      Plugin.instance.register_command("cutlist_export") do |settings|
         export_command(settings)
       end
 
-      Plugin.register_command("cutlist_numbers_save") do |settings|
+      Plugin.instance.register_command("cutlist_numbers_save") do |settings|
         numbers_command(settings, false)
       end
 
-      Plugin.register_command("cutlist_numbers_reset") do |settings|
+      Plugin.instance.register_command("cutlist_numbers_reset") do |settings|
         numbers_command(settings, true)
       end
 
-      Plugin.register_command("cutlist_part_get_thumbnail") do |part_data|
+      Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
         part_get_thumbnail_command(part_data)
       end
 
-      Plugin.register_command("cutlist_part_highlight") do |part_data|
+      Plugin.instance.register_command("cutlist_part_highlight") do |part_data|
         part_highlight_command(part_data)
       end
 
-      Plugin.register_command("cutlist_part_update") do |part_data|
+      Plugin.instance.register_command("cutlist_part_update") do |part_data|
         part_update_command(part_data)
       end
 
-      Plugin.register_command("cutlist_group_update") do |group_data|
+      Plugin.instance.register_command("cutlist_group_update") do |group_data|
         group_update_command(group_data)
       end
 
-      Plugin.register_command("cutlist_group_cuttingdiagram") do |settings|
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram") do |settings|
         group_cuttingdiagram_command(settings)
       end
 
@@ -718,7 +718,7 @@
       if @cutlist and @cutlist[:groups]
 
         # Ask for export file path
-        export_path = UI.savepanel(Plugin.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
+        export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
         if export_path
 
           begin
@@ -754,19 +754,19 @@
 
                 # Header row
                 header = []
-                header.push(Plugin.get_i18n_string('tab.cutlist.export.name'))
-                header.push(Plugin.get_i18n_string('tab.cutlist.export.count'))
+                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.name'))
+                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.count'))
                 unless hide_raw_dimensions
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_length'))
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_width'))
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.raw_thickness'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_width'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_thickness'))
                 end
                 unless hide_final_dimensions
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.length'))
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.width'))
-                  header.push(Plugin.get_i18n_string('tab.cutlist.export.thickness'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.length'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.width'))
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.thickness'))
                 end
-                header.push(Plugin.get_i18n_string('tab.cutlist.export.material_name'))
+                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
 
                 csv << header
 
@@ -872,7 +872,7 @@
 
         definition.refresh_thumbnail
 
-        temp_dir = Plugin.temp_dir
+        temp_dir = Plugin.instance.temp_dir
         component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
         unless Dir.exist?(component_thumbnails_dir)
           Dir.mkdir(component_thumbnails_dir)
@@ -914,8 +914,8 @@
         # Compute text infos
         text_line_1 = name
         text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
-            ' | ' + instance_infos.length.to_s + ' ' + Plugin.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
-            ' | ' + (material_name.empty? ? Plugin.get_i18n_string('tab.cutlist.material_undefined') : material_name)
+            ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
+            ' | ' + (material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : material_name)
 
         # Create and activate highlight part tool
         highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_infos)
@@ -1011,17 +1011,21 @@
     
     def group_cuttingdiagram_command(settings)
       if @cutlist
+
+        puts settings['base_sheet_length'], settings['base_sheet_width']
         
         # Check settings
         group_id = settings['group_id']
-        kerf = DimensionUtils.str_to_ifloat(settings['kerf']).to_l.to_f
-        trimming = DimensionUtils.str_to_ifloat(settings['trimming']).to_l.to_f
-        base_sheet_length = DimensionUtils.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
-        base_sheet_width = DimensionUtils.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
+        kerf = DimensionUtils.instance.str_to_ifloat(settings['kerf']).to_l.to_f
+        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
+        base_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
+        base_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
         bbox = settings['bbox']
+
+        puts base_sheet_length, base_sheet_width
 
         boxes = []
 
@@ -1060,12 +1064,8 @@
           elsif group[:material_type] == MaterialAttributes::TYPE_SHEET_GOOD
 
             group[:parts].each { |part|
-              thickness = part[:thickness]
-              material_name = part[:material_name]
-              i = 0
-              while i < part[:count]
+              for i in 1..part[:count]
                 boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
-                i += 1
               end
             }
             
@@ -1081,7 +1081,6 @@
               :presort => presort.to_i, # available options in packing2d.rb
               :base_sheet_length => base_sheet_length,
               :base_sheet_width => base_sheet_width,
-              :colored => true,
               :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
               :debugging => false
             }
@@ -1090,7 +1089,7 @@
             e = BinPacking2D::PackEngine.new(bins, boxes, group)
 
             # create this directory to put html files into
-            cuttingdiagram_dir = File.join(Plugin::temp_dir, 'cuttingdiagram')
+            cuttingdiagram_dir = File.join(Plugin.instance.temp_dir, 'cuttingdiagram')
             unless Dir.exist?(cuttingdiagram_dir)
               Dir.mkdir(cuttingdiagram_dir)
             end

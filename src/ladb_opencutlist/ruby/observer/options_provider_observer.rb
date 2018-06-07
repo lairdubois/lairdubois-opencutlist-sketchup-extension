@@ -4,7 +4,8 @@ module Ladb::OpenCutList
 
     def onOptionsProviderChanged(provider, name)
       # puts "onOptionsProviderChanged: #{name}"
-      Plugin.trigger_event('on_options_provider_changed', nil)
+      Plugin.instance.trigger_event('on_options_provider_changed', nil)
+      DimensionUtils.instance.fetch_length_options
     end
 
   end

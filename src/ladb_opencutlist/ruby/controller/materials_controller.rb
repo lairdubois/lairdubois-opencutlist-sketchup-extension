@@ -14,25 +14,25 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.register_command("materials_list") do ||
+      Plugin.instance.register_command("materials_list") do ||
         list_command
       end
-      Plugin.register_command("materials_purge_unused") do ||
+      Plugin.instance.register_command("materials_purge_unused") do ||
         purge_unused_command
       end
-      Plugin.register_command("materials_update") do |material_data|
+      Plugin.instance.register_command("materials_update") do |material_data|
         update_command(material_data)
       end
-      Plugin.register_command("materials_remove") do |material_data|
+      Plugin.instance.register_command("materials_remove") do |material_data|
         remove_command(material_data)
       end
-      Plugin.register_command("materials_import_from_skm") do ||
+      Plugin.instance.register_command("materials_import_from_skm") do ||
         import_from_skm_command
       end
-      Plugin.register_command("materials_export_to_skm") do |material_data|
+      Plugin.instance.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
-      Plugin.register_command("materials_get_attributes_command") do |material_id|
+      Plugin.instance.register_command("materials_get_attributes_command") do |material_id|
         get_attributes_command(material_id)
       end
 
@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       materials = model ? model.materials : []
 
-      temp_dir = Plugin.temp_dir
+      temp_dir = Plugin.instance.temp_dir
       material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
       if Dir.exist?(material_thumbnails_dir)
         FileUtils.remove_dir(material_thumbnails_dir, true)   # Temp dir exists we clean it
@@ -213,7 +213,7 @@ module Ladb::OpenCutList
       materials = model.materials
 
       dir, filename = File.split(model.path)
-      path = UI.openpanel(Plugin.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
+      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
 
         begin
@@ -247,7 +247,7 @@ module Ladb::OpenCutList
       if material
 
         dir, filename = File.split(model.path)
-        path = UI.savepanel(Plugin.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
+        path = UI.savepanel(Plugin.instance.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
         if path
           begin
             material.save_as(path)
@@ -293,21 +293,9 @@ module Ladb::OpenCutList
         response[:length_increase] = material_attributes.length_increase
         response[:width_increase] = material_attributes.width_increase
         response[:thickness_increase] = material_attributes.thickness_increase
-        material_attributes.l_std_thicknesses.each { |std_thickness|
-          response[:std_thicknesses].push(std_thickness)
-        }
-        material_attributes.l_std_sections.each { |std_section|
-          response[:std_sections].push({
-                                        :width => std_section.width,
-                                        :height => std_section.height,
-                                    })
-        }
-        material_attributes.l_std_sizes.each { |std_size|
-          response[:std_sizes].push({
-                                        :length => std_size.length,
-                                        :width => std_size.width,
-                                    })
-        }
+        response[:std_thicknesses] = material_attributes.std_thicknesses
+        response[:std_section] = material_attributes.std_sections
+        response[:std_sizes] = material_attributes.std_sizes
         response[:grained] = material_attributes.grained
 
       end

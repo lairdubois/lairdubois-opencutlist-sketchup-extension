@@ -9,8 +9,8 @@ function LadbAbstractTab(element, options, opencutlist) {
 
     this._$modal = null;
 
-    this.$baseSlide = $('.ladb-slide', this.$element).first();
-    this._$slides = [ this.$baseSlide ];
+    this.$rootSlide = $('.ladb-slide', this.$element).first();
+    this._$slides = [ this.$rootSlide ];
 }
 
 // Slide /////
@@ -22,52 +22,59 @@ LadbAbstractTab.prototype.topSlide = function() {
     return null;
 };
 
-LadbAbstractTab.prototype.pushSlide = function(id, twigFile, renderParams) {
-    var that = this;
-
-    var $topSlide = this.topSlide();
+LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams) {
 
     // Render slide
     this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
 
     // Fetch UI elements
-    var $pushedSlide = $('#' + id, this.$element);
+    var $slide = $('#' + id, this.$element);
+
+    return this.pushSlide($slide);
+};
+
+LadbAbstractTab.prototype.pushSlide = function($slide) {
+    var that = this;
+
+    var $topSlide = this.topSlide();
 
     // Push in slides stack
-    this._$slides.push($pushedSlide);
+    this._$slides.push($slide);
 
     // Animation
-    $pushedSlide.addClass('animated');
-    $pushedSlide.switchClass('out', 'in', {
+    $slide.addClass('animated');
+    $slide.switchClass('out', 'in', {
         duration: 300,
         complete: function() {
-            $pushedSlide.removeClass('animated');
-            that.stickSlideHeader($pushedSlide);
+            $slide.removeClass('animated');
+            that.stickSlideHeader($slide);
             if ($topSlide) {
                 $topSlide.hide();
             }
         }
     });
 
-    return $pushedSlide;
+    return $slide;
 };
 
 LadbAbstractTab.prototype.popSlide = function() {
-    var $poppedSlide = this._$slides.pop();
-    var $topSlide = this.topSlide();
-    if ($topSlide) {
-        $topSlide.show();
-        this.computeStuckSlideHeaderWidth($topSlide);
-    }
-    this.unstickSlideHeader($poppedSlide);
-    $poppedSlide.addClass('animated');
-    $poppedSlide.switchClass('in', 'out', {
-        duration: 300,
-        complete: function() {
-            $poppedSlide.removeClass('animated');
-            $poppedSlide.remove();
+    if (this._$slides.length > 1) {
+        var $poppedSlide = this._$slides.pop();
+        var $topSlide = this.topSlide();
+        if ($topSlide) {
+            $topSlide.show();
+            this.computeStuckSlideHeaderWidth($topSlide);
         }
-    });
+        this.unstickSlideHeader($poppedSlide);
+        $poppedSlide.addClass('animated');
+        $poppedSlide.switchClass('in', 'out', {
+            duration: 300,
+            complete: function() {
+                $poppedSlide.removeClass('animated');
+                $poppedSlide.remove();
+            }
+        });
+    }
 };
 
 LadbAbstractTab.prototype.stickSlideHeader = function($slide) {
