@@ -1064,7 +1064,12 @@
           # Compute the cutting diagram
           result = e.run(options)
 
+          # Response
+          # --------
+
           response = {
+              :errors => [],
+              :warnings => [],
               :px_trimming => to_px(options[:trimming]),
               :trimming => options[:trimming].to_l.to_s,
               :px_kerf => to_px(options[:kerf]),
@@ -1073,12 +1078,20 @@
               :bins => [],
           }
 
+          # Warnings
+          materials = Sketchup.active_model.materials
+          material = materials[group[:material_name]]
+          material_attributes = MaterialAttributes.new(material)
+          if material_attributes.l_length_increase > 0 and material_attributes.l_width_increase > 0
+            response[:warnings].push('tab.cutlist.cuttingdiagram.warning.raw_dimensions')
+          end
+
           # Unplaced boxes
           result.unplaced_boxes.each { |box_def|
             response[:unplaced_boxes].push(
                 {
-                    :number => box_def.number[:number],
-                    :name => box_def.number[:name],
+                    :number => box_def.part[:number],
+                    :name => box_def.part[:name],
                     :length => box_def.length.to_l.to_s,
                     :width => box_def.width.to_l.to_s,
                 }
@@ -1111,7 +1124,8 @@
                       :length => box_def.length.to_l.to_s,
                       :width => box_def.width.to_l.to_s,
                       :rotated => box_def.rotated,
-                      :number => box_def.number[:number],
+                      :number => box_def.part[:number],
+                      :name => box_def.part[:name],
                   }
               )
             }

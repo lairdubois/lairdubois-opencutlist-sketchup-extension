@@ -176,11 +176,16 @@ tab:
     cuttingdiagram:
       title: Schnittplan
       option_kerf: Sägeblattdicke
+      option_kerf_help: Sägeblattdicke
       option_trimming: Kantenabfallbreite
+      option_trimming_help: Kantenabfallbreite
       option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
+      option_presort_help: Vorsortierung der Teile
       option_stacking: Identische Teile stapeln
+      option_stacking_help: Identische Teile stapeln
       option_bbox: Hüllenoptimierung
+      option_bbox_help: Hüllenoptimierung
       option_base_sheet: Standard Platte
       option_custom_sheet: Spezifische Platte
       option_base_sheet_length: Plattenlänge
@@ -208,6 +213,10 @@ tab:
         width: Largeur
         trimming: Marge
         efficiency: Efficacité
+      warning:
+        raw_dimensions: |
+          Ce calepinage présente les pièces dans leur dimensions brutes.
+          *(dimensions majorées par les surcôtes configurées en longueur et en largeur)*.
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)

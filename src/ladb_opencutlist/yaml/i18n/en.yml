@@ -176,11 +176,16 @@ tab:
     cuttingdiagram:
       title: Cutting Diagram
       option_kerf: Blade Thickness
+      option_kerf_help: Blade Thickness
       option_trimming: Trimming Size
+      option_trimming_help: Trimming Size
       option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
+      option_presort_help: Preordering of Parts
       option_stacking: Stack Identical Parts
+      option_stacking_help: Stack Identical Parts
       option_bbox: Bounding Box Optimization
+      option_bbox_help: Bounding Box Optimization
       option_base_sheet: Standard Panel
       option_custom_sheet: Custom Panel
       option_base_sheet_length: Custom Panel Length
@@ -208,6 +213,10 @@ tab:
         width: Largeur
         trimming: Marge
         efficiency: Efficacité
+      warning:
+        raw_dimensions: |
+          Ce calepinage présente les pièces dans leur dimensions brutes.
+          *(dimensions majorées par les surcôtes configurées en longueur et en largeur)*.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
