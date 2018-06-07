@@ -27,27 +27,25 @@
 
   class DimensionUtils
 
-    def initialize ()
-      @separator = Sketchup::RegionalSettings.decimal_separator
-      @length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
-      @length_format = Sketchup.active_model.options['UnitsOptions']['LengthFormat']
-    end
+    @@separator = Sketchup::RegionalSettings.decimal_separator
+    @@length_unit = Sketchup.active_model.options['UnitsOptions']['LengthUnit']
+    @@length_format = Sketchup.active_model.options['UnitsOptions']['LengthFormat']
 
-    def from_fractional(i)
+    def self.from_fractional(i)
      input_split = (i.split('/').map( &:to_i ))
      return Rational(*input_split)
     end
 
-    def prefix_marker(i)
+    def self.prefix_marker(i)
       return MARKER + i
     end
 
-    def strip_marker(i)
+    def self.strip_marker(i)
       return i.sub(MARKER, '')
     end
 
-    def model_units_to_inches(i)
-      case @length_unit
+    def self.model_units_to_inches(i)
+      case @@length_unit
       when MILLIMETER
         return i/25.4
       when CENTIMETER
@@ -61,8 +59,8 @@
       end
     end
 
-    def unit_sign
-      case @length_unit
+    def self.unit_sign
+      case @@length_unit
       when MILLIMETER
         return UNIT_SIGN_MILLIMETER
       when CENTIMETER
@@ -76,10 +74,10 @@
       end
     end
 
-    def inches_to_model_units(i)
+    def self.inches_to_model_units(i)
 =begin
 i = i.to_f
-      case @length_unit
+      case @@length_unit
       when MILLIMETER
         i = i*25.4
       when CENTIMETER
@@ -100,7 +98,7 @@ i = i.to_f
     # 1. x/0 into x
     # 2. 0/x into 0
     #
-    def simplify(i)
+    def self.simplify(i)
       i = i.to_s
       if match = i.match(/^(\d*)\/(\d*)$/)
         num,den = match.captures
@@ -122,13 +120,13 @@ i = i.to_f
     # 3. add units if none
     # 4. convert garbage into 0
     #
-    def str_add_units(i)
+    def self.str_add_units(i)
       return "0" + unit_sign if i.nil? || i.empty?
       i = i.strip
       nu = ""
       sum = 0
       if i.is_a?(String) 
-        if match = i.match(/^(~?\s*)(\d*([#{Regexp.escape(@separator)}]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
+        if match = i.match(/^(~?\s*)(\d*([#{Regexp.escape(@@separator)}]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three, four = match.captures
           if four.nil?
             nu = one + two + unit_sign
@@ -138,7 +136,7 @@ i = i.to_f
             nu = one + two + four
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
           end
-        elsif match = i.match(/^~?\s*(((\d*([#{Regexp.escape(@separator)}]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
+        elsif match = i.match(/^~?\s*(((\d*([#{Regexp.escape(@@separator)}]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             nu = simplify(from_fractional(eight)).to_s + '"'
@@ -162,17 +160,17 @@ i = i.to_f
 
     # Takes a single dimension as a string and converts it into a decimal inch
     # returns the float as a string
-    def str_to_ifloat(i)
+    def self.str_to_ifloat(i)
      i = i.sub(/~/, '') # strip approximate sign away
      i = i.strip
      sum = 0
       # make sure the entry is a string and starts with the proper magic
       if i.is_a?(String) 
         i = strip_marker(i)
-        if match = i.match(/^(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
+        if match = i.match(/^(\d*(#{Regexp.escape(@@separator)}\d*)?)?\s*(mm|cm|m|'|")?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
-          one = one.sub(/#{Regexp.escape(@separator)}/, '.')
+          one = one.sub(/#{Regexp.escape(@@separator)}/, '.')
           one = one.to_f
           if three.nil?
             sum = model_units_to_inches(one) 
@@ -187,7 +185,7 @@ i = i.to_f
           elsif three == UNIT_SIGN_INCHES
             sum = 12*one
           end
-        elsif match = i.match(/^(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
+        elsif match = i.match(/^(((\d*(#{Regexp.escape(@@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             #puts "i = #{'%15s' % i} => fractional+unit:: #{'%7s' % eight}  #{nine}"
@@ -207,14 +205,14 @@ i = i.to_f
           sum = 0 # garbage always becomes 0
         end
       end
-      sum = sum.to_s.sub(/\./, @separator)
+      sum = sum.to_s.sub(/\./, @@separator)
       return sum + UNIT_SIGN_INCHES
     end
 
     # Takes a single number in a string and converts it to a string
     # in Sketchup internal format (inches, decimal) with unit sign
     #
-    def str_to_istr(i)
+    def self.str_to_istr(i)
       return str_to_ifloat(i)
     end
 
@@ -222,7 +220,7 @@ i = i.to_f
     # into single d's and applies the function f to each element
     # returns the concatenated string in the same format
     #
-    def dd_transform(i, f)
+    def self.dd_transform(i, f)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -232,11 +230,11 @@ i = i.to_f
       return r.join(LIST_SEPARATOR)
     end
 
-    def dd_add_units(i)
+    def self.dd_add_units(i)
       return dd_transform(i, :str_add_units)
     end
 
-    def dd_to_ifloats(i)
+    def self.dd_to_ifloats(i)
       return dd_transform(i, :str_to_ifloat)
     end
 
@@ -244,7 +242,7 @@ i = i.to_f
     # into single d's and applies the function f to each element
     # returns the concatenated string in the same format
     #
-    def dxd_transform(i, f)
+    def self.dxd_transform(i, f)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -261,7 +259,7 @@ i = i.to_f
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def dxd_add_units(i)
+    def self.dxd_add_units(i)
       return dxd_transform(i, :str_add_units)
     end
 
@@ -270,13 +268,13 @@ i = i.to_f
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def dxd_to_ifloats_str(i)
+    def self.dxd_to_ifloats_str(i)
       return dxd_transform(i, :str_to_ifloat)
     end
     
     # Normalize value for entry into the registry
     #
-    def normalize(i)
+    def self.normalize(i)
       i = strip_marker(i)
       i = str_add_units(i)        # add units
       i = i.sub(/"/, '\"')        # escape double quote in string for registry
@@ -285,7 +283,7 @@ i = i.to_f
     end
     
     # De-normalize value when reading from registry
-    def denormalize(i)
+    def self.denormalize(i)
       i = strip_marker(i)
       i = i.sub(/\\/, '"')        # unescape double quote feet single quote unit is not a problem   
       return i
