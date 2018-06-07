@@ -1082,7 +1082,7 @@
           materials = Sketchup.active_model.materials
           material = materials[group[:material_name]]
           material_attributes = MaterialAttributes.new(material)
-          if material_attributes.l_length_increase > 0 and material_attributes.l_width_increase > 0
+          if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
             response[:warnings].push('tab.cutlist.cuttingdiagram.warning.raw_dimensions')
           end
 
