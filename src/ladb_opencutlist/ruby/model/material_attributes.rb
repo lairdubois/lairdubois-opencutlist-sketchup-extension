@@ -105,8 +105,7 @@
     end
 
     def l_length_increase
-      du = DimensionUtils.new()
-      du.dd_to_ifloats(length_increase).to_l
+      DimensionUtils.dd_to_ifloats(length_increase).to_l
     end
 
     def width_increase
@@ -119,8 +118,7 @@
     end
 
     def l_width_increase
-      du = DimensionUtils.new()
-      du.dd_to_ifloats(width_increase).to_l
+      DimensionUtils.dd_to_ifloats(width_increase).to_l
     end
 
     def thickness_increase
@@ -133,8 +131,7 @@
     end
 
     def l_thickness_increase
-      du = DimensionUtils.new()
-      du.dd_to_ifloats(thickness_increase).to_l
+      DimensionUtils.dd_to_ifloats(thickness_increase).to_l
     end
 
     def std_thicknesses
@@ -147,10 +144,9 @@
     end
 
     def l_std_thicknesses
-      du = DimensionUtils.new()
       a = []
       @std_thicknesses.split(';').each { |std_thickness|
-        a.push(du.dd_to_ifloats(std_thickness).to_l)
+        a.push(DimensionUtils.dd_to_ifloats(std_thickness).to_l)
       }
       a.sort!
       a
@@ -166,10 +162,9 @@
     end
 
     def l_std_sections
-      du = DimensionUtils.new()
       a = []
       @std_sections.split(';').each { |std_section|
-        a.push(Section.new(du.dxd_to_ifloats_str(std_section)))
+        a.push(Section.new(DimensionUtils.dxd_to_ifloats_str(std_section)))
       }
       a
     end
@@ -184,10 +179,9 @@
     end
 
     def l_std_sizes
-      du = DimensionUtils.new()
       a = []
       @std_sizes.split(';').each { |std_size|
-        a.push(Size2d.new(du.dxd_to_ifloats_str(std_size)))
+        a.push(Size2d.new(DimensionUtils.dxd_to_ifloats_str(std_size)))
       }
       a
     end
@@ -209,14 +203,13 @@
 
     def write_to_attributes
       if @material
-        du = DimensionUtils.new()
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', du.str_add_units(@length_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', du.str_add_units(@width_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', du.str_add_units(@thickness_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', du.dd_add_units(@std_thicknesses))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', du.dxd_add_units(@std_sections))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', du.dxd_add_units(@std_sizes))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.str_add_units(@length_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.str_add_units(@width_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.str_add_units(@thickness_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', DimensionUtils.dd_add_units(@std_thicknesses))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', DimensionUtils.dxd_add_units(@std_sections))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
       end
     end

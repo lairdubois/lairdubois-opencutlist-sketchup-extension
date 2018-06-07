@@ -1011,15 +1011,13 @@
     
     def group_cuttingdiagram_command(settings)
       if @cutlist
-
-        du = DimensionUtils.new()
         
         # Check settings
         group_id = settings['group_id']
-        kerf = du.str_to_ifloat(settings['kerf']).to_l.to_f
-        trimming = du.str_to_ifloat(settings['trimming']).to_l.to_f
-        base_sheet_length = du.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
-        base_sheet_width = du.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
+        kerf = DimensionUtils.str_to_ifloat(settings['kerf']).to_l.to_f
+        trimming = DimensionUtils.str_to_ifloat(settings['trimming']).to_l.to_f
+        base_sheet_length = DimensionUtils.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
+        base_sheet_width = DimensionUtils.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
         rotatable = settings['rotatable']
         presort = settings['presort']
         stacking = settings['stacking']
