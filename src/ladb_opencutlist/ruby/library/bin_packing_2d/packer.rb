@@ -1,12 +1,12 @@
 ﻿module BinPacking2D
   class Packer < Packing2D
   
-    attr_accessor :sawkerf, :original_bins, :unplaced_boxes, :score, :split, :performance
+    attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :score, :split, :performance
 
     def initialize(options)
       @@debugging = options[:debugging]
 
-      @sawkerf = options[:kerf]
+      @saw_kerf = options[:saw_kerf]
       @trimsize = options[:trimming]
       @rotatable = options[:rotatable]
       @score = -1
@@ -41,17 +41,17 @@
             sboxes << nb
             v = v.sort_by { |b| [b.length] }.reverse
             v.each do |box|
-              if !nb.stack_length(box, @sawkerf, maxlength)
+              if !nb.stack_length(box, @saw_kerf, maxlength)
                 added = false
                 sboxes.each do |s|
-                  if !added && s.stack_length(box, @sawkerf, maxlength)
+                  if !added && s.stack_length(box, @saw_kerf, maxlength)
                     added = true
                   end
                 end
                 if !added
                   nb = BinPacking2D::Box.new(0, k[0])
                   sboxes << nb
-                  nb.stack_length(box, @sawkerf, maxlength)
+                  nb.stack_length(box, @saw_kerf, maxlength)
                 end
               end
             end
@@ -70,17 +70,17 @@
             sboxes << nb
             v = v.sort_by { |b| [b.width] }.reverse
             v.each do |box|
-              if !nb.stack_width(box, @sawkerf, maxwidth)
+              if !nb.stack_width(box, @saw_kerf, maxwidth)
                 added = false
                 sboxes.each do |s|
-                  if !added && s.stack_width(box, @sawkerf, maxwidth)
+                  if !added && s.stack_width(box, @saw_kerf, maxwidth)
                     added = true
                   end
                 end
                 if !added
                   nb = BinPacking2D::Box.new(k[0], 0)
                   sboxes << nb
-                  nb.stack_width(box, @sawkerf, maxwidth)
+                  nb.stack_width(box, @saw_kerf, maxwidth)
                 end
               end
             end
@@ -111,13 +111,13 @@
                 b.set_position(x, y, sbox.index)
                 if sbox.rotated
                   b.rotate
-                  y += b.width + @sawkerf
+                  y += b.width + @saw_kerf
                   if cut_counts > 0
                     bin.add_cut(BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, b.index, false))
                     cut_counts = cut_counts - 1
                   end
                 else
-                  x += b.length + @sawkerf
+                  x += b.length + @saw_kerf
                   if cut_counts > 0
                     bin.add_cut(BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false))
                     cut_counts = cut_counts - 1
@@ -143,13 +143,13 @@
                 b.set_position(x, y, sbox.index)
                 if sbox.rotated
                   b.rotate
-                  x += b.length + @sawkerf
+                  x += b.length + @saw_kerf
                   if cut_counts > 0
                     bin.add_cut(BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, b.index, false))
                     cut_counts = cut_counts - 1
                   end
                 else
-                  y += b.width + @sawkerf
+                  y += b.width + @saw_kerf
                   if cut_counts > 0
                     bin.add_cut(BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, b.index, false))
                     cut_counts = cut_counts - 1
@@ -172,7 +172,7 @@
     # a longer bottom part and a shorter vertical right side part or
     # inversely. 
     #
-    # THIS is also a good place to remove too small boxes (< 2*sawkerf)
+    # THIS is also a good place to remove too small boxes (< 2*saw_kerf)
     # which are really waste and not leftovers
     #
     def postprocess_bounding_box(bins, box = nil)
@@ -180,7 +180,7 @@
       # the bottom/right part of the bounding box, depending on a 
       # next candidate box.
       bins.each do |bin|
-        bin.crop_to_bounding_box(@sawkerf, box)
+        bin.crop_to_bounding_box(@saw_kerf, box)
       end
     end
 
@@ -190,11 +190,11 @@
     def assign_leftovers_to_bins(bins, original_bins)
 
       # add the leftovers (bin in bins) to the parent bin, but only if
-      # they are larger and longer than the sawkerf
+      # they are larger and longer than the saw_kerf
       original_bins.each_with_index do |bin, index|
         bin.leftovers = []
         bins.each do |b|
-          if b.index == index && b.width >= sawkerf && b.length >= sawkerf
+          if b.index == index && b.width >= saw_kerf && b.length >= saw_kerf
             bin.leftovers << b
           end
         end
@@ -298,7 +298,7 @@
         # find best position for given box in collection of bins
         i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
         if i == -1
-          if options[:bbox_optimization] == BBOX_ALWAYS
+          if options[:bbox_optimization] == BBOX_OPTIMIZATION_ALWAYS
             assign_leftovers_to_bins(bins, @original_bins)
             postprocess_bounding_box(@original_bins, box)
             bins = collect_leftovers(@original_bins)
@@ -339,24 +339,24 @@
         # split horizontally first
         if cs.split_horizontally_first?(box, @split)
           if box.width < cs.width # this will split into top (contains the box), bottom (goes to leftover)
-            cs, sb = cs.split_horizontally(box.width, @sawkerf)
+            cs, sb = cs.split_horizontally(box.width, @saw_kerf)
             @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true, cs.index))
             # leftover returns to bins
             bins << sb
           end
           if box.length < cs.length # this will split into left (the box), right (goes to leftover)
-            cs, sr = cs.split_vertically(box.length, @sawkerf)
+            cs, sr = cs.split_vertically(box.length, @saw_kerf)
             @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false, cs.index))
             bins << sr
           end
         else
           if box.length < cs.length # this will split into left (containes the box), right (goes to leftover)
-            cs, sr = cs.split_vertically(box.length, @sawkerf)
+            cs, sr = cs.split_vertically(box.length, @saw_kerf)
             @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false, cs.index))
             bins << sr
           end
           if box.width < cs.width # this will split into top (the box), bottom (goes to leftover)
-            cs, sb = cs.split_horizontally(box.width, @sawkerf)
+            cs, sb = cs.split_horizontally(box.width, @saw_kerf)
             @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true, cs.index))
             bins << sb
           end
@@ -371,7 +371,7 @@
       assign_leftovers_to_bins(bins, @original_bins)
 
       # compute the bounding box and fix bottom and right leftovers
-      postprocess_bounding_box(@original_bins) if options[:bbox_optimization] != BBOX_NONE
+      postprocess_bounding_box(@original_bins) if options[:bbox_optimization] != BBOX_OPTIMIZATION_NONE
       
       # unpacked boxes are in @unpacked_boxes
       

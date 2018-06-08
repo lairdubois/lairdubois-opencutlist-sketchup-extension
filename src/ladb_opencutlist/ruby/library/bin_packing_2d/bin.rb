@@ -61,38 +61,38 @@
       end
     end
 
-    # Split the bin vertically at v considering the sawkerf.
+    # Split the bin vertically at v considering the saw_kerf.
     # Creates and returns a sl = left bin and sr = right bin
     #
-    def split_vertically(v, sawkerf)
+    def split_vertically(v, saw_kerf)
       sl = self.clone
       sl.length = v
       sr = self.clone
       if @length > v
-        sr.length -= v + sawkerf
-        sr.x += v + sawkerf
+        sr.length -= v + saw_kerf
+        sr.x += v + saw_kerf
       else
         sr.length = 0
         sr.width = 0
-        sr.x += v + sawkerf
+        sr.x += v + saw_kerf
       end
       return sl, sr
     end
 
-    # Split the bin bin horizontally at h considering the sawkerf.
+    # Split the bin bin horizontally at h considering the saw_kerf.
     # Creates and returns a st = top bin and sb = bottom bin
     #
-    def split_horizontally(h, sawkerf)
+    def split_horizontally(h, saw_kerf)
       st = self.clone
       st.width = h
       sb = self.clone
       if @width > h
-        sb.width -= h + sawkerf
-        sb.y += h + sawkerf
+        sb.width -= h + saw_kerf
+        sb.y += h + saw_kerf
       else
         sb.length = 0
         sb.width = 0
-        s.y += h + sawkerf
+        s.y += h + saw_kerf
       end
       return st, sb
     end
@@ -172,7 +172,7 @@
     # This function assumes that leftovers have been assigned correctly
     # to the bin prior to calling it.
     #
-    def crop_to_bounding_box(sawkerf, box)
+    def crop_to_bounding_box(saw_kerf, box)
       if !@bbox_done
         # trim all cuts that go beyond max_y and max_y
         @cuts.each do |cut|
@@ -218,16 +218,16 @@
           # add a new horizontal cut and make a new bottom leftover
           if @max_y <= @width
             c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true, @index)
-            hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - sawkerf - @trimsize,
-                                       @x + @trimsize, @max_y + sawkerf, @index)
+            hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - saw_kerf - @trimsize,
+                                       @x + @trimsize, @max_y + saw_kerf, @index)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end
           # add a new vertical cut and make a new right side vertical leftover
           if @max_x <= @length
             c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false, @index)
-            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - sawkerf, @max_y - @trimsize,
-                                       @max_x + sawkerf, @y + @trimsize, @index)
+            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @max_y - @trimsize,
+                                       @max_x + saw_kerf, @y + @trimsize, @index)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
@@ -235,15 +235,15 @@
           # add a new vertical cut and make a new right side vertical leftover
           if @max_x <= @length 
             c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false, @index)
-            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - sawkerf, @width - 2 * @trimsize,
-                                       @max_x + sawkerf, @y + @trimsize, @index)
+            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @width - 2 * @trimsize,
+                                       @max_x + saw_kerf, @y + @trimsize, @index)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
           if @max_y <= @width
             c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true, @index)
-            hl = BinPacking2D::Bin.new(@max_x  - @trimsize, @width - @max_y - sawkerf - @trimsize,
-                                     @x + @trimsize, @max_y + sawkerf, @index)
+            hl = BinPacking2D::Bin.new(@max_x  - @trimsize, @width - @max_y - saw_kerf - @trimsize,
+                                     @x + @trimsize, @max_y + saw_kerf, @index)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end
@@ -262,7 +262,7 @@
     end
 
     # Returns percentage of coverage by boxes not including
-    # waste area from sawkerf
+    # waste area from saw_kerf
     #
     def efficiency
       boxes_area = 0

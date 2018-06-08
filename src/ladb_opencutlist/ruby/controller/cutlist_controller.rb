@@ -1014,14 +1014,14 @@
 
         # Check settings
         group_id = settings['group_id']
-        kerf = DimensionUtils.instance.str_to_ifloat(settings['kerf']).to_l.to_f
-        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
         base_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
         base_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
         rotatable = settings['rotatable']
+        saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
+        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
         presort = settings['presort'].to_i
         stacking = settings['stacking'].to_i
-        bbox = settings['bbox'].to_i
+        bbox_optimization = settings['bbox_optimization'].to_i
 
         boxes = []
 
@@ -1040,17 +1040,16 @@
           # the dimensions need to be in Sketchup internal units AND float
 
           options = {
-            :kerf => kerf,
-            :trimming => trimming,
-            :rotatable => rotatable,
-            :stacking => stacking, # available options in packing2d.rb
-            :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
-            :bbox_optimization => bbox, # available options in packing2d.rb
-            :presort => presort, # available options in packing2d.rb
-            :base_sheet_length => base_sheet_length,
-            :base_sheet_width => base_sheet_width,
-            :zoom => 1 / 3.3,   # 1px = 3,3mm (3m = 900px)
-            :debugging => false
+              :base_sheet_length => base_sheet_length,
+              :base_sheet_width => base_sheet_width,
+              :rotatable => rotatable,
+              :saw_kerf => saw_kerf,
+              :trimming => trimming,
+              :stacking => stacking, # available options in packing2d.rb
+              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
+              :bbox_optimization => bbox_optimization, # available options in packing2d.rb
+              :presort => presort, # available options in packing2d.rb
+              :debugging => false
           }
 
           # Convert inch float value to pixel
@@ -1070,10 +1069,16 @@
           response = {
               :errors => [],
               :warnings => [],
+
+              :rotatable => rotatable,
+              :px_saw_kerf => to_px(options[:saw_kerf]),
+              :saw_kerf => options[:saw_kerf].to_l.to_s,
               :px_trimming => to_px(options[:trimming]),
               :trimming => options[:trimming].to_l.to_s,
-              :px_kerf => to_px(options[:kerf]),
-              :kerf => options[:kerf].to_l.to_s,
+              :stacking => stacking,
+              :bbox_optimization => bbox_optimization,
+              :presort => presort,
+
               :unplaced_boxes => [],
               :bins => [],
           }
@@ -1107,6 +1112,7 @@
                 :length => bin_def.length.to_l.to_s,
                 :width => bin_def.width.to_l.to_s,
                 :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
+
                 :boxes => [],
                 :leftovers => [],
                 :cuts => [],
@@ -1117,6 +1123,8 @@
             bin_def.boxes.each { |box_def|
               bin[:boxes].push(
                   {
+                      :number => box_def.part[:number],
+                      :name => box_def.part[:name],
                       :px_x => to_px(box_def.x),
                       :px_y => to_px(box_def.y),
                       :px_length => to_px(box_def.length),
@@ -1124,8 +1132,6 @@
                       :length => box_def.length.to_l.to_s,
                       :width => box_def.width.to_l.to_s,
                       :rotated => box_def.rotated,
-                      :number => box_def.part[:number],
-                      :name => box_def.part[:name],
                   }
               )
             }

@@ -137,11 +137,13 @@ LadbAbstractTab.prototype.appendModalInside = function(id, twigFile, renderParam
         $('body')
             .removeClass('modal-open')
             .css('padding-right', 0);
+        that.$element.addClass('modal-open');
     });
     this._$modal.on('hidden.bs.modal', function () {
         $(this)
             .data('bs.modal', null)
             .remove();
+        that.$element.removeClass('modal-open');
     });
 
     return this._$modal;

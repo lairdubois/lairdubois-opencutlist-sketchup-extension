@@ -15,14 +15,14 @@
     var SETTING_KEY_OPTION_COL_SEP = 'cutlist_option_col_sep';
     var SETTING_KEY_OPTION_ENCODING = 'cutlist_option_encoding';
 
-    var SETTING_KEY_OPTION_KERF = 'cutlist_option_kerf';
+    var SETTING_KEY_OPTION_SAW_KERF = 'cutlist_option_saw_kerf';
     var SETTING_KEY_OPTION_TRIMMING = 'cutlist_option_trimming';
     var SETTING_KEY_OPTION_BASE_SHEET_LENGTH = 'cutlist_option_base_sheet_length';
     var SETTING_KEY_OPTION_BASE_SHEET_WIDTH = 'cutlist_option_base_sheet_width';
     var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
     var SETTING_KEY_OPTION_PRESORT = 'cutlist_option_presort';
     var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
-    var SETTING_KEY_OPTION_BBOX = 'cutlist_option_bbox';
+    var SETTING_KEY_OPTION_BBOX_OPTIMIZATION = 'cutlist_option_bbox_optimization';
 
     var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
@@ -41,14 +41,14 @@
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
     var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
-    var OPTION_DEFAULT_KERF = '3mm';
+    var OPTION_DEFAULT_SAW_KERF = '3mm';
     var OPTION_DEFAULT_TRIMMING = '10mm';
     var OPTION_DEFAULT_BASE_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_BASE_SHEET_WIDTH = '2070mm';
     var OPTION_DEFAULT_ROTATABLE = false;
-    var OPTION_DEFAULT_PRESORT = 1;     // PRESORT_WIDTH_DECR
-    var OPTION_DEFAULT_STACKING = 0;    // STACKING_NONE
-    var OPTION_DEFAULT_BBOX = 0;        // BBOX_NONE
+    var OPTION_DEFAULT_PRESORT = 1;             // PRESORT_WIDTH_DECR
+    var OPTION_DEFAULT_STACKING = 0;            // STACKING_NONE
+    var OPTION_DEFAULT_BBOX_OPTIMIZATION = 0;   // BBOX_OPTIMIZATION_NONE
 
     var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
@@ -628,26 +628,26 @@
             var $selectSizes = $('#ladb_select_sizes', $modal);
             var $inputBaseSheetLength = $('#ladb_input_base_sheet_length', $modal);
             var $inputBaseSheetWidth = $('#ladb_input_base_sheet_width', $modal);
-            var $inputKerf = $('#ladb_input_kerf', $modal);
+            var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
             var $inputTrimming = $('#ladb_input_trimming', $modal);
             var $inputRotatable = $('#ladb_input_rotatable', $modal);
             var $selectPresort = $('#ladb_select_presort', $modal);
             var $selectStacking = $('#ladb_select_stacking', $modal);
-            var $selectBBox = $('#ladb_select_bbox', $modal);
+            var $selectBBoxOptimization = $('#ladb_select_bbox_optimization', $modal);
             var $btnEditMaterial = $('#ladb_edit_material', $modal);
             var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
 
-            $inputKerf.val(that.cuttingdiagramOptions.kerf);
+            $inputSawKerf.val(that.cuttingdiagramOptions.saw_kerf);
             $inputTrimming.val(that.cuttingdiagramOptions.trimming);
             $selectPresort.val(that.cuttingdiagramOptions.presort);
             $selectStacking.val(that.cuttingdiagramOptions.stacking);
-            $selectBBox.val(that.cuttingdiagramOptions.bbox);
+            $selectBBoxOptimization.val(that.cuttingdiagramOptions.bbox_optimization);
 
             // Bind select
             $selectSizes.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
             $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectBBox.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectBBoxOptimization.selectpicker(SELECT_PICKER_OPTIONS);
 
             var fnSelectSize = function() {
                 var value = $selectSizes.val();
@@ -682,25 +682,25 @@
 
                 // Fetch options
 
-                that.cuttingdiagramOptions.kerf = $inputKerf.val();
+                that.cuttingdiagramOptions.saw_kerf = $inputSawKerf.val();
                 that.cuttingdiagramOptions.trimming = $inputTrimming.val();
                 that.cuttingdiagramOptions.base_sheet_length = $inputBaseSheetLength.val();
                 that.cuttingdiagramOptions.base_sheet_width = $inputBaseSheetWidth.val();
                 that.cuttingdiagramOptions.rotatable = $inputRotatable.is(':checked');
                 that.cuttingdiagramOptions.presort = $selectPresort.val();
                 that.cuttingdiagramOptions.stacking = $selectStacking.val();
-                that.cuttingdiagramOptions.bbox = $selectBBox.val();
+                that.cuttingdiagramOptions.bbox_optimization = $selectBBoxOptimization.val();
 
                 // Store options
                 that.opencutlist.setSettings([
-                    { key:SETTING_KEY_OPTION_KERF, value:'d:' + that.cuttingdiagramOptions.kerf },
+                    { key:SETTING_KEY_OPTION_SAW_KERF, value:'d:' + that.cuttingdiagramOptions.saw_kerf },
                     { key:SETTING_KEY_OPTION_TRIMMING, value:'d:' + that.cuttingdiagramOptions.trimming },
                     { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:'d:' + that.cuttingdiagramOptions.base_sheet_length },
                     { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:'d:' + that.cuttingdiagramOptions.base_sheet_width },
                     { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cuttingdiagramOptions.rotatable },
                     { key:SETTING_KEY_OPTION_PRESORT, value:that.cuttingdiagramOptions.presort },
                     { key:SETTING_KEY_OPTION_STACKING, value:that.cuttingdiagramOptions.stacking },
-                    { key:SETTING_KEY_OPTION_BBOX, value:that.cuttingdiagramOptions.bbox }
+                    { key:SETTING_KEY_OPTION_BBOX_OPTIMIZATION, value:that.cuttingdiagramOptions.bbox_optimization }
 
                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
@@ -829,14 +829,14 @@
                 SETTING_KEY_OPTION_COL_SEP,
                 SETTING_KEY_OPTION_ENCODING,
 
-                SETTING_KEY_OPTION_KERF,
+                SETTING_KEY_OPTION_SAW_KERF,
                 SETTING_KEY_OPTION_TRIMMING,
                 SETTING_KEY_OPTION_BASE_SHEET_LENGTH,
                 SETTING_KEY_OPTION_BASE_SHEET_WIDTH,
                 SETTING_KEY_OPTION_ROTATABLE,
                 SETTING_KEY_OPTION_PRESORT,
                 SETTING_KEY_OPTION_STACKING,
-                SETTING_KEY_OPTION_BBOX,
+                SETTING_KEY_OPTION_BBOX_OPTIMIZATION,
 
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
@@ -862,14 +862,14 @@
                 };
 
                 that.cuttingdiagramOptions = {
-                    kerf: that.opencutlist.getSetting(SETTING_KEY_OPTION_KERF, OPTION_DEFAULT_KERF),
+                    saw_kerf: that.opencutlist.getSetting(SETTING_KEY_OPTION_SAW_KERF, OPTION_DEFAULT_SAW_KERF),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_OPTION_TRIMMING, OPTION_DEFAULT_TRIMMING),
                     base_sheet_length: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_LENGTH, OPTION_DEFAULT_BASE_SHEET_LENGTH),
                     base_sheet_width: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_WIDTH, OPTION_DEFAULT_BASE_SHEET_WIDTH),
                     rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
                     presort: that.opencutlist.getSetting(SETTING_KEY_OPTION_PRESORT, OPTION_DEFAULT_PRESORT),
                     stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
-                    bbox: that.opencutlist.getSetting(SETTING_KEY_OPTION_BBOX, OPTION_DEFAULT_BBOX)
+                    bbox_optimization: that.opencutlist.getSetting(SETTING_KEY_OPTION_BBOX_OPTIMIZATION, OPTION_DEFAULT_BBOX_OPTIMIZATION)
 
                 };
 

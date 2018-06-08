@@ -29,13 +29,13 @@
     # Stack box horizontally. The container box is the bounding
     # box of the contained boxes in @sboxes
     #
-    def stack_length(box, sawkerf, max)
+    def stack_length(box, saw_kerf, max)
       return false if box.width != @width
 
       if box.length + @length > max
         return false
       else
-        @length += sawkerf if @length > 0
+        @length += saw_kerf if @length > 0
         @length += box.length
         @sboxes << box
         @is_superbox = true
@@ -46,13 +46,13 @@
     # Stack box vertically. The container box is the bounding
     # box of the contained boxes in @sboxes
     #
-    def stack_width(box, sawkerf, max)
+    def stack_width(box, saw_kerf, max)
       return false if box.length != @length
 
       if box.width + @width > max
         return false
       else
-        @width += sawkerf if @width > 0
+        @width += saw_kerf if @width > 0
         @width += box.width
         @sboxes << box
         @is_superbox = true

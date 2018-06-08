@@ -3,8 +3,8 @@
   class Packer < Packing1D
     attr_accessor :unplaced_boxes, :original_bins
 
-    def initialize(sawkerf, cleanup=5, debugging=false)
-      @sawkerf = sawkerf
+    def initialize(saw_kerf, cleanup=5, debugging=false)
+      @saw_kerf = saw_kerf
       @original_bins = []
       @unplaced_boxes = []
       @cleanup = cleanup
@@ -60,7 +60,7 @@
         box.index = cs.index
         placed_boxes << box
     
-        r = cs.cut(box.length, @sawkerf)
+        r = cs.cut(box.length, @saw_kerf)
         cuts << BinPacking1D::Cut.new(cs.x + box.length, cs.index)
         # leftover returns to bins
         bins << r
@@ -95,7 +95,7 @@
         end
       end
       @original_bins.each do |bin|
-        s = "dim #{'%3d' % bin.index.to_s} #{cu(bin.length)}/#{cu(@sawkerf)}/#{cu(@cleanup)} : "
+        s = "dim #{'%3d' % bin.index.to_s} #{cu(bin.length)}/#{cu(@saw_kerf)}/#{cu(@cleanup)} : "
         bin.boxes = bin.boxes.sort_by { |b| [b.length] }.reverse
         l = bin.boxes.inject(0){|sum, x| sum + x.length}
         s += " tot = #{'%4d' % bin.boxes.length}, #{'%10s' % cu(l)} ->"

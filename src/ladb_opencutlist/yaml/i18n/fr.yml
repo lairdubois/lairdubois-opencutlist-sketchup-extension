@@ -175,8 +175,8 @@ tab:
       material_name: Matière
     cuttingdiagram:
       title: Calepinage
-      option_kerf: Epaisseur de lame de scie
-      option_kerf_help: Epaisseur de lame de scie
+      option_saw_kerf: Epaisseur de lame de scie
+      option_saw_kerf_help: Epaisseur de lame de scie
       option_trimming: Marge
       option_trimming_help: Marge
       option_rotatable: Les pièces peuvent être pivotées
@@ -184,8 +184,8 @@ tab:
       option_presort_help: Ordre de tri des pièces
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Empiler les pièces identiques
-      option_bbox: Optimisation de l'enveloppe
-      option_bbox_help: Optimisation de l'enveloppe
+      option_bbox_optimization: Optimisation de l'enveloppe
+      option_bbox_optimization_help: Optimisation de l'enveloppe
       option_base_sheet: Panneau de base
       option_custom_sheet: Personnalisé
       option_base_sheet_length: Longueur du panneau
@@ -200,7 +200,7 @@ tab:
         none: Non
         length: Sur la longueur
         width: Sur la largeur
-      bbox:
+      bbox_optimization:
         none: Jamais
         only_final: Seulement à la fin
         full: Toujours
@@ -216,7 +216,7 @@ tab:
       warning:
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.
-          *(dimensions majorées par les surcôtes configurées en longueur et en largeur)*.
+          *(dimensions majorées par les surcôtes configurées sur la matière en longueur et en largeur)*.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

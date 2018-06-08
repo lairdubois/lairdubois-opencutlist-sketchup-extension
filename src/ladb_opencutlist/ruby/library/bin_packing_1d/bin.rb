@@ -33,11 +33,11 @@
       end
     end
     
-    def cut(length, sawkerf)
+    def cut(length, saw_kerf)
       cs = self.dup
-      if @length > length + sawkerf
-        cs.length -= length + sawkerf
-        cs.x += length + sawkerf
+      if @length > length + saw_kerf
+        cs.length -= length + saw_kerf
+        cs.x += length + saw_kerf
       else
         cs.length = 0
         cs.x = 0

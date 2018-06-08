@@ -8,11 +8,10 @@
       @unplaced_boxes = unplaced_boxes
       @options = options
       @group = group
-      @zoom = options[:zoom] || 1
     end
 
     def zoom(value)
-      cmm(value * @zoom)
+      cmm(value * 1.0)
     end
     
     def dim(value)
