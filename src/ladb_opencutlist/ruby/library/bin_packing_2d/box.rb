@@ -15,10 +15,6 @@
       @is_superbox = false
       @stack_is_horizontal = true
     end
-
-    def get_export
-      return cmm(@x), cmm(@y), cmm(@length), cmm(@width), @rotated, @number
-    end
     
     def set_position(x, y, index)
       @x = x
@@ -90,14 +86,5 @@
       return @rotated
     end
 
-    def print
-      db ("box #{cu(@x)} #{cu(@y)} #{cu(@length)} #{cu(@width)}" + (@rotated ? " r" : ""))
-    end
-
-    def label
-      length = cu(@length)
-      width = cu(@width)
-      return "#{length} x #{width}" + (@rotated ? " r" : "")
-    end
   end
 end

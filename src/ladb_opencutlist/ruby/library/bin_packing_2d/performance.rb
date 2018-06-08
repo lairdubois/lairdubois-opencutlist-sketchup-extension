@@ -1,4 +1,4 @@
-module BinPacking2D
+﻿module BinPacking2D
   class Performance < Packing2D
     attr_accessor :score, :split, :largest_leftover, :cutlength, :nb_bins, :nb_leftovers,
       :v_cutlength, :h_cutlength, :h_length, :v_length, :max_x, :max_y
@@ -18,8 +18,5 @@ module BinPacking2D
       @max_y = 0
     end
 
-    def print
-      puts " #{get_strategy_str(@score, @split)} #{"%3d" % nb_bins} #{cu(@largest_leftover.length)} " + "#{cu(@largest_leftover.width)} #{cu(@cutlength)} " + "#{cu(@v_cutlength)} #{cu(@v_length)} #{cu(@largest_leftover.area())}"
-    end
   end
 end

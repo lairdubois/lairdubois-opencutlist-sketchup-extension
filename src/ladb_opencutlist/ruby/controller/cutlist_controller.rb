@@ -1048,8 +1048,7 @@
               :stacking => stacking, # available options in packing2d.rb
               :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
               :bbox_optimization => bbox_optimization, # available options in packing2d.rb
-              :presort => presort, # available options in packing2d.rb
-              :debugging => false
+              :presort => presort # available options in packing2d.rb
           }
 
           # Convert inch float value to pixel
@@ -1127,7 +1126,7 @@
                 :length => bin_def.length.to_l.to_s,
                 :width => bin_def.width.to_l.to_s,
                 :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
-
+#               :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
                 :boxes => [],
                 :leftovers => [],
                 :cuts => [],
