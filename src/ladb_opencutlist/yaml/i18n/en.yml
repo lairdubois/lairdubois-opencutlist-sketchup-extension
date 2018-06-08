@@ -205,18 +205,22 @@ tab:
         only_final: Only Final
         full: Always
       list:
-        unplaced_boxes: Pièces non placées
+        unplaced_parts: Pièces non placées
         number: N°
         name: Désignation
+        count: Qty
         raw: Brute
         length: Longueur
         width: Largeur
         trimming: Marge
         efficiency: Efficacité
+      error:
+        unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
+        unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.
-          *(dimensions majorées par les surcôtes configurées sur la matière en longueur et en largeur)*.
+          *Dimensions majorées par les surcôtes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)

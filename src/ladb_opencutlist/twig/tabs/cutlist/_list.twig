@@ -91,8 +91,8 @@
             <td colspan="{{ colspan }}">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                 <div class="btn-group pull-right">
-                    {% if group.material_type == 2 %} {# or group.material_type == 3 %} #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-group-cuttingdiagram"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                    {% if group.material_type == 2 %}
+                        <button class="no-print btn btn-default btn-sm ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">

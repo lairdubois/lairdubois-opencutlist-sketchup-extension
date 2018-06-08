@@ -36,17 +36,18 @@
 
         {% include 'core/_alert-errors.twig' %}
         {% include 'core/_alert-warnings.twig' %}
+        {% include 'core/_alert-tips.twig' %}
 
-        {% if unplaced_boxes|length > 0 %}
+        {% if unplaced_parts|length > 0 %}
             <div class="ladb-cuttingdiagram-group">
 
                 <table class="table table-bordered ladb-cutlist-group">
                     <thead>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                             <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                             <div>
-                                <span class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_boxes'|i18next }}</span>
+                                <span class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</span>
                             </div>
                         </td>
                     </tr>
@@ -55,25 +56,33 @@
                     <tr>
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.number'|i18next }}</td>
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.name'|i18next }}</td>
+                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
                         <td class="text-center" colspan="2">{{ 'tab.cutlist.cuttingdiagram.list.raw'|i18next }}</td>
                     </tr>
                     <tr>
                         <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
                         <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
                     </tr>
-                    {% for box in unplaced_boxes  %}
+                    {% for part in unplaced_parts  %}
                     <tr class="ladb-cutlist-row">
                         <td class="text-center">
-                            {{ box.number }}
+                            {{ part.number }}
                         </td>
                         <td>
-                            {{ box.name }}
+                            <div class="ladb-minitools no-print">
+                                <span class="ladb-separator"></span>
+                                <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                            </div>
+                            {{ part.name|escape }}
+                        </td>
+                        <td class="text-center">
+                            {{ part.count }}
                         </td>
                         <td class="text-right">
-                            {{ box.length }}
+                            {{ part.length }}
                         </td>
                         <td class="text-right">
-                            {{ box.width }}
+                            {{ part.width }}
                         </td>
                     </tr>
                     {% endfor %}
@@ -139,8 +148,8 @@
                                 {% endfor %}
                                 {% for cut in bin.cuts %}
                                     <g class="cut">
-                                        <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : px_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? px_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
-                                        <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : px_kerf }}" height="{{ cut.is_horizontal ? px_kerf : cut.px_length }}"></rect>
+                                        <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
+                                        <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : px_saw_kerf }}" height="{{ cut.is_horizontal ? px_saw_kerf : cut.px_length }}"></rect>
                                     </g>
                                 {% endfor %}
                             </svg>

@@ -1069,6 +1069,7 @@
           response = {
               :errors => [],
               :warnings => [],
+              :tips => [],
 
               :rotatable => rotatable,
               :px_saw_kerf => to_px(options[:saw_kerf]),
@@ -1079,28 +1080,42 @@
               :bbox_optimization => bbox_optimization,
               :presort => presort,
 
-              :unplaced_boxes => [],
+              :unplaced_parts => [],
               :bins => [],
           }
+
+          # Errors
+          if result.unplaced_boxes.length > 0
+            response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
+          end
 
           # Warnings
           materials = Sketchup.active_model.materials
           material = materials[group[:material_name]]
           material_attributes = MaterialAttributes.new(material)
           if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
-            response[:warnings].push('tab.cutlist.cuttingdiagram.warning.raw_dimensions')
+            response[:warnings].push([ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ])
           end
 
           # Unplaced boxes
+          unplaced_parts = {}
           result.unplaced_boxes.each { |box_def|
-            response[:unplaced_boxes].push(
-                {
-                    :number => box_def.part[:number],
-                    :name => box_def.part[:name],
-                    :length => box_def.length.to_l.to_s,
-                    :width => box_def.width.to_l.to_s,
-                }
-            )
+            part = unplaced_parts[box_def.part[:number]]
+            unless part
+              part = {
+                  :id => box_def.part[:id],
+                  :number => box_def.part[:number],
+                  :name => box_def.part[:name],
+                  :length => box_def.length.to_l.to_s,
+                  :width => box_def.width.to_l.to_s,
+                  :count => 0,
+              }
+              unplaced_parts[box_def.part[:number]] = part
+            end
+            part[:count] += 1
+          }
+          unplaced_parts.each { |key, part|
+            response[:unplaced_parts].push(part)
           }
 
           # Bins
