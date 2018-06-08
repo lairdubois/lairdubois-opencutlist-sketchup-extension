@@ -176,16 +176,16 @@ tab:
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness
-      option_saw_kerf_help: Blade Thickness
+      option_saw_kerf_help: The width of material removed by the sawblade
       option_trimming: Trimming Size
-      option_trimming_help: Trimming Size
+      option_trimming_help: The amount of material around the raw panel to be treated as waste
       option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
-      option_presort_help: Preordering of Parts
+      option_presort_help: The order in which the parts will be considered for placement
       option_stacking: Stack Identical Parts
-      option_stacking_help: Stack Identical Parts
+      option_stacking_help: The way parts with common width or length are tentatively placed together
       option_bbox_optimization: Bounding Box Optimization
-      option_bbox_optimization_help: Bounding Box Optimization
+      option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
       option_base_sheet: Standard Panel
       option_custom_sheet: Custom Panel
       option_base_sheet_length: Custom Panel Length
@@ -201,26 +201,26 @@ tab:
         length: Lengthwise
         width: Widthwise
       bbox_optimization:
-        none: None
+        none: Never
         only_final: Only Final
         full: Always
       list:
-        unplaced_parts: Pièces non placées
-        number: N°
-        name: Désignation
+        unplaced_parts: Unplaced Parts
+        number: No.
+        name: Description
         count: Qty
-        raw: Brute
-        length: Longueur
-        width: Largeur
-        trimming: Marge
-        efficiency: Efficacité
+        raw: Raw
+        length: Length
+        width: Width
+        trimming: Trimming
+        efficiency: Efficiency
       error:
-        unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
-        unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
+        unplaced_boxes: There is **1 part** which could not be placed, because it is too large to fit.
+        unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
         raw_dimensions: |
-          Ce calepinage présente les pièces dans leur dimensions brutes.
-          *Dimensions majorées par les surcôtes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
+          This cutting diagramm displays the parts with their raw dimensions.
+          *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
