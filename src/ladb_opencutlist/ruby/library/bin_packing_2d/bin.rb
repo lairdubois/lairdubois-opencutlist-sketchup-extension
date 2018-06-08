@@ -8,8 +8,8 @@
 
   class Bin < Packing2D
     attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y,
-                  :length_cuts, :strategy, :trimmed, :trimsize
-    attr_reader :index
+                  :length_cuts, :trimmed, :trimsize
+    attr_reader :index, :efficiency
 
     def initialize(length, width, x, y, index)
       @length = length
@@ -22,27 +22,18 @@
       @boxes = []
       @cuts = []
       @total_length_cuts = 0
+      @efficiency = 0
       @leftovers = []
       @trimmed = false
       @trimsize = 0
       @bbox_done = false
-      @strategy = ""
-    end
-
-    def get_export
-      return cmm(@length), cmm(@width), cmm(@trimsize), efficiency
     end
     
     def get_copy
       b = Bin.new(@length, @width, @x, @y, @index)
       b.trimmed = @trimmed
       b.trimsize = @trimsize
-      b.strategy = @strategy
       return b
-    end
-
-    def set_strategy(strategy)
-      @strategy = strategy
     end
 
     # Trim the bin's all four edges by trimsize, not recording
@@ -264,10 +255,10 @@
     # Returns percentage of coverage by boxes not including
     # waste area from saw_kerf
     #
-    def efficiency
+    def compute_efficiency
       boxes_area = 0
       @boxes.each { |box| boxes_area += box.area }
-      boxes_area * 100 / area
+      @efficiency = boxes_area * 100.0 / area
     end
 
     # Returns total horizontal and vertical cut lengths
@@ -313,22 +304,9 @@
       return largest_bin
     end
 
-    def title
-      "Sheet id: #{@index} Strategy: " + @strategy + "<br>" +
-      "Size: #{cu(@length)} x #{cu(@width)}   " +
-      "Efficiency: #{'%3.2f' % efficiency}%   " +
-      "Length of Cuts: #{cu(@total_length_cuts)}   " +
-      "Trimming: " + (@trimmed ? "#{cu(@trimsize)}" : "")
-    end
-
     def area
       return @length * @width
     end
 
-    # Return a label. Used by bin when it is a leftover piece
-    #
-    def label
-      return "#{cu(@length)} x #{cu(@width)}"
-    end
   end
 end

@@ -30,42 +30,6 @@
     
 
   class Packing2D
-    @@debugging = false
 
-    def get_strategy_str(score, split)
-      score_string = [
-        "Best Area Fit",
-        "Best Short Side Fit",
-        "Best Long Side Fit",
-        "Worst Area Fit",
-        "Worst Short Side Fit",
-        "Worst Long Side Fit",
-      ]
-      split_string = [
-        "Shorter Leftover Axis",
-        "Longer Leftover Axis",
-        "Minimize Area",
-        "Maximize Area",
-        "Shorter Axis",
-        "Longer Axis",
-      ]
-      return "#{score}/#{split} #{'%25s' % score_string[score]} / #{'%21s' % split_string[split]}"
-    end
-
-    def db(str)
-      if @@debugging
-        puts " " + str
-      end
-    end
-
-    # convert to model units !! empty on test version outside of Sketchup
-    def cu(l)
-      return l.to_l.to_s
-    end
-
-    # convert to mm for html export !! empty on test version outside of Sketchup
-    def cmm(l)
-      return l.to_l.to_mm
-    end
   end
 end

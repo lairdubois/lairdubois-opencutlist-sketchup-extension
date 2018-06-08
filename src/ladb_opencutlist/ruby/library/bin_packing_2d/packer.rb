@@ -4,8 +4,7 @@
     attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :score, :split, :performance
 
     def initialize(options)
-      @@debugging = options[:debugging]
-
+    
       @saw_kerf = options[:saw_kerf]
       @trimsize = options[:trimming]
       @rotatable = options[:rotatable]
@@ -244,8 +243,6 @@
       @score = score
       @split = split
 
-      db "start -->"
-
       # bins are numbered in sequence, this is the next available index
       next_bin_index = bins.length
 
@@ -258,7 +255,6 @@
       # keep a copy of the original bins to collect all relevant info
       bins.each do |bin|
         b = bin.get_copy
-        b.set_strategy(get_strategy_str(@score, @split))
         # the original bins are not cleaned but they know about the trimming size
         b.trimsize = @trimsize
         b.trimmed = true
@@ -314,7 +310,6 @@
               end
             end
             cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index)
-            cs.strategy = get_strategy_str(@score, @split)
             cs.trimsize = @trimsize
             cs.trimmed = true
             @original_bins << cs.get_copy
@@ -401,6 +396,7 @@
               largest_area = a
             end
           end
+          bin.compute_efficiency
         end
 
         p.largest_leftover = largest_bin
@@ -409,66 +405,6 @@
       else
         return nil
       end
-    end
-    
-    def export(options)
-
-      response = {}
-      if @packed
-        response = {}
-        response[:error_code] = "no error"
-        response[:kerf] = cmm(options[:kerf])
-        response[:trimming] = cmm(options[:trimming])
-        response[:rotatable] = options[:rotatable]
-        response[:stacking] = options[:stacking]
-        response[:presort] = options[:presort]
-        response[:bbox_optimization] = options[:bbox_optimization]
-        
-        # the following two are NO options for now
-        #response[:break_stacking_if_needed] = options[:break_stacking_if_needed].to_s
-        #response[:preprocess_rotatable] = options[:preprocess_rotatable].to_s
-
-        unplaced = []
-        @unplaced_boxes.each do |box|
-           unplaced << box
-        end
-        response[:unplaced] = unplaced
-
-        bins = []
-        index = 1
-        @original_bins.each do |bin|
-          bin_entry = {}
-          bin_entry[:index] = index
-          bin_entry[:bins] = bin.get_export
-
-          boxes = []
-          bin.boxes.each do |box|
-            boxes << box.get_export
-          end
-          bin_entry[:boxes] = boxes
-
-          leftovers = []
-          bin.leftovers.each do |box|
-            leftovers << box.get_export
-          end
-          bin_entry[:leftovers] = leftovers
-
-          cuts = []
-          bin.cuts.each do |cut|
-            cuts << cut.get_export
-          end
-          bin_entry[:cuts] = cuts
-
-          bins << bin_entry
-          index = index + 1
-        end
-
-        response[:cutdiagram] = bins
-
-      else
-        response[:error_code] = "nothing to display"
-      end
-      return response
     end
     
   end

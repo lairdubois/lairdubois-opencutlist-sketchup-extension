@@ -11,10 +11,6 @@
       @is_horizontal = is_horizontal
       @index = index
     end
-
-    def get_export
-      return cmm(@x), cmm(@y), cmm(@length), @is_horizontal
-    end
     
     def get_v_cutlength
       return length if !@is_horizontal
@@ -26,9 +22,5 @@
       return 0
     end
 
-    def label
-      # not used
-      return ""
-    end
   end
 end

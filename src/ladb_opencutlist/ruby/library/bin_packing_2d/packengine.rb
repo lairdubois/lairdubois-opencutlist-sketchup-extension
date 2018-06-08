@@ -8,17 +8,12 @@
   require_relative 'performance'
   require_relative 'packer'
 
-  require_relative 'export_binding'
-  require_relative 'export'
-  require 'erb'
-
   class PackEngine < Packing2D
   
     def initialize(bins, boxes, group)
       @bins = bins
       @boxes = boxes
       @group = group
-      @best_packing = nil
     end
 
     def run(options)
@@ -53,15 +48,6 @@
       }
 
       @best_packing = packings[0]
-      # response = export(options, @best_packing)
-      #response[:group] = @group
-      # puts response
-      # return BinPacking2D::Export.new(@best_packing.original_bins, @best_packing.unplaced_boxes, @group).to_html(options)
-      return @best_packing
-    end
-    
-    def export(options, packing)
-      return packing.export(options)
     end
     
   end
