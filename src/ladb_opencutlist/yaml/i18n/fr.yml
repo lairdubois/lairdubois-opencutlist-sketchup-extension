@@ -178,14 +178,14 @@ tab:
       option_saw_kerf: Epaisseur de lame de scie
       option_saw_kerf_help: Epaisseur de lame de scie
       option_trimming: Marge
-      option_trimming_help: Marge
+      option_trimming_help: Marge du panneau à considérer comme chute
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
-      option_presort_help: Ordre de tri des pièces
+      option_presort_help: Ordre dans lesquels les pièces sont sélectionnées pour le placement
       option_stacking: Empiler les pièces identiques
-      option_stacking_help: Empiler les pièces identiques
+      option_stacking_help: Manière d'empiler les pièces qui ont longueur ou largeur commune
       option_bbox_optimization: Optimisation de l'enveloppe
-      option_bbox_optimization_help: Optimisation de l'enveloppe
+      option_bbox_optimization_help: Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes
       option_base_sheet: Panneau de base
       option_custom_sheet: Personnalisé
       option_base_sheet_length: Longueur du panneau
@@ -220,7 +220,7 @@ tab:
       warning:
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.
-          *Dimensions majorées par les surcôtes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
+          *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

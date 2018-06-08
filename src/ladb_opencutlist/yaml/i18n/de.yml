@@ -178,20 +178,20 @@ tab:
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Sägeblattdicke
       option_trimming: Kantenabfallbreite
-      option_trimming_help: Kantenabfallbreite
+      option_trimming_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte
       option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
-      option_presort_help: Vorsortierung der Teile
+      option_presort_help: Die Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden
       option_stacking: Identische Teile stapeln
-      option_stacking_help: Identische Teile stapeln
+      option_stacking_help: Teile gleicher Länge oder Breite werden möglichst zusammengefasst
       option_bbox_optimization: Hüllenoptimierung
-      option_bbox_optimization_help: Hüllenoptimierung
+      option_bbox_optimization_help: Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert
       option_base_sheet: Standard Platte
       option_custom_sheet: Spezifische Platte
       option_base_sheet_length: Plattenlänge
       option_base_sheet_width: Plattenbreite
       presort:
-        input_order: nicht vorsortiert
+        input_order: keine Vorsortierung
         width_decr: abnehmende Breiten
         length_decr: abnehmende Längen
         area_decr: abnehmende Flächen
@@ -205,22 +205,22 @@ tab:
         only_final: Nur am Schluss
         full: Immer
       list:
-        unplaced_parts: Pièces non placées
-        number: N°
-        name: Désignation
+        unplaced_parts: Nicht platzierte Teile
+        number: Nr.
+        name: Bezeichnung
         count: Anzahl
-        raw: Brute
-        length: Longueur
-        width: Largeur
-        trimming: Marge
-        efficiency: Efficacité
+        raw: Rohmass
+        length: Länge
+        width: Breite
+        trimming: Seitenrand
+        efficiency: Effizienz
       error:
-        unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
-        unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
+        unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
+        unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
         raw_dimensions: |
-          Ce calepinage présente les pièces dans leur dimensions brutes.
-          *Dimensions majorées par les surcôtes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
+          Dieser Schnittplan verwendet die Rohmasse der Teile.
+          *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längezumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
