@@ -13,12 +13,14 @@
     def initialize(bins, boxes, group)
       @bins = bins
       @boxes = boxes
-      @group = group
+      #@group = group
     end
 
     def run(options)
-      if @bins.empty?
-        @bins << BinPacking2D::Bin.new(options[:base_sheet_length], options[:base_sheet_width], 0, 0, 0)
+      if options[:base_sheet_length] > options[:trimming]  && options[:base_sheet_width] > options[:trimming]
+        @bins.each_with_index { |bin, i| bin.index = i}
+      else
+        return nil, "trimming size larger than panel in at least one dimension."
       end
 
       packings = []
@@ -47,7 +49,7 @@
          p.performance.v_cutlength]
       }
 
-      @best_packing = packings[0]
+      return packings[0], "no error"
     end
     
   end

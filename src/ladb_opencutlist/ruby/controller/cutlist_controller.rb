@@ -1048,7 +1048,7 @@
               :stacking => stacking, # available options in packing2d.rb
               :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
               :bbox_optimization => bbox_optimization, # available options in packing2d.rb
-              :presort => presort # available options in packing2d.rb
+              :presort => presort, # available options in packing2d.rb
           }
 
           # Convert inch float value to pixel
@@ -1056,11 +1056,24 @@
             inch_value * 7.5 # 900px = 120" ~ 3m
           end
 
-          bins = [] # run will create a first bin if this is empty
+          # add leftovers to the bins, you need only length and width, index will be added in packengine
+          bins = [
+            BinPacking2D::Bin.new(options[:base_sheet_length]/2, options[:base_sheet_width], 0, 0, 0),
+            BinPacking2D::Bin.new(options[:base_sheet_length]*3/4, options[:base_sheet_width], 0, 0, 0),
+          ] 
+
           e = BinPacking2D::PackEngine.new(bins, boxes, group)
 
           # Compute the cutting diagram
-          result = e.run(options)
+          result, error = e.run(options)
+          if result.nil? 
+            # 
+            # this should be treated as an error
+            response = {
+                :errors => [error],
+            }
+            return response
+          end
 
           # Response
           # --------
