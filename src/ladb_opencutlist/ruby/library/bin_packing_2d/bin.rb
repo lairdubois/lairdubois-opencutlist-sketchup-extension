@@ -26,7 +26,7 @@
       @leftovers = []
       @trimmed = false
       @trimsize = 0
-      @bbox_done = false
+      @bbox_done = true
     end
     
     def get_copy
@@ -181,6 +181,7 @@
         sb = @length * (@width - 2 * @trimsize - @max_y)
         
         cut_horizontal = true
+
         if !box.nil?
           if box.length <= @length && box.width <= (@width - 2 * @trimsize - @max_y)
             # cut first horizontal
@@ -199,7 +200,7 @@
         else
           cut_horizontal = false
         end
-        
+
         # Pick the cut sequence that will maximize area of larger leftover area.
         # Probably needs to follow split strategy using score object, maybe later.
         #
