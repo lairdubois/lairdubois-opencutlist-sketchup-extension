@@ -190,6 +190,11 @@ tab:
       option_custom_sheet: Personnalisé
       option_base_sheet_length: Longueur du panneau
       option_base_sheet_width: Largeur du panneau
+      option_leftovers: Chutes
+      option_leftovers_help:  |
+        Indiquez ici la liste des chutes à considérer.
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* de le chute.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       presort:
         input_order: Pas de tri préalable
         width_decr: Par largeur décroissante
@@ -215,6 +220,7 @@ tab:
         trimming: Marge
         efficiency: Efficacité
       error:
+        trimming_larger_than_base_sheet: La marge est plus grande qu'au moins une des dimensions du panneau de base.
         unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
         unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:

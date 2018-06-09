@@ -121,10 +121,10 @@
                                     <rect class="sheet-inner" x="0" y="0" width="{{ bin.px_length }}" height="{{ bin.px_width }}"></rect>
                                 </g>
                                 {% for box in bin.boxes %}
-                                    <g class="box" data-toggle="tooltip" title="{{ box.name }} - {{ box.length }} x {{ box.width }}">
+                                    <g class="box" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ box.name }}</span><br>{{ box.length }}&nbsp;x&nbsp;{{ box.width }}">
                                         <rect class="box-outer" x="{{ box.px_x }}" y="{{ box.px_y }}" width="{{ box.px_length }}" height="{{ box.px_width }}"></rect>
                                         <rect class="box-inner" x="{{ box.px_x + boxOutlineWidth }}" y="{{ box.px_y + boxOutlineWidth }}" width="{{ box.px_length - boxOutlineWidth * 2 }}" height="{{ box.px_width - boxOutlineWidth * 2 }}"></rect>
-                                        <text class="box-number" x="{{ box.px_x + box.px_length / 2 }}" y="{{ box.px_y + box.px_width / 2 }}" font-size="{{ min(numberFontSize, box.px_length, box.px_width)  }}px" text-anchor="middle" dominant-baseline="central"{% if box.rotated %} transform="rotate(-90 {{ box.px_x + box.px_length / 2 }},{{ box.px_y + box.px_width / 2 }})"{% endif %}>{{ box.number }}</text>
+                                        <text class="box-number" x="{{ box.px_x + box.px_length / 2 }}" y="{{ box.px_y + box.px_width / 2 }}" font-size="{{ min(numberFontSize, box.px_length - dimensionOffset * 2, box.px_width - dimensionOffset * 2)  }}px" text-anchor="middle" dominant-baseline="central"{% if box.rotated %} transform="rotate(-90 {{ box.px_x + box.px_length / 2 }},{{ box.px_y + box.px_width / 2 }})"{% endif %}>{{ box.number }}</text>
                                         {% set centredLength = box.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
                                         {% set centredWidth = box.px_length > (dimensionOffset + dimensionFontSize + numberFontSize) %}
                                         <text class="box-dimension" x="{{ centredLength ? box.px_x + box.px_length / 2 : box.px_x + boxOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ box.px_y + boxOutlineWidth + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}">{{ box.length }}</text>
@@ -157,8 +157,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ trimming }}</td>
-                        <td width="12%" style="white-space: nowrap;"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bin.efficiency }}</td>
+                        <td>
+                            <span><i class="ladb-opencutlist-icon-grained-{{ rotatable ? '0' : '1' }}"></i> {{ ('tab.materials.edit_material.grained_'~(rotatable ? '0' : '1'))|i18next }}</span>{% if trimming > 0 %}<span style="margin-left: 10px; border-left: 1px solid #ddd; padding-left: 10px;"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ trimming }}</span>{% endif %}
+                        </td>
+                        <td width="12%" class="ladb-nowrap"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bin.efficiency }}</td>
                     </tr>
                     </tbody>
                 </table>

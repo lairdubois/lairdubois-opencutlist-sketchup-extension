@@ -1066,14 +1066,6 @@
 
           # Compute the cutting diagram
           result, error = e.run(options)
-          if result.nil? 
-            # 
-            # this should be treated as an error
-            response = {
-                :errors => [error],
-            }
-            return response
-          end
 
           # Response
           # --------
@@ -1097,6 +1089,12 @@
           }
 
           # Errors
+          unless error.nil?
+            response[:errors].push(error)
+          end
+          if result.nil?
+            return response   # this should be treated as a fatal error
+          end
           if result.unplaced_boxes.length > 0
             response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
           end
@@ -1139,7 +1137,8 @@
                 :length => bin_def.length.to_l.to_s,
                 :width => bin_def.width.to_l.to_s,
                 :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
-#               :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
+                #:total_length_cuts => bin_def.total_length_cuts.to_l.to_s,
+
                 :boxes => [],
                 :leftovers => [],
                 :cuts => [],

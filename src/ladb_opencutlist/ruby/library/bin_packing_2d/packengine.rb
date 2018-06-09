@@ -17,10 +17,11 @@
     end
 
     def run(options)
+
       if options[:base_sheet_length] > options[:trimming]  && options[:base_sheet_width] > options[:trimming]
         @bins.each_with_index { |bin, i| bin.index = i}
       else
-        return nil, "trimming size larger than panel in at least one dimension."
+        return nil, 'tab.cutlist.cuttingdiagram.error.trimming_larger_than_base_sheet'
       end
 
       packings = []
@@ -49,7 +50,7 @@
          p.performance.v_cutlength]
       }
 
-      return packings[0], "no error"
+      return packings[0], nil
     end
     
   end
