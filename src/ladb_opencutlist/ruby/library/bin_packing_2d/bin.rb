@@ -8,8 +8,8 @@
 
   class Bin < Packing2D
     attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y,
-                  :length_cuts, :trimmed, :trimsize
-    attr_reader :index, :efficiency
+                  :length_cuts, :trimmed, :trimsize, :index
+    attr_reader :efficiency
 
     def initialize(length, width, x, y, index)
       @length = length

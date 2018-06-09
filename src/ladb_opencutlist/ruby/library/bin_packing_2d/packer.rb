@@ -247,10 +247,10 @@
       next_bin_index = bins.length
 
       # remember original length/width of first bin, aka reference bin
-      @b_l = bins[0].length
-      @b_w = bins[0].width
-      @b_x = bins[0].x
-      @b_y = bins[0].y
+      @b_l = options[:base_sheet_length]
+      @b_w = options[:base_sheet_width]
+      @b_x = 0
+      @b_y = 0
 
       # keep a copy of the original bins to collect all relevant info
       bins.each do |bin|
