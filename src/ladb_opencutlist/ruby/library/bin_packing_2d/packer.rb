@@ -1,7 +1,7 @@
 ﻿module BinPacking2D
   class Packer < Packing2D
   
-    attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :score, :split, :performance
+    attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :unused_bins, :score, :split, :performance
 
     def initialize(options)
     
@@ -13,6 +13,7 @@
 
       @original_bins = []
       @unplaced_boxes = []
+      @unused_bins = []
       @bins = []
       @b_x = 0
       @b_y = 0
@@ -396,23 +397,32 @@
       if @packed
         largest_bin = nil
         largest_area = 0
-        p = BinPacking2D::Performance.new(@score, @split)
+        p = BinPacking2D::Performance.new()
 
+        @unused_bins = []
+        bins = []
         @original_bins.each do |bin|
-          p.h_length, p.v_length = bin.total_boxlengths()
-          p.h_cutlength, p.v_cutlength = bin.total_cutlengths()
-          p.cutlength = p.h_cutlength + p.v_cutlength
-          p.nb_leftovers += bin.leftovers.length
+          if bin.boxes.empty? # a bin without boxes has not been used
+            @unused_bins << bin
+          else
+            p.h_length, p.v_length = bin.total_boxlengths()
+            p.h_cutlength, p.v_cutlength = bin.total_cutlengths()
+            p.cutlength = p.h_cutlength + p.v_cutlength
+            p.nb_leftovers += bin.leftovers.length
 
-          bin.leftovers.each do |b|
-            a = b.area
-            if a > largest_area
-              largest_bin = b
-              largest_area = a
+            bin.leftovers.each do |b|
+              a = b.area
+              if a > largest_area
+                largest_bin = b
+                largest_area = a
+              end
             end
+            bin.compute_efficiency
+            
+            bins << bin
           end
-          bin.compute_efficiency
         end
+        @original_bins = bins
 
         p.largest_leftover = largest_bin
         p.nb_bins = @original_bins.length

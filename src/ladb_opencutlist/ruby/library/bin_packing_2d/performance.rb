@@ -1,11 +1,9 @@
 ﻿module BinPacking2D
   class Performance < Packing2D
-    attr_accessor :score, :split, :largest_leftover, :cutlength, :nb_bins, :nb_leftovers,
+    attr_accessor :largest_leftover, :cutlength, :nb_bins, :nb_leftovers,
       :v_cutlength, :h_cutlength, :h_length, :v_length, :max_x, :max_y
 
-    def initialize(score, split)
-      @score = score
-      @split = split
+    def initialize()
       @largest_leftover = nil
       @cutlength = 0
       @nb_bins = 0
