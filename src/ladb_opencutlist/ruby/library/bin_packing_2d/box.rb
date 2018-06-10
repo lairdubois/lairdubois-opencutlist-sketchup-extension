@@ -57,13 +57,25 @@
       end
     end
 
-    # Break up a superbox into its child boxes. When called, we know that
+    # Reduce the size of a supergroup. If it contains more than
+    # 2 elements, remove just the last one. When called, we know that
     # it is a superbox, no need to check
-    #
-    def break_up_supergroup
+    #   
+    def reduce_supergroup(saw_kerf)
       boxes = []
-      @sboxes.each do |box|
-        boxes << box
+      if @sboxes.length() > 2
+        *@sboxes, last = @sboxes
+        if @stack_is_horizontal
+          @length = @length - last.length - saw_kerf
+        else
+          @width = @width - last.width - saw_kerf
+        end
+        boxes.unshift(last)
+        boxes.unshift(self) # we are still a valid superbox
+      else
+        @sboxes.each do |box|
+          boxes.unshift(box)
+        end
       end
       return boxes
     end

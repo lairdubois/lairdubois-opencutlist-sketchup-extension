@@ -1,4 +1,4 @@
-module BinPacking2D
+﻿module BinPacking2D
   class Score < Packing2D
 
     # this may not be a good idea, verify please!
@@ -35,6 +35,8 @@ module BinPacking2D
     def find_position_for_box(box, bins, rotatable, score)
       scores = []
 
+      return [-1, 0, 0, false] if bins.empty?
+      
       bins.each_with_index do |bin, index|
 
         r1 = MAX_INT

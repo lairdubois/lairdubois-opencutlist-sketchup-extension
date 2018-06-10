@@ -8,13 +8,14 @@
 
   class Bin < Packing2D
     attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y,
-                  :length_cuts, :trimmed, :trimsize, :index
+                  :length_cuts, :trimmed, :trimsize, :index, :type
     attr_reader :efficiency
 
-    def initialize(length, width, x, y, index)
+    def initialize(length, width, x, y, index, type)
       @length = length
       @width = width
       @index = index
+      @type = type
       @x = x
       @y = y
       @max_x = 0
@@ -30,7 +31,7 @@
     end
     
     def get_copy
-      b = Bin.new(@length, @width, @x, @y, @index)
+      b = Bin.new(@length, @width, @x, @y, @index, @type)
       b.trimmed = @trimmed
       b.trimsize = @trimsize
       return b
@@ -211,7 +212,7 @@
           if @max_y <= @width
             c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true, @index)
             hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - saw_kerf - @trimsize,
-                                       @x + @trimsize, @max_y + saw_kerf, @index)
+                                       @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end
@@ -219,7 +220,7 @@
           if @max_x <= @length
             c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false, @index)
             vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @max_y - @trimsize,
-                                       @max_x + saw_kerf, @y + @trimsize, @index)
+                                       @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
@@ -228,14 +229,14 @@
           if @max_x <= @length 
             c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false, @index)
             vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @width - 2 * @trimsize,
-                                       @max_x + saw_kerf, @y + @trimsize, @index)
+                                       @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
           if @max_y <= @width
             c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true, @index)
             hl = BinPacking2D::Bin.new(@max_x  - @trimsize, @width - @max_y - saw_kerf - @trimsize,
-                                     @x + @trimsize, @max_y + saw_kerf, @index)
+                                     @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end

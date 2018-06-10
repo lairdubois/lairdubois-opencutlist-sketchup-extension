@@ -217,7 +217,10 @@ tab:
       error:
         unplaced_boxes: There is **1 part** which could not be placed, because it is too large to fit.
         unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
+        no_base_panel: Base panel sizes are badly configured
+        trimming_too_large: Trimming sizes are badly configured
       warning:
+        saw_kerf_small: The configured value for the saw kerf is probably too small
         raw_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
