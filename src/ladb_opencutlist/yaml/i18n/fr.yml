@@ -176,9 +176,9 @@ tab:
     cuttingdiagram:
       title: Calepinage
       option_saw_kerf: Epaisseur de lame de scie
-      option_saw_kerf_help: Epaisseur de lame de scie
+      option_saw_kerf_help: Epaisseur perdue entre les coupes par le trait de scie
       option_trimming: Marge
-      option_trimming_help: Marge du panneau à considérer comme chute
+      option_trimming_help: Marge autour du panneau à considérer comme chute
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquels les pièces sont sélectionnées pour le placement
@@ -219,6 +219,7 @@ tab:
         width: Largeur
         trimming: Marge
         efficiency: Efficacité
+        cut: Coupe
       error:
         trimming_larger_than_base_sheet: La marge est plus grande qu'au moins une des dimensions du panneau de base.
         unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.

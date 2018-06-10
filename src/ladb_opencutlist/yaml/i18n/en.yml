@@ -214,6 +214,7 @@ tab:
         width: Width
         trimming: Trimming
         efficiency: Efficiency
+        cut: Coupe
       error:
         trimming_larger_than_base_sheet: Trimming size larger than panel in at least one dimension.
         unplaced_boxes: There is **1 part** which could not be placed, because it is too large to fit.

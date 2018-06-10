@@ -1183,6 +1183,7 @@
                       :px_x => to_px(cut_def.x),
                       :px_y => to_px(cut_def.y),
                       :px_length => to_px(cut_def.length),
+                      :length => cut_def.length.to_l.to_s,
                       :is_horizontal => cut_def.is_horizontal,
                   }
               )
