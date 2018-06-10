@@ -216,10 +216,12 @@ tab:
         efficiency: Effizienz
         cut: Coupe
       error:
-        trimming_larger_than_base_sheet: La marge est plus grande qu'au moins une des dimensions du panneau de base.
+        no_base_panel: Base panel sizes are badly configured.
+        trimming_too_large: Trimming sizes are badly configured.
         unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
+        saw_kerf_small: The configured value for the saw kerf is probably too small.
         raw_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längezumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
