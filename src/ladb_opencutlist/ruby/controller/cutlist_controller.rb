@@ -1064,7 +1064,7 @@
           e = BinPacking2D::PackEngine.new(bins, boxes)
 
           # Compute the cutting diagram
-          result, err = e.run(options)
+          result, error = e.run(options)
 
           # Response
           # --------
@@ -1100,13 +1100,13 @@
               response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
             end
 
-            # Warnings
-            materials = Sketchup.active_model.materials
-            material = materials[group[:material_name]]
-            material_attributes = MaterialAttributes.new(material)
-            if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
-              response[:warnings].push([ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ])
-            end
+          # Warnings
+          materials = Sketchup.active_model.materials
+          material = materials[group[:material_name]]
+          material_attributes = MaterialAttributes.new(material)
+          if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
+            response[:warnings].push([ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ])
+          end
 
             # Unplaced boxes
             unplaced_parts = {}
@@ -1139,6 +1139,7 @@
                   :width => bin_def.width.to_l.to_s,
                   :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
   #               :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
+                
                   :boxes => [],
                   :leftovers => [],
                   :cuts => [],
@@ -1183,6 +1184,7 @@
                         :px_x => to_px(cut_def.x),
                         :px_y => to_px(cut_def.y),
                         :px_length => to_px(cut_def.length),
+                      :length => cut_def.length.to_l.to_s,
                         :is_horizontal => cut_def.is_horizontal,
                     }
                 )

@@ -716,7 +716,6 @@
                     }, response));
 
                     // Fetch UI elements
-                    var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                     var $btnPrint = $('#ladb_btn_print', $slide);
                     var $btnClose = $('#ladb_btn_close', $slide);
 
@@ -766,7 +765,6 @@
                     $('a.ladb-btn-highlight-part', $slide).on('click', function() {
                         $(this).blur();
                         var partId = $(this).data('part-id');
-                        console.log('partId', partId);
                         that.highlightPart(partId);
                         return false;
                     });

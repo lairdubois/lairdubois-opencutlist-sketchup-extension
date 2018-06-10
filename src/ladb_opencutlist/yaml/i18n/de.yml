@@ -214,7 +214,9 @@ tab:
         width: Breite
         trimming: Seitenrand
         efficiency: Effizienz
+        cut: Coupe
       error:
+        trimming_larger_than_base_sheet: La marge est plus grande qu'au moins une des dimensions du panneau de base.
         unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
