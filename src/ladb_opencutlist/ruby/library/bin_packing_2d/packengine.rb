@@ -77,8 +77,8 @@
           end
         end
         packings = packings.sort_by { |p|
-          [p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.area(),
-           p.performance.v_cutlength]
+          [ p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.width,
+            p.performance.nb_leftovers ]
         }
         return packings[0], NO_ERROR
       end

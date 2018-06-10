@@ -190,6 +190,11 @@ tab:
       option_custom_sheet: Custom Panel
       option_base_sheet_length: Custom Panel Length
       option_base_sheet_width: Custom Panel Width
+      option_leftovers: Scrap Sheet Goods
+      option_leftovers_help:  |
+        List all scrap sheet goods you would like to include in the cutting diagram.
+        Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
+        *Sizes without units are considered to be in model units.*
       presort:
         input_order: None
         width_decr: Width Decreasing
@@ -214,10 +219,11 @@ tab:
         width: Width
         trimming: Trimming
         efficiency: Efficiency
-        cut: Coupe
+        cut: Cut
       error:
         no_base_panel: Base panel sizes are badly configured.
         trimming_too_large: Trimming sizes are badly configured.
+        general_error: Algorithmic panic, please contact the developpers, you have an interesting case.
         unplaced_boxes: There is **1 part** which could not be placed, because it is too large to fit.
         unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:

@@ -1096,6 +1096,8 @@
               response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.no_base_panel' ])
             when BinPacking2D::TRIMMING_TOO_LARGE
               response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.trimming_too_large' ])
+            when BinPacking2D::GENERAL_ERROR
+              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.general_error' ])
             end
 
           else
@@ -1133,6 +1135,9 @@
             unplaced_parts.each { |key, part|
               response[:unplaced_parts].push(part)
             }
+
+            # Unused bins are in
+            # result.unused_bins
 
             # Bins
             result.original_bins.each { |bin_def|
