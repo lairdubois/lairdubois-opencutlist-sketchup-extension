@@ -7,21 +7,40 @@
   require_relative 'score'
   require_relative 'performance'
   require_relative 'packer'
-
+  
   class PackEngine < Packing2D
   
-    def initialize(bins, boxes, group)
+    def initialize(bins, boxes)
       @bins = bins
       @boxes = boxes
-      #@group = group
     end
 
+    def check_basic_preconditions (options)
+    
+      if !options.key?(:base_sheet_length) || options[:base_sheet_length] == 0
+        return NO_BASE_PANEL
+      elsif options[:base_sheet_length] < 2*options[:trimming]
+        return TRIMMING_TOO_LARGE
+      end
+      if !options.key?(:base_sheet_width) || options[:base_sheet_width] == 0
+        return NO_BASE_PANEL
+      elsif options[:base_sheet_width] < 2*options[:trimming]
+        return TRIMMING_TOO_LARGE
+      end
+      return NO_ERROR
+    end
+    
     def run(options)
-
-      if options[:base_sheet_length] > options[:trimming]  && options[:base_sheet_width] > options[:trimming]
+    
+      err = check_basic_preconditions(options)
+      if err != NO_ERROR
+        return nil, err     
+      end
+      
+      # index the bins in the order they were put added here
+      # the base panel may or may not be index = 0
+      if !@bins.nil?
         @bins.each_with_index { |bin, i| bin.index = i}
-      else
-        return nil, 'tab.cutlist.cuttingdiagram.error.trimming_larger_than_base_sheet'
       end
 
       packings = []
@@ -29,15 +48,19 @@
       (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
           copy_boxes = []
-          @boxes.each do |box|
-            b = box.clone
-            copy_boxes << b
+          if !@boxes.nil? 
+            @boxes.each do |box|
+              b = box.clone
+              copy_boxes << b
+            end
           end
 
           copy_bins = []
-          @bins.each do |bin|
-            b = bin.clone
-            copy_bins << b
+          if !@bins.nil?
+            @bins.each do |bin|
+              b = bin.clone
+              copy_bins << b
+            end
           end
           p = BinPacking2D::Packer.new(options)
           p.pack(copy_bins, copy_boxes, score, split, options)
@@ -45,12 +68,20 @@
         end
       end
 
-      packings = packings.sort_by { |p|
-        [p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.area(),
-         p.performance.v_cutlength]
-      }
-
-      return packings[0], nil
+      if packings.empty?
+        return nil, GENERAL_ERROR
+      else
+        packings.each do |p|
+          if p.performance.nil?
+            puts "no performance"
+          end
+        end
+        packings = packings.sort_by { |p|
+          [p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.area(),
+           p.performance.v_cutlength]
+        }
+        return packings[0], NO_ERROR
+      end
     end
     
   end

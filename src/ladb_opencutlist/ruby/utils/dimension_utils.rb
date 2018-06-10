@@ -97,26 +97,6 @@
       end
     end
 
-    def inches_to_model_units(i)
-=begin
-i = i.to_f
-      case @length_unit
-      when MILLIMETER
-        i = i*25.4
-      when CENTIMETER
-        i = i*2.54
-      when METER
-        i = i*0.0254
-      when FEET
-        i =  i/12.0
-      end
-      return i.to_s
-=end
-      # in Sketchup the whole function is just:
-      i = i.to_s + '"'
-      i.to_l
-    end
-
     # Take a fraction and try to simplify it by turning:
     # 1. x/0 into x
     # 2. 0/x into 0
@@ -149,15 +129,18 @@ i = i.to_f
       nu = ""
       sum = 0
       if i.is_a?(String) 
-        if match = i.match(/^(~?\s*)(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
-          one, two, three, four = match.captures
-          if four.nil?
+        if match = i.match(/^(~?\s*)(\d*(([.,])\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
+          one, two, three, four, five = match.captures
+          if five.nil?
             nu = one + two + unit_sign
           elsif two.empty? and three.nil?  # two could not be nil
-            nu = one + "0" + four
+            nu = one + "0" + five
           else
-            nu = one + two + four
+            nu = one + two + five
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
+          end
+          if !four.nil?
+            nu.sub!(four, @separator)
           end
         elsif match = i.match(/^~?\s*(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures

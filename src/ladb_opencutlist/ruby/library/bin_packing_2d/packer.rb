@@ -214,6 +214,7 @@
     # If a box only fits rotated, rotate it
     #
     def remove_too_large_boxes(boxes, bins)
+      standard_bin = BinPacking2D::Bin.new(@b_l, @b_w, 0, 0, 0, PANEL_TYPE_NEW)
       fitting_boxes = []
       boxes.each_with_index do |box, i|
         fits = false
@@ -225,8 +226,15 @@
             fits = true
           end
         end
-        if !fits
-          @unplaced_boxes << box
+        if !fits # box does not fit one that is available, but maybe fits standard bin
+          if standard_bin.encloses?(box)
+            fitting_boxes << box
+          elsif (@rotatable && bin.encloses_rotated?(box))
+            box.rotate
+            fitting_boxes << box
+          else
+            @unplaced_boxes << box
+          end
         else
           fitting_boxes << box
         end
@@ -244,23 +252,29 @@
       @split = split
 
       # bins are numbered in sequence, this is the next available index
-      next_bin_index = bins.length
+      if bins.nil? || bins.empty?
+        next_bin_index = 0
+      else
+        next_bin_index = bins.length
+      end
 
       # remember original length/width of first bin, aka reference bin
       @b_l = options[:base_sheet_length]
       @b_w = options[:base_sheet_width]
       @b_x = 0
       @b_y = 0
-
+      
       # keep a copy of the original bins to collect all relevant info
-      bins.each do |bin|
-        b = bin.get_copy
-        # the original bins are not cleaned but they know about the trimming size
-        b.trimsize = @trimsize
-        b.trimmed = true
-        @original_bins << b
-        # trim bins, this reduces the available space
-        bin.trim_rough_bin(@trimsize)
+      if !bins.empty?
+        bins.each do |bin|
+          b = bin.get_copy
+          # the original bins are not cleaned but they know about the trimming size
+          b.trimsize = @trimsize
+          b.trimmed = true
+          @original_bins << b
+          # trim bins, this reduces the available space
+          bin.trim_rough_bin(@trimsize)
+        end
       end
 
       # remove boxes that are too large to fit a single bin
@@ -304,15 +318,16 @@
             if options[:stacking] != STACKING_NONE && options[:break_stacking_if_needed]
               # try to break up this box if it is a supergroup
               if box.is_superbox
-                sboxes = box.break_up_supergroup
-                boxes += sboxes
+                sboxes = box.reduce_supergroup(@saw_kerf)
+                boxes.unshift(*sboxes) # prepend the boxes, this does not guarantee that order is preserved
                 next
               end
             end
-            cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index)
+            cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, PANEL_TYPE_NEW)
             cs.trimsize = @trimsize
             cs.trimmed = true
             @original_bins << cs.get_copy
+
             cs.trim_rough_bin(@trimsize)
             next_bin_index += 1
           else

@@ -1058,11 +1058,10 @@
 
           # add leftovers to the bins, you need only length and width, index will be added in packengine
           bins = [
-            BinPacking2D::Bin.new(options[:base_sheet_length]/2, options[:base_sheet_width], 0, 0, 0),
-            BinPacking2D::Bin.new(options[:base_sheet_length]*3/4, options[:base_sheet_width], 0, 0, 0),
+            BinPacking2D::Bin.new(options[:base_sheet_length]/2, options[:base_sheet_width], 0, 0, 0, BinPacking2D::PANEL_TYPE_OFFCUT),
           ] 
 
-          e = BinPacking2D::PackEngine.new(bins, boxes, group)
+          e = BinPacking2D::PackEngine.new(bins, boxes)
 
           # Compute the cutting diagram
           result, error = e.run(options)
@@ -1089,15 +1088,17 @@
           }
 
           # Errors
-          unless error.nil?
-            response[:errors].push(error)
-          end
-          if result.nil?
-            return response   # this should be treated as a fatal error
-          end
-          if result.unplaced_boxes.length > 0
-            response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
-          end
+          if err > BinPacking2D::NO_ERROR
+            case err
+            when BinPacking2D::NO_BASE_PANEL 
+              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.no_base_panel' ])
+            when BinPacking2D::TRIMMING_TOO_LARGE
+              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.trimming_too_large' ])           
+            end
+          else
+            if result.unplaced_boxes.length > 0
+              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
+            end
 
           # Warnings
           materials = Sketchup.active_model.materials
@@ -1107,90 +1108,90 @@
             response[:warnings].push([ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ])
           end
 
-          # Unplaced boxes
-          unplaced_parts = {}
-          result.unplaced_boxes.each { |box_def|
-            part = unplaced_parts[box_def.part[:number]]
-            unless part
-              part = {
-                  :id => box_def.part[:id],
-                  :number => box_def.part[:number],
-                  :name => box_def.part[:name],
-                  :length => box_def.length.to_l.to_s,
-                  :width => box_def.width.to_l.to_s,
-                  :count => 0,
+            # Unplaced boxes
+            unplaced_parts = {}
+            result.unplaced_boxes.each { |box_def|
+              part = unplaced_parts[box_def.part[:number]]
+              unless part
+                part = {
+                    :id => box_def.part[:id],
+                    :number => box_def.part[:number],
+                    :name => box_def.part[:name],
+                    :length => box_def.length.to_l.to_s,
+                    :width => box_def.width.to_l.to_s,
+                    :count => 0,
+                }
+                unplaced_parts[box_def.part[:number]] = part
+              end
+              part[:count] += 1
+            }
+            unplaced_parts.each { |key, part|
+              response[:unplaced_parts].push(part)
+            }
+
+            # Bins
+            result.original_bins.each { |bin_def|
+
+              bin = {
+                  :px_length => to_px(bin_def.length),
+                  :px_width => to_px(bin_def.width),
+                  :length => bin_def.length.to_l.to_s,
+                  :width => bin_def.width.to_l.to_s,
+                  :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
+  #               :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
+                
+                  :boxes => [],
+                  :leftovers => [],
+                  :cuts => [],
               }
-              unplaced_parts[box_def.part[:number]] = part
-            end
-            part[:count] += 1
-          }
-          unplaced_parts.each { |key, part|
-            response[:unplaced_parts].push(part)
-          }
+              response[:bins].push(bin)
 
-          # Bins
-          result.original_bins.each { |bin_def|
+              # Boxes
+              bin_def.boxes.each { |box_def|
+                bin[:boxes].push(
+                    {
+                        :number => box_def.part[:number],
+                        :name => box_def.part[:name],
+                        :px_x => to_px(box_def.x),
+                        :px_y => to_px(box_def.y),
+                        :px_length => to_px(box_def.length),
+                        :px_width => to_px(box_def.width),
+                        :length => box_def.length.to_l.to_s,
+                        :width => box_def.width.to_l.to_s,
+                        :rotated => box_def.rotated,
+                    }
+                )
+              }
 
-            bin = {
-                :px_length => to_px(bin_def.length),
-                :px_width => to_px(bin_def.width),
-                :length => bin_def.length.to_l.to_s,
-                :width => bin_def.width.to_l.to_s,
-                :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
-                #:total_length_cuts => bin_def.total_length_cuts.to_l.to_s,
+              # Leftovers
+              bin_def.leftovers.each { |box_def|
+                bin[:leftovers].push(
+                    {
+                        :px_x => to_px(box_def.x),
+                        :px_y => to_px(box_def.y),
+                        :px_length => to_px(box_def.length),
+                        :px_width => to_px(box_def.width),
+                        :length => box_def.length.to_l.to_s,
+                        :width => box_def.width.to_l.to_s,
+                    }
+                )
+              }
 
-                :boxes => [],
-                :leftovers => [],
-                :cuts => [],
-            }
-            response[:bins].push(bin)
-
-            # Boxes
-            bin_def.boxes.each { |box_def|
-              bin[:boxes].push(
-                  {
-                      :number => box_def.part[:number],
-                      :name => box_def.part[:name],
-                      :px_x => to_px(box_def.x),
-                      :px_y => to_px(box_def.y),
-                      :px_length => to_px(box_def.length),
-                      :px_width => to_px(box_def.width),
-                      :length => box_def.length.to_l.to_s,
-                      :width => box_def.width.to_l.to_s,
-                      :rotated => box_def.rotated,
-                  }
-              )
-            }
-
-            # Leftovers
-            bin_def.leftovers.each { |box_def|
-              bin[:leftovers].push(
-                  {
-                      :px_x => to_px(box_def.x),
-                      :px_y => to_px(box_def.y),
-                      :px_length => to_px(box_def.length),
-                      :px_width => to_px(box_def.width),
-                      :length => box_def.length.to_l.to_s,
-                      :width => box_def.width.to_l.to_s,
-                  }
-              )
-            }
-
-            # Cuts
-            bin_def.cuts.each { |cut_def|
-              bin[:cuts].push(
-                  {
-                      :px_x => to_px(cut_def.x),
-                      :px_y => to_px(cut_def.y),
-                      :px_length => to_px(cut_def.length),
+              # Cuts
+              bin_def.cuts.each { |cut_def|
+                bin[:cuts].push(
+                    {
+                        :px_x => to_px(cut_def.x),
+                        :px_y => to_px(cut_def.y),
+                        :px_length => to_px(cut_def.length),
                       :length => cut_def.length.to_l.to_s,
-                      :is_horizontal => cut_def.is_horizontal,
-                  }
-              )
+                        :is_horizontal => cut_def.is_horizontal,
+                    }
+                )
+              }
+
             }
-
-          }
-
+          end
           return response
         }
 
