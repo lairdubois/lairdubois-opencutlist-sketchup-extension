@@ -6,31 +6,39 @@
 
     // Options keys
 
-    var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist_option_auto_orient';
-    var SETTING_KEY_OPTION_SMART_MATERIAL = 'cutlist_option_smart_material';
-    var SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS = 'cutlist_option_part_number_with_letters';
-    var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist_option_part_number_sequence_by_group';
-    var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist_option_part_order_strategy';
+    var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist.option.hide_raw_dimensions';
+    var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist.option.hide_final_dimensions';
+    var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
+    var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
+    var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist.option.hidden_group_ids';
 
-    var SETTING_KEY_OPTION_COL_SEP = 'cutlist_option_col_sep';
-    var SETTING_KEY_OPTION_ENCODING = 'cutlist_option_encoding';
+    var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
+    var SETTING_KEY_OPTION_SMART_MATERIAL = 'cutlist.option.smart_material';
+    var SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS = 'cutlist.option.part_number_with_letters';
+    var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist.option.part_number_sequence_by_group';
+    var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist.option.part_order_strategy';
 
-    var SETTING_KEY_OPTION_SAW_KERF = 'cutlist_option_saw_kerf';
-    var SETTING_KEY_OPTION_TRIMMING = 'cutlist_option_trimming';
-    var SETTING_KEY_OPTION_BASE_SHEET_LENGTH = 'cutlist_option_base_sheet_length';
-    var SETTING_KEY_OPTION_BASE_SHEET_WIDTH = 'cutlist_option_base_sheet_width';
-    var SETTING_KEY_OPTION_ROTATABLE = 'cutlist_option_rotatable';
-    var SETTING_KEY_OPTION_PRESORT = 'cutlist_option_presort';
-    var SETTING_KEY_OPTION_STACKING = 'cutlist_option_stacking';
-    var SETTING_KEY_OPTION_BBOX_OPTIMIZATION = 'cutlist_option_bbox_optimization';
+    var SETTING_KEY_EXPORT_OPTION_COL_SEP = 'cutlist.export.option.col_sep';
+    var SETTING_KEY_EXPORT_OPTION_ENCODING = 'cutlist.export.option.encoding';
 
-    var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist_option_hide_raw_dimensions';
-    var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist_option_hide_final_dimensions';
-    var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist_option_hide_untyped_material_dimensions';
-    var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist_option_dimension_column_order_strategy';
-    var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist_option_hidden_group_ids';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET = 'cutlist.cuttingdiagram2d.option.base_sheet_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_LENGTH = 'cutlist.cuttingdiagram2d.option.base_sheet_length_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_WIDTH = 'cutlist.cuttingdiagram2d.option.base_sheet_width_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_LEFTOVER_SIZES = 'cutlist.cuttingdiagram2d.option.leftover_sizes_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE = 'cutlist.cuttingdiagram2d.option.rotatable_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram2d.option.saw_kerf_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING = 'cutlist.cuttingdiagram2d.option.trimming_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT = 'cutlist.cuttingdiagram2d.option.presort_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING = 'cutlist.cuttingdiagram2d.option.stacking_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION = 'cutlist.cuttingdiagram2d.option.bbox_optimization_';
 
     // Options defaults
+
+    var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
+    var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
+    var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
     var OPTION_DEFAULT_AUTO_ORIENT = true;
     var OPTION_DEFAULT_SMART_MATERIAL = true;
@@ -41,20 +49,16 @@
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
     var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
-    var OPTION_DEFAULT_SAW_KERF = '3mm';
-    var OPTION_DEFAULT_TRIMMING = '10mm';
+    var OPTION_DEFAULT_BASE_SHEET = '';
     var OPTION_DEFAULT_BASE_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_BASE_SHEET_WIDTH = '2070mm';
     var OPTION_DEFAULT_ROTATABLE = false;
+    var OPTION_DEFAULT_LEFTOVER_SIZES = '';
+    var OPTION_DEFAULT_SAW_KERF = '3mm';
+    var OPTION_DEFAULT_TRIMMING = '10mm';
     var OPTION_DEFAULT_PRESORT = 1;             // PRESORT_WIDTH_DECR
     var OPTION_DEFAULT_STACKING = 0;            // STACKING_NONE
     var OPTION_DEFAULT_BBOX_OPTIMIZATION = 0;   // BBOX_OPTIMIZATION_NONE
-
-    var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
-    var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
-    var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
     // Select picker options
 
@@ -79,6 +83,7 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.generateAt = null;
+        this.isMetric = false;
         this.filename = null;
         this.pageLabel = null;
         this.lengthUnit = null;
@@ -130,6 +135,7 @@
             var groups = response.groups;
 
             // Keep usefull data
+            that.isMetric = isMetric;
             that.filename = filename;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
@@ -294,68 +300,85 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
+        // Retrieve export option options
+        this.opencutlist.pullSettings([
 
-        // Fetch UI elements
-        var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
-        var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
-        var $btnExport = $('#ladb_cutlist_export', $modal);
+                SETTING_KEY_EXPORT_OPTION_COL_SEP,
+                SETTING_KEY_EXPORT_OPTION_ENCODING
 
-        // Bind select
-        $selectColSep.val(that.exportOptions.col_sep);
-        $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectEncoding.val(that.exportOptions.encoding);
-        $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+            ],
+            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
+            function () {
 
-        // Bind buttons
-        $btnExport.on('click', function() {
+                var exportOptions = {
+                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
+                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
+                };
 
-            // Fetch options
+                var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
-            that.exportOptions.col_sep = $selectColSep.val();
-            that.exportOptions.encoding = $selectEncoding.val();
+                // Fetch UI elements
+                var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
+                var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+                var $btnExport = $('#ladb_cutlist_export', $modal);
 
-            // Store options
-            that.opencutlist.setSettings([
-                { key:SETTING_KEY_OPTION_COL_SEP, value:that.exportOptions.col_sep },
-                { key:SETTING_KEY_OPTION_ENCODING, value:that.exportOptions.encoding }
-            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
+                // Bind select
+                $selectColSep.val(that.exportOptions.col_sep);
+                $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectEncoding.val(that.exportOptions.encoding);
+                $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
 
-            rubyCallCommand('cutlist_export', $.extend(that.exportOptions, that.uiOptions), function(response) {
+                // Bind buttons
+                $btnExport.on('click', function() {
 
-                var i;
+                    // Fetch options
 
-                if (response.errors) {
-                    for (i = 0; i < response.errors.length; i++) {
-                        that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                    }
-                }
-                if (response.warnings) {
-                    for (i = 0; i < response.warnings.length; i++) {
-                        that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
-                    }
-                }
-                if (response.export_path) {
-                    that.opencutlist.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
-                        Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                    that.exportOptions.col_sep = $selectColSep.val();
+                    that.exportOptions.encoding = $selectEncoding.val();
 
-                            rubyCallCommand('core_open_external_file', {
-                                path: response.export_path
-                            });
+                    // Store options
+                    that.opencutlist.setSettings([
+                        { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:that.exportOptions.col_sep },
+                        { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:that.exportOptions.encoding }
+                    ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                        })
-                    ]);
-                }
+                    rubyCallCommand('cutlist_export', $.extend(that.exportOptions, that.uiOptions), function(response) {
+
+                        var i;
+
+                        if (response.errors) {
+                            for (i = 0; i < response.errors.length; i++) {
+                                that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                            }
+                        }
+                        if (response.warnings) {
+                            for (i = 0; i < response.warnings.length; i++) {
+                                that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
+                            }
+                        }
+                        if (response.export_path) {
+                            that.opencutlist.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                                Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                    rubyCallCommand('core_open_external_file', {
+                                        path: response.export_path
+                                    });
+
+                                })
+                            ]);
+                        }
+
+                    });
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
+
+                // Show modal
+                $modal.modal('show');
 
             });
-
-            // Hide modal
-            $modal.modal('hide');
-
-        });
-
-        // Show modal
-        $modal.modal('show');
 
     };
 
@@ -621,173 +644,221 @@
 
         var group = this.findGroupById(groupId);
 
-        rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
+        // Retrieve cutting diagram options
+        this.opencutlist.pullSettings([
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', $.extend({ material_attributes: response }, { group: group }));
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_LENGTH + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_WIDTH + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_LEFTOVER_SIZES + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION + groupId
 
-            // Fetch UI elements
-            var $selectSizes = $('#ladb_select_sizes', $modal);
-            var $inputBaseSheetLength = $('#ladb_input_base_sheet_length', $modal);
-            var $inputBaseSheetWidth = $('#ladb_input_base_sheet_width', $modal);
-            var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
-            var $inputTrimming = $('#ladb_input_trimming', $modal);
-            var $inputRotatable = $('#ladb_input_rotatable', $modal);
-            var $selectPresort = $('#ladb_select_presort', $modal);
-            var $selectStacking = $('#ladb_select_stacking', $modal);
-            var $selectBBoxOptimization = $('#ladb_select_bbox_optimization', $modal);
-            var $btnEditMaterial = $('#ladb_edit_material', $modal);
-            var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
+            ],
+            2 /* SETTINGS_RW_STRATEGY_MODEL */,
+            function () {
 
-            $inputSawKerf.val(that.cuttingdiagram2dOptions.saw_kerf);
-            $inputTrimming.val(that.cuttingdiagram2dOptions.trimming);
-            $selectPresort.val(that.cuttingdiagram2dOptions.presort);
-            $selectStacking.val(that.cuttingdiagram2dOptions.stacking);
-            $selectBBoxOptimization.val(that.cuttingdiagram2dOptions.bbox_optimization);
+                var cuttingdiagram2dOptions = {
+                    base_sheet: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET + groupId, OPTION_DEFAULT_BASE_SHEET),
+                    base_sheet_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_LENGTH + groupId, OPTION_DEFAULT_BASE_SHEET_LENGTH),
+                    base_sheet_width: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_WIDTH + groupId, OPTION_DEFAULT_BASE_SHEET_WIDTH),
+                    leftover_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_LEFTOVER_SIZES + groupId, OPTION_DEFAULT_LEFTOVER_SIZES),
+                    rotatable: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId, OPTION_DEFAULT_ROTATABLE),
+                    saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId, OPTION_DEFAULT_SAW_KERF),
+                    trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId, OPTION_DEFAULT_TRIMMING),
+                    presort: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId, OPTION_DEFAULT_PRESORT),
+                    stacking: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + groupId, OPTION_DEFAULT_STACKING),
+                    bbox_optimization: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION + groupId, OPTION_DEFAULT_BBOX_OPTIMIZATION)
+                };
 
-            // Bind select
-            $selectSizes.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectBBoxOptimization.selectpicker(SELECT_PICKER_OPTIONS);
+                rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            var fnSelectSize = function() {
-                var value = $selectSizes.val();
-                if (value == '0x0') {
-                    $('#ladb_base_sheet_values').show();
-                    $inputBaseSheetLength.val(that.cuttingdiagram2dOptions.base_sheet_length);
-                    $inputBaseSheetWidth.val(that.cuttingdiagram2dOptions.base_sheet_width);
-                    $inputRotatable.prop('checked', that.cuttingdiagram2dOptions.rotatable);
-                } else {
-                    $('#ladb_base_sheet_values').hide();
-                    var sizeAndGrained = value.split('|');
-                    var size = sizeAndGrained[0].split('x');
-                    $inputBaseSheetLength.val(size[0].trim());
-                    $inputBaseSheetWidth.val(size[1].trim());
-                    var grained = sizeAndGrained[1] === 'true';
-                    $inputRotatable.prop('checked', !grained);
-                }
-            };
-
-            $selectSizes.on('changed.bs.select', function (e) {
-                fnSelectSize();
-            });
-            fnSelectSize();
-
-            // Bind buttons
-            $btnEditMaterial.on('click', function() {
-                that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
-                    material_id: group.material_id
-                });
-            });
-            $btnCuttingdiagram.on('click', function() {
-
-                // Fetch options
-
-                that.cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
-                that.cuttingdiagram2dOptions.trimming = $inputTrimming.val();
-                that.cuttingdiagram2dOptions.base_sheet_length = $inputBaseSheetLength.val();
-                that.cuttingdiagram2dOptions.base_sheet_width = $inputBaseSheetWidth.val();
-                that.cuttingdiagram2dOptions.rotatable = $inputRotatable.is(':checked');
-                that.cuttingdiagram2dOptions.presort = $selectPresort.val();
-                that.cuttingdiagram2dOptions.stacking = $selectStacking.val();
-                that.cuttingdiagram2dOptions.bbox_optimization = $selectBBoxOptimization.val();
-
-                // Store options
-                that.opencutlist.setSettings([
-                    { key:SETTING_KEY_OPTION_SAW_KERF, value:'d:' + that.cuttingdiagram2dOptions.saw_kerf },
-                    { key:SETTING_KEY_OPTION_TRIMMING, value:'d:' + that.cuttingdiagram2dOptions.trimming },
-                    { key:SETTING_KEY_OPTION_BASE_SHEET_LENGTH, value:'d:' + that.cuttingdiagram2dOptions.base_sheet_length },
-                    { key:SETTING_KEY_OPTION_BASE_SHEET_WIDTH, value:'d:' + that.cuttingdiagram2dOptions.base_sheet_width },
-                    { key:SETTING_KEY_OPTION_ROTATABLE, value:that.cuttingdiagram2dOptions.rotatable },
-                    { key:SETTING_KEY_OPTION_PRESORT, value:that.cuttingdiagram2dOptions.presort },
-                    { key:SETTING_KEY_OPTION_STACKING, value:that.cuttingdiagram2dOptions.stacking },
-                    { key:SETTING_KEY_OPTION_BBOX_OPTIMIZATION, value:that.cuttingdiagram2dOptions.bbox_optimization }
-
-                ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
-
-                rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, that.cuttingdiagram2dOptions, that.uiOptions), function(response) {
-
-                    var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
-                        filename: that.filename,
-                        pageLabel: that.pageLabel,
-                        lengthUnit: that.lengthUnit,
-                        generatedAt: new Date().getTime() / 1000,
-                        group: group
-                    }, response));
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', $.extend({ material_attributes: response }, { group: group }));
 
                     // Fetch UI elements
-                    var $btnPrint = $('#ladb_btn_print', $slide);
-                    var $btnClose = $('#ladb_btn_close', $slide);
+                    var $inputScrapSheet = $('#ladb_select_base_sheet', $modal);
+                    var $inputBaseSheetLength = $('#ladb_input_base_sheet_length', $modal);
+                    var $inputBaseSheetWidth = $('#ladb_input_base_sheet_width', $modal);
+                    var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                    var $inputRotatable = $('#ladb_input_rotatable', $modal);
+                    var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
+                    var $inputTrimming = $('#ladb_input_trimming', $modal);
+                    var $selectPresort = $('#ladb_select_presort', $modal);
+                    var $selectStacking = $('#ladb_select_stacking', $modal);
+                    var $selectBBoxOptimization = $('#ladb_select_bbox_optimization', $modal);
+                    var $btnEditMaterial = $('#ladb_edit_material', $modal);
+                    var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
+
+                    $inputScrapSheet.val(cuttingdiagram2dOptions.base_sheet);
+                    $inputScrapSheetSizes.val(cuttingdiagram2dOptions.leftover_sizes);
+                    $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
+                    $inputTrimming.val(cuttingdiagram2dOptions.trimming);
+                    $selectPresort.val(cuttingdiagram2dOptions.presort);
+                    $selectStacking.val(cuttingdiagram2dOptions.stacking);
+                    $selectBBoxOptimization.val(cuttingdiagram2dOptions.bbox_optimization);
+
+                    // Bind select
+                    $inputScrapSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectBBoxOptimization.selectpicker(SELECT_PICKER_OPTIONS);
+
+                    var fnSelectSize = function() {
+                        var value = $inputScrapSheet.val();
+                        if (!value || value == '0x0') {
+                            $('#ladb_form_group_base_sheet_length', $modal).show();
+                            $('#ladb_form_group_base_sheet_width', $modal).show();
+                            $('#ladb_form_group_rotatable', $modal).show();
+                            $inputBaseSheetLength.val(cuttingdiagram2dOptions.base_sheet_length);
+                            $inputBaseSheetWidth.val(cuttingdiagram2dOptions.base_sheet_width);
+                            $inputRotatable.prop('checked', cuttingdiagram2dOptions.rotatable);
+                        } else {
+                            $('#ladb_form_group_base_sheet_length', $modal).hide();
+                            $('#ladb_form_group_base_sheet_width', $modal).hide();
+                            $('#ladb_form_group_rotatable', $modal).hide();
+                            var sizeAndGrained = value.split('|');
+                            var size = sizeAndGrained[0].split('x');
+                            $inputBaseSheetLength.val(size[0].trim());
+                            $inputBaseSheetWidth.val(size[1].trim());
+                            var grained = sizeAndGrained[1] === 'true';
+                            $inputRotatable.prop('checked', !grained);
+                        }
+                    };
+
+                    $inputScrapSheet.on('changed.bs.select', function (e) {
+                        fnSelectSize();
+                    });
+                    fnSelectSize();
 
                     // Bind buttons
-                    $btnPrint.on('click', function() {
-                        window.print();
+                    $btnEditMaterial.on('click', function() {
+                        that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                            material_id: group.material_id
+                        });
                     });
-                    $btnClose.on('click', function() {
-                        that.popSlide();
+                    $btnCuttingdiagram.on('click', function() {
+
+                        // Fetch options
+
+                        cuttingdiagram2dOptions.base_sheet = $inputScrapSheet.val();
+                        cuttingdiagram2dOptions.base_sheet_length = $inputBaseSheetLength.val();
+                        cuttingdiagram2dOptions.base_sheet_width = $inputBaseSheetWidth.val();
+                        cuttingdiagram2dOptions.leftover_sizes = $inputScrapSheetSizes.val();
+                        cuttingdiagram2dOptions.rotatable = $inputRotatable.is(':checked');
+                        cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
+                        cuttingdiagram2dOptions.trimming = $inputTrimming.val();
+                        cuttingdiagram2dOptions.presort = $selectPresort.val();
+                        cuttingdiagram2dOptions.stacking = $selectStacking.val();
+                        cuttingdiagram2dOptions.bbox_optimization = $selectBBoxOptimization.val();
+
+                        // Store options
+                        that.opencutlist.setSettings([
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET + groupId, value:cuttingdiagram2dOptions.base_sheet },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_LENGTH + groupId, value:cuttingdiagram2dOptions.base_sheet_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BASE_SHEET_WIDTH + groupId, value:cuttingdiagram2dOptions.base_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_LEFTOVER_SIZES + groupId, value:cuttingdiagram2dOptions.leftover_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId, value:cuttingdiagram2dOptions.rotatable },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId, value:cuttingdiagram2dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId, value:cuttingdiagram2dOptions.presort },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + groupId, value:cuttingdiagram2dOptions.stacking },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION + groupId, value:cuttingdiagram2dOptions.bbox_optimization }
+
+                        ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+
+                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram2dOptions, that.uiOptions), function(response) {
+
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
+                                isMetric: that.isMetric,
+                                filename: that.filename,
+                                pageLabel: that.pageLabel,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: group
+                            }, response));
+
+                            // Fetch UI elements
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnPrint.on('click', function() {
+                                window.print();
+                            });
+                            $btnClose.on('click', function() {
+                                that.popSlide();
+                            });
+
+                            $('.ladb-btn-toggle-no-print', $slide).on('click', function() {
+                                var $btn = $(this);
+                                var $group = $btn.closest('.ladb-cutlist-group');
+                                var $i = $('i', $btn);
+                                if ($group.hasClass('no-print')) {
+                                    $group.removeClass('no-print');
+                                    $i.addClass('ladb-opencutlist-icon-eye-close');
+                                    $i.removeClass('ladb-opencutlist-icon-eye-open');
+                                } else {
+                                    $group.addClass('no-print');
+                                    $i.addClass('ladb-opencutlist-icon-eye-open');
+                                    $i.removeClass('ladb-opencutlist-icon-eye-close');
+                                }
+                                $btn.blur();
+                            });
+                            $('.ladb-btn-scrollto-prev-group', $slide).on('click', function() {
+                                var $group = $(this).closest('.ladb-cutlist-group');
+                                var groupId = $group.data('group-id');
+                                var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-btn-scrollto-next-group', $slide).on('click', function() {
+                                var $group = $(this).closest('.ladb-cutlist-group');
+                                var groupId = $group.data('group-id');
+                                var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('a.ladb-btn-highlight-part', $slide).on('click', function() {
+                                $(this).blur();
+                                var partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                return false;
+                            });
+
+                            // Toggle tooltips
+                            $('[data-toggle=tooltip]', $slide).tooltip({
+                                'container': 'body'
+                            });
+
+                        });
+
+                        // Hide modal
+                        $modal.modal('hide');
+
                     });
 
-                    $('.ladb-btn-toggle-no-print', $slide).on('click', function() {
-                        var $btn = $(this);
-                        var $group = $btn.closest('.ladb-cutlist-group');
-                        var $i = $('i', $btn);
-                        if ($group.hasClass('no-print')) {
-                            $group.removeClass('no-print');
-                            $i.addClass('ladb-opencutlist-icon-eye-close');
-                            $i.removeClass('ladb-opencutlist-icon-eye-open');
-                        } else {
-                            $group.addClass('no-print');
-                            $i.addClass('ladb-opencutlist-icon-eye-open');
-                            $i.removeClass('ladb-opencutlist-icon-eye-close');
-                        }
-                        $btn.blur();
-                    });
-                    $('.ladb-btn-scrollto-prev-group', $slide).on('click', function() {
-                        var $group = $(this).closest('.ladb-cutlist-group');
-                        var groupId = $group.data('group-id');
-                        var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
-                        $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
-                            $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
-                        });
-                        $(this).blur();
-                        return false;
-                    });
-                    $('.ladb-btn-scrollto-next-group', $slide).on('click', function() {
-                        var $group = $(this).closest('.ladb-cutlist-group');
-                        var groupId = $group.data('group-id');
-                        var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
-                        $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
-                            $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
-                        });
-                        $(this).blur();
-                        return false;
-                    });
-                    $('a.ladb-btn-highlight-part', $slide).on('click', function() {
-                        $(this).blur();
-                        var partId = $(this).data('part-id');
-                        that.highlightPart(partId);
-                        return false;
-                    });
+                    // Show modal
+                    $modal.modal('show');
 
-                    // Toggle tooltips
-                    $('[data-toggle=tooltip]', $slide).tooltip({
-                        'container': 'body'
-                    });
+                    // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+                    $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+
+                    // Setup popovers
+                    that.opencutlist.setupPopovers();
 
                 });
 
-                // Hide modal
-                $modal.modal('hide');
-
             });
-
-            // Show modal
-            $modal.modal('show');
-
-            // Setup popovers
-            that.opencutlist.setupPopovers();
-
-        });
 
     };
 
@@ -822,57 +893,21 @@
 
         this.opencutlist.pullSettings([
 
-                SETTING_KEY_OPTION_AUTO_ORIENT,
-                SETTING_KEY_OPTION_SMART_MATERIAL,
-                SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS,
-                SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
-                SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
-
-                SETTING_KEY_OPTION_COL_SEP,
-                SETTING_KEY_OPTION_ENCODING,
-
-                SETTING_KEY_OPTION_SAW_KERF,
-                SETTING_KEY_OPTION_TRIMMING,
-                SETTING_KEY_OPTION_BASE_SHEET_LENGTH,
-                SETTING_KEY_OPTION_BASE_SHEET_WIDTH,
-                SETTING_KEY_OPTION_ROTATABLE,
-                SETTING_KEY_OPTION_PRESORT,
-                SETTING_KEY_OPTION_STACKING,
-                SETTING_KEY_OPTION_BBOX_OPTIMIZATION,
-
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
                 SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
-                SETTING_KEY_OPTION_HIDDEN_GROUP_IDS
+                SETTING_KEY_OPTION_HIDDEN_GROUP_IDS,
+
+                SETTING_KEY_OPTION_AUTO_ORIENT,
+                SETTING_KEY_OPTION_SMART_MATERIAL,
+                SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS,
+                SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
+                SETTING_KEY_OPTION_PART_ORDER_STRATEGY
 
             ],
             3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
             function () {
-
-                that.generateOptions = {
-                    auto_orient: that.opencutlist.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
-                    smart_material: that.opencutlist.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
-                    part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
-                    part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
-                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
-                };
-
-                that.exportOptions = {
-                    col_sep: that.opencutlist.getSetting(SETTING_KEY_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                    encoding: that.opencutlist.getSetting(SETTING_KEY_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
-                };
-
-                that.cuttingdiagram2dOptions = {
-                    saw_kerf: that.opencutlist.getSetting(SETTING_KEY_OPTION_SAW_KERF, OPTION_DEFAULT_SAW_KERF),
-                    trimming: that.opencutlist.getSetting(SETTING_KEY_OPTION_TRIMMING, OPTION_DEFAULT_TRIMMING),
-                    base_sheet_length: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_LENGTH, OPTION_DEFAULT_BASE_SHEET_LENGTH),
-                    base_sheet_width: that.opencutlist.getSetting(SETTING_KEY_OPTION_BASE_SHEET_WIDTH, OPTION_DEFAULT_BASE_SHEET_WIDTH),
-                    rotatable: that.opencutlist.getSetting(SETTING_KEY_OPTION_ROTATABLE, OPTION_DEFAULT_ROTATABLE),
-                    presort: that.opencutlist.getSetting(SETTING_KEY_OPTION_PRESORT, OPTION_DEFAULT_PRESORT),
-                    stacking: that.opencutlist.getSetting(SETTING_KEY_OPTION_STACKING, OPTION_DEFAULT_STACKING),
-                    bbox_optimization: that.opencutlist.getSetting(SETTING_KEY_OPTION_BBOX_OPTIMIZATION, OPTION_DEFAULT_BBOX_OPTIMIZATION)
-                };
 
                 that.uiOptions = {
                     hide_raw_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, OPTION_DEFAULT_HIDE_RAW_DIMENSIONS),
@@ -880,6 +915,14 @@
                     hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
                     hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
+                };
+
+                that.generateOptions = {
+                    auto_orient: that.opencutlist.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
+                    smart_material: that.opencutlist.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
+                    part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
+                    part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
+                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
                 };
 
                 // Callback

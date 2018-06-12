@@ -71,23 +71,25 @@ module Ladb::OpenCutList
 
         material_attributes = MaterialAttributes.new(material)
 
-        response[:materials].push({
-                                  :id => material.entityID,
-                                  :name => material.name,
-                                  :display_name => material.display_name,
-                                  :thumbnail_file => thumbnail_file,
-                                  :color => '#' + material.color.to_i.to_s(16),
-                                  :attributes => {
-                                      :type => material_attributes.type,
-                                      :length_increase => material_attributes.length_increase,
-                                      :width_increase => material_attributes.width_increase,
-                                      :thickness_increase => material_attributes.thickness_increase,
-                                      :std_thicknesses => material_attributes.std_thicknesses,
-                                      :std_sections => material_attributes.std_sections,
-                                      :std_sizes => material_attributes.std_sizes,
-                                      :grained => material_attributes.grained,
-                                  }
-                              })
+        response[:materials].push(
+            {
+                :id => material.entityID,
+                :name => material.name,
+                :display_name => material.display_name,
+                :thumbnail_file => thumbnail_file,
+                :color => '#' + material.color.to_i.to_s(16),
+                :attributes => {
+                    :type => material_attributes.type,
+                    :length_increase => material_attributes.length_increase,
+                    :width_increase => material_attributes.width_increase,
+                    :thickness_increase => material_attributes.thickness_increase,
+                    :std_thicknesses => material_attributes.std_thicknesses,
+                    :std_sections => material_attributes.std_sections,
+                    :std_sizes => material_attributes.std_sizes,
+                    :grained => material_attributes.grained,
+                }
+            }
+        )
 
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD
@@ -104,10 +106,10 @@ module Ladb::OpenCutList
       # Errors
       if model
         if materials.count == 0
-          response[:errors].push('tab.materials.error.no_materials')
+          response[:errors] << 'tab.materials.error.no_materials'
         end
       else
-        response[:errors].push('tab.materials.error.no_model')
+        response[:errors] << 'tab.materials.error.no_model'
       end
 
       # Sort materials by type ASC, display_name ASC
@@ -190,11 +192,11 @@ module Ladb::OpenCutList
         begin
           materials.remove(material)
         rescue
-          response[:errors].push('tab.materials.error.failed_removing_material')
+          response[:errors] << 'tab.materials.error.failed_removing_material'
         end
 
       else
-        response[:errors].push('tab.materials.error.failed_removing_material')
+        response[:errors] << 'tab.materials.error.failed_removing_material'
       end
 
       response
@@ -219,7 +221,7 @@ module Ladb::OpenCutList
         begin
           materials.load(path)
         rescue
-          response[:errors].push('tab.materials.error.failed_import_skm_file')
+          response[:errors] << 'tab.materials.error.failed_import_skm_file'
         end
 
       end
@@ -253,12 +255,12 @@ module Ladb::OpenCutList
             material.save_as(path)
             response[:export_path] = path
           rescue
-            response[:errors].push('tab.materials.error.failed_export_skm_file')
+            response[:errors] << 'tab.materials.error.failed_export_skm_file'
           end
         end
 
       else
-        response[:errors].push('tab.materials.error.failed_export_skm_file')
+        response[:errors] << 'tab.materials.error.failed_export_skm_file'
       end
 
       response

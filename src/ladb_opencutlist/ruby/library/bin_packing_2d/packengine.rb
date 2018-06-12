@@ -15,32 +15,31 @@
       @boxes = boxes
     end
 
-    def check_basic_preconditions (options)
-    
+    def check_basic_preconditions(options)
       if !options.key?(:base_sheet_length) || options[:base_sheet_length] == 0
         return NO_BASE_PANEL
-      elsif options[:base_sheet_length] < 2*options[:trimming]
+      elsif options[:base_sheet_length] < 2 * options[:trimming]
         return TRIMMING_TOO_LARGE
       end
       if !options.key?(:base_sheet_width) || options[:base_sheet_width] == 0
         return NO_BASE_PANEL
-      elsif options[:base_sheet_width] < 2*options[:trimming]
+      elsif options[:base_sheet_width] < 2 * options[:trimming]
         return TRIMMING_TOO_LARGE
       end
-      return NO_ERROR
+      NO_ERROR
     end
-    
+
     def run(options)
     
       err = check_basic_preconditions(options)
       if err != NO_ERROR
-        return nil, err     
+        return nil, err
       end
       
       # index the bins in the order they were put added here
       # the base panel may or may not be index = 0
-      if !@bins.nil?
-        @bins.each_with_index { |bin, i| bin.index = i}
+      unless @bins.nil?
+        @bins.each_with_index { |bin, i| bin.index = i }
       end
 
       packings = []
@@ -48,7 +47,7 @@
       (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
           copy_boxes = []
-          if !@boxes.nil? 
+          unless @boxes.nil?
             @boxes.each do |box|
               b = box.clone
               copy_boxes << b
@@ -56,7 +55,7 @@
           end
 
           copy_bins = []
-          if !@bins.nil?
+          unless @bins.nil?
             @bins.each do |bin|
               b = bin.clone
               copy_bins << b

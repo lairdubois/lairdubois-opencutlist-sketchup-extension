@@ -187,13 +187,18 @@ tab:
       option_bbox_optimization: Optimisation de l'enveloppe
       option_bbox_optimization_help: Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes
       option_base_sheet: Panneau de base
-      option_custom_sheet: Personnalisé
+      option_base_sheet_help: |
+        Sélectionnez ici le panneau de base qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_base_sheet_custom: Personnalisé
       option_base_sheet_length: Longueur du panneau
       option_base_sheet_width: Largeur du panneau
-      option_leftovers: Chutes
-      option_leftovers_help:  |
-        Indiquez ici la liste des chutes à considérer.
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* de le chute.
+      option_scrap_sheet_sizes: Restes de panneau
+      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes_help:  |
+        Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       presort:
         input_order: Pas de tri préalable
@@ -211,15 +216,21 @@ tab:
         full: Toujours
       list:
         unplaced_parts: Pièces non placées
+        summary: Résumé
         number: N°
         name: Désignation
         count: Qte.
         raw: Brute
+        type: Type
         length: Longueur
         width: Largeur
+        area: Surface
         trimming: Marge
         efficiency: Efficacité
         cut: Coupe
+        panel_type_0: Panneau de base
+        panel_type_1: Reste de panneau
+        unused: Inutilisée
       error:
         no_base_panel: Le panneau de base n'est pas correctement configuré.
         trimming_too_large: La marge n'est pas correctement configurée.
@@ -281,10 +292,12 @@ tab:
         Epaisseurs **brutes** disponibles.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_sections: Sections disponibles
+      std_sections_placeholder: longueur x largeur
       std_sections_help: |
         Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       std_sizes: Tailles disponibles
+      std_sizes_placeholder: longueur x largeur
       std_sizes_help: |
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*

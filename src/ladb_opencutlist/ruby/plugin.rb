@@ -17,7 +17,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806080712'.freeze
+    BUILD = '201806121531'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -26,6 +26,9 @@ module Ladb::OpenCutList
     SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes
     SETTINGS_RW_STRATEGY_MODEL = 2                # Read/Write settings from/to active model attributes
     SETTINGS_RW_STRATEGY_MODEL_GLOBAL = 3         # Read/Write settings from/to active model attributes and (if undefined from)/to global Sketchup defaults
+
+    SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
+    SETTINGS_PREPROCESSOR_DXD = 2                 # 2D dimension
 
     DIALOG_MAXIMIZED_WIDTH = 1100
     DIALOG_MAXIMIZED_HEIGHT = 800
@@ -384,30 +387,32 @@ module Ladb::OpenCutList
           value = read_default(key)
         end
 
-        # Denormalize value if dimension
-        if value.is_a? String and value.start_with?(DimensionUtils::MARKER)
-          value = DimensionUtils.instance.denormalize(value)
-        end
-        
-        values.push({
-                        :key => key,
-                        :value => value
-                    })
+        values.push(
+            {
+                :key => key,
+                :value => value
+            }
+        )
+
       }
       { :values => values }
     end
 
-    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ], strategy: [0|1|2|3] }
+    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1|...] }, ... ], strategy: [0|1|2|3] }
       settings = params['settings']
       strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
       settings.each { |setting|
 
         key = setting['key']
         value = setting['value']
+        preprocessor = setting['preprocessor']    # Preprocessor used to reformat value SETTINGS_PREPROCESSOR_D or SETTINGS_PREPROCESSOR_DXD
 
-        # Normalize value if dimension
-        if value.is_a? String and value.start_with?(DimensionUtils::MARKER)
-          value = DimensionUtils.instance.normalize(value)
+        # Value Preprocessor
+        case preprocessor
+          when SETTINGS_PREPROCESSOR_D
+            value = DimensionUtils.instance.dd_add_units(value)
+          when SETTINGS_PREPROCESSOR_DXD
+            value = DimensionUtils.instance.dxd_add_units(value)
         end
 
         if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL

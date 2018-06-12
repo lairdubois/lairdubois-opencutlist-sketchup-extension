@@ -187,11 +187,16 @@ tab:
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
       option_base_sheet: Standard Panel
-      option_custom_sheet: Custom Panel
+      option_base_sheet_help: |
+        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_base_sheet_custom: Custom Panel
       option_base_sheet_length: Custom Panel Length
       option_base_sheet_width: Custom Panel Width
-      option_leftovers: Scrap Sheet Goods
-      option_leftovers_help:  |
+      option_scrap_sheet_sizes: Scrap Sheet Goods
+      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes_help:  |
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
@@ -211,15 +216,21 @@ tab:
         full: Always
       list:
         unplaced_parts: Unplaced Parts
+        summary: Résumé
         number: No.
         name: Description
         count: Qty
         raw: Raw
+        type: Type
         length: Length
         width: Width
+        area: Surface
         trimming: Trimming
         efficiency: Efficiency
         cut: Cut
+        panel_type_0: Panneau de base
+        panel_type_1: Chute
+        unused: Inutilisée
       error:
         no_base_panel: Base panel sizes are badly configured.
         trimming_too_large: Trimming sizes are badly configured.
@@ -281,10 +292,12 @@ tab:
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Available Cross Sections
+      std_sections_placeholder: longueur x largeur
       std_sections_help: |
         Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes).
         *Sizes without units are considered to be in model units.*
       std_sizes: Available Sizes
+      std_sizes_placeholder: longueur x largeur
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*

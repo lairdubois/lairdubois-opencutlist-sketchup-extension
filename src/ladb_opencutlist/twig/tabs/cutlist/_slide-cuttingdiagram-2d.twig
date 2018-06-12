@@ -91,6 +91,52 @@
 
             </div>
         {% endif %}
+        {% if summary.bins is not empty  %}
+            <div class="ladb-cuttingdiagram-group">
+
+                <table class="table table-bordered ladb-cutlist-group">
+                    <thead>
+                    <tr>
+                        <td colspan="5">
+                            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                            <div>
+                                <span class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.type'|i18next }}</td>
+                            <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
+                            <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
+                            <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
+                            <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.area'|i18next }}</td>
+                        </tr>
+                        {% for bin in summary.bins  %}
+                            <tr class="ladb-cutlist-row"{% if not bin.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
+                                <td>
+                                    <i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.panel_type_'~bin.type)|i18next }}
+                                </td>
+                                <td class="text-center">
+                                    {{ bin.count }}
+                                </td>
+                                <td class="text-right">
+                                    {{ bin.length }}
+                                </td>
+                                <td class="text-right">
+                                    {{ bin.width }}
+                                </td>
+                                <td class="text-right">
+                                    {{ bin.area|number_format(3, ',', ' ') }}{% if isMetric %}m<sup>2{% else %}ft<sup>2</sup>{% endif %}</sup>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        {% endif %}
         {% for bin in bins %}
             <div class="ladb-cuttingdiagram-group">
                 <table id="ladb_cuttingdiagram_group_{{ loop.index }}" class="table table-bordered ladb-cutlist-group" data-group-id="{{ loop.index }}">
@@ -99,7 +145,7 @@
                         <td colspan="2">
                             <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                             <div>
-                                <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ bin.length }} x {{ bin.width }}</em></span>
+                                <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ bin.length }} x {{ bin.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.panel_type_'~bin.type)|i18next }}</span></span>
                                 <div class="no-print btn-group pull-right" role="group">
                                     <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>
                                     <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
@@ -160,7 +206,7 @@
                         <td>
                             <span><i class="ladb-opencutlist-icon-grained-{{ rotatable ? '0' : '1' }}"></i> {{ ('tab.materials.edit_material.grained_'~(rotatable ? '0' : '1'))|i18next }}</span>{% if trimming > 0 %}<span style="margin-left: 10px; border-left: 1px solid #ddd; padding-left: 10px;"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ trimming }}</span>{% endif %}
                         </td>
-                        <td width="12%" class="ladb-nowrap"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bin.efficiency }}</td>
+                        <td width="12%" class="ladb-nowrap"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bin.efficiency|number_format(2, ',', ' ') }}%</td>
                     </tr>
                     </tbody>
                 </table>

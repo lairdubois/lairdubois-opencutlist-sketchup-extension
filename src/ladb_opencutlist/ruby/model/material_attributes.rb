@@ -44,7 +44,7 @@
             :width_increase => '0',
             :thickness_increase => '0',
             :std_thicknesses => '',
-            :std_sections => '30mmx40mm;40mmx50mm',
+            :std_sections => '30mm x 40mm;40mm x 50mm',
             :std_sizes => '',
             :grained => false,
         },

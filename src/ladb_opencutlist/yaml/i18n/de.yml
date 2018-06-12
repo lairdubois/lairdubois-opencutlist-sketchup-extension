@@ -187,11 +187,16 @@ tab:
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert
       option_base_sheet: Standard Platte
-      option_custom_sheet: Spezifische Platte
+      option_base_sheet_help: |
+        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_base_sheet_custom: Spezifische Platte
       option_base_sheet_length: Plattenlänge
       option_base_sheet_width: Plattenbreite
-      option_leftovers: Ausschuss
-      option_leftovers_help:  |
+      option_scrap_sheet_sizes: Ausschuss
+      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes_help:  |
         Führen Sie hier die Liste der Abfälle die Sie weiterverwenden möchten.
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
@@ -211,15 +216,21 @@ tab:
         full: Immer
       list:
         unplaced_parts: Nicht platzierte Teile
+        summary: Résumé
         number: Nr.
         name: Bezeichnung
         count: Anzahl
         raw: Rohmass
+        type: Type
         length: Länge
         width: Breite
+        area: Surface
         trimming: Seitenrand
         efficiency: Effizienz
         cut: Schnitt
+        panel_type_0: Panneau de base
+        panel_type_1: Chute
+        unused: Inutilisée
       error:
         no_base_panel: Standardplattenmasse mangelhaft konfiguriert.
         trimming_too_large: Kantenabfallbreite zu gross konfiguriert.
@@ -281,10 +292,12 @@ tab:
         Rohmasse der verfügbaren Dicken.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sections: Verfügbare Querschnitte
+      std_sections_placeholder: longueur x largeur
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sizes: Verfügbare Plattenmasse
+      std_sizes_placeholder: longueur x largeur
       std_sizes_help: |
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*

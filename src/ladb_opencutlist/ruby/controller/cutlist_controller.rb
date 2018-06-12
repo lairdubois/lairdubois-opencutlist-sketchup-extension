@@ -649,31 +649,32 @@
 
         # Sort and browse parts
         group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
-          group[:parts].push({
-                                 :id => part_def.id,
-                                 :definition_id => part_def.definition_id,
-                                 :name => part_def.name,
-                                 :resized => !part_def.scale.identity?,
-                                 :length => part_def.size.length.to_s,
-                                 :width => part_def.size.width.to_s,
-                                 :thickness => part_def.size.thickness.to_s,
-                                 :count => part_def.count,
-                                 :raw_length => part_def.raw_size.length.to_s,
-                                 :raw_width => part_def.raw_size.width.to_s,
-                                 :raw_thickness => part_def.raw_size.thickness.to_s,
-                                 :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
-                                 :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
-                                 :number => part_def.number ? part_def.number : part_number,
-                                 :saved_number => part_def.saved_number,
-                                 :material_name => part_def.material_name,
-                                 :material_origins => part_def.material_origins,
-                                 :cumulable => part_def.cumulable,
-                                 :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
-                                 :entity_ids => part_def.entity_ids,
-                                 :entity_serialized_paths => part_def.entity_serialized_paths,
-                                 :entity_names => part_def.entity_names.sort,
-                                 :contains_blank_entity_names => part_def.contains_blank_entity_names
-                             }
+          group[:parts].push(
+              {
+                  :id => part_def.id,
+                  :definition_id => part_def.definition_id,
+                  :name => part_def.name,
+                  :resized => !part_def.scale.identity?,
+                  :length => part_def.size.length.to_s,
+                  :width => part_def.size.width.to_s,
+                  :thickness => part_def.size.thickness.to_s,
+                  :count => part_def.count,
+                  :raw_length => part_def.raw_size.length.to_s,
+                  :raw_width => part_def.raw_size.width.to_s,
+                  :raw_thickness => part_def.raw_size.thickness.to_s,
+                  :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
+                  :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
+                  :number => part_def.number ? part_def.number : part_number,
+                  :saved_number => part_def.saved_number,
+                  :material_name => part_def.material_name,
+                  :material_origins => part_def.material_origins,
+                  :cumulable => part_def.cumulable,
+                  :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
+                  :entity_ids => part_def.entity_ids,
+                  :entity_serialized_paths => part_def.entity_serialized_paths,
+                  :entity_names => part_def.entity_names.sort,
+                  :contains_blank_entity_names => part_def.contains_blank_entity_names
+              }
           )
           unless part_def.number
             part_number = part_number.succ
@@ -813,7 +814,7 @@
             end
 
           rescue
-            response[:errors].push('tab.cutlist.error.failed_to_write_export_file')
+            response[:errors] << 'tab.cutlist.error.failed_to_write_export_file'
           end
 
         end
@@ -1016,6 +1017,7 @@
         group_id = settings['group_id']
         base_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
         base_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
+        leftover_sizes = DimensionUtils.instance.dxd_to_ifloats_str(settings['leftover_sizes'])
         rotatable = settings['rotatable']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
@@ -1057,9 +1059,11 @@
           end
 
           # add leftovers to the bins, you need only length and width, index will be added in packengine
-          bins = [
-            # BinPacking2D::Bin.new(options[:base_sheet_length]/2, options[:base_sheet_width], 0, 0, 0, BinPacking2D::PANEL_TYPE_OFFCUT),
-          ] 
+          bins = []
+          leftover_sizes.split(';').each { |leftover_size|
+            size2d = Size2d.new(leftover_size)
+            bins << BinPacking2D::Bin.new(size2d.length.to_f, size2d.width.to_f, 0, 0, 0, BinPacking2D::PANEL_TYPE_OFFCUT)
+          }
 
           e = BinPacking2D::PackEngine.new(bins, boxes)
 
@@ -1084,6 +1088,9 @@
               :presort => presort,
 
               :unplaced_parts => [],
+              :summary => {
+                :bins => [],
+              },
               :bins => [],
           }
 
@@ -1092,19 +1099,19 @@
             # Engine error -> returns error only
 
             case err
-            when BinPacking2D::NO_BASE_PANEL
-              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.no_base_panel' ])
-            when BinPacking2D::TRIMMING_TOO_LARGE
-              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.trimming_too_large' ])
-            when BinPacking2D::GENERAL_ERROR
-              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.general_error' ])
+              when BinPacking2D::NO_BASE_PANEL
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_base_panel'
+              when BinPacking2D::TRIMMING_TOO_LARGE
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.trimming_too_large'
+              when BinPacking2D::GENERAL_ERROR
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.general_error'
             end
 
           else
 
             # Errors
             if result.unplaced_boxes.length > 0
-              response[:errors].push([ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ])
+              response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ]
             end
 
             # Warnings
@@ -1112,7 +1119,7 @@
             material = materials[group[:material_name]]
             material_attributes = MaterialAttributes.new(material)
             if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
-              response[:warnings].push([ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ])
+              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.raw_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
             end
 
             # Unplaced boxes
@@ -1136,8 +1143,40 @@
               response[:unplaced_parts].push(part)
             }
 
-            # Unused bins are in
-            # result.unused_bins
+            # Summary
+            result.unused_bins.each {|bin_def|
+              response[:summary][:bins].push(
+                  {
+                      :type => bin_def.type,
+                      :count => 1,
+                      :length => bin_def.length.to_l.to_s,
+                      :width => bin_def.width.to_l.to_s,
+                      :area => @cutlist[:is_metric] ? Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area_m2 : Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area / 144,
+                      :is_used => false,
+                  }
+              )
+            }
+            summary_bins = {}
+            result.original_bins.each { |bin_def|
+              id = "#{bin_def.type},#{bin_def.length},#{bin_def.width}"
+              bin = summary_bins[id]
+              unless bin
+                bin = {
+                    :type => bin_def.type,
+                    :count => 0,
+                    :length => bin_def.length.to_l.to_s,
+                    :width => bin_def.width.to_l.to_s,
+                    :area => 0,
+                    :is_used => true,
+                }
+                summary_bins[id] = bin
+              end
+              bin[:count] += 1
+              bin[:area] += @cutlist[:is_metric] ? Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area_m2 : Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area / 144
+            }
+            summary_bins.each { |key, bin|
+              response[:summary][:bins].push(bin)
+            }
 
             # Bins
             result.original_bins.each { |bin_def|
@@ -1145,9 +1184,10 @@
               bin = {
                   :px_length => to_px(bin_def.length),
                   :px_width => to_px(bin_def.width),
+                  :type => bin_def.type,
                   :length => bin_def.length.to_l.to_s,
                   :width => bin_def.width.to_l.to_s,
-                  :efficiency => ('%3.1f' % bin_def.efficiency) + '%',
+                  :efficiency => bin_def.efficiency,
                   # :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
 
                   :boxes => [],

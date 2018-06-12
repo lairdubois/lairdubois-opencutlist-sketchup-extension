@@ -287,7 +287,7 @@
       i = prefix_marker(i)        # prefix marker
       i
     end
-    
+
     # De-normalize value when reading from registry
     def denormalize(i)
       i = strip_marker(i)
