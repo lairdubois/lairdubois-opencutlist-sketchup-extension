@@ -194,10 +194,10 @@ tab:
       option_std_sheet_custom: Spezifische Platte
       option_std_sheet_length: Plattenlänge
       option_std_sheet_width: Plattenbreite
-      option_scrap_sheet_sizes: Ausschuss
-      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes: Plattenreste
+      option_scrap_sheet_sizes_placeholder: Länge x Breite
       option_scrap_sheet_sizes_help:  |
-        Führen Sie hier die Liste der Abfälle die Sie weiterverwenden möchten.
+        Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       presort:
@@ -228,13 +228,13 @@ tab:
         trimming: Seitenrand
         efficiency: Effizienz
         cut: Schnitt
-        panel_type_0: Panneau de base
-        panel_type_1: Chute
-        unused: Inutilisée
+        panel_type_0: Standard Platte
+        panel_type_1: Abfall
+        unused: Nicht verwendet
       error:
         no_base_panel: Standardplattenmasse mangelhaft konfiguriert.
-        trimming_too_large: Kantenabfallbreite zu gross konfiguriert.
-        general_error: Algorithmischer Fehler, kontaktieren Sie die Entwicklers, denn Sie haben hier einen spezielle Fall.
+        no_placement_possible: Kantenabfallbreite zu gross konfiguriert.
+        bad_bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
         unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:

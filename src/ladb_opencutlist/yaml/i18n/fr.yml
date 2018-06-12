@@ -233,8 +233,8 @@ tab:
         unused: Inutilisée
       error:
         no_base_panel: Le panneau de base n'est pas correctement configuré.
-        trimming_too_large: La marge n'est pas correctement configurée.
-        general_error: Erreur d'algoritme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
+        no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau trop petit, ...).
+        bad_bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
         unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
         unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:
