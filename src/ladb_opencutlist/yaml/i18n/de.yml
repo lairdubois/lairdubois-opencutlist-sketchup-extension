@@ -186,14 +186,14 @@ tab:
       option_stacking_help: Teile gleicher Länge oder Breite werden möglichst zusammengefasst
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert
-      option_base_sheet: Standard Platte
-      option_base_sheet_help: |
+      option_std_sheet: Standard Platte
+      option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_base_sheet_custom: Spezifische Platte
-      option_base_sheet_length: Plattenlänge
-      option_base_sheet_width: Plattenbreite
+      option_std_sheet_custom: Spezifische Platte
+      option_std_sheet_length: Plattenlänge
+      option_std_sheet_width: Plattenbreite
       option_scrap_sheet_sizes: Ausschuss
       option_scrap_sheet_sizes_placeholder: longueur x largeur
       option_scrap_sheet_sizes_help:  |

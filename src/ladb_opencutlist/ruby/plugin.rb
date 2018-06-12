@@ -17,7 +17,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806121531'.freeze
+    BUILD = '201806121701'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -387,6 +387,10 @@ module Ladb::OpenCutList
           value = read_default(key)
         end
 
+        if value.is_a? String
+          value = value.gsub(/[\\]/, '')        # unescape double quote
+        end
+
         values.push(
             {
                 :key => key,
@@ -408,17 +412,23 @@ module Ladb::OpenCutList
         preprocessor = setting['preprocessor']    # Preprocessor used to reformat value SETTINGS_PREPROCESSOR_D or SETTINGS_PREPROCESSOR_DXD
 
         # Value Preprocessor
-        case preprocessor
-          when SETTINGS_PREPROCESSOR_D
-            value = DimensionUtils.instance.dd_add_units(value)
-          when SETTINGS_PREPROCESSOR_DXD
-            value = DimensionUtils.instance.dxd_add_units(value)
+        unless value.nil?
+          case preprocessor
+            when SETTINGS_PREPROCESSOR_D
+              value = DimensionUtils.instance.dd_add_units(value)
+            when SETTINGS_PREPROCESSOR_DXD
+              value = DimensionUtils.instance.dxd_add_units(value)
+          end
         end
 
-        if !strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+        if value.is_a? String
+          value = value.gsub(/["]/, '\"')        # escape double quote in string
+        end
+
+        if strategy.nil? or strategy == SETTINGS_RW_STRATEGY_GLOBAL or strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
           Sketchup.write_default(DEFAULT_SECTION, key, value)
         end
-        if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
+        if Sketchup.active_model and (strategy == SETTINGS_RW_STRATEGY_MODEL or strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
           Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
         end
 

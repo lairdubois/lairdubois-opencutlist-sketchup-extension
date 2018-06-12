@@ -1015,9 +1015,9 @@
 
         # Check settings
         group_id = settings['group_id']
-        base_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_length']).to_l.to_f
-        base_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['base_sheet_width']).to_l.to_f
-        leftover_sizes = DimensionUtils.instance.dxd_to_ifloats_str(settings['leftover_sizes'])
+        std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
+        std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
+        scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats_str(settings['scrap_sheet_sizes'])
         rotatable = settings['rotatable']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
@@ -1042,8 +1042,8 @@
           # the dimensions need to be in Sketchup internal units AND float
 
           options = {
-              :base_sheet_length => base_sheet_length,
-              :base_sheet_width => base_sheet_width,
+              :base_sheet_length => std_sheet_length,
+              :base_sheet_width => std_sheet_width,
               :rotatable => rotatable,
               :saw_kerf => saw_kerf,
               :trimming => trimming,
@@ -1060,8 +1060,8 @@
 
           # add leftovers to the bins, you need only length and width, index will be added in packengine
           bins = []
-          leftover_sizes.split(';').each { |leftover_size|
-            size2d = Size2d.new(leftover_size)
+          scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+            size2d = Size2d.new(scrap_sheet_size)
             bins << BinPacking2D::Bin.new(size2d.length.to_f, size2d.width.to_f, 0, 0, 0, BinPacking2D::PANEL_TYPE_OFFCUT)
           }
 

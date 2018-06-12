@@ -186,14 +186,14 @@ tab:
       option_stacking_help: Manière d'empiler les pièces qui ont longueur ou largeur commune
       option_bbox_optimization: Optimisation de l'enveloppe
       option_bbox_optimization_help: Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes
-      option_base_sheet: Panneau de base
-      option_base_sheet_help: |
-        Sélectionnez ici le panneau de base qui sera dupliqué pour contenir au mieux toutes les pièces.
+      option_std_sheet: Panneau standard
+      option_std_sheet_help: |
+        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_base_sheet_custom: Personnalisé
-      option_base_sheet_length: Longueur du panneau
-      option_base_sheet_width: Largeur du panneau
+      option_std_sheet_custom: Personnalisé
+      option_std_sheet_length: Longueur du panneau
+      option_std_sheet_width: Largeur du panneau
       option_scrap_sheet_sizes: Restes de panneau
       option_scrap_sheet_sizes_placeholder: longueur x largeur
       option_scrap_sheet_sizes_help:  |
@@ -228,7 +228,7 @@ tab:
         trimming: Marge
         efficiency: Efficacité
         cut: Coupe
-        panel_type_0: Panneau de base
+        panel_type_0: Panneau standard
         panel_type_1: Reste de panneau
         unused: Inutilisée
       error:

@@ -186,14 +186,14 @@ tab:
       option_stacking_help: The way parts with common width or length are tentatively placed together
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
-      option_base_sheet: Standard Panel
-      option_base_sheet_help: |
+      option_std_sheet: Standard Panel
+      option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_base_sheet_custom: Custom Panel
-      option_base_sheet_length: Custom Panel Length
-      option_base_sheet_width: Custom Panel Width
+      option_std_sheet_custom: Custom Panel
+      option_std_sheet_length: Custom Panel Length
+      option_std_sheet_width: Custom Panel Width
       option_scrap_sheet_sizes: Scrap Sheet Goods
       option_scrap_sheet_sizes_placeholder: longueur x largeur
       option_scrap_sheet_sizes_help:  |
