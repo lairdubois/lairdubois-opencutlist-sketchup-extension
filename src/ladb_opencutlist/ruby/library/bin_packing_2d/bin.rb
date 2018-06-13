@@ -1,4 +1,4 @@
-﻿module BinPacking2D
+module BinPacking2D
 
   # This class has two purposes:
   #
@@ -273,7 +273,6 @@
         v_cuts += cut.get_v_cutlength()
       end
       @total_length_cuts = h_cuts + v_cuts
-      return h_cuts, v_cuts
     end
 
     # Returns total horizontal and vertical length of

@@ -216,7 +216,7 @@ tab:
         full: Immer
       list:
         unplaced_parts: Nicht platzierte Teile
-        summary: Résumé
+        summary: Übersicht
         number: Nr.
         name: Bezeichnung
         count: Anzahl
@@ -224,22 +224,21 @@ tab:
         type: Type
         length: Länge
         width: Breite
-        area: Surface
+        area: Fläche
         trimming: Seitenrand
-        total_length_cuts: Longueur de coupe
+        total_length_cuts: Schnittlänge
         efficiency: Effizienz
         cut: Schnitt
         panel_type_0: Standard Platte
-        panel_type_1: Abfall
+        panel_type_1: Plattenrest
         unused: Nicht verwendet
       error:
-        no_base_panel: Standardplattenmasse mangelhaft konfiguriert.
-        no_placement_possible: Kantenabfallbreite zu gross konfiguriert.
+        no_panel: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
+        no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
         unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
-        saw_kerf_small: Der konfigurierte Wert für die Sägeblattbreite ist wahrscheinlich zu klein.
         raw_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längezumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
@@ -293,12 +292,12 @@ tab:
         Rohmasse der verfügbaren Dicken.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sections: Verfügbare Querschnitte
-      std_sections_placeholder: longueur x largeur
+      std_sections_placeholder: Länge x Breite
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sizes: Verfügbare Plattenmasse
-      std_sizes_placeholder: longueur x largeur
+      std_sizes_placeholder: Länge x Breite
       std_sizes_help: |
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*

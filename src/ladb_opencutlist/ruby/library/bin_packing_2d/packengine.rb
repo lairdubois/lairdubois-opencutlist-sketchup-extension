@@ -1,4 +1,4 @@
-﻿module BinPacking2D
+module BinPacking2D
 
   require_relative 'packing2d'
   require_relative 'box'
@@ -18,7 +18,8 @@
     def run(options)
     
       if (options[:base_sheet_length] == 0 || options[:base_sheet_width] == 0) && @bins.length == 0
-        return nil, ERROR_NO_BASE_PANEL_AND_NO_BINS
+        return nil, ERROR_NO_STANDARD_PANEL_AND_NO_SCRAPS
+      elsif options[:saw_kerf] >= 0
       end
       
       @bins.each_with_index { |bin, i| bin.index = i } unless @bins.nil?
@@ -55,32 +56,20 @@
       packings.each_with_index do |p, index|
         if p.performance.nil?
           error = ERROR_BAD_ERROR
-        elsif p.unplaced_boxes.length == @boxes.length
+        elsif p.performance.nb_boxes_packed == 0
           error = ERROR_NO_PLACEMENT_POSSIBLE
-        elsif p.unplaced_boxes.length > 0
-          p.performance.packing_quality = PACKING_PARTIAL
-          valid_packings << p
         else
-          p.performance.packing_quality = PACKING_OPTIMAL
           valid_packings << p          
         end
       end
       
-      if valid_packings.length > 0
-        packings = valid_packings.sort_by { |p|
-          [p.performance.packing_quality, p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.width, p.performance.nb_leftovers ]
-        }
-        min_nb_bins = packings[0].performance.nb_bins
+      return nil, error unless valid_packings.length > 0
 
-        packings.each do |p|
-          if p.performance.nb_bins == min_nb_bins
-            #puts "#{p.score}/#{p.split} #{p.performance.largest_leftover.length} #{p.performance.largest_leftover.width} #{p.performance.nb_leftovers}"
-          end
-        end
-        return packings[0], ERROR_NONE
-      else
-        return nil, error
-      end
+      packings = valid_packings.sort_by { |p|
+        [p.unplaced_boxes.length, p.performance.nb_bins, 1/(p.performance.largest_leftover_length + 0.01), 1/(p.performance.largest_leftover_width + 0.01), p.performance.nb_leftovers ]
+      }        
+        
+      return packings[0], ERROR_NONE
     end
     
   end

@@ -1,4 +1,4 @@
-﻿module Ladb::OpenCutList
+module Ladb::OpenCutList
 
   require 'pathname'
   require 'csv'
@@ -1099,8 +1099,8 @@
             # Engine error -> returns error only
 
             case err
-              when BinPacking2D::ERROR_NO_BASE_PANEL_AND_NO_BINS
-                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_base_panel'
+              when BinPacking2D::ERROR_NO_STANDARD_PANEL_AND_NO_SCRAPS
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_panel'
               when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
               when BinPacking2D::ERROR_BAD_ERROR
