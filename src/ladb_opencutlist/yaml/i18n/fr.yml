@@ -233,13 +233,12 @@ tab:
         panel_type_1: Reste de panneau
         unused: Inutilisée
       error:
-        no_base_panel: Le panneau de base n'est pas correctement configuré.
-        no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau trop petit, ...).
+        no_panel: Le panneau de base n'est pas correctement configuré et pas de restes.
+        no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau standard trop petit, lame de scie trop épaisse, ...).
         bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
         unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
         unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:
-        saw_kerf_small: La valeur configurée pour l'épaisseur de la lame de scie est probablement trop petite.
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.

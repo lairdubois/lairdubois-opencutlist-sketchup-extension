@@ -1,4 +1,4 @@
-﻿module BinPacking2D
+module BinPacking2D
   class Packer < Packing2D
     attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :unused_bins, :score, :split, :performance
 
@@ -17,6 +17,8 @@
       @b_y = 0
       @b_w = 0
       @b_l = 0
+      @stacking_maxlength = 0
+      @stacking_maxwidth = 0
 
       @performance = nil
     end
@@ -34,6 +36,10 @@
       if bins.nil? || bins.empty?
         next_bin_index = 0
       else
+        bins.each do |bin|
+          @stacking_maxlength = bin.length unless bin.length <= @stacking_maxlength
+          @stacking_maxwidth = bin.width unless bin.width <= @stacking_maxwidth
+        end
         next_bin_index = bins.length
       end
 
@@ -188,52 +194,66 @@
       sboxes = []
 
       if stacking == STACKING_LENGTH
-        maxlength = @b_l - 2 * @trimsize
-        # make groups of same width and stack them lengthwise
+        maxlength = [(@b_l - 2 * @trimsize).abs, (@stacking_maxlength - 2 * @trimsize).abs].max
+        # compute groups of same width and stack them lengthwise
         # up to maxlength
         width_groups = boxes.group_by { |b| [b.width] }
         width_groups.each do |k, v|
           if v.length() > 1
             v = v.sort_by { |b| [b.length] }.reverse
-            nb = BinPacking2D::Box.new(0, k[0])
-            sboxes << nb
-            v.each do |box|
-              if !nb.stack_length(box, @saw_kerf, maxlength)
-                # element could not be added, would overflow maxlength
-                # start a new superbox
-                nb = BinPacking2D::Box.new(0, k[0])
-                sboxes << nb
-                if !nb.stack_length(box, @saw_kerf, maxlength)
-                  puts "huge error ..."
+            superbox = BinPacking2D::Box.new(0, k[0])
+            until v.empty?
+              box = v.shift
+              if box.length <= maxlength
+                # try to stack it, if it fails
+                if !superbox.stack_length(box, @saw_kerf, maxlength)
+                  # close this superbox
+                  sboxes << superbox
+                  # and create a new one
+                  superbox = BinPacking2D::Box.new(0, k[0])
+                  # this should alway succeed, because box.length <= maxlength
+                  superbox.stack_length(box, @saw_kerf, maxlength)
                 end
+              else
+                # box is larger than the maxlength to stack, let packer handle it
+                sboxes << box
               end
             end
-          else
+            # close the last superbox created if it is not empty
+            if superbox.sboxes.length() > 1
+              sboxes << superbox
+            end
+           else
             sboxes << v[0]
           end
         end
       else
-        maxwidth = @b_w - 2 * @trimsize
+        maxwidth = [(@b_w - 2 * @trimsize).abs, (@stacking_maxwidth - 2 * @trimsize).abs].max
         # make groups of same length and stack them widthwise
         # up to maxwidth
         length_groups = boxes.group_by { |b| [b.length] }
         length_groups.each do |k, v|
           if v.length() > 1
             v = v.sort_by { |b| [b.width] }.reverse
-            nb = BinPacking2D::Box.new(k[0], 0)
-            sboxes << nb
-            v.each do |box|
-              if !nb.stack_width(box, @saw_kerf, maxwidth)
-                # element could not be added, would overflow maxlength
-                # start a new superbox
-                nb = BinPacking2D::Box.new(k[0], 0)
-                sboxes << nb
-                if !nb.stack_width(box, @saw_kerf, maxwidth)
-                  puts "huge error ..."
+            superbox = BinPacking2D::Box.new(k[0], 0)
+            until v.empty?
+              box = v.shift
+                if box.width <= maxwidth
+                  if !superbox.stack_width(box, @saw_kerf, maxwidth)
+                    sboxes << superbox
+                    superbox = BinPacking2D::Box.new(k[0], 0)
+                    if !superbox.stack_width(box, @saw_kerf, maxwidth)
+                      puts "huge error ..."
+                    end
+                  end
+                else
+                  sboxes << box
                 end
               end
-            end
-          else
+              if superbox.sboxes.length() > 1
+                sboxes << superbox
+              end
+           else
             sboxes << v[0]
           end
         end
@@ -396,22 +416,20 @@
     def get_performance
       largest_bin = nil
       largest_area = 0
+
       p = BinPacking2D::Performance.new()
 
-      @unused_bins = []
       bins = []
       
       # we split the bins into ones that contain boxes and ones
-      # that contain no boxes
+      # that do not contain boxes
       @original_bins.each do |bin|
         if bin.boxes.empty? # a bin without boxes has not been used
           @unused_bins << bin
         else
-          p.h_length, p.v_length = bin.total_boxlengths()
-          p.h_cutlength, p.v_cutlength = bin.total_cutlengths()
-          p.cutlength = p.h_cutlength + p.v_cutlength
+          p.nb_boxes_packed += bin.boxes.length()
           p.nb_leftovers += bin.leftovers.length
-
+          bin.total_cutlengths()
           bin.leftovers.each do |b|
             a = b.area
             if a > largest_area
@@ -426,7 +444,9 @@
       end
       @original_bins = bins
 
-      p.largest_leftover = largest_bin
+      p.largest_leftover_length = largest_bin.length unless largest_bin.nil?
+      p.largest_leftover_width = largest_bin.width unless largest_bin.nil?
+
       p.nb_bins = @original_bins.length
       return p
     end

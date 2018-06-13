@@ -1,4 +1,4 @@
-﻿module BinPacking2D
+module BinPacking2D
 
   # This class has two purposes:
   #
@@ -45,8 +45,8 @@
     def trim_rough_bin(trimsize)
       if trimsize > 0
         @trimsize = trimsize
-        @length -= 2 * @trimsize
-        @width -= 2 * @trimsize
+        @length = (@length - 2 * @trimsize).abs
+        @width = (@width - 2 * @trimsize).abs
         @x = @trimsize
         @y = @trimsize
         @cleaned = true
@@ -273,7 +273,6 @@
         v_cuts += cut.get_v_cutlength()
       end
       @total_length_cuts = h_cuts + v_cuts
-      return h_cuts, v_cuts
     end
 
     # Returns total horizontal and vertical length of
