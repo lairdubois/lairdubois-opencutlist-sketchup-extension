@@ -226,6 +226,7 @@ tab:
         width: Width
         area: Area
         trimming: Trimming
+        total_length_cuts: Longueur de coupe
         efficiency: Efficiency
         cut: Cut
         panel_type_0: Standard Sized Panel
@@ -234,7 +235,7 @@ tab:
       error:
         no_base_panel: Base panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, ...).
-        bad_bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
+        bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
         unplaced_boxes: '**One part** could not be placed, because it is too large to fit.'
         unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:

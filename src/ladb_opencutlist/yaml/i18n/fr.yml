@@ -226,6 +226,7 @@ tab:
         width: Largeur
         area: Surface
         trimming: Marge
+        total_length_cuts: Longueur de coupe
         efficiency: Efficacité
         cut: Coupe
         panel_type_0: Panneau standard
@@ -234,7 +235,7 @@ tab:
       error:
         no_base_panel: Le panneau de base n'est pas correctement configuré.
         no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau trop petit, ...).
-        bad_bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
+        bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
         unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
         unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:

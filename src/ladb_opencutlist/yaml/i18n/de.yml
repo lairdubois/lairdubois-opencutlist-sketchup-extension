@@ -226,6 +226,7 @@ tab:
         width: Breite
         area: Surface
         trimming: Seitenrand
+        total_length_cuts: Longueur de coupe
         efficiency: Effizienz
         cut: Schnitt
         panel_type_0: Standard Platte
@@ -234,7 +235,7 @@ tab:
       error:
         no_base_panel: Standardplattenmasse mangelhaft konfiguriert.
         no_placement_possible: Kantenabfallbreite zu gross konfiguriert.
-        bad_bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
+        bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
         unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:

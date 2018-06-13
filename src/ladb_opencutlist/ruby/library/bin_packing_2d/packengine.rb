@@ -18,10 +18,10 @@
     def run(options)
     
       if (options[:base_sheet_length] == 0 || options[:base_sheet_width] == 0) && @bins.length == 0
-        return nil, NO_BASE_PANEL_AND_NO_BINS
+        return nil, ERROR_NO_BASE_PANEL_AND_NO_BINS
       end
       
-      @bins.each_with_index { |bin, i| bin.index = i} unless @bins.nil?
+      @bins.each_with_index { |bin, i| bin.index = i } unless @bins.nil?
 
       packings = []
 
@@ -29,7 +29,7 @@
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
 
           copy_boxes = []
-          if !@boxes.nil? 
+          unless @boxes.nil?
             @boxes.each do |box|
               b = box.clone
               copy_boxes << b
@@ -37,7 +37,7 @@
           end
 
           copy_bins = []
-          if !@bins.nil?
+          unless @bins.nil?
             @bins.each do |bin|
               b = bin.clone
               copy_bins << b
@@ -50,13 +50,13 @@
       end
 
       valid_packings = []
-      error = NO_ERROR
+      error = ERROR_NONE
       
       packings.each_with_index do |p, index|
         if p.performance.nil?
-          error = BAD_ERROR
+          error = ERROR_BAD_ERROR
         elsif p.unplaced_boxes.length == @boxes.length
-          error = NO_PLACEMENT_POSSIBLE
+          error = ERROR_NO_PLACEMENT_POSSIBLE
         elsif p.unplaced_boxes.length > 0
           p.performance.packing_quality = PACKING_PARTIAL
           valid_packings << p
@@ -77,7 +77,7 @@
             #puts "#{p.score}/#{p.split} #{p.performance.largest_leftover.length} #{p.performance.largest_leftover.width} #{p.performance.nb_leftovers}"
           end
         end
-        return packings[0], NO_ERROR
+        return packings[0], ERROR_NONE
       else
         return nil, error
       end

@@ -813,9 +813,9 @@
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function() {
                                 var $group = $(this).closest('.ladb-cutlist-group');
                                 var groupId = $group.data('group-id');
-                                var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
-                                    $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $target.effect("highlight", {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;
@@ -823,19 +823,27 @@
                             $('.ladb-btn-scrollto-next-group', $slide).on('click', function() {
                                 var $group = $(this).closest('.ladb-cutlist-group');
                                 var groupId = $group.data('group-id');
-                                var $targetCuttingdiagramGroup = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $targetCuttingdiagramGroup.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
-                                    $targetCuttingdiagramGroup.effect("highlight", {}, 1500);
+                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $target.effect("highlight", {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;
                             });
-                            $('a.ladb-btn-highlight-part', $slide).on('click', function() {
+                            $('a.ladb-btn-scrollto', $slide).on('click', function() {
+                                var target = $(this).attr('href');
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $(target).position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $(target).effect("highlight", {}, 1500);
+                                });
                                 $(this).blur();
-                                var partId = $(this).data('part-id');
-                                that.highlightPart(partId);
                                 return false;
                             });
+                            $('.ladb-cutlist-row', $slide).on('click', function() {
+                                $('.ladb-click-tool', $(this)).click();
+                                $(this).blur();
+                                return false;
+                            });
+
 
                             // Toggle tooltips
                             $('[data-toggle=tooltip]', $slide).tooltip({

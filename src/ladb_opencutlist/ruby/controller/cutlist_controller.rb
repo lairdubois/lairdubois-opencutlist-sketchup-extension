@@ -1094,17 +1094,17 @@
               :bins => [],
           }
 
-          if err > BinPacking2D::NO_ERROR
+          if err > BinPacking2D::ERROR_NONE
 
             # Engine error -> returns error only
 
             case err
-              when BinPacking2D::NO_BASE_PANEL_AND_NO_BINS
+              when BinPacking2D::ERROR_NO_BASE_PANEL_AND_NO_BINS
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_base_panel'
-              when BinPacking2D::NO_PLACEMENT_POSSIBLE
+              when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
-              when BinPacking2D::BAD_BAD_ERROR
-                response[:errors] << 'tab.cutlist.cuttingdiagram.error.general_error'
+              when BinPacking2D::ERROR_BAD_ERROR
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.bad_error'
             end
 
           else
@@ -1157,11 +1157,14 @@
               )
             }
             summary_bins = {}
+            index = 0
             result.original_bins.each { |bin_def|
+              index += 1
               id = "#{bin_def.type},#{bin_def.length},#{bin_def.width}"
               bin = summary_bins[id]
               unless bin
                 bin = {
+                    :index => index,
                     :type => bin_def.type,
                     :count => 0,
                     :length => bin_def.length.to_l.to_s,
@@ -1179,9 +1182,12 @@
             }
 
             # Bins
+            index = 0
             result.original_bins.each { |bin_def|
 
+              index += 1
               bin = {
+                  :index => index,
                   :px_length => to_px(bin_def.length),
                   :px_width => to_px(bin_def.width),
                   :type => bin_def.type,
@@ -1189,6 +1195,7 @@
                   :width => bin_def.width.to_l.to_s,
                   :efficiency => bin_def.efficiency,
                   :total_length_cuts => bin_def.total_length_cuts.to_l.to_s,
+
                   :boxes => [],
                   :leftovers => [],
                   :cuts => [],
