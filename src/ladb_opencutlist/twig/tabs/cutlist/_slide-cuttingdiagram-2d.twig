@@ -167,7 +167,7 @@
                             <svg version=”1.1″ xmlns=”http://www.w3.org/2000/svg” xmlns:xlink=”http://www.w3.org/1999/xlink” viewBox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ bin.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }} {{ bin.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" height="{{ bin.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" style="max-height: {{ bin.px_width + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize }}px">
                                 <text class="sheet-dimension" x="{{ bin.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bin.length }}</text>
                                 <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ bin.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ bin.px_width / 2 }})">{{ bin.width }}</text>
-                                <g class="sheet">
+                                <g class="sheet" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ trimming }}">
                                     <rect class="sheet-outer" x="-1" y="-1" width="{{ bin.px_length + 2 }}" height="{{ bin.px_width + 2 }}"></rect>
                                     <rect class="sheet-inner" x="0" y="0" width="{{ bin.px_length }}" height="{{ bin.px_width }}"></rect>
                                 </g>
@@ -198,7 +198,7 @@
                                     </g>
                                 {% endfor %}
                                 {% for cut in bin.cuts %}
-                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{% if cut.is_horizontal %}H: {{ cut.y }}{% else %}V: {{ cut.x }}{% endif %}">>
+                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{% if cut.is_horizontal %}H: {{ cut.y }}{% else %}V: {{ cut.x }}{% endif %}&nbsp;({{ saw_kerf }})">>
                                         <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                         <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : px_saw_kerf }}" height="{{ cut.is_horizontal ? px_saw_kerf : cut.px_length }}"></rect>
                                     </g>
