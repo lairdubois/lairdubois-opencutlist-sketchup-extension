@@ -9,7 +9,7 @@
   class Bin < Packing2D
     attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y,
                   :length_cuts, :trimmed, :trimsize, :index, :type
-    attr_reader :efficiency
+    attr_reader :efficiency, :total_length_cuts
 
     def initialize(length, width, x, y, index, type)
       @length = length
@@ -29,7 +29,7 @@
       @trimsize = 0
       @bbox_done = true
     end
-    
+
     def get_copy
       b = Bin.new(@length, @width, @x, @y, @index, @type)
       b.trimmed = @trimmed
@@ -177,10 +177,10 @@
         end
 
         leftovers = []
-        
+
         sr = (@length - 2 * @trimsize - @max_x) * @width
         sb = @length * (@width - 2 * @trimsize - @max_y)
-        
+
         cut_horizontal = true
 
         if !box.nil?
@@ -207,10 +207,10 @@
         #
         # This may also lead to degenerate pieces, will have to fix them in packer
         #
-        if cut_horizontal       
+        if cut_horizontal
           # add a new horizontal cut and make a new bottom leftover
           if @max_y <= @width
-            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true, @index)
+            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true)
             hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - saw_kerf - @trimsize,
                                        @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
@@ -218,7 +218,7 @@
           end
           # add a new vertical cut and make a new right side vertical leftover
           if @max_x <= @length
-            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false, @index)
+            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false)
             vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @max_y - @trimsize,
                                        @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
@@ -226,17 +226,17 @@
           end
         else
           # add a new vertical cut and make a new right side vertical leftover
-          if @max_x <= @length 
-            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false, @index)
+          if @max_x <= @length
+            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false)
             vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @width - 2 * @trimsize,
                                        @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
           if @max_y <= @width
-            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true, @index)
-            hl = BinPacking2D::Bin.new(@max_x  - @trimsize, @width - @max_y - saw_kerf - @trimsize,
-                                     @x + @trimsize, @max_y + saw_kerf, @index, @type)
+            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true)
+            hl = BinPacking2D::Bin.new(@max_x - @trimsize, @width - @max_y - saw_kerf - @trimsize,
+                                       @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end
@@ -309,6 +309,5 @@
     def area
       return @length * @width
     end
-
   end
 end

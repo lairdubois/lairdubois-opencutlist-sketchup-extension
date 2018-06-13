@@ -14,40 +14,22 @@
       @bins = bins
       @boxes = boxes
     end
-
-    def check_basic_preconditions(options)
-      if !options.key?(:base_sheet_length) || options[:base_sheet_length] == 0
-        return NO_BASE_PANEL
-      elsif options[:base_sheet_length] < 2 * options[:trimming]
-        return TRIMMING_TOO_LARGE
-      end
-      if !options.key?(:base_sheet_width) || options[:base_sheet_width] == 0
-        return NO_BASE_PANEL
-      elsif options[:base_sheet_width] < 2 * options[:trimming]
-        return TRIMMING_TOO_LARGE
-      end
-      NO_ERROR
-    end
-
+    
     def run(options)
     
-      err = check_basic_preconditions(options)
-      if err != NO_ERROR
-        return nil, err
+      if (options[:base_sheet_length] == 0 || options[:base_sheet_width] == 0) && @bins.length == 0
+        return nil, NO_BASE_PANEL_AND_NO_BINS
       end
       
-      # index the bins in the order they were put added here
-      # the base panel may or may not be index = 0
-      unless @bins.nil?
-        @bins.each_with_index { |bin, i| bin.index = i }
-      end
+      @bins.each_with_index { |bin, i| bin.index = i} unless @bins.nil?
 
       packings = []
 
       (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
+
           copy_boxes = []
-          unless @boxes.nil?
+          if !@boxes.nil? 
             @boxes.each do |box|
               b = box.clone
               copy_boxes << b
@@ -55,7 +37,7 @@
           end
 
           copy_bins = []
-          unless @bins.nil?
+          if !@bins.nil?
             @bins.each do |bin|
               b = bin.clone
               copy_bins << b
@@ -67,19 +49,37 @@
         end
       end
 
-      if packings.empty?
-        return nil, GENERAL_ERROR
-      else
+      valid_packings = []
+      error = NO_ERROR
+      
+      packings.each_with_index do |p, index|
+        if p.performance.nil?
+          error = BAD_ERROR
+        elsif p.unplaced_boxes.length == @boxes.length
+          error = NO_PLACEMENT_POSSIBLE
+        elsif p.unplaced_boxes.length > 0
+          p.performance.packing_quality = PACKING_PARTIAL
+          valid_packings << p
+        else
+          p.performance.packing_quality = PACKING_OPTIMAL
+          valid_packings << p          
+        end
+      end
+      
+      if valid_packings.length > 0
+        packings = valid_packings.sort_by { |p|
+          [p.performance.packing_quality, p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.width, p.performance.nb_leftovers ]
+        }
+        min_nb_bins = packings[0].performance.nb_bins
+
         packings.each do |p|
-          if p.performance.nil?
-            puts "no performance"
+          if p.performance.nb_bins == min_nb_bins
+            #puts "#{p.score}/#{p.split} #{p.performance.largest_leftover.length} #{p.performance.largest_leftover.width} #{p.performance.nb_leftovers}"
           end
         end
-        packings = packings.sort_by { |p|
-          [ p.performance.nb_bins, 1/p.performance.largest_leftover.length, 1/p.performance.largest_leftover.width,
-            p.performance.nb_leftovers ]
-        }
         return packings[0], NO_ERROR
+      else
+        return nil, error
       end
     end
     

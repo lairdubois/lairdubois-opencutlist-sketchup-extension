@@ -56,7 +56,7 @@
           else
             match_score = MATCH_INSIDE
           end
-          s1  = [index, r1, match_score, false]
+          s1 = [index, r1, match_score, false]
         end
         if rotatable && bin.encloses_rotated?(box)
           b = box.clone

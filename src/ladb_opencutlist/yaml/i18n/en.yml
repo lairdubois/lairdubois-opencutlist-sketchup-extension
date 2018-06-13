@@ -176,7 +176,7 @@ tab:
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness
-      option_saw_kerf_help: The width of material removed by the sawblade
+      option_saw_kerf_help: The width of material removed by the sawblade cut
       option_trimming: Trimming Size
       option_trimming_help: The amount of material around the raw panel to be treated as waste
       option_rotatable: No Grain Direction
@@ -188,14 +188,14 @@ tab:
       option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
-        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Select the standard panel which will be duplicated to contain all your parts in the best possible way.
+        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
       option_std_sheet_custom: Custom Panel
       option_std_sheet_length: Custom Panel Length
       option_std_sheet_width: Custom Panel Width
       option_scrap_sheet_sizes: Scrap Sheet Goods
-      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes_placeholder: length x width
       option_scrap_sheet_sizes_help:  |
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
@@ -216,7 +216,7 @@ tab:
         full: Always
       list:
         unplaced_parts: Unplaced Parts
-        summary: Résumé
+        summary: Summary
         number: No.
         name: Description
         count: Qty
@@ -224,18 +224,18 @@ tab:
         type: Type
         length: Length
         width: Width
-        area: Surface
+        area: Area
         trimming: Trimming
         efficiency: Efficiency
         cut: Cut
-        panel_type_0: Panneau de base
-        panel_type_1: Chute
-        unused: Inutilisée
+        panel_type_0: Standard Sized Panel
+        panel_type_1: Offcut
+        unused: Unused
       error:
-        no_base_panel: Base panel sizes are badly configured.
-        trimming_too_large: Trimming sizes are badly configured.
-        general_error: Algorithmic panic, please contact the developpers, you have an interesting case.
-        unplaced_boxes: There is **1 part** which could not be placed, because it is too large to fit.
+        no_base_panel: Base panel sizes are badly configured and no scraps available.
+        no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, ...).
+        bad_bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
+        unplaced_boxes: '**One part** could not be placed, because it is too large to fit.'
         unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
         saw_kerf_small: The configured value for the saw kerf is probably too small.

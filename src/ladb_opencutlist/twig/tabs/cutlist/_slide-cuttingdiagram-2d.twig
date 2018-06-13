@@ -193,7 +193,7 @@
                                     </g>
                                 {% endfor %}
                                 {% for cut in bin.cuts %}
-                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{{ cut.length }}&nbsp;x&nbsp;{{ saw_kerf }}">>
+                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{{ (cut.is_horizontal ? "H:" : "V:" )}} {{ (cut.is_horizontal ? cut.y : cut.x )}}">>
                                         <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                         <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : px_saw_kerf }}" height="{{ cut.is_horizontal ? px_saw_kerf : cut.px_length }}"></rect>
                                     </g>

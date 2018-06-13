@@ -1099,11 +1099,11 @@
             # Engine error -> returns error only
 
             case err
-              when BinPacking2D::NO_BASE_PANEL
+              when BinPacking2D::NO_BASE_PANEL_AND_NO_BINS
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_base_panel'
-              when BinPacking2D::TRIMMING_TOO_LARGE
-                response[:errors] << 'tab.cutlist.cuttingdiagram.error.trimming_too_large'
-              when BinPacking2D::GENERAL_ERROR
+              when BinPacking2D::NO_PLACEMENT_POSSIBLE
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+              when BinPacking2D::BAD_BAD_ERROR
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.general_error'
             end
 
@@ -1188,8 +1188,7 @@
                   :length => bin_def.length.to_l.to_s,
                   :width => bin_def.width.to_l.to_s,
                   :efficiency => bin_def.efficiency,
-                  # :total_length_cuts => bin_def.total_length_cuts.to_l.to_s
-
+                  :total_length_cuts => bin_def.total_length_cuts.to_l.to_s,
                   :boxes => [],
                   :leftovers => [],
                   :cuts => [],
@@ -1234,6 +1233,8 @@
                         :px_x => to_px(cut_def.x),
                         :px_y => to_px(cut_def.y),
                         :px_length => to_px(cut_def.length),
+                        :x => cut_def.x.to_l.to_s,
+                        :y => cut_def.y.to_l.to_s,
                         :length => cut_def.length.to_l.to_s,
                         :is_horizontal => cut_def.is_horizontal,
                     }
