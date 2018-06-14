@@ -100,8 +100,30 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td colspan="5">
+                        <small>
+                            <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <ul>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_presort'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_presort_'~options.presort)|i18next }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_stacking'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_stacking_'~options.stacking)|i18next }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_bbox_optimization'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_bbox_optimization_'~options.bbox_optimization)|i18next }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-6">
+                                    <ul>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </small>
+                    </td>
+                </tr>
                     <tr>
-                        <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.type'|i18next }}</td>
+                        <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.sheet'|i18next }}</td>
                         <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
                         <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
                         <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
@@ -131,20 +153,6 @@
                             </td>
                         </tr>
                     {% endfor %}
-                    <tr>
-                        <td colspan="5">
-                            <small>
-                                {{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}
-                                <ul>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_presort'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_presort_'~options.presort)|i18next }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_stacking'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_stacking_'~options.stacking)|i18next }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_bbox_optimization'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_bbox_optimization_'~options.bbox_optimization)|i18next }}</li>
-                                </ul>
-                            </small>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         {% endif %}
