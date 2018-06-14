@@ -225,6 +225,7 @@ tab:
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
+        leftover: Chute
         cut: Coupe
         sheet_type0: Panneau standard
         sheet_type1: Reste de panneau

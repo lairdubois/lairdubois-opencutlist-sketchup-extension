@@ -191,7 +191,7 @@
                                 {% for leftover in sheet.leftovers %}
                                     {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                     {% set hideDimensions = leftover.px_length < (dimensionFontSize + dimensionOffset) or leftover.px_width < (dimensionFontSize + dimensionOffset) %}
-                                    <g class="leftover">
+                                    <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ leftover.length }}&nbsp;x&nbsp;{{ leftover.width }}">
                                         <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
                                         {% if not hideCross %}
                                             <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
@@ -204,7 +204,7 @@
                                     </g>
                                 {% endfor %}
                                 {% for cut in sheet.cuts %}
-                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{% if cut.is_horizontal %}H: {{ cut.y }}{% else %}V: {{ cut.x }}{% endif %}&nbsp;({{ options.saw_kerf }})">>
+                                    <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut'></i> {{ cut.y }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x }}{% endif %}<br><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf }}">>
                                         <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                         <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
                                     </g>

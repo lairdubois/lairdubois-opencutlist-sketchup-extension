@@ -146,7 +146,7 @@
     def l_std_thicknesses
       a = []
       @std_thicknesses.split(';').each { |std_thickness|
-        a.push(DimensionUtils.instance.dd_to_ifloats(std_thickness).to_l)
+        a << DimensionUtils.instance.dd_to_ifloats(std_thickness).to_l
       }
       a.sort!
       a
@@ -164,7 +164,7 @@
     def l_std_sections
       a = []
       @std_sections.split(';').each { |std_section|
-        a.push(Section.new(DimensionUtils.instance.dxd_to_ifloats_str(std_section)))
+        a << Section.new(DimensionUtils.instance.dxd_to_ifloats(std_section))
       }
       a
     end
@@ -181,7 +181,7 @@
     def l_std_sizes
       a = []
       @std_sizes.split(';').each { |std_size|
-        a.push(Size2d.new(DimensionUtils.instance.dxd_to_ifloats_str(std_size)))
+        a << Size2d.new(DimensionUtils.instance.dxd_to_ifloats(std_size))
       }
       a
     end

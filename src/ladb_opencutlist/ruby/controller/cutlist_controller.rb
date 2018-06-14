@@ -1017,15 +1017,13 @@ module Ladb::OpenCutList
         group_id = settings['group_id']
         std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
         std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
-        scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats_str(settings['scrap_sheet_sizes'])
+        scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
         rotatable = settings['rotatable']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
         presort = settings['presort'].to_i
         stacking = settings['stacking'].to_i
         bbox_optimization = settings['bbox_optimization'].to_i
-
-        boxes = []
 
         @cutlist[:groups].each { |group|
 

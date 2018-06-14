@@ -26,9 +26,6 @@
 
     include Singleton
 
-    # Marker
-    MARKER = 'd:'.freeze
-
     # Separators
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
@@ -60,14 +57,6 @@
      Rational(*input_split)
     end
 
-    def prefix_marker(i)
-      MARKER + i
-    end
-
-    def strip_marker(i)
-      i.sub(MARKER, '')
-    end
-
     def model_units_to_inches(i)
       case @length_unit
       when MILLIMETER
@@ -85,16 +74,16 @@
 
     def unit_sign
       case @length_unit
-      when MILLIMETER
-        return UNIT_SIGN_MILLIMETER
-      when CENTIMETER
-        return UNIT_SIGN_CENTIMETER
-      when METER
-        return UNIT_SIGN_METER
-      when FEET
-        return UNIT_SIGN_FEET
-      else
-        return UNIT_SIGN_INCHES
+        when MILLIMETER
+          return UNIT_SIGN_MILLIMETER
+        when CENTIMETER
+          return UNIT_SIGN_CENTIMETER
+        when METER
+          return UNIT_SIGN_METER
+        when FEET
+          return UNIT_SIGN_FEET
+        else
+          return UNIT_SIGN_INCHES
       end
     end
 
@@ -104,7 +93,8 @@
     #
     def simplify(i)
       i = i.to_s
-      if match = i.match(/^(\d*)\/(\d*)$/)
+      match = i.match(/^(\d*)\/(\d*)$/)
+      if match
         num, den = match.captures
         if num == "0"
           return "0"
@@ -173,7 +163,6 @@
      sum = 0
       # make sure the entry is a string and starts with the proper magic
       if i.is_a?(String) 
-        i = strip_marker(i)
         if match = i.match(/^(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
@@ -275,25 +264,8 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def dxd_to_ifloats_str(i)
+    def dxd_to_ifloats(i)
       dxd_transform(i, :str_to_ifloat)
-    end
-    
-    # Normalize value for entry into the registry
-    #
-    def normalize(i)
-      i = strip_marker(i)
-      i = str_add_units(i)        # add units
-      i = i.sub(/"/, '\"')        # escape double quote in string for registry
-      i = prefix_marker(i)        # prefix marker
-      i
-    end
-
-    # De-normalize value when reading from registry
-    def denormalize(i)
-      i = strip_marker(i)
-      i = i.sub(/\\/, '"')        # unescape double quote feet single quote unit is not a problem   
-      i
     end
 
   end
