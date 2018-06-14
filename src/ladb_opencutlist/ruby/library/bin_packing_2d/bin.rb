@@ -45,8 +45,8 @@ module BinPacking2D
     def trim_rough_bin(trimsize)
       if trimsize > 0
         @trimsize = trimsize
-        @length = (@length - 2 * @trimsize).abs
-        @width = (@width - 2 * @trimsize).abs
+        @length = @length - 2 * @trimsize
+        @width = @width - 2 * @trimsize
         @x = @trimsize
         @y = @trimsize
         @cleaned = true
