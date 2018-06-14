@@ -225,6 +225,7 @@ tab:
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
+        leftover: Chute
         cut: Schnitt
         sheet_type0: Standard Platte
         sheet_type1: Plattenrest

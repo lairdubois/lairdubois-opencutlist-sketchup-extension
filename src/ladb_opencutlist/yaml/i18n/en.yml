@@ -225,6 +225,7 @@ tab:
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency
+        leftover: Leftover
         cut: Cut
         sheet_type0: Standard Sized Panel
         sheet_type1: Offcut
