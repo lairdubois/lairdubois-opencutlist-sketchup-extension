@@ -182,10 +182,21 @@ tab:
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquels les pièces sont sélectionnées pour le placement
+      option_presort_0: Pas de tri préalable
+      option_presort_1: Par largeur décroissante
+      option_presort_2: Par longueur décroissante
+      option_presort_3: Par superficie décroissante
+      option_presort_4: Par périmètre décroissant
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Manière d'empiler les pièces qui ont longueur ou largeur commune
+      option_stacking_0: Non
+      option_stacking_1: Sur la longueur
+      option_stacking_2: Sur la largeur
       option_bbox_optimization: Optimisation de l'enveloppe
       option_bbox_optimization_help: Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes
+      option_bbox_optimization_0: Jamais
+      option_bbox_optimization_1: Seulement à la fin
+      option_bbox_optimization_2: Toujours
       option_std_sheet: Panneau standard
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -200,20 +211,6 @@ tab:
         Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      presort:
-        input_order: Pas de tri préalable
-        width_decr: Par largeur décroissante
-        length_decr: Par longueur décroissante
-        area_decr: Par superficie décroissante
-        perimeter_decr: Par périmètre décroissant
-      stacking:
-        none: Non
-        length: Sur la longueur
-        width: Sur la largeur
-      bbox_optimization:
-        none: Jamais
-        only_final: Seulement à la fin
-        full: Toujours
       list:
         unplaced_parts: Pièces non placées
         summary: Résumé
@@ -234,6 +231,7 @@ tab:
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
+        settings: Configuration
       error:
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
         no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau standard trop petit, lame de scie trop épaisse, ...).

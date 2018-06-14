@@ -182,10 +182,21 @@ tab:
       option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
       option_presort_help: Die Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden
+      option_presort_0: keine Vorsortierung
+      option_presort_1: abnehmende Breiten
+      option_presort_2: abnehmende Längen
+      option_presort_3: abnehmende Flächen
+      option_presort_4: abnehmende Perimeter
       option_stacking: Identische Teile stapeln
       option_stacking_help: Teile gleicher Länge oder Breite werden möglichst zusammengefasst
+      option_stacking_0: kein Stapeln
+      option_stacking_1: der Länge nach
+      option_stacking_2: der Breite nach
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert
+      option_bbox_optimization_0: Nie
+      option_bbox_optimization_1: Nur am Schluss
+      option_bbox_optimization_2: Immer
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -200,20 +211,6 @@ tab:
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
-      presort:
-        input_order: keine Vorsortierung
-        width_decr: abnehmende Breiten
-        length_decr: abnehmende Längen
-        area_decr: abnehmende Flächen
-        perimeter_decr: abnehmende Perimeter
-      stacking:
-        none: kein Stapeln
-        length: der Länge nach
-        width: der Breite nach
-      bbox_optimization:
-        none: Nie
-        only_final: Nur am Schluss
-        full: Immer
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
@@ -234,6 +231,7 @@ tab:
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
+        settings: Einstellungen
       error:
         no_sheet: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).

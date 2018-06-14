@@ -182,10 +182,21 @@ tab:
       option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement
+      option_presort_0: None
+      option_presort_1: Width Decreasing
+      option_presort_2: Length Decreasing
+      option_presort_3: Area Decreasing
+      option_presort_4: Perimeter Decreasing
       option_stacking: Stack Identical Parts
       option_stacking_help: The way parts with common width or length are tentatively placed together
+      option_stacking_0: None
+      option_stacking_1: Lengthwise
+      option_stacking_2: Widthwise
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
+      option_bbox_optimization_0: Never
+      option_bbox_optimization_1: Only Final
+      option_bbox_optimization_2: Always
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
         Select the standard panel which will be duplicated to contain all your parts in the best possible way.
@@ -200,20 +211,6 @@ tab:
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
-      presort:
-        input_order: None
-        width_decr: Width Decreasing
-        length_decr: Length Decreasing
-        area_decr: Area Decreasing
-        perimeter_decr: Perimeter Decreasing
-      stacking:
-        none: None
-        length: Lengthwise
-        width: Widthwise
-      bbox_optimization:
-        none: Never
-        only_final: Only Final
-        full: Always
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
@@ -234,6 +231,7 @@ tab:
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
+        settings: Settings
       error:
         no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
