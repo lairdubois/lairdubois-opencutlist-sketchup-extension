@@ -142,7 +142,7 @@ module BinPacking2D
         # the box will be placed at the top/left corner of the bin, get its index
         # and added to the original bin
         box.set_position(cs.x, cs.y)
-        @original_bins[cs.index].addbox(box)
+        @original_bins[cs.index].add_box(box)
 
         # split horizontally first
         if cs.split_horizontally_first?(box, @split)

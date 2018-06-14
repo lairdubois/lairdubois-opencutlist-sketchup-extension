@@ -132,7 +132,7 @@ module BinPacking2D
 
     # Adds a box to the bin once it was placed
     #
-    def addbox(box)
+    def add_box(box)
       # keep track of bounding box lower right corner
       @max_x = [@max_x, box.x + box.length].max
       @max_y = [@max_y, box.y + box.width].max

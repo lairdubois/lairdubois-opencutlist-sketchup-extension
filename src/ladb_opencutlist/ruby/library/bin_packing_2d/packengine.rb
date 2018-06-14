@@ -25,7 +25,7 @@ module BinPacking2D
       @boxes << BinPacking2D::Box.new(length, width, data)
     end
 
-    def run()
+    def run
 
       # Check bins definitions
       if (@options.base_bin_length == 0 || @options.base_bin_width == 0) and (@bin.nil? or @bins.length == 0)
