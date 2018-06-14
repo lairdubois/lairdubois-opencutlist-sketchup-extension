@@ -232,6 +232,8 @@ tab:
         sheet_type0: Standard Sized Panel
         sheet_type1: Offcut
         unused: Unused
+        parts: "{{ count }} part"
+        parts_plural: "{{ count }} parts"
       error:
         no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).

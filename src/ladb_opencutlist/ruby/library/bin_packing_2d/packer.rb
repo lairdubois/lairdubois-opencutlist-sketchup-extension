@@ -110,7 +110,7 @@ module BinPacking2D
                 next
               end
             end
-            # only create a new panel if this box will fit into it
+            # only create a new bin if this box will fit into it
             if box.fits_into_bin?(@b_l, @b_w, @trimsize, @rotatable)
               cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
               cs.trimsize = @trimsize

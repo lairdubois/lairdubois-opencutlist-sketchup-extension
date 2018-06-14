@@ -232,6 +232,8 @@ tab:
         sheet_type0: Standard Platte
         sheet_type1: Plattenrest
         unused: Nicht verwendet
+        parts: "{{ count }} Teil"
+        parts_plural: "{{ count }} Teile"
       error:
         no_sheet: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).
