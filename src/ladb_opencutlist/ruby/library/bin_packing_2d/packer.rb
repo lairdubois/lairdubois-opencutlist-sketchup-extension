@@ -222,7 +222,7 @@ module BinPacking2D
               end
             end
             # close the last superbox created if it is not empty
-            if superbox.sboxes.length() > 1
+            if superbox.sboxes.length() > 0
               sboxes << superbox
             end
            else
@@ -244,15 +244,13 @@ module BinPacking2D
                   if !superbox.stack_width(box, @saw_kerf, maxwidth)
                     sboxes << superbox
                     superbox = BinPacking2D::Box.new(k[0], 0)
-                    if !superbox.stack_width(box, @saw_kerf, maxwidth)
-                      puts "huge error ..."
-                    end
+                    superbox.stack_width(box, @saw_kerf, maxwidth)
                   end
                 else
                   sboxes << box
                 end
               end
-              if superbox.sboxes.length() > 1
+              if superbox.sboxes.length() > 0
                 sboxes << superbox
               end
            else
