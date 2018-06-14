@@ -199,9 +199,9 @@ tab:
       option_bbox_optimization_2: Immer
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
-        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu finden.
+        Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
       option_std_sheet_custom: Spezifische Platte
       option_std_sheet_length: Plattenlänge
       option_std_sheet_width: Plattenbreite
@@ -218,14 +218,14 @@ tab:
         name: Bezeichnung
         count: Anzahl
         raw: Rohmass
-        type: Type
+        sheet: Platte
         length: Länge
         width: Breite
         area: Fläche
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
-        leftover: Chute
+        leftover: Rest
         cut: Schnitt
         sheet_type0: Standard Platte
         sheet_type1: Plattenrest
