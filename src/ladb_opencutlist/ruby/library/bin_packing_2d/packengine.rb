@@ -28,7 +28,7 @@ module BinPacking2D
     def run
 
       # Check bins definitions
-      if (@options.base_bin_length == 0 || @options.base_bin_width == 0) and (@bin.nil? or @bins.length == 0)
+      if (@options.base_bin_length == 0 or @options.base_bin_width == 0) and @bins.empty?
         return nil, ERROR_NO_BIN
       end
       
