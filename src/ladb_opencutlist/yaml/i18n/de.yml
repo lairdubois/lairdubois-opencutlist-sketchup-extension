@@ -218,7 +218,7 @@ tab:
         name: Bezeichnung
         count: Anzahl
         raw: Rohmass
-        type: Type
+        sheet: Panneau
         length: Länge
         width: Breite
         area: Fläche

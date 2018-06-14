@@ -218,7 +218,7 @@ tab:
         name: Désignation
         count: Qte.
         raw: Brute
-        type: Type
+        sheet: Panneau
         length: Longueur
         width: Largeur
         area: Surface

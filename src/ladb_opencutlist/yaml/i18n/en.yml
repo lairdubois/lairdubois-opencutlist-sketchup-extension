@@ -218,7 +218,7 @@ tab:
         name: Description
         count: Qty
         raw: Raw
-        type: Type
+        sheet: Panneau
         length: Length
         width: Width
         area: Area
