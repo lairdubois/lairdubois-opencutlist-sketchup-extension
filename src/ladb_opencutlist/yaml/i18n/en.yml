@@ -229,15 +229,15 @@ tab:
         total_length_cuts: Length of Cuts
         efficiency: Efficiency
         cut: Cut
-        panel_type_0: Standard Sized Panel
-        panel_type_1: Offcut
+        sheet_type0: Standard Sized Panel
+        sheet_type1: Offcut
         unused: Unused
       error:
-        no_panel: Standard panel sizes are badly configured and no scraps available.
+        no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
         bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
-        unplaced_boxes: '**One part** could not be placed, because it is too large to fit.'
-        unplaced_boxes_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
+        unplaced_parts: '**One part** could not be placed, because it is too large to fit.'
+        unplaced_parts_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
         raw_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.

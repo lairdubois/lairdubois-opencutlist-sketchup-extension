@@ -1,4 +1,5 @@
 ﻿module BinPacking2D
+
   class Score < Packing2D
 
     # this may not be a good idea, verify please!
@@ -10,23 +11,23 @@
     MATCH_W_OR_L_R = 3
     MATCH_INSIDE = 4
     NO_MATCH = 5
-    
+
     # Compute score by heuristic. The lower the score the better the fit
     #
     def score_by_heuristic(box, bin, score)
       case score
-      when SCORE_BESTAREA_FIT
-        return bin.length * bin.width - box.length * box.width
-      when SCORE_BESTSHORTSIDE_FIT
-        return [(bin.length - box.length).abs, (bin.width - box.width).abs].min
-      when SCORE_BESTLONGSIDE_FIT
-        return [(bin.length - box.length).abs, (bin.width - box.width).abs].max
-      when SCORE_WORSTAREA_FIT
-        return -score_by_heuristic(box, bin, SCORE_BESTAREA_FIT)
-      when SCORE_WORSTSHORTSIDE_FIT
-        return -score_by_heuristic(box, bin, SCORE_BESTSHORTSIDE_FIT)
-      when SCORE_WORSTLONGSIDE_FIT
-        return -score_by_heuristic(box, bin, SCORE_BESTLONGSIDE_FIT)
+        when SCORE_BESTAREA_FIT
+          return bin.length * bin.width - box.length * box.width
+        when SCORE_BESTSHORTSIDE_FIT
+          return [(bin.length - box.length).abs, (bin.width - box.width).abs].min
+        when SCORE_BESTLONGSIDE_FIT
+          return [(bin.length - box.length).abs, (bin.width - box.width).abs].max
+        when SCORE_WORSTAREA_FIT
+          return -score_by_heuristic(box, bin, SCORE_BESTAREA_FIT)
+        when SCORE_WORSTSHORTSIDE_FIT
+          return -score_by_heuristic(box, bin, SCORE_BESTSHORTSIDE_FIT)
+        when SCORE_WORSTLONGSIDE_FIT
+          return -score_by_heuristic(box, bin, SCORE_BESTLONGSIDE_FIT)
       end
     end
 
@@ -99,5 +100,7 @@
       scores = scores.sort_by { |e| [e[2], e[1]] }
       return scores[0][0], scores[0][3]
     end
+
   end
+
 end

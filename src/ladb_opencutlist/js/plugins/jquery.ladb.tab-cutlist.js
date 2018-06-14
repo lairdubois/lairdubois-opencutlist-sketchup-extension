@@ -830,6 +830,12 @@
                                 $(this).blur();
                                 return false;
                             });
+                            $('a.ladb-btn-highlight-part', $slide).on('click', function() {
+                                $(this).blur();
+                                var partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                return false;
+                            });
                             $('a.ladb-btn-scrollto', $slide).on('click', function() {
                                 var target = $(this).attr('href');
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $(target).position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {

@@ -1,11 +1,13 @@
 module BinPacking2D
+
   class Packer < Packing2D
+
     attr_accessor :saw_kerf, :original_bins, :unplaced_boxes, :unused_bins, :score, :split, :performance
 
     def initialize(options)
-      @saw_kerf = options[:saw_kerf]
-      @trimsize = options[:trimming]
-      @rotatable = options[:rotatable]
+      @saw_kerf = options.saw_kerf
+      @trimsize = options.trimming
+      @rotatable = options.rotatable
       @score = -1
       @split = -1
 
@@ -44,13 +46,13 @@ module BinPacking2D
       end
 
       # remember original length/width of first bin, aka reference bin
-      @b_l = options[:base_sheet_length]
-      @b_w = options[:base_sheet_width]
+      @b_l = options.base_bin_length
+      @b_w = options.base_bin_width
       @b_x = 0
       @b_y = 0
 
       # keep a copy of the original bins to collect all relevant info
-      if !bins.empty?
+      unless bins.empty?
         bins.each do |bin|
           b = bin.get_copy
           # the original bins are not cleaned but they know about the trimming size
@@ -66,23 +68,23 @@ module BinPacking2D
       boxes = remove_too_large_boxes(boxes, bins)
 
       # preprocess supergroups
-      boxes = preprocess_supergroups(boxes, options[:stacking]) if options[:stacking] != STACKING_NONE
+      boxes = preprocess_supergroups(boxes, options.stacking) if options.stacking != STACKING_NONE
 
       # sort boxes width/length decreasing (other heuristics like
       # by decreasing area/perimeter would also be possible)
-      case options[:presort]
-      when PRESORT_WIDTH_DECR
-        boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
-      when PRESORT_LENGTH_DECR
-        boxes = boxes.sort_by { |b| [b.length, b.width] }.reverse
-      when PRESORT_AREA_DECR
-        boxes = boxes.sort_by { |b| [b.width * b.length] }.reverse
-      when PRESORT_PERIMETER_DECR
-        boxes = boxes.sort_by { |b| [b.length + b.width] }.reverse
-      when PRESORT_INPUT_ORDER
-        # do nothing
-      else
-        boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
+      case options.presort
+        when PRESORT_WIDTH_DECR
+          boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
+        when PRESORT_LENGTH_DECR
+          boxes = boxes.sort_by { |b| [b.length, b.width] }.reverse
+        when PRESORT_AREA_DECR
+          boxes = boxes.sort_by { |b| [b.width * b.length] }.reverse
+        when PRESORT_PERIMETER_DECR
+          boxes = boxes.sort_by { |b| [b.length + b.width] }.reverse
+        when PRESORT_INPUT_ORDER
+          # do nothing
+        else
+          boxes = boxes.sort_by { |b| [b.width, b.length] }.reverse
       end
 
       until boxes.empty?
@@ -93,14 +95,14 @@ module BinPacking2D
         # find best position for given box in collection of bins
         i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
         if i == -1
-          if options[:bbox_optimization] == BBOX_OPTIMIZATION_ALWAYS
+          if options.bbox_optimization == BBOX_OPTIMIZATION_ALWAYS
             assign_leftovers_to_bins(bins, @original_bins)
             postprocess_bounding_box(@original_bins, box)
             bins = collect_leftovers(@original_bins)
             i, using_rotated = s.find_position_for_box(box, bins, @rotatable, @score)
           end
           if i == -1
-            if options[:stacking] != STACKING_NONE && options[:break_stacking_if_needed]
+            if options.stacking != STACKING_NONE && options.break_stacking_if_needed
               # try to break up this box if it is a supergroup
               if box.is_superbox
                 sboxes = box.reduce_supergroup(@saw_kerf)
@@ -110,7 +112,7 @@ module BinPacking2D
             end
             # only create a new panel if this box will fit into it
             if box.fits_into_bin?(@b_l, @b_w, @trimsize, @rotatable)
-              cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, PANEL_TYPE_NEW)
+              cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
               cs.trimsize = @trimsize
               cs.trimmed = true
               @original_bins << cs.get_copy
@@ -171,13 +173,13 @@ module BinPacking2D
       end
 
       # postprocess supergroups: boxes in @original_bins.boxes
-      postprocess_supergroups(@original_bins, options[:stacking]) if options[:stacking] != STACKING_NONE
+      postprocess_supergroups(@original_bins, options.stacking) if options.stacking != STACKING_NONE
 
       # assign leftovers to the original bins, here mainly for drawing purpose
       assign_leftovers_to_bins(bins, @original_bins)
 
       # compute the bounding box and fix bottom and right leftovers
-      postprocess_bounding_box(@original_bins) if options[:bbox_optimization] != BBOX_OPTIMIZATION_NONE
+      postprocess_bounding_box(@original_bins) if options.bbox_optimization != BBOX_OPTIMIZATION_NONE
 
       # unpacked boxes are in @unpacked_boxes
 
@@ -384,7 +386,7 @@ module BinPacking2D
     # If a box only fits rotated, rotate it
     #
     def remove_too_large_boxes(boxes, bins)
-      standard_bin = BinPacking2D::Bin.new(@b_l, @b_w, 0, 0, 0, PANEL_TYPE_NEW)
+      standard_bin = BinPacking2D::Bin.new(@b_l, @b_w, 0, 0, 0, BIN_TYPE_AUTO_GENERATED)
       boxes_that_fit = []
       boxes.each_with_index do |box, i|
         box_fits = false
@@ -417,7 +419,7 @@ module BinPacking2D
       largest_bin = nil
       largest_area = 0
 
-      p = BinPacking2D::Performance.new()
+      p = BinPacking2D::Performance.new
 
       bins = []
       
@@ -427,9 +429,9 @@ module BinPacking2D
         if bin.boxes.empty? # a bin without boxes has not been used
           @unused_bins << bin
         else
-          p.nb_boxes_packed += bin.boxes.length()
+          p.nb_boxes_packed += bin.boxes.length
           p.nb_leftovers += bin.leftovers.length
-          bin.total_cutlengths()
+          bin.total_cutlengths
           bin.leftovers.each do |b|
             a = b.area
             if a > largest_area
@@ -450,5 +452,7 @@ module BinPacking2D
       p.nb_bins = @original_bins.length
       return p
     end
+
   end
+
 end

@@ -229,15 +229,15 @@ tab:
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
         cut: Schnitt
-        panel_type_0: Standard Platte
-        panel_type_1: Plattenrest
+        sheet_type0: Standard Platte
+        sheet_type1: Plattenrest
         unused: Nicht verwendet
       error:
-        no_panel: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
+        no_sheet: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
-        unplaced_boxes: '**1 zu grosses Teil** konnte nicht platziert werden.'
-        unplaced_boxes_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
+        unplaced_parts: '**1 zu grosses Teil** konnte nicht platziert werden.'
+        unplaced_parts_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
         raw_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.

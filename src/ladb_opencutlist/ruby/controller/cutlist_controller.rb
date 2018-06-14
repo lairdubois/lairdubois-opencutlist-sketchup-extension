@@ -1033,65 +1033,64 @@ module Ladb::OpenCutList
             next
           end
 
+          # the dimensions need to be in Sketchup internal units AND float
+          options = BinPacking2D::Options.new
+          options.base_bin_length = std_sheet_length
+          options.base_bin_width = std_sheet_width
+          options.rotatable = rotatable
+          options.saw_kerf = saw_kerf
+          options.trimming = trimming
+          options.stacking = stacking
+          options.bbox_optimization = bbox_optimization
+          options.presort = presort
+
+          # Create the bin packing engine with given bins and boxes
+          e = BinPacking2D::PackEngine.new(options)
+
+          # Add bins from scrap sheets
+          scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+            size2d = Size2d.new(scrap_sheet_size)
+            e.add_bin(size2d.length.to_f, size2d.width.to_f)
+          }
+
+          # Add boxes from parts
           group[:parts].each { |part|
             for i in 1..part[:count]
-              boxes << BinPacking2D::Box.new(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
+              e.add_box(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
             end
           }
 
-          # the dimensions need to be in Sketchup internal units AND float
-
-          options = {
-              :base_sheet_length => std_sheet_length,
-              :base_sheet_width => std_sheet_width,
-              :rotatable => rotatable,
-              :saw_kerf => saw_kerf,
-              :trimming => trimming,
-              :stacking => stacking, # available options in packing2d.rb
-              :break_stacking_if_needed => true, # not breaking does not make sense when panel is small, NOT an option
-              :bbox_optimization => bbox_optimization, # available options in packing2d.rb
-              :presort => presort, # available options in packing2d.rb
-          }
-
-          # Convert inch float value to pixel
-          def to_px(inch_value)
-            inch_value * 7.5 # 900px = 120" ~ 3m
-          end
-
-          # add leftovers to the bins, you need only length and width, index will be added in packengine
-          bins = []
-          scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
-            size2d = Size2d.new(scrap_sheet_size)
-            bins << BinPacking2D::Bin.new(size2d.length.to_f, size2d.width.to_f, 0, 0, 0, BinPacking2D::PANEL_TYPE_OFFCUT)
-          }
-
-          e = BinPacking2D::PackEngine.new(bins, boxes)
-
           # Compute the cutting diagram
-          result, err = e.run(options)
+          result, err = e.run
 
           # Response
           # --------
+
+          # Convert inch float value to pixel
+          def to_px(inch_value)
+            inch_value * 7 # 840px = 120" ~ 3m
+          end
 
           response = {
               :errors => [],
               :warnings => [],
               :tips => [],
 
-              :rotatable => rotatable,
-              :px_saw_kerf => to_px(options[:saw_kerf]),
-              :saw_kerf => options[:saw_kerf].to_l.to_s,
-              :px_trimming => to_px(options[:trimming]),
-              :trimming => options[:trimming].to_l.to_s,
-              :stacking => stacking,
-              :bbox_optimization => bbox_optimization,
-              :presort => presort,
+              :options => {
+                :rotatable => rotatable,
+                :px_saw_kerf => to_px(options.saw_kerf),
+                :saw_kerf => options.saw_kerf.to_l.to_s,
+                :trimming => options.trimming.to_l.to_s,
+                :stacking => stacking,
+                :bbox_optimization => bbox_optimization,
+                :presort => presort,
+              },
 
               :unplaced_parts => [],
               :summary => {
-                :bins => [],
+                :sheets => [],
               },
-              :bins => [],
+              :sheets => [],
           }
 
           if err > BinPacking2D::ERROR_NONE
@@ -1099,8 +1098,8 @@ module Ladb::OpenCutList
             # Engine error -> returns error only
 
             case err
-              when BinPacking2D::ERROR_NO_STANDARD_PANEL_AND_NO_SCRAPS
-                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_panel'
+              when BinPacking2D::ERROR_NO_BIN
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_sheet'
               when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
                 response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
               when BinPacking2D::ERROR_BAD_ERROR
@@ -1111,7 +1110,7 @@ module Ladb::OpenCutList
 
             # Errors
             if result.unplaced_boxes.length > 0
-              response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_boxes', { :count => result.unplaced_boxes.length } ]
+              response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
             end
 
             # Warnings
@@ -1124,18 +1123,18 @@ module Ladb::OpenCutList
 
             # Unplaced boxes
             unplaced_parts = {}
-            result.unplaced_boxes.each { |box_def|
-              part = unplaced_parts[box_def.part[:number]]
+            result.unplaced_boxes.each { |box|
+              part = unplaced_parts[box.data[:number]]
               unless part
                 part = {
-                    :id => box_def.part[:id],
-                    :number => box_def.part[:number],
-                    :name => box_def.part[:name],
-                    :length => box_def.length.to_l.to_s,
-                    :width => box_def.width.to_l.to_s,
+                    :id => box.data[:id],
+                    :number => box.data[:number],
+                    :name => box.data[:name],
+                    :length => box.length.to_l.to_s,
+                    :width => box.width.to_l.to_s,
                     :count => 0,
                 }
-                unplaced_parts[box_def.part[:number]] = part
+                unplaced_parts[box.data[:number]] = part
               end
               part[:count] += 1
             }
@@ -1144,106 +1143,104 @@ module Ladb::OpenCutList
             }
 
             # Summary
-            result.unused_bins.each {|bin_def|
-              response[:summary][:bins].push(
+            result.unused_bins.each {|bin|
+              response[:summary][:sheets].push(
                   {
-                      :type => bin_def.type,
+                      :type => bin.type,
                       :count => 1,
-                      :length => bin_def.length.to_l.to_s,
-                      :width => bin_def.width.to_l.to_s,
-                      :area => @cutlist[:is_metric] ? Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area_m2 : Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area / 144,
+                      :length => bin.length.to_l.to_s,
+                      :width => bin.width.to_l.to_s,
+                      :area => @cutlist[:is_metric] ? Size2d.new(bin.length.to_l, bin.width.to_l).area_m2 : Size2d.new(bin.length.to_l, bin.width.to_l).area / 144,
                       :is_used => false,
                   }
               )
             }
-            summary_bins = {}
+            summary_sheets = {}
             index = 0
-            result.original_bins.each { |bin_def|
+            result.original_bins.each { |bin|
               index += 1
-              id = "#{bin_def.type},#{bin_def.length},#{bin_def.width}"
-              bin = summary_bins[id]
-              unless bin
-                bin = {
+              id = "#{bin.type},#{bin.length},#{bin.width}"
+              sheet = summary_sheets[id]
+              unless sheet
+                sheet = {
                     :index => index,
-                    :type => bin_def.type,
+                    :type => bin.type,
                     :count => 0,
-                    :length => bin_def.length.to_l.to_s,
-                    :width => bin_def.width.to_l.to_s,
+                    :length => bin.length.to_l.to_s,
+                    :width => bin.width.to_l.to_s,
                     :area => 0,
                     :is_used => true,
                 }
-                summary_bins[id] = bin
+                summary_sheets[id] = sheet
               end
-              bin[:count] += 1
-              bin[:area] += @cutlist[:is_metric] ? Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area_m2 : Size2d.new(bin_def.length.to_l, bin_def.width.to_l).area / 144
+              sheet[:count] += 1
+              sheet[:area] += @cutlist[:is_metric] ? Size2d.new(bin.length.to_l, bin.width.to_l).area_m2 : Size2d.new(bin.length.to_l, bin.width.to_l).area / 144
             }
-            summary_bins.each { |key, bin|
-              response[:summary][:bins].push(bin)
-            }
+            response[:summary][:sheets] += summary_sheets.values
 
-            # Bins
+            # Sheets
             index = 0
-            result.original_bins.each { |bin_def|
+            result.original_bins.each { |bin|
 
               index += 1
-              bin = {
+              sheet = {
                   :index => index,
-                  :px_length => to_px(bin_def.length),
-                  :px_width => to_px(bin_def.width),
-                  :type => bin_def.type,
-                  :length => bin_def.length.to_l.to_s,
-                  :width => bin_def.width.to_l.to_s,
-                  :efficiency => bin_def.efficiency,
-                  :total_length_cuts => bin_def.total_length_cuts.to_l.to_s,
+                  :px_length => to_px(bin.length),
+                  :px_width => to_px(bin.width),
+                  :type => bin.type,
+                  :length => bin.length.to_l.to_s,
+                  :width => bin.width.to_l.to_s,
+                  :efficiency => bin.efficiency,
+                  :total_length_cuts => bin.total_length_cuts.to_l.to_s,
 
-                  :boxes => [],
+                  :parts => [],
                   :leftovers => [],
                   :cuts => [],
               }
-              response[:bins].push(bin)
+              response[:sheets].push(sheet)
 
-              # Boxes
-              bin_def.boxes.each { |box_def|
-                bin[:boxes].push(
+              # Parts
+              bin.boxes.each { |box|
+                sheet[:parts].push(
                     {
-                        :number => box_def.part[:number],
-                        :name => box_def.part[:name],
-                        :px_x => to_px(box_def.x),
-                        :px_y => to_px(box_def.y),
-                        :px_length => to_px(box_def.length),
-                        :px_width => to_px(box_def.width),
-                        :length => box_def.length.to_l.to_s,
-                        :width => box_def.width.to_l.to_s,
-                        :rotated => box_def.rotated,
+                        :number => box.data[:number],
+                        :name => box.data[:name],
+                        :px_x => to_px(box.x),
+                        :px_y => to_px(box.y),
+                        :px_length => to_px(box.length),
+                        :px_width => to_px(box.width),
+                        :length => box.length.to_l.to_s,
+                        :width => box.width.to_l.to_s,
+                        :rotated => box.rotated,
                     }
                 )
               }
 
               # Leftovers
-              bin_def.leftovers.each { |box_def|
-                bin[:leftovers].push(
+              bin.leftovers.each { |box|
+                sheet[:leftovers].push(
                     {
-                        :px_x => to_px(box_def.x),
-                        :px_y => to_px(box_def.y),
-                        :px_length => to_px(box_def.length),
-                        :px_width => to_px(box_def.width),
-                        :length => box_def.length.to_l.to_s,
-                        :width => box_def.width.to_l.to_s,
+                        :px_x => to_px(box.x),
+                        :px_y => to_px(box.y),
+                        :px_length => to_px(box.length),
+                        :px_width => to_px(box.width),
+                        :length => box.length.to_l.to_s,
+                        :width => box.width.to_l.to_s,
                     }
                 )
               }
 
               # Cuts
-              bin_def.cuts.each { |cut_def|
-                bin[:cuts].push(
+              bin.cuts.each { |cut|
+                sheet[:cuts].push(
                     {
-                        :px_x => to_px(cut_def.x),
-                        :px_y => to_px(cut_def.y),
-                        :px_length => to_px(cut_def.length),
-                        :x => cut_def.x.to_l.to_s,
-                        :y => cut_def.y.to_l.to_s,
-                        :length => cut_def.length.to_l.to_s,
-                        :is_horizontal => cut_def.is_horizontal,
+                        :px_x => to_px(cut.x),
+                        :px_y => to_px(cut.y),
+                        :px_length => to_px(cut.length),
+                        :x => cut.x.to_l.to_s,
+                        :y => cut.y.to_l.to_s,
+                        :length => cut.length.to_l.to_s,
+                        :is_horizontal => cut.is_horizontal,
                     }
                 )
               }

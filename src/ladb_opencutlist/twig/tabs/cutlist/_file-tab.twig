@@ -2,4 +2,4 @@
 
 {% extends 'tabs/base-file-tab.twig' %}
 
-{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}<span class="ladb-extra">{{ generateAt|date(('default.date_format'|i18next())) }}</span>{% if lengthUnit is not null %}<span class="ladb-extra">{{ ('default.unit_'~lengthUnit)|i18next() }}</span>{% endif %}{% endblock %}
+{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}<span class="ladb-extra ladb-horizontal-left-separator">{{ generateAt|date(('default.date_format'|i18next())) }}</span>{% if lengthUnit is not null %}<span class="ladb-extra ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next() }}</span>{% endif %}{% endblock %}

@@ -7,8 +7,8 @@ module BinPacking2D
   #
 
   class Bin < Packing2D
-    attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y,
-                  :length_cuts, :trimmed, :trimsize, :index, :type
+
+    attr_accessor :boxes, :cuts, :leftovers, :length, :width, :x, :y, :length_cuts, :trimmed, :trimsize, :index, :type
     attr_reader :efficiency, :total_length_cuts
 
     def initialize(length, width, x, y, index, type)
@@ -165,7 +165,7 @@ module BinPacking2D
     # to the bin prior to calling it.
     #
     def crop_to_bounding_box(saw_kerf, box)
-      if !@bbox_done
+      unless @bbox_done
         # trim all cuts that go beyond max_y and max_y
         @cuts.each do |cut|
           if cut.is_horizontal && cut.x + cut.length > @max_x
@@ -308,5 +308,7 @@ module BinPacking2D
     def area
       return @length * @width
     end
+
   end
+
 end

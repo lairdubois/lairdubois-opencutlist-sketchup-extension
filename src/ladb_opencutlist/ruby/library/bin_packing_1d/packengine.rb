@@ -8,17 +8,15 @@
   require_relative "cut"
 
   class PackEngine < Packing1D
-    attr_accessor
-    
+
     def initialize(bins, boxes)
       @bins = bins
       @boxes = boxes
     end
     
     def run(options)
-    
       if @bins.empty?
-        @bins << BinPacking1D::Bin.new(options[:base_sheet_length], 0, 0)
+        @bins << BinPacking1D::Bin.new(options[:base_bin_length], 0, 0)
       end
       p = BinPacking1D::Packer.new(options[:kerf], options[:trimming])
       p.pack(@bins, @boxes)
@@ -26,4 +24,5 @@
     end
     
   end
+
 end

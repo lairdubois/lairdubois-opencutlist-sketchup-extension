@@ -1,4 +1,5 @@
 ﻿module BinPacking2D
+
   class Cut < Packing2D
   
     attr_accessor :x, :y, :length, :width, :is_horizontal, :is_primary
@@ -22,4 +23,5 @@
     end
 
   end
+
 end

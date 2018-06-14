@@ -106,12 +106,17 @@
 // SVG
 
 .ladb-cuttingdiagram-group {
-  page-break-after: always;
+  page-break-inside: avoid;
+
+  &:first-of-type {
+    page-break-before: auto;
+  }
 
   svg {
     shape-rendering: geometricPrecision;
     text-rendering: optimizeLegibility;
     width: 100%;
+    //height: auto;
 
     /* .sheet */
 
@@ -134,33 +139,33 @@
 
     }
 
-    /* .box */
+    /* .part */
 
-    .box {
+    .part {
 
       &:hover {
         cursor: pointer !important;
 
-        .box-outer {
+        .part-outer {
           fill: @ladb-brand-primary;
         }
-        .box-inner {
+        .part-inner {
           fill: lighten(@ladb-brand-primary, 40%);
           filter: none;
         }
 
       }
 
-      .box-outer {
+      .part-outer {
         fill: #555;
       }
-      .box-inner {
+      .part-inner {
         fill: #eee;
       }
-      .box-number {
+      .part-number {
         fill: #000;
       }
-      .box-dimension {
+      .part-dimension {
         fill: #000;
       }
     }
@@ -223,11 +228,11 @@
 
   .ladb-cuttingdiagram-group svg {
 
-    .box {
-      .box-outer {
+    .part {
+      .part-outer {
         fill: #fff;
       }
-      .box-inner {
+      .part-inner {
         fill: #fff;
       }
     }

@@ -229,15 +229,15 @@ tab:
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
         cut: Coupe
-        panel_type_0: Panneau standard
-        panel_type_1: Reste de panneau
+        sheet_type0: Panneau standard
+        sheet_type1: Reste de panneau
         unused: Inutilisée
       error:
-        no_panel: Le panneau de base n'est pas correctement configuré et pas de restes.
+        no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
         no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau standard trop petit, lame de scie trop épaisse, ...).
         bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
-        unplaced_boxes: Il y a **1 pièce** trop grande pour être placée.
-        unplaced_boxes_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
+        unplaced_parts: Il y a **1 pièce** trop grande pour être placée.
+        unplaced_parts_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
       warning:
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.

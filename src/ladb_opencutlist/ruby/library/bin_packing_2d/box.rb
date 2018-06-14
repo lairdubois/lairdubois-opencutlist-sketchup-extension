@@ -1,15 +1,16 @@
 module BinPacking2D
   
   class Box < Packing2D
-    attr_reader :length, :width, :x, :y, :rotated, :part, :sboxes, :is_superbox
 
-    def initialize(length, width, part = nil)
+    attr_reader :length, :width, :x, :y, :rotated, :data, :sboxes, :is_superbox
+
+    def initialize(length, width, data = nil)
       @length = length
       @width = width
       @x = 0
       @y = 0
       @rotated = false
-      @part = part
+      @data = data
       @sboxes = []
       @is_superbox = false
       @stack_is_horizontal = true

@@ -7,21 +7,32 @@ module BinPacking2D
   require_relative 'score'
   require_relative 'performance'
   require_relative 'packer'
-  
+  require_relative 'options'
+
   class PackEngine < Packing2D
   
-    def initialize(bins, boxes)
-      @bins = bins
-      @boxes = boxes
+    def initialize(options)
+      @options = options
+      @bins = []
+      @boxes = []
+    end
+
+    def add_bin(length, width, type = BinPacking2D::BIN_TYPE_USER_DEFINED)
+      @bins << BinPacking2D::Bin.new(length, width, 0, 0, 0, type)
     end
     
-    def run(options)
-    
-      if (options[:base_sheet_length] == 0 || options[:base_sheet_width] == 0) && @bins.length == 0
-        return nil, ERROR_NO_STANDARD_PANEL_AND_NO_SCRAPS
-      elsif options[:saw_kerf] >= 0
+    def add_box(length, width, data = nil)
+      @boxes << BinPacking2D::Box.new(length, width, data)
+    end
+
+    def run()
+
+      # Check bins definitions
+      if (@options.base_bin_length == 0 || @options.base_bin_width == 0) and (@bin.nil? or @bins.length == 0)
+        return nil, ERROR_NO_BIN
       end
       
+      # Compute index on each bin
       @bins.each_with_index { |bin, i| bin.index = i } unless @bins.nil?
 
       packings = []
@@ -44,16 +55,18 @@ module BinPacking2D
               copy_bins << b
             end
           end
-          p = BinPacking2D::Packer.new(options)
-          p.pack(copy_bins, copy_boxes, score, split, options)
+
+          p = BinPacking2D::Packer.new(@options)
+          p.pack(copy_bins, copy_boxes, score, split, @options)
           packings << p
+
         end
       end
 
       valid_packings = []
       error = ERROR_NONE
       
-      packings.each_with_index do |p, index|
+      packings.each do |p|
         if p.performance.nil?
           error = ERROR_BAD_ERROR
         elsif p.performance.nb_boxes_packed == 0
@@ -66,7 +79,7 @@ module BinPacking2D
       return nil, error unless valid_packings.length > 0
 
       packings = valid_packings.sort_by { |p|
-        [p.unplaced_boxes.length, p.performance.nb_bins, 1/(p.performance.largest_leftover_length + 0.01), 1/(p.performance.largest_leftover_width + 0.01), p.performance.nb_leftovers ]
+        [ p.unplaced_boxes.length, p.performance.nb_bins, 1 / (p.performance.largest_leftover_length + 0.01), 1 / (p.performance.largest_leftover_width + 0.01), p.performance.nb_leftovers ]
       }        
         
       return packings[0], ERROR_NONE

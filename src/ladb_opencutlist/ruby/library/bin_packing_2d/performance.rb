@@ -1,4 +1,5 @@
 module BinPacking2D
+
   class Performance < Packing2D
 
     attr_accessor :largest_leftover_length, :largest_leftover_width, :nb_bins, :nb_boxes_packed, :nb_leftovers
@@ -13,4 +14,5 @@ module BinPacking2D
     end
 
   end
+
 end
