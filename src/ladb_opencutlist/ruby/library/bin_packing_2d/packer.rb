@@ -14,7 +14,7 @@ module BinPacking2D
       @original_bins = []
       @unplaced_boxes = []
       @unused_bins = []
-      @bins = []
+
       @b_x = 0
       @b_y = 0
       @b_w = 0
@@ -34,9 +34,19 @@ module BinPacking2D
       @score = score
       @split = split
 
+      # remember original length/width of first bin, aka reference bin
+      @b_l = options.base_bin_length
+      @b_w = options.base_bin_width
+      @b_x = 0
+      @b_y = 0
+
       # bins are numbered in sequence, this is the next available index
       if bins.nil? || bins.empty?
         next_bin_index = 0
+        # make sure we have at least one panel, otherwise stacking will try to break
+        # stacks just for fun and give suboptimal solutions
+        bins << BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
+        next_bin_index += 1
       else
         bins.each do |bin|
           @stacking_maxlength = bin.length unless bin.length <= @stacking_maxlength
@@ -44,12 +54,6 @@ module BinPacking2D
         end
         next_bin_index = bins.length
       end
-
-      # remember original length/width of first bin, aka reference bin
-      @b_l = options.base_bin_length
-      @b_w = options.base_bin_width
-      @b_x = 0
-      @b_y = 0
 
       # keep a copy of the original bins to collect all relevant info
       unless bins.empty?
@@ -105,10 +109,16 @@ module BinPacking2D
             if options.stacking != STACKING_NONE && options.break_stacking_if_needed
               # try to break up this box if it is a supergroup
               if box.is_superbox
-                sboxes = box.reduce_supergroup(@saw_kerf)
-                boxes.unshift(*sboxes) # prepend the boxes, this does not guarantee that order is preserved
+                sboxes = box.break_up_supergroup
+                boxes << sboxes
                 next
               end
+              # FIXME in 1.5.1 it would be nice to only break up part of the superbox
+              #if box.is_superbox
+              #  sboxes = box.reduce_supergroup(@saw_kerf)
+              #  boxes.unshift(*sboxes) # prepend the boxes, this does not guarantee that order is preserved
+              #  next
+              #end
             end
             # only create a new bin if this box will fit into it
             if box.fits_into_bin?(@b_l, @b_w, @trimsize, @rotatable)
@@ -119,6 +129,8 @@ module BinPacking2D
               cs.trim_rough_bin(@trimsize)
               next_bin_index += 1
             else
+              # this will never happen if the above FIXME is not implemented, because
+              # the superbox will have been brocken down by now
               if box.is_superbox
                 #sboxes = box.break_up_supergroup()
                 #@unplaced_boxes.unshift(*sboxes)
