@@ -612,18 +612,19 @@ module Ladb::OpenCutList
 
       # Sort and browse material usages
       cutlist_def.material_usages.sort_by { |k, v| [v.display_name.downcase] }.each { |key, material_usage|
-        response[:material_usages].push({
-                                        :name => material_usage.name,
-                                        :display_name => material_usage.display_name,
-                                        :type => material_usage.type,
-                                        :use_count => material_usage.use_count
-                                    })
+        response[:material_usages].push(
+            {
+                :name => material_usage.name,
+                :display_name => material_usage.display_name,
+                :type => material_usage.type,
+                :use_count => material_usage.use_count
+            })
       }
 
       part_number = cutlist_def.max_number ? cutlist_def.max_number.succ : (part_number_with_letters ? 'A' : '1')
 
       # Sort and browse groups
-      cutlist_def.group_defs.sort_by { |k, v| [MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.std_width, -v.std_thickness] }.each { |key, group_def|
+      cutlist_def.group_defs.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each { |key, group_def|
 
         if part_number_sequence_by_group
           part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
@@ -1021,9 +1022,9 @@ module Ladb::OpenCutList
         rotatable = settings['rotatable']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-        presort = settings['presort'].to_i
-        stacking = settings['stacking'].to_i
-        bbox_optimization = settings['bbox_optimization'].to_i
+        presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
+        stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
+        bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
 
         @cutlist[:groups].each { |group|
 
@@ -1031,7 +1032,7 @@ module Ladb::OpenCutList
             next
           end
 
-          # the dimensions need to be in Sketchup internal units AND float
+          # The dimensions need to be in Sketchup internal units AND float
           options = BinPacking2D::Options.new
           options.base_bin_length = std_sheet_length
           options.base_bin_width = std_sheet_width

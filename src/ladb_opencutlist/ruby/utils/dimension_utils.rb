@@ -133,7 +133,7 @@
           if !four.nil?
             nu.sub!(four, @separator)
           end
-        elsif match = i.match(/^~?\s*(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
+        elsif match = i.match(/^~?\s*(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             nu = simplify(from_fractional(eight)).to_s + '"'
@@ -163,10 +163,10 @@
      sum = 0
       # make sure the entry is a string and starts with the proper magic
       if i.is_a?(String) 
-        if match = i.match(/^(\d*(#{Regexp.escape(@separator)}\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
+        if match = i.match(/^(\d*([.,]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
-          one = one.sub(/#{Regexp.escape(@separator)}/, '.')
+          one = one.sub(/,/, '.')
           one = one.to_f
           if three.nil?
             sum = model_units_to_inches(one)

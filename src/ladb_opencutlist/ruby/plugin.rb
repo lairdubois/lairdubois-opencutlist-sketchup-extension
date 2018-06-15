@@ -18,6 +18,7 @@ module Ladb::OpenCutList
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
     BUILD = '201806151259'.freeze
+    DEBUG = VERSION.end_with? '-dev'
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -188,6 +189,11 @@ module Ladb::OpenCutList
 
     def start
 
+      # Clear Ruby console if debug enabled
+      if DEBUG
+        SKETCHUP_CONSOLE.clear
+      end
+
       # To minimize plugin initialization, start setup is called only once
       unless @started
 
@@ -237,7 +243,7 @@ module Ladb::OpenCutList
       start
 
       # Create dialog instance
-      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION + (VERSION.end_with?('-dev') ? " ( build: #{BUILD} )" : '')
+      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION + (DEBUG ? " ( build: #{BUILD} )" : '')
       if html_dialog_compatible
         @dialog = UI::HtmlDialog.new(
             {
