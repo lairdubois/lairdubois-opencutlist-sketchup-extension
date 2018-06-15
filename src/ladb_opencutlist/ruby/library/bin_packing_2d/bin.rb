@@ -199,8 +199,14 @@ module BinPacking2D
         elsif sb >= sr
           cut_horizontal = true
         else
-          cut_horizontal = false
-        end
+          # FIXME in 1.5.1
+          # cut_horizontal = false
+          # this seems to exhibit some strange behaviour!
+          # the idea is that we perform the bounding box by increasing
+          # the area of the larger of the two leftovers, but this tends
+          # to break the selection of the best packing in packengine
+          cut_horizontal = true
+         end
 
         # Pick the cut sequence that will maximize area of larger leftover area.
         # Probably needs to follow split strategy using score object, maybe later.
