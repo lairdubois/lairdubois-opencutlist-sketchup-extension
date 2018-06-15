@@ -262,9 +262,8 @@
     };
 
     LadbDialog.prototype.setupTooltips = function() {
-        $('[data-toggle="tooltip"]')
-            .tooltip('hide')    // Assume that previouly created tooltips are closed
-            .tooltip({
+        $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
+        $('[data-toggle="tooltip"]').tooltip({
             container: 'body'
         });
     };

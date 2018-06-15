@@ -3,8 +3,8 @@
 {% set id = 'ladb_cutlist_slide_cuttingdiagram_2d' %}
 {% set out = true %}
 
-{% set sheetDimensionFontSize = 18 %}
-{% set dimensionFontSize = 13 %}
+{% set sheetDimensionFontSize = 16 %}
+{% set dimensionFontSize = 12 %}
 {% set numberFontSize = 26 %}
 
 {% set dimensionOffset = 3 %}
@@ -186,7 +186,7 @@
                                 <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
                             </g>
                             {% for part in sheet.parts %}
-                                <g class="part" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length }}&nbsp;x&nbsp;{{ part.width }}">
+                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length }}&nbsp;x&nbsp;{{ part.width }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ min(numberFontSize, part.px_length - dimensionOffset * 2, part.px_width - dimensionOffset * 2)  }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>

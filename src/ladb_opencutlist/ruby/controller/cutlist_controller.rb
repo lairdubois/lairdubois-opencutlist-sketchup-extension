@@ -1201,6 +1201,7 @@ module Ladb::OpenCutList
               bin.boxes.each { |box|
                 sheet[:parts].push(
                     {
+                        :id => box.data[:id],
                         :number => box.data[:number],
                         :name => box.data[:name],
                         :px_x => to_px(box.x),

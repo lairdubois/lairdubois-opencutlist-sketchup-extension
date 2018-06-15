@@ -851,6 +851,14 @@
                                 return false;
                             });
 
+                            // SVG
+                            $('SVG .part', $slide).on('click', function() {
+                                var partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                $(this).blur();
+                                return false;
+                            });
+
                         });
 
                         // Hide modal
