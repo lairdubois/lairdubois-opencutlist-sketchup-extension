@@ -323,9 +323,9 @@
                 var $btnExport = $('#ladb_cutlist_export', $modal);
 
                 // Bind select
-                $selectColSep.val(that.exportOptions.col_sep);
+                $selectColSep.val(exportOptions.col_sep);
                 $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectEncoding.val(that.exportOptions.encoding);
+                $selectEncoding.val(exportOptions.encoding);
                 $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind buttons
@@ -333,16 +333,16 @@
 
                     // Fetch options
 
-                    that.exportOptions.col_sep = $selectColSep.val();
-                    that.exportOptions.encoding = $selectEncoding.val();
+                    exportOptions.col_sep = $selectColSep.val();
+                    exportOptions.encoding = $selectEncoding.val();
 
                     // Store options
                     that.opencutlist.setSettings([
-                        { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:that.exportOptions.col_sep },
-                        { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:that.exportOptions.encoding }
+                        { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:exportOptions.col_sep },
+                        { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding }
                     ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                    rubyCallCommand('cutlist_export', $.extend(that.exportOptions, that.uiOptions), function(response) {
+                    rubyCallCommand('cutlist_export', $.extend(exportOptions, that.uiOptions), function(response) {
 
                         var i;
 
@@ -697,16 +697,14 @@
                         $inputScrapSheet.val(cuttingdiagram2dOptions.std_sheet);
                     }
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
+                    $inputScrapSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                     $inputTrimming.val(cuttingdiagram2dOptions.trimming);
                     $selectPresort.val(cuttingdiagram2dOptions.presort);
-                    $selectStacking.val(cuttingdiagram2dOptions.stacking);
-                    $selectBBoxOptimization.val(cuttingdiagram2dOptions.bbox_optimization);
-
-                    // Bind select
-                    $inputScrapSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectStacking.val(cuttingdiagram2dOptions.stacking);
                     $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectBBoxOptimization.val(cuttingdiagram2dOptions.bbox_optimization);
                     $selectBBoxOptimization.selectpicker(SELECT_PICKER_OPTIONS);
 
                     var fnSelectSize = function() {
