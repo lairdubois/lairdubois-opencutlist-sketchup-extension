@@ -181,7 +181,7 @@
           elsif three == UNIT_SIGN_INCHES
             sum = one
           end
-        elsif match = i.match(/^(((\d*(#{Regexp.escape(@separator)}\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
+        elsif match = i.match(/^(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
           if three.nil? && six.nil?
             #puts "i = #{'%15s' % i} => fractional+unit:: #{'%7s' % eight}  #{nine}"
