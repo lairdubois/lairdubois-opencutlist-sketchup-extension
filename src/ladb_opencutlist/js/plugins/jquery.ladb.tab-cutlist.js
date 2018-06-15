@@ -782,7 +782,9 @@
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
                                 group: group
-                            }, response));
+                            }, response), function() {
+                                that.opencutlist.setupTooltips();
+                            });
 
                             // Fetch UI elements
                             var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
@@ -847,12 +849,6 @@
                                 $('.ladb-click-tool', $(this)).click();
                                 $(this).blur();
                                 return false;
-                            });
-
-
-                            // Toggle tooltips
-                            $('[data-toggle=tooltip]', $slide).tooltip({
-                                'container': 'body'
                             });
 
                         });

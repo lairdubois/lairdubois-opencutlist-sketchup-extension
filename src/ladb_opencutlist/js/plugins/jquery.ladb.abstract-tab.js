@@ -22,7 +22,7 @@ LadbAbstractTab.prototype.topSlide = function() {
     return null;
 };
 
-LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams) {
+LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams, callback) {
 
     // Check if top slide has the same id
     var $topSlide = this.topSlide();
@@ -37,10 +37,10 @@ LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams) {
     // Fetch UI elements
     var $slide = $('#' + id, this.$element).first();
 
-    return this.pushSlide($slide);
+    return this.pushSlide($slide, callback);
 };
 
-LadbAbstractTab.prototype.pushSlide = function($slide) {
+LadbAbstractTab.prototype.pushSlide = function($slide, callback) {
     var that = this;
 
     var $topSlide = this.topSlide();
@@ -60,6 +60,9 @@ LadbAbstractTab.prototype.pushSlide = function($slide) {
                 if ($topSlide.data('remove-after-animation')) {
                     that.removeSlide($topSlide);
                 }
+            }
+            if (typeof(callback) == 'function') {
+                callback();
             }
         }
     });
