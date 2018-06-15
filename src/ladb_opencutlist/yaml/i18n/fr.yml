@@ -213,7 +213,7 @@ tab:
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       list:
         unplaced_parts: Pièces non placées
-        summary: Résumé
+        summary: Récapitulatif
         number: N°
         name: Désignation
         count: Qte.

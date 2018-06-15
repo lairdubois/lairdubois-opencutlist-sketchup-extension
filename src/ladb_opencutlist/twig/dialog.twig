@@ -50,6 +50,9 @@
 <script src="../js/i18n/{{ language }}.js"></script>
 <script type="text/javascript">
 
+    // Add .ie class on boby tag if running on IE. Used for special workarounds
+    $('body').addClass(navigator.appName == 'Microsoft Internet Explorer' ? 'ie' : 'no-ie');
+
     // JS -> Ruby interactions
 
     // -- Commands

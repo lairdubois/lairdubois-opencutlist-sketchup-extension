@@ -115,6 +115,15 @@
 
 // SVG
 
+// Workaround for IE bug on height auto with SVG
+body.no-ie {
+
+  .ladb-cuttingdiagram-group svg {
+    height: auto;
+  }
+
+}
+
 .ladb-cuttingdiagram-group {
   page-break-inside: avoid;
 
@@ -122,7 +131,6 @@
     shape-rendering: geometricPrecision;
     text-rendering: optimizeLegibility;
     width: 100%;
-    //height: auto;
 
     /* .sheet */
 
