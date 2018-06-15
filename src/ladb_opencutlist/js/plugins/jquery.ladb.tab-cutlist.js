@@ -180,7 +180,7 @@
             // Cleanup nonexistent hidden group ids
             var hiddenGroupIdsLength = that.uiOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.uiOptions.hidden_group_ids[i] == 'summary') {
+                if (that.uiOptions.hidden_group_ids[i].endsWith('summary')) {
                     continue;
                 }
                 var exists = false;
@@ -775,6 +775,7 @@
                         rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram2dOptions, that.uiOptions), function(response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
+                                uiOptions: that.uiOptions,
                                 isMetric: that.isMetric,
                                 filename: that.filename,
                                 pageLabel: that.pageLabel,
@@ -784,10 +785,14 @@
                             }, response));
 
                             // Fetch UI elements
+                            var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                             var $btnPrint = $('#ladb_btn_print', $slide);
                             var $btnClose = $('#ladb_btn_close', $slide);
 
                             // Bind buttons
+                            $btnCuttingDiagram.on('click', function() {
+                                that.cuttingdiagram2dGroup(groupId);
+                            });
                             $btnPrint.on('click', function() {
                                 window.print();
                             });
@@ -796,23 +801,17 @@
                             });
 
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function() {
-                                var $btn = $(this);
-                                var $group = $btn.closest('.ladb-cutlist-group');
-                                var $i = $('i', $btn);
+                                var $group = $(this).closest('.ladb-cutlist-group');
                                 if ($group.hasClass('no-print')) {
-                                    $group.removeClass('no-print');
-                                    $i.addClass('ladb-opencutlist-icon-eye-close');
-                                    $i.removeClass('ladb-opencutlist-icon-eye-open');
+                                    that.showGroup($group);
                                 } else {
-                                    $group.addClass('no-print');
-                                    $i.addClass('ladb-opencutlist-icon-eye-open');
-                                    $i.removeClass('ladb-opencutlist-icon-eye-close');
+                                    that.hideGroup($group);
                                 }
-                                $btn.blur();
+                                $(this).blur();
                             });
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function() {
                                 var $group = $(this).closest('.ladb-cutlist-group');
-                                var groupId = $group.data('group-id');
+                                var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
                                     $target.effect("highlight", {}, 1500);
@@ -822,7 +821,7 @@
                             });
                             $('.ladb-btn-scrollto-next-group', $slide).on('click', function() {
                                 var $group = $(this).closest('.ladb-cutlist-group');
-                                var groupId = $group.data('group-id');
+                                var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
                                     $target.effect("highlight", {}, 1500);

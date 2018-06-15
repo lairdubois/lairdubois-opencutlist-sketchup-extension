@@ -1,0 +1,21 @@
+//
+// Bootstrap Table
+//
+
+table.table-bordered {
+
+  &.table-danger {
+    border-color: darken(spin(#f2dede, -10), 5%);
+
+    & > thead > tr > th,
+    & > tbody > tr > th,
+    & > tfoot > tr > th,
+    & > thead > tr > td,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      border: 1px solid darken(spin(#f2dede, -10), 5%);;
+    }
+
+  }
+
+}

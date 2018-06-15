@@ -24,11 +24,18 @@ LadbAbstractTab.prototype.topSlide = function() {
 
 LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams) {
 
+    // Check if top slide has the same id
+    var $topSlide = this.topSlide();
+    if ($topSlide.attr('id') == id) {
+        $topSlide.attr('id', id + '_obsolete');
+        $topSlide.data('remove-after-animation', true);
+    }
+
     // Render slide
     this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
 
     // Fetch UI elements
-    var $slide = $('#' + id, this.$element);
+    var $slide = $('#' + id, this.$element).first();
 
     return this.pushSlide($slide);
 };
@@ -50,6 +57,9 @@ LadbAbstractTab.prototype.pushSlide = function($slide) {
             that.stickSlideHeader($slide);
             if ($topSlide) {
                 $topSlide.hide();
+                if ($topSlide.data('remove-after-animation')) {
+                    that.removeSlide($topSlide);
+                }
             }
         }
     });
@@ -74,6 +84,13 @@ LadbAbstractTab.prototype.popSlide = function() {
                 $poppedSlide.remove();
             }
         });
+    }
+};
+
+LadbAbstractTab.prototype.removeSlide = function($slide) {
+    var $removedSlides = this._$slides.splice(this._$slides.indexOf($slide), 1);    // Remove from slide stack
+    if ($removedSlides.length > 0) {
+        $removedSlides[0].remove(); // Remove from DOM
     }
 };
 
