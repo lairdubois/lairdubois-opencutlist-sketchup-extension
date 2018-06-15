@@ -133,7 +133,7 @@
                     {% for sheet in summary.sheets  %}
                         <tr class="ladb-cutlist-row"{% if not sheet.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                             <td>
-                                <i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_type'~sheet.type)|i18next }}
+                                <i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}
                                 {% if sheet.is_used %}
                                     <div class="ladb-minitools no-print">
                                         <a href="#ladb_cuttingdiagram_group_{{ sheet.index }}" class="ladb-btn-scrollto ladb-click-tool"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
@@ -164,7 +164,7 @@
                     <td colspan="2">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div>
-                            <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type'~sheet.type)|i18next }}</span></span>
+                            <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></span>
                             <div class="no-print btn-group pull-right" role="group">
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>

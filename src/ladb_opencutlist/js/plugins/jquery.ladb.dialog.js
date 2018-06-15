@@ -95,7 +95,7 @@
 
     LadbDialog.prototype.getSetting = function (key, defaultValue) {
         var value = this.settings[key];
-        if (value != null) {
+        if (value) {
             if (defaultValue != undefined) {
                 if (typeof(defaultValue) == 'number' && isNaN(value)) {
                     return defaultValue;

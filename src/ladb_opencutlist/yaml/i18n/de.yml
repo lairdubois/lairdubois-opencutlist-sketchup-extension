@@ -227,8 +227,8 @@ tab:
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
-        sheet_type0: Standard Platte
-        sheet_type1: Plattenrest
+        sheet_type_0: Standard Platte
+        sheet_type_1: Plattenrest
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"

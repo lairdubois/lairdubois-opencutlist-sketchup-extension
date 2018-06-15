@@ -358,13 +358,17 @@
                         defaultGrained = false;
                         break;
                 }
+                var setTokens = function($input, tokens) {
+                    // Workaround for empty string tokens
+                    $input.tokenfield('setTokens', tokens === ''  ? ' ' : tokens);
+                };
                 $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
                 $inputWidthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
                 $inputThicknessIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
-                $inputStdThicknesses.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
-                $inputStdSections.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
-                $inputStdSizes.tokenfield('setTokens', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
-                $selectGrained.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained));
+                setTokens($inputStdThicknesses, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
+                setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
+                setTokens($inputStdSizes, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
+                $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
             };
 
             // Bing change
@@ -387,7 +391,7 @@
             // Bind buttons
             $btnCutOptionsDefaultsSave.on('click', function() {
 
-                var type = $selectType.val();
+                var type = parseInt($selectType.val());
                 var length_increase = $inputLengthIncrease.val();
                 var width_increase = $inputWidthIncrease.val();
                 var thickness_increase = $inputThicknessIncrease.val();
@@ -409,13 +413,12 @@
 
                 that.opencutlist.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
 
+                this.blur();
             });
             $btnCutOptionsDefaultsReset.on('click', function() {
-
-                var type = $selectType.val();
-
+                var type = parseInt($selectType.val());
                 setFiledValuesToDefaults(type);
-
+                this.blur();
             });
             $btnRemove.on('click', function () {
                 that.remove(that.editedMaterial);

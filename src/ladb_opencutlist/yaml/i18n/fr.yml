@@ -227,18 +227,18 @@ tab:
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe
-        sheet_type0: Panneau standard
-        sheet_type1: Reste de panneau
+        sheet_type_0: Panneau standard
+        sheet_type_1: Reste de panneau
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
-        settings: Configuration
+        settings: Paramètres
       error:
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
-        no_placement_possible: Aucune de vos pièces n'a pu être placées (marge trop grande, panneau standard trop petit, lame de scie trop épaisse, ...).
+        no_placement_possible: Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
         bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
-        unplaced_parts: Il y a **1 pièce** trop grande pour être placée.
-        unplaced_parts_plural: Il y a **{{ count }} pièces** trop grandes pour être placées.
+        unplaced_parts: "**1 pièce** est trop grande pour être placée."
+        unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."
       warning:
         raw_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions brutes.

@@ -227,8 +227,8 @@ tab:
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
-        sheet_type0: Standard Sized Panel
-        sheet_type1: Offcut
+        sheet_type_0: Standard Sized Panel
+        sheet_type_1: Offcut
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
