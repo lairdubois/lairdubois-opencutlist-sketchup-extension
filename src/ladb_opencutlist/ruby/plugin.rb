@@ -17,7 +17,7 @@ module Ladb::OpenCutList
 
     NAME = 'OpenCutList'.freeze
     VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806151219'.freeze
+    BUILD = '201806151259'.freeze
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -237,7 +237,7 @@ module Ladb::OpenCutList
       start
 
       # Create dialog instance
-      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION
+      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION + (VERSION.end_with?('-dev') ? " ( build: #{BUILD} )" : '')
       if html_dialog_compatible
         @dialog = UI::HtmlDialog.new(
             {
