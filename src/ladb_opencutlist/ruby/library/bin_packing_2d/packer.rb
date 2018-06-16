@@ -110,7 +110,7 @@ module BinPacking2D
               # try to break up this box if it is a supergroup
               if box.is_superbox
                 sboxes = box.break_up_supergroup
-                boxes << sboxes
+                boxes += sboxes
                 next
               end
               # FIXME in 1.5.1 it would be nice to only break up part of the superbox
