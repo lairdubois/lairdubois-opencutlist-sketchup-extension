@@ -709,7 +709,7 @@
 
                     var fnSelectSize = function() {
                         var value = $inputScrapSheet.val();
-                        if (!value || value == '0x0') {
+                        if (!value || value == 'custom') {
                             $('#ladb_form_group_std_sheet_length', $modal).show();
                             $('#ladb_form_group_std_sheet_width', $modal).show();
                             $('#ladb_form_group_rotatable', $modal).show();

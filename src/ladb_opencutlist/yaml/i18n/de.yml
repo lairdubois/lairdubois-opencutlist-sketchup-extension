@@ -203,10 +203,11 @@ tab:
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
       option_std_sheet_custom: Spezifische Platte
+      option_std_sheet_none: Kein
       option_std_sheet_length: Plattenlänge
       option_std_sheet_width: Plattenbreite
       option_scrap_sheet_sizes: Plattenreste
-      option_scrap_sheet_sizes_placeholder: Länge x Breite
+      option_scrap_sheet_sizes_placeholder: Länge x Breite ; ...
       option_scrap_sheet_sizes_help:  |
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
@@ -293,12 +294,12 @@ tab:
         Rohmasse der verfügbaren Dicken.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sections: Verfügbare Querschnitte
-      std_sections_placeholder: Länge x Breite
+      std_sections_placeholder: Länge x Breite ; ...
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sizes: Verfügbare Plattenmasse
-      std_sizes_placeholder: Länge x Breite
+      std_sizes_placeholder: Länge x Breite ; ...
       std_sizes_help: |
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*

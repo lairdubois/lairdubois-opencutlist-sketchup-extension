@@ -203,10 +203,11 @@ tab:
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_custom: Personnalisé
+      option_std_sheet_none: Aucun
       option_std_sheet_length: Longueur du panneau
       option_std_sheet_width: Largeur du panneau
       option_scrap_sheet_sizes: Restes de panneau
-      option_scrap_sheet_sizes_placeholder: longueur x largeur
+      option_scrap_sheet_sizes_placeholder: longueur x largeur ; ...
       option_scrap_sheet_sizes_help:  |
         Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
@@ -293,12 +294,12 @@ tab:
         Epaisseurs **brutes** disponibles.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_sections: Sections disponibles
-      std_sections_placeholder: longueur x largeur
+      std_sections_placeholder: longueur x largeur ; ...
       std_sections_help: |
         Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       std_sizes: Tailles disponibles
-      std_sizes_placeholder: longueur x largeur
+      std_sizes_placeholder: longueur x largeur ; ...
       std_sizes_help: |
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*

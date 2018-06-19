@@ -203,10 +203,11 @@ tab:
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_sheet_custom: Custom Panel
+      option_std_sheet_none: None
       option_std_sheet_length: Custom Panel Length
       option_std_sheet_width: Custom Panel Width
       option_scrap_sheet_sizes: Scrap Sheet Goods
-      option_scrap_sheet_sizes_placeholder: length x width
+      option_scrap_sheet_sizes_placeholder: length x width ; ...
       option_scrap_sheet_sizes_help:  |
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
@@ -293,12 +294,12 @@ tab:
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Available Cross Sections
-      std_sections_placeholder: length x width
+      std_sections_placeholder: length x width ; ...
       std_sections_help: |
         Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes).
         *Sizes without units are considered to be in model units.*
       std_sizes: Available Sizes
-      std_sizes_placeholder: length x width
+      std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
