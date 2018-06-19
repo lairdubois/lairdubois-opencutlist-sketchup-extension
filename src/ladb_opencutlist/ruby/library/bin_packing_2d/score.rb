@@ -1,4 +1,4 @@
-﻿module BinPacking2D
+module BinPacking2D
 
   class Score < Packing2D
 
@@ -50,7 +50,7 @@
         if bin.encloses?(box)
           match = true
           r1 = score_by_heuristic(box, bin, score)
-          if box.width == bin.width && box.length == box.length
+          if box.width == bin.width && box.length == bin.length
             match_score = MATCH_PERFECT
           elsif box.width == bin.width || box.length == bin.length
             match_score = MATCH_W_OR_L
