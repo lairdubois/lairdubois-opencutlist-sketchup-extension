@@ -176,34 +176,37 @@ tab:
     cuttingdiagram:
       title: Schnittplan
       option_saw_kerf: Sägeblattdicke
-      option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust
+      option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Kantenabfallbreite
-      option_trimming_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte
+      option_trimming_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
-      option_presort_help: Die Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden
+      option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung
       option_presort_1: abnehmende Breiten
       option_presort_2: abnehmende Längen
       option_presort_3: abnehmende Flächen
       option_presort_4: abnehmende Perimeter
       option_stacking: Identische Teile stapeln
-      option_stacking_help: Teile gleicher Länge oder Breite werden möglichst zusammengefasst
+      option_stacking_help: Richtung in welche Teile gleicher Länge oder Breite zusammengefasst werden.
       option_stacking_0: kein Stapeln
       option_stacking_1: der Länge nach
       option_stacking_2: der Breite nach
       option_bbox_optimization: Hüllenoptimierung
-      option_bbox_optimization_help: Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert
+      option_bbox_optimization_help: |
+        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass
+        grössere Reste übrigbleiben. Diese Optimierung erfolgt nie, immer wenn eine neue Platte
+        hinzugefügt wird oder aber nur am Schluss der Platzierung.
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
-        Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu finden.
+        Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_custom: Spezifische Platte
-      option_std_sheet_none: Kein
+      option_std_sheet_custom: Spezielle Platte
+      option_std_sheet_none: Keine
       option_std_sheet_length: Plattenlänge
       option_std_sheet_width: Plattenbreite
       option_scrap_sheet_sizes: Plattenreste
@@ -237,7 +240,7 @@ tab:
       error:
         no_sheet: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).
-        bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwicklers, denn Sie haben hier einen spezielle Fall.
+        bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwickler, denn Sie haben hier einen speziellen Fall.
         unplaced_parts: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_parts_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
@@ -252,8 +255,8 @@ tab:
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
-      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtyp (**Massivholz** oder **Platten** oder **Bar**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtyp (**Massivholz** oder **Platten** oder **Bar**).
+      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platten** oder **Bar**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz** oder **Platten** oder **Bar**).
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: Export in Datei {{ export_path }} erfolgreich.

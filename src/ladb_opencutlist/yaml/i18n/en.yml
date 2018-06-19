@@ -51,8 +51,8 @@ tab:
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
     material_undefined: Material Undefined
-    not_available_thickness: Thickness not available
-    not_available_section: Cross section not available
+    not_available_thickness: Thickness Not Available
+    not_available_section: Cross Section Not Available
     highlight_part: Highlight the part in the model
     highlight_error: Part '{{ name }}' was not found in the model
     tooltip:
