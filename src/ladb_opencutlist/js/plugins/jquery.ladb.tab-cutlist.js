@@ -25,7 +25,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH = 'cutlist.cuttingdiagram2d.option.std_sheet_length_';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH = 'cutlist.cuttingdiagram2d.option.std_sheet_width_';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES = 'cutlist.cuttingdiagram2d.option.scrap_sheet_sizes_';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE = 'cutlist.cuttingdiagram2d.option.rotatable_';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED = 'cutlist.cuttingdiagram2d.option.grained_';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram2d.option.saw_kerf_';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING = 'cutlist.cuttingdiagram2d.option.trimming_';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT = 'cutlist.cuttingdiagram2d.option.presort_';
@@ -52,7 +52,7 @@
     var OPTION_DEFAULT_STD_SHEET = '';
     var OPTION_DEFAULT_STD_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_STD_SHEET_WIDTH = '2070mm';
-    var OPTION_DEFAULT_ROTATABLE = false;
+    var OPTION_DEFAULT_GRAINED = false;
     var OPTION_DEFAULT_SCRAP_SHEET_SIZES = '';
     var OPTION_DEFAULT_SAW_KERF = '3mm';
     var OPTION_DEFAULT_TRIMMING = '10mm';
@@ -651,7 +651,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId,
@@ -667,7 +667,7 @@
                     std_sheet_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + groupId, OPTION_DEFAULT_STD_SHEET_LENGTH),
                     std_sheet_width: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + groupId, OPTION_DEFAULT_STD_SHEET_WIDTH),
                     scrap_sheet_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + groupId, OPTION_DEFAULT_SCRAP_SHEET_SIZES),
-                    rotatable: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId, OPTION_DEFAULT_ROTATABLE),
+                    grained: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + groupId, OPTION_DEFAULT_GRAINED),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId, OPTION_DEFAULT_SAW_KERF),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId, OPTION_DEFAULT_TRIMMING),
                     presort: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId, OPTION_DEFAULT_PRESORT),
@@ -684,7 +684,7 @@
                     var $inputStdSheetLength = $('#ladb_input_std_sheet_length', $modal);
                     var $inputStdSheetWidth = $('#ladb_input_std_sheet_width', $modal);
                     var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
-                    var $inputRotatable = $('#ladb_input_rotatable', $modal);
+                    var $selectGrained = $('#ladb_select_grained', $modal);
                     var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                     var $inputTrimming = $('#ladb_input_trimming', $modal);
                     var $selectPresort = $('#ladb_select_presort', $modal);
@@ -693,11 +693,16 @@
                     var $btnEditMaterial = $('#ladb_edit_material', $modal);
                     var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
 
+                    var $formGroupStdSheetLength = $('#ladb_form_group_std_sheet_length', $modal);
+                    var $formGroupStdSheetWidth = $('#ladb_form_group_std_sheet_width', $modal);
+                    var $formGroupGrained = $('#ladb_form_group_grained', $modal);
+
                     if (cuttingdiagram2dOptions.std_sheet) {
                         $inputScrapSheet.val(cuttingdiagram2dOptions.std_sheet);
                     }
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputScrapSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                     $inputTrimming.val(cuttingdiagram2dOptions.trimming);
                     $selectPresort.val(cuttingdiagram2dOptions.presort);
@@ -709,23 +714,29 @@
 
                     var fnSelectSize = function() {
                         var value = $inputScrapSheet.val();
-                        if (!value || value == 'custom') {
-                            $('#ladb_form_group_std_sheet_length', $modal).show();
-                            $('#ladb_form_group_std_sheet_width', $modal).show();
-                            $('#ladb_form_group_rotatable', $modal).show();
+                        if (!value || value === 'custom') {
+                            $formGroupStdSheetLength.show();
+                            $formGroupStdSheetWidth.show();
+                            $formGroupGrained.show();
                             $inputStdSheetLength.val(cuttingdiagram2dOptions.std_sheet_length);
                             $inputStdSheetWidth.val(cuttingdiagram2dOptions.std_sheet_width);
-                            $inputRotatable.prop('checked', cuttingdiagram2dOptions.rotatable);
+                            $selectGrained.selectpicker('val', cuttingdiagram2dOptions.grained ? '1' : '0');
                         } else {
-                            $('#ladb_form_group_std_sheet_length', $modal).hide();
-                            $('#ladb_form_group_std_sheet_width', $modal).hide();
-                            $('#ladb_form_group_rotatable', $modal).hide();
                             var sizeAndGrained = value.split('|');
                             var size = sizeAndGrained[0].split('x');
-                            $inputStdSheetLength.val(size[0].trim());
-                            $inputStdSheetWidth.val(size[1].trim());
+                            var stdSheetLength = size[0].trim();
+                            var stdSheetWidth = size[1].trim();
                             var grained = sizeAndGrained[1] === 'true';
-                            $inputRotatable.prop('checked', !grained);
+                            $inputStdSheetLength.val(stdSheetLength);
+                            $inputStdSheetWidth.val(stdSheetWidth);
+                            $selectGrained.selectpicker('val', grained ? '1' : '0');
+                            $formGroupStdSheetLength.hide();
+                            $formGroupStdSheetWidth.hide();
+                            if (stdSheetLength === '0' && stdSheetWidth === '0') {
+                                $formGroupGrained.show();
+                            } else {
+                                $formGroupGrained.hide();
+                            }
                         }
                     };
 
@@ -748,7 +759,7 @@
                         cuttingdiagram2dOptions.std_sheet_length = $inputStdSheetLength.val();
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
                         cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.val();
-                        cuttingdiagram2dOptions.rotatable = $inputRotatable.is(':checked');
+                        cuttingdiagram2dOptions.grained = $selectGrained.val() === '1';
                         cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram2dOptions.trimming = $inputTrimming.val();
                         cuttingdiagram2dOptions.presort = $selectPresort.val();
@@ -761,7 +772,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + groupId, value:cuttingdiagram2dOptions.std_sheet_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ROTATABLE + groupId, value:cuttingdiagram2dOptions.rotatable },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + groupId, value:cuttingdiagram2dOptions.grained },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + groupId, value:cuttingdiagram2dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + groupId, value:cuttingdiagram2dOptions.presort },

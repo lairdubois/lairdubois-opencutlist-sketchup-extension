@@ -179,7 +179,6 @@ tab:
       option_saw_kerf_help: The width of material removed by the sawblade cut
       option_trimming: Trimming Size
       option_trimming_help: The amount of material around the raw panel to be treated as waste
-      option_rotatable: No Grain Direction
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement
       option_presort_0: None

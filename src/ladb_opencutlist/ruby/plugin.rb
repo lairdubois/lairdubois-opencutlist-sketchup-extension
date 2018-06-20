@@ -408,7 +408,7 @@ module Ladb::OpenCutList
       { :values => values }
     end
 
-    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1|...] }, ... ], strategy: [0|1|2|3] }
+    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1] }, ... ], strategy: [0|1|2|3] }
       settings = params['settings']
       strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
       settings.each { |setting|
@@ -431,10 +431,10 @@ module Ladb::OpenCutList
           value = value.gsub(/["]/, '\"')        # escape double quote in string
         end
 
-        if strategy.nil? or strategy == SETTINGS_RW_STRATEGY_GLOBAL or strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+        if strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
           Sketchup.write_default(DEFAULT_SECTION, key, value)
         end
-        if Sketchup.active_model and (strategy == SETTINGS_RW_STRATEGY_MODEL or strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
+        if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
           Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
         end
 

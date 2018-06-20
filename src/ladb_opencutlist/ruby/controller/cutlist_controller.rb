@@ -1019,7 +1019,7 @@ module Ladb::OpenCutList
         std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
         std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
         scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
-        rotatable = settings['rotatable']
+        grained = settings['grained']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
         presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
@@ -1036,7 +1036,7 @@ module Ladb::OpenCutList
           options = BinPacking2D::Options.new
           options.base_bin_length = std_sheet_length
           options.base_bin_width = std_sheet_width
-          options.rotatable = rotatable
+          options.rotatable = !grained
           options.saw_kerf = saw_kerf
           options.trimming = trimming
           options.stacking = stacking
@@ -1076,7 +1076,7 @@ module Ladb::OpenCutList
               :tips => [],
 
               :options => {
-                :rotatable => rotatable,
+                :grained => grained,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
                 :trimming => options.trimming.to_l.to_s,

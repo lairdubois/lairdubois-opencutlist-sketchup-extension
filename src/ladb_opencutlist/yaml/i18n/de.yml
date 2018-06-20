@@ -179,7 +179,6 @@ tab:
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Kantenabfallbreite
       option_trimming_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_rotatable: keine Faserrichtung
       option_presort: Vorsortierung der Teile
       option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung

@@ -141,7 +141,7 @@ tab:
       material_thickness: Matière / Épaisseur
       part_count: Nb. pièces
       length: Longueur
-      area: Aire
+      area: Surface
       volume: Volume
       number: N°
       name: Désignation
@@ -179,7 +179,6 @@ tab:
       option_saw_kerf_help: Épaisseur perdue entre les coupes par le trait de scie.
       option_trimming: Marge
       option_trimming_help: Marge autour du panneau à considérer comme chute.
-      option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
@@ -225,7 +224,7 @@ tab:
         sheet: Panneau
         length: Longueur
         width: Largeur
-        area: Aire
+        area: Surface
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
