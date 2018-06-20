@@ -6,7 +6,7 @@ default:
   open: Ouvrir
   close: Fermer
   empty_filename: Sans titre
-  refresh: Rafraichir
+  refresh: Rafraîchir
   generate: Générer
   print: Imprimer
   export: Exporter
@@ -51,7 +51,7 @@ tab:
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
     material_undefined: Matière non définie
-    not_available_thickness: Epaisseur non disponible
+    not_available_thickness: Épaisseur non disponible
     not_available_section: Section non disponible
     highlight_part: Voir la pièce dans le modèle
     highlight_error: Pièce '{{ name }}' est introuvable dans le modèle
@@ -59,7 +59,7 @@ tab:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
       highlight_part: $t(tab.cutlist.highlight_part)
-      edit_part_properties: Editer les propriétés de la pièce
+      edit_part_properties: Éditer les propriétés de la pièce
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
@@ -76,8 +76,8 @@ tab:
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
       group_cuttingdiagram: Calepinage
-      edit_material: Editer la matière '{{ material }}'...
-      edit_group_properties: Editer les propriétés du groupe
+      edit_material: Éditer la matière '{{ material }}'...
+      edit_group_properties: Éditer les propriétés du groupe
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       name: Nom
@@ -104,24 +104,24 @@ tab:
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
-        Si cette option est active, les trois dimensions des pièces sont triées pour que la plus grande représente la *longueur* et la plus petite l'*épaisseur*.
+        Si cette option est activée, les trois dimensions des pièces sont triées pour que la plus grande représente la *longueur* et la plus petite l'*épaisseur*.
 
         Sinon,
         - la *longueur* est sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       smart_material: Attribution *intelligente* des matières
-      smart_material_help: Si cette option est active, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
+      smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
-      part_number_with_letters_help: Si cette option est active, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
+      part_number_with_letters_help: Si cette option est activée, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
-      part_number_sequence_by_group_help: Si cette option est active, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
+      part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est active, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
       hide_raw_dimensions: Masquer les dimensions brutes
-      hide_raw_dimensions_help: Si cette option est active, les dimensions **brutes** des pièces ne sont pas affichées.
+      hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
       hide_final_dimensions: Masquer les dimensions finies
-      hide_final_dimensions_help: Si cette option est active, les dimensions **finies** des pièces ne sont pas affichées.
+      hide_final_dimensions_help: Si cette option est activée, les dimensions **finies** des pièces ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
@@ -129,8 +129,8 @@ tab:
       dimension_column_order_strategy: Ordre des colonnes
       dimension_column_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir l'ordre d'affichage des colonnes de dimension.
-      property_thickness: Epaisseur
-      property_length: Longeur
+      property_thickness: Épaisseur
+      property_length: Longueur
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
@@ -138,10 +138,10 @@ tab:
     list:
       summary: Récapitulatif
       type: Type
-      material_thickness: Matière / Epaisseur
+      material_thickness: Matière / Épaisseur
       part_count: Nb. pièces
       length: Longueur
-      area: Surface
+      area: Aire
       volume: Volume
       number: N°
       name: Désignation
@@ -150,8 +150,8 @@ tab:
       final: Finie
       length_short: Long.
       width_short: Larg.
-      thickness: Epaisseur
-      thickness_short: Ep.
+      thickness: Épaisseur
+      thickness_short: Ép.
     export:
       title: Exporter au format CSV
       info: |
@@ -167,33 +167,36 @@ tab:
       name: Désignation
       raw_length: Longueur brute
       raw_width: Largeur brute
-      raw_thickness: Epaisseur brute
+      raw_thickness: paisseur brute
       length: Longueur finie
       width: Largeur finie
-      thickness: Epaisseur finie
+      thickness: Épaisseur finie
       count: Quantité
       material_name: Matière
     cuttingdiagram:
       title: Calepinage
-      option_saw_kerf: Epaisseur de lame de scie
-      option_saw_kerf_help: Epaisseur perdue entre les coupes par le trait de scie
+      option_saw_kerf: Épaisseur de lame de scie
+      option_saw_kerf_help: Épaisseur perdue entre les coupes par le trait de scie.
       option_trimming: Marge
-      option_trimming_help: Marge autour du panneau à considérer comme chute
+      option_trimming_help: Marge autour du panneau à considérer comme chute.
       option_rotatable: Les pièces peuvent être pivotées
       option_presort: Ordre de tri des pièces
-      option_presort_help: Ordre dans lesquels les pièces sont sélectionnées pour le placement
+      option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
       option_presort_1: Par largeur décroissante
       option_presort_2: Par longueur décroissante
       option_presort_3: Par superficie décroissante
       option_presort_4: Par périmètre décroissant
       option_stacking: Empiler les pièces identiques
-      option_stacking_help: Manière d'empiler les pièces qui ont longueur ou largeur commune
+      option_stacking_help: Direction d'empilement des pièces qui ont une longueur ou une largeur commune.
       option_stacking_0: Non
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
       option_bbox_optimization: Optimisation de l'enveloppe
-      option_bbox_optimization_help: Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes
+      option_bbox_optimization_help: |
+        Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes. Cette
+        procédure est appliqué à chaque ajout d'un nouveau panneau sur les panneaux déjà pleins, Seulement
+        à la fin du calepinage ou jamais.
       option_bbox_optimization_0: Jamais
       option_bbox_optimization_1: Seulement à la fin
       option_bbox_optimization_2: Toujours
@@ -222,7 +225,7 @@ tab:
         sheet: Panneau
         length: Longueur
         width: Largeur
-        area: Surface
+        area: Aire
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
@@ -289,9 +292,9 @@ tab:
       length_increase: Surcote de longueur
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
-      std_thicknesses: Epaisseurs disponibles
+      std_thicknesses: Épaisseurs disponibles
       std_thicknesses_help: |
-        Epaisseurs **brutes** disponibles.
+        Épaisseurs **brutes** disponibles.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_sections: Sections disponibles
       std_sections_placeholder: longueur x largeur ; ...
