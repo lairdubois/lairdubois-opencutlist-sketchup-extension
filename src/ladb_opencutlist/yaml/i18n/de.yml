@@ -193,9 +193,8 @@ tab:
       option_stacking_2: der Breite nach
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: |
-        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass
-        grössere Reste übrigbleiben. Diese Optimierung erfolgt nie, immer wenn eine neue Platte
-        hinzugefügt wird oder aber nur am Schluss der Platzierung.
+        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass grössere Reste übrigbleiben.
+        Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Platzierung.
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
@@ -204,10 +203,8 @@ tab:
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_custom: Spezielle Platte
+      option_std_sheet_add: Ajouter une taille...
       option_std_sheet_none: Keine
-      option_std_sheet_length: Plattenlänge
-      option_std_sheet_width: Plattenbreite
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite ; ...
       option_scrap_sheet_sizes_help:  |
@@ -292,6 +289,7 @@ tab:
       width_increase: Breitenzumass
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
+      std_thicknesses_placeholder: Dicken ; ...
       std_thicknesses_help: |
         Rohmasse der verfügbaren Dicken.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
@@ -301,7 +299,7 @@ tab:
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sizes: Verfügbare Plattenmasse
-      std_sizes_placeholder: Länge x Breite ; ...
+      std_sizes_placeholder: Breite x Dicke ; ...
       std_sizes_help: |
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*

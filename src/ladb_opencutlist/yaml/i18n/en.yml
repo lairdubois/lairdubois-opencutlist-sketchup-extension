@@ -192,7 +192,8 @@ tab:
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_bbox_optimization: Bounding Box Optimization
-      option_bbox_optimization_help: Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
+      option_bbox_optimization_help: |
+        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
@@ -201,10 +202,8 @@ tab:
         Select the standard panel which will be duplicated to contain all your parts in the best possible way.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to update this list.
-      option_std_sheet_custom: Custom Panel
+      option_std_sheet_add: Ajouter une taille...
       option_std_sheet_none: None
-      option_std_sheet_length: Custom Panel Length
-      option_std_sheet_width: Custom Panel Width
       option_scrap_sheet_sizes: Scrap Sheet Goods
       option_scrap_sheet_sizes_placeholder: length x width ; ...
       option_scrap_sheet_sizes_help:  |
@@ -289,6 +288,7 @@ tab:
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
       std_thicknesses: Available Thicknesses
+      std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
@@ -298,7 +298,7 @@ tab:
         Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes).
         *Sizes without units are considered to be in model units.*
       std_sizes: Available Sizes
-      std_sizes_placeholder: length x width ; ...
+      std_sizes_placeholder: width x height ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*

@@ -680,7 +680,7 @@
                     var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', $.extend({ material_attributes: response }, { group: group }));
 
                     // Fetch UI elements
-                    var $inputScrapSheet = $('#ladb_select_std_sheet', $modal);
+                    var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                     var $inputStdSheetLength = $('#ladb_input_std_sheet_length', $modal);
                     var $inputStdSheetWidth = $('#ladb_input_std_sheet_width', $modal);
                     var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
@@ -693,15 +693,13 @@
                     var $btnEditMaterial = $('#ladb_edit_material', $modal);
                     var $btnCuttingdiagram = $('#ladb_cutlist_cuttingdiagram', $modal);
 
-                    var $formGroupStdSheetLength = $('#ladb_form_group_std_sheet_length', $modal);
-                    var $formGroupStdSheetWidth = $('#ladb_form_group_std_sheet_width', $modal);
                     var $formGroupGrained = $('#ladb_form_group_grained', $modal);
 
                     if (cuttingdiagram2dOptions.std_sheet) {
-                        $inputScrapSheet.val(cuttingdiagram2dOptions.std_sheet);
+                        $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
                     }
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
-                    $inputScrapSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                    $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                     $inputTrimming.val(cuttingdiagram2dOptions.trimming);
@@ -712,15 +710,24 @@
                     $selectBBoxOptimization.val(cuttingdiagram2dOptions.bbox_optimization);
                     $selectBBoxOptimization.selectpicker(SELECT_PICKER_OPTIONS);
 
+                    var fnEditMaterial = function(callback) {
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                        // Edit material and focus std_sizes input field
+                        that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                            material_id: group.material_id,
+                            callback: callback
+                        });
+
+                    };
                     var fnSelectSize = function() {
-                        var value = $inputScrapSheet.val();
-                        if (!value || value === 'custom') {
-                            $formGroupStdSheetLength.show();
-                            $formGroupStdSheetWidth.show();
-                            $formGroupGrained.show();
-                            $inputStdSheetLength.val(cuttingdiagram2dOptions.std_sheet_length);
-                            $inputStdSheetWidth.val(cuttingdiagram2dOptions.std_sheet_width);
-                            $selectGrained.selectpicker('val', cuttingdiagram2dOptions.grained ? '1' : '0');
+                        var value = $inputStdSheet.val();
+                        if (value === 'add') {
+                            fnEditMaterial(function($editMaterialModal) {
+                                $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                            });
                         } else {
                             var sizeAndGrained = value.split('|');
                             var size = sizeAndGrained[0].split('x');
@@ -730,8 +737,6 @@
                             $inputStdSheetLength.val(stdSheetLength);
                             $inputStdSheetWidth.val(stdSheetWidth);
                             $selectGrained.selectpicker('val', grained ? '1' : '0');
-                            $formGroupStdSheetLength.hide();
-                            $formGroupStdSheetWidth.hide();
                             if (stdSheetLength === '0' && stdSheetWidth === '0') {
                                 $formGroupGrained.show();
                             } else {
@@ -740,22 +745,20 @@
                         }
                     };
 
-                    $inputScrapSheet.on('changed.bs.select', function (e) {
+                    $inputStdSheet.on('changed.bs.select', function (e) {
                         fnSelectSize();
                     });
                     fnSelectSize();
 
                     // Bind buttons
                     $btnEditMaterial.on('click', function() {
-                        that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
-                            material_id: group.material_id
-                        });
+                        fnEditMaterial();
                     });
                     $btnCuttingdiagram.on('click', function() {
 
                         // Fetch options
 
-                        cuttingdiagram2dOptions.std_sheet = $inputScrapSheet.val();
+                        cuttingdiagram2dOptions.std_sheet = $inputStdSheet.val();
                         cuttingdiagram2dOptions.std_sheet_length = $inputStdSheetLength.val();
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
                         cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.val();

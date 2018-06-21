@@ -228,7 +228,7 @@
         return null;
     };
 
-    LadbTabMaterials.prototype.editMaterial = function (id) {
+    LadbTabMaterials.prototype.editMaterial = function (id, callback) {
         var that = this;
 
         var material = this.findMaterialById(id);
@@ -371,7 +371,7 @@
                 $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
             };
 
-            // Bing change
+            // Bind change
             $('input', $modal).on('change', function() {
                 disableBtnExport();
             });
@@ -477,6 +477,11 @@
             // Setup popovers
             this.opencutlist.setupPopovers();
 
+            /// Callback
+            if (typeof(callback) === 'function') {
+                callback($modal);
+            }
+
         } else {
             alert('Material not found (id=' + id + ')');
         }
@@ -544,9 +549,10 @@
         // Register commands
         this.registerCommand('edit_material', function(parameters) {
             var materialId = parameters.material_id;
+            var callback = parameters.callback;
             setTimeout(function() {     // Use setTimer to give time tu UI to refresh
                 that.loadList(function() {
-                    that.editMaterial(materialId);
+                    that.editMaterial(materialId, callback);
                 });
             }, 1);
         });

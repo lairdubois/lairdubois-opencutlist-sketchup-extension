@@ -16,22 +16,12 @@
                         {% endfor %}
                         <option data-divider="true"></option>
                     {% endif %}
-                    <option value="custom" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_custom'|i18next }}"></option>
+                    <option value="0x0|{{ material_attributes.grained }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_none'|i18next }}"{% if material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
                     <option data-divider="true"></option>
-                    <option value="0x0|{{ material_attributes.grained }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_none'|i18next }}"></option>
+                    <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.cutlist.cuttingdiagram.option_std_sheet_add'|i18next }}"></option>
                 </select>
-            </div>
-        </div>
-        <div id="ladb_form_group_std_sheet_length" class="form-group">
-            <label for="ladb_input_std_sheet_length" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_length'|i18next }}</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" id="ladb_input_std_sheet_length">
-            </div>
-        </div>
-        <div id="ladb_form_group_std_sheet_width" class="form-group">
-            <label for="ladb_input_std_sheet_width" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_width'|i18next }}</label>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" id="ladb_input_std_sheet_width">
+                <input type="hidden" class="form-control" id="ladb_input_std_sheet_length">
+                <input type="hidden" class="form-control" id="ladb_input_std_sheet_width">
             </div>
         </div>
         <div class="form-group">
