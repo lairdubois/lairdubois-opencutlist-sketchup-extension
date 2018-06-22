@@ -697,6 +697,9 @@
 
                     if (cuttingdiagram2dOptions.std_sheet) {
                         $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
+                        if ($inputStdSheet.val() == null && response.std_sizes.length === 0) {
+                            $inputStdSheet.val('0x0|' + response.grained);  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                        }
                     }
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);

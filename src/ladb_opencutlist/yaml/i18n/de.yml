@@ -304,6 +304,7 @@ tab:
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       grained: Faserrichtung
+      grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
       grained_0: keine Faserrichtung
       grained_1: Faser in Längsrichtung
       cut_options_defaults:

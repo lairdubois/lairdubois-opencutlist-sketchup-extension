@@ -303,6 +303,7 @@ tab:
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
       grained: Grain Direction
+      grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
       grained_0: No Grain
       grained_1: Grain Follows Length
       cut_options_defaults:
