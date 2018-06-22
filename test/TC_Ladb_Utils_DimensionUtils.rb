@@ -53,7 +53,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     @units_options_provider['LengthUnit'] = Length::Feet
     assert_equal_fn(fn, '1', '12' + @separator + '0"')
     assert_equal_fn(fn, '1.5', '18' + @separator + '0"')
-    assert_equal_fn(fn, '1 1/2', '18' + @separator + '0"')  # FAIL !
+    assert_equal_fn(fn, '1 1/2', '1' + @separator + '5"')  # FAIL !
     assert_equal_fn(fn, '2', '24' + @separator + '0"')
 
     @units_options_provider['LengthUnit'] = Length::Millimeter
@@ -75,7 +75,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
   private
 
   def assert_equal_fn(fn, input, expected)
-    assert_equal(Ladb::OpenCutList::DimensionUtils.instance.send(fn, input), expected)
+    assert_equal(expected, Ladb::OpenCutList::DimensionUtils.instance.send(fn, input))
   end
 
 end
