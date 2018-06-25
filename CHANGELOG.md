@@ -4,9 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.5.0 (DEV)
+* 1.5.0 (2018-06-25)
 
-  * Added bin packing interface for material of type "sheet good"
+  * Added bin packing interface for material of type *Sheet good*
   * Added 2D bin packing library
   * Fixed conversion to local units. Input fields recognize other length units than model units.
 

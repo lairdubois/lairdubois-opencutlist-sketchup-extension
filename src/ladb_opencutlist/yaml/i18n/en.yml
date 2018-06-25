@@ -27,7 +27,7 @@ default:
   part_plural: parts
 core:
   extension:
-    description: Cutlist Generator for Woodworkers. Open Source and Easy to Use ;)
+    description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source and Easy to Use ;)
   menu:
     submenu: OpenCutList
   toolbar:
