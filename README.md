@@ -1,8 +1,10 @@
 # OpenCutList by L'Air du Bois
 
-**OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of cut lists for woodworking projects.
+**OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of cut lists and cutting diagrams for woodworking projects.
 
 ![OpenCutList](docs/img/capture.jpg)
+
+![OpenCutList](docs/img/capture_2.jpg)
 
 ## Download and Install
 

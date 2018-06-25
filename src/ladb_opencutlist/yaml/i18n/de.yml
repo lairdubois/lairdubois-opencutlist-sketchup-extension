@@ -203,7 +203,7 @@ tab:
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_add: Ajouter une taille...
+      option_std_sheet_add: ein Plattenmass hinzufügen ...
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite ; ...
@@ -289,22 +289,22 @@ tab:
       width_increase: Breitenzumass
       thickness_increase: Dickenzumass
       std_thicknesses: Verfügbare Dicken
-      std_thicknesses_placeholder: Dicken ; ...
+      std_thicknesses_placeholder: Dicke ; ...
       std_thicknesses_help: |
         Rohmasse der verfügbaren Dicken.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sections: Verfügbare Querschnitte
-      std_sections_placeholder: Länge x Breite ; ...
+      std_sections_placeholder: Breite x Dicke ; ...
       std_sections_help: |
         Erwartetes Format : **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_sizes: Verfügbare Plattenmasse
-      std_sizes_placeholder: Breite x Dicke ; ...
+      std_sizes_placeholder: Länge x Breite ; ...
       std_sizes_help: |
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       grained: Faserrichtung
-      grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
+      grained_help: Konfiguriert die Faserrichtung der Platte.
       grained_0: keine Faserrichtung
       grained_1: Faser in Längsrichtung
       cut_options_defaults:
