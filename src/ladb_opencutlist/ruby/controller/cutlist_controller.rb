@@ -18,10 +18,8 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
-  require_relative '../library/bin_packing_1d/packengine'
   require_relative '../library/bin_packing_2d/packengine'
-  require 'fileutils'
-  
+
   class CutlistController < Controller
 
     MATERIAL_ORIGIN_UNKNOW = 0

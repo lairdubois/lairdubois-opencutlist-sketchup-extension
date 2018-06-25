@@ -1,4 +1,4 @@
-module BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   class Score < Packing2D
 

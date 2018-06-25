@@ -1,4 +1,4 @@
-module BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   # This class has two purposes:
   #
@@ -216,16 +216,16 @@ module BinPacking2D
         if cut_horizontal
           # add a new horizontal cut and make a new bottom leftover
           if @max_y <= @width
-            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true)
-            hl = BinPacking2D::Bin.new(@length - 2 * @trimsize, @width - @max_y - saw_kerf - @trimsize,
+            c = Cut.new(@x + @trimsize, @max_y, @length - 2 * @trimsize, true)
+            hl = Bin.new(@length - 2 * @trimsize, @width - @max_y - saw_kerf - @trimsize,
                                        @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0
           end
           # add a new vertical cut and make a new right side vertical leftover
           if @max_x <= @length
-            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false)
-            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @max_y - @trimsize,
+            c = Cut.new(@max_x, @y + @trimsize, @max_y - @trimsize, false)
+            vl = Bin.new(@length - @max_x - @trimsize - saw_kerf, @max_y - @trimsize,
                                        @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
@@ -233,15 +233,15 @@ module BinPacking2D
         else
           # add a new vertical cut and make a new right side vertical leftover
           if @max_x <= @length
-            c = BinPacking2D::Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false)
-            vl = BinPacking2D::Bin.new(@length - @max_x - @trimsize - saw_kerf, @width - 2 * @trimsize,
+            c = Cut.new(@max_x, @y + @trimsize, @width - 2 * @trimsize, false)
+            vl = Bin.new(@length - @max_x - @trimsize - saw_kerf, @width - 2 * @trimsize,
                                        @max_x + saw_kerf, @y + @trimsize, @index, @type)
             add_cut(c)
             leftovers << vl if vl.length > 0 && vl.width > 0
           end
           if @max_y <= @width
-            c = BinPacking2D::Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true)
-            hl = BinPacking2D::Bin.new(@max_x - @trimsize, @width - @max_y - saw_kerf - @trimsize,
+            c = Cut.new(@x + @trimsize, @max_y, @max_x - @trimsize, true)
+            hl = Bin.new(@max_x - @trimsize, @width - @max_y - saw_kerf - @trimsize,
                                        @x + @trimsize, @max_y + saw_kerf, @index, @type)
             add_cut(c)
             leftovers << hl if hl.length > 0 && hl.width > 0

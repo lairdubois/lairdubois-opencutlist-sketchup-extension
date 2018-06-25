@@ -1,4 +1,4 @@
-module BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   class Packer < Packing2D
 
@@ -30,7 +30,7 @@ module BinPacking2D
     # If stacking is desired, then preprocess/postprocess supergroups.
     #
     def pack(bins, boxes, score, split, options)
-      s = BinPacking2D::Score.new
+      s = Score.new
       @score = score
       @split = split
 
@@ -45,7 +45,7 @@ module BinPacking2D
         next_bin_index = 0
         # make sure we have at least one panel, otherwise stacking will try to break
         # stacks just for fun and give suboptimal solutions
-        bins << BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
+        bins << Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
         next_bin_index += 1
       else
         bins.each do |bin|
@@ -122,7 +122,7 @@ module BinPacking2D
             end
             # only create a new bin if this box will fit into it
             if box.fits_into_bin?(@b_l, @b_w, @trimsize, @rotatable)
-              cs = BinPacking2D::Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
+              cs = Bin.new(@b_l, @b_w, @b_x, @b_y, next_bin_index, BIN_TYPE_AUTO_GENERATED)
               cs.trimsize = @trimsize
               cs.trimmed = true
               @original_bins << cs.get_copy
@@ -160,24 +160,24 @@ module BinPacking2D
         if cs.split_horizontally_first?(box, @split)
           if box.width < cs.width # this will split into top (contains the box), bottom (goes to leftover)
             cs, sb = cs.split_horizontally(box.width, @saw_kerf)
-            @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true))
+            @original_bins[cs.index].add_cut(Cut.new(cs.x, cs.y + box.width, cs.length, true))
             # leftover returns to bins
             bins << sb
           end
           if box.length < cs.length # this will split into left (the box), right (goes to leftover)
             cs, sr = cs.split_vertically(box.length, @saw_kerf)
-            @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false))
+            @original_bins[cs.index].add_cut(Cut.new(cs.x + box.length, cs.y, cs.width, false))
             bins << sr
           end
         else
           if box.length < cs.length # this will split into left (containes the box), right (goes to leftover)
             cs, sr = cs.split_vertically(box.length, @saw_kerf)
-            @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x + box.length, cs.y, cs.width, false))
+            @original_bins[cs.index].add_cut(Cut.new(cs.x + box.length, cs.y, cs.width, false))
             bins << sr
           end
           if box.width < cs.width # this will split into top (the box), bottom (goes to leftover)
             cs, sb = cs.split_horizontally(box.width, @saw_kerf)
-            @original_bins[cs.index].add_cut(BinPacking2D::Cut.new(cs.x, cs.y + box.width, cs.length, true))
+            @original_bins[cs.index].add_cut(Cut.new(cs.x, cs.y + box.width, cs.length, true))
             bins << sb
           end
         end
@@ -215,7 +215,7 @@ module BinPacking2D
         width_groups.each do |k, v|
           if v.length() > 1
             v = v.sort_by { |b| [b.length] }.reverse
-            superbox = BinPacking2D::Box.new(0, k[0])
+            superbox = Box.new(0, k[0])
             until v.empty?
               box = v.shift
               if box.length <= maxlength
@@ -224,7 +224,7 @@ module BinPacking2D
                   # close this superbox
                   sboxes << superbox
                   # and create a new one
-                  superbox = BinPacking2D::Box.new(0, k[0])
+                  superbox = Box.new(0, k[0])
                   # this should alway succeed, because box.length <= maxlength
                   superbox.stack_length(box, @saw_kerf, maxlength)
                 end
@@ -249,13 +249,13 @@ module BinPacking2D
         length_groups.each do |k, v|
           if v.length() > 1
             v = v.sort_by { |b| [b.width] }.reverse
-            superbox = BinPacking2D::Box.new(k[0], 0)
+            superbox = Box.new(k[0], 0)
             until v.empty?
               box = v.shift
                 if box.width <= maxwidth
                   if !superbox.stack_width(box, @saw_kerf, maxwidth)
                     sboxes << superbox
-                    superbox = BinPacking2D::Box.new(k[0], 0)
+                    superbox = Box.new(k[0], 0)
                     superbox.stack_width(box, @saw_kerf, maxwidth)
                   end
                 else
@@ -294,13 +294,13 @@ module BinPacking2D
                   b.rotate
                   y += b.width + @saw_kerf
                   if cut_counts > 0
-                    bin.add_cut(BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, false))
+                    bin.add_cut(Cut.new(b.x, b.y + b.width, b.length, true, false))
                     cut_counts = cut_counts - 1
                   end
                 else
                   x += b.length + @saw_kerf
                   if cut_counts > 0
-                    bin.add_cut(BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, false))
+                    bin.add_cut(Cut.new(b.x + b.length, b.y, b.width, false, false))
                     cut_counts = cut_counts - 1
                   end
                 end
@@ -326,13 +326,13 @@ module BinPacking2D
                   b.rotate
                   x += b.length + @saw_kerf
                   if cut_counts > 0
-                    bin.add_cut(BinPacking2D::Cut.new(b.x + b.length, b.y, b.width, false, false))
+                    bin.add_cut(Cut.new(b.x + b.length, b.y, b.width, false, false))
                     cut_counts = cut_counts - 1
                   end
                 else
                   y += b.width + @saw_kerf
                   if cut_counts > 0
-                    bin.add_cut(BinPacking2D::Cut.new(b.x, b.y + b.width, b.length, true, false))
+                    bin.add_cut(Cut.new(b.x, b.y + b.width, b.length, true, false))
                     cut_counts = cut_counts - 1
                   end
                 end
@@ -396,7 +396,7 @@ module BinPacking2D
     # If a box only fits rotated, rotate it
     #
     def remove_too_large_boxes(boxes, bins)
-      standard_bin = BinPacking2D::Bin.new(@b_l, @b_w, 0, 0, 0, BIN_TYPE_AUTO_GENERATED)
+      standard_bin = Bin.new(@b_l, @b_w, 0, 0, 0, BIN_TYPE_AUTO_GENERATED)
       boxes_that_fit = []
       boxes.each_with_index do |box, i|
         box_fits = false
@@ -429,7 +429,7 @@ module BinPacking2D
       largest_bin = nil
       largest_area = 0
 
-      p = BinPacking2D::Performance.new
+      p = Performance.new
 
       bins = []
       

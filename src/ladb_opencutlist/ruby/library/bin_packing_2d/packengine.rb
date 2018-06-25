@@ -1,4 +1,4 @@
-module BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   require_relative 'packing2d'
   require_relative 'box'
@@ -17,12 +17,12 @@ module BinPacking2D
       @boxes = []
     end
 
-    def add_bin(length, width, type = BinPacking2D::BIN_TYPE_USER_DEFINED)
-      @bins << BinPacking2D::Bin.new(length, width, 0, 0, 0, type)
+    def add_bin(length, width, type = BIN_TYPE_USER_DEFINED)
+      @bins << Bin.new(length, width, 0, 0, 0, type)
     end
     
     def add_box(length, width, data = nil)
-      @boxes << BinPacking2D::Box.new(length, width, data)
+      @boxes << Box.new(length, width, data)
     end
 
     def run
@@ -56,7 +56,7 @@ module BinPacking2D
             end
           end
 
-          p = BinPacking2D::Packer.new(@options)
+          p = Packer.new(@options)
           p.pack(copy_bins, copy_boxes, score, split, @options)
           packings << p
 
