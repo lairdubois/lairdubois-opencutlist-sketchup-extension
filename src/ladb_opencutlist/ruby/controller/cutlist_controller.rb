@@ -18,7 +18,7 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
-  require_relative '../library/bin_packing_2d/packengine'
+  require_relative '../lib/bin_packing_2d/packengine'
 
   class CutlistController < Controller
 
