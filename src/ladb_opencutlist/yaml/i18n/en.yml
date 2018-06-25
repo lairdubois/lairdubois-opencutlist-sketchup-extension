@@ -176,24 +176,24 @@ tab:
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness
-      option_saw_kerf_help: The width of material removed by the sawblade cut
+      option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
-      option_trimming_help: The amount of material around the raw panel to be treated as waste
+      option_trimming_help: The amount of material around the raw panel to be treated as waste.
       option_presort: Preordering of Parts
-      option_presort_help: The order in which the parts will be considered for placement
+      option_presort_help: The order in which the parts will be considered for placement.
       option_presort_0: None
       option_presort_1: Width Decreasing
       option_presort_2: Length Decreasing
       option_presort_3: Area Decreasing
       option_presort_4: Perimeter Decreasing
       option_stacking: Stack Identical Parts
-      option_stacking_help: The way parts with common width or length are tentatively placed together
+      option_stacking_help: The way parts with common width or length are tentatively placed together.
       option_stacking_0: None
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: |
-        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers
+        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
@@ -202,7 +202,7 @@ tab:
         Select the standard panel which will be duplicated to contain all your parts in the best possible way.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to update this list.
-      option_std_sheet_add: Ajouter une taille...
+      option_std_sheet_add: Add a panel size ...
       option_std_sheet_none: None
       option_scrap_sheet_sizes: Scrap Sheet Goods
       option_scrap_sheet_sizes_placeholder: length x width ; ...
@@ -293,17 +293,17 @@ tab:
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Available Cross Sections
-      std_sections_placeholder: length x width ; ...
+      std_sections_placeholder: width x thickness ; ...
       std_sections_help: |
-        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (in actual not nominal sizes).
+        Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (*in actual not nominal sizes*).
         *Sizes without units are considered to be in model units.*
       std_sizes: Available Sizes
-      std_sizes_placeholder: width x height ; ...
+      std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
       grained: Grain Direction
-      grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
+      grained_help: Configures the grain direction of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
       cut_options_defaults:
