@@ -16,8 +16,8 @@ module Ladb::OpenCutList
     include Singleton
 
     NAME = 'OpenCutList'.freeze
-    VERSION = '1.5.0-dev'.freeze
-    BUILD = '201806251409'.freeze
+    VERSION = '1.6.0-dev'.freeze
+    BUILD = '201806251440'.freeze
     DEBUG = VERSION.end_with? '-dev'
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
