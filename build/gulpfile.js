@@ -87,10 +87,10 @@ gulp.task('version', function () {
     var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
 
     // Update version property in plugin.rb
-    return gulp.src('../src/ladb_opencutlist/ruby/plugin.rb')
-        .pipe(replace(/VERSION = '[0-9.]+(-alpha|-dev)?'/g, "VERSION = '" + version + "'"))
-        .pipe(replace(/BUILD = '[0-9.]{12}?'/g, "BUILD = '" + build + "'"))
-        .pipe(gulp.dest('../src/ladb_opencutlist/ruby'));
+    return gulp.src('../src/ladb_opencutlist.rb')
+        .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-alpha|-dev)?'/g, "EXTENSION_VERSION = '" + version + "'"))
+        .pipe(replace(/EXTENSION_BUILD = '[0-9.]{12}?'/g, "EXTENSION_BUILD = '" + build + "'"))
+        .pipe(gulp.dest('../src'));
 });
 
 gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);

@@ -15,10 +15,7 @@ module Ladb::OpenCutList
     
     include Singleton
 
-    NAME = 'OpenCutList'.freeze
-    VERSION = '1.6.0-dev'.freeze
-    BUILD = '201806251440'.freeze
-    DEBUG = VERSION.end_with? '-dev'
+    DEBUG = EXTENSION_VERSION.end_with? '-dev'
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
@@ -243,7 +240,7 @@ module Ladb::OpenCutList
       start
 
       # Create dialog instance
-      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + VERSION + (DEBUG ? " ( build: #{BUILD} )" : '')
+      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (DEBUG ? " ( build: #{EXTENSION_BUILD} )" : '')
       if html_dialog_compatible
         @dialog = UI::HtmlDialog.new(
             {
@@ -443,8 +440,8 @@ module Ladb::OpenCutList
 
     def dialog_loaded_command
       {
-          :version => VERSION,
-          :build => BUILD,
+          :version => EXTENSION_VERSION,
+          :build => EXTENSION_BUILD,
           :sketchup_is_pro => Sketchup.is_pro?,
           :sketchup_version => Sketchup.version.to_s,
           :ruby_version => RUBY_VERSION,

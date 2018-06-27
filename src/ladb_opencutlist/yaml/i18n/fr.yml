@@ -26,8 +26,6 @@ default:
   part_single: pièce
   part_plural: pièces
 core:
-  extension:
-    description: Générateur de fiche de débit et calepinage pour les boiseux. Open Source et facile à utiliser ;)
   menu:
     submenu: OpenCutList
   toolbar:
