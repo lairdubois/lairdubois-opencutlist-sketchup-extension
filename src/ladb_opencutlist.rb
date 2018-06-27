@@ -5,8 +5,8 @@ module Ladb
     require 'extensions.rb'
 
     EXTENSION_NAME = 'OpenCutList'.freeze
-    EXTENSION_VERSION = '1.5.0'.freeze
-    EXTENSION_BUILD = '201806270458'.freeze
+    EXTENSION_VERSION = '1.6.0-dev'.freeze
+    EXTENSION_BUILD = '201806270520'.freeze
 
     unless file_loaded?(__FILE__)
 
