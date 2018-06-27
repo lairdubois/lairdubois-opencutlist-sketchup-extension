@@ -26,8 +26,6 @@ default:
   part_single: Teil
   part_plural: Teile
 core:
-  extension:
-    description: Holzlistengenerator für Tischler/Schreiner. Open Source und einfach anzuwenden ;)
   menu:
     submenu: OpenCutList
   toolbar:
