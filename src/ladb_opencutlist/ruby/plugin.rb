@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require 'yaml'
   require 'base64'
   require 'uri'
+  require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
@@ -35,21 +36,6 @@ module Ladb::OpenCutList
     DIALOG_LEFT = 100
     DIALOG_TOP = 100
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
-
-    @temp_dir
-    @language
-    @current_os
-    @i18n_strings
-    @html_dialog_compatible
-
-    @commands
-    @controllers
-
-    @started
-
-    @dialog
-    @dialog_min_size
-    @dialog_startup_tab_name
 
     # -----
 
@@ -428,10 +414,10 @@ module Ladb::OpenCutList
           value = value.gsub(/["]/, '\"')        # escape double quote in string
         end
 
-        if strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
+        if strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
           Sketchup.write_default(DEFAULT_SECTION, key, value)
         end
-        if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL)
+        if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL)
           Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
         end
 
