@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.5.1 (DEV)
+
+  * Fix settings storage
+  * Change startup file structure 
+  
 * 1.5.0 (2018-06-25)
 
   * Added bin packing interface for material of type *Sheet good*

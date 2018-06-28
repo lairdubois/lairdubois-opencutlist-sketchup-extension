@@ -3,15 +3,12 @@ module Ladb
 
     require 'sketchup.rb'
     require 'extensions.rb'
-
-    EXTENSION_NAME = 'OpenCutList'.freeze
-    EXTENSION_VERSION = '1.6.0-dev'.freeze
-    EXTENSION_BUILD = '201806270520'.freeze
+    require_relative 'ladb_opencutlist/ruby/constants.rb'
 
     unless file_loaded?(__FILE__)
 
       # Create extension
-      ex = SketchupExtension.new(EXTENSION_NAME, 'ladb_opencutlist/main')
+      ex = SketchupExtension.new(EXTENSION_NAME, 'ladb_opencutlist/ruby/main')
       ex.version     = EXTENSION_VERSION
       ex.copyright   = '2016-2018 - GNU GPLv3'
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'

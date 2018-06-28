@@ -2,7 +2,7 @@ module Ladb
   module OpenCutList
 
     require 'sketchup.rb'
-    require_relative 'ruby/plugin.rb'
+    require_relative 'plugin'
 
     unless file_loaded?(__FILE__)
 
@@ -21,8 +21,8 @@ module Ladb
       cmd = UI::Command.new(Plugin.instance.get_i18n_string('core.toolbar.command')) {
         Plugin.instance.toggle_dialog
       }
-      cmd.small_icon = 'img/icon-72x72.png'
-      cmd.large_icon = 'img/icon-114x114.png'
+      cmd.small_icon = '../img/icon-72x72.png'
+      cmd.large_icon = '../img/icon-114x114.png'
       cmd.tooltip = Plugin.instance.get_i18n_string('core.toolbar.command')
       cmd.status_bar_text = Plugin.instance.get_i18n_string('core.toolbar.command')
       cmd.menu_text = Plugin.instance.get_i18n_string('core.toolbar.command')
