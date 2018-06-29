@@ -1,4 +1,4 @@
-﻿module Ladb::OpenCutList::BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   class Cut < Packing2D
   
