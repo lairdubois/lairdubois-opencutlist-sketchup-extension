@@ -1034,9 +1034,9 @@ module Ladb::OpenCutList
           options = BinPacking2D::Options.new
           options.base_bin_length = std_sheet_length
           options.base_bin_width = std_sheet_width
-          options.rotatable = !grained
+          options.has_grain = grained
           options.saw_kerf = saw_kerf
-          options.trimming = trimming
+          options.trimsize = trimming
           options.stacking = stacking
           options.bbox_optimization = bbox_optimization
           options.presort = presort
@@ -1077,7 +1077,7 @@ module Ladb::OpenCutList
                 :grained => grained,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
-                :trimming => options.trimming.to_l.to_s,
+                :trimming => options.trimsize.to_l.to_s,
                 :stacking => stacking,
                 :bbox_optimization => bbox_optimization,
                 :presort => presort,
@@ -1154,7 +1154,7 @@ module Ladb::OpenCutList
             }
             summary_sheets = {}
             index = 0
-            result.original_bins.each { |bin|
+            result.container_bins.each { |bin|
               index += 1
               id = "#{bin.type},#{bin.length},#{bin.width}"
               sheet = summary_sheets[id]
@@ -1177,7 +1177,7 @@ module Ladb::OpenCutList
 
             # Sheets
             index = 0
-            result.original_bins.each { |bin|
+            result.container_bins.each { |bin|
 
               index += 1
               sheet = {
@@ -1209,7 +1209,7 @@ module Ladb::OpenCutList
                         :px_width => to_px(box.width),
                         :length => box.length.to_l.to_s,
                         :width => box.width.to_l.to_s,
-                        :rotated => box.rotated,
+                        :rotated => box.is_rotated?,
                     }
                 )
               }
@@ -1239,6 +1239,7 @@ module Ladb::OpenCutList
                         :y => cut.y.to_l.to_s,
                         :length => cut.length.to_l.to_s,
                         :is_horizontal => cut.is_horizontal,
+                        :is_primary => cut.is_primary,
                     }
                 )
               }
