@@ -1,5 +1,6 @@
 ﻿module Ladb::OpenCutList
 
+  require 'securerandom'
   require_relative '../model/section'
   require_relative '../model/size2d'
   require_relative '../utils/dimension_utils'
@@ -50,11 +51,12 @@
         },
     }
 
-    attr_accessor :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes, :grained
+    attr_accessor :uuid, :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes, :grained
     attr_reader :material
 
     def initialize(material)
       @material = material
+      @uuid = nil
       @type = TYPE_UNKNOW
       @length_increase = get_default(:length_increase)
       @width_increase = get_default(:width_increase)
@@ -63,7 +65,18 @@
       @std_sections = get_default(:std_sections)
       @std_sizes = get_default(:@std_sizes)
       @grained = get_default(:@grained)
+
+      # Reload properties from attributes
       read_from_attributes
+
+      # Init uuid if undefined
+      if @uuid.nil?
+        @uuid = SecureRandom.uuid
+        unless material.nil?
+          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+        end
+      end
+
     end
 
     # -----
@@ -190,6 +203,7 @@
 
     def read_from_attributes
       if @material
+        @uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
         @type = Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW)
         @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
         @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))
@@ -203,6 +217,7 @@
 
     def write_to_attributes
       if @material
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
