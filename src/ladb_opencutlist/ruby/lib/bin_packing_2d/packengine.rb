@@ -110,33 +110,7 @@ module Ladb::OpenCutList::BinPacking2D
         p.performance.nb_leftovers ]
       } 
 
-      p_longest = packings[0]
-
-      packings = valid_packings.sort_by { |p|
-        [ p.unplaced_boxes.length, p.performance.nb_bins, 
-        1 / (p.performance.largest_leftover_area + 0.01),
-        1 / (p.performance.largest_leftover_length + 0.01),  
-        1 / (p.performance.largest_leftover_width + 0.01), 
-        p.performance.nb_leftovers ]
-      } 
-      
-      p_area = packings[0]
-
-      puts "p longest #{p_longest.score} #{p_longest.split} nnbins: #{p_longest.performance.nb_bins} unbins: #{p_longest.unplaced_boxes.length()}"
-      puts "p area    #{p_area.score} #{p_area.score} nbbins: #{p_area.performance.nb_bins} unbins: #{p_area.unplaced_boxes.length()}"
-      
-=begin
-if p_longest.score == p_area.score && p_longest.split == p_area.split
-        return [p_longest], ERROR_NONE
-      elsif p_longest.unplaced_boxes.length() == p_area.unplaced_boxes.length()
-        return [p_longest, p_area], ERROR_NONE
-      elsif p_longest.unplaced_boxes.length() < p_area.unplaced_boxes.length()
-        return [p_longest], ERROR_NONE
-      else 
-        return [p_area], ERROR_NONE
-      end
-=end
-      return p_longest, error
+      return packings[0], error
     end
     
   end
