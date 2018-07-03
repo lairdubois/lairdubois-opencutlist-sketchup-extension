@@ -474,6 +474,7 @@ module Ladb::OpenCutList
           group_def.std_availability_message = std_info[:availability_mesage]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
+          group_def.show_raw_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOW && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
 
           cutlist_def.set_group_def(group_id, group_def)
 
@@ -642,6 +643,7 @@ module Ladb::OpenCutList
             :raw_length => group_def.raw_length,
             :raw_area => group_def.raw_area,
             :raw_volume => group_def.raw_volume,
+            :show_raw_dimensions => group_def.show_raw_dimensions,
             :parts => []
         }
         response[:groups].push(group)

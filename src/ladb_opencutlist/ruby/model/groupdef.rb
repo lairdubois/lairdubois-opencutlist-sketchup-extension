@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume
+    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_raw_dimensions
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -23,6 +23,7 @@ module Ladb::OpenCutList
       @raw_length = 0
       @raw_area = 0
       @raw_volume = 0
+      @show_raw_dimensions = false
     end
 
     # -----

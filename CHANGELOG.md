@@ -7,7 +7,8 @@ in 1.x and 0.x versions.
 * 1.5.1 (DEV)
 
   * Fix settings storage
-  * Change startup file structure 
+  * Change startup file structure
+  * Hide cutlist group's raw dimensions if no length or width increase is defined
   
 * 1.5.0 (2018-06-25)
 

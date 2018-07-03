@@ -66,7 +66,7 @@
 {% endif %}
 {% for group in groups %}
 
-    {% set showRawDimensions = group.material_type > 0 and not uiOptions.hide_raw_dimensions %}
+    {% set showRawDimensions = group.show_raw_dimensions and not uiOptions.hide_raw_dimensions %}
     {% set showFinalDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_final_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
     {% set colspan = 8 %}
