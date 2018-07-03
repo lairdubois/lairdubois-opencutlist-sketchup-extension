@@ -63,7 +63,7 @@ module Ladb::OpenCutList::BinPacking2D
      (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
 
-          unless @boxes.nil?
+         unless @boxes.nil?
            copy_boxes = []
             @boxes.each do |box|
               copy_boxes << box.copy
@@ -108,9 +108,9 @@ module Ladb::OpenCutList::BinPacking2D
         1 / (p.performance.largest_leftover_width + 0.01), 
         1 / (p.performance.largest_leftover_area + 0.01), 
         p.performance.nb_leftovers ]
-      } 
+      }
 
-      return packings[0], error
+      return packings[0], ERROR_NONE
     end
     
   end
