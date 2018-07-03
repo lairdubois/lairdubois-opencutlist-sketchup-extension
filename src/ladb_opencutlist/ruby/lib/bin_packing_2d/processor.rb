@@ -104,7 +104,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
         end
         if !stacked
-          if box.length >= box.width || @has_grain
+          if @has_grain || box.length >= box.width
             sbox = SuperBox.new(0, box.width, @saw_kerf)
             sbox.stack_length(box)
           else
@@ -136,14 +136,13 @@ module Ladb::OpenCutList::BinPacking2D
           end
         end
         if !stacked
-          if box.length >= box.width || @has_grain
-            sbox = SuperBox.new(0, box.width, @saw_kerf)
-            sbox.stack_length(box)
+          if @has_grain || box.length < box.width
+            sbox = SuperBox.new(box.length, 0, @saw_kerf)
+            sbox.stack_width(box)
           else
-            sbox = SuperBox.new(0, box.length, @saw_kerf)
-            sbox.stack_length(box.rotate)
+            sbox = SuperBox.new(box.width, 0, @saw_kerf)
+            sbox.stack_width(box.rotate)
           end
-
           sboxes << sbox
         end
       end
