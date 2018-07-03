@@ -122,7 +122,6 @@ module Ladb::OpenCutList::BinPacking2D
           end
           iscores << [index, r, match_score, ORIENTATION_ROTATED]
         end
-        
         if @rotatable && box.is_a?(SuperBox) && bin.encloses_internally_rotated?(box)
           b = box.copy
           b.internal_rotate

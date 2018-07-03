@@ -18,7 +18,8 @@ module Ladb::OpenCutList::BinPacking2D
       @options = options
       @stacking = options.stacking
       @trimsize = options.trimsize
-      
+      @base_bin_length = @options.base_bin_length
+      @base_bin_width = @options.base_bin_width
       @bins = []
       @boxes = []
       @oversized_boxes = []
@@ -50,6 +51,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     #
     def run
+      min_packings = [] # packings with only scrap
+      packings = []
 
       # Check bin definitions
       if (@options.base_bin_length == 0 or @options.base_bin_width == 0) and @bins.empty?
@@ -58,13 +61,76 @@ module Ladb::OpenCutList::BinPacking2D
       
       preprocess()
 
-      packings = []
+      # if there are some scrap goods, first run on these
+      if !@bins.empty?
+        @options.base_bin_length = 0
+        @options.base_bin_width = 0
+        (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
+          (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
 
-     (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
+            copy_boxes = []
+            unless @boxes.nil?
+              @boxes.each do |box|
+                copy_boxes << box.copy
+              end
+            end
+            copy_bins = []
+            unless @bins.nil?
+              @bins.each do |bin|
+                copy_bins <<  bin.copy
+              end
+            end
+
+            p = Packer.new(@options, @processor)
+            p.pack(copy_bins, copy_boxes, score, split)
+            min_packings << p
+          end
+        end
+
+        valid_packings = []
+        error = ERROR_NONE
+
+        min_packings.each do |p|
+          if p.performance.nil?
+            error = ERROR_BAD_ERROR
+          elsif p.performance.nb_boxes_packed == 0
+            error = ERROR_NO_PLACEMENT_POSSIBLE
+          elsif p.performance.nb_boxes_packed < @boxes.length
+            error = ERROR_PLACEMENT_INCOMPLETE
+            p.unplaced_boxes += @oversized_boxes
+            valid_packings << p
+          else
+            p.unplaced_boxes += @oversized_boxes
+            valid_packings << p
+          end
+        end
+
+        return nil, error unless valid_packings.length > 0
+
+        min_packings = valid_packings.sort_by { |p|
+          [ p.unplaced_boxes.length, p.performance.nb_bins,
+          1 / (p.performance.largest_leftover_length + 0.01),
+          1 / (p.performance.largest_leftover_width + 0.01),
+          1 / (p.performance.largest_leftover_area + 0.01),
+          p.performance.nb_leftovers ]
+        }
+
+        if min_packings[0].unplaced_boxes.length() > 0
+          @options.base_bin_length = @base_bin_length
+          @options.base_bin_width = @base_bin_width
+          @boxes = min_packings[0].unplaced_boxes
+          @bins = []
+        end
+        if @base_bin_length == 0 && @base_bin_width == 0
+          return min_packings[0], ERROR_NONE
+        end
+      end
+
+      (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a.each do |score|
         (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a.each do |split|
 
-         unless @boxes.nil?
-           copy_boxes = []
+          copy_boxes = []
+          unless @boxes.nil?
             @boxes.each do |box|
               copy_boxes << box.copy
             end
@@ -84,7 +150,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       valid_packings = []
       error = ERROR_NONE
-      
+
       packings.each do |p|
         if p.performance.nil?
           error = ERROR_BAD_ERROR
@@ -99,9 +165,9 @@ module Ladb::OpenCutList::BinPacking2D
           valid_packings << p
         end
       end
-      
+
       return nil, error unless valid_packings.length > 0
-      
+
       packings = valid_packings.sort_by { |p|
         [ p.unplaced_boxes.length, p.performance.nb_bins, 
         1 / (p.performance.largest_leftover_length + 0.01),  
@@ -109,6 +175,16 @@ module Ladb::OpenCutList::BinPacking2D
         1 / (p.performance.largest_leftover_area + 0.01), 
         p.performance.nb_leftovers ]
       }
+
+      if !min_packings.empty?
+        packings[0].container_bins = min_packings[0].container_bins + packings[0].container_bins
+        index = 0
+        packings[0].container_bins.each do |bin|
+          bin.index = index
+          index += 1
+        end
+        packings[0].unused_bins += min_packings[0].unused_bins
+      end
 
       return packings[0], ERROR_NONE
     end
