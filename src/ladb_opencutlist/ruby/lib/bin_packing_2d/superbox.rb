@@ -142,4 +142,5 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
   end
+
 end

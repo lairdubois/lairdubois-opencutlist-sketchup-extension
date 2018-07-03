@@ -1,18 +1,18 @@
 module Ladb::OpenCutList::BinPacking2D
 
-    MATCH_PERFECT = 0
-    MATCH_W_OR_L = 2
-    MATCH_INSIDE = 4
-    NO_MATCH = 8
-    
-    ORIENTATION_NORMAL = 0
-    ORIENTATION_ROTATED = 1
-    ORIENTATION_INTERNALLY_ROTATED = 2
-    ORIENTATION_EXPLODED = 3
-    
-    POSITION_NOT_FOUND = -1
-    
-    class Score < Packing2D
+  MATCH_PERFECT = 0
+  MATCH_W_OR_L = 2
+  MATCH_INSIDE = 4
+  NO_MATCH = 8
+
+  ORIENTATION_NORMAL = 0
+  ORIENTATION_ROTATED = 1
+  ORIENTATION_INTERNALLY_ROTATED = 2
+  ORIENTATION_EXPLODED = 3
+
+  POSITION_NOT_FOUND = -1
+
+  class Score < Packing2D
 
     # this may not be a good idea, verify please!
     MAX_INT = (2 ** (0.size * 8 - 2) - 1)
@@ -150,4 +150,5 @@ module Ladb::OpenCutList::BinPacking2D
     end    
 
   end
+
 end
