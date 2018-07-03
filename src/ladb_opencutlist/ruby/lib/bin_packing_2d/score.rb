@@ -33,26 +33,45 @@ module Ladb::OpenCutList::BinPacking2D
       y_pos = MAX_INT
       smallest_diff = MAX_INT 
       orientation = ORIENTATION_NORMAL
-     
       boxes.each_with_index do |box, j|
         bins.each_with_index do |bin, k|
-          if bin.x >= @trimsize && box.width == bin.width && box.length <= bin.length
-            diff = bin.length - box.length
-            if diff < smallest_diff && bin.y < y_pos
-              y_pos = bin.y
-              smallest_diff = diff 
-              j_selected = j
-              k_selected = k
-              orientation = ORIENTATION_NORMAL
-            end
-          elsif bin.x >= @trimsize && @rotatable && box.length == bin.width && box.width <= bin.length
-            diff = bin.width - box.width
-            if diff < smallest_diff && bin.y < y_pos
-              y_pos = bin.y
-              j_selected = j
-              k_selected = k
-              smallest_diff = diff 
-              orientation = ORIENTATION_ROTATED
+          if bin.x >= @trimsize
+            if box.width == bin.width && box.length <= bin.length
+              diff = bin.length - box.length
+              if diff < smallest_diff && bin.y < y_pos
+                y_pos = bin.y
+                smallest_diff = diff
+                j_selected = j
+                k_selected = k
+                orientation = ORIENTATION_NORMAL
+              end
+            elsif box.length == bin.length && box.width <= bin.width
+              diff = bin.width - box.width
+              if diff < smallest_diff && bin.y < y_pos
+                y_pos = bin.y
+                smallest_diff = diff
+                j_selected = j
+                k_selected = k
+                orientation = ORIENTATION_NORMAL
+              end
+            elsif @rotatable && box.length == bin.width && box.width <= bin.length
+              diff = bin.length - box.width
+              if diff < smallest_diff && bin.y < y_pos
+                y_pos = bin.y
+                j_selected = j
+                k_selected = k
+                smallest_diff = diff
+                orientation = ORIENTATION_ROTATED
+              end
+            elsif @rotatable && box.width == bin.length && box.length <= bin.width
+              diff = bin.width - box.length
+              if diff < smallest_diff && bin.y < y_pos
+                y_pos = bin.y
+                j_selected = j
+                k_selected = k
+                smallest_diff = diff
+                orientation = ORIENTATION_ROTATED
+              end
             end
           end
         end
