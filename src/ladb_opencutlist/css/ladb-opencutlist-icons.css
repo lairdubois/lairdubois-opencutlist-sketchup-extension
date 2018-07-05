@@ -28,6 +28,36 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-arrow-right:before {
+  content: "\e930";
+}
+.ladb-opencutlist-icon-arrow-left:before {
+  content: "\e931";
+}
+.ladb-opencutlist-icon-arrow-down:before {
+  content: "\e932";
+}
+.ladb-opencutlist-icon-arrow-up:before {
+  content: "\e933";
+}
+.ladb-opencutlist-icon-materials:before {
+  content: "\e901";
+}
+.ladb-opencutlist-icon-unknow:before {
+  content: "\e919";
+}
+.ladb-opencutlist-icon-sheet-good:before {
+  content: "\e902";
+}
+.ladb-opencutlist-icon-chevron-right:before {
+  content: "\e904";
+}
+.ladb-opencutlist-icon-chevron-left:before {
+  content: "\e905";
+}
+.ladb-opencutlist-icon-minus:before {
+  content: "\e92f";
+}
 .ladb-opencutlist-icon-plus:before {
   content: "\e92e";
 }
@@ -153,19 +183,4 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-bar:before {
   content: "\e922";
-}
-.ladb-opencutlist-icon-materials:before {
-  content: "\e901";
-}
-.ladb-opencutlist-icon-unknow:before {
-  content: "\e919";
-}
-.ladb-opencutlist-icon-sheet-good:before {
-  content: "\e902";
-}
-.ladb-opencutlist-icon-chevron-right:before {
-  content: "\e904";
-}
-.ladb-opencutlist-icon-chevron-left:before {
-  content: "\e905";
 }

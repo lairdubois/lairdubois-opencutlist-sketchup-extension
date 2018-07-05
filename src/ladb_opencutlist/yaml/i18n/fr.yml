@@ -346,6 +346,9 @@ tab:
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
       Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
+  settings:
+    label: Préférences
+    title: Préférences
 tool:
   highlight:
     transparency: Transparence

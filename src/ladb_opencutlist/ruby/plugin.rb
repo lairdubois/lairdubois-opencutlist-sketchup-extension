@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
+  require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
 
   class Plugin
@@ -29,12 +30,17 @@ module Ladb::OpenCutList
     SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
     SETTINGS_PREPROCESSOR_DXD = 2                 # 2D dimension
 
-    DIALOG_MAXIMIZED_WIDTH = 1100
-    DIALOG_MAXIMIZED_HEIGHT = 800
+    SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
+    SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
+    SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
+    SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
+
+    DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
+    DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 800
     DIALOG_MINIMIZED_WIDTH = 90
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 2    # = 2 Tab buttons
-    DIALOG_LEFT = 100
-    DIALOG_TOP = 100
+    DIALOG_DEFAULT_LEFT = 100
+    DIALOG_DEFAULT_TOP = 100
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     # -----
@@ -53,8 +59,11 @@ module Ladb::OpenCutList
       @started = false
 
       @dialog = nil
-      @dialog_min_size = { :width => DIALOG_MINIMIZED_WIDTH, :height => DIALOG_MINIMIZED_HEIGHT }
       @dialog_startup_tab_name = nil
+      @dialog_maximized_width = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, DIALOG_DEFAULT_MAXIMIZED_WIDTH)
+      @dialog_maximized_height = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_DEFAULT_MAXIMIZED_HEIGHT)
+      @dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, DIALOG_DEFAULT_LEFT)
+      @dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, DIALOG_DEFAULT_TOP)
 
     end
 
@@ -136,9 +145,17 @@ module Ladb::OpenCutList
 
     # -----
 
+    def set_attribute(entity, key, value)
+      entity.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
+    end
+
     def get_attribute(entity, key, default_value = nil)
       # Try to retrieve entity attribute with Backward Compatibility with previous dictionary name
       entity.get_attribute(ATTRIBUTE_DICTIONARY, key, entity.get_attribute(BC_ATTRIBUTE_DICTIONARY, key, default_value))
+    end
+
+    def write_default(key, value)
+      Sketchup.write_default(DEFAULT_SECTION, key, value)
     end
 
     def read_default(key, default_value = nil)
@@ -188,6 +205,7 @@ module Ladb::OpenCutList
 
         @controllers.push(MaterialsController.new)
         @controllers.push(CutlistController.new)
+        @controllers.push(SettingsController.new)
 
         # -- Commands --
 
@@ -236,8 +254,8 @@ module Ladb::OpenCutList
                 :resizable => true,
                 :width => DIALOG_MINIMIZED_WIDTH,
                 :height => DIALOG_MINIMIZED_HEIGHT,
-                :left => DIALOG_LEFT,
-                :top => DIALOG_TOP,
+                :left => @dialog_left,
+                :top => @dialog_top,
                 :min_width => DIALOG_MINIMIZED_WIDTH,
                 :min_height => DIALOG_MINIMIZED_HEIGHT,
                 :style => UI::HtmlDialog::STYLE_DIALOG
@@ -252,8 +270,8 @@ module Ladb::OpenCutList
             DIALOG_PREF_KEY,
             DIALOG_MINIMIZED_WIDTH,
             DIALOG_MINIMIZED_HEIGHT,
-            DIALOG_LEFT,
-            DIALOG_TOP,
+            @dialog_left,
+            @dialog_top,
             true
         )
         @dialog.min_width = DIALOG_MINIMIZED_WIDTH
@@ -268,7 +286,7 @@ module Ladb::OpenCutList
 
       # Set dialog size and position
       dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
-      dialog_set_position(DIALOG_LEFT, DIALOG_TOP)
+      dialog_set_position(@dialog_left, @dialog_top)
 
       # Setup dialog actions
       @dialog.add_action_callback("ladb_opencutlist_command") do |action_context, call_json|
@@ -329,27 +347,39 @@ module Ladb::OpenCutList
       end
     end
 
-    private
-
-    def dialog_set_size(width, height)
+    def dialog_set_size(width, height, persist = false)
       if @dialog
         if current_os == :MAC && !html_dialog_compatible
           @dialog.execute_script("window.resizeTo(#{width},#{height})")
         else
           @dialog.set_size(width, height)
         end
+        if persist
+          @dialog_maximized_width = width
+          @dialog_maximized_height = height
+          write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
+          write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
+        end
       end
     end
 
-    def dialog_set_position(left, top)
+    def dialog_set_position(left, top, persist = false)
       if @dialog
         if current_os == :MAC && !html_dialog_compatible
           @dialog.execute_script("window.moveTo(#{left},#{top})")
         else
           @dialog.set_position(left, top)
         end
+        if persist
+          @dialog_left = left
+          @dialog_top = top
+          write_default(SETTINGS_KEY_DIALOG_LEFT, left)
+          write_default(SETTINGS_KEY_DIALOG_TOP, top)
+        end
       end
     end
+
+    private
 
     # -- Commands ---
 
@@ -415,10 +445,10 @@ module Ladb::OpenCutList
         end
 
         if strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
-          Sketchup.write_default(DEFAULT_SECTION, key, value)
+          write_default(key, value)
         end
         if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL)
-          Sketchup.active_model.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
+          set_attribute(Sketchup.active_model, key, value)
         end
 
       }
@@ -436,7 +466,10 @@ module Ladb::OpenCutList
           :locale => Sketchup.get_locale,
           :language => Plugin.instance.language,
           :html_dialog_compatible => html_dialog_compatible,
-          :dialog_startup_size => @dialog_min_size,
+          :dialog_maximized_width => @dialog_maximized_width,
+          :dialog_maximized_height => @dialog_maximized_height,
+          :dialog_left => @dialog_left,
+          :dialog_top => @dialog_top,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
     end
@@ -449,7 +482,7 @@ module Ladb::OpenCutList
 
     def dialog_maximize_command
       if @dialog
-        dialog_set_size(DIALOG_MAXIMIZED_WIDTH, DIALOG_MAXIMIZED_HEIGHT)
+        dialog_set_size(@dialog_maximized_width, @dialog_maximized_height)
       end
     end
 

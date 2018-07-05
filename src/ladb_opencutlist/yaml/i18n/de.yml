@@ -346,6 +346,9 @@ tab:
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
+  settings:
+    label: Préférences
+    title: Préférences
 tool:
   highlight:
     transparency: Transparenz

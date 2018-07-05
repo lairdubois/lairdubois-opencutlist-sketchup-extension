@@ -32,8 +32,8 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
-      Plugin.instance.register_command("materials_get_attributes_command") do |material_id|
-        get_attributes_command(material_id)
+      Plugin.instance.register_command("materials_get_attributes_command") do |material_data|
+        get_attributes_command(material_data)
       end
 
     end

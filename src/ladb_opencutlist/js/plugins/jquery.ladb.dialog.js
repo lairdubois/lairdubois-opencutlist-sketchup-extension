@@ -24,7 +24,11 @@
             userAgent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,
-            htmlDialogCompatible: options.html_dialog_compatible
+            htmlDialogCompatible: options.html_dialog_compatible,
+            dialogMaximizedWidth: options.dialog_maximized_width,
+            dialogMaximizedHeight: options.dialog_maximized_height,
+            dialogLeft: options.dialog_left,
+            dialogTop: options.dialog_top
         };
 
         this.settings = {};
@@ -53,6 +57,11 @@
                 name: 'cutlist',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-cutlist'
+            },
+            {
+                name: 'settings',
+                bar: 'bottombar',
+                icon: 'ladb-opencutlist-icon-settings'
             },
             {
                 name: 'about',
