@@ -346,10 +346,10 @@ tab:
     credits_thanks: |
       A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
   settings:
-    label: Préférences
-    title: Préférences
+    label: Preferences
+    title: Preferences
     reset: Restore to default values
-    size_and_position: Taille et Position de la fenêtre
+    size_and_position: Size and Position of the Window
 tool:
   highlight:
     transparency: Transparency
