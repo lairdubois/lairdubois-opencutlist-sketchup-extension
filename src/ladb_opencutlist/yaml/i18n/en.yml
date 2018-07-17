@@ -348,6 +348,8 @@ tab:
   settings:
     label: Préférences
     title: Préférences
+    reset: Restore to default values
+    size_and_position: Taille et Position de la fenêtre
 tool:
   highlight:
     transparency: Transparency

@@ -1,7 +1,12 @@
 {% extends 'tabs/base-tab.twig' %}
 
+{% block headerToolsInner %}
+    <button id="ladb_btn_reset" class="btn btn-default"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.settings.reset'|i18next }}</button>
+{% endblock %}
+
 {% block containerInner %}
     <div>
+        <h4>{{ 'tab.settings.size_and_position'|i18next }}</h4>
         <div class="ladb-fake-dialog">
             <div class="ladb-fake-dialog-titlebar">OpenCutList</div>
             <div class="ladb-fake-dialog-leftbar"></div>

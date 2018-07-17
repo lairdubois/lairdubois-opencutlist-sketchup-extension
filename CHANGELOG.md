@@ -10,7 +10,7 @@ in 1.x and 0.x versions.
   * Change startup file structure
   * Hide cutlist group's raw dimensions if no length or width increase is defined
   * Added persistant material UUID mecanism to improve options storage
-  * Added setting tab to manage dialog size and position
+  * Added settings tab to manage dialog size and position
   
 * 1.5.0 (2018-06-25)
 

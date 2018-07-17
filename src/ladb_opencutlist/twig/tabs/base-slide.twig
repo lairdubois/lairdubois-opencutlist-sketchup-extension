@@ -5,7 +5,7 @@
 <div{% block id %} id="{{ id }}"{% endblock %} class="ladb-slide {% if out|default(false) %}out{% else %}in{% endif %}">
     <div class="ladb-header-wrapper">
         <div class="ladb-header">
-            <div class="container">
+            <div class="container-fluid">
                 {% block headerInner %}
                     {% block headerToolsOuter %}
                         <div class="no-print ladb-header-tools">
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="ladb-container">
-        <div class="container">
+        <div class="container-fluid">
             {% block containerInner %}{% endblock %}
         </div>
     </div>

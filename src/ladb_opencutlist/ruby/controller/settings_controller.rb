@@ -27,8 +27,8 @@ module Ladb::OpenCutList
       top = settings['top']
       left = settings['left']
 
-      Plugin.instance.dialog_set_size([ width, 300 ].max, [ height, 300 ].max, true)
-      Plugin.instance.dialog_set_position([ left, 0 ].max, [ top, 0 ].max, true)
+      Plugin.instance.dialog_set_size(width, height, true)
+      Plugin.instance.dialog_set_position(left, top, true)
 
     end
 
