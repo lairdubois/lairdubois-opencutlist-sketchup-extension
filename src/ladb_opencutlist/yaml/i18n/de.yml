@@ -347,8 +347,8 @@ tab:
     credits_thanks: |
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
   settings:
-    label: Préférences
-    title: Préférences
+    label: Benutzereinstellungen
+    title: Benutzereinstellungen
     reset: Auf vorgegebene Werte zurücksetzen
     size_and_position: Taille et Position de la fenêtre
 tool:
