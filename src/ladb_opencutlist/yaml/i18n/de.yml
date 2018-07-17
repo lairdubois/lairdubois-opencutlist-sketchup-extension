@@ -350,7 +350,7 @@ tab:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
     reset: Auf vorgegebene Werte zurücksetzen
-    size_and_position: Taille et Position de la fenêtre
+    size_and_position: Grösse und Position des Fensters
 tool:
   highlight:
     transparency: Transparenz
