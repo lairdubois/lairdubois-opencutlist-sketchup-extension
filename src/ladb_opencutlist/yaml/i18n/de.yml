@@ -209,6 +209,11 @@ tab:
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+      options_defaults:
+        manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
+        save: Als vorgegebene Werte speichern
+        save_success: "*Schnittparameter* als vorgegebene Werte gespeichert"
+        reset: Auf vorgegebene Werte zurücksetzen
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht

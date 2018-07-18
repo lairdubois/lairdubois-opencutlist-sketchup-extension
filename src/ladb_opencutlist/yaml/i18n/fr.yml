@@ -209,6 +209,11 @@ tab:
         Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      options_defaults:
+        manage_help: Gestion des *Options de calepinage* par défaut
+        save: Enregistrer comme valeurs par défaut
+        save_success: "*Options de calepinage* par défaut enregistrées"
+        reset: Restaurer aux valeurs par défaut
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif

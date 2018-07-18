@@ -29,7 +29,7 @@
         var fnUpdate = function() {
 
             // Adjust min limits
-            that.opencutlist.capabilities.dialogMaximizedWidth = Math.max(480, that.opencutlist.capabilities.dialogMaximizedWidth);
+            that.opencutlist.capabilities.dialogMaximizedWidth = Math.max(580, that.opencutlist.capabilities.dialogMaximizedWidth);
             that.opencutlist.capabilities.dialogMaximizedHeight = Math.max(480, that.opencutlist.capabilities.dialogMaximizedHeight);
             that.opencutlist.capabilities.dialogLeft = Math.max(0, that.opencutlist.capabilities.dialogLeft);
             that.opencutlist.capabilities.dialogTop = Math.max(0, that.opencutlist.capabilities.dialogTop);

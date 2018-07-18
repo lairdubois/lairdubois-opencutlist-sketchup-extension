@@ -208,6 +208,11 @@ tab:
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
+      options_defaults:
+        manage_help: Administration of the default *Cutting Diagram Parameters*
+        save: Save as default values
+        save_success: Default *Cutting Diagram Parameters* saved
+        reset: Restore to default values
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
