@@ -896,6 +896,7 @@ module Ladb::OpenCutList
 
       # Extract parameters
       name = part_data['name']
+      number = part_data['number']
       length = part_data['length']
       width = part_data['width']
       thickness = part_data['thickness']
@@ -914,7 +915,7 @@ module Ladb::OpenCutList
       unless instance_infos.empty?
 
         # Compute text infos
-        text_line_1 = name
+        text_line_1 = '[' + number + '] ' + name
         text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
             ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
             ' | ' + (material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : material_name)
