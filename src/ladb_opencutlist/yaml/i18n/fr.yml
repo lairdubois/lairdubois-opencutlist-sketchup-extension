@@ -85,7 +85,7 @@ tab:
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
       orientation: Orientation
-      orientation_locked_on_axis: Vérouiller sur le repère
+      orientation_locked_on_axis: Verrouiller sur le repère
       orientation_locked_on_axis_help: |
         Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
 
