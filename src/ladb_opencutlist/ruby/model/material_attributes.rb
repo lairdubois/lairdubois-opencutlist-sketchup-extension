@@ -71,10 +71,7 @@
 
       # Init uuid if undefined
       if @uuid.nil?
-        @uuid = SecureRandom.uuid
-        unless material.nil?
-          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
-        end
+        reset_uuid
       end
 
     end
@@ -103,6 +100,15 @@
           3
         else
           99
+      end
+    end
+
+    # -----
+
+    def reset_uuid
+      @uuid = SecureRandom.uuid
+      unless material.nil?
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
       end
     end
 

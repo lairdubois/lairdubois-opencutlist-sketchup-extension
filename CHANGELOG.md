@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.5.2 (DEV)
+
+  * Reset imported material UUID
+
 * 1.5.1 (2018-07-18)
 
   * Fix settings storage
