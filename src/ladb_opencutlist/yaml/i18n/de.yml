@@ -27,6 +27,7 @@ default:
   part_plural: Teile
 core:
   menu:
+    name: OpenCutList
     submenu: OpenCutList
   toolbar:
     command: OpenCutList

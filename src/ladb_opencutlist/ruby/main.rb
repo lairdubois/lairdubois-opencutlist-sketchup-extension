@@ -17,7 +17,7 @@ module Ladb
       }
 
       # Setup Toolbar
-      toolbar = UI::Toolbar.new('L\'Air du Bois')
+      toolbar = UI::Toolbar.new(Plugin.instance.get_i18n_string('core.toolbar.name'))
       cmd = UI::Command.new(Plugin.instance.get_i18n_string('core.toolbar.command')) {
         Plugin.instance.toggle_dialog
       }
@@ -27,7 +27,7 @@ module Ladb
       cmd.status_bar_text = Plugin.instance.get_i18n_string('core.toolbar.command')
       cmd.menu_text = Plugin.instance.get_i18n_string('core.toolbar.command')
       toolbar = toolbar.add_item(cmd)
-      toolbar.show
+      toolbar.restore
 
       file_loaded(__FILE__)
     end

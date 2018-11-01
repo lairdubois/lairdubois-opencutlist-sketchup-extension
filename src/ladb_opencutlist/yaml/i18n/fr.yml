@@ -29,6 +29,7 @@ core:
   menu:
     submenu: OpenCutList
   toolbar:
+    name: OpenCutList
     command: OpenCutList
   dialog:
     title: OpenCutList by L'Air du Bois
