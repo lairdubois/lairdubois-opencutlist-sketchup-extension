@@ -756,6 +756,7 @@ module Ladb::OpenCutList
 
                 # Header row
                 header = []
+                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.number'))
                 header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.name'))
                 header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.count'))
                 unless hide_raw_dimensions
@@ -785,6 +786,7 @@ module Ladb::OpenCutList
                     no_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW && hide_untyped_material_dimensions
 
                     row = []
+                    row.push(part[:number])
                     row.push(part[:name])
                     row.push(part[:count])
                     unless hide_raw_dimensions

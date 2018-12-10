@@ -163,6 +163,7 @@ tab:
       option_col_sep_comma: Komma
       option_col_sep_semicolon: Strichpunkt
       option_encoding: Kodierung
+      number: Nr.
       name: Bezeichnung
       raw_length: Länge - roh
       raw_width: Breite - roh

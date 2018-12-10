@@ -163,6 +163,7 @@ tab:
       option_col_sep_comma: Comma
       option_col_sep_semicolon: Semicolon
       option_encoding: Encoding
+      number: No.
       name: Description
       raw_length: Length - raw
       raw_width: Width - raw

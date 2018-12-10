@@ -163,6 +163,7 @@ tab:
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
       option_encoding: Encodage
+      number: N°
       name: Désignation
       raw_length: Longueur brute
       raw_width: Largeur brute
