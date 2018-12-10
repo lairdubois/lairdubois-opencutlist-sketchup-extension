@@ -6,7 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.5.3 (2018-12-10)
 
-  * Cutlist export now include part numbers
+  * Cutlist export now includes part numbers
 
 * 1.5.2 (2018-11-01)
 
