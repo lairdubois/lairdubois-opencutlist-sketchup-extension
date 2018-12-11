@@ -180,7 +180,7 @@
             // Cleanup nonexistent hidden group ids
             var hiddenGroupIdsLength = that.uiOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.uiOptions.hidden_group_ids[i].endsWith('summary')) {
+                if (that.uiOptions.hidden_group_ids[i].indexOf('summary', that.uiOptions.hidden_group_ids[i].length - 'summary'.length) !== -1) {  // == endsWith(...)
                     continue;
                 }
                 var exists = false;
