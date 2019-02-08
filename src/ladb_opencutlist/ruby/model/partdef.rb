@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis
+    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names
 
     def initialize(id)
@@ -21,6 +21,7 @@ module Ladb::OpenCutList
       @material_origins = []
       @cumulable = DefinitionAttributes::CUMULABLE_NONE
       @orientation_locked_on_axis = false
+      @labels = ''
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = count)

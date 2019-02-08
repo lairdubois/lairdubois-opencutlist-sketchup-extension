@@ -331,6 +331,7 @@ module Ladb::OpenCutList
       part_number_with_letters = settings['part_number_with_letters']
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_order_strategy = settings['part_order_strategy']
+      labels_filter = settings['labels_filter'].split(';').map(&:strip)
 
       # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
@@ -394,6 +395,10 @@ module Ladb::OpenCutList
 
         definition = entity.definition
         definition_attributes = _get_definition_attributes(definition)
+
+        if !labels_filter.empty? and !definition_attributes.has_labels(labels_filter)
+          next
+        end
 
         material, material_origin = _get_material(instance_info.path, smart_material)
         material_id = material ? material.entityID : ''
@@ -521,6 +526,7 @@ module Ladb::OpenCutList
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
+          part_def.labels = definition_attributes.labels
 
           group_def.set_part_def(part_id, part_def)
 
@@ -671,6 +677,7 @@ module Ladb::OpenCutList
                   :material_origins => part_def.material_origins,
                   :cumulable => part_def.cumulable,
                   :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
+                  :labels => part_def.labels,
                   :entity_ids => part_def.entity_ids,
                   :entity_serialized_paths => part_def.entity_serialized_paths,
                   :entity_names => part_def.entity_names.sort,
@@ -941,6 +948,7 @@ module Ladb::OpenCutList
       material_name = part_data['material_name']
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
+      labels = part_data['labels']
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions
@@ -955,9 +963,10 @@ module Ladb::OpenCutList
 
         # Update definition's attributes
         definition_attributes = DefinitionAttributes.new(definition)
-        if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis
+        if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis or labels != definition_attributes.labels
           definition_attributes.cumulable = cumulable
           definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
+          definition_attributes.labels = labels
           definition_attributes.write_to_attributes
         end
 

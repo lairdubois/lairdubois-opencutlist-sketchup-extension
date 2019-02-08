@@ -5,6 +5,7 @@ default:
   validate: Valider
   open: Ouvrir
   close: Fermer
+  clear: Effacer
   empty_filename: Sans titre
   refresh: Rafraîchir
   generate: Générer
@@ -94,6 +95,7 @@ tab:
         - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+      labels: Etiquettes
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
@@ -117,6 +119,8 @@ tab:
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_labels: Masquer les étiquettes
+      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Masquer les dimensions brutes
       hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
       hide_final_dimensions: Masquer les dimensions finies
@@ -135,6 +139,7 @@ tab:
       property_count: Quantité
       reset: Restaurer aux valeurs par défaut
     list:
+      filters: Filtres
       summary: Récapitulatif
       type: Type
       material_thickness: Matière / Épaisseur

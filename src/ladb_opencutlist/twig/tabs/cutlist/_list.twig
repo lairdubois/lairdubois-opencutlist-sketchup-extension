@@ -7,6 +7,47 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
+<table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
+    <thead>
+    <tr>
+        <td>
+            <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-open"></i></button>
+            <div>
+                <span class="ladb-heading"><i class="ladb-opencutlist-icon-filter"></i> {{ 'tab.cutlist.list.filters'|i18next }}</span>
+            </div>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <div class="media">
+                <div class="media-left">
+                    <i class="ladb-opencutlist-icon-label" style="font-size: 150%; line-height: 32px;"></i>
+                </div>
+                <div class="media-body">
+                    <div class="no-print">
+                        <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter }}" placeholder="Etiquettes à filtrer">
+                    </div>
+                    <div class="no-screen">
+                        {{ generateFilters.labels_filter }}
+                    </div>
+                    <span class="no-screen"></span>
+                </div>
+                <div class="media-right no-print">
+                    <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.clear'|i18next() }}</button>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr id="ladb_cutlist_filters_tips" style="display: none;">
+        <td class="alert alert-info">
+            <i class="ladb-opencutlist-icon-tip"></i> Vous devez <strong>Générer</strong> à nouveau la fiche de débit pour prendre en compte les nouveaux filtres.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
 {% if groups|length > 0 %}
     <table id="ladb_group_summary" data-group-id="summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
         <thead>
@@ -159,6 +200,13 @@
                     {{ part.name|escape }}
                     {% if part.entity_names is not empty %}
                         <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name[0]|escape }}{% if entity_name[1] > 1 %} <small class="text-muted">x{{ entity_name[1] }}</small>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
+                    {% endif %}
+                    {% if not uiOptions.hide_labels and part.labels is not empty %}
+                        <ul class="ladb-cutlist-part-labels">
+                            {% for label in part.labels|split(';') %}
+                                <li><a href="#" class="ladb-btn-label-filter">{{ label }}</a></li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
                 </td>
                 <td class="text-center">{{ part.count }}</td>

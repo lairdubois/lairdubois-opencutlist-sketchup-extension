@@ -5,6 +5,7 @@ default:
   validate: Apply
   open: Open
   close: Close
+  clear: Effacer
   empty_filename: Untitled
   refresh: Refresh
   generate: Generate
@@ -94,6 +95,7 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
+      labels: Labels
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -117,6 +119,8 @@ tab:
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
       hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood** or **Sheet Good**) will be hidden.
+      hide_labels: Masquer les étiquettes
+      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Hide rough dimensions
       hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_final_dimensions: Hide finished dimensions
@@ -135,6 +139,7 @@ tab:
       property_count: Quantity
       reset: Restore Default Values
     list:
+      filters: Filtres
       summary: Summary
       type: Type
       material_thickness: Material / Thickness

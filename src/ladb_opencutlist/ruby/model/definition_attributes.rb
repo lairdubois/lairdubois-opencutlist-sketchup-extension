@@ -6,7 +6,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :number,:cumulable, :orientation_locked_on_axis
+    attr_accessor :number,:cumulable, :orientation_locked_on_axis, :labels
     attr_reader :definition
 
     def initialize(definition)
@@ -14,6 +14,7 @@ module Ladb::OpenCutList
       @number = nil
       @cumulable = CUMULABLE_NONE
       @orientation_locked_on_axis = false
+      @labels = ''
       read_from_attributes
     end
 
@@ -33,11 +34,18 @@ module Ladb::OpenCutList
 
     # -----
 
+    def has_labels(labels)
+      (labels - @labels.split(';').map(&:strip)).empty?
+    end
+
+    # -----
+
     def read_from_attributes
       if @definition
         @number = Plugin.instance.get_attribute(@definition, 'number', nil)
         @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
         @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
+        @labels = Plugin.instance.get_attribute(@definition, 'labels', '')
       end
     end
 
@@ -46,6 +54,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'number', @number)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', @labels)
       end
     end
 

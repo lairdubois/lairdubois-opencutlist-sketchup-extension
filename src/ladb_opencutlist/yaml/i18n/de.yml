@@ -5,6 +5,7 @@ default:
   validate: Bestätigen
   open: Öffnen
   close: Schliessen
+  clear: Effacer
   empty_filename: ohne Titel
   refresh: Aktualisieren
   generate: Generieren
@@ -94,6 +95,7 @@ tab:
         - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
+      labels: Etiketten
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -117,6 +119,8 @@ tab:
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz** oder **Platten**) nicht angezeigt.
+      hide_labels: Masquer les étiquettes
+      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Rohmasse ausblenden
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_final_dimensions: Fertigmasse ausblenden
@@ -135,6 +139,7 @@ tab:
       property_count: Anzahl
       reset: Einstellungen zurücksetzen
     list:
+      filters: Filtres
       summary: Übersicht
       type: Typ
       material_thickness: Material / Dicke
