@@ -30,19 +30,13 @@
                         <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter }}" placeholder="Etiquettes à filtrer">
                     </div>
                     <div class="no-screen">
-                        {{ generateFilters.labels_filter }}
+                        {% include 'tabs/cutlist/_part-labels.twig' with { 'labels':generateFilters.labels_filter } %}
                     </div>
-                    <span class="no-screen"></span>
                 </div>
                 <div class="media-right no-print">
-                    <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.clear'|i18next() }}</button>
+                    <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear">{{ 'default.clear'|i18next() }}</button>
                 </div>
             </div>
-        </td>
-    </tr>
-    <tr id="ladb_cutlist_filters_tips" style="display: none;">
-        <td class="alert alert-info">
-            <i class="ladb-opencutlist-icon-tip"></i> Vous devez <strong>Générer</strong> à nouveau la fiche de débit pour prendre en compte les nouveaux filtres.
         </td>
     </tr>
     </tbody>
@@ -204,7 +198,7 @@
                     {% if not uiOptions.hide_labels and part.labels is not empty %}
                         <ul class="ladb-cutlist-part-labels">
                             {% for label in part.labels|split(';') %}
-                                <li><a href="#" class="ladb-btn-label-filter">{{ label }}</a></li>
+                                <li><a href="#" class="ladb-btn-label-filter{% if label in generateFilters.labels_filter|split(';') %} ladb-active{% endif %}">{{ label }}</a></li>
                             {% endfor %}
                         </ul>
                     {% endif %}

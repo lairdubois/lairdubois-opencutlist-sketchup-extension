@@ -75,7 +75,8 @@
 
     var TOKENFIELD_OPTIONS = {
         delimiter: ';',
-        createTokensOnBlur: true
+        createTokensOnBlur: true,
+        beautify: false
     };
 
     // CLASS DEFINITION
@@ -207,19 +208,17 @@
 
             // Bind inputs
             $('#ladb_cutlist_labels_filter', that.$page)
-                .on('change', function () {
-                    that.generateFilters.labels_filter = $(this).val();
-                })
                 .tokenfield(TOKENFIELD_OPTIONS)
                 .on('tokenfield:createdtoken tokenfield:editedtoken tokenfield:removedtoken', function() {
-                    $('#ladb_cutlist_filters_tips', that.$page).show();
+                    that.generateFilters.labels_filter = $(this).tokenfield('getTokensList', ';');
+                    that.$btnGenerate.click();
                 })
             ;
 
             // Bind buttons
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function() {
                 that.generateFilters.labels_filter = '';
-                that.generateCutlist();
+                that.$btnGenerate.click();
                 $(this).blur();
             });
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
@@ -301,8 +300,15 @@
             });
             $('a.ladb-btn-label-filter', that.$page).on('click', function() {
                 var labelFilter = $(this).html();
-                that.generateFilters.labels_filter = labelFilter;
-                that.generateCutlist();
+                var labelsFilter = that.generateFilters.labels_filter.length === 0 ? [] : that.generateFilters.labels_filter.split(';');
+                var indexOf = labelsFilter.indexOf(labelFilter);
+                if (indexOf > -1) {
+                    labelsFilter.splice(indexOf, 1);
+                } else {
+                    labelsFilter.push(labelFilter);
+                }
+                that.generateFilters.labels_filter = labelsFilter.join(';');
+                that.$btnGenerate.click();
                 $(this).blur();
                 return false;
             });
