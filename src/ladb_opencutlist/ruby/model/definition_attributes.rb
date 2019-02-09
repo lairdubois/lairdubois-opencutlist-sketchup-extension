@@ -37,7 +37,7 @@ module Ladb::OpenCutList
         if labels.is_a? Array and !labels.empty?
           labels = labels.map(&:strip).reject { |label| label.empty? }
         elsif labels.is_a? String
-          labels = labels.split(';')
+          labels = labels.split(';').map(&:strip).reject { |label| label.empty? }
         end
         labels
       else
@@ -58,7 +58,7 @@ module Ladb::OpenCutList
         @number = Plugin.instance.get_attribute(@definition, 'number', nil)
         @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
         @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
-        @labels = Plugin.instance.get_attribute(@definition, 'labels', [])
+        @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
       end
     end
 

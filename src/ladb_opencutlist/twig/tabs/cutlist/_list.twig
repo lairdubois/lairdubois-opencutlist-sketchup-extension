@@ -27,18 +27,9 @@
                         <i class="ladb-opencutlist-icon-label" style="font-size: 150%; line-height: 32px;"></i>
                     </div>
                     <div class="media-body">
-                        <div class="no-print">
-                            <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';') }}" placeholder="Etiquettes à filtrer">
-                        </div>
-                        <div class="no-screen">
-                            <ul class="ladb-cutlist-part-labels">
-                                {% for label in generateFilters.labels_filter %}
-                                    <li><a href="#" class="ladb-btn-label-filter">{{ label }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';') }}" placeholder="Etiquettes à filtrer">
                     </div>
-                    <div class="media-right no-print">
+                    <div class="media-right">
                         <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear">{{ 'default.clear'|i18next() }}</button>
                     </div>
                 </div>

@@ -32,7 +32,7 @@ module Ladb::OpenCutList
     end
 
     def add_used_labels(used_labels)
-      @used_labels += used_labels + (@used_labels & used_labels)
+      @used_labels += used_labels - (@used_labels & used_labels)
     end
 
     def set_material_usage(key, material_usage)
