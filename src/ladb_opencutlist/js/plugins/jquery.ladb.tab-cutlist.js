@@ -86,7 +86,7 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.generateFilters = {
-          labels_filter: ''
+          labels_filter: []
         };
 
         this.generateAt = null;
@@ -94,8 +94,9 @@
         this.filename = null;
         this.pageLabel = null;
         this.lengthUnit = null;
-        this.groups = [];
+        this.usedLabels = [];
         this.materialUsages = [];
+        this.groups = [];
         this.editedPart = null;
         this.editedGroup = null;
 
@@ -138,6 +139,7 @@
             var isMetric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
+            var usedLabels = response.used_labels;
             var materialUsages = response.material_usages;
             var groups = response.groups;
 
@@ -146,8 +148,9 @@
             that.filename = filename;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
-            that.groups = groups;
+            that.usedLabels = usedLabels;
             that.materialUsages = materialUsages;
+            that.groups = groups;
 
             // Update filename
             that.$fileTabs.empty();
@@ -179,6 +182,7 @@
                 warnings: warnings,
                 tips: tips,
                 isMetric: isMetric,
+                usedLabels: usedLabels,
                 groups: groups
             }));
 
@@ -208,16 +212,21 @@
 
             // Bind inputs
             $('#ladb_cutlist_labels_filter', that.$page)
-                .tokenfield(TOKENFIELD_OPTIONS)
+                .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    autocomplete: {
+                        source: that.usedLabels,
+                        delay: 100
+                    }
+                }))
                 .on('tokenfield:createdtoken tokenfield:editedtoken tokenfield:removedtoken', function() {
-                    that.generateFilters.labels_filter = $(this).tokenfield('getTokensList', ';');
+                    that.generateFilters.labels_filter = $(this).tokenfield('getTokensList', ';').split(';');
                     that.$btnGenerate.click();
                 })
             ;
 
             // Bind buttons
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function() {
-                that.generateFilters.labels_filter = '';
+                that.generateFilters.labels_filter = [];
                 that.$btnGenerate.click();
                 $(this).blur();
             });
@@ -300,14 +309,12 @@
             });
             $('a.ladb-btn-label-filter', that.$page).on('click', function() {
                 var labelFilter = $(this).html();
-                var labelsFilter = that.generateFilters.labels_filter.length === 0 ? [] : that.generateFilters.labels_filter.split(';');
-                var indexOf = labelsFilter.indexOf(labelFilter);
+                var indexOf = that.generateFilters.labels_filter.indexOf(labelFilter);
                 if (indexOf > -1) {
-                    labelsFilter.splice(indexOf, 1);
+                    that.generateFilters.labels_filter.splice(indexOf, 1);
                 } else {
-                    labelsFilter.push(labelFilter);
+                    that.generateFilters.labels_filter.push(labelFilter);
                 }
-                that.generateFilters.labels_filter = labelsFilter.join(';');
                 that.$btnGenerate.click();
                 $(this).blur();
                 return false;
@@ -509,7 +516,7 @@
                     that.editedPart.material_name = $selectMaterialName.val();
                     that.editedPart.cumulable = $selectCumulable.val();
                     that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
-                    that.editedPart.labels = $inputLabels.val();
+                    that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function(response) {
 
@@ -550,7 +557,12 @@
                 $modal.modal('show');
 
                 // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                $inputLabels.tokenfield(TOKENFIELD_OPTIONS);
+                $inputLabels.tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    autocomplete: {
+                        source: that.usedLabels,
+                        delay: 100
+                    }
+                }));
 
                 // Setup popovers
                 that.opencutlist.setupPopovers();

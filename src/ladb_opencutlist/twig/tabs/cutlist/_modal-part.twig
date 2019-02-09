@@ -49,7 +49,7 @@
         <div class="form-group">
             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
             <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels }}">
+                <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';') }}">
             </div>
         </div>
     </div>

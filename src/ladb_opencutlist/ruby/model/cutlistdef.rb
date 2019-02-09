@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   class CutlistDef
 
     attr_accessor :length_unit, :dir, :filename, :page_label, :max_number
-    attr_reader :errors, :warnings, :tips, :material_usages, :group_defs
+    attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :group_defs
 
     def initialize(length_unit, dir, filename, page_label)
       @errors = []
@@ -14,6 +14,7 @@ module Ladb::OpenCutList
       @filename = filename
       @page_label = page_label
       @max_number = nil
+      @used_labels = []
       @material_usages = {}
       @group_defs = {}
     end
@@ -28,6 +29,10 @@ module Ladb::OpenCutList
 
     def add_tip(tip)
       @tips.push(tip)
+    end
+
+    def add_used_labels(used_labels)
+      @used_labels += used_labels + (@used_labels & used_labels)
     end
 
     def set_material_usage(key, material_usage)

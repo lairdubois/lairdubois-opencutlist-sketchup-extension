@@ -331,7 +331,7 @@ module Ladb::OpenCutList
       part_number_with_letters = settings['part_number_with_letters']
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_order_strategy = settings['part_order_strategy']
-      labels_filter = settings['labels_filter'].split(';').map(&:strip)
+      labels_filter = settings['labels_filter']
 
       # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
@@ -396,6 +396,10 @@ module Ladb::OpenCutList
         definition = entity.definition
         definition_attributes = _get_definition_attributes(definition)
 
+        # Populate used labels
+        cutlist_def.add_used_labels(definition_attributes.labels)
+
+        # Labels filter
         if !labels_filter.empty? and !definition_attributes.has_labels(labels_filter)
           next
         end
@@ -611,6 +615,7 @@ module Ladb::OpenCutList
           :dir => cutlist_def.dir,
           :filename => cutlist_def.filename,
           :page_label => cutlist_def.page_label,
+          :used_labels => cutlist_def.used_labels,
           :material_usages => [],
           :groups => []
       }
@@ -948,7 +953,7 @@ module Ladb::OpenCutList
       material_name = part_data['material_name']
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
-      labels = part_data['labels']
+      labels = DefinitionAttributes.valid_labels(part_data['labels'])
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions
