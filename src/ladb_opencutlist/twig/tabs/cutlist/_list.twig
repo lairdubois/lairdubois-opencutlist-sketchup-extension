@@ -8,7 +8,7 @@
 {% include 'core/_alert-tips.twig' %}
 
 {% if usedLabels is not empty %}
-    <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids or filteredInstanceCount == 0 %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
+    <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids or generateFilters.labels_filter is empty %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
         <thead>
         <tr>
             <td>
