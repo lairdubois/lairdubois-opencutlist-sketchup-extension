@@ -139,6 +139,8 @@
             var isMetric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
+            var instanceCount = response.instance_count;
+            var filteredInstanceCount = response.filtered_instance_count;
             var usedLabels = response.used_labels;
             var materialUsages = response.material_usages;
             var groups = response.groups;
@@ -182,6 +184,8 @@
                 warnings: warnings,
                 tips: tips,
                 isMetric: isMetric,
+                instanceCount: instanceCount,
+                filteredInstanceCount: filteredInstanceCount,
                 usedLabels: usedLabels,
                 groups: groups
             }));
@@ -197,7 +201,7 @@
                 }
                 var exists = false;
                 for (var j = 0; j < groups.length; j++) {
-                    if (that.uiOptions.hidden_group_ids[i] == groups[j].id) {
+                    if (that.uiOptions.hidden_group_ids[i] === groups[j].id) {
                         exists = true;
                         break;
                     }
@@ -216,18 +220,45 @@
                     autocomplete: {
                         source: that.usedLabels,
                         delay: 100
-                    }
+                    },
+                    showAutocompleteOnFocus: true
                 }))
-                .on('tokenfield:createdtoken tokenfield:editedtoken tokenfield:removedtoken', function() {
-                    that.generateFilters.labels_filter = $(this).tokenfield('getTokensList', ';').split(';');
-                    that.$btnGenerate.click();
+                .on('tokenfield:createtoken', function(e) {
+
+                    // Unique token
+                    var existingTokens = $(this).tokenfield('getTokens');
+                    $.each(existingTokens, function(index, token) {
+                        if (token.value === e.attrs.value) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    // Available token only
+                    var available = false;
+                    $.each(that.usedLabels, function(index, token) {
+                        if (token === e.attrs.value) {
+                            available = true;
+                            return false;
+                        }
+                    });
+                    if (!available) {
+                        e.preventDefault();
+                    }
+
+                })
+                .on('tokenfield:createdtoken tokenfield:removedtoken', function(e) {
+                    var tokenList = $(this).tokenfield('getTokensList');
+                    that.generateFilters.labels_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                    that.generateCutlist(function() {
+                        $('#ladb_cutlist_labels_filter', that.$page).focus();
+                    });
                 })
             ;
 
             // Bind buttons
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function() {
                 that.generateFilters.labels_filter = [];
-                that.$btnGenerate.click();
+                that.generateCutlist();
                 $(this).blur();
             });
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function() {
@@ -557,12 +588,21 @@
                 $modal.modal('show');
 
                 // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                $inputLabels.tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                    autocomplete: {
-                        source: that.usedLabels,
-                        delay: 100
-                    }
-                }));
+                $inputLabels
+                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                        autocomplete: {
+                            source: that.usedLabels,
+                            delay: 100
+                        }
+                    }))
+                    .on('tokenfield:createtoken', function (e) {
+                        var existingTokens = $(this).tokenfield('getTokens');
+                        $.each(existingTokens, function (index, token) {
+                            if (token.value === e.attrs.value) {
+                                e.preventDefault();
+                            }
+                        });
+                    });
 
                 // Setup popovers
                 that.opencutlist.setupPopovers();

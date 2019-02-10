@@ -8,7 +8,7 @@
 {% include 'core/_alert-tips.twig' %}
 
 {% if usedLabels is not empty %}
-    <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
+    <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids or filteredInstanceCount == 0 %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
         <thead>
         <tr>
             <td>
@@ -27,14 +27,28 @@
                         <i class="ladb-opencutlist-icon-label" style="font-size: 150%; line-height: 32px;"></i>
                     </div>
                     <div class="media-body">
-                        <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';') }}" placeholder="Etiquettes à filtrer">
+                        <div class="no-print">
+                            <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';') }}" placeholder="{{ 'tab.cutlist.list.labels_filter'|i18next() }}">
+                        </div>
+                        <div class="no-screen">
+                            <ul class="ladb-cutlist-labels-filters-printable">
+                                {% for label in generateFilters.labels_filter %}
+                                    <li>{{ label }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
-                    <div class="media-right">
+                    <div class="media-right no-print">
                         <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear">{{ 'default.clear'|i18next() }}</button>
                     </div>
                 </div>
             </td>
         </tr>
+        {% if filteredInstanceCount > 0 %}
+            <tr class="alert alert-{% if instanceCount - filteredInstanceCount == 0 %}danger{% else %}warning{% endif %} no-print">
+                <td><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.list.filters_warning'~(instanceCount - filteredInstanceCount == 0 ? '_0' : ''))|i18next({ 'count':(instanceCount - filteredInstanceCount), 'total':instanceCount }) }}</td>
+            </tr>
+        {% endif %}
         </tbody>
     </table>
 {% endif %}
@@ -195,7 +209,8 @@
                     {% if not uiOptions.hide_labels and part.labels is not empty %}
                         <ul class="ladb-cutlist-part-labels">
                             {% for label in part.labels %}
-                                <li><a href="#" class="ladb-btn-label-filter{% if label in generateFilters.labels_filter %} ladb-active{% endif %}">{{ label }}</a></li>
+                                {% set active = label in generateFilters.labels_filter %}
+                                <li><a href="#" class="ladb-btn-label-filter{% if active %} ladb-active{% endif %}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(active ? 'remove' : 'add')~'_label_filter')|i18next({ 'label':label }) }}">{{ label }}</a></li>
                             {% endfor %}
                         </ul>
                     {% endif %}

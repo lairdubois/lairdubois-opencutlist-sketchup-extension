@@ -360,7 +360,7 @@ module Ladb::OpenCutList
       page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
       # Create cut list def
-      cutlist_def = CutlistDef.new(length_unit, dir, filename, page_label)
+      cutlist_def = CutlistDef.new(length_unit, dir, filename, page_label, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0
@@ -401,6 +401,7 @@ module Ladb::OpenCutList
 
         # Labels filter
         if !labels_filter.empty? and !definition_attributes.has_labels(labels_filter)
+          cutlist_def.filtered_instance_count += 1
           next
         end
 
@@ -597,7 +598,7 @@ module Ladb::OpenCutList
             bar_material_count += material_usage.use_count
           end
         }
-        if hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
+        if cutlist_def.instance_count - cutlist_def.filtered_instance_count > 0 and hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
           cutlist_def.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
           cutlist_def.add_tip("tab.cutlist.tip.no_typed_materials")
         end
@@ -615,6 +616,8 @@ module Ladb::OpenCutList
           :dir => cutlist_def.dir,
           :filename => cutlist_def.filename,
           :page_label => cutlist_def.page_label,
+          :instance_count => cutlist_def.instance_count,
+          :filtered_instance_count => cutlist_def.filtered_instance_count,
           :used_labels => cutlist_def.used_labels,
           :material_usages => [],
           :groups => []

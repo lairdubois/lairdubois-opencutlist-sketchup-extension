@@ -68,6 +68,8 @@ tab:
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Attention, cette pièce est redimensionnée par rapport à sa définition de composant
+      add_label_filter: Filtrer sur '{{ label }}'
+      remove_label_filter: Ne plus filtrer sur '{{ label }}'
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -140,6 +142,10 @@ tab:
       reset: Restaurer aux valeurs par défaut
     list:
       filters: Filtres
+      filters_warning_0: "Ce filtrage masque toutes les pièces !"
+      filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
+      filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
+      labels_filter: "Etiquettes à filtrer"
       summary: Récapitulatif
       type: Type
       material_thickness: Matière / Épaisseur

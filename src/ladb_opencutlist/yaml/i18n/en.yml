@@ -68,6 +68,8 @@ tab:
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
       resized: Warning, this piece was resized with respect to its component definition
+      add_label_filter: Filtrer sur '{{ label }}'
+      remove_label_filter: Ne plus filtrer sur '{{ label }}'
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -140,6 +142,10 @@ tab:
       reset: Restore Default Values
     list:
       filters: Filtres
+      filters_warning_0: "Ce filtrage masque toutes les pièces !"
+      filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
+      filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
+      labels_filter: "Etiquettes à filtrer"
       summary: Summary
       type: Type
       material_thickness: Material / Thickness

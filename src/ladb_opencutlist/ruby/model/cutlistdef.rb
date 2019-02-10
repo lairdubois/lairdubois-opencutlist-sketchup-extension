@@ -2,10 +2,10 @@ module Ladb::OpenCutList
 
   class CutlistDef
 
-    attr_accessor :length_unit, :dir, :filename, :page_label, :max_number
+    attr_accessor :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :filtered_instance_count
     attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :group_defs
 
-    def initialize(length_unit, dir, filename, page_label)
+    def initialize(length_unit, dir, filename, page_label, instance_count)
       @errors = []
       @warnings = []
       @tips = []
@@ -13,6 +13,8 @@ module Ladb::OpenCutList
       @dir = dir
       @filename = filename
       @page_label = page_label
+      @instance_count = instance_count
+      @filtered_instance_count = 0
       @max_number = nil
       @used_labels = []
       @material_usages = {}
