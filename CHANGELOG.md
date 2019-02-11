@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.6.0 (2019-02-11)
+
+  * Added Cutlist part's labels
+  * Added "*Highlight parts in model*" option en entire cutlist and groups
+
 * 1.5.3 (2018-12-10)
 
   * Cutlist export now includes part numbers
