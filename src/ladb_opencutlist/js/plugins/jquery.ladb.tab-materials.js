@@ -425,7 +425,7 @@
                 this.blur();
             });
             $btnExportToSkm.on('click', function () {
-                that.exportToSkm(that.editedMaterial);
+                that.exportToSkm(that.editedMaterial, true);
                 this.blur();
             });
             $btnUpdate.on('click', function () {

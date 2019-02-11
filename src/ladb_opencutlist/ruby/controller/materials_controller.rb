@@ -259,6 +259,9 @@ module Ladb::OpenCutList
         path = UI.savepanel(Plugin.instance.get_i18n_string('tab.materials.export_to_skm.title'), dir, display_name + '.skm')
         if path
           begin
+            unless File.directory?(dir)
+              FileUtils.mkdir_p(dir)
+            end
             material.save_as(path)
             response[:export_path] = path
           rescue

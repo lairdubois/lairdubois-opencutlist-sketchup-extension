@@ -59,11 +59,11 @@ module Ladb::OpenCutList
       end
 
       Plugin.instance.register_command("cutlist_highlight_all_parts") do
-        highlight_parts_command(nil, nil)
+        highlight_parts_command()
       end
 
       Plugin.instance.register_command("cutlist_highlight_group_parts") do |group_id|
-        highlight_parts_command(group_id, nil)
+        highlight_parts_command(group_id)
       end
 
       Plugin.instance.register_command("cutlist_highlight_part") do |part_id|
@@ -881,7 +881,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def highlight_parts_command(group_id, part_id)
+    def highlight_parts_command(group_id = nil, part_id = nil)
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
@@ -997,7 +997,7 @@ module Ladb::OpenCutList
       material_name = part_data['material_name']
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
-      labels = DefinitionAttributes.valid_labels(part_data['labels'])
+      labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions

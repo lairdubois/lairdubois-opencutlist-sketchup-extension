@@ -105,8 +105,8 @@
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
-        this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
+        this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
@@ -170,8 +170,8 @@
             // Update buttons and items state
             that.$btnPrint.prop('disabled', groups.length == 0);
             that.$btnExport.prop('disabled', groups.length == 0);
-            that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemHighlightAllParts.closest('li').toggleClass('disabled', groups.length == 0);
+            that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersSave.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersReset.closest('li').toggleClass('disabled', groups.length == 0);
 
@@ -354,7 +354,7 @@
                 } else {
                     that.generateFilters.labels_filter.push(labelFilter);
                 }
-                that.$btnGenerate.click();
+                that.generateCutlist();
                 $(this).blur();
                 return false;
             });
@@ -474,7 +474,7 @@
             if (response['errors']) {
                 var errMessages = [];
                 for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
                 }
                 that.opencutlist.notify(errMessages.join('\n'), 'error');
             } else {
@@ -493,7 +493,7 @@
             if (response['errors']) {
                 var errMessages = [];
                 for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
                 }
                 that.opencutlist.notify(errMessages.join('\n'), 'error');
             } else {
@@ -512,7 +512,7 @@
             if (response['errors']) {
                 var errMessages = [];
                 for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
                 }
                 that.opencutlist.notify(errMessages.join('\n'), 'error');
             } else {
@@ -1371,20 +1371,28 @@
             that.exportCutlist();
             this.blur();
         });
-        this.$itemShowAllGroups.on('click', function () {
-            that.showAllGroups();
+        this.$itemHighlightAllParts.on('click', function () {
+            if (!$(this).closest('li').hasClass('disabled')) {
+                that.highlightAllParts();
+            }
             this.blur();
         });
-        this.$itemHighlightAllParts.on('click', function () {
-            that.highlightAllParts();
+        this.$itemShowAllGroups.on('click', function () {
+            if (!$(this).closest('li').hasClass('disabled')) {
+                that.showAllGroups();
+            }
             this.blur();
         });
         this.$itemNumbersSave.on('click', function () {
-            that.numbersSave();
+            if (!$(this).closest('li').hasClass('disabled')) {
+                that.numbersSave();
+            }
             this.blur();
         });
         this.$itemNumbersReset.on('click', function () {
-            that.numbersReset();
+            if (!$(this).closest('li').hasClass('disabled')) {
+                that.numbersReset();
+            }
             this.blur();
         });
         this.$itemOptions.on('click', function () {
