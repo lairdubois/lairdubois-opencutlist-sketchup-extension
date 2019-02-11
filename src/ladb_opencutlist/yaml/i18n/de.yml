@@ -54,7 +54,7 @@ tab:
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
-    highlight_error: Teil '{{ name }}' wurde im Modell nicht gefunden
+    highlight_parts: Voir les pièces dans le modèle
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -75,6 +75,7 @@ tab:
       hide_all_other_groups: Alle anderen Gruppen ausblenden
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
@@ -98,6 +99,10 @@ tab:
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
       labels: Etiketten
+      labels_help: |
+        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile

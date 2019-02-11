@@ -58,12 +58,20 @@ module Ladb::OpenCutList
         numbers_command(settings, true)
       end
 
-      Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
-        part_get_thumbnail_command(part_data)
+      Plugin.instance.register_command("cutlist_highlight_all_parts") do
+        highlight_parts_command(nil, nil)
       end
 
-      Plugin.instance.register_command("cutlist_part_highlight") do |part_data|
-        part_highlight_command(part_data)
+      Plugin.instance.register_command("cutlist_highlight_group_parts") do |group_id|
+        highlight_parts_command(group_id, nil)
+      end
+
+      Plugin.instance.register_command("cutlist_highlight_part") do |part_id|
+        highlight_parts_command(nil, part_id)
+      end
+
+      Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
+        part_get_thumbnail_command(part_data)
       end
 
       Plugin.instance.register_command("cutlist_part_update") do |part_data|
@@ -401,7 +409,7 @@ module Ladb::OpenCutList
 
         # Labels filter
         if !labels_filter.empty? and !definition_attributes.has_labels(labels_filter)
-          cutlist_def.filtered_instance_count += 1
+          cutlist_def.ignored_instance_count += 1
           next
         end
 
@@ -598,7 +606,7 @@ module Ladb::OpenCutList
             bar_material_count += material_usage.use_count
           end
         }
-        if cutlist_def.instance_count - cutlist_def.filtered_instance_count > 0 and hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
+        if cutlist_def.instance_count - cutlist_def.ignored_instance_count > 0 and hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
           cutlist_def.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
           cutlist_def.add_tip("tab.cutlist.tip.no_typed_materials")
         end
@@ -617,8 +625,8 @@ module Ladb::OpenCutList
           :filename => cutlist_def.filename,
           :page_label => cutlist_def.page_label,
           :instance_count => cutlist_def.instance_count,
-          :filtered_instance_count => cutlist_def.filtered_instance_count,
-          :used_labels => cutlist_def.used_labels,
+          :ignored_instance_count => cutlist_def.ignored_instance_count,
+          :used_labels => cutlist_def.used_labels.sort,
           :material_usages => [],
           :groups => []
       }
@@ -873,6 +881,78 @@ module Ladb::OpenCutList
       end
     end
 
+    def highlight_parts_command(group_id, part_id)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
+      # Retrieve cutlist
+      return { :errors => [ 'default.error' ] } unless @cutlist
+
+      # Populate entity infos
+      instance_infos = []
+      displayed_part = nil
+      displayed_group = nil
+      @cutlist[:groups].each { |group|
+        if group_id.nil? or group[:id] == group_id
+          group = group
+          group[:parts].each { |part|
+            if part_id.nil? or part[:id] == part_id
+              part[:entity_serialized_paths].each { |entity_serialized_path|
+                instance_info = @instance_infos_cache[entity_serialized_path]
+                unless instance_info.nil?
+                  instance_infos.push(instance_info)
+                end
+              }
+              if part[:id] == part_id
+                displayed_part = part
+                break
+              end
+            end
+          }
+          if group[:id] == group_id
+            displayed_group = group
+            break
+          end
+        end
+      }
+
+      if instance_infos.empty?
+
+        # Retrieve cutlist
+        return { :errors => [ 'default.error' ] }
+
+      end
+
+      # Compute text infos
+      if part_id
+
+        text_line_1 = '[' + displayed_part[:number] + '] ' + displayed_part[:name]
+        text_line_2 = displayed_part[:labels].join(' | ')
+        text_line_3 = displayed_part[:length].to_s + ' x ' + displayed_part[:width].to_s + ' x ' + displayed_part[:thickness].to_s +
+            ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
+            ' | ' + (displayed_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_part[:material_name])
+
+      elsif group_id
+
+        text_line_1 = (displayed_group[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_group[:material_name])
+        text_line_2 = ''
+        text_line_3 = instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single')
+
+      else
+
+        text_line_1 = ''
+        text_line_2 = ''
+        text_line_3 = instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single')
+
+      end
+
+      # Create and activate highlight part tool
+      highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, text_line_3, instance_infos)
+      model.select_tool(highlight_tool)
+
+    end
+
     def part_get_thumbnail_command(part_data)
 
       response = {
@@ -904,45 +984,6 @@ module Ladb::OpenCutList
       end
 
       response
-    end
-
-    def part_highlight_command(part_data)
-
-      model = Sketchup.active_model
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
-
-      # Extract parameters
-      name = part_data['name']
-      number = part_data['number']
-      length = part_data['length']
-      width = part_data['width']
-      thickness = part_data['thickness']
-      material_name = part_data['material_name']
-      entity_serialized_paths = part_data['entity_serialized_paths']
-
-      # Populate entity infos
-      instance_infos = []
-      entity_serialized_paths.each { |entity_serialized_path|
-        instance_info = @instance_infos_cache[entity_serialized_path]
-        unless instance_info.nil?
-          instance_infos.push(instance_info)
-        end
-      }
-
-      unless instance_infos.empty?
-
-        # Compute text infos
-        text_line_1 = '[' + number + '] ' + name
-        text_line_2 = length.to_s + ' x ' + width.to_s + ' x ' + thickness.to_s +
-            ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
-            ' | ' + (material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : material_name)
-
-        # Create and activate highlight part tool
-        highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, instance_infos)
-        model.select_tool(highlight_tool)
-
-      end
-
     end
 
     def part_update_command(part_data)

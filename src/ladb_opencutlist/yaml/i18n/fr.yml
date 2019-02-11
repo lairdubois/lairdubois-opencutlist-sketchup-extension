@@ -54,7 +54,7 @@ tab:
     not_available_thickness: Épaisseur non disponible
     not_available_section: Section non disponible
     highlight_part: Voir la pièce dans le modèle
-    highlight_error: Pièce '{{ name }}' est introuvable dans le modèle
+    highlight_parts: Voir les pièces dans le modèle
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
@@ -75,6 +75,7 @@ tab:
       hide_all_other_groups: Masquer tous les autres groupes
       numbers_save: Mémoriser les numéros de pièce
       numbers_reset: Réinitialiser les numéros de pièce
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       group_numbers_save: Mémoriser les numéros de pièce du groupe
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
       group_cuttingdiagram: Calepinage
@@ -98,6 +99,10 @@ tab:
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       labels: Etiquettes
+      labels_help: |
+        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces

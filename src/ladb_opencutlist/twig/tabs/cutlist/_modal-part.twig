@@ -5,7 +5,7 @@
 
 {% block bodyInner %}
     <div class="ladb-part-thumbnail">
-        <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="256" height="256">
+        <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
     </div>
     <div class="form form-horizontal">
         <div class="form-group">
@@ -36,10 +36,10 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>
             <div class="col-xs-7">
                 <div class="checkbox">
-                    <div class="ladb-minitools pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label>
                         <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
                     </label>
@@ -47,6 +47,7 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
             <div class="col-xs-7">
                 <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';') }}">

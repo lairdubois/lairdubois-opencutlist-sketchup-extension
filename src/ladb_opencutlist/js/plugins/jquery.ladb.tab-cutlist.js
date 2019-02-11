@@ -106,6 +106,7 @@
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
+        this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
@@ -140,7 +141,7 @@
             var filename = response.filename;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
-            var filteredInstanceCount = response.filtered_instance_count;
+            var ignoredInstanceCount = response.ignored_instance_count;
             var usedLabels = response.used_labels;
             var materialUsages = response.material_usages;
             var groups = response.groups;
@@ -170,6 +171,7 @@
             that.$btnPrint.prop('disabled', groups.length == 0);
             that.$btnExport.prop('disabled', groups.length == 0);
             that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
+            that.$itemHighlightAllParts.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersSave.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersReset.closest('li').toggleClass('disabled', groups.length == 0);
 
@@ -185,7 +187,7 @@
                 tips: tips,
                 isMetric: isMetric,
                 instanceCount: instanceCount,
-                filteredInstanceCount: filteredInstanceCount,
+                ignoredInstanceCount: ignoredInstanceCount,
                 usedLabels: usedLabels,
                 groups: groups
             }));
@@ -221,7 +223,7 @@
                         source: that.usedLabels,
                         delay: 100
                     },
-                    showAutocompleteOnFocus: true
+                    showAutocompleteOnFocus: false
                 }))
                 .on('tokenfield:createtoken', function(e) {
 
@@ -250,7 +252,7 @@
                     var tokenList = $(this).tokenfield('getTokensList');
                     that.generateFilters.labels_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                     that.generateCutlist(function() {
-                        $('#ladb_cutlist_labels_filter', that.$page).focus();
+                        $('#ladb_cutlist_labels_filter-tokenfield', that.$page).focus();
                     });
                 })
             ;
@@ -293,6 +295,12 @@
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.editGroup(groupId);
+                $(this).blur();
+            });
+            $('a.ladb-item-highlight-group-parts', that.$page).on('click', function() {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.highlightGroupParts(groupId);
                 $(this).blur();
             });
             $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function() {
@@ -456,6 +464,65 @@
 
     };
 
+    // Highlight /////
+
+    LadbTabCutlist.prototype.highlightAllParts = function () {
+        var that = this;
+
+        rubyCallCommand('cutlist_highlight_all_parts', null, function (response) {
+
+            if (response['errors']) {
+                var errMessages = [];
+                for (var i = 0; i < response['errors'].length; i++) {
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                }
+                that.opencutlist.notify(errMessages.join('\n'), 'error');
+            } else {
+                that.opencutlist.minimize();
+            }
+
+        });
+
+    };
+
+    LadbTabCutlist.prototype.highlightGroupParts = function (group_id) {
+        var that = this;
+
+        rubyCallCommand('cutlist_highlight_group_parts', group_id, function (response) {
+
+            if (response['errors']) {
+                var errMessages = [];
+                for (var i = 0; i < response['errors'].length; i++) {
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                }
+                that.opencutlist.notify(errMessages.join('\n'), 'error');
+            } else {
+                that.opencutlist.minimize();
+            }
+
+        });
+
+    };
+
+    LadbTabCutlist.prototype.highlightPart = function (part_id) {
+        var that = this;
+
+        rubyCallCommand('cutlist_highlight_part', part_id, function (response) {
+
+            if (response['errors']) {
+                var errMessages = [];
+                for (var i = 0; i < response['errors'].length; i++) {
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + response['errors'])
+                }
+                that.opencutlist.notify(errMessages.join('\n'), 'error');
+            } else {
+                that.opencutlist.minimize();
+            }
+
+        });
+
+    };
+
     // Parts /////
 
     LadbTabCutlist.prototype.findPartById = function (id) {
@@ -463,7 +530,7 @@
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
                 var part = group.parts[j];
-                if (part.id == id) {
+                if (part.id === id) {
                     return part;
                 }
             }
@@ -471,28 +538,10 @@
         return null;
     };
 
-    LadbTabCutlist.prototype.highlightPart = function (id) {
-        var that = this;
-
-        var part = this.findPartById(id);
-        if (part) {
-
-            rubyCallCommand('cutlist_part_highlight', part, function (response) {
-
-                if (response['errors']) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t('tab.cutlist.highlight_error', {'name': part.name}), 'error');
-                } else {
-                    that.opencutlist.minimize();
-                }
-
-            });
-
-        }
-
-    };
-
     LadbTabCutlist.prototype.editPart = function (id) {
         var that = this;
+
+        console.log('editPart', id);
 
         var part = this.findPartById(id);
         if (part) {
@@ -617,7 +666,7 @@
     LadbTabCutlist.prototype.findGroupById = function (id) {
         for (var i = 0 ; i < this.groups.length; i++) {
             var group = this.groups[i];
-            if (group.id == id) {
+            if (group.id === id) {
                 return group;
             }
         }
@@ -691,7 +740,7 @@
         $i.removeClass('ladb-opencutlist-icon-eye-open');
 
         var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
-        if (idx != -1) {
+        if (idx !== -1) {
             this.uiOptions.hidden_group_ids.splice(idx, 1);
             this.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.uiOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
         }
@@ -708,7 +757,7 @@
         $i.addClass('ladb-opencutlist-icon-eye-open');
 
         var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
-        if (idx == -1) {
+        if (idx === -1) {
             this.uiOptions.hidden_group_ids.push(groupId);
             this.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.uiOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
         }
@@ -1103,7 +1152,7 @@
                 };
 
                 // Callback
-                if (callback && typeof(callback) == 'function') {
+                if (callback && typeof(callback) === 'function') {
                     callback();
                 }
 
@@ -1324,6 +1373,10 @@
         });
         this.$itemShowAllGroups.on('click', function () {
             that.showAllGroups();
+            this.blur();
+        });
+        this.$itemHighlightAllParts.on('click', function () {
+            that.highlightAllParts();
             this.blur();
         });
         this.$itemNumbersSave.on('click', function () {

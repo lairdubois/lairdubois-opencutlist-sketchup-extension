@@ -54,7 +54,7 @@ tab:
     not_available_thickness: Thickness Not Available
     not_available_section: Cross Section Not Available
     highlight_part: Highlight the part in the model
-    highlight_error: Part '{{ name }}' was not found in the model
+    highlight_parts: Voir les pièces dans le modèle
     tooltip:
       show_hide_block: Show / Hide
       scroll_to_block: Scroll to group
@@ -75,6 +75,7 @@ tab:
       hide_all_other_groups: Hide all other groups
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
@@ -98,6 +99,10 @@ tab:
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
       labels: Labels
+      labels_help: |
+        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts

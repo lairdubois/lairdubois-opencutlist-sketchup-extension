@@ -156,13 +156,15 @@
     };
 
     LadbDialog.prototype.selectTab = function (tabName, callback) {
-        var $tab = null;
+
+        console.log(tabName, callback);
+
+        var $tab = this.tabs[tabName];
         var $freshTab = false;
         if (tabName != this.activeTabName) {
             if (this.activeTabName) {
                 this.unselectActiveTab();
             }
-            $tab = this.tabs[tabName];
             if ($tab) {
 
                 $freshTab = false;
@@ -227,6 +229,8 @@
     };
 
     LadbDialog.prototype.executeCommandOnTab = function(tabName, command, parameters, callback) {
+
+        console.log(tabName, command, parameters, callback);
 
         // Select tab and execute command
         this.selectTab(tabName, function($tab) {

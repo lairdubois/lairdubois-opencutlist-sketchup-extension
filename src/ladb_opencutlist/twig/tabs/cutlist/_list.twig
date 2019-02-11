@@ -7,7 +7,7 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
-{% if usedLabels is not empty %}
+{% if usedLabels is not empty or ignoredInstanceCount > 0 %}
     <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids or generateFilters.labels_filter is empty %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
         <thead>
         <tr>
@@ -44,9 +44,9 @@
                 </div>
             </td>
         </tr>
-        {% if filteredInstanceCount > 0 %}
-            <tr class="alert alert-{% if instanceCount - filteredInstanceCount == 0 %}danger{% else %}warning{% endif %} no-print">
-                <td><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.list.filters_warning'~(instanceCount - filteredInstanceCount == 0 ? '_0' : ''))|i18next({ 'count':(instanceCount - filteredInstanceCount), 'total':instanceCount }) }}</td>
+        {% if ignoredInstanceCount > 0 %}
+            <tr class="alert alert-{% if instanceCount - ignoredInstanceCount == 0 %}danger{% else %}warning{% endif %} no-print">
+                <td><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.list.filters_warning'~(instanceCount - ignoredInstanceCount == 0 ? '_0' : ''))|i18next({ 'count':(instanceCount - ignoredInstanceCount), 'total':instanceCount }) }}</td>
             </tr>
         {% endif %}
         </tbody>
@@ -146,6 +146,8 @@
                         {% if group.material_name is not empty %}
                             <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</a></li>
                         {% endif %}
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li role="separator" class="divider"></li>

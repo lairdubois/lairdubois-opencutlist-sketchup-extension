@@ -9,9 +9,10 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(line_1_text, line_2_text, instance_infos)
+    def initialize(line_1_text, line_2_text, line_3_text, instance_infos)
       @line_1_text = line_1_text
       @line_2_text = line_2_text
+      @line_3_text = line_3_text
       @instance_infos = instance_infos
 
       # Define text options
@@ -22,6 +23,12 @@ module Ladb::OpenCutList
           align: TextAlignCenter
       }
       @line_2_text_options = {
+          color: COLOR_TEXT,
+          font: FONT_TEXT,
+          size: Plugin.instance.current_os == :MAC ? 12 : 8,
+          align: TextAlignCenter
+      }
+      @line_3_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
           size: Plugin.instance.current_os == :MAC ? 15 : 10,
@@ -88,8 +95,15 @@ module Ladb::OpenCutList
       view.drawing_color = COLOR_FACE
       view.draw(GL_TRIANGLES, @face_triangles_cache)
       if Sketchup.version_number >= 16000000
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 60, 0), @line_1_text, @line_1_text_options)
-        view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @line_2_text, @line_2_text_options)
+        unless @line_1_text.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (@line_2_text.empty? ? 0 : 20) - (@line_3_text.empty? ? 0 : 30), 0), @line_1_text, @line_1_text_options)
+        end
+        unless @line_2_text.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (@line_3_text.empty? ? 0 : 30), 0), @line_2_text, @line_2_text_options)
+        end
+        unless @line_3_text.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @line_3_text, @line_3_text_options)
+        end
         @buttons.each { |button|
           button.draw(view)
         }
