@@ -935,7 +935,7 @@ module Ladb::OpenCutList
 
       elsif group_id
 
-        text_line_1 = (displayed_group[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_group[:material_name])
+        text_line_1 = (displayed_group[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_group[:material_name] + (displayed_group[:std_dimension].empty? ? '' : ' / ' + displayed_group[:std_dimension]))
         text_line_2 = ''
         text_line_3 = instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single')
 
