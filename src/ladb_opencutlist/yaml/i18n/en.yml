@@ -5,7 +5,7 @@ default:
   validate: Apply
   open: Open
   close: Close
-  clear: Effacer
+  clear: Clear
   empty_filename: Untitled
   refresh: Refresh
   generate: Generate
@@ -54,7 +54,7 @@ tab:
     not_available_thickness: Thickness Not Available
     not_available_section: Cross Section Not Available
     highlight_part: Highlight the part in the model
-    highlight_parts: Voir les pièces dans le modèle
+    highlight_parts: Highlight the parts in the model
     tooltip:
       show_hide_block: Show / Hide
       scroll_to_block: Scroll to group
@@ -68,8 +68,8 @@ tab:
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
       resized: Warning, this piece was resized with respect to its component definition
-      add_label_filter: Filtrer sur '{{ label }}'
-      remove_label_filter: Ne plus filtrer sur '{{ label }}'
+      add_label_filter: Filtering on '{{ label }}'
+      remove_label_filter: Remove filtering on '{{ label }}'
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -100,9 +100,9 @@ tab:
         - *thickness* is on the <span style='color:blue'>blue</span> axis
       labels: Labels
       labels_help: |
-        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
+        With *Labels* you can add keywords to customize the part definitions.
+        You can add as many labels as you see fit.
+        The visible parts of your custlist can then be filtered according to the label list.
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -126,8 +126,8 @@ tab:
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
       hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood** or **Sheet Good**) will be hidden.
-      hide_labels: Masquer les étiquettes
-      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
+      hide_labels: Hide labels
+      hide_labels_help: If this option is selected, **labels** will be hidden.
       hide_raw_dimensions: Hide rough dimensions
       hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_final_dimensions: Hide finished dimensions
@@ -146,11 +146,11 @@ tab:
       property_count: Quantity
       reset: Restore Default Values
     list:
-      filters: Filtres
-      filters_warning_0: "Ce filtrage masque toutes les pièces !"
-      filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
-      filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
-      labels_filter: "Etiquettes à filtrer"
+      filters: Filters
+      filters_warning_0: "This filter masks all parts!"
+      filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
+      filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
+      labels_filter: "Labels to filter"
       summary: Summary
       type: Type
       material_thickness: Material / Thickness
