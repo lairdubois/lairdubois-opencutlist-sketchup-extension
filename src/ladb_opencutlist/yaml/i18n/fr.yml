@@ -127,7 +127,7 @@ tab:
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
       hide_labels: Masquer les étiquettes
-      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
+      hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Masquer les dimensions brutes
       hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
       hide_final_dimensions: Masquer les dimensions finies

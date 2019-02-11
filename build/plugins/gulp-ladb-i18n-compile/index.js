@@ -62,7 +62,7 @@ module.exports = function (opt) {
             return cb(new PluginError('gulp-ladb-i18n-compile', err));
         }
 
-        file.contents = new Buffer(data);
+        file.contents = Buffer.from(data);
         file.path = file.base + language + '.js';
 
         cb(null, file);

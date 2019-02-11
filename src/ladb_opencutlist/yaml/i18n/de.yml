@@ -5,7 +5,7 @@ default:
   validate: Bestätigen
   open: Öffnen
   close: Schliessen
-  clear: Effacer
+  clear: Löschen
   empty_filename: ohne Titel
   refresh: Aktualisieren
   generate: Generieren
@@ -28,9 +28,9 @@ default:
   part_plural: Teile
 core:
   menu:
-    name: OpenCutList
     submenu: OpenCutList
   toolbar:
+    name: OpenCutList
     command: OpenCutList
   dialog:
     title: OpenCutList by L'Air du Bois
@@ -48,13 +48,13 @@ tab:
     label: Holzliste
     title: Holzliste
     help: |
-      Wählen Sie die Teile ihrer Holzliste in der Szene aus und klicken Sie auf **Generieren**.
+      Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
     material_undefined: Material nicht definiert
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
-    highlight_parts: Voir les pièces dans le modèle
+    highlight_parts: Teile im Modell hervorheben
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -68,8 +68,8 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
-      add_label_filter: Filtrer sur '{{ label }}'
-      remove_label_filter: Ne plus filtrer sur '{{ label }}'
+      add_label_filter: Nach '{{ label }}' auslesen
+      remove_label_filter: Auslese nach '{{ label }}' aufheben
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -100,9 +100,9 @@ tab:
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
       labels: Etiketten
       labels_help: |
-        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
+        Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
+        Sie können beliebig viele Etiketten hinzufügen.
+        Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -126,8 +126,8 @@ tab:
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz** oder **Platten**) nicht angezeigt.
-      hide_labels: Masquer les étiquettes
-      hide_labels_help: Si cette option est activée, les étiquettes placées sur les pièces ne sont pas affichées.
+      hide_labels: Etiketten ausblenden
+      hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
       hide_raw_dimensions: Rohmasse ausblenden
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_final_dimensions: Fertigmasse ausblenden
@@ -146,11 +146,11 @@ tab:
       property_count: Anzahl
       reset: Einstellungen zurücksetzen
     list:
-      filters: Filtres
-      filters_warning_0: "Ce filtrage masque toutes les pièces !"
-      filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
-      filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
-      labels_filter: "Etiquettes à filtrer"
+      filters: Filter
+      filters_warning_0: "Dieser Filter verdeckt alle Teile!"
+      filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
+      filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
+      labels_filter: "Filteretiketten"
       summary: Übersicht
       type: Typ
       material_thickness: Material / Dicke

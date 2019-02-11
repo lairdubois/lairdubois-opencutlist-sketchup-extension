@@ -28,7 +28,7 @@ module.exports = function (templateSource, opt) {
             return cb(new PluginError('gulp-ladb-i18n-dialog-compile', err));
         }
 
-        file.contents = new Buffer(data);
+        file.contents = Buffer.from(data);
         file.path = file.base + 'dialog-' + language + '.html';
 
         cb(null, file);
