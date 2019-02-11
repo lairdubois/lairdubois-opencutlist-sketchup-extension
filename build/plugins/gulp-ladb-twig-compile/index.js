@@ -32,7 +32,7 @@ module.exports = function (opt) {
             return cb(new PluginError('gulp-ladb-twig-compile', err));
         }
 
-        file.contents = new Buffer(data);
+        file.contents = Buffer.from(data);
         file.path = file.path + '.js';
 
         cb(null, file);
