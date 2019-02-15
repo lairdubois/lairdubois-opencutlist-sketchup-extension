@@ -178,7 +178,7 @@
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
-                showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
+                showThicknessSeparators: String(that.generateOptions.part_order_strategy).startsWith('thickness') || String(that.generateOptions.part_order_strategy).startsWith('-thickness'),
                 dimensionColumnOrderStrategy: that.uiOptions.dimension_column_order_strategy.split('>'),
                 uiOptions: that.uiOptions,
                 generateFilters: that.generateFilters,
@@ -198,7 +198,7 @@
             // Cleanup nonexistent hidden group ids
             var hiddenGroupIdsLength = that.uiOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.uiOptions.hidden_group_ids[i].indexOf('summary', that.uiOptions.hidden_group_ids[i].length - 'summary'.length) !== -1) {  // == endsWith(...)
+                if (that.uiOptions.hidden_group_ids[i].endsWith('summary')) {
                     continue;
                 }
                 var exists = false;
@@ -540,8 +540,6 @@
 
     LadbTabCutlist.prototype.editPart = function (id) {
         var that = this;
-
-        console.log('editPart', id);
 
         var part = this.findPartById(id);
         if (part) {

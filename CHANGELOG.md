@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.6.1 (2019-02-15)
+
+  * Revert i18next javascript lib for compatibility issues
+  * Javascripts string polyfills
+  * Fxed some IE 9 issues
+  
 * 1.6.0 (2019-02-11)
 
   * Added Cutlist part's labels
