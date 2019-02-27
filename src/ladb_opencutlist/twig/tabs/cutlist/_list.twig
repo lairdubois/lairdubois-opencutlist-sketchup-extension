@@ -148,6 +148,7 @@
                         {% endif %}
                         <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
+                        <li><a href="#" class="ladb-item-group-numbers"><i class="ladb-opencutlist-icon-label"></i> NUMBERS</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li role="separator" class="divider"></li>
@@ -186,11 +187,18 @@
             {% endif %}
         </tr>
         {% set thickness = 0 %}
+        {% set width = 0 %}
         {% for part in group.parts %}
             {% if showThicknessSeparators and showFinalDimensions and group.material_type == 1 and part.thickness != thickness %}
                 {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
+                </tr>
+            {% endif %}
+            {% if showWidthSeparators and showFinalDimensions and group.material_type == 1 and part.width != width %}
+                {% set width = part.width %}
+                <tr style="background-color: #fcfcfc;">
+                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
                 </tr>
             {% endif %}
             <tr id="ladb_part_{{ part.id }}" class="ladb-cutlist-row">

@@ -164,6 +164,7 @@ tab:
       raw: Rohmass
       final: Fertigmass
       length_short: L
+      width: Breite
       width_short: B
       thickness: Dicke
       thickness_short: D

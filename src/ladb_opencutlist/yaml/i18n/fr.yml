@@ -164,6 +164,7 @@ tab:
       raw: Brute
       final: Finie
       length_short: Long.
+      width: Largeur
       width_short: Larg.
       thickness: Épaisseur
       thickness_short: Ép.

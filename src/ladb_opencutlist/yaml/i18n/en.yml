@@ -164,6 +164,7 @@ tab:
       raw: Rough
       final: Finished
       length_short: L
+      width: Width
       width_short: W
       thickness: Thickness
       thickness_short: T

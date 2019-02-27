@@ -178,7 +178,8 @@
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
-                showThicknessSeparators: String(that.generateOptions.part_order_strategy).startsWith('thickness') || String(that.generateOptions.part_order_strategy).startsWith('-thickness'),
+                showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
+                showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
                 dimensionColumnOrderStrategy: that.uiOptions.dimension_column_order_strategy.split('>'),
                 uiOptions: that.uiOptions,
                 generateFilters: that.generateFilters,
@@ -301,6 +302,12 @@
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.highlightGroupParts(groupId);
+                $(this).blur();
+            });
+            $('a.ladb-item-group-numbers', that.$page).on('click', function() {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.groupNumbers(groupId);
                 $(this).blur();
             });
             $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function() {
@@ -508,6 +515,27 @@
         var that = this;
 
         rubyCallCommand('cutlist_highlight_part', part_id, function (response) {
+
+            if (response['errors']) {
+                var errMessages = [];
+                for (var i = 0; i < response['errors'].length; i++) {
+                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
+                }
+                that.opencutlist.notify(errMessages.join('\n'), 'error');
+            } else {
+                that.opencutlist.minimize();
+            }
+
+        });
+
+    };
+
+    // Numbers /////
+
+    LadbTabCutlist.prototype.groupNumbers = function (group_id) {
+        var that = this;
+
+        rubyCallCommand('cutlist_group_model_numbers', group_id, function (response) {
 
             if (response['errors']) {
                 var errMessages = [];
