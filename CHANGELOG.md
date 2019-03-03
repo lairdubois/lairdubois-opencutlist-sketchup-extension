@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.6.2
+
+  * Add raw volume in all type of material in cutlist summary
+  
 * 1.6.1 (2019-02-15)
 
   * Revert i18next javascript lib for compatibility issues

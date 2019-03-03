@@ -581,9 +581,7 @@ module Ladb::OpenCutList
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             group_def.raw_area += (cutlist_def.is_metric? ? part_def.raw_size.area_m2 : part_def.raw_size.area)
           end
-          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD
-            group_def.raw_volume += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume)
-          end
+          group_def.raw_volume += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume)
         end
         group_def.part_count += 1
 
