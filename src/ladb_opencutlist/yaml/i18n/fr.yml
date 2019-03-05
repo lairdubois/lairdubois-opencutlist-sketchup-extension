@@ -183,7 +183,7 @@ tab:
       name: Désignation
       raw_length: Longueur brute
       raw_width: Largeur brute
-      raw_thickness: paisseur brute
+      raw_thickness: Épaisseur brute
       length: Longueur finie
       width: Largeur finie
       thickness: Épaisseur finie

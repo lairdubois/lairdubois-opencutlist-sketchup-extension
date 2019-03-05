@@ -17,7 +17,7 @@ default:
   help: Hilfe
   error: Verflixt!
   warning: Achtung
-  tip: Tipp
+  tip: Hinweis
   date_format: Y-m-d G:i
   unit_0: Zoll
   unit_1: Fuss
@@ -65,7 +65,7 @@ tab:
       material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
       orientation_locked_on_axis: Die Orientierung des Teils ist an sein Koordinatensystem gebunden
       number_saved: Die Nummer dieses Teils wird gespeichert
-      number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden weil sie schon zugewiesen ist
+      number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
       add_label_filter: Nach '{{ label }}' auslesen
@@ -263,7 +263,7 @@ tab:
       warning:
         raw_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
-          *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längezumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
+          *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
