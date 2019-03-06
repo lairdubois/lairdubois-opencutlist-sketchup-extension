@@ -11,14 +11,14 @@ in 1.x and 0.x versions.
   
 * 1.6.1 (2019-02-15)
 
-  * Revert i18next javascript lib for compatibility issues
+  * Reverted i18next javascript lib for compatibility issues
   * Javascripts string polyfills
-  * Fxed some IE 9 issues
-  
+  * Fixed some IE 9 issues
+
 * 1.6.0 (2019-02-11)
 
   * Added Cutlist part's labels
-  * Added "*Highlight parts in model*" option en entire cutlist and groups
+  * Added "*Highlight parts in model*" option on entire cutlist and groups
 
 * 1.5.3 (2018-12-10)
 
@@ -30,13 +30,13 @@ in 1.x and 0.x versions.
 
 * 1.5.1 (2018-07-18)
 
-  * Fix settings storage
-  * Change startup file structure
+  * Fixed settings storage
+  * Changed startup file structure
   * Hide cutlist group's raw dimensions if no length or width increase is defined
-  * Added persistant material UUID mecanism to improve options storage
+  * Added persistent material UUID mechanism to improve options storage
   * Added settings tab to manage dialog size and position
   * Added cutting diagram options defaults storage
-  
+
 * 1.5.0 (2018-06-25)
 
   * Added bin packing interface for material of type *Sheet good*
