@@ -143,12 +143,12 @@ module Ladb::OpenCutList
 
     def _compute_children_faces_tirangles(view, entities, transformation = nil)
       entities.each { |entity|
-        if entity.is_a? Sketchup::Face
+        if entity.is_a? Sketchup::Face and entity.visible?
           _compute_face_triangles(view, entity, transformation)
-        elsif entity.is_a? Sketchup::Group
+        elsif entity.is_a? Sketchup::Group and entity.visible?
           _compute_children_faces_tirangles(view, entity.entities, transformation ? transformation * entity.transformation : entity.transformation)
-        elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-          _compute_children_faces_tirangles(view, entity.definition, transformation ? transformation * entity.transformation : entity.transformation)
+        elsif entity.is_a? Sketchup::ComponentInstance and entity.visible? and entity.definition.behavior.cuts_opening?
+          _compute_children_faces_tirangles(view, entity.definition.entities, transformation ? transformation * entity.transformation : entity.transformation)
         end
       }
     end
