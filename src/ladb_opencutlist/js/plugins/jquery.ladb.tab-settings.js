@@ -1,6 +1,13 @@
 +function ($) {
     'use strict';
 
+    var SELECT_PICKER_OPTIONS = {
+        size: 10,
+        iconBase: 'ladb-opencutlist-icon',
+        tickIcon: 'ladb-opencutlist-icon-tick',
+        showTick: true
+    };
+
     // CLASS DEFINITION
     // ======================
 
@@ -9,6 +16,7 @@
 
         this.$btnReset = $('#ladb_btn_reset', this.$element);
 
+        this.$selectLanguage = $('#ladb_select_language', this.$element);
         this.$btnWidthUp = $('#ladb_btn_width_up', this.$element);
         this.$btnWidthDown = $('#ladb_btn_width_down', this.$element);
         this.$btnHeightUp = $('#ladb_btn_height_up', this.$element);
@@ -23,6 +31,10 @@
 
     LadbTabSettings.DEFAULTS = {};
 
+    LadbTabSettings.prototype.showReloadDialogWarning = function () {
+        $('#ladb_reload_dialog_warning', this.$element).show();
+    };
+
     LadbTabSettings.prototype.bind = function () {
         var that = this;
 
@@ -36,6 +48,7 @@
 
             // Send to ruby
             rubyCallCommand('settings_dialog_settings', {
+                language: that.opencutlist.capabilities.language,
                 width: that.opencutlist.capabilities.dialogMaximizedWidth,
                 height: that.opencutlist.capabilities.dialogMaximizedHeight,
                 left: that.opencutlist.capabilities.dialogLeft,
@@ -44,13 +57,23 @@
 
         };
 
+        this.$selectLanguage.val(this.opencutlist.capabilities.language);
+        this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
+
+        this.$selectLanguage.on('change', function() {
+            that.opencutlist.capabilities.language = that.$selectLanguage.val();
+            fnUpdate();
+            that.showReloadDialogWarning();
+        });
         this.$btnReset.on('click', function() {
             $(this).blur();
+            that.opencutlist.capabilities.language = 'auto';
             that.opencutlist.capabilities.dialogMaximizedWidth = 1100;
             that.opencutlist.capabilities.dialogMaximizedHeight = 800;
             that.opencutlist.capabilities.dialogLeft = 100;
             that.opencutlist.capabilities.dialogTop = 100;
             fnUpdate();
+            that.showReloadDialogWarning();
             return false;
         });
         this.$btnWidthUp.on('click', function() {

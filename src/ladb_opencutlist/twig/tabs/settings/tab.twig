@@ -6,18 +6,34 @@
 
 {% block containerInner %}
     <div>
-        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.size_and_position'|i18next }}</div>
-        <div class="ladb-fake-dialog">
-            <div class="ladb-fake-dialog-titlebar">OpenCutList</div>
-            <div class="ladb-fake-dialog-leftbar"></div>
-            <button id="ladb_btn_top_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-down"></i></button>
-            <button id="ladb_btn_top_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-up"></i></button>
-            <button id="ladb_btn_left_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-right"></i></button>
-            <button id="ladb_btn_left_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-left"></i></button>
-            <button id="ladb_btn_width_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-plus"></i></button>
-            <button id="ladb_btn_width_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-minus"></i></button>
-            <button id="ladb_btn_height_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-plus"></i></button>
-            <button id="ladb_btn_height_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-minus"></i></button>
+        <div id="ladb_reload_dialog_warning" class="alert alert-warning" style="display: none;">
+            <div class="media">
+                <div class="media-left"><i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i></div>
+                <div class="media-body">{{ 'tab.settings.reload_dialog_warning'|i18next }}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.language'|i18next }}</div>
+            <select id="ladb_select_language" class="form-control">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.size_and_position'|i18next }}</div>
+            <div class="ladb-fake-dialog">
+                <div class="ladb-fake-dialog-titlebar">OpenCutList</div>
+                <div class="ladb-fake-dialog-leftbar"></div>
+                <button id="ladb_btn_top_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-down"></i></button>
+                <button id="ladb_btn_top_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-up"></i></button>
+                <button id="ladb_btn_left_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-right"></i></button>
+                <button id="ladb_btn_left_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-arrow-left"></i></button>
+                <button id="ladb_btn_width_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-plus"></i></button>
+                <button id="ladb_btn_width_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-minus"></i></button>
+                <button id="ladb_btn_height_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-plus"></i></button>
+                <button id="ladb_btn_height_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-minus"></i></button>
+            </div>
         </div>
     </div>
 {% endblock %}

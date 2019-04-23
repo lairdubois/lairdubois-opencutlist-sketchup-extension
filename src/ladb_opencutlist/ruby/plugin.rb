@@ -30,6 +30,7 @@ module Ladb::OpenCutList
     SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
     SETTINGS_PREPROCESSOR_DXD = 2                 # 2D dimension
 
+    SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
@@ -85,17 +86,27 @@ module Ladb::OpenCutList
       if @language
         return @language
       end
+      # Try to retrieve and set language from defaults
+      set_language(read_default(SETTINGS_KEY_LANGUAGE))
+      @language
+    end
+
+    def set_language(language, persist = false)
+      if language.nil? or language == 'auto'
+        language = Sketchup.get_locale.split('-')[0].downcase  # Retrieve SU language
+      end
       available_translations = []
       Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
         available_translations.push(File.basename(file, File.extname(file)))
       }
-      language = Sketchup.get_locale.split('-')[0].downcase
       if available_translations.include? language
-        @language = language   # Uses SU locale only if translation is available
+        @language = language   # Uses language only if translation is available
       else
         @language = 'en'
       end
-      @language
+      if persist
+        write_default(SETTINGS_KEY_LANGUAGE, language)
+      end
     end
 
     def current_os

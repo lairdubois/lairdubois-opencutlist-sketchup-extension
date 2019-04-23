@@ -374,6 +374,8 @@ tab:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
     reset: Auf vorgegebene Werte zurücksetzen
+    reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
+    language: Sprache
     size_and_position: Grösse und Position des Fensters
 tool:
   highlight:

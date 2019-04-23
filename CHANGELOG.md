@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.6.2
 
+  * Add custom language option in settings
   * Add raw volume in all type of material in cutlist summary
   * Add cutlist "width" separators if first sort order is width on solid wood material parts
   * Fixed Highlight tool bug with simple ComponentInstance children

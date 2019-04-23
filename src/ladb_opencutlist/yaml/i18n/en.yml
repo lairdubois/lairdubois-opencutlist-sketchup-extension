@@ -373,6 +373,8 @@ tab:
     label: Preferences
     title: Preferences
     reset: Restore to default values
+    reload_dialog_warning: In order to take into account all the changes, you must **close** and **reopen** the OpenCutList window.
+    language: Language
     size_and_position: Size and Position of the Window
 tool:
   highlight:
