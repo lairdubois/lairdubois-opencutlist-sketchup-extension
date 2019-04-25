@@ -28,13 +28,7 @@ On Windows you may also have to install `gulp-cli` to be able to run **gulp** fr
 
 ## 2. Get The Source Code
 
-### Simple way
-
-Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases).
- 
-### Best way
-
-The best way to get project source is to clone them from GitHub repository. For that you need to have [Git](https://git-scm.com/) installed on your computer.
+The best way to get project sources is to clone them from GitHub repository. For that you need to have [Git](https://git-scm.com/) installed on your computer.
 It's better because in this way you will be able to retrive future updates of the origin sources.
 
 Move to your project parent folder. Adapt it to your needs and environment.
