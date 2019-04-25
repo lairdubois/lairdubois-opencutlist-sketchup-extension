@@ -4,20 +4,20 @@ To be able to rebuild the plugin, you will first need to install a few tools. Th
 
 The required tools and steps for successfully building this plugin are described hereafter.
 
-## Get **Node.js** and **npm**
+## 1. Get **Node.js** and **npm**
 
 Download and install [Node.js](https://nodejs.org/en/download/) - *the asynchronous event driven JavaScript runtime*. This will include [npm](https://www.npmjs.com/) - *the package manager for JavaScript*.
 
 Read this short note about [Installing Node](https://docs.npmjs.com/getting-started/installing-node) and make sure you have the latest version of **npm**:
 
 ``` bash
-      $ node -v
-      v10.15.3
-      $ npm -v
-      6.4.1
-      $ npm install npm@latest -g
-      $ npm -v
-      6.8.0
+    $ node -v
+    v10.15.3
+    $ npm -v
+    6.4.1
+    $ npm install npm@latest -g
+    $ npm -v
+    6.8.0
 ```
 
 On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
@@ -26,20 +26,52 @@ On Windows you may also have to install `gulp-cli` to be able to run **gulp** fr
      $ npm install gulp-cli -g
 ```
 
-## Get The Source Code
+## 2. Get The Source Code
 
-Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases) or do a `git clone`.
+### Simple way
 
-## Install Dependencies
+Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases)
+ 
+### Best way
 
-Change to the `build/` directory. We have placed a `package.json` file telling **npm** which dependencies to install.
+The best way to get project source is to clone them from GitHub repository. For that you need to have [Git](https://git-scm.com/) installed on your computer.
+It's better because in this way you will be able to retrive future updates of the origin sources.
+
+Move to your project parent folder. Adapt it to your needs and environment.
+
+``` bash
+     $ cd /somewhere/on/your/computer
+```
+
+And clone the project from sources.
+
+``` bash
+     $ git clone git@github.com:lairdubois/lairdubois-opencutlist-sketchup-extension.git 
+```
+
+Change to project directory :
+
+``` bash
+     $ cd lairdubois-opencutlist-sketchup-extension
+```
+
+In the future, if you want to retrieve origin sources updates, just execute the git pull command from your project directory.
+Caution that if you change some files it cans generate some code conflicts that you need to solve.
+
+``` bash
+     $ git pull origin master
+```
+
+## 3. Install Dependencies
+
+From the project directory, change to the `build/` directory. We have placed a `package.json` file telling **npm** which dependencies to install.
 
 ``` bash
     $ cd build
     $ npm install
 ```
 
-## Compile Templates And Distribution Archive
+## 4. Compile Templates And Distribution Archive
 
 Templates in the `src/ladb_opencutlist/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates:
 
