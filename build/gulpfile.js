@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var minimist = require('minimist');
 var fs = require('fs');
-var gutil = require('gulp-util');
 var ladb_twig_compile = require('./plugins/gulp-ladb-twig-compile');
 var ladb_i18n_compile = require('./plugins/gulp-ladb-i18n-compile');
 var ladb_i18n_dialog_compile = require('./plugins/gulp-ladb-i18n-dialog-compile');
@@ -10,6 +9,9 @@ var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
 var replace = require('gulp-replace');
+var glob = require('glob');
+var yaml = require('js-yaml');
+var path = require('path');
 
 var knownOptions = {
     string: 'env',
@@ -40,8 +42,19 @@ gulp.task('twig_compile', function () {
 
 // Convert yaml i18n to .js files
 gulp.task('i18n_compile', function () {
+
+    var languageLabels = {};
+    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/*.yml');
+    ymlFiles.forEach(function(ymlFile) {
+        var contents = fs.readFileSync(ymlFile);
+        var ymlDocument = yaml.safeLoad(contents);
+        if ('_label' in ymlDocument) {
+            languageLabels[path.basename(ymlFile, '.yml')] = ymlDocument['_label'];
+        }
+    });
+
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
-        .pipe(ladb_i18n_compile())
+        .pipe(ladb_i18n_compile(languageLabels))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
@@ -70,7 +83,7 @@ gulp.task('rbz_create', function () {
             '!../src/**/twig/'
 
         ])
-        .pipe(gulpif(options.env === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env + '.rbz')))
+        .pipe(gulpif(options.env.toLowerCase() === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env.toLowerCase() + '.rbz')))
         .pipe(gulp.dest('../dist'));
 });
 
@@ -80,7 +93,7 @@ gulp.task('version', function () {
 
     // Retrive version from package.json
     var pkg = JSON.parse(fs.readFileSync('./package.json'));
-    var version = pkg.version + (options.env === 'dev' ? '-dev' : '');
+    var version = pkg.version + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase());
 
     // Compute build from current date
     var nowISO = (new Date()).toISOString();
@@ -88,12 +101,12 @@ gulp.task('version', function () {
 
     // Update version property in plugin.rb
     return gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
-        .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-dev)?'/g, "EXTENSION_VERSION = '" + version + "'"))
+        .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-[a-z]*)?'/g, "EXTENSION_VERSION = '" + version + "'"))
         .pipe(replace(/EXTENSION_BUILD = '[0-9.]{12}?'/g, "EXTENSION_BUILD = '" + build + "'"))
         .pipe(gulp.dest('../src/ladb_opencutlist/ruby'));
 });
 
-gulp.task('compile', ['less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile']);
-gulp.task('build', ['compile', 'version', 'rbz_create']);
+gulp.task('compile', gulp.series('less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
+gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
 
-gulp.task('default', ['build']);
+gulp.task('default', gulp.series('build'));

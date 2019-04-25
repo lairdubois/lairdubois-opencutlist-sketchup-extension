@@ -1,8 +1,7 @@
 var through = require('through2');
 var gutil = require('gulp-util');
+var path = require('path');
 var yaml = require('js-yaml');
-var merge = require('merge');
-var twig = require('twig').twig;
 
 var markdownIt = require('markdown-it');
 var externalLinks = require('markdown-it-external-links');
@@ -17,8 +16,22 @@ var md = markdownIt({
 
 var PluginError = gutil.PluginError;
 
-module.exports = function (opt) {
+module.exports = function (languageLabels, opt) {
 
+    // Delete keys that starts by "_"
+    function deleteHiddenKeys(doc) {
+        for (var key in doc) {
+            if (doc.hasOwnProperty(key)) {
+                if (key.startsWith('_')) {
+                    delete doc[key];
+                } else if (typeof doc[key] == 'object') {
+                    deleteHiddenKeys(doc[key]);
+                }
+            }
+        }
+    }
+
+    // Process markdown on string values
     function markownValues(doc) {
         for (var key in doc) {
             if (doc.hasOwnProperty(key)) {
@@ -42,10 +55,13 @@ module.exports = function (opt) {
             var contents = file.contents.toString('utf8');
             var ymlDocument = yaml.safeLoad(contents);
 
+            deleteHiddenKeys(ymlDocument);
             markownValues(ymlDocument);
 
-            var filename = file.path.substr(file.base.length);
-            var language = filename.substr(0, filename.length - '.yml'.length);
+            // Append languages labels
+            ymlDocument['language'] = languageLabels;
+
+            var language = file.stem;
 
             var resources = {};
             resources[language] = {
@@ -63,7 +79,7 @@ module.exports = function (opt) {
         }
 
         file.contents = Buffer.from(data);
-        file.path = file.base + language + '.js';
+        file.path = path.join(file.base, language + '.js');
 
         cb(null, file);
     }

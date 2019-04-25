@@ -16,8 +16,7 @@ module.exports = function (templateSource, opt) {
         var data;
         try {
 
-            var filename = file.path.substr(file.base.length);
-            var language = filename.substr(0, filename.length - '.yml'.length);
+            var language = file.stem;
 
             var templateFile = vinylFile.readSync(templateSource);
 
@@ -29,7 +28,7 @@ module.exports = function (templateSource, opt) {
         }
 
         file.contents = Buffer.from(data);
-        file.path = file.base + 'dialog-' + language + '.html';
+        file.path = path.join(file.base, 'dialog-' + language + '.html');
 
         cb(null, file);
     }

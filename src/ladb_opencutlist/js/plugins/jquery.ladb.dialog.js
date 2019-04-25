@@ -24,6 +24,7 @@
             userAgent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,
+            available_languages: options.available_languages,
             htmlDialogCompatible: options.html_dialog_compatible,
             dialogMaximizedWidth: options.dialog_maximized_width,
             dialogMaximizedHeight: options.dialog_maximized_height,

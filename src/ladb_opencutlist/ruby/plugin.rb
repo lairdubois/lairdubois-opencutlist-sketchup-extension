@@ -95,11 +95,8 @@ module Ladb::OpenCutList
       if language.nil? or language == 'auto'
         language = Sketchup.get_locale.split('-')[0].downcase  # Retrieve SU language
       end
-      available_translations = []
-      Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
-        available_translations.push(File.basename(file, File.extname(file)))
-      }
-      if available_translations.include? language
+      available_languages = self.get_available_languages
+      if available_languages.include? language
         @language = language   # Uses language only if translation is available
       else
         @language = 'en'
@@ -107,6 +104,14 @@ module Ladb::OpenCutList
       if persist
         write_default(SETTINGS_KEY_LANGUAGE, language)
       end
+    end
+
+    def get_available_languages
+      available_languages = []
+      Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
+        available_languages.push(File.basename(file, File.extname(file)))
+      }
+      available_languages
     end
 
     def current_os
@@ -476,6 +481,7 @@ module Ladb::OpenCutList
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
           :language => Plugin.instance.language,
+          :available_languages => Plugin.instance.get_available_languages,
           :html_dialog_compatible => html_dialog_compatible,
           :dialog_maximized_width => @dialog_maximized_width,
           :dialog_maximized_height => @dialog_maximized_height,

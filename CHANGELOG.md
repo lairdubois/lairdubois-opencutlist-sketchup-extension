@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.6.3
+
+  * New language managment improvement
+
 * 1.6.2 (2019-04-23)
 
   * Add custom language option in settings

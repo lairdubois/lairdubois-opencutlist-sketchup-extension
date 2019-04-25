@@ -15,9 +15,9 @@
         <div class="form-group">
             <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.language'|i18next }}</div>
             <select id="ladb_select_language" class="form-control">
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
+                {% for language in capabilities.available_languages %}
+                    <option value="{{ language }}">{{ ('language.'~language)|i18next }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">

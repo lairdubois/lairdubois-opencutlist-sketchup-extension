@@ -30,7 +30,7 @@ On Windows you may also have to install `gulp-cli` to be able to run **gulp** fr
 
 ### Simple way
 
-Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases)
+Download the source code for this plugin from the [release page](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/releases).
  
 ### Best way
 

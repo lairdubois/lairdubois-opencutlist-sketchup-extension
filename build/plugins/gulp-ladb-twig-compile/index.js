@@ -19,6 +19,7 @@ module.exports = function (opt) {
         }, opt);
         var data;
         try {
+
             var template = twig({ id: slash(file.relative), data: file.contents.toString('utf8') });
             data = template.compile(options);
 
