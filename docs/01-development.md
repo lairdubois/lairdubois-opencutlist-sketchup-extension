@@ -95,3 +95,11 @@ If you wish to build the archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencut
 ```
 
 The default behaviour of the **gulp** task (without argument) is to *compile* and then *build*.
+
+
+## 5. Adding a new language
+
+Adding new languages is quit simple. You just need to add a new `.yml` file in `src/yaml/i18n` directory by duplicating `fr.yml` and changing all key values into the desired language.
+It's important to keep and change the first key `_label` to the corresponding readable label or the new language.
+
+After you need to compile the projet (see 4.) and your new language will appear in the **Preferences panel** of the *OpenCutList*.
