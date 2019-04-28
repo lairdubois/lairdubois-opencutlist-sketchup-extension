@@ -727,6 +727,7 @@ module Ladb::OpenCutList
       # Check settings
       col_sep = settings['col_sep']
       encoding = settings['encoding']
+      hide_labels = settings['hide_labels']
       hide_raw_dimensions = settings['hide_raw_dimensions']
       hide_final_dimensions = settings['hide_final_dimensions']
       hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
@@ -791,7 +792,9 @@ module Ladb::OpenCutList
                   header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.thickness'))
                 end
                 header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
-                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
+                unless hide_labels
+                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
+                end
 
                 csv << header
 
@@ -822,7 +825,9 @@ module Ladb::OpenCutList
                       row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
                     end
                     row.push(part[:material_name])
-                    row.push(part[:labels].join(','))
+                    unless hide_labels
+                      row.push(part[:labels].join(','))
+                    end
 
                     csv << row
                   }
