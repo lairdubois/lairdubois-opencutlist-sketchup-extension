@@ -191,6 +191,7 @@ tab:
       thickness: Épaisseur finie
       count: Quantité
       material_name: Matière
+      labels: Etiquettes
     cuttingdiagram:
       title: Calepinage
       option_saw_kerf: Épaisseur de lame de scie

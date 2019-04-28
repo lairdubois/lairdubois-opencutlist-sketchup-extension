@@ -791,6 +791,7 @@ module Ladb::OpenCutList
                   header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.thickness'))
                 end
                 header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
+                header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
 
                 csv << header
 
@@ -821,6 +822,7 @@ module Ladb::OpenCutList
                       row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
                     end
                     row.push(part[:material_name])
+                    row.push(part[:labels].join(','))
 
                     csv << row
                   }

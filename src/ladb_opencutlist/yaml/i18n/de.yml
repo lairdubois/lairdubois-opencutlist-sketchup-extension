@@ -191,6 +191,7 @@ tab:
       thickness: Dicke - fertig
       count: Anzahl
       material_name: Material
+      labels: Etiketten
     cuttingdiagram:
       title: Schnittplan
       option_saw_kerf: Sägeblattdicke

@@ -191,6 +191,7 @@ tab:
       thickness: Thickness - final
       count: Quantity
       material_name: Material
+      labels: Labels
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness
