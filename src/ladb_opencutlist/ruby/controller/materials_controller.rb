@@ -220,13 +220,6 @@ module Ladb::OpenCutList
 
         begin
           material = materials.load(path)
-          if material
-
-            # Imported materials can have an already defined UUID. We need to reset it to avoid conflicts
-            material_attributes = MaterialAttributes.new(material)
-            material_attributes.reset_uuid
-
-          end
         rescue
           response[:errors] << 'tab.materials.error.failed_import_skm_file'
         end

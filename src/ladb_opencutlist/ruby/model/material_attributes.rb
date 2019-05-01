@@ -54,6 +54,8 @@
     attr_accessor :uuid, :type, :length_increase, :width_increase, :thickness_increase, :std_thicknesses, :std_sections, :std_sizes, :grained
     attr_reader :material
 
+    @@used_uuids = []
+
     def initialize(material)
       @material = material
       @uuid = nil
@@ -68,11 +70,6 @@
 
       # Reload properties from attributes
       read_from_attributes
-
-      # Init uuid if undefined
-      if @uuid.nil?
-        reset_uuid
-      end
 
     end
 
@@ -100,15 +97,6 @@
           3
         else
           99
-      end
-    end
-
-    # -----
-
-    def reset_uuid
-      @uuid = SecureRandom.uuid
-      unless material.nil?
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
       end
     end
 
@@ -209,7 +197,21 @@
 
     def read_from_attributes
       if @material
-        @uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
+
+        # Special case for UUID that must be truely unique
+        uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
+        if uuid.nil? or @@used_uuids.include?(uuid)
+
+          # Generate a new UUID
+          uuid = SecureRandom.uuid
+
+          # Store the new uuid to attributes
+          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+
+        end
+        @@used_uuids.push(uuid)
+        @uuid = uuid
+
         @type = Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW)
         @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
         @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))
