@@ -198,7 +198,7 @@
     def read_from_attributes
       if @material
 
-        # Special case for UUID that must be truely unique
+        # Special case for UUID that must be truely unique in the session
         uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
         if uuid.nil? or @@used_uuids.include?(uuid)
 

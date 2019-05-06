@@ -208,6 +208,8 @@ module Ladb::OpenCutList
 
       def _find_std_thickness(thickness, std_thicknesses, nearest_highest)
         std_thicknesses.each { |std_thickness|
+          puts std_thickness, thickness
+          puts std_thickness.class, thickness.class
           if thickness <= std_thickness
             if nearest_highest
               return {
@@ -656,8 +658,6 @@ module Ladb::OpenCutList
             :material_type => group_def.material_type,
             :part_count => group_def.part_count,
             :std_dimension => group_def.std_dimension,
-            :std_width => group_def.std_width,
-            :std_thickness => group_def.std_thickness,
             :std_available => group_def.std_available,
             :std_availability_message => group_def.std_availability_message,
             :raw_length => group_def.raw_length,

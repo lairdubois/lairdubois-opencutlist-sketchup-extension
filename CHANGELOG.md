@@ -7,6 +7,7 @@ in 1.x and 0.x versions.
 * 1.6.3
 
   * New language managment improvement
+  * Fixed cutlist crash on Sketchup 2014
 
 * 1.6.2 (2019-04-23)
 
