@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.6.3
 
+  * Export cutlist labels
   * New language managment improvement
   * Fixed cutlist crash on Sketchup 2014
 

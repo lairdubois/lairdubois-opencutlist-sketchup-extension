@@ -530,27 +530,6 @@
 
     };
 
-    // Numbers /////
-
-    LadbTabCutlist.prototype.groupNumbers = function (group_id) {
-        var that = this;
-
-        rubyCallCommand('cutlist_group_model_numbers', group_id, function (response) {
-
-            if (response['errors']) {
-                var errMessages = [];
-                for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
-                }
-                that.opencutlist.notify(errMessages.join('\n'), 'error');
-            } else {
-                that.opencutlist.minimize();
-            }
-
-        });
-
-    };
-
     // Parts /////
 
     LadbTabCutlist.prototype.findPartById = function (id) {
