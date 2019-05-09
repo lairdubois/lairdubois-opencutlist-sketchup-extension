@@ -205,7 +205,7 @@
           # Generate a new UUID
           uuid = SecureRandom.uuid
 
-          # Store the new uuid to attributes
+          # Store the new uuid to material attributes
           @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
 
         end
@@ -225,7 +225,7 @@
 
     def write_to_attributes
       if @material
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
