@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.6.3
+* 1.6.3 (2019-05-09)
 
   * Export cutlist labels
   * New language managment improvement
