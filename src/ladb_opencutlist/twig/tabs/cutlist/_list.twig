@@ -84,7 +84,7 @@
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
         </tr>
         {% for group in groups %}
-            <tr class="ladb-cutlist-row">
+            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in uiOptions.hidden_group_ids %} ladb-mute{% endif %}">
                 <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %}</td>
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}

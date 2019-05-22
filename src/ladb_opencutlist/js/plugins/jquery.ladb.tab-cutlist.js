@@ -276,9 +276,12 @@
                 $(this).blur();
             });
             $('a.ladb-btn-scrollto', that.$page).on('click', function() {
-                var target = $(this).attr('href');
-                that.$rootSlide.animate({ scrollTop: $(target).offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
-                    $(target).effect("highlight", {}, 1500);
+                var $target = $($(this).attr('href'));
+                if ($target.data('group-id')) {
+                    that.showGroup($target);
+                }
+                that.$rootSlide.animate({ scrollTop: $target.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function() {
+                    $target.effect("highlight", {}, 1500);
                 });
                 $(this).blur();
                 return false;
@@ -748,10 +751,12 @@
         var groupId = $group.data('group-id');
         var $btn = $('.ladb-btn-toggle-no-print', $group);
         var $i = $('i', $btn);
+        var $summaryRow = $('#' + $group.attr('id') + '_summary');
 
         $group.removeClass('no-print');
         $i.addClass('ladb-opencutlist-icon-eye-close');
         $i.removeClass('ladb-opencutlist-icon-eye-open');
+        $summaryRow.removeClass('ladb-mute');
 
         var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
         if (idx !== -1) {
@@ -765,10 +770,12 @@
         var groupId = $group.data('group-id');
         var $btn = $('.ladb-btn-toggle-no-print', $group);
         var $i = $('i', $btn);
+        var $summaryRow = $('#' + $group.attr('id') + '_summary');
 
         $group.addClass('no-print');
         $i.removeClass('ladb-opencutlist-icon-eye-close');
         $i.addClass('ladb-opencutlist-icon-eye-open');
+        $summaryRow.addClass('ladb-mute');
 
         var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
         if (idx === -1) {
@@ -1057,9 +1064,12 @@
                                 return false;
                             });
                             $('a.ladb-btn-scrollto', $slide).on('click', function() {
-                                var target = $(this).attr('href');
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $(target).position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
-                                    $(target).effect("highlight", {}, 1500);
+                                var $target = $($(this).attr('href'));
+                                if ($target.data('group-id')) {
+                                    that.showGroup($target);
+                                }
+                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function() {
+                                    $target.effect("highlight", {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;

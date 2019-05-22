@@ -197,9 +197,9 @@ tab:
       width: Largeur capable
       thickness: Épaisseur capable
       count: Quantité
-      part_count: $t(tab.cutlist.list.part_count)
-      material_type: $t(tab.cutlist.list.material_type)
-      material_thickness: $t(tab.cutlist.list.material_thickness)
+      part_count: Nombre de pièces
+      material_type: Type
+      material_thickness: Matière / Dimension
       material_name: Matière
       labels: Etiquettes
     cuttingdiagram:

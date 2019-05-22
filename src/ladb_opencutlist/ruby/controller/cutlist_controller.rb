@@ -887,6 +887,7 @@ module Ladb::OpenCutList
                     csv << header
 
                     @cutlist[:groups].each { |group|
+                      next if hidden_group_ids.include? group[:id]
 
                       row = []
                       row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group[:material_type]}"))

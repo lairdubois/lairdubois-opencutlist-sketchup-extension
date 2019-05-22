@@ -197,9 +197,9 @@ tab:
       width: Width - final
       thickness: Thickness - final
       count: Quantity
-      part_count: $t(tab.cutlist.list.part_count)
-      material_type: $t(tab.cutlist.list.material_type)
-      material_thickness: $t(tab.cutlist.list.material_thickness)
+      part_count: Quantity
+      material_type: Type
+      material_thickness: Material / Thickness
       material_name: Material
       labels: Labels
     cuttingdiagram:
