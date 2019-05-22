@@ -133,8 +133,8 @@ tab:
       hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Masquer les dimensions brutes
       hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
-      hide_final_dimensions: Masquer les dimensions finies
-      hide_final_dimensions_help: Si cette option est activée, les dimensions **finies** des pièces ne sont pas affichées.
+      hide_final_dimensions: Masquer les dimensions capables
+      hide_final_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
@@ -165,7 +165,7 @@ tab:
       name: Désignation
       count: Qte.
       raw: Brute
-      final: Finie
+      final: Capable
       length_short: Long.
       width: Largeur
       width_short: Larg.
@@ -193,9 +193,9 @@ tab:
       raw_thickness: Épaisseur brute
       raw_area: Surface brute
       raw_volume: Volume brute
-      length: Longueur finie
-      width: Largeur finie
-      thickness: Épaisseur finie
+      length: Longueur capable
+      width: Largeur capable
+      thickness: Épaisseur capable
       count: Quantité
       part_count: $t(tab.cutlist.list.part_count)
       material_type: $t(tab.cutlist.list.material_type)
