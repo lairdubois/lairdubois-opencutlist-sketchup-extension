@@ -159,14 +159,11 @@ module Ladb::OpenCutList
             # Considere component instance if it contains faces
             if face_count > 0
 
-              x_faces = []
-              y_faces = []
-              z_faces = []
-              bounds = _compute_faces_bounds_and_grab_main_faces(entity.definition, x_faces, y_faces, z_faces)
+              bounds = _compute_faces_bounds(entity.definition)
               unless bounds.empty?
 
                 # Create the instance info
-                instance_info = InstanceInfo.new(path + [entity ], x_faces, y_faces, z_faces)
+                instance_info = InstanceInfo.new(path + [entity ])
                 instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
 
                 @instance_infos_cache[instance_info.serialized_path] = instance_info
@@ -187,8 +184,32 @@ module Ladb::OpenCutList
 
       # -- Bounds Utils --
 
-      def _compute_faces_bounds_and_grab_main_faces(definition_or_group, x_faces, y_faces, z_faces, transformation = nil)
+      def _compute_faces_bounds(definition_or_group, transformation = nil)
         bounds = Geom::BoundingBox.new
+        definition_or_group.entities.each { |entity|
+          if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+            if entity.is_a? Sketchup::Face
+              face_bounds = entity.bounds
+              if transformation
+                min = face_bounds.min.transform(transformation)
+                max = face_bounds.max.transform(transformation)
+                face_bounds = Geom::BoundingBox.new
+                face_bounds.add(min, max)
+              end
+              bounds.add(face_bounds)
+            elsif entity.is_a? Sketchup::Group
+              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
+            elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
+              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
+            end
+          end
+        }
+        bounds
+      end
+
+      # -- Faces Utils --
+
+      def _grab_main_faces(definition_or_group, x_faces = [], y_faces = [], z_faces = [], transformation = nil)
         definition_or_group.entities.each { |entity|
           if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
             if entity.is_a? Sketchup::Face
@@ -200,22 +221,40 @@ module Ladb::OpenCutList
               elsif transformed_normal.parallel?(Z_AXIS)
                 z_faces.push(entity)
               end
-              face_bounds = entity.bounds
-              if transformation
-                min = face_bounds.min.transform(transformation)
-                max = face_bounds.max.transform(transformation)
-                face_bounds = Geom::BoundingBox.new
-                face_bounds.add(min, max)
-              end
-              bounds.add(face_bounds)
             elsif entity.is_a? Sketchup::Group
-              bounds.add(_compute_faces_bounds_and_grab_main_faces(entity, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation))
+              _grab_main_faces(entity, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              bounds.add(_compute_faces_bounds_and_grab_main_faces(entity.definition, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation))
+              _grab_main_faces(entity.definition, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation)
             end
           end
         }
-        bounds
+        return x_faces, y_faces, z_faces
+      end
+
+      def _faces_by_normal(normal, x_faces, y_faces, z_faces)
+        case normal
+        when X_AXIS
+          x_faces
+        when Y_AXIS
+          y_faces
+        when Z_AXIS
+          z_faces
+        else
+          []
+        end
+      end
+
+      def _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+
+        real_thickness_area = _faces_by_normal(instance_info.size.thickness_normal, x_faces, y_faces, z_faces).map { | face | face.area(instance_info.transformation) }.max
+        thickness_area = instance_info.size.length * instance_info.size.width
+        thickness_area_ratio = real_thickness_area.nil? ? 0 : real_thickness_area / thickness_area
+
+        real_width_area = _faces_by_normal(instance_info.size.width_normal, x_faces, y_faces, z_faces).map { | face | face.area(instance_info.transformation) }.max
+        width_area = instance_info.size.thickness * instance_info.size.width
+        width_area_ratio = real_width_area.nil? ? 0 : real_width_area / width_area
+
+        return real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio
       end
 
       # -- Std utils --
@@ -559,21 +598,33 @@ module Ladb::OpenCutList
           part_def.labels = definition_attributes.labels
           part_def.auto_oriented = size.auto_oriented
 
-          # Compute axes alignment and final area
+          # Compute axes alignment and real area
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
-              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 1 or instance_info.faces_by_normal(size.width_normal).length >= 1)
+
+              x_faces, y_faces, z_faces = _grab_main_faces(definition)
+              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+
+              part_def.aligned_on_axes = (thickness_area_ratio > 0.7 or (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 1 and _faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 1))
 
             when MaterialAttributes::TYPE_SHEET_GOOD
-              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and (instance_info.faces_by_normal(size.width_normal).length >= 1 or instance_info.faces_by_normal(size.length_normal).length >= 1))
-              part_def.real_area = instance_info.faces_by_normal(size.thickness_normal).map(&:area).max
+
+              x_faces, y_faces, z_faces = _grab_main_faces(definition)
+              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+
+              part_def.real_area = real_thickness_area
+              part_def.aligned_on_axes = (thickness_area_ratio > 0.3 and (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 2 and (_faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 1 or _faces_by_normal(size.length_normal, x_faces, y_faces, z_faces).length >= 1)))
 
             when MaterialAttributes::TYPE_BAR
-              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and instance_info.faces_by_normal(size.width_normal).length >= 2)
+
+              x_faces, y_faces, z_faces = _grab_main_faces(definition)
+              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+
+              part_def.aligned_on_axes = (thickness_area_ratio > 0.7 and width_area_ratio > 0.7 and (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 2 and _faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 2))
 
             else
-              part_def.aligned_on_axes = (instance_info.x_faces.length > 0 or instance_info.y_faces.length > 0 or instance_info.z_faces.length > 0)
+              part_def.aligned_on_axes = true
 
           end
 

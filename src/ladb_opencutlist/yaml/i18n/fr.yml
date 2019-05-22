@@ -27,6 +27,7 @@ default:
   unit_4: Mètres
   part_single: pièce
   part_plural: pièces
+  more_extensions: Plus de plugins...
 core:
   menu:
     submenu: OpenCutList
@@ -69,7 +70,7 @@ tab:
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Attention, cette pièce est redimensionnée par rapport à sa définition de composant
-      auto_oriented: Attention, cette pièce a été réorienté automatiquement
+      auto_oriented: Cette pièce a été réorienté automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur son repère

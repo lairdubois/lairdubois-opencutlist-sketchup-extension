@@ -131,7 +131,7 @@
                         <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.area'|i18next }}</td>
                     </tr>
                     {% for sheet in summary.sheets  %}
-                        <tr id="ladb_cuttingdiagram_group_{{ sheet.index }}_summary" class="ladb-cutlist-row"{% if not sheet.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
+                        <tr class="ladb-cutlist-row"{% if not sheet.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                             <td>
                                 <i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}
                                 {% if sheet.is_used %}

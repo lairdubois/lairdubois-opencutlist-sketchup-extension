@@ -5,18 +5,12 @@ module Ladb::OpenCutList
   class InstanceInfo
 
     attr_accessor :size
-    attr_reader :path, :x_faces, :y_faces, :z_faces
+    attr_reader :path
 
     @size
-    @x_faces
-    @y_faces
-    @z_faces
 
-    def initialize(path = [], x_faces = [], y_faces = [], z_faces = [])
+    def initialize(path = [])
       @path = path
-      @x_faces = x_faces
-      @y_faces = y_faces
-      @z_faces = z_faces
     end
 
     # -----
@@ -44,19 +38,6 @@ module Ladb::OpenCutList
         return @scale
       end
       @scale = TransformationUtils::get_scale3d(transformation)
-    end
-
-    def faces_by_normal(normal)
-      case normal
-        when X_AXIS
-          x_faces
-        when Y_AXIS
-          y_faces
-        when Z_AXIS
-          z_faces
-        else
-          []
-      end
     end
 
     # -----

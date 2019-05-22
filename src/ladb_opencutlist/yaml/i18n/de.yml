@@ -27,6 +27,7 @@ default:
   unit_4: Meter
   part_single: Teil
   part_plural: Teile
+  more_extensions: Plus de plugins...
 core:
   menu:
     submenu: OpenCutList
@@ -69,7 +70,7 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
-      auto_oriented: Attention, cette pièce a été réorienté automatiquement
+      auto_oriented: Cette pièce a été réorienté automatiquement
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur son repère

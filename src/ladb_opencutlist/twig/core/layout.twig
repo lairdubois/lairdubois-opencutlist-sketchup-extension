@@ -21,6 +21,9 @@
         </div>
     {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
+        <ul class="pull-left">
+            <li><a href="https://www.lairdubois.fr/logiciels/?q=@addon:%22sketchup%22" target="_blank"><i class="ladb-opencutlist-icon-plus"></i> {{ 'default.more_extensions'|i18next }}</a></li>
+        </ul>
         <ul>
             <li><a href="https://www.lairdubois.fr" target="_blank"><i class="ladb-opencutlist-icon-link"></i> www.lairdubois.fr</a></li>
             {% for tabDef in tabDefs if tabDef.bar == 'bottombar' %}
