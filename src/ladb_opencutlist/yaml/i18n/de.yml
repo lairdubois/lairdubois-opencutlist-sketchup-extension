@@ -135,6 +135,8 @@ tab:
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_final_dimensions: Fertigmasse ausblenden
       hide_final_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
+      hide_real_areas: Masquer les surfaces réelles des panneaux
+      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
         Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
@@ -160,12 +162,14 @@ tab:
       part_count: Anzahl
       length: Länge
       area: Fläche
+      area_short: Surf.
       volume: Volumen
       number: Nr.
       name: Bezeichnung
       count: Anzahl
       raw: Rohmass
       final: Fertigmass
+      real: Réelle
       length_short: L
       width: Breite
       width_short: B
@@ -196,6 +200,7 @@ tab:
       length: Länge - fertig
       width: Breite - fertig
       thickness: Dicke - fertig
+      real_area: Sourface réelle
       count: Anzahl
       part_count: Anzahl
       material_type: Typ

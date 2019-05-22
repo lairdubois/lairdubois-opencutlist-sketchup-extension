@@ -135,6 +135,8 @@ tab:
       hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_final_dimensions: Hide finished dimensions
       hide_final_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
+      hide_real_areas: Masquer les surfaces réelles des panneaux
+      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
       part_order_strategy: Sorting of Parts
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.
@@ -160,12 +162,14 @@ tab:
       part_count: Quantity
       length: Length
       area: Area
+      area_short: Surf.
       volume: Volume
       number: No.
       name: Description
       count: Qty
       raw: Rough
       final: Finished
+      real: Réelle
       length_short: L
       width: Width
       width_short: W
@@ -196,6 +200,7 @@ tab:
       length: Length - final
       width: Width - final
       thickness: Thickness - final
+      real_area: Sourface réelle
       count: Quantity
       part_count: Quantity
       material_type: Type

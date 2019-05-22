@@ -115,7 +115,8 @@
     {% set showRawDimensions = group.show_raw_dimensions and not uiOptions.hide_raw_dimensions %}
     {% set showFinalDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_final_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
-    {% set colspan = 8 %}
+    {% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_real_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+    {% set colspan = 9 %}
     {% if showRawDimensions %}
         {% if showLengthOnly %}
             {% set colspan = colspan - 1 %}
@@ -129,6 +130,9 @@
         {% endif %}
     {% else %}
         {% set colspan = colspan - 3 %}
+    {% endif %}
+    {% if not showFinalAreas %}
+        {% set colspan = colspan - 1 %}
     {% endif %}
 
     <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
@@ -172,6 +176,9 @@
             {% if showFinalDimensions %}
                 <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}3{% endif %}">{{ 'tab.cutlist.list.final'|i18next }}</td>
             {% endif %}
+            {% if showFinalAreas %}
+                <td class="text-center" width="10%">{{ ('tab.cutlist.list.real')|i18next }}</td>
+            {% endif %}
         </tr>
         <tr>
             {% if showRawDimensions %}
@@ -183,6 +190,9 @@
                 {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
                     <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
+            {% endif %}
+            {% if showFinalAreas %}
+                <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
             {% endif %}
         </tr>
         {% set thickness = 0 %}
@@ -236,6 +246,9 @@
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
                         <td class="ladb-cutlist-final-dimension">{{ part[property] }}</td>
                     {% endfor %}
+                {% endif %}
+                {% if showFinalAreas %}
+                    <td class="ladb-cutlist-final-dimension">{% if part.real_area %}{{ part.real_area }}{% else %}-{% endif %}</td>
                 {% endif %}
             </tr>
         {% endfor %}

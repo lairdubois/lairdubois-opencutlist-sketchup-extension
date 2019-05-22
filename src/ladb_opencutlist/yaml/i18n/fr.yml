@@ -135,6 +135,8 @@ tab:
       hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
       hide_final_dimensions: Masquer les dimensions capables
       hide_final_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
+      hide_real_areas: Masquer les surfaces réelles des panneaux
+      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
@@ -160,12 +162,14 @@ tab:
       part_count: Nb. pièces
       length: Longueur
       area: Surface
+      area_short: Surf.
       volume: Volume
       number: N°
       name: Désignation
       count: Qte.
       raw: Brute
       final: Capable
+      real: Réelle
       length_short: Long.
       width: Largeur
       width_short: Larg.
@@ -196,6 +200,7 @@ tab:
       length: Longueur capable
       width: Largeur capable
       thickness: Épaisseur capable
+      real_area: Sourface réelle
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type

@@ -559,7 +559,7 @@ module Ladb::OpenCutList
           part_def.labels = definition_attributes.labels
           part_def.auto_oriented = size.auto_oriented
 
-          # Compute axes alignment
+          # Compute axes alignment and final area
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
@@ -567,6 +567,7 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SHEET_GOOD
               part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and (instance_info.faces_by_normal(size.width_normal).length >= 1 or instance_info.faces_by_normal(size.length_normal).length >= 1))
+              part_def.real_area = instance_info.faces_by_normal(size.thickness_normal).map(&:area).max
 
             when MaterialAttributes::TYPE_BAR
               part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and instance_info.faces_by_normal(size.width_normal).length >= 2)
@@ -730,7 +731,8 @@ module Ladb::OpenCutList
                   :entity_names => part_def.entity_names.sort,
                   :contains_blank_entity_names => part_def.contains_blank_entity_names,
                   :auto_oriented => part_def.auto_oriented,
-                  :aligned_on_axes => part_def.aligned_on_axes
+                  :aligned_on_axes => part_def.aligned_on_axes,
+                  :real_area => part_def.real_area.nil? ? nil : Sketchup.format_area(part_def.real_area)
               }
           )
           unless part_def.number
@@ -767,6 +769,7 @@ module Ladb::OpenCutList
       hide_raw_dimensions = settings['hide_raw_dimensions']
       hide_final_dimensions = settings['hide_final_dimensions']
       hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
+      hide_real_areas = settings['hide_real_areas']
       hidden_group_ids = settings['hidden_group_ids']
 
       response = {
@@ -831,6 +834,9 @@ module Ladb::OpenCutList
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.width'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.thickness'))
                     end
+                    unless hide_real_areas
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.real_area'))
+                    end
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
                     unless hide_labels
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
@@ -863,6 +869,9 @@ module Ladb::OpenCutList
                           row.push(no_dimensions ? '' : sanitize_length_string(part[:length]))
                           row.push(no_dimensions ? '' : sanitize_length_string(part[:width]))
                           row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
+                        end
+                        unless hide_real_areas
+                          row.push(no_dimensions ? '' : part[:real_area])
                         end
                         row.push(part[:material_name])
                         unless hide_labels

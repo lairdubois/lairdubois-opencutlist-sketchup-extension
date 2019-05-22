@@ -6,9 +6,10 @@ in 1.x and 0.x versions.
 
 * 1.6.4  
 
-  * Add cutlist export source option
-  * Cutlist auto orient display
-  * Cutlist part orientation check 
+  * Added cutlist export source option
+  * Added cutlist real area for sheet good part
+  * Added Cutlist auto orient display
+  * Added Cutlist part orientation check 
   
 * 1.6.3 (2019-05-09)
 
