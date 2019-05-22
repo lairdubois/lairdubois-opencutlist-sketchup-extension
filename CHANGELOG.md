@@ -6,7 +6,9 @@ in 1.x and 0.x versions.
 
 * 1.6.4  
 
-  * Export option source
+  * Add cutlist export source option
+  * Cutlist auto orient display
+  * Cutlist part orientation check 
   
 * 1.6.3 (2019-05-09)
 

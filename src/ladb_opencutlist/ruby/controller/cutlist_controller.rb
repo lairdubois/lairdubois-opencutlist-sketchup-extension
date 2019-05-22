@@ -557,7 +557,24 @@ module Ladb::OpenCutList
           part_def.cumulable = definition_attributes.cumulable
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.labels = definition_attributes.labels
-          part_def.aligned_on_axes = instance_info.aligned_on_axes
+          part_def.auto_oriented = size.auto_oriented
+
+          # Compute axes alignment
+          case group_def.material_type
+
+            when MaterialAttributes::TYPE_SOLID_WOOD
+              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 1 or instance_info.faces_by_normal(size.width_normal).length >= 1)
+
+            when MaterialAttributes::TYPE_SHEET_GOOD
+              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and (instance_info.faces_by_normal(size.width_normal).length >= 1 or instance_info.faces_by_normal(size.length_normal).length >= 1))
+
+            when MaterialAttributes::TYPE_BAR
+              part_def.aligned_on_axes = (instance_info.faces_by_normal(size.thickness_normal).length >= 2 and instance_info.faces_by_normal(size.width_normal).length >= 2)
+
+            else
+              part_def.aligned_on_axes = (instance_info.x_faces.length > 0 or instance_info.y_faces.length > 0 or instance_info.z_faces.length > 0)
+
+          end
 
           group_def.set_part_def(part_id, part_def)
 
@@ -712,6 +729,7 @@ module Ladb::OpenCutList
                   :entity_serialized_paths => part_def.entity_serialized_paths,
                   :entity_names => part_def.entity_names.sort,
                   :contains_blank_entity_names => part_def.contains_blank_entity_names,
+                  :auto_oriented => part_def.auto_oriented,
                   :aligned_on_axes => part_def.aligned_on_axes
               }
           )

@@ -46,8 +46,17 @@ module Ladb::OpenCutList
       @scale = TransformationUtils::get_scale3d(transformation)
     end
 
-    def aligned_on_axes
-      ((x_faces.empty? ? 0 : 1) + (y_faces.empty? ? 0 : 1) + (z_faces.empty? ? 0 : 1)) >= 2
+    def faces_by_normal(normal)
+      case normal
+        when X_AXIS
+          x_faces
+        when Y_AXIS
+          y_faces
+        when Z_AXIS
+          z_faces
+        else
+          []
+      end
     end
 
     # -----

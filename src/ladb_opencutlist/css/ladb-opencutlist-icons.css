@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'ladb_opencutlist';
   src:
-    url('../fonts/ladb_opencutlist.ttf?it9gv4') format('truetype'),
-    url('../fonts/ladb_opencutlist.woff?it9gv4') format('woff'),
-    url('../fonts/ladb_opencutlist.svg?it9gv4#ladb_opencutlist') format('svg');
+    url('../fonts/ladb_opencutlist.ttf?wp1a82') format('truetype'),
+    url('../fonts/ladb_opencutlist.woff?wp1a82') format('woff'),
+    url('../fonts/ladb_opencutlist.svg?wp1a82#ladb_opencutlist') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -66,6 +66,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-numbers-save:before {
   content: "\e91e";
+}
+.ladb-opencutlist-icon-auto-oriented:before {
+  content: "\e937";
 }
 .ladb-opencutlist-icon-not-aligned-on-axes:before {
   content: "\e936";
