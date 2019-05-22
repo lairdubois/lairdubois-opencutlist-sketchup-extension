@@ -49,7 +49,7 @@
     var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
 
-    var OPTION_DEFAULT_SOURCE = 0;     // cutlist
+    var OPTION_DEFAULT_SOURCE = 1;     // cutlist
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
     var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 

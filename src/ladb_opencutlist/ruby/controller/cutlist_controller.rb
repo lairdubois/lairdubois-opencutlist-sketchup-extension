@@ -27,8 +27,8 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
-    EXPORT_OPTION_SOURCE_CUTLIST = 0
-    EXPORT_OPTION_SOURCE_SUMMARY = 1
+    EXPORT_OPTION_SOURCE_SUMMARY = 0
+    EXPORT_OPTION_SOURCE_CUTLIST = 1
 
     EXPORT_OPTION_COL_SEP_TAB = 0
     EXPORT_OPTION_COL_SEP_COMMA = 1
@@ -860,8 +860,7 @@ module Ladb::OpenCutList
                     # Header row
                     header = []
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_type'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.std_dimension'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length') + (@cutlist[:is_metric] ? ' (m)' : ' (ft)'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area') + (@cutlist[:is_metric] ? ' (m2)' : ' (ft2)'))
@@ -873,7 +872,7 @@ module Ladb::OpenCutList
 
                       row = []
                       row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group[:material_type]}"))
-                      row.push(group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined'))
+                      row.push((group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group[:material_type] > 0 ? ' / ' + group[:std_dimension] : ''))
                       row.push(group[:std_dimension])
                       row.push(group[:part_count])
                       row.push(group[:raw_length] == 0 ? '' : ((@cutlist[:is_metric] ? '%.3f' : '%.2f') % group[:raw_length]).to_s.tr('.', DimensionUtils.instance.decimal_separator))

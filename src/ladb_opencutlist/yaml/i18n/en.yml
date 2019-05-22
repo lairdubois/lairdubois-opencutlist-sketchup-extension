@@ -190,10 +190,15 @@ tab:
       raw_length: Length - raw
       raw_width: Width - raw
       raw_thickness: Thickness - raw
+      raw_area: Area - raw
+      raw_volume: Volume - raw
       length: Length - final
       width: Width - final
       thickness: Thickness - final
       count: Quantity
+      part_count: $t(tab.cutlist.list.part_count)
+      material_type: $t(tab.cutlist.list.material_type)
+      material_thickness: $t(tab.cutlist.list.material_thickness)
       material_name: Material
       labels: Labels
     cuttingdiagram:
