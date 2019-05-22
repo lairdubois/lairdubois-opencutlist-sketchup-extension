@@ -71,6 +71,7 @@ tab:
       resized: Achtung, dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
+      not_aligned_on_axes: Attention, cette pièce ne semble pas correctement alignée son repère
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -176,6 +177,9 @@ tab:
 
         <i class="ladb-opencutlist-icon-warning"></i> *Die in maskierten Gruppen enthaltenen Teile werden nicht exportiert*.
       options: Dateioptionen
+      option_source: Source
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_summary: $t(tab.cutlist.list.summary)
       option_col_sep: Trennzeichen
       option_col_sep_tab: Tabulator
       option_col_sep_comma: Komma

@@ -71,6 +71,7 @@ tab:
       resized: Warning, this piece was resized with respect to its component definition
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
+      not_aligned_on_axes: Attention, cette pièce ne semble pas correctement alignée son repère
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -176,6 +177,9 @@ tab:
 
         <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
       options: Export Options
+      option_source: Source
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_summary: $t(tab.cutlist.list.summary)
       option_col_sep: Separator
       option_col_sep_tab: Tabulator
       option_col_sep_comma: Comma

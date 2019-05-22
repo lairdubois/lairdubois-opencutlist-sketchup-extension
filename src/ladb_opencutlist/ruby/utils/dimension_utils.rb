@@ -26,6 +26,8 @@
 
     include Singleton
 
+    attr_accessor :decimal_separator
+
     # Separators
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
@@ -37,9 +39,9 @@
     def initialize
       begin
         '1.0'.to_l
-        @separator = '.'
+        @decimal_separator = '.'
       rescue
-        @separator = ','
+        @decimal_separator = ','
       end
       fetch_length_options
     end
@@ -131,7 +133,7 @@
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
           end
           if !four.nil?
-            nu.sub!(four, @separator)
+            nu.sub!(four, @decimal_separator)
           end
         elsif match = i.match(/^~?\s*(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
           one, two, three, four, five, six, seven, eight, nine = match.captures
@@ -201,7 +203,7 @@
           sum = 0 # garbage always becomes 0
         end
       end
-      sum = sum.to_s.sub(/\./, @separator)
+      sum = sum.to_s.sub(/\./, @decimal_separator)
       sum + UNIT_SIGN_INCHES
     end
 

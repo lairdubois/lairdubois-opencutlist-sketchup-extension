@@ -31,6 +31,99 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-filter:before {
   content: "\e935";
 }
+.ladb-opencutlist-icon-height:before {
+  content: "\e92b";
+}
+.ladb-opencutlist-icon-width:before {
+  content: "\e92c";
+}
+.ladb-opencutlist-icon-saw:before {
+  content: "\e92d";
+}
+.ladb-opencutlist-icon-vertical-cut:before {
+  content: "\e929";
+}
+.ladb-opencutlist-icon-horizontal-cut:before {
+  content: "\e92a";
+}
+.ladb-opencutlist-icon-grained-0:before {
+  content: "\e925";
+}
+.ladb-opencutlist-icon-grained-1:before {
+  content: "\e926";
+}
+.ladb-opencutlist-icon-resized:before {
+  content: "\e921";
+}
+.ladb-opencutlist-icon-import:before {
+  content: "\e91a";
+}
+.ladb-opencutlist-icon-export:before {
+  content: "\e920";
+}
+.ladb-opencutlist-icon-numbers-reset:before {
+  content: "\e91d";
+}
+.ladb-opencutlist-icon-numbers-save:before {
+  content: "\e91e";
+}
+.ladb-opencutlist-icon-not-aligned-on-axes:before {
+  content: "\e936";
+}
+.ladb-opencutlist-icon-orientation-locked-on-axis:before {
+  content: "\e91c";
+}
+.ladb-opencutlist-icon-trash:before {
+  content: "\e91b";
+}
+.ladb-opencutlist-icon-sort-asc:before {
+  content: "\e915";
+}
+.ladb-opencutlist-icon-sort-desc:before {
+  content: "\e916";
+}
+.ladb-opencutlist-icon-reorder:before {
+  content: "\e917";
+}
+.ladb-opencutlist-icon-material-origin-1:before {
+  content: "\e913";
+}
+.ladb-opencutlist-icon-material-origin-3:before {
+  content: "\e911";
+}
+.ladb-opencutlist-icon-material-origin-2:before {
+  content: "\e912";
+}
+.ladb-opencutlist-icon-edit:before {
+  content: "\e90d";
+}
+.ladb-opencutlist-icon-magnifier:before {
+  content: "\e924";
+}
+.ladb-opencutlist-icon-arrow-circle-down:before {
+  content: "\e90f";
+}
+.ladb-opencutlist-icon-arrow-circle-up:before {
+  content: "\e910";
+}
+.ladb-opencutlist-icon-settings:before {
+  content: "\e907";
+}
+.ladb-opencutlist-icon-warning:before {
+  content: "\e908";
+}
+.ladb-opencutlist-icon-help:before {
+  content: "\e909";
+}
+.ladb-opencutlist-icon-print:before {
+  content: "\e906";
+}
+.ladb-opencutlist-icon-cutlist:before {
+  content: "\e900";
+}
+.ladb-opencutlist-icon-bar:before {
+  content: "\e922";
+}
 .ladb-opencutlist-icon-label:before {
   content: "\e934";
 }
@@ -99,94 +192,4 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-chevron-left:before {
   content: "\e905";
-}
-.ladb-opencutlist-icon-height:before {
-  content: "\e92b";
-}
-.ladb-opencutlist-icon-width:before {
-  content: "\e92c";
-}
-.ladb-opencutlist-icon-saw:before {
-  content: "\e92d";
-}
-.ladb-opencutlist-icon-vertical-cut:before {
-  content: "\e929";
-}
-.ladb-opencutlist-icon-horizontal-cut:before {
-  content: "\e92a";
-}
-.ladb-opencutlist-icon-grained-0:before {
-  content: "\e925";
-}
-.ladb-opencutlist-icon-grained-1:before {
-  content: "\e926";
-}
-.ladb-opencutlist-icon-resized:before {
-  content: "\e921";
-}
-.ladb-opencutlist-icon-import:before {
-  content: "\e91a";
-}
-.ladb-opencutlist-icon-export:before {
-  content: "\e920";
-}
-.ladb-opencutlist-icon-numbers-reset:before {
-  content: "\e91d";
-}
-.ladb-opencutlist-icon-numbers-save:before {
-  content: "\e91e";
-}
-.ladb-opencutlist-icon-orientation-locked-on-axis:before {
-  content: "\e91c";
-}
-.ladb-opencutlist-icon-trash:before {
-  content: "\e91b";
-}
-.ladb-opencutlist-icon-sort-asc:before {
-  content: "\e915";
-}
-.ladb-opencutlist-icon-sort-desc:before {
-  content: "\e916";
-}
-.ladb-opencutlist-icon-reorder:before {
-  content: "\e917";
-}
-.ladb-opencutlist-icon-material-origin-1:before {
-  content: "\e913";
-}
-.ladb-opencutlist-icon-material-origin-3:before {
-  content: "\e911";
-}
-.ladb-opencutlist-icon-material-origin-2:before {
-  content: "\e912";
-}
-.ladb-opencutlist-icon-edit:before {
-  content: "\e90d";
-}
-.ladb-opencutlist-icon-magnifier:before {
-  content: "\e924";
-}
-.ladb-opencutlist-icon-arrow-circle-down:before {
-  content: "\e90f";
-}
-.ladb-opencutlist-icon-arrow-circle-up:before {
-  content: "\e910";
-}
-.ladb-opencutlist-icon-settings:before {
-  content: "\e907";
-}
-.ladb-opencutlist-icon-warning:before {
-  content: "\e908";
-}
-.ladb-opencutlist-icon-help:before {
-  content: "\e909";
-}
-.ladb-opencutlist-icon-print:before {
-  content: "\e906";
-}
-.ladb-opencutlist-icon-cutlist:before {
-  content: "\e900";
-}
-.ladb-opencutlist-icon-bar:before {
-  content: "\e922";
 }

@@ -64,6 +64,10 @@ module Ladb::OpenCutList
           :untyped_material_count => 0,
           :materials => []
       }
+
+      # Reset materials UUIDS
+      MaterialAttributes::reset_used_uuids
+
       materials.each { |material|
 
         thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")

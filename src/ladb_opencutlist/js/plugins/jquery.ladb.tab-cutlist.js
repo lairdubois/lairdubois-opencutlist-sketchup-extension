@@ -19,6 +19,7 @@
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist.option.part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist.option.part_order_strategy';
 
+    var SETTING_KEY_EXPORT_OPTION_SOURCE = 'cutlist.export.option.source';
     var SETTING_KEY_EXPORT_OPTION_COL_SEP = 'cutlist.export.option.col_sep';
     var SETTING_KEY_EXPORT_OPTION_ENCODING = 'cutlist.export.option.encoding';
 
@@ -48,6 +49,7 @@
     var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
 
+    var OPTION_DEFAULT_SOURCE = 0;     // cutlist
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
     var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
@@ -392,6 +394,7 @@
         // Retrieve export option options
         this.opencutlist.pullSettings([
 
+                SETTING_KEY_EXPORT_OPTION_SOURCE,
                 SETTING_KEY_EXPORT_OPTION_COL_SEP,
                 SETTING_KEY_EXPORT_OPTION_ENCODING
 
@@ -400,6 +403,7 @@
             function () {
 
                 var exportOptions = {
+                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, OPTION_DEFAULT_SOURCE),
                     col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
                     encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
                 };
@@ -407,11 +411,14 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
                 // Fetch UI elements
+                var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
                 var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
                 var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
                 var $btnExport = $('#ladb_cutlist_export', $modal);
 
                 // Bind select
+                $selectSource.val(exportOptions.source);
+                $selectSource.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectColSep.val(exportOptions.col_sep);
                 $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectEncoding.val(exportOptions.encoding);
@@ -422,11 +429,13 @@
 
                     // Fetch options
 
+                    exportOptions.source = $selectSource.val();
                     exportOptions.col_sep = $selectColSep.val();
                     exportOptions.encoding = $selectEncoding.val();
 
                     // Store options
                     that.opencutlist.setSettings([
+                        { key:SETTING_KEY_EXPORT_OPTION_SOURCE, value:exportOptions.source },
                         { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:exportOptions.col_sep },
                         { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding }
                     ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);

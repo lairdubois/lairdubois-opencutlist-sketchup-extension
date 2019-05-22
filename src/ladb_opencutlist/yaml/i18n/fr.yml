@@ -71,6 +71,7 @@ tab:
       resized: Attention, cette pièce est redimensionnée par rapport à sa définition de composant
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
+      not_aligned_on_axes: Attention, cette pièce ne semble pas correctement alignée sur son repère
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -176,6 +177,9 @@ tab:
 
         <i class="ladb-opencutlist-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
+      option_source: Source
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_summary: $t(tab.cutlist.list.summary)
       option_col_sep: Séparateur
       option_col_sep_tab: Tabulation
       option_col_sep_comma: Virgule
@@ -186,11 +190,16 @@ tab:
       raw_length: Longueur brute
       raw_width: Largeur brute
       raw_thickness: Épaisseur brute
+      raw_area: Surface brute
+      raw_volume: Volume brute
       length: Longueur finie
       width: Largeur finie
       thickness: Épaisseur finie
       count: Quantité
+      part_count: Nombre de pièces
+      material_type: Type
       material_name: Matière
+      std_dimension: Dimensions
       labels: Etiquettes
     cuttingdiagram:
       title: Calepinage

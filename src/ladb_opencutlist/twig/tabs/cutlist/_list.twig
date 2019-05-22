@@ -204,6 +204,7 @@
                 <td class="text-center" style="color: red;"><span data-toggle="tooltip"{% if part.number == part.saved_number %} style="border: 1px solid red; padding: 0 4px;" title="{{ 'tab.cutlist.tooltip.number_saved'|i18next() }}"{% elseif part.saved_number is not null %} style="border: 1px solid #dedede; padding: 0 4px;" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.number_hidden'|i18next({ 'number':part.saved_number }) }}"{% else %} title="{{ 'tab.cutlist.tooltip.number_generated'|i18next }}"{% endif %}>{{ part.number }}</span></td>
                 <td>
                     <div class="ladb-minitools no-print">
+                        {% if not part.aligned_on_axes %}<a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.not_aligned_on_axes')|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
                         {% if part.resized %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.resized')|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
                         {% if part.orientation_locked_on_axis %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.orientation_locked_on_axis')|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
                         {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}

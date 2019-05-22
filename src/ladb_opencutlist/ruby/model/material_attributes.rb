@@ -75,6 +75,10 @@
 
     # -----
 
+    def self.reset_used_uuids
+      @@used_uuids.clear
+    end
+
     def self.valid_type(type)
       if type
         i_type = type.to_i

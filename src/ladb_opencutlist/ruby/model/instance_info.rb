@@ -5,12 +5,18 @@ module Ladb::OpenCutList
   class InstanceInfo
 
     attr_accessor :size
-    attr_reader :path
+    attr_reader :path, :x_faces, :y_faces, :z_faces
 
     @size
+    @x_faces
+    @y_faces
+    @z_faces
 
-    def initialize(path = [])
+    def initialize(path = [], x_faces = [], y_faces = [], z_faces = [])
       @path = path
+      @x_faces = x_faces
+      @y_faces = y_faces
+      @z_faces = z_faces
     end
 
     # -----
@@ -38,6 +44,10 @@ module Ladb::OpenCutList
         return @scale
       end
       @scale = TransformationUtils::get_scale3d(transformation)
+    end
+
+    def aligned_on_axes
+      ((x_faces.empty? ? 0 : 1) + (y_faces.empty? ? 0 : 1) + (z_faces.empty? ? 0 : 1)) >= 2
     end
 
     # -----
