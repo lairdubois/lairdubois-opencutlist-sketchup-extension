@@ -201,7 +201,7 @@ tab:
       length: Length - final
       width: Width - final
       thickness: Thickness - final
-      real_area: Sourface réelle
+      real_area: Surface réelle
       count: Quantity
       part_count: Quantity
       material_type: Type

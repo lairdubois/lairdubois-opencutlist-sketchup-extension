@@ -201,7 +201,7 @@ tab:
       length: Longueur capable
       width: Largeur capable
       thickness: Épaisseur capable
-      real_area: Sourface réelle
+      real_area: Surface réelle
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type
