@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative 'controller'
   require_relative '../model/scale3d'
   require_relative '../model/size3d'
+  require_relative '../model/face_info'
   require_relative '../model/instance_info'
   require_relative '../model/cutlistdef'
   require_relative '../model/groupdef'
@@ -37,6 +38,10 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF8 = 0
     EXPORT_OPTION_ENCODING_UTF16LE = 1
     EXPORT_OPTION_ENCODING_UTF16BE = 2
+
+    FLAG_REAL_AREA_NONE       = 1 >> 0
+    FLAG_REAL_AREA_THICKNESS  = 1 >> 1
+    FLAG_REAL_AREA_WIDTH      = 1 >> 2
 
     def initialize()
       super('cutlist')
@@ -209,52 +214,86 @@ module Ladb::OpenCutList
 
       # -- Faces Utils --
 
-      def _grab_main_faces(definition_or_group, x_faces = [], y_faces = [], z_faces = [], transformation = nil)
+      def _grab_main_faces(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], transformation = nil)
         definition_or_group.entities.each { |entity|
           if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
             if entity.is_a? Sketchup::Face
               transformed_normal = transformation.nil? ? entity.normal : entity.normal.transform(transformation)
               if transformed_normal.parallel?(X_AXIS)
-                x_faces.push(entity)
+                x_face_infos.push(FaceInfo.new(entity, transformation))
               elsif transformed_normal.parallel?(Y_AXIS)
-                y_faces.push(entity)
+                y_face_infos.push(FaceInfo.new(entity, transformation))
               elsif transformed_normal.parallel?(Z_AXIS)
-                z_faces.push(entity)
+                z_face_infos.push(FaceInfo.new(entity, transformation))
               end
             elsif entity.is_a? Sketchup::Group
-              _grab_main_faces(entity, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces(entity, x_face_infos, y_face_infos, z_face_infos, transformation ? transformation * entity.transformation : entity.transformation)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              _grab_main_faces(entity.definition, x_faces, y_faces, z_faces, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces(entity.definition, x_face_infos, y_face_infos, z_face_infos, transformation ? transformation * entity.transformation : entity.transformation)
             end
           end
         }
-        return x_faces, y_faces, z_faces
+        return x_face_infos, y_face_infos, z_face_infos
       end
 
-      def _faces_by_normal(normal, x_faces, y_faces, z_faces)
+      def _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
         case normal
         when X_AXIS
-          x_faces
+          x_face_infos
         when Y_AXIS
-          y_faces
+          y_face_infos
         when Z_AXIS
-          z_faces
+          z_face_infos
         else
           []
         end
       end
 
-      def _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+      def _compute_largest_real_area(normal, x_face_infos, y_face_infos, z_face_infos)
 
-        real_thickness_area = _faces_by_normal(instance_info.size.thickness_normal, x_faces, y_faces, z_faces).map { | face | face.area(instance_info.transformation) }.max
-        thickness_area = instance_info.size.length * instance_info.size.width
-        thickness_area_ratio = real_thickness_area.nil? ? 0 : real_thickness_area / thickness_area
+        # Groups faces by plane
+        plane_grouped_face_infos = {}
+        _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
+          transformed_plane = face_info.transformation.nil? ? face_info.face.plane : face_info.transformation * face_info.face.plane
+          unless plane_grouped_face_infos.has_key?(transformed_plane)
+            plane_grouped_face_infos.store(transformed_plane, [])
+          end
+          plane_grouped_face_infos[transformed_plane].push(face_info)
+        }
 
-        real_width_area = _faces_by_normal(instance_info.size.width_normal, x_faces, y_faces, z_faces).map { | face | face.area(instance_info.transformation) }.max
-        width_area = instance_info.size.thickness * instance_info.size.width
-        width_area_ratio = real_width_area.nil? ? 0 : real_width_area / width_area
+        # Compute area of each group
+        areas = []
+        plane_grouped_face_infos.each do |plane, face_infos|
+          areas.push(face_infos.inject(0) { |area, face_info|
+            area + (face_info.transformation.nil? ? face_info.face.area : face_info.face.area(face_info.transformation))
+          })
+        end
 
-        return real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio
+        # Return the max
+        areas.max
+      end
+
+      def _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, flags = FLAG_REAL_AREA_NONE)
+
+        if flags & FLAG_REAL_AREA_THICKNESS == FLAG_REAL_AREA_THICKNESS
+          real_area_thickness = _compute_largest_real_area(instance_info.size.thickness_normal, x_face_infos, y_face_infos, z_face_infos)
+          area_thickness = instance_info.size.length * instance_info.size.width
+          area_ratio_thickness = real_area_thickness.nil? ? 0 : real_area_thickness / area_thickness
+        else
+          real_area_thickness = nil
+          area_ratio_thickness = nil
+        end
+
+        if flags & FLAG_REAL_AREA_WIDTH == FLAG_REAL_AREA_WIDTH
+          real_area_width = _compute_largest_real_area(instance_info.size.width_normal, x_face_infos, y_face_infos, z_face_infos)
+          area_width = instance_info.size.thickness * instance_info.size.width
+          area_ratio_width = real_area_width.nil? ? 0 : real_area_width / area_width
+        else
+          real_area_width = nil
+          area_ratio_width = nil
+        end
+
+        return real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width
       end
 
       # -- Std utils --
@@ -603,25 +642,25 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SOLID_WOOD
 
-              x_faces, y_faces, z_faces = _grab_main_faces(definition)
-              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS)
 
-              part_def.aligned_on_axes = (thickness_area_ratio > 0.7 or (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 1 and _faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 1))
+              part_def.aligned_on_axes = (area_ratio_thickness > 0.7 or (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1 and _faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1))
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
-              x_faces, y_faces, z_faces = _grab_main_faces(definition)
-              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS)
 
-              part_def.real_area = real_thickness_area
-              part_def.aligned_on_axes = (thickness_area_ratio > 0.3 and (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 2 and (_faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 1 or _faces_by_normal(size.length_normal, x_faces, y_faces, z_faces).length >= 1)))
+              part_def.real_area = real_area_thickness
+              part_def.aligned_on_axes = (area_ratio_thickness > 0.3 and (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2 and (_faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.length_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1)))
 
             when MaterialAttributes::TYPE_BAR
 
-              x_faces, y_faces, z_faces = _grab_main_faces(definition)
-              real_thickness_area, thickness_area_ratio, real_width_area, width_area_ratio = _compute_real_areas_and_ratios(instance_info, x_faces, y_faces, z_faces)
+              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS | FLAG_REAL_AREA_WIDTH)
 
-              part_def.aligned_on_axes = (thickness_area_ratio > 0.7 and width_area_ratio > 0.7 and (_faces_by_normal(size.thickness_normal, x_faces, y_faces, z_faces).length >= 2 and _faces_by_normal(size.width_normal, x_faces, y_faces, z_faces).length >= 2))
+              part_def.aligned_on_axes = (area_ratio_thickness > 0.7 and area_ratio_width > 0.7 and (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2 and _faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2))
 
             else
               part_def.aligned_on_axes = true
@@ -1068,6 +1107,7 @@ module Ladb::OpenCutList
         text_line_1 = '[' + displayed_part[:number] + '] ' + displayed_part[:name]
         text_line_2 = displayed_part[:labels].join(' | ')
         text_line_3 = displayed_part[:length].to_s + ' x ' + displayed_part[:width].to_s + ' x ' + displayed_part[:thickness].to_s +
+            (displayed_part[:real_area].nil? ? '' : " (#{displayed_part[:real_area]})") +
             ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
             ' | ' + (displayed_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_part[:material_name])
 

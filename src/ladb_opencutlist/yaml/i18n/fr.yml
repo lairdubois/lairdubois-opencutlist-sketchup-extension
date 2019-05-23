@@ -69,7 +69,7 @@ tab:
       number_saved: Le numéro de cette pièce est enregistré
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
-      resized: Attention, cette pièce est redimensionnée par rapport à sa définition de composant
+      resized: Cette pièce est redimensionnée par rapport à sa définition de composant
       auto_oriented: Cette pièce a été réorienté automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
