@@ -254,7 +254,7 @@ module Ladb::OpenCutList
         # Groups faces by plane
         plane_grouped_face_infos = {}
         _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
-          transformed_plane = face_info.transformation.nil? ? face_info.face.plane : face_info.transformation * face_info.face.plane
+          transformed_plane = face_info.transformation.nil? ? face_info.face.plane : face_info.face.plane * face_info.transformation
           unless plane_grouped_face_infos.has_key?(transformed_plane)
             plane_grouped_face_infos.store(transformed_plane, [])
           end
