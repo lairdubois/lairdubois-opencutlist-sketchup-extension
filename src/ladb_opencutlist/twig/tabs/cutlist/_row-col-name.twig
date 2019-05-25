@@ -1,0 +1,32 @@
+<div class="ladb-minitools no-print">
+    {% if not part.children %}
+        {% if not part.aligned_on_axes %}<a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.not_aligned_on_axes')|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
+        {% if part.auto_oriented %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.auto_oriented')|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
+        {% if part.resized %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.resized')|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
+        {% if part.orientation_locked_on_axis %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.orientation_locked_on_axis')|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
+        {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins } %}
+    {% endif %}
+    <span class="ladb-separator"></span>
+    <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+    {% if part.children %}
+        <a href="#" class="ladb-btn-collapse-toggle-part ladb-click-tool" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.collapse_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
+    {% else %}
+        <a href="#" class="ladb-btn-edit-part ladb-click-tool" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+    {% endif %}
+</div>
+{% if isChild %}<span style="padding-left:10px;">{% endif %}{{ part.name|escape }}{% if part.children %}, ...{% endif %}{% if isChild %}</span>{% endif %}
+{% if not part.children %}
+    {% if part.entity_names is not empty %}
+        <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name[0]|escape }}{% if entity_name[1] > 1 %} <small class="text-muted">x{{ entity_name[1] }}</small>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
+    {% endif %}
+{% endif %}
+{% if not isChild %}
+    {% if not uiOptions.hide_labels and part.labels is not empty %}
+        <ul class="ladb-cutlist-part-labels">
+            {% for label in part.labels %}
+                {% set active = label in generateFilters.labels_filter %}
+                <li><a href="#" class="ladb-btn-label-filter{% if active %} ladb-active{% endif %}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(active ? 'remove' : 'add')~'_label_filter')|i18next({ 'label':label }) }}">{{ label }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}

@@ -360,6 +360,12 @@
                 $(this).blur();
                 return false;
             });
+            $('a.ladb-btn-collapse-toggle-part', that.$page).on('click', function() {
+                var partId = $(this).data('part-id');
+                that.toggleCollapsePart(partId);
+                $(this).blur();
+                return false;
+            });
             $('a.ladb-btn-label-filter', that.$page).on('click', function() {
                 var labelFilter = $(this).html();
                 var indexOf = that.generateFilters.labels_filter.indexOf(labelFilter);
@@ -551,8 +557,17 @@
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
                 var part = group.parts[j];
-                if (part.id === id) {
-                    return part;
+                if (part.children !== undefined) {
+                    for (var k = 0; k < part.children.length; k++) {
+                        var childPart = part.children[k];
+                        if (childPart.id === id) {
+                            return childPart;
+                        }
+                    }
+                } else {
+                    if (part.id === id) {
+                        return part;
+                    }
                 }
             }
         }
@@ -678,6 +693,44 @@
             });
 
         }
+    };
+
+    LadbTabCutlist.prototype.toggleCollapsePart = function (id) {
+        var $row = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-collapse-toggle-part', $row);
+        var $i = $('i', $btn);
+
+        if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
+            this.openCollapsePart(id);
+        } else {
+            this.closeCollapsePart(id);
+        }
+    };
+
+    LadbTabCutlist.prototype.openCollapsePart = function (id) {
+        var $row = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-collapse-toggle-part', $row);
+        var $i = $('i', $btn);
+
+        $i.addClass('ladb-opencutlist-icon-arrow-up');
+        $i.removeClass('ladb-opencutlist-icon-arrow-down');
+
+        // Show children
+        $('tr[data-parent-id=' + id + ']', this.$element).removeClass('hide');
+
+    };
+
+    LadbTabCutlist.prototype.closeCollapsePart = function (id) {
+        var $row = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-collapse-toggle-part', $row);
+        var $i = $('i', $btn);
+
+        $i.addClass('ladb-opencutlist-icon-arrow-down');
+        $i.removeClass('ladb-opencutlist-icon-arrow-up');
+
+        // Hide children
+        $('tr[data-parent-id=' + id + ']', this.$element).addClass('hide');
+
     };
 
     // Groups /////

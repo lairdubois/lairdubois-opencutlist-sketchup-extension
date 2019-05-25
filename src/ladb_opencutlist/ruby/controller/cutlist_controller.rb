@@ -779,39 +779,73 @@ module Ladb::OpenCutList
 
         # Sort and browse parts
         group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
-          group[:parts].push(
-              {
-                  :id => part_def.id,
-                  :definition_id => part_def.definition_id,
-                  :name => part_def.name,
-                  :resized => !part_def.scale.identity?,
-                  :length => part_def.size.length.to_s,
-                  :width => part_def.size.width.to_s,
-                  :thickness => part_def.size.thickness.to_s,
-                  :count => part_def.count,
-                  :raw_length => part_def.raw_size.length.to_s,
-                  :raw_width => part_def.raw_size.width.to_s,
-                  :raw_thickness => part_def.raw_size.thickness.to_s,
-                  :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
-                  :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
-                  :number => part_def.number ? part_def.number : part_number,
-                  :saved_number => part_def.saved_number,
-                  :material_name => part_def.material_name,
-                  :material_origins => part_def.material_origins,
-                  :cumulable => part_def.cumulable,
-                  :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
-                  :labels => part_def.labels,
-                  :entity_ids => part_def.entity_ids,
-                  :entity_serialized_paths => part_def.entity_serialized_paths,
-                  :entity_names => part_def.entity_names.sort,
-                  :contains_blank_entity_names => part_def.contains_blank_entity_names,
-                  :auto_oriented => part_def.auto_oriented,
-                  :aligned_on_axes => part_def.aligned_on_axes,
-                  :real_area => part_def.real_area.nil? ? nil : Sketchup.format_area(part_def.real_area)
-              }
-          )
+          part = {
+              :id => part_def.id,
+              :definition_id => part_def.definition_id,
+              :name => part_def.name,
+              :resized => !part_def.scale.identity?,
+              :length => part_def.size.length.to_s,
+              :width => part_def.size.width.to_s,
+              :thickness => part_def.size.thickness.to_s,
+              :count => part_def.count,
+              :raw_length => part_def.raw_size.length.to_s,
+              :raw_width => part_def.raw_size.width.to_s,
+              :raw_thickness => part_def.raw_size.thickness.to_s,
+              :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
+              :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
+              :number => part_def.number ? part_def.number : part_number,
+              :saved_number => part_def.saved_number,
+              :material_name => part_def.material_name,
+              :material_origins => part_def.material_origins,
+              :cumulable => part_def.cumulable,
+              :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
+              :labels => part_def.labels,
+              :entity_ids => part_def.entity_ids,
+              :entity_serialized_paths => part_def.entity_serialized_paths,
+              :entity_names => part_def.entity_names.sort,
+              :contains_blank_entity_names => part_def.contains_blank_entity_names,
+              :auto_oriented => part_def.auto_oriented,
+              :aligned_on_axes => part_def.aligned_on_axes,
+              :real_area => part_def.real_area.nil? ? nil : Sketchup.format_area(part_def.real_area),
+          }
           unless part_def.number
             part_number = part_number.succ
+          end
+
+          last_part = group[:parts].last
+          if !last_part.nil? and last_part[:raw_length] == part[:raw_length] and last_part[:raw_width] == part[:raw_width] and last_part[:raw_thickness] == part[:raw_thickness] and last_part[:labels] == part[:labels]
+            if last_part[:children].nil?
+
+              first_child_part = group[:parts].pop
+
+              last_part = {
+                  :id => first_child_part[:id] + '_parent',
+                  :name => first_child_part[:name],
+                  :length => first_child_part[:length],
+                  :width => first_child_part[:width],
+                  :thickness => first_child_part[:thickness],
+                  :count => first_child_part[:count],
+                  :raw_length => first_child_part[:raw_length],
+                  :raw_width => first_child_part[:raw_width],
+                  :raw_thickness => first_child_part[:raw_thickness],
+                  :number => first_child_part[:number] + '+',
+                  :saved_number => first_child_part[:saved_number],
+                  :material_name => first_child_part[:material_name],
+                  :labels => first_child_part[:labels],
+                  :entity_ids => first_child_part[:entity_ids],
+                  :entity_serialized_paths => first_child_part[:entity_serialized_paths],
+                  :real_area => first_child_part[:real_area],
+                  :children => [ first_child_part ]
+              }
+              group[:parts].push(last_part)
+
+            end
+            last_part[:children].push(part)
+            last_part[:count] += part[:count]
+            last_part[:entity_ids] += part[:entity_ids]
+            last_part[:entity_serialized_paths] += part[:entity_serialized_paths]
+          else
+            group[:parts].push(part)
           end
         }
 
@@ -1060,16 +1094,46 @@ module Ladb::OpenCutList
           group = group
           group[:parts].each { |part|
             if part_id.nil? or part[:id] == part_id
-              part[:entity_serialized_paths].each { |entity_serialized_path|
-                instance_info = @instance_infos_cache[entity_serialized_path]
-                unless instance_info.nil?
-                  instance_infos.push(instance_info)
-                end
-              }
+              if part[:children].nil?
+                part[:entity_serialized_paths].each { |entity_serialized_path|
+                  instance_info = @instance_infos_cache[entity_serialized_path]
+                  unless instance_info.nil?
+                    instance_infos.push(instance_info)
+                  end
+                }
+              else
+                part[:children].each { |child_part|
+                  child_part[:entity_serialized_paths].each { |entity_serialized_path|
+                    instance_info = @instance_infos_cache[entity_serialized_path]
+                    unless instance_info.nil?
+                      instance_infos.push(instance_info)
+                    end
+                  }
+                }
+              end
               if part[:id] == part_id
                 displayed_part = part
                 break
               end
+            end
+            unless part[:children].nil?
+              part[:children].each { |child_part|
+                if part_id.nil? or child_part[:id] == part_id
+                  child_part[:entity_serialized_paths].each { |entity_serialized_path|
+                    instance_info = @instance_infos_cache[entity_serialized_path]
+                    unless instance_info.nil?
+                      instance_infos.push(instance_info)
+                    end
+                  }
+                  if child_part[:id] == part_id
+                    displayed_part = part
+                    break
+                  end
+                end
+              }
+            end
+            unless displayed_part.nil?
+              break
             end
           }
           if group[:id] == group_id

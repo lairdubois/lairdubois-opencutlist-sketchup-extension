@@ -129,7 +129,7 @@ tab:
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif** ou **Bois panneau**).
+      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_labels: Masquer les étiquettes
       hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
       hide_raw_dimensions: Masquer les dimensions brutes
@@ -137,7 +137,7 @@ tab:
       hide_final_dimensions: Masquer les dimensions capables
       hide_final_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
       hide_real_areas: Masquer les surfaces réelles des panneaux
-      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
+      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *Panneau* ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.

@@ -64,6 +64,24 @@
     font-size: 120%;
     cursor: pointer;
 
+    &.ladb-cutlist-row-parent {
+
+      > td {
+        border-bottom: 1px dashed @ladb-global-border;
+      }
+
+    }
+
+    &.ladb-cutlist-row-child {
+      font-size: 100%;
+
+      > td {
+        border-top: none;
+        border-bottom: none;
+      }
+
+    }
+
     &:hover {
       background-color: #f9f9f9;
 
