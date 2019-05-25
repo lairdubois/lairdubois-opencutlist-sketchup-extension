@@ -85,7 +85,7 @@
         </tr>
         {% for group in groups %}
             <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in uiOptions.hidden_group_ids %} ladb-mute{% endif %}">
-                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %}</td>
+                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}</td>
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     <div class="ladb-minitools no-print">
@@ -135,7 +135,7 @@
         {% set colspan = colspan - 1 %}
     {% endif %}
 
-    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group">
+    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
         <thead>
         <tr>
             <td colspan="{{ colspan }}">
@@ -160,7 +160,7 @@
                     </ul>
                 </div>
                 <div>
-                    <span class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
+                    <span class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %} {% include 'tabs/cutlist/_group-label.twig' %}</span>
                 </div>
             </td>
         </tr>

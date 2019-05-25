@@ -39,10 +39,6 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF16LE = 1
     EXPORT_OPTION_ENCODING_UTF16BE = 2
 
-    FLAG_REAL_AREA_NONE       = 1 >> 0
-    FLAG_REAL_AREA_THICKNESS  = 1 >> 1
-    FLAG_REAL_AREA_WIDTH      = 1 >> 2
-
     def initialize()
       super('cutlist')
     end
@@ -238,14 +234,14 @@ module Ladb::OpenCutList
 
       def _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
         case normal
-        when X_AXIS
-          x_face_infos
-        when Y_AXIS
-          y_face_infos
-        when Z_AXIS
-          z_face_infos
-        else
-          []
+          when X_AXIS
+            x_face_infos
+          when Y_AXIS
+            y_face_infos
+          when Z_AXIS
+            z_face_infos
+          else
+            []
         end
       end
 
@@ -255,6 +251,7 @@ module Ladb::OpenCutList
         plane_grouped_face_infos = {}
         _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
           transformed_plane = face_info.transformation.nil? ? face_info.face.plane : face_info.transformation * face_info.face.plane
+          transformed_plane.map! { |v| v.round(4) }   # Round plane values with only 4 digits
           unless plane_grouped_face_infos.has_key?(transformed_plane)
             plane_grouped_face_infos.store(transformed_plane, [])
           end
@@ -269,31 +266,17 @@ module Ladb::OpenCutList
           })
         end
 
-        # Return the max
-        areas.max
+        # Return plane count and max area
+        return plane_grouped_face_infos.length, areas.max
       end
 
-      def _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, flags = FLAG_REAL_AREA_NONE)
+      def _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
-        if flags & FLAG_REAL_AREA_THICKNESS == FLAG_REAL_AREA_THICKNESS
-          real_area_thickness = _compute_largest_real_area(instance_info.size.thickness_normal, x_face_infos, y_face_infos, z_face_infos)
-          area_thickness = instance_info.size.length * instance_info.size.width
-          area_ratio_thickness = real_area_thickness.nil? ? 0 : real_area_thickness / area_thickness
-        else
-          real_area_thickness = nil
-          area_ratio_thickness = nil
-        end
+        plane_count, real_area = _compute_largest_real_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        area = instance_info.size.area_by_axis(axis)
+        area_ratio = (real_area.nil? or area.nil?) ? 0 : real_area / area
 
-        if flags & FLAG_REAL_AREA_WIDTH == FLAG_REAL_AREA_WIDTH
-          real_area_width = _compute_largest_real_area(instance_info.size.width_normal, x_face_infos, y_face_infos, z_face_infos)
-          area_width = instance_info.size.thickness * instance_info.size.width
-          area_ratio_width = real_area_width.nil? ? 0 : real_area_width / area_width
-        else
-          real_area_width = nil
-          area_ratio_width = nil
-        end
-
-        return real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width
+        return plane_count, real_area, area_ratio
       end
 
       # -- Std utils --
@@ -643,24 +626,26 @@ module Ladb::OpenCutList
             when MaterialAttributes::TYPE_SOLID_WOOD
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS)
+              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              y_plane_count, y_real_area, y_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.aligned_on_axes = (area_ratio_thickness > 0.7 or (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1 and _faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.aligned_on_axes = (z_area_ratio >= 0.7 or y_area_ratio >= 0.7)
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS)
+              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
-              part_def.real_area = real_area_thickness
-              part_def.aligned_on_axes = (area_ratio_thickness > 0.3 and (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2 and (_faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.length_normal, x_face_infos, y_face_infos, z_face_infos).length >= 1)))
+              part_def.real_area = z_real_area
+              part_def.aligned_on_axes = (z_area_ratio >= 0.3 and (z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1)))
 
             when MaterialAttributes::TYPE_BAR
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              real_area_thickness, area_ratio_thickness, real_area_width, area_ratio_width = _compute_real_areas_and_ratios(instance_info, x_face_infos, y_face_infos, z_face_infos, FLAG_REAL_AREA_THICKNESS | FLAG_REAL_AREA_WIDTH)
+              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              y_plane_count, y_real_area, y_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.aligned_on_axes = (area_ratio_thickness > 0.7 and area_ratio_width > 0.7 and (_faces_by_normal(size.thickness_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2 and _faces_by_normal(size.width_normal, x_face_infos, y_face_infos, z_face_infos).length >= 2))
+              part_def.aligned_on_axes = (z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
 
             else
               part_def.aligned_on_axes = true

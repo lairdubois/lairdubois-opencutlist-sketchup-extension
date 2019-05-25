@@ -65,7 +65,7 @@ tab:
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
-      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur son repère
+      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur ses axes
       number_saved: Le numéro de cette pièce est enregistré
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
@@ -73,7 +73,7 @@ tab:
       auto_oriented: Cette pièce a été réorienté automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
-      not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur son repère
+      not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -94,7 +94,7 @@ tab:
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
       orientation: Orientation
-      orientation_locked_on_axis: Verrouiller sur le repère
+      orientation_locked_on_axis: Verrouiller sur les axes de la pièce
       orientation_locked_on_axis_help: |
         Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
 

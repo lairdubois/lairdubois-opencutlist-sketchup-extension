@@ -28,7 +28,7 @@ module Ladb::OpenCutList
             { :value => (bounds.width * scale.x).to_l, :normal => X_AXIS },
             { :value => (bounds.height * scale.y).to_l, :normal => Y_AXIS },
             { :value => (bounds.depth * scale.z).to_l, :normal => Z_AXIS }
-        ].sort_by { |item| item[:value]}
+        ].sort_by { |item| item[:value] }
         Size3d.new(ordered[2][:value], ordered[1][:value], ordered[0][:value], [ ordered[2][:normal], ordered[1][:normal], ordered[0][:normal] ])
       else
         Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)
@@ -41,16 +41,33 @@ module Ladb::OpenCutList
       @normals != DEFAULT_NORMALS
     end
 
-    def length_normal
-      @normals[0]
+    def oriented_normal(axis)
+      case axis
+        when X_AXIS
+          @normals[0]
+        when Y_AXIS
+          @normals[1]
+        when Z_AXIS
+          @normals[2]
+        else
+          raise 'Invalid axis'
+      end
     end
 
-    def width_normal
-      @normals[1]
-    end
+    # -----
 
-    def thickness_normal
-      @normals[2]
+    # Returns square area normal to given axis
+    def area_by_axis(axis)
+      case axis
+        when X_AXIS
+          @width * @thickness
+        when Y_AXIS
+          @length * @thickness
+        when Z_AXIS
+          area
+        else
+          raise 'Invalid axis'
+      end
     end
 
     # -----

@@ -34,3 +34,37 @@
   }
 
 }
+
+.ladb-material-type-icon {
+  font-size: 110%;
+
+  &.ladb-material-type-icon-filled {
+    color: #fff;
+    padding: 4px 5px;
+    border-radius: 2px;
+
+    &.ladb-material-type-1 {
+      background-color: @ladb-material-type-1;
+    }
+
+    &.ladb-material-type-2 {
+      background-color: @ladb-material-type-2;
+    }
+
+    &.ladb-material-type-3 {
+      background-color: @ladb-material-type-3;
+    }
+
+  }
+
+}
+
+// Print
+
+@media print {
+  .ladb-material-type-icon.ladb-material-type-icon-filled {
+    color: #000;
+    padding: 0;
+    border-radius: 0;
+  }
+}
