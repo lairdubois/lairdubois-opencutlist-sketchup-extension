@@ -27,7 +27,9 @@ default:
   unit_4: Meter
   part_single: Teil
   part_plural: Teile
-  more_extensions: Plus de plugins...
+  more: More
+  more_help: Help
+  more_extensions: Extensions
 core:
   menu:
     submenu: OpenCutList

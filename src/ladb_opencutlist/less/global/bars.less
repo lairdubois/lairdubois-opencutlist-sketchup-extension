@@ -56,15 +56,16 @@
   background: @ladb-brand-dark;
   width: @ladb-leftbar-width;
 
-  a {
+  a, .ladb-toggle-handle {
     display: block;
     text-align: center;
     text-decoration: none;
     color: #d6d4cd;
     position: relative;
     padding-top: 12px;
-    width: 90px;
-    height: 80px;
+    width: @ladb-leftbar-width;
+    height: @ladb-leftbar-height;
+    z-index: 1;
 
     &:hover {
       background-color: @ladb-brand-light;
@@ -78,6 +79,85 @@
 
     i {
       font-size: 30px;
+    }
+
+  }
+
+  .ladb-leftbar-subbar {
+    background-color: @ladb-brand-dark;
+    width: @ladb-leftbar-width;
+    height: @ladb-leftbar-height;
+
+    &.ladb-leftbar-subbar-2:hover {
+      width: @ladb-leftbar-width + 10px + @ladb-leftbar-width * 2;
+    }
+    &.ladb-leftbar-subbar-3:hover {
+      width: @ladb-leftbar-width + 10px + @ladb-leftbar-width * 3;
+    }
+    &.ladb-leftbar-subbar-4:hover {
+      width: @ladb-leftbar-width + 10px + @ladb-leftbar-width * 4;
+    }
+
+    &:hover {
+
+      .ladb-subbar-toggle {
+        background-color: initial;
+        border-color: #999;
+
+        .ladb-toggle-handle {
+          background-color: @ladb-brand-light;
+          color: @ladb-brand-dark;
+        }
+
+        .ladb-toggle-arrow {
+          display: block;
+          border-left-color: @ladb-brand-light;
+        }
+
+      }
+
+      .ladb-subbar-panel {
+        display: block;
+        background-color: @ladb-brand-dark;
+        height: @ladb-leftbar-height;
+      }
+
+    }
+
+    .ladb-subbar-toggle {
+      float: left;
+      width: @ladb-leftbar-width + 5px;
+
+      &.ladb-nav-active {
+        border-color: @ladb-brand-primary;
+      }
+
+      .ladb-toggle-handle {
+        float: left;
+        width: @ladb-leftbar-width;
+        z-index: 0;
+      }
+
+      .ladb-toggle-arrow {
+        display: none;
+        float: right;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent transparent transparent @ladb-brand-dark;
+        border-width: (@ladb-leftbar-height / 2) 0 (@ladb-leftbar-height / 2) 5px;
+      }
+
+    }
+
+    .ladb-subbar-panel {
+      float: right;
+      display: none;
+
+      a {
+        float: left;
+      }
+
     }
 
   }

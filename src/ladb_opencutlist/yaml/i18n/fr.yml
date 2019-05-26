@@ -27,7 +27,9 @@ default:
   unit_4: Mètres
   part_single: pièce
   part_plural: pièces
-  more_extensions: Plus de plugins...
+  more: Plus
+  more_help: Aide
+  more_extensions: Plugins
 core:
   menu:
     submenu: OpenCutList

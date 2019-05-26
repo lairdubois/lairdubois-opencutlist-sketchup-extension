@@ -28,6 +28,12 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-extension:before {
+  content: "\e93b";
+}
+.ladb-opencutlist-icon-more:before {
+  content: "\e938";
+}
 .ladb-opencutlist-icon-filter:before {
   content: "\e935";
 }

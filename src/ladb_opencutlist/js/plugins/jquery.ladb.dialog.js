@@ -43,6 +43,7 @@
         this.$wrapper = null;
         this.$btnMinimize = null;
         this.$btnMaximize = null;
+        this.$btnMore = null;
         this.$btnCloseCompatibilityAlert = null;
     };
 
@@ -125,6 +126,7 @@
                 that.$wrapper.hide();
                 that.$btnMinimize.hide();
                 that.$btnMaximize.show();
+                that.$btnMore.hide();
                 that.maximized = false;
                 that.$element.trigger(jQuery.Event('minimized.ladb.dialog'));
             });
@@ -138,6 +140,7 @@
                 that.$wrapper.show();
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
+                that.$btnMore.show();
                 that.maximized = true;
                 that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
             });
@@ -338,6 +341,7 @@
                 that.$wrapper = $('#ladb_wrapper', that.$element);
                 that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
                 that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+                that.$btnMore = $('#ladb_btn_more', that.$element);
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                 for (var i = 0; i < that.options.tabDefs.length; i++) {
                     var tabDef = that.options.tabDefs[i];
