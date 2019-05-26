@@ -761,103 +761,71 @@ module Ladb::OpenCutList
           part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
         end
 
-        group = {
-            :id => group_def.id,
-            :material_id => group_def.material_id,
-            :material_name => group_def.material_name,
-            :material_type => group_def.material_type,
-            :part_count => group_def.part_count,
-            :std_dimension => group_def.std_dimension,
-            :std_available => group_def.std_available,
-            :std_availability_message => group_def.std_availability_message,
-            :raw_length => group_def.raw_length,
-            :raw_area => group_def.raw_area,
-            :raw_volume => group_def.raw_volume,
-            :show_raw_dimensions => group_def.show_raw_dimensions,
-            :parts => []
-        }
+        group = group_def.to_struct
         response[:groups].push(group)
 
-        part_defs = []
-        group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width ] }.each { |part_def|
-          if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels
-            puts 'BINGO !'
-            if folder_part_def.children.empty?
-              first_child_part_def = part_defs.pop
+        if part_folding
+          part_defs = []
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width ] }.each { |part_def|
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels
+              if folder_part_def.children.empty?
+                first_child_part_def = part_defs.pop
 
-              folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
-              folder_part_def.number = first_child_part_def.number
-              folder_part_def.name = first_child_part_def.name
-              folder_part_def.count = first_child_part_def.count
-              folder_part_def.raw_size = first_child_part_def.raw_size
-              folder_part_def.size = first_child_part_def.size
-              folder_part_def.material_name = first_child_part_def.material_name
-              folder_part_def.labels = first_child_part_def.labels
+                folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
+                folder_part_def.name = first_child_part_def.name
+                folder_part_def.count = first_child_part_def.count
+                folder_part_def.raw_size = first_child_part_def.raw_size
+                folder_part_def.size = first_child_part_def.size
+                folder_part_def.material_name = first_child_part_def.material_name
+                folder_part_def.labels = first_child_part_def.labels
 
+                folder_part_def.children.push(first_child_part_def)
+
+                part_defs.push(folder_part_def)
+
+              end
+              folder_part_def.children.push(part_def)
+              folder_part_def.count += part_def.count
+            else
+              part_defs.push(part_def)
             end
-            folder_part_def.children.push(part_def)
-            folder_part_def.count += part_def.count
-          else
-            part_defs.push(part_def)
-          end
-        }
+          }
+        else
+          part_defs = group_def.part_defs.values
+        end
 
         # Sort and browse parts
         part_defs.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
+
           if part_def.children.empty?
+
+            # Part is simgle part
             part = part_def.to_struct(part_number)
+            unless part_def.number
+              part_number = part_number.succ
+            end
+
           else
-            part = {
-                :id => part_def.id,
-                :name => part_def.name,
-                :length => part_def.size.length.to_s,
-                :width => part_def.size.width.to_s,
-                :thickness => part_def.size.thickness.to_s,
-                :count => part_def.count,
-                :raw_length => part_def.raw_size.length.to_s,
-                :raw_width => part_def.raw_size.width.to_s,
-                :raw_thickness => part_def.raw_size.thickness.to_s,
-                :number => part_def.number ? part_def.number : part_number,
-                :saved_number => part_def.saved_number,
-                :material_name => part_def.material_name,
-                :labels => part_def.labels,
-                :children => []
+
+            # Part is folder part
+            part = part_def.to_struct(nil)
+
+            # Iterate on children
+            part_def.children.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |child_part_def|
+              child_part = child_part_def.to_struct(part_number)
+              unless child_part_def.number
+                part_number = part_number.succ
+              end
+              part[:children].push(child_part)
             }
-          end
-          unless part_def.number
-            part_number = part_number.succ
+
+            # Folder part takes first child number
+            part[:name] = part[:children].first[:name] + ', ...'
+            part[:number] = part[:children].first[:number] + '+'
+
           end
 
-          # if part_folding and !(folder_part = group[:parts].last).nil? and folder_part[:raw_length] == part[:raw_length] and folder_part[:raw_width] == part[:raw_width] and folder_part[:raw_thickness] == part[:raw_thickness] and folder_part[:labels] == part[:labels]
-          #   if folder_part[:children].nil?
-          #
-          #     first_child_part = group[:parts].pop
-          #
-          #     folder_part = {
-          #         :id => first_child_part[:id] + '_folder',
-          #         :name => first_child_part[:name] + ', ...',
-          #         :length => first_child_part[:length],
-          #         :width => first_child_part[:width],
-          #         :thickness => first_child_part[:thickness],
-          #         :count => first_child_part[:count],
-          #         :raw_length => first_child_part[:raw_length],
-          #         :raw_width => first_child_part[:raw_width],
-          #         :raw_thickness => first_child_part[:raw_thickness],
-          #         :number => first_child_part[:number] + '+',
-          #         :saved_number => nil,
-          #         :material_name => first_child_part[:material_name],
-          #         :labels => first_child_part[:labels],
-          #         :real_area => first_child_part[:real_area],
-          #         :children => [ first_child_part ]
-          #     }
-          #     group[:parts].push(folder_part)
-          #
-          #   end
-          #   folder_part[:children].push(part)
-          #   folder_part[:count] += part[:count]
-          # else
-            group[:parts].push(part)
-          # end
+          group[:parts].push(part)
         }
 
         # Compute imperial group's raw dimensions

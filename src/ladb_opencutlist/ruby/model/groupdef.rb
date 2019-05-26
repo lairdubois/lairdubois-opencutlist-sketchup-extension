@@ -54,6 +54,25 @@ module Ladb::OpenCutList
       false
     end
 
+    # -----
+
+    def to_struct
+      {
+          :id => id,
+          :material_id => material_id,
+          :material_name => material_name,
+          :material_type => material_type,
+          :part_count => part_count,
+          :std_dimension => std_dimension,
+          :std_available => std_available,
+          :std_availability_message => std_availability_message,
+          :raw_length => raw_length,
+          :raw_area => raw_area,
+          :raw_volume => raw_volume,
+          :show_raw_dimensions => show_raw_dimensions,
+          :parts => []
+      }
+    end
   end
 
 end
