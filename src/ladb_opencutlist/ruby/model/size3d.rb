@@ -82,6 +82,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def ==(o)
+      super(o) && o.thickness == @thickness
+    end
+
     def to_s
       'Size3d(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ', ' + @thickness.to_l.to_s + ')'
     end

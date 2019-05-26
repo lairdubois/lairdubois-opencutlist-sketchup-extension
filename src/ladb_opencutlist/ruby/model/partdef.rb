@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   class PartDef
 
     attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :aligned_on_axes, :real_area
-    attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names
+    attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
       @id = id
@@ -29,6 +29,7 @@ module Ladb::OpenCutList
       @auto_oriented = false
       @aligned_on_axes = false
       @real_area = nil
+      @children = []
     end
 
     # -----
@@ -85,10 +86,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    # def id
-    #   Digest::SHA1.hexdigest(@entity_ids.join(','))   # ParfDef ID is generated according to its entity list
-    # end
-
     def cumulative_raw_length
       if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
         (@raw_size.length.to_f * @count).to_l
@@ -131,6 +128,40 @@ module Ladb::OpenCutList
           @entity_names[entity_name] = 1
         end
       end
+    end
+
+    # -----
+
+    def to_struct(part_number)
+      {
+          :id => id,
+          :definition_id => definition_id,
+          :name => name,
+          :resized => !scale.identity?,
+          :length => size.length.to_s,
+          :width => size.width.to_s,
+          :thickness => size.thickness.to_s,
+          :count => count,
+          :raw_length => raw_size.length.to_s,
+          :raw_width => raw_size.width.to_s,
+          :raw_thickness => raw_size.thickness.to_s,
+          :cumulative_raw_length => cumulative_raw_length.to_s,
+          :cumulative_raw_width => cumulative_raw_width.to_s,
+          :number => number ? number : part_number,
+          :saved_number => saved_number,
+          :material_name => material_name,
+          :material_origins => material_origins,
+          :cumulable => cumulable,
+          :orientation_locked_on_axis => orientation_locked_on_axis,
+          :labels => labels,
+          :entity_ids => entity_ids,
+          :entity_serialized_paths => entity_serialized_paths,
+          :entity_names => entity_names.sort,
+          :contains_blank_entity_names => contains_blank_entity_names,
+          :auto_oriented => auto_oriented,
+          :aligned_on_axes => aligned_on_axes,
+          :real_area => real_area.nil? ? nil : Sketchup.format_area(real_area),
+      }
     end
 
   end

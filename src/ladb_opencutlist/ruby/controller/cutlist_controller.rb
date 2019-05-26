@@ -413,6 +413,7 @@ module Ladb::OpenCutList
       smart_material = settings['smart_material']
       part_number_with_letters = settings['part_number_with_letters']
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
+      part_folding = settings['part_folding']
       part_order_strategy = settings['part_order_strategy']
       labels_filter = settings['labels_filter']
 
@@ -777,76 +778,86 @@ module Ladb::OpenCutList
         }
         response[:groups].push(group)
 
+        part_defs = []
+        group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width ] }.each { |part_def|
+          if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels
+            puts 'BINGO !'
+            if folder_part_def.children.empty?
+              first_child_part_def = part_defs.pop
+
+              folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
+              folder_part_def.number = first_child_part_def.number
+              folder_part_def.name = first_child_part_def.name
+              folder_part_def.count = first_child_part_def.count
+              folder_part_def.raw_size = first_child_part_def.raw_size
+              folder_part_def.size = first_child_part_def.size
+              folder_part_def.material_name = first_child_part_def.material_name
+              folder_part_def.labels = first_child_part_def.labels
+
+            end
+            folder_part_def.children.push(part_def)
+            folder_part_def.count += part_def.count
+          else
+            part_defs.push(part_def)
+          end
+        }
+
         # Sort and browse parts
-        group_def.part_defs.values.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
-          part = {
-              :id => part_def.id,
-              :definition_id => part_def.definition_id,
-              :name => part_def.name,
-              :resized => !part_def.scale.identity?,
-              :length => part_def.size.length.to_s,
-              :width => part_def.size.width.to_s,
-              :thickness => part_def.size.thickness.to_s,
-              :count => part_def.count,
-              :raw_length => part_def.raw_size.length.to_s,
-              :raw_width => part_def.raw_size.width.to_s,
-              :raw_thickness => part_def.raw_size.thickness.to_s,
-              :cumulative_raw_length => part_def.cumulative_raw_length.to_s,
-              :cumulative_raw_width => part_def.cumulative_raw_width.to_s,
-              :number => part_def.number ? part_def.number : part_number,
-              :saved_number => part_def.saved_number,
-              :material_name => part_def.material_name,
-              :material_origins => part_def.material_origins,
-              :cumulable => part_def.cumulable,
-              :orientation_locked_on_axis => part_def.orientation_locked_on_axis,
-              :labels => part_def.labels,
-              :entity_ids => part_def.entity_ids,
-              :entity_serialized_paths => part_def.entity_serialized_paths,
-              :entity_names => part_def.entity_names.sort,
-              :contains_blank_entity_names => part_def.contains_blank_entity_names,
-              :auto_oriented => part_def.auto_oriented,
-              :aligned_on_axes => part_def.aligned_on_axes,
-              :real_area => part_def.real_area.nil? ? nil : Sketchup.format_area(part_def.real_area),
-          }
+        part_defs.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, part_order_strategy) }.each { |part_def|
+          if part_def.children.empty?
+            part = part_def.to_struct(part_number)
+          else
+            part = {
+                :id => part_def.id,
+                :name => part_def.name,
+                :length => part_def.size.length.to_s,
+                :width => part_def.size.width.to_s,
+                :thickness => part_def.size.thickness.to_s,
+                :count => part_def.count,
+                :raw_length => part_def.raw_size.length.to_s,
+                :raw_width => part_def.raw_size.width.to_s,
+                :raw_thickness => part_def.raw_size.thickness.to_s,
+                :number => part_def.number ? part_def.number : part_number,
+                :saved_number => part_def.saved_number,
+                :material_name => part_def.material_name,
+                :labels => part_def.labels,
+                :children => []
+            }
+          end
           unless part_def.number
             part_number = part_number.succ
           end
 
-          last_part = group[:parts].last
-          if !last_part.nil? and last_part[:raw_length] == part[:raw_length] and last_part[:raw_width] == part[:raw_width] and last_part[:raw_thickness] == part[:raw_thickness] and last_part[:labels] == part[:labels]
-            if last_part[:children].nil?
-
-              first_child_part = group[:parts].pop
-
-              last_part = {
-                  :id => first_child_part[:id] + '_parent',
-                  :name => first_child_part[:name],
-                  :length => first_child_part[:length],
-                  :width => first_child_part[:width],
-                  :thickness => first_child_part[:thickness],
-                  :count => first_child_part[:count],
-                  :raw_length => first_child_part[:raw_length],
-                  :raw_width => first_child_part[:raw_width],
-                  :raw_thickness => first_child_part[:raw_thickness],
-                  :number => first_child_part[:number] + '+',
-                  :saved_number => first_child_part[:saved_number],
-                  :material_name => first_child_part[:material_name],
-                  :labels => first_child_part[:labels],
-                  :entity_ids => first_child_part[:entity_ids],
-                  :entity_serialized_paths => first_child_part[:entity_serialized_paths],
-                  :real_area => first_child_part[:real_area],
-                  :children => [ first_child_part ]
-              }
-              group[:parts].push(last_part)
-
-            end
-            last_part[:children].push(part)
-            last_part[:count] += part[:count]
-            last_part[:entity_ids] += part[:entity_ids]
-            last_part[:entity_serialized_paths] += part[:entity_serialized_paths]
-          else
+          # if part_folding and !(folder_part = group[:parts].last).nil? and folder_part[:raw_length] == part[:raw_length] and folder_part[:raw_width] == part[:raw_width] and folder_part[:raw_thickness] == part[:raw_thickness] and folder_part[:labels] == part[:labels]
+          #   if folder_part[:children].nil?
+          #
+          #     first_child_part = group[:parts].pop
+          #
+          #     folder_part = {
+          #         :id => first_child_part[:id] + '_folder',
+          #         :name => first_child_part[:name] + ', ...',
+          #         :length => first_child_part[:length],
+          #         :width => first_child_part[:width],
+          #         :thickness => first_child_part[:thickness],
+          #         :count => first_child_part[:count],
+          #         :raw_length => first_child_part[:raw_length],
+          #         :raw_width => first_child_part[:raw_width],
+          #         :raw_thickness => first_child_part[:raw_thickness],
+          #         :number => first_child_part[:number] + '+',
+          #         :saved_number => nil,
+          #         :material_name => first_child_part[:material_name],
+          #         :labels => first_child_part[:labels],
+          #         :real_area => first_child_part[:real_area],
+          #         :children => [ first_child_part ]
+          #     }
+          #     group[:parts].push(folder_part)
+          #
+          #   end
+          #   folder_part[:children].push(part)
+          #   folder_part[:count] += part[:count]
+          # else
             group[:parts].push(part)
-          end
+          # end
         }
 
         # Compute imperial group's raw dimensions
@@ -953,7 +964,7 @@ module Ladb::OpenCutList
 
                     csv << header
 
-                    def sanitize_length_string(length)
+                    def _sanitize_length_string(length)
                       length.gsub(/^~ /, '')
                     end
 
@@ -970,14 +981,14 @@ module Ladb::OpenCutList
                         row.push(part[:name])
                         row.push(part[:count])
                         unless hide_raw_dimensions
-                          row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_length]))
-                          row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_width]))
-                          row.push(no_raw_dimensions ? '' : sanitize_length_string(part[:raw_thickness]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_length]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_width]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_thickness]))
                         end
                         unless hide_final_dimensions
-                          row.push(no_dimensions ? '' : sanitize_length_string(part[:length]))
-                          row.push(no_dimensions ? '' : sanitize_length_string(part[:width]))
-                          row.push(no_dimensions ? '' : sanitize_length_string(part[:thickness]))
+                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:length]))
+                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:width]))
+                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:thickness]))
                         end
                         unless hide_real_areas
                           row.push(no_dimensions ? '' : part[:real_area])
@@ -1055,6 +1066,17 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         definitions = model ? model.definitions : []
 
+        def _apply_on_part(definitions, part, reset)
+          definition = definitions[part[:definition_id]]
+          if definition
+
+            definition_attributes = DefinitionAttributes.new(definition)
+            definition_attributes.number = reset ? nil : part[:number]
+            definition_attributes.write_to_attributes
+
+          end
+        end
+
         @cutlist[:groups].each { |group|
 
           if group_id && group[:id] != group_id
@@ -1063,13 +1085,12 @@ module Ladb::OpenCutList
 
           group[:parts].each { |part|
 
-            definition = definitions[part[:definition_id]]
-            if definition
-
-              definition_attributes = DefinitionAttributes.new(definition)
-              definition_attributes.number = reset ? nil : part[:number]
-              definition_attributes.write_to_attributes
-
+            if part[:children].nil?
+              _apply_on_part(definitions, part, reset)
+            else
+              part[:children].each { |child_part|
+                _apply_on_part(definitions, child_part, reset)
+              }
             end
 
           }

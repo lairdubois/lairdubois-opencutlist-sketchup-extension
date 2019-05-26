@@ -62,6 +62,7 @@ tab:
       scroll_to_block: Scroll to group
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Edit part properties
+      folding_part: Déplier / Replier
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
@@ -128,6 +129,8 @@ tab:
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
+      part_folding: Grouper les pièces identiques
+      part_folding_help: Si cette option est activée, les pièces de **même taille** et avec les **mêmes étiquettes** seront groupées.
       hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood** or **Sheet Good**) will be hidden.
       hide_labels: Hide labels

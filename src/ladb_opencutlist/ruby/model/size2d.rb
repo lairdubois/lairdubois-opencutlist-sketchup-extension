@@ -28,6 +28,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def ==(o)
+      o.class == self.class && o.length == @length && o.width == @width
+    end
+
     def to_s
       'Size2d(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ')'
     end

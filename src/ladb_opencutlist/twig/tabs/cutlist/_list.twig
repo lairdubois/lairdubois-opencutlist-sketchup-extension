@@ -210,12 +210,12 @@
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
                 </tr>
             {% endif %}
-            <tr id="ladb_part_{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-parent{% endif %}">
+            <tr id="ladb_part_{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %}">
                 <td class="text-center" style="color: red;">
-                    {% include 'tabs/cutlist/_row-col-number.twig' %}
+                    {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                 </td>
                 <td>
-                    {% include 'tabs/cutlist/_row-col-name.twig' %}
+                    {% include 'tabs/cutlist/_list-row-col-name.twig' %}
                 </td>
                 <td class="text-center">{{ part.count }}</td>
                 {% if showRawDimensions %}
@@ -234,12 +234,12 @@
             </tr>
             {% if part.children %}
                 {% for partChild in part.children %}
-                    <tr id="ladb_part_{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-parent-id="{{ part.id }}">
+                    <tr id="ladb_part_{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
                         <td class="text-center" style="color: red;">
-                            {% include 'tabs/cutlist/_row-col-number.twig' with { 'part':partChild } %}
+                            {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
                         </td>
                         <td>
-                            {% include 'tabs/cutlist/_row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
+                            {% include 'tabs/cutlist/_list-row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
                         </td>
                         <td class="text-center">{{ partChild.count }}</td>
                         {% if showRawDimensions %}
