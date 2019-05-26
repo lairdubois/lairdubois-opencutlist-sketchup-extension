@@ -4,13 +4,14 @@
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
         <a id="ladb_tab_btn_{{ tabDef.name }}" href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
-    <div id="ladb_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-2" style="display: none; position: absolute; bottom: 0;">
+    <div id="ladb_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-3" style="display: none; position: absolute; bottom: 0;">
         <div class="ladb-subbar-toggle">
             <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><div>{{ 'default.more'|i18next }}</div></div>
             <span class="ladb-toggle-arrow"></span>
         </div>
         <div class="ladb-subbar-panel">
-            <a href="https://www.lairdubois.fr/collections/1/tab/108" target="_blank"><i class="ladb-opencutlist-icon-help"></i><div>{{ 'default.more_help'|i18next }}</div></a>
+            <a href="https://www.lairdubois.fr/collections/1/tab/108" target="_blank"><i class="ladb-opencutlist-icon-help"></i><div>{{ 'default.more_docs'|i18next }}</div></a>
+            <a href="https://www.lairdubois.fr/plans/?q=@kind:%22sketchup%22%20@sort-recent" target="_blank"><i class="ladb-opencutlist-icon-plan"></i><div>{{ 'default.more_plans'|i18next }}</div></a>
             <a href="https://www.lairdubois.fr/logiciels/?q=@addon:%22sketchup%22" target="_blank"><i class="ladb-opencutlist-icon-extension"></i><div>{{ 'default.more_extensions'|i18next }}</div></a>
         </div>
     </div>
