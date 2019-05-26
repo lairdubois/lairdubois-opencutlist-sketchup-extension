@@ -4,12 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.6.4  
+* 1.7.0  
 
+  * Added cutlist same size part grouping option
   * Added cutlist export source option
   * Added cutlist real area for sheet good part
-  * Added Cutlist auto orient display
-  * Added Cutlist part orientation check 
+  * Added cutlist auto orient display
+  * Added cutlist part orientation check 
   
 * 1.6.3 (2019-05-09)
 
