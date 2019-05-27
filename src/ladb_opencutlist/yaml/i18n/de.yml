@@ -30,7 +30,7 @@ default:
   more: Mehr
   more_docs: Docs
   more_plans: Plans
-  more_extensions: Extensions
+  more_extensions: Erweiterungen
 core:
   menu:
     submenu: OpenCutList
