@@ -89,7 +89,7 @@
       end
     end
 
-    def model_units_is_metric
+    def model_unit_is_metric
       case @length_unit
         when MILLIMETER, CENTIMETER, METER
           return true
@@ -281,6 +281,26 @@
 
     # -----
 
+    # Take a float containing an area in inch
+    # and convert it to a string representation according to the
+    # local unit settings.
+    #
+    def format_length(f)
+      if f.nil?
+        return nil
+      end
+      if model_unit_is_metric
+        multiplier = 1 / 39.37
+        precision = 3
+        unit_sign = 'm'
+      else
+        multiplier = 1 / 12
+        precision = 2
+        unit_sign = 'ft'
+      end
+      format_value(f, multiplier, precision, unit_sign)
+    end
+
     # Take a float containing an area in inch²
     # and convert it to a string representation according to the
     # local unit settings.
@@ -289,22 +309,42 @@
       if f2.nil?
         return nil
       end
-      if model_units_is_metric
+      if model_unit_is_metric
         multiplier = 1 / 1550.003
         precision = 3
-        unit = 'm²'
+        unit_sign = 'm²'
       else
-        multiplier = 1 / 144
+        multiplier = 1 / 144.0
         precision = 2
-        unit = 'ft²'
+        unit_sign = 'ft²'
       end
-      format_value(f2, multiplier, precision, unit)
+      format_value(f2, multiplier, precision, unit_sign)
     end
 
-    def format_value(f, multiplier, precision, unit)
+    # Take a float containing an area in inch³
+    # and convert it to a string representation according to the
+    # local unit settings.
+    #
+    def format_volume(f3)
+      if f3.nil?
+        return nil
+      end
+      if model_unit_is_metric
+        multiplier = 1 / 61023.744
+        precision = 3
+        unit_sign = 'm³'
+      else
+        multiplier = 1 / 1728.0
+        precision = 2
+        unit_sign = 'ft³'
+      end
+      format_value(f3, multiplier, precision, unit_sign)
+    end
+
+    def format_value(f, multiplier, precision, unit_sign)
       value = f * multiplier
       rounded_value = value.round(precision)
-      (rounded_value < value ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit
+      ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit_sign
     end
 
   end

@@ -689,12 +689,12 @@ module Ladb::OpenCutList
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
           if group_def.material_type == MaterialAttributes::TYPE_BAR
-            group_def.raw_length += (cutlist_def.is_metric? ? part_def.raw_size.length.to_m : part_def.raw_size.length)
+            group_def.raw_length += part_def.raw_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            group_def.raw_area += (cutlist_def.is_metric? ? part_def.raw_size.area_m2 : part_def.raw_size.area)
+            group_def.raw_area += part_def.raw_size.area
           end
-          group_def.raw_volume += (cutlist_def.is_metric? ? part_def.raw_size.volume_m3 : part_def.raw_size.volume)
+          group_def.raw_volume += part_def.raw_size.volume
         end
         group_def.part_count += 1
 
@@ -830,13 +830,6 @@ module Ladb::OpenCutList
           group[:parts].push(part)
         }
 
-        # Compute imperial group's raw dimensions
-        unless cutlist_def.is_metric?
-          group[:raw_length] = group[:raw_length].to_feet
-          group[:raw_area] = group[:raw_area] / 144
-          group[:raw_volume] = group[:raw_volume] / 144
-        end
-
       }
 
       # Keep generated cutlist
@@ -905,6 +898,10 @@ module Ladb::OpenCutList
             File.open(export_path, "wb+:#{encoding}") do |f|
               csv_file = CSV.generate({ :col_sep => col_sep, :force_quotes => force_quotes }) do |csv|
 
+                def _sanitize_value_string(value)
+                  value.gsub(/^~ /, '')
+                end
+
                 case source.to_i
 
                   when EXPORT_OPTION_SOURCE_CUTLIST
@@ -934,10 +931,6 @@ module Ladb::OpenCutList
 
                     csv << header
 
-                    def _sanitize_length_string(length)
-                      length.gsub(/^~ /, '')
-                    end
-
                     # Content rows
                     @cutlist[:groups].each { |group|
                       next if hidden_group_ids.include? group[:id]
@@ -951,17 +944,17 @@ module Ladb::OpenCutList
                         row.push(part[:name])
                         row.push(part[:count])
                         unless hide_raw_dimensions
-                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_length]))
-                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_width]))
-                          row.push(no_raw_dimensions ? '' : _sanitize_length_string(part[:raw_thickness]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_length]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_width]))
+                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_thickness]))
                         end
                         unless hide_final_dimensions
-                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:length]))
-                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:width]))
-                          row.push(no_dimensions ? '' : _sanitize_length_string(part[:thickness]))
+                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:length]))
+                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:width]))
+                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:thickness]))
                         end
                         unless hide_real_areas
-                          row.push(no_dimensions ? '' : part[:real_area])
+                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:real_area]))
                         end
                         row.push(part[:material_name])
                         unless hide_labels
@@ -979,9 +972,9 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_type'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length') + (@cutlist[:is_metric] ? ' (m)' : ' (ft)'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area') + (@cutlist[:is_metric] ? ' (m²)' : ' (ft²)'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_volume') + (@cutlist[:is_metric] ? ' (m²)' : ' (bft)'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_volume'))
 
                     csv << header
 
@@ -993,9 +986,9 @@ module Ladb::OpenCutList
                       row.push((group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group[:material_type] > 0 ? ' / ' + group[:std_dimension] : ''))
                       row.push(group[:std_dimension])
                       row.push(group[:part_count])
-                      row.push(group[:raw_length] == 0 ? '' : ((@cutlist[:is_metric] ? '%.3f' : '%.2f') % group[:raw_length]).to_s.tr('.', DimensionUtils.instance.decimal_separator))
-                      row.push(group[:raw_area] == 0 ? '' : ((@cutlist[:is_metric] ? '%.3f' : '%.2f') % group[:raw_area]).to_s.tr('.', DimensionUtils.instance.decimal_separator))
-                      row.push(group[:raw_volume] == 0 ? '' : ((@cutlist[:is_metric] ? '%.3f' : '%.2f') % group[:raw_volume]).to_s.tr('.', DimensionUtils.instance.decimal_separator))
+                      row.push(group[:raw_length].nil? ? '' : _sanitize_value_string(group[:raw_length]))
+                      row.push(group[:raw_area].nil? ? '' : _sanitize_value_string(group[:raw_area]))
+                      row.push(group[:raw_volume].nil? ? '' : _sanitize_value_string(group[:raw_volume]))
 
                       csv << row
                     }

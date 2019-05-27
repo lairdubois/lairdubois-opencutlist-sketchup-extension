@@ -66,9 +66,9 @@ module Ladb::OpenCutList
           :std_dimension => std_dimension,
           :std_available => std_available,
           :std_availability_message => std_availability_message,
-          :raw_length => raw_length,
-          :raw_area => raw_area,
-          :raw_volume => raw_volume,
+          :raw_length => raw_length == 0 ? nil : DimensionUtils.instance.format_length(raw_length),
+          :raw_area => raw_area == 0 ? nil : DimensionUtils.instance.format_area(raw_area),
+          :raw_volume => raw_volume == 0 ? nil : DimensionUtils.instance.format_volume(raw_volume),
           :show_raw_dimensions => show_raw_dimensions,
           :parts => []
       }
