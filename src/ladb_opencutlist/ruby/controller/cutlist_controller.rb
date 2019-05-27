@@ -415,6 +415,7 @@ module Ladb::OpenCutList
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_folding = settings['part_folding']
       part_order_strategy = settings['part_order_strategy']
+      hide_real_areas = settings['hide_real_areas']
       labels_filter = settings['labels_filter']
 
       # Retrieve selected entities or all if no selection
@@ -638,7 +639,7 @@ module Ladb::OpenCutList
               z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.real_area = z_real_area
-              part_def.aligned_on_axes = (z_area_ratio >= 0.3 and (z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1)))
+              part_def.aligned_on_axes = (z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
 
             when MaterialAttributes::TYPE_BAR
 
@@ -766,8 +767,8 @@ module Ladb::OpenCutList
 
         if part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.real_area ] }.each { |part_def|
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels and (folder_part_def.real_area == part_def.real_area or hide_real_areas)
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
@@ -778,6 +779,7 @@ module Ladb::OpenCutList
                 folder_part_def.size = first_child_part_def.size
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.labels = first_child_part_def.labels
+                folder_part_def.real_area = first_child_part_def.real_area
 
                 folder_part_def.children.push(first_child_part_def)
 
@@ -978,8 +980,8 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length') + (@cutlist[:is_metric] ? ' (m)' : ' (ft)'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area') + (@cutlist[:is_metric] ? ' (m2)' : ' (ft2)'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_volume') + (@cutlist[:is_metric] ? ' (m3)' : ' (bft)'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area') + (@cutlist[:is_metric] ? ' (m²)' : ' (ft²)'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_volume') + (@cutlist[:is_metric] ? ' (m²)' : ' (bft)'))
 
                     csv << header
 

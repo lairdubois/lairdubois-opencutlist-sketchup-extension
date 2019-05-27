@@ -651,6 +651,9 @@
                                 // Try to scroll to the edited part's row
                                 var $part = $('#ladb_part_' + partId);
                                 if ($part.length > 0) {
+                                    if ($part.hasClass('hide')) {
+                                        that.expendFoldingPart($part.data('folder-id'))
+                                    }
                                     $part.effect("highlight", {}, 1500);
                                     that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
                                 }
@@ -698,8 +701,8 @@
     };
 
     LadbTabCutlist.prototype.toggleFoldingPart = function (id) {
-        var $row = $('#ladb_part_' + id, this.$element);
-        var $btn = $('.ladb-btn-folding-toggle-part', $row);
+        var $part = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
         if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
@@ -710,8 +713,8 @@
     };
 
     LadbTabCutlist.prototype.expendFoldingPart = function (id) {
-        var $row = $('#ladb_part_' + id, this.$element);
-        var $btn = $('.ladb-btn-folding-toggle-part', $row);
+        var $part = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-up');
@@ -723,8 +726,8 @@
     };
 
     LadbTabCutlist.prototype.shrinkFoldingPart = function (id) {
-        var $row = $('#ladb_part_' + id, this.$element);
-        var $btn = $('.ladb-btn-folding-toggle-part', $row);
+        var $part = $('#ladb_part_' + id, this.$element);
+        var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-down');
@@ -1233,7 +1236,8 @@
                     part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
                     part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                     part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
-                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
+                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
+                    hide_real_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_REAL_AREAS, OPTION_DEFAULT_HIDE_REAL_AREAS) /* SHARED */
                 };
 
                 // Callback
@@ -1349,7 +1353,8 @@
                 part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
                 part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
                 part_folding: OPTION_DEFAULT_PART_FOLDING,
-                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
+                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY,
+                hide_real_areas: OPTION_DEFAULT_HIDE_REAL_AREAS /* SHARED */
             });
             var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_labels: OPTION_DEFAULT_HIDE_LABELS,
@@ -1370,6 +1375,7 @@
             that.generateOptions.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
+            that.generateOptions.hide_real_areas = $inputHideRealAreas.is(':checked');  /* SHARED */
             that.uiOptions.hide_labels = $inputHideLabels.is(':checked');
             that.uiOptions.hide_raw_dimensions = $inputHideRawDimensions.is(':checked');
             that.uiOptions.hide_final_dimensions = $inputHideFinalDimensions.is(':checked');

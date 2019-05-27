@@ -89,6 +89,15 @@
       end
     end
 
+    def model_units_is_metric
+      case @length_unit
+        when MILLIMETER, CENTIMETER, METER
+          return true
+        else
+          return false
+      end
+    end
+
     # Take a fraction and try to simplify it by turning:
     # 1. x/0 into x
     # 2. 0/x into 0
@@ -268,6 +277,34 @@
     #
     def dxd_to_ifloats(i)
       dxd_transform(i, :str_to_ifloat)
+    end
+
+    # -----
+
+    # Take a float containing an area in inch²
+    # and convert it to a string representation according to the
+    # local unit settings.
+    #
+    def format_area(f2)
+      if f2.nil?
+        return nil
+      end
+      if model_units_is_metric
+        multiplier = 1 / 1550.003
+        precision = 3
+        unit = 'm²'
+      else
+        multiplier = 1 / 144
+        precision = 2
+        unit = 'ft²'
+      end
+      format_value(f2, multiplier, precision, unit)
+    end
+
+    def format_value(f, multiplier, precision, unit)
+      value = f * multiplier
+      rounded_value = value.round(precision)
+      (rounded_value < value ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit
     end
 
   end
