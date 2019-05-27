@@ -27,7 +27,7 @@ default:
   unit_4: Meter
   part_single: Teil
   part_plural: Teile
-  more: More
+  more: Mehr
   more_docs: Docs
   more_plans: Plans
   more_extensions: Extensions
@@ -65,7 +65,7 @@ tab:
       scroll_to_block: Zur Gruppe blättern
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Eigenschaften bearbeiten
-      folding_part: Déplier / Replier
+      folding_part: Aufklappen / Zuklappen
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
       material_origin_3: Das Material dieses Teils wird aus einem enthaltenen Teil extrahiert
@@ -74,10 +74,10 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
-      auto_oriented: Cette pièce a été réorienté automatiquement
+      auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
-      not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur son repère
+      not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht richtig nach den Hauptachsen ausgerichtet
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -132,18 +132,18 @@ tab:
       part_number_with_letters_help: Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
       part_number_sequence_by_group: Aufzählung der Teile für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
-      part_folding: Grouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille** et avec les **mêmes étiquettes** seront groupées.
+      part_folding: Ähnliche Teile zusammenfassen
+      part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Masse** und mit **gleichen Etiketten** zusammengefasst.
       hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz** oder **Platten**) nicht angezeigt.
+      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platten** oder **Stangenware**) nicht angezeigt.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
       hide_raw_dimensions: Rohmasse ausblenden
       hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_final_dimensions: Fertigmasse ausblenden
       hide_final_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
-      hide_real_areas: Masquer les surfaces réelles des panneaux
-      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
+      hide_real_areas: Effektive Flächen von Plattenteilen ausblenden
+      hide_real_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
         Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
@@ -164,19 +164,19 @@ tab:
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
       labels_filter: "Filteretiketten"
       summary: Übersicht
-      type: Typ
+      material_type: Typ
       material_thickness: Material / Dicke
       part_count: Anzahl
       length: Länge
       area: Fläche
-      area_short: Surf.
+      area_short: Fl.
       volume: Volumen
       number: Nr.
       name: Bezeichnung
       count: Anzahl
       raw: Rohmass
       final: Fertigmass
-      real: Réelle
+      real: Fertigmass
       length_short: L
       width: Breite
       width_short: B
@@ -207,7 +207,7 @@ tab:
       length: Länge - fertig
       width: Breite - fertig
       thickness: Dicke - fertig
-      real_area: Surface réelle
+      real_area: Flächeninhalt - fertig
       count: Anzahl
       part_count: Anzahl
       material_type: Typ

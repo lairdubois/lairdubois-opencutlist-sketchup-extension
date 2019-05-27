@@ -56,16 +56,16 @@ tab:
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
     material_undefined: Material Undefined
-    not_available_thickness: Thickness Not Available
-    not_available_section: Cross Section Not Available
+    not_available_thickness: Thickness not available
+    not_available_section: Cross section not available
     highlight_part: Highlight the part in the model
     highlight_parts: Highlight the parts in the model
     tooltip:
-      show_hide_block: Show / Hide
+      show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Edit part properties
-      folding_part: Déplier / Replier
+      folding_part: Unfold / Fold
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
       material_origin_3: The material of this part is extracted from one its child elements
@@ -73,11 +73,11 @@ tab:
       number_saved: The number of this part was saved
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
-      resized: This piece was resized with respect to its component definition
-      auto_oriented: Cette pièce a été réorienté automatiquement
+      resized: This part was resized with respect to its component definition
+      auto_oriented: This part has been automatically reoriented
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
-      not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur son repère
+      not_aligned_on_axes: Caution, this part may not be oriented correctly with respect to its axes
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -126,31 +126,31 @@ tab:
          - *length* is on the <span style='color:red'>red</span> axis
          - *width* is on the <span style='color:green'>green</span> axis
          - *thickness* is on the <span style='color:blue'>blue</span> axis
-      smart_material: "*Intelligent* assignment of material"
+      smart_material: "*Smart* assignment of material"
       smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
-      part_folding: Grouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille** et avec les **mêmes étiquettes** seront groupées.
+      part_folding: Group identical parts
+      part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.
       hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
-      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood** or **Sheet Good**) will be hidden.
+      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_labels: Hide labels
       hide_labels_help: If this option is selected, **labels** will be hidden.
       hide_raw_dimensions: Hide rough dimensions
       hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_final_dimensions: Hide finished dimensions
       hide_final_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
-      hide_real_areas: Masquer les surfaces réelles des panneaux
-      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *panneau* ne sont pas affichées.
+      hide_real_areas: Hide area (finished) of parts of type sheet good
+      hide_real_areas_help: If this option is selected, the **finished areas** of parts of type *Sheet Good* will be hidden.
       part_order_strategy: Sorting of Parts
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       dimension_column_order_strategy: Dimension Column Order
       dimension_column_order_strategy_help: |
-        Reorganize the following dimension properties to define the order of the columns.
+        Reorganize the following dimension properties to define the sorting order of the columns.
       property_thickness: Thickness
       property_length: Length
       property_width: Width
@@ -164,19 +164,19 @@ tab:
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       labels_filter: "Labels to filter"
       summary: Summary
-      type: Type
+      material_type: Type
       material_thickness: Material / Thickness
       part_count: Quantity
       length: Length
       area: Area
-      area_short: Surf.
+      area_short: Area
       volume: Volume
       number: No.
       name: Description
       count: Qty
       raw: Rough
       final: Finished
-      real: Réelle
+      real: Finished
       length_short: L
       width: Width
       width_short: W
@@ -207,7 +207,7 @@ tab:
       length: Length - final
       width: Width - final
       thickness: Thickness - final
-      real_area: Surface réelle
+      real_area: Area - final
       count: Quantity
       part_count: Quantity
       material_type: Type
@@ -235,6 +235,7 @@ tab:
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: |
         Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
+        This option may be applied every time a new panel is added, only at the end or never.
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
@@ -343,7 +344,7 @@ tab:
       std_sections_help: |
         Expected format : **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (*in actual not nominal sizes*).
         *Sizes without units are considered to be in model units.*
-      std_sizes: Available Sizes
+      std_sizes: Available Panel Sizes
       std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
