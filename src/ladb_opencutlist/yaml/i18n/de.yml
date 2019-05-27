@@ -28,8 +28,9 @@ default:
   part_single: Teil
   part_plural: Teile
   more: Mehr
-  more_help: Hilfe
-  more_extensions: Erweiterungen
+  more_docs: Docs
+  more_plans: Plans
+  more_extensions: Extensions
 core:
   menu:
     submenu: OpenCutList

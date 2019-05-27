@@ -28,7 +28,8 @@ default:
   part_single: part
   part_plural: parts
   more: More
-  more_help: Help
+  more_docs: Docs
+  more_plans: Plans
   more_extensions: Extensions
 core:
   menu:

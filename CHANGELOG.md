@@ -12,6 +12,7 @@ in 1.x and 0.x versions.
   * Added cutlist auto orient display
   * Added cutlist part orientation check 
   * Added "more" leftbar submenu 
+  * Added new extension icon
   
 * 1.6.3 (2019-05-09)
 

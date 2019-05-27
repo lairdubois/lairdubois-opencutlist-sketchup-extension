@@ -28,7 +28,8 @@ default:
   part_single: pièce
   part_plural: pièces
   more: Plus
-  more_help: Aide
+  more_docs: Docs
+  more_plans: Plans
   more_extensions: Plugins
 core:
   menu:

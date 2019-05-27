@@ -28,6 +28,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-plan:before {
+  content: "\e93a";
+}
 .ladb-opencutlist-icon-extension:before {
   content: "\e93b";
 }
@@ -132,6 +135,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-bar:before {
   content: "\e922";
+}
+.ladb-opencutlist-icon-mini-logo-ladb:before {
+  content: "\e939";
 }
 .ladb-opencutlist-icon-label:before {
   content: "\e934";
