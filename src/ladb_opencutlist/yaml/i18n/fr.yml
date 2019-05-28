@@ -132,8 +132,8 @@ tab:
       part_number_with_letters_help: Si cette option est activée, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
-      part_folding: Grouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille** et avec les **mêmes étiquettes** seront groupées.
+      part_folding: Regrouper les pièces identiques
+      part_folding_help: Si cette option est activée, les pièces de **même taille capable** et avec les **mêmes étiquettes** seront regroupées sur une même ligne.
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_labels: Masquer les étiquettes
