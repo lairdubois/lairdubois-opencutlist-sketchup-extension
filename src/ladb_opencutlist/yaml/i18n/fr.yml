@@ -142,8 +142,8 @@ tab:
       hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
       hide_bbox_dimensions: Masquer les dimensions capables
       hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
-      hide_real_areas: Masquer les surfaces réelles des *Panneaux*
-      hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *Panneau* ne sont pas affichées.
+      hide_final_areas: Masquer les surfaces finales des *Panneaux*
+      hide_final_areas_help: Si cette option est activée, les **surfaces finales** des pièces de type *Panneau* ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
@@ -173,10 +173,10 @@ tab:
       number: N°
       name: Désignation
       count: Qte.
-      raw: Brute
+      total: Cumul brut
       cutting: Débit
-      box: Capable
-      real: Réelle
+      bbox: Capable
+      final: Finale
       length: Longueur
       length_short: Long.
       width: Largeur
@@ -200,16 +200,16 @@ tab:
       option_encoding: Encodage
       number: N°
       name: Désignation
-      raw_length: Longueur - brute
-      raw_area: Surface - brute
-      raw_volume: Volume - brute
+      total_length: Longueur - cumul brut
+      total_area: Surface - cumul brut
+      total_volume: Volume - cumul brut
       cutting_length: Longueur - débit
       cutting_width: Largeur - débit
       cutting_thickness: Épaisseur - débit
       bbox_length: Longueur - capable
       bbox_width: Largeur - capable
       bbox_thickness: Épaisseur - capable
-      real_area: Surface - réelle
+      final_area: Surface - finale
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type

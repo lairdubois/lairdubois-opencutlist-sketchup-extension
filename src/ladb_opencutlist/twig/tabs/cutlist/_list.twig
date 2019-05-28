@@ -76,7 +76,7 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.material_type'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="49%">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
-            <td class="text-center" colspan="3">{{ 'tab.cutlist.list.raw'|i18next }}</td>
+            <td class="text-center" colspan="3">{{ 'tab.cutlist.list.total'|i18next }}</td>
         </tr>
         <tr>
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.length'|i18next }}</td>
@@ -93,9 +93,9 @@
                     </div>
                 </td>
                 <td class="text-center">{{ group.part_count }}</td>
-                <td class="ladb-cutlist-dimension-value">{% if group.raw_length is null %}-{% else %}{{ group.raw_length }}{% endif %}</td>
-                <td class="ladb-cutlist-dimension-value">{% if group.raw_area is null %}-{% else %}{{ group.raw_area }}{% endif %}</td>
-                <td class="ladb-cutlist-dimension-value">{% if group.raw_volume is null %}-{% else %}{{ group.raw_volume }}{% endif %}</td>
+                <td class="ladb-cutlist-dimension-value">{% if group.total_length is null %}-{% else %}{{ group.total_length }}{% endif %}</td>
+                <td class="ladb-cutlist-dimension-value">{% if group.total_area is null %}-{% else %}{{ group.total_area }}{% endif %}</td>
+                <td class="ladb-cutlist-dimension-value">{% if group.total_volume is null %}-{% else %}{{ group.total_volume }}{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -109,7 +109,7 @@
     {% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
     {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_bbox_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
-    {% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_real_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+    {% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
     {% set colspan = 9 %}
     {% if showCuttingDimensions %}
         {% if showLengthOnly %}
@@ -168,10 +168,10 @@
                 <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}2{% endif %}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
             {% endif %}
             {% if showBoxDimensions %}
-                <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}3{% endif %}">{{ 'tab.cutlist.list.box'|i18next }}</td>
+                <td class="text-center" colspan="{% if showLengthOnly %}1{% else %}3{% endif %}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
             {% endif %}
             {% if showFinalAreas %}
-                <td class="text-center" width="10%">{{ ('tab.cutlist.list.real')|i18next }}</td>
+                <td class="text-center" width="10%">{{ ('tab.cutlist.list.final')|i18next }}</td>
             {% endif %}
         </tr>
         <tr>
@@ -192,13 +192,13 @@
         {% set thickness = 0 %}
         {% set width = 0 %}
         {% for part in group.parts %}
-            {% if showThicknessSeparators and showBoxDimensions and group.material_type == 1 and part.thickness != thickness %}
+            {% if showThicknessSeparators and showBoxDimensions and group.material_type == 1 and part.thickness != thickness and group.parts|length > 1 %}
                 {% set thickness = part.thickness %}
                 <tr style="background-color: #fcfcfc;">
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
                 </tr>
             {% endif %}
-            {% if showWidthSeparators and showBoxDimensions and group.material_type == 1 and part.width != width %}
+            {% if showWidthSeparators and showBoxDimensions and group.material_type == 1 and part.width != width and group.parts|length > 1 %}
                 {% set width = part.width %}
                 <tr style="background-color: #fcfcfc;">
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
@@ -214,7 +214,7 @@
                 <td class="text-center">{{ part.count }}</td>
                 {% if showCuttingDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
-                        <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{{ part['raw_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['raw_'~property] }} = {{ part['cumulative_raw_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_raw_'~property] }}</em></small>{% endif %}</td>
+                        <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{{ part['cutting_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['cutting_'~property] }} = {{ part['cumulative_cutting_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_cutting_'~property] }}</em></small>{% endif %}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showBoxDimensions %}
@@ -223,7 +223,7 @@
                     {% endfor %}
                 {% endif %}
                 {% if showFinalAreas %}
-                    <td class="ladb-cutlist-dimension-value">{% if part.real_area %}{{ part.real_area }}{% else %}-{% endif %}</td>
+                    <td class="ladb-cutlist-dimension-value">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
                 {% endif %}
             </tr>
             {% if part.children %}

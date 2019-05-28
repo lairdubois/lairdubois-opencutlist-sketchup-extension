@@ -4,8 +4,7 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_cutting_dimensions
-    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_cutting_dimensions
+    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :total_length, :total_area, :total_volume, :show_cutting_dimensions
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -21,9 +20,9 @@ module Ladb::OpenCutList
       @max_number = nil
       @part_count = 0
       @part_defs = {}
-      @raw_length = 0
-      @raw_area = 0
-      @raw_volume = 0
+      @total_length = 0
+      @total_area = 0
+      @total_volume = 0
       @show_cutting_dimensions = false
     end
 
@@ -67,9 +66,9 @@ module Ladb::OpenCutList
           :std_dimension => std_dimension,
           :std_available => std_available,
           :std_availability_message => std_availability_message,
-          :raw_length => raw_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(raw_length),
-          :raw_area => raw_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(raw_area),
-          :raw_volume => raw_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(raw_volume),
+          :total_length => total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(total_length),
+          :total_area => total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(total_area),
+          :total_volume => total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(total_volume),
           :show_cutting_dimensions => show_cutting_dimensions,
           :parts => []
       }

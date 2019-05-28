@@ -245,7 +245,7 @@ module Ladb::OpenCutList
         end
       end
 
-      def _compute_largest_real_area(normal, x_face_infos, y_face_infos, z_face_infos)
+      def _compute_largest_final_area(normal, x_face_infos, y_face_infos, z_face_infos)
 
         # Groups faces by plane
         plane_grouped_face_infos = {}
@@ -270,13 +270,13 @@ module Ladb::OpenCutList
         return plane_grouped_face_infos.length, areas.max
       end
 
-      def _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+      def _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
-        plane_count, real_area = _compute_largest_real_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
         area = instance_info.size.area_by_axis(axis)
-        area_ratio = (real_area.nil? or area.nil?) ? 0 : real_area / area
+        area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
 
-        return plane_count, real_area, area_ratio
+        return plane_count, final_area, area_ratio
       end
 
       # -- Std utils --
@@ -415,7 +415,7 @@ module Ladb::OpenCutList
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_folding = settings['part_folding']
       part_order_strategy = settings['part_order_strategy']
-      hide_real_areas = settings['hide_real_areas']
+      hide_final_areas = settings['hide_final_areas']
       labels_filter = settings['labels_filter']
 
       # Retrieve selected entities or all if no selection
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
                 :dimension => std_thickness_info[:value].to_s,
                 :width => 0,
                 :thickness => std_thickness_info[:value],
-                :raw_size => Size3d.new(
+                :cutting_size => Size3d.new(
                     (size.length + material_attributes.l_length_increase).to_l,
                     (size.width + material_attributes.l_width_increase).to_l,
                     std_thickness_info[:value]
@@ -539,7 +539,7 @@ module Ladb::OpenCutList
                 :dimension => std_section_info[:value].to_s,
                 :width => std_section_info[:value].width,
                 :thickness => std_section_info[:value].height,
-                :raw_size => Size3d.new(
+                :cutting_size => Size3d.new(
                     (size.length + material_attributes.l_length_increase).to_l,
                     std_section_info[:value].width,
                     std_section_info[:value].height
@@ -552,10 +552,10 @@ module Ladb::OpenCutList
                 :dimension => '',
                 :width => 0,
                 :thickness => 0,
-                :raw_size => size
+                :cutting_size => size
             }
         end
-        raw_size = std_info[:raw_size]
+        cutting_size = std_info[:cutting_size]
 
         # Define group
 
@@ -614,7 +614,7 @@ module Ladb::OpenCutList
           part_def.saved_number = definition_attributes.number
           part_def.name = definition.name
           part_def.scale = instance_info.scale
-          part_def.raw_size = raw_size
+          part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
@@ -628,24 +628,24 @@ module Ladb::OpenCutList
             when MaterialAttributes::TYPE_SOLID_WOOD
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
-              y_plane_count, y_real_area, y_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.aligned_on_axes = (z_area_ratio >= 0.7 or y_area_ratio >= 0.7)
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
-              part_def.real_area = z_real_area
+              part_def.final_area = z_final_area
               part_def.aligned_on_axes = (z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
 
             when MaterialAttributes::TYPE_BAR
 
               x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
-              z_plane_count, z_real_area, z_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
-              y_plane_count, y_real_area, y_area_ratio = _compute_real_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.aligned_on_axes = (z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
 
@@ -689,12 +689,12 @@ module Ladb::OpenCutList
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
           if group_def.material_type == MaterialAttributes::TYPE_BAR
-            group_def.raw_length += part_def.raw_size.length
+            group_def.total_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            group_def.raw_area += part_def.raw_size.area
+            group_def.total_area += part_def.cutting_size.area
           end
-          group_def.raw_volume += part_def.raw_size.volume
+          group_def.total_volume += part_def.cutting_size.volume
         end
         group_def.part_count += 1
 
@@ -767,19 +767,19 @@ module Ladb::OpenCutList
 
         if part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.real_area ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.raw_size == part_def.raw_size and folder_part_def.labels == part_def.labels and (folder_part_def.real_area == part_def.real_area or hide_real_areas)
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and (folder_part_def.final_area == part_def.final_area or hide_final_areas)
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
                 folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
                 folder_part_def.name = first_child_part_def.name
                 folder_part_def.count = first_child_part_def.count
-                folder_part_def.raw_size = first_child_part_def.raw_size
+                folder_part_def.cutting_size = first_child_part_def.cutting_size
                 folder_part_def.size = first_child_part_def.size
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.labels = first_child_part_def.labels
-                folder_part_def.real_area = first_child_part_def.real_area
+                folder_part_def.final_area = first_child_part_def.final_area
 
                 folder_part_def.children.push(first_child_part_def)
 
@@ -852,7 +852,7 @@ module Ladb::OpenCutList
       hide_cutting_dimensions = settings['hide_cuttong_dimensions']
       hide_bbox_dimensions = settings['hide_bbox_dimensions']
       hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
-      hide_real_areas = settings['hide_real_areas']
+      hide_final_areas = settings['hide_final_areas']
       hidden_group_ids = settings['hidden_group_ids']
 
       response = {
@@ -911,9 +911,9 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_type'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_area'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.raw_volume'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_length'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_area'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_volume'))
 
                     csv << header
 
@@ -925,9 +925,9 @@ module Ladb::OpenCutList
                       row.push((group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group[:material_type] > 0 ? ' / ' + group[:std_dimension] : ''))
                       row.push(group[:std_dimension])
                       row.push(group[:part_count])
-                      row.push(group[:raw_length].nil? ? '' : _sanitize_value_string(group[:raw_length]))
-                      row.push(group[:raw_area].nil? ? '' : _sanitize_value_string(group[:raw_area]))
-                      row.push(group[:raw_volume].nil? ? '' : _sanitize_value_string(group[:raw_volume]))
+                      row.push(group[:total_length].nil? ? '' : _sanitize_value_string(group[:total_length]))
+                      row.push(group[:total_area].nil? ? '' : _sanitize_value_string(group[:total_area]))
+                      row.push(group[:total_volume].nil? ? '' : _sanitize_value_string(group[:total_volume]))
 
                       csv << row
                     }
@@ -949,8 +949,8 @@ module Ladb::OpenCutList
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_width'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_thickness'))
                     end
-                    unless hide_real_areas
-                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.real_area'))
+                    unless hide_final_areas
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.final_area'))
                     end
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
                     unless hide_labels
@@ -964,7 +964,7 @@ module Ladb::OpenCutList
                       next if hidden_group_ids.include? group[:id]
                       group[:parts].each { |part|
 
-                        no_raw_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW
+                        no_cutting_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW
                         no_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW && hide_untyped_material_dimensions
 
                         row = []
@@ -972,17 +972,17 @@ module Ladb::OpenCutList
                         row.push(part[:name])
                         row.push(part[:count])
                         unless hide_cutting_dimensions
-                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_length]))
-                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_width]))
-                          row.push(no_raw_dimensions ? '' : _sanitize_value_string(part[:raw_thickness]))
+                          row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part[:cutting_length]))
+                          row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part[:cutting_width]))
+                          row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part[:cutting_thickness]))
                         end
                         unless hide_bbox_dimensions
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:length]))
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:width]))
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:thickness]))
                         end
-                        unless hide_real_areas
-                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:real_area]))
+                        unless hide_final_areas
+                          row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                         end
                         row.push(part[:material_name])
                         unless hide_labels
@@ -1138,7 +1138,7 @@ module Ladb::OpenCutList
         text_line_1 = '[' + displayed_part[:number] + '] ' + displayed_part[:name]
         text_line_2 = displayed_part[:labels].join(' | ')
         text_line_3 = displayed_part[:length].to_s + ' x ' + displayed_part[:width].to_s + ' x ' + displayed_part[:thickness].to_s +
-            (displayed_part[:real_area].nil? ? '' : " (#{displayed_part[:real_area]})") +
+            (displayed_part[:final_area].nil? ? '' : " (#{displayed_part[:final_area]})") +
             ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
             ' | ' + (displayed_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_part[:material_name])
 
@@ -1325,7 +1325,7 @@ module Ladb::OpenCutList
           # Add boxes from parts
           group[:parts].each { |part|
             for i in 1..part[:count]
-              e.add_box(part[:raw_length].to_l.to_f, part[:raw_width].to_l.to_f, part)
+              e.add_box(part[:cutting_length].to_l.to_f, part[:cutting_width].to_l.to_f, part)
             end
           }
 

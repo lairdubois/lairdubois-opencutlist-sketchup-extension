@@ -142,8 +142,8 @@ tab:
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_bbox_dimensions: Fertigmasse ausblenden
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
-      hide_real_areas: Effektive Flächen von Plattenteilen ausblenden
-      hide_real_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
+      hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
+      hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
         Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
@@ -173,10 +173,10 @@ tab:
       number: Nr.
       name: Bezeichnung
       count: Anzahl
-      raw: Rohmass
+      total: Rohmass
       cutting: Débit
-      box: Fertigmass
-      real: Fertigmass
+      bbox: Fertigmass
+      final: Fertigmass
       length: Länge
       length_short: L
       width: Breite
@@ -200,16 +200,16 @@ tab:
       option_encoding: Kodierung
       number: Nr.
       name: Bezeichnung
-      raw_length: Länge - roh
-      raw_area: Fläche - roh
-      raw_volume: Volumen - roh
+      total_length: Länge - roh
+      total_area: Fläche - roh
+      total_volume: Volumen - roh
       cutting_length: Länge - roh
       cutting_width: Breite - roh
       cutting_thickness: Dicke - roh
       bbox_length: Länge - fertig
       bbox_width: Breite - fertig
       bbox_thickness: Dicke - fertig
-      real_area: Flächeninhalt - fertig
+      final_area: Flächeninhalt - fertig
       count: Anzahl
       part_count: Anzahl
       material_type: Typ

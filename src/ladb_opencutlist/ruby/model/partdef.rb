@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :raw_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :aligned_on_axes, :real_area
+    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :cutting_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :aligned_on_axes, :final_area
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
@@ -14,7 +14,7 @@ module Ladb::OpenCutList
       @saved_number = nil
       @name = ''
       @count = 0
-      @raw_size = Size3d.new
+      @cutting_size = Size3d.new
       @size = Size3d.new
       @scale = Scale3d.new
       @material_name = ''
@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       @contains_blank_entity_names = false
       @auto_oriented = false
       @aligned_on_axes = false
-      @real_area = nil
+      @final_area = nil
       @children = []
     end
 
@@ -55,11 +55,11 @@ module Ladb::OpenCutList
           end
           case property
             when 'length'
-              a_value = part_def_a.cumulative_raw_length
-              b_value = part_def_b.cumulative_raw_length
+              a_value = part_def_a.cumulative_cutting_length
+              b_value = part_def_b.cumulative_cutting_length
             when 'width'
-              a_value = part_def_a.cumulative_raw_width
-              b_value = part_def_b.cumulative_raw_width
+              a_value = part_def_a.cumulative_cutting_width
+              b_value = part_def_b.cumulative_cutting_width
             when 'thickness'
               a_value = part_def_a.size.thickness
               b_value = part_def_b.size.thickness
@@ -86,19 +86,19 @@ module Ladb::OpenCutList
 
     # -----
 
-    def cumulative_raw_length
+    def cumulative_cutting_length
       if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
-        (@raw_size.length.to_f * @count).to_l
+        (@cutting_size.length.to_f * @count).to_l
       else
-        @raw_size.length
+        @cutting_size.length
       end
     end
 
-    def cumulative_raw_width
+    def cumulative_cutting_width
       if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH
-        (@raw_size.width.to_f * @count).to_l
+        (@cutting_size.width.to_f * @count).to_l
       else
-        @raw_size.width
+        @cutting_size.width
       end
     end
 
@@ -143,11 +143,11 @@ module Ladb::OpenCutList
             :width => size.width.to_s,
             :thickness => size.thickness.to_s,
             :count => count,
-            :raw_length => raw_size.length.to_s,
-            :raw_width => raw_size.width.to_s,
-            :raw_thickness => raw_size.thickness.to_s,
-            :cumulative_raw_length => cumulative_raw_length.to_s,
-            :cumulative_raw_width => cumulative_raw_width.to_s,
+            :cutting_length => cutting_size.length.to_s,
+            :cutting_width => cutting_size.width.to_s,
+            :cutting_thickness => cutting_size.thickness.to_s,
+            :cumulative_cutting_length => cumulative_cutting_length.to_s,
+            :cumulative_cutting_width => cumulative_cutting_width.to_s,
             :number => number ? number : part_number,
             :saved_number => saved_number,
             :material_name => material_name,
@@ -161,7 +161,7 @@ module Ladb::OpenCutList
             :contains_blank_entity_names => contains_blank_entity_names,
             :auto_oriented => auto_oriented,
             :aligned_on_axes => aligned_on_axes,
-            :real_area => DimensionUtils.instance.format_to_readable_area(real_area),
+            :final_area => DimensionUtils.instance.format_to_readable_area(final_area),
         }
       else
         {
@@ -170,13 +170,13 @@ module Ladb::OpenCutList
             :width => size.width.to_s,
             :thickness => size.thickness.to_s,
             :count => count,
-            :raw_length => raw_size.length.to_s,
-            :raw_width => raw_size.width.to_s,
-            :raw_thickness => raw_size.thickness.to_s,
+            :cutting_length => cutting_size.length.to_s,
+            :cutting_width => cutting_size.width.to_s,
+            :cutting_thickness => cutting_size.thickness.to_s,
             :saved_number => nil,
             :material_name => material_name,
             :labels => labels,
-            :real_area => DimensionUtils.instance.format_to_readable_area(real_area),
+            :final_area => DimensionUtils.instance.format_to_readable_area(final_area),
             :children => []
         }
       end
