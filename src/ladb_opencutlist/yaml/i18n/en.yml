@@ -144,6 +144,7 @@ tab:
       hide_bbox_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
       hide_final_areas: Hide area (finished) of parts of type sheet good
       hide_final_areas_help: If this option is selected, the **finished areas** of parts of type *Sheet Good* will be hidden.
+      general: Générales
       part_order_strategy: Sorting of Parts
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.

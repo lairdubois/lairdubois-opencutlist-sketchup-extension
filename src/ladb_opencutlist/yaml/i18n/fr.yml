@@ -144,6 +144,7 @@ tab:
       hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
       hide_final_areas: Masquer les surfaces finales des *Panneaux*
       hide_final_areas_help: Si cette option est activée, les **surfaces finales** des pièces de type *Panneau* ne sont pas affichées.
+      general: Générales
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.

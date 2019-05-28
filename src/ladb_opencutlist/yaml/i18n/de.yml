@@ -144,6 +144,7 @@ tab:
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
+      general: Générales
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
         Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.

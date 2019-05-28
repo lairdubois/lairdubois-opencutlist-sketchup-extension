@@ -923,7 +923,6 @@ module Ladb::OpenCutList
                       row = []
                       row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group[:material_type]}"))
                       row.push((group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group[:material_type] > 0 ? ' / ' + group[:std_dimension] : ''))
-                      row.push(group[:std_dimension])
                       row.push(group[:part_count])
                       row.push(group[:total_length].nil? ? '' : _sanitize_value_string(group[:total_length]))
                       row.push(group[:total_area].nil? ? '' : _sanitize_value_string(group[:total_area]))
