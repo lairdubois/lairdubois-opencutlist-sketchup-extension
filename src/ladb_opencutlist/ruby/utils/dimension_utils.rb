@@ -22,6 +22,12 @@
   UNIT_SIGN_CENTIMETER = 'cm'
   UNIT_SIGN_MILLIMETER = 'mm'
 
+  UNIT_SIGN_METER_2 = 'm²'
+  UNIT_SIGN_FEET_2 = 'ft²'
+
+  UNIT_SIGN_METER_3 = 'm³'
+  UNIT_SIGN_FEET_3 = 'ft³'
+
   class DimensionUtils
 
     include Singleton
@@ -35,7 +41,8 @@
     @separator
     @length_unit
     @length_format
-    
+    @length_precision
+
     def initialize
       begin
         '1.0'.to_l
@@ -50,6 +57,7 @@
       model = Sketchup.active_model
       @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : DECIMAL
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : INCHES
+      @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
     end
 
     # -----
@@ -281,22 +289,22 @@
 
     # -----
 
-    # Take a float containing an area in inch
+    # Take a float containing a length in inch
     # and convert it to a string representation according to the
     # local unit settings.
     #
-    def format_length(f)
+    def format_to_readable_length(f)
       if f.nil?
         return nil
       end
       if model_unit_is_metric
-        multiplier = 1 / 39.37
+        multiplier = 0.0254
         precision = 3
-        unit_sign = 'm'
+        unit_sign = UNIT_SIGN_METER
       else
-        multiplier = 1 / 12
+        multiplier = 1 / 12.0
         precision = 2
-        unit_sign = 'ft'
+        unit_sign = UNIT_SIGN_FEET
       end
       format_value(f, multiplier, precision, unit_sign)
     end
@@ -305,38 +313,38 @@
     # and convert it to a string representation according to the
     # local unit settings.
     #
-    def format_area(f2)
+    def format_to_readable_area(f2)
       if f2.nil?
         return nil
       end
       if model_unit_is_metric
-        multiplier = 1 / 1550.003
-        precision = 3
-        unit_sign = 'm²'
+        multiplier = 0.0254**2
+        precision = [3, @length_precision].max
+        unit_sign = UNIT_SIGN_METER_2
       else
         multiplier = 1 / 144.0
-        precision = 2
-        unit_sign = 'ft²'
+        precision = [2, @length_precision].max
+        unit_sign = UNIT_SIGN_FEET_2
       end
       format_value(f2, multiplier, precision, unit_sign)
     end
 
-    # Take a float containing an area in inch³
+    # Take a float containing a volume in inch³
     # and convert it to a string representation according to the
     # local unit settings.
     #
-    def format_volume(f3)
+    def format_to_readable_volume(f3)
       if f3.nil?
         return nil
       end
       if model_unit_is_metric
-        multiplier = 1 / 61023.744
-        precision = 3
-        unit_sign = 'm³'
+        multiplier = 0.0254**3
+        precision = [3, @length_precision].max
+        unit_sign = UNIT_SIGN_METER_3
       else
         multiplier = 1 / 1728.0
-        precision = 2
-        unit_sign = 'ft³'
+        precision = [2, @length_precision].max
+        unit_sign = UNIT_SIGN_FEET_3
       end
       format_value(f3, multiplier, precision, unit_sign)
     end

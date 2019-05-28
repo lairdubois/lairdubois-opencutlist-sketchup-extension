@@ -4,7 +4,8 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_raw_dimensions
+    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_cutting_dimensions
+    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :raw_length, :raw_area, :raw_volume, :show_cutting_dimensions
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -23,7 +24,7 @@ module Ladb::OpenCutList
       @raw_length = 0
       @raw_area = 0
       @raw_volume = 0
-      @show_raw_dimensions = false
+      @show_cutting_dimensions = false
     end
 
     # -----
@@ -66,10 +67,10 @@ module Ladb::OpenCutList
           :std_dimension => std_dimension,
           :std_available => std_available,
           :std_availability_message => std_availability_message,
-          :raw_length => raw_length == 0 ? nil : DimensionUtils.instance.format_length(raw_length),
-          :raw_area => raw_area == 0 ? nil : DimensionUtils.instance.format_area(raw_area),
-          :raw_volume => raw_volume == 0 ? nil : DimensionUtils.instance.format_volume(raw_volume),
-          :show_raw_dimensions => show_raw_dimensions,
+          :raw_length => raw_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(raw_length),
+          :raw_area => raw_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(raw_area),
+          :raw_volume => raw_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(raw_volume),
+          :show_cutting_dimensions => show_cutting_dimensions,
           :parts => []
       }
     end

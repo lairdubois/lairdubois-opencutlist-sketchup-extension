@@ -7,8 +7,8 @@
     // Options keys
 
     var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_labels';
-    var SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS = 'cutlist.option.hide_raw_dimensions';
-    var SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS = 'cutlist.option.hide_final_dimensions';
+    var SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS = 'cutlist.option.hide_cutting_dimensions';
+    var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
     var SETTING_KEY_OPTION_HIDE_REAL_AREAS = 'cutlist.option.hide_real_areas';
     var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
@@ -39,8 +39,8 @@
     // Options defaults
 
     var OPTION_DEFAULT_HIDE_LABELS = false;
-    var OPTION_DEFAULT_HIDE_RAW_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_REAL_AREAS = true;
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
@@ -1202,8 +1202,8 @@
         this.opencutlist.pullSettings([
 
                 SETTING_KEY_OPTION_HIDE_LABELS,
-                SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS,
+                SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS,
+                SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_REAL_AREAS,
                 SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
@@ -1222,8 +1222,8 @@
 
                 that.uiOptions = {
                     hide_labels: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
-                    hide_raw_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, OPTION_DEFAULT_HIDE_RAW_DIMENSIONS),
-                    hide_final_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS, OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS),
+                    hide_cutting_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
+                    hide_bbox_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
                     hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     hide_real_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_REAL_AREAS, OPTION_DEFAULT_HIDE_REAL_AREAS),
                     dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
@@ -1261,8 +1261,8 @@
         var $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
         var $inputPartFolding = $('#ladb_input_part_folding', $modal);
         var $inputHideLabels = $('#ladb_input_hide_labels', $modal);
-        var $inputHideRawDimensions = $('#ladb_input_hide_raw_dimensions', $modal);
-        var $inputHideFinalDimensions = $('#ladb_input_hide_final_dimensions', $modal);
+        var $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
+        var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
         var $inputHideRealAreas = $('#ladb_input_hide_real_areas', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
@@ -1281,11 +1281,11 @@
             $inputPartNumberSequenceByGroup.prop('checked', generateOptions.part_number_sequence_by_group);
             $inputPartFolding.prop('checked', generateOptions.part_folding);
             $inputHideLabels.prop('checked', uiOptions.hide_labels);
-            $inputHideRawDimensions.prop('checked', uiOptions.hide_raw_dimensions);
-            $inputHideFinalDimensions.prop('checked', uiOptions.hide_final_dimensions);
+            $inputHideCuttingDimensions.prop('checked', uiOptions.hide_cutting_dimensions);
+            $inputHideBBoxDimensions.prop('checked', uiOptions.hide_bbox_dimensions);
             $inputHideUntypedMaterialDimensions
                 .prop('checked', uiOptions.hide_untyped_material_dimensions)
-                .prop('disabled', uiOptions.hide_final_dimensions);
+                .prop('disabled', uiOptions.hide_bbox_dimensions);
             $inputHideRealAreas.prop('checked', uiOptions.hide_real_areas);
 
             // Sortables
@@ -1341,7 +1341,7 @@
         };
 
         // Bind inputs
-        $inputHideFinalDimensions.on('change', function () {
+        $inputHideBBoxDimensions.on('change', function () {
             $inputHideUntypedMaterialDimensions.prop('disabled', $(this).is(':checked'));
         });
 
@@ -1358,8 +1358,8 @@
             });
             var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_labels: OPTION_DEFAULT_HIDE_LABELS,
-                hide_raw_dimensions: OPTION_DEFAULT_HIDE_RAW_DIMENSIONS,
-                hide_final_dimensions: OPTION_DEFAULT_HIDE_FINAL_DIMENSIONS,
+                hide_cutting_dimensions: OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS,
+                hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
                 hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 hide_real_areas: OPTION_DEFAULT_HIDE_REAL_AREAS,
                 dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY
@@ -1377,8 +1377,8 @@
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
             that.generateOptions.hide_real_areas = $inputHideRealAreas.is(':checked');  /* SHARED */
             that.uiOptions.hide_labels = $inputHideLabels.is(':checked');
-            that.uiOptions.hide_raw_dimensions = $inputHideRawDimensions.is(':checked');
-            that.uiOptions.hide_final_dimensions = $inputHideFinalDimensions.is(':checked');
+            that.uiOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
+            that.uiOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.uiOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.uiOptions.hide_real_areas = $inputHideRealAreas.is(':checked');
 
@@ -1403,8 +1403,8 @@
                 { key:SETTING_KEY_OPTION_PART_FOLDING, value:that.generateOptions.part_folding },
                 { key:SETTING_KEY_OPTION_PART_ORDER_STRATEGY, value:that.generateOptions.part_order_strategy },
                 { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.uiOptions.hide_labels },
-                { key:SETTING_KEY_OPTION_HIDE_RAW_DIMENSIONS, value:that.uiOptions.hide_raw_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_FINAL_DIMENSIONS, value:that.uiOptions.hide_final_dimensions },
+                { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.uiOptions.hide_cutting_dimensions },
+                { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.uiOptions.hide_bbox_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.uiOptions.hide_untyped_material_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_REAL_AREAS, value:that.uiOptions.hide_real_areas },
                 { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.uiOptions.dimension_column_order_strategy }

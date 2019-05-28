@@ -76,10 +76,6 @@ module Ladb::OpenCutList
       area * @thickness
     end
 
-    def volume_m3
-      area_m2 * @thickness.to_m
-    end
-
     # -----
 
     def ==(o)

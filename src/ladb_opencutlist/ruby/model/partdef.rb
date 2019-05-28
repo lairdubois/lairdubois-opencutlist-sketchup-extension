@@ -161,7 +161,7 @@ module Ladb::OpenCutList
             :contains_blank_entity_names => contains_blank_entity_names,
             :auto_oriented => auto_oriented,
             :aligned_on_axes => aligned_on_axes,
-            :real_area => DimensionUtils.instance.format_area(real_area),
+            :real_area => DimensionUtils.instance.format_to_readable_area(real_area),
         }
       else
         {
@@ -176,7 +176,7 @@ module Ladb::OpenCutList
             :saved_number => nil,
             :material_name => material_name,
             :labels => labels,
-            :real_area => DimensionUtils.instance.format_area(real_area),
+            :real_area => DimensionUtils.instance.format_to_readable_area(real_area),
             :children => []
         }
       end

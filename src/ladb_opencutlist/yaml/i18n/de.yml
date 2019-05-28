@@ -138,10 +138,10 @@ tab:
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platten** oder **Stangenware**) nicht angezeigt.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
-      hide_raw_dimensions: Rohmasse ausblenden
-      hide_raw_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
-      hide_final_dimensions: Fertigmasse ausblenden
-      hide_final_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
+      hide_cutting_dimensions: Rohmasse ausblenden
+      hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
+      hide_bbox_dimensions: Fertigmasse ausblenden
+      hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
       hide_real_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_real_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
       part_order_strategy: Sortierfolge der Teile
@@ -167,7 +167,6 @@ tab:
       material_type: Typ
       material_thickness: Material / Dicke
       part_count: Anzahl
-      length: Länge
       area: Fläche
       area_short: Fl.
       volume: Volumen
@@ -175,8 +174,10 @@ tab:
       name: Bezeichnung
       count: Anzahl
       raw: Rohmass
-      final: Fertigmass
+      cutting: Débit
+      box: Fertigmass
       real: Fertigmass
+      length: Länge
       length_short: L
       width: Breite
       width_short: B
@@ -200,13 +201,14 @@ tab:
       number: Nr.
       name: Bezeichnung
       raw_length: Länge - roh
-      raw_width: Breite - roh
-      raw_thickness: Dicke - roh
       raw_area: Fläche - roh
       raw_volume: Volumen - roh
-      length: Länge - fertig
-      width: Breite - fertig
-      thickness: Dicke - fertig
+      cutting_length: Länge - roh
+      cutting_width: Breite - roh
+      cutting_thickness: Dicke - roh
+      bbox_length: Länge - fertig
+      bbox_width: Breite - fertig
+      bbox_thickness: Dicke - fertig
       real_area: Flächeninhalt - fertig
       count: Anzahl
       part_count: Anzahl
@@ -263,7 +265,7 @@ tab:
         number: Nr.
         name: Bezeichnung
         count: Anzahl
-        raw: Rohmass
+        cutting: Rohmass
         sheet: Platte
         length: Länge
         width: Breite
@@ -286,7 +288,7 @@ tab:
         unplaced_parts: '**1 zu grosses Teil** konnte nicht platziert werden.'
         unplaced_parts_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
       warning:
-        raw_dimensions: |
+        cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
     error:

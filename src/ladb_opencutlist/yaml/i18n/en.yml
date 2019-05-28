@@ -138,10 +138,10 @@ tab:
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_labels: Hide labels
       hide_labels_help: If this option is selected, **labels** will be hidden.
-      hide_raw_dimensions: Hide rough dimensions
-      hide_raw_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
-      hide_final_dimensions: Hide finished dimensions
-      hide_final_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
+      hide_cutting_dimensions: Hide rough dimensions
+      hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
+      hide_bbox_dimensions: Hide finished dimensions
+      hide_bbox_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
       hide_real_areas: Hide area (finished) of parts of type sheet good
       hide_real_areas_help: If this option is selected, the **finished areas** of parts of type *Sheet Good* will be hidden.
       part_order_strategy: Sorting of Parts
@@ -167,7 +167,6 @@ tab:
       material_type: Type
       material_thickness: Material / Thickness
       part_count: Quantity
-      length: Length
       area: Area
       area_short: Area
       volume: Volume
@@ -175,8 +174,10 @@ tab:
       name: Description
       count: Qty
       raw: Rough
-      final: Finished
+      cutting: Débit
+      box: Finished
       real: Finished
+      length: Length
       length_short: L
       width: Width
       width_short: W
@@ -200,13 +201,14 @@ tab:
       number: No.
       name: Description
       raw_length: Length - raw
-      raw_width: Width - raw
-      raw_thickness: Thickness - raw
       raw_area: Area - raw
       raw_volume: Volume - raw
-      length: Length - final
-      width: Width - final
-      thickness: Thickness - final
+      cutting_length: Length - raw
+      cutting_width: Width - raw
+      cutting_thickness: Thickness - raw
+      bbox_length: Length - final
+      bbox_width: Width - final
+      bbox_thickness: Thickness - final
       real_area: Area - final
       count: Quantity
       part_count: Quantity
@@ -263,7 +265,7 @@ tab:
         number: No.
         name: Description
         count: Qty
-        raw: Raw
+        cutting: Raw
         sheet: Panel
         length: Length
         width: Width
@@ -286,7 +288,7 @@ tab:
         unplaced_parts: '**One part** could not be placed, because it is too large to fit.'
         unplaced_parts_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
-        raw_dimensions: |
+        cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
     error:

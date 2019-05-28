@@ -22,10 +22,6 @@ module Ladb::OpenCutList
       @length * @width
     end
 
-    def area_m2
-      @length.to_m * @width.to_m
-    end
-
     # -----
 
     def ==(o)

@@ -138,11 +138,11 @@ tab:
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_labels: Masquer les étiquettes
       hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
-      hide_raw_dimensions: Masquer les dimensions brutes
-      hide_raw_dimensions_help: Si cette option est activée, les dimensions **brutes** des pièces ne sont pas affichées.
-      hide_final_dimensions: Masquer les dimensions capables
-      hide_final_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
-      hide_real_areas: Masquer les surfaces réelles des panneaux
+      hide_cutting_dimensions: Masquer les dimensions de débit
+      hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
+      hide_bbox_dimensions: Masquer les dimensions capables
+      hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
+      hide_real_areas: Masquer les surfaces réelles des *Panneaux*
       hide_real_areas_help: Si cette option est activée, les **surfaces réelles** des pièces de type *Panneau* ne sont pas affichées.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
@@ -167,7 +167,6 @@ tab:
       material_type: Type
       material_thickness: Matière / Dimension
       part_count: Nb. pièces
-      length: Longueur
       area: Surface
       area_short: Surf.
       volume: Volume
@@ -175,8 +174,10 @@ tab:
       name: Désignation
       count: Qte.
       raw: Brute
-      final: Capable
+      cutting: Débit
+      box: Capable
       real: Réelle
+      length: Longueur
       length_short: Long.
       width: Largeur
       width_short: Larg.
@@ -199,15 +200,16 @@ tab:
       option_encoding: Encodage
       number: N°
       name: Désignation
-      raw_length: Longueur brute
-      raw_width: Largeur brute
-      raw_thickness: Épaisseur brute
-      raw_area: Surface brute
-      raw_volume: Volume brute
-      length: Longueur capable
-      width: Largeur capable
-      thickness: Épaisseur capable
-      real_area: Surface réelle
+      raw_length: Longueur - brute
+      raw_area: Surface - brute
+      raw_volume: Volume - brute
+      cutting_length: Longueur - débit
+      cutting_width: Largeur - débit
+      cutting_thickness: Épaisseur - débit
+      bbox_length: Longueur - capable
+      bbox_width: Largeur - capable
+      bbox_thickness: Épaisseur - capable
+      real_area: Surface - réelle
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type
@@ -263,11 +265,11 @@ tab:
         number: N°
         name: Désignation
         count: Qte.
-        raw: Brute
+        cutting: Débit
         sheet: Panneau
         length: Longueur
         width: Largeur
-        area: Surface
+        area: Surface tot.
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
@@ -286,8 +288,8 @@ tab:
         unplaced_parts: "**1 pièce** est trop grande pour être placée."
         unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."
       warning:
-        raw_dimensions: |
-          Ce calepinage présente les pièces dans leur dimensions brutes.
+        cutting_dimensions: |
+          Ce calepinage présente les pièces dans leur dimensions de **débit**.
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)

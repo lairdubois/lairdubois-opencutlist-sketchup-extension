@@ -56,7 +56,7 @@
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.number'|i18next }}</td>
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.name'|i18next }}</td>
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.cuttingdiagram.list.raw'|i18next }}</td>
+                    <td class="text-center" colspan="2">{{ 'tab.cutlist.cuttingdiagram.list.cutting'|i18next }}</td>
                 </tr>
                 <tr>
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
@@ -150,7 +150,7 @@
                                 {{ sheet.width }}
                             </td>
                             <td class="text-right">
-                                {{ sheet.area|number_format(3, ',', ' ') }}{% if isMetric %}m<sup>2{% else %}ft<sup>2</sup>{% endif %}</sup>
+                                {{ sheet.area }}
                             </td>
                         </tr>
                     {% endfor %}
