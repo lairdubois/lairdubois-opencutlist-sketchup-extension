@@ -78,9 +78,9 @@ tab:
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
       not_aligned_on_axes: Caution, this part may not be oriented correctly with respect to its axes
-      multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
-      children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
-      children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
+      multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers :<br>{{ layers }}"
+      children_warnings: "Caution, there is {{ count }} alert in grouped parts"
+      children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -90,7 +90,7 @@ tab:
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
-      edit_material: Edit Material '{{ material }}'...
+      edit_material: Edit material '{{ material }}'...
       edit_group_properties: Edit properties of this group
     edit_part:
       title: Properties of Part '{{ name }}'
@@ -145,14 +145,14 @@ tab:
       hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
-      hide_final_areas: Hide area (finished) of parts of type sheet good
-      hide_final_areas_help: If this option is selected, the **finished areas** of parts of type *Sheet Good* will be hidden.
-      general: Générales
-      part_order_strategy: Sorting of Parts
+      hide_final_areas: Hide actual area of parts of type **Sheet Good**
+      hide_final_areas_help: If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden.
+      general: General
+      part_order_strategy: Parts Sorting
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
-      dimension_column_order_strategy: Dimension Column Order
+      dimension_column_order_strategy: Dimension Ordering
       dimension_column_order_strategy_help: |
         Reorganize the following dimension properties to define the sorting order of the columns.
       property_thickness: Thickness
@@ -178,9 +178,9 @@ tab:
       name: Description
       count: Qty
       total: Rough
-      cutting: Débit
+      cutting: Rough
       bbox: Finished
-      final: Finished
+      final: Actual
       length: Length
       length_short: L
       width: Width
@@ -303,8 +303,8 @@ tab:
       failed_to_write_export_file: Failed to write the export file.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
-      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
-      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good** or **Bar**).
+      no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).
+      no_typed_materials_in_selection: The selection does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).
       export_empty: Your export does not contain any part.
     success:
       exported_to: Export to {{ export_path }} successful.
@@ -313,7 +313,7 @@ tab:
         The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them first into components.
         By using components for parts, they can be replicated without being duplicated.
-      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Bar**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Dimensional**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
     outdated_base: To remain synchronized, you must regenerate the parts list.
   materials:
     label: Materials
