@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :cutting_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :aligned_on_axes, :final_area
+    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :cutting_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
@@ -27,8 +27,11 @@ module Ladb::OpenCutList
       @entity_names = {}                  # All non empty entity instance names (key = name, value = count)
       @contains_blank_entity_names = false
       @auto_oriented = false
-      @aligned_on_axes = false
+      @not_aligned_on_axes = false
+      @layers = []
       @final_area = nil
+
+      @children_warning_count = 0
       @children = []
     end
 
@@ -130,53 +133,60 @@ module Ladb::OpenCutList
       end
     end
 
+    def multiple_layers
+      @layers.length > 1
+    end
+
     # -----
 
     def to_struct(part_number)
       if @children.empty?
         {
-            :id => id,
-            :definition_id => definition_id,
-            :name => name,
-            :resized => !scale.identity?,
-            :length => size.length.to_s,
-            :width => size.width.to_s,
-            :thickness => size.thickness.to_s,
-            :count => count,
-            :cutting_length => cutting_size.length.to_s,
-            :cutting_width => cutting_size.width.to_s,
-            :cutting_thickness => cutting_size.thickness.to_s,
-            :cumulative_cutting_length => cumulative_cutting_length.to_s,
-            :cumulative_cutting_width => cumulative_cutting_width.to_s,
-            :number => number ? number : part_number,
-            :saved_number => saved_number,
-            :material_name => material_name,
-            :material_origins => material_origins,
-            :cumulable => cumulable,
-            :orientation_locked_on_axis => orientation_locked_on_axis,
-            :labels => labels,
-            :entity_ids => entity_ids,
-            :entity_serialized_paths => entity_serialized_paths,
-            :entity_names => entity_names.sort,
-            :contains_blank_entity_names => contains_blank_entity_names,
-            :auto_oriented => auto_oriented,
-            :aligned_on_axes => aligned_on_axes,
-            :final_area => DimensionUtils.instance.format_to_readable_area(final_area),
+            :id => @id,
+            :definition_id => @definition_id,
+            :name => @name,
+            :resized => !@scale.identity?,
+            :length => @size.length.to_s,
+            :width => @size.width.to_s,
+            :thickness => @size.thickness.to_s,
+            :count => @count,
+            :cutting_length => @cutting_size.length.to_s,
+            :cutting_width => @cutting_size.width.to_s,
+            :cutting_thickness => @cutting_size.thickness.to_s,
+            :cumulative_cutting_length => @cumulative_cutting_length.to_s,
+            :cumulative_cutting_width => @cumulative_cutting_width.to_s,
+            :number => @number ? @number : part_number,
+            :saved_number => @saved_number,
+            :material_name => @material_name,
+            :material_origins => @material_origins,
+            :cumulable => @cumulable,
+            :orientation_locked_on_axis => @orientation_locked_on_axis,
+            :labels => @labels,
+            :entity_ids => @entity_ids,
+            :entity_serialized_paths => @entity_serialized_paths,
+            :entity_names => @entity_names.sort,
+            :contains_blank_entity_names => @contains_blank_entity_names,
+            :auto_oriented => @auto_oriented,
+            :not_aligned_on_axes => @not_aligned_on_axes,
+            :layers => @layers.map(&:name),
+            :multiple_layers => multiple_layers,
+            :final_area => DimensionUtils.instance.format_to_readable_area(@final_area),
         }
       else
         {
-            :id => id,
-            :length => size.length.to_s,
-            :width => size.width.to_s,
-            :thickness => size.thickness.to_s,
-            :count => count,
-            :cutting_length => cutting_size.length.to_s,
-            :cutting_width => cutting_size.width.to_s,
-            :cutting_thickness => cutting_size.thickness.to_s,
+            :id => @id,
+            :length => @size.length.to_s,
+            :width => @size.width.to_s,
+            :thickness => @size.thickness.to_s,
+            :count => @count,
+            :cutting_length => @cutting_size.length.to_s,
+            :cutting_width => @cutting_size.width.to_s,
+            :cutting_thickness => @cutting_size.thickness.to_s,
             :saved_number => nil,
-            :material_name => material_name,
-            :labels => labels,
-            :final_area => DimensionUtils.instance.format_to_readable_area(final_area),
+            :material_name => @material_name,
+            :labels => @labels,
+            :final_area => DimensionUtils.instance.format_to_readable_area(@final_area),
+            :children_warning_count => @children_warning_count,
             :children => []
         }
       end

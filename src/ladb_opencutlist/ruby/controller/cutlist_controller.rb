@@ -133,6 +133,7 @@ module Ladb::OpenCutList
       def _fetch_useful_instance_infos(entity, path, auto_orient)
         face_count = 0
         if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+
           if entity.is_a? Sketchup::Group
 
             # Entity is a group : check its children
@@ -160,11 +161,11 @@ module Ladb::OpenCutList
             # Considere component instance if it contains faces
             if face_count > 0
 
-              bounds = _compute_faces_bounds(entity.definition)
-              unless bounds.empty?
+              bounds = _compute_faces_bounds(entity.definition, nil)
+              unless bounds.empty? or [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty and flat bounds
 
                 # Create the instance info
-                instance_info = InstanceInfo.new(path + [entity ])
+                instance_info = InstanceInfo.new(path + [ entity ])
                 instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
 
                 @instance_infos_cache[instance_info.serialized_path] = instance_info
@@ -199,9 +200,11 @@ module Ladb::OpenCutList
               end
               bounds.add(face_bounds)
             elsif entity.is_a? Sketchup::Group
-              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
+              b, l = _compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation)
+              bounds.add(b)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
+              b, l = _compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation)
+              bounds.add(b)
             end
           end
         }
@@ -210,7 +213,7 @@ module Ladb::OpenCutList
 
       # -- Faces Utils --
 
-      def _grab_main_faces(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], transformation = nil)
+      def _grab_main_faces(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = [], transformation = nil)
         definition_or_group.entities.each { |entity|
           if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
             if entity.is_a? Sketchup::Face
@@ -222,14 +225,15 @@ module Ladb::OpenCutList
               elsif transformed_normal.parallel?(Z_AXIS)
                 z_face_infos.push(FaceInfo.new(entity, transformation))
               end
+              layers = (layers + [ entity.layer ]).uniq
             elsif entity.is_a? Sketchup::Group
-              _grab_main_faces(entity, x_face_infos, y_face_infos, z_face_infos, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces(entity, x_face_infos, y_face_infos, z_face_infos, (layers + [ entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              _grab_main_faces(entity.definition, x_face_infos, y_face_infos, z_face_infos, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces(entity.definition, x_face_infos, y_face_infos, z_face_infos, (layers + [ entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
             end
           end
         }
-        return x_face_infos, y_face_infos, z_face_infos
+        return x_face_infos, y_face_infos, z_face_infos, layers
       end
 
       def _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
@@ -627,30 +631,33 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SOLID_WOOD
 
-              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.aligned_on_axes = (z_area_ratio >= 0.7 or y_area_ratio >= 0.7)
+              part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 or y_area_ratio >= 0.7)
+              part_def.layers = layers
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
-              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.final_area = z_final_area
-              part_def.aligned_on_axes = (z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.not_aligned_on_axes = !(z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.layers = layers
 
             when MaterialAttributes::TYPE_BAR
 
-              x_face_infos, y_face_infos, z_face_infos = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.aligned_on_axes = (z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
+              part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
+              part_def.layers = layers
 
             else
-              part_def.aligned_on_axes = true
+              part_def.not_aligned_on_axes = true
 
           end
 
@@ -782,12 +789,16 @@ module Ladb::OpenCutList
                 folder_part_def.final_area = first_child_part_def.final_area
 
                 folder_part_def.children.push(first_child_part_def)
+                folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
+                folder_part_def.children_warning_count += 1 if first_child_part_def.multiple_layers
 
                 part_defs.push(folder_part_def)
 
               end
               folder_part_def.children.push(part_def)
               folder_part_def.count += part_def.count
+              folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
+              folder_part_def.children_warning_count += 1 if part_def.multiple_layers
             else
               part_defs.push(part_def)
             end

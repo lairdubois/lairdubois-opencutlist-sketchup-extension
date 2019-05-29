@@ -78,6 +78,7 @@ tab:
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
       not_aligned_on_axes: Caution, this part may not be oriented correctly with respect to its axes
+      multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques :<br>{{ layers }}"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups

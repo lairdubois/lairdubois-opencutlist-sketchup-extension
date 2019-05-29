@@ -58,18 +58,18 @@ module Ladb::OpenCutList
 
     def to_struct
       {
-          :id => id,
-          :material_id => material_id,
-          :material_name => material_name,
-          :material_type => material_type,
-          :part_count => part_count,
-          :std_dimension => std_dimension,
-          :std_available => std_available,
-          :std_availability_message => std_availability_message,
-          :total_length => total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(total_length),
-          :total_area => total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(total_area),
-          :total_volume => total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(total_volume),
-          :show_cutting_dimensions => show_cutting_dimensions,
+          :id => @id,
+          :material_id => @material_id,
+          :material_name => @material_name,
+          :material_type => @material_type,
+          :part_count => @part_count,
+          :std_dimension => @std_dimension,
+          :std_available => @std_available,
+          :std_availability_message => @std_availability_message,
+          :total_length => @total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(@total_length),
+          :total_area => @total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@total_area),
+          :total_volume => @total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(@total_volume),
+          :show_cutting_dimensions => @show_cutting_dimensions,
           :parts => []
       }
     end

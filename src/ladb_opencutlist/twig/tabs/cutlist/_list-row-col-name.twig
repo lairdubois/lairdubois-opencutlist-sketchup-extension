@@ -1,6 +1,9 @@
 <div class="ladb-minitools no-print">
-    {% if not part.children %}
-        {% if not part.aligned_on_axes %}<a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.not_aligned_on_axes')|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
+    {% if part.children %}
+        {% if part.children_warning_count > 0 %}<a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.children_warnings')|i18next({ 'count':part.children_warning_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>{% endif %}
+    {% else %}
+        {% if part.not_aligned_on_axes %}<a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.not_aligned_on_axes')|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
+        {% if part.multiple_layers %}<a class="ladb-tool-warning" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.multiple_layers')|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
         {% if part.auto_oriented %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.auto_oriented')|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
         {% if part.resized %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.resized')|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
         {% if part.orientation_locked_on_axis %}<a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.orientation_locked_on_axis')|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
