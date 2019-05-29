@@ -137,14 +137,16 @@ tab:
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       part_folding: Regrouper les pièces identiques
       part_folding_help: Si cette option est activée, les pièces de **même taille capable** et avec les **mêmes étiquettes** seront regroupées sur une même ligne.
-      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
+      hide_entity_names: Masquer les noms d'instance
+      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
       hide_labels: Masquer les étiquettes
       hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
       hide_cutting_dimensions: Masquer les dimensions de débit
       hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
       hide_bbox_dimensions: Masquer les dimensions capables
       hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
+      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
+      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_final_areas: Masquer les surfaces finales des *Panneaux*
       hide_final_areas_help: Si cette option est activée, les **surfaces finales** des pièces de type *Panneau* ne sont pas affichées.
       general: Générales

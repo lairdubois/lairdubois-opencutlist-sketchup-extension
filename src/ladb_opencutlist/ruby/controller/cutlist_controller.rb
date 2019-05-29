@@ -101,6 +101,10 @@ module Ladb::OpenCutList
       # Clear previously generated cutlist
       @cutlist = nil
 
+
+      # Clear layer0 cache
+      @layer0 = nil
+
       # Clear previously generated entity infos
       @instance_infos_cache = {}
 
@@ -134,8 +138,9 @@ module Ladb::OpenCutList
       # -- Components utils --
 
       def _fetch_useful_instance_infos(entity, path, auto_orient)
+        return 0 if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
         face_count = 0
-        if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+        if entity.visible? and (entity.layer.visible? or (entity.layer.equal?(@layer0) and !path.empty?))   # Layer0 hide entities only on root scene
 
           if entity.is_a? Sketchup::Group
 
@@ -192,7 +197,8 @@ module Ladb::OpenCutList
       def _compute_faces_bounds(definition_or_group, transformation = nil)
         bounds = Geom::BoundingBox.new
         definition_or_group.entities.each { |entity|
-          if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+          next if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
+          if entity.visible? and (entity.layer.visible? or entity.layer.equal?(@layer0))
             if entity.is_a? Sketchup::Face
               face_bounds = entity.bounds
               if transformation
@@ -203,11 +209,9 @@ module Ladb::OpenCutList
               end
               bounds.add(face_bounds)
             elsif entity.is_a? Sketchup::Group
-              b, l = _compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation)
-              bounds.add(b)
+              bounds.add(_compute_faces_bounds(entity, transformation ? transformation * entity.transformation : entity.transformation))
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              b, l = _compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation)
-              bounds.add(b)
+              bounds.add(_compute_faces_bounds(entity.definition, transformation ? transformation * entity.transformation : entity.transformation))
             end
           end
         }
@@ -218,7 +222,8 @@ module Ladb::OpenCutList
 
       def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = [], transformation = nil)
         definition_or_group.entities.each { |entity|
-          if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
+          next if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
+          if entity.visible? and (entity.layer.visible? or entity.layer.equal?(@layer0))
             if entity.is_a? Sketchup::Face
               transformed_normal = transformation.nil? ? entity.normal : entity.normal.transform(transformation)
               if transformed_normal.parallel?(X_AXIS)
@@ -437,6 +442,7 @@ module Ladb::OpenCutList
           entities = model.selection
           use_selection = true
         end
+        @layer0 = model.layers[0]
       else
         entities = []
         use_selection = false

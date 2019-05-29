@@ -137,14 +137,16 @@ tab:
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       part_folding: Ähnliche Teile zusammenfassen
       part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Masse** und mit **gleichen Etiketten** zusammengefasst.
-      hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
+      hide_entity_names: Masquer les noms d'instance
+      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
       hide_cutting_dimensions: Rohmasse ausblenden
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
       hide_bbox_dimensions: Fertigmasse ausblenden
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
+      hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
+      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
       general: Allgemein
