@@ -213,7 +213,7 @@ module Ladb::OpenCutList
 
       # -- Faces Utils --
 
-      def _grab_main_faces(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = [], transformation = nil)
+      def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = [], transformation = nil)
         definition_or_group.entities.each { |entity|
           if entity.visible? and (entity.layer.visible? or (entity.is_a? Sketchup::Face and entity.layer.name == 'Layer0'))
             if entity.is_a? Sketchup::Face
@@ -227,9 +227,9 @@ module Ladb::OpenCutList
               end
               layers = (layers + [ entity.layer ]).uniq
             elsif entity.is_a? Sketchup::Group
-              _grab_main_faces(entity, x_face_infos, y_face_infos, z_face_infos, (layers + [ entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, (layers + [entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              _grab_main_faces(entity.definition, x_face_infos, y_face_infos, z_face_infos, (layers + [ entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, (layers + [entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
             end
           end
         }
@@ -249,12 +249,13 @@ module Ladb::OpenCutList
         end
       end
 
-      def _compute_largest_final_area(normal, x_face_infos, y_face_infos, z_face_infos)
+      def _compute_largest_final_area(normal, x_face_infos, y_face_infos, z_face_infos, transformation = nil)
 
         # Groups faces by plane
         plane_grouped_face_infos = {}
         _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
-          transformed_plane = face_info.transformation.nil? ? face_info.face.plane : face_info.transformation * face_info.face.plane
+          t = TransformationUtils.multiply(transformation, face_info.transformation)
+          transformed_plane = t.nil? ? face_info.face.plane : t * face_info.face.plane
           transformed_plane.map! { |v| v.round(4) }   # Round plane values with only 4 digits
           unless plane_grouped_face_infos.has_key?(transformed_plane)
             plane_grouped_face_infos.store(transformed_plane, [])
@@ -266,7 +267,8 @@ module Ladb::OpenCutList
         areas = []
         plane_grouped_face_infos.each do |plane, face_infos|
           areas.push(face_infos.inject(0) { |area, face_info|
-            area + (face_info.transformation.nil? ? face_info.face.area : face_info.face.area(face_info.transformation))
+            t = TransformationUtils.multiply(transformation, face_info.transformation)
+            area + (t.nil? ? face_info.face.area : face_info.face.area(t))
           })
         end
 
@@ -276,7 +278,7 @@ module Ladb::OpenCutList
 
       def _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
-        plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos, instance_info.transformation)
         area = instance_info.size.area_by_axis(axis)
         area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
 
@@ -631,7 +633,7 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SOLID_WOOD
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
@@ -640,7 +642,7 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.final_area = z_final_area
@@ -649,9 +651,11 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_BAR
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces(definition)
+              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+
+              puts z_area_ratio, y_area_ratio
 
               part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
               part_def.layers = layers

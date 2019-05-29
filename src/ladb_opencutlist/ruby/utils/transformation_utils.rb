@@ -11,6 +11,22 @@ module Ladb::OpenCutList
       Scale3d.new(vx.length, vy.length, vz.length)
     end
 
+    def self.multiply(transformation1, transformation2)
+      if transformation1.nil?
+        if transformation2.nil?
+          nil
+        else
+          transformation2
+        end
+      else
+        if transformation2.nil?
+          transformation1
+        else
+          transformation1 * transformation2
+        end
+      end
+    end
+
   end
 
 end
