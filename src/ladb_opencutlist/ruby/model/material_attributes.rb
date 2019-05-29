@@ -56,7 +56,7 @@
 
     @@used_uuids = []
 
-    def initialize(material)
+    def initialize(material, force_unique_uuid = false)
       @material = material
       @uuid = nil
       @type = TYPE_UNKNOW
@@ -69,7 +69,7 @@
       @grained = get_default(:@grained)
 
       # Reload properties from attributes
-      read_from_attributes
+      read_from_attributes(force_unique_uuid)
 
     end
 
@@ -199,12 +199,12 @@
 
     # -----
 
-    def read_from_attributes
+    def read_from_attributes(force_unique_uuid = false)
       if @material
 
         # Special case for UUID that must be truely unique in the session
         uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
-        if uuid.nil? or @@used_uuids.include?(uuid)
+        if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
 
           # Generate a new UUID
           uuid = SecureRandom.uuid

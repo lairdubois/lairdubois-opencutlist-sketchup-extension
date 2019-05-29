@@ -10,6 +10,19 @@
 
   .ladb-content {
     position: relative;
+
+    .ladb-image {
+      position: relative;
+
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+    }
   }
 
   .ladb-overlay-caption {
@@ -26,11 +39,14 @@
 
   .ladb-overlay-icon {
     position: absolute;
-    right: 10px;
-    top: 4px;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
-    color: #fff;
-    font-size: 150%;
+    right: 0;
+    top: 2px;
+    font-size: 120%;
+
+    .ladb-material-type-icon {
+      border-radius: 0 0 0 4px;
+    }
+
   }
 
 }
@@ -41,7 +57,7 @@
   &.ladb-material-type-icon-filled {
     color: #fff;
     padding: 4px 5px;
-    border-radius: 2px;
+    border-radius: 4px;
 
     &.ladb-material-type-1 {
       background-color: @ladb-material-type-1;

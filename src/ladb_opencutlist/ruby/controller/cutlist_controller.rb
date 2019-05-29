@@ -108,6 +108,9 @@ module Ladb::OpenCutList
       @material_attributes_cache = {}     # Cleared after response
       @definition_attributes_cache = {}   # Cleared after response
 
+      # Reset materials UUIDS
+      MaterialAttributes::reset_used_uuids
+
       # [BEGIN] -- Utils definitions --
 
       # -- Cache Utils --
@@ -115,7 +118,7 @@ module Ladb::OpenCutList
       def _get_material_attributes(material)
         key = material ? material.name : '$EMPTY$'
         unless @material_attributes_cache.has_key? key
-          @material_attributes_cache[key] = MaterialAttributes.new(material)
+          @material_attributes_cache[key] = MaterialAttributes.new(material, true)
         end
         @material_attributes_cache[key]
       end
@@ -471,9 +474,6 @@ module Ladb::OpenCutList
         end
       end
 
-      # Reset materials UUIDS
-      MaterialAttributes::reset_used_uuids
-
       # Materials usages
       materials = model ? model.materials : []
       materials.each { |material|
@@ -655,13 +655,11 @@ module Ladb::OpenCutList
               z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              puts z_area_ratio, y_area_ratio
-
               part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
               part_def.layers = layers
 
             else
-              part_def.not_aligned_on_axes = true
+              part_def.not_aligned_on_axes = false
 
           end
 
