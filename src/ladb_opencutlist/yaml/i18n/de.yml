@@ -28,8 +28,8 @@ default:
   part_single: Teil
   part_plural: Teile
   more: Mehr
-  more_docs: Docs
-  more_plans: Plans
+  more_docs: Dokus
+  more_plans: Pläne
   more_extensions: Erweiterungen
 core:
   menu:
@@ -78,9 +78,9 @@ tab:
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
       not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht richtig nach den Hauptachsen ausgerichtet
-      multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
-      children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
-      children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
+      multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen erscheinen :<br>{{ layers }}"
+      children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
+      children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -129,7 +129,7 @@ tab:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
         - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
-      smart_material: "*intelligente* Zuweisung des Materials"
+      smart_material: "*Intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
       part_number_with_letters: Buchstaben zur Aufzählung verwenden
       part_number_with_letters_help: Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
@@ -138,7 +138,7 @@ tab:
       part_folding: Ähnliche Teile zusammenfassen
       part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Masse** und mit **gleichen Etiketten** zusammengefasst.
       hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platten** oder **Stangenware**) nicht angezeigt.
+      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
       hide_cutting_dimensions: Rohmasse ausblenden
@@ -146,8 +146,8 @@ tab:
       hide_bbox_dimensions: Fertigmasse ausblenden
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
-      hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** (Fertigmasse) von Teilen des Typs *Platten* nicht angezeigt.
-      general: Générales
+      hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
+      general: Allgemein
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
         Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
@@ -178,9 +178,9 @@ tab:
       name: Bezeichnung
       count: Anzahl
       total: Rohmass
-      cutting: Débit
+      cutting: Rohmass
       bbox: Fertigmass
-      final: Fertigmass
+      final: Effektiv
       length: Länge
       length_short: L
       width: Breite
@@ -303,8 +303,8 @@ tab:
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
-      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platten** oder **Bar**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz** oder **Platten** oder **Bar**).
+      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: Export in Datei {{ export_path }} erfolgreich.
