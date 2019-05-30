@@ -118,6 +118,7 @@
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
+        this.$itemHelp = $('#ladb_item_help', this.$header);
 
         this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
@@ -1452,6 +1453,16 @@
 
     };
 
+    LadbTabCutlist.prototype.showHelp = function () {
+        var that = this;
+
+        var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-help.twig');
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     // Internals /////
 
     LadbTabCutlist.prototype.showOutdated = function (messageI18nKey) {
@@ -1519,6 +1530,10 @@
         });
         this.$itemOptions.on('click', function () {
             that.editOptions();
+            this.blur();
+        });
+        this.$itemHelp.on('click', function () {
+            that.showHelp();
             this.blur();
         });
 
