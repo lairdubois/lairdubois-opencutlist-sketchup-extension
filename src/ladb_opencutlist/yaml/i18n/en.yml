@@ -81,6 +81,8 @@ tab:
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers :<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
+      invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finale invalide"
+      invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finale invalide"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -206,9 +208,10 @@ tab:
       option_encoding: Encoding
       number: No.
       name: Description
-      total_length: Length - raw
-      total_area: Area - raw
-      total_volume: Volume - raw
+      total_cutting_length: Length - raw
+      total_cutting_area: Area - raw
+      total_cutting_volume: Volume - raw
+      total_final_area: Area - final
       cutting_length: Length - raw
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw

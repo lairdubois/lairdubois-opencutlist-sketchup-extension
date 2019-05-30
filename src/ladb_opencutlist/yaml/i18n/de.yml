@@ -81,6 +81,8 @@ tab:
       multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen erscheinen :<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
+      invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finale invalide"
+      invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finale invalide"
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -206,9 +208,10 @@ tab:
       option_encoding: Kodierung
       number: Nr.
       name: Bezeichnung
-      total_length: Länge - roh
-      total_area: Fläche - roh
-      total_volume: Volumen - roh
+      total_cutting_length: Länge - roh
+      total_cutting_area: Fläche - roh
+      total_cutting_volume: Volumen - roh
+      total_final_area: Fläche - fertig
       cutting_length: Länge - roh
       cutting_width: Breite - roh
       cutting_thickness: Dicke - roh

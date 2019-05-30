@@ -45,9 +45,7 @@
                 <tr>
                     <td colspan="5">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
-                        <div>
-                            <span class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</span>
-                        </div>
+                        <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
                     </td>
                 </tr>
                 </thead>
@@ -94,9 +92,7 @@
                 <tr>
                     <td colspan="5">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
-                        <div>
-                            <span class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</span>
-                        </div>
+                        <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
                     </td>
                 </tr>
                 </thead>
@@ -163,14 +159,12 @@
                 <tr>
                     <td colspan="2">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
-                        <div>
-                            <span class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></span>
-                            <div class="no-print btn-group pull-right" role="group">
-                                <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>
-                                <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
-                            </div>
-                            <span class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ sheets|length }}</strong></span>
+                        <div class="no-print btn-group pull-right" role="group">
+                            <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>
+                            <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                         </div>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ sheets|length }}</strong></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>

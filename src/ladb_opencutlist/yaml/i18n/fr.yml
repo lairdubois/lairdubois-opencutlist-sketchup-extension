@@ -81,6 +81,8 @@ tab:
       multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
+      invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
+      invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -147,8 +149,8 @@ tab:
       hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
       hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
-      hide_final_areas: Masquer les surfaces finales des *Panneaux*
-      hide_final_areas_help: Si cette option est activée, les **surfaces finales** des pièces de type *Panneau* ne sont pas affichées.
+      hide_final_areas: Masquer les surfaces finies des *Panneaux*
+      hide_final_areas_help: Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées.
       general: Générales
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
@@ -182,7 +184,7 @@ tab:
       total: Cumul brut
       cutting: Débit
       bbox: Capable
-      final: Finale
+      final: Finie
       length: Longueur
       length_short: Long.
       width: Largeur
@@ -206,16 +208,17 @@ tab:
       option_encoding: Encodage
       number: N°
       name: Désignation
-      total_length: Longueur - cumul brut
-      total_area: Surface - cumul brut
-      total_volume: Volume - cumul brut
+      total_cutting_length: Longueur - cumul brut
+      total_cutting_area: Surface - cumul brut
+      total_cutting_volume: Volume - cumul brut
+      total_final_area: Surface - finie
       cutting_length: Longueur - débit
       cutting_width: Largeur - débit
       cutting_thickness: Épaisseur - débit
       bbox_length: Longueur - capable
       bbox_width: Largeur - capable
       bbox_thickness: Épaisseur - capable
-      final_area: Surface - finale
+      final_area: Surface - finie
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type
