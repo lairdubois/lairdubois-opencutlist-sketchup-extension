@@ -790,7 +790,7 @@ module Ladb::OpenCutList
         if part_folding
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and (folder_part_def.final_area == part_def.final_area or hide_final_areas)
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas)    # final_area workaround for rounding error
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
