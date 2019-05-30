@@ -137,8 +137,8 @@ tab:
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       part_folding: Ähnliche Teile zusammenfassen
       part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Masse** und mit **gleichen Etiketten** zusammengefasst.
-      hide_entity_names: Masquer les noms d'instance
-      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
+      hide_entity_names: Instanzbezeichnungen ausblenden
+      hide_entity_names_help: Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht eingeblendet.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
       hide_cutting_dimensions: Rohmasse ausblenden
