@@ -325,7 +325,7 @@ tab:
     title: Materialien
     type_0: Unbekannt
     type_1: Massivholz
-    type_2: Platten
+    type_2: Platte
     type_3: Stangenware
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
