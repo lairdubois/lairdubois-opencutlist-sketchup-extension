@@ -81,8 +81,8 @@ tab:
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers :<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
-      invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finale invalide"
-      invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finale invalide"
+      invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
+      invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
