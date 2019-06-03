@@ -181,10 +181,11 @@ tab:
       number: Nr.
       name: Bezeichnung
       count: Anzahl
-      total: Rohmass
       cutting: Rohmass
       bbox: Fertigmass
       final: Effektiv
+      total_cutting: Σ Rohmass
+      total_final: Σ Effektiv
       length: Länge
       length_short: L
       width: Breite

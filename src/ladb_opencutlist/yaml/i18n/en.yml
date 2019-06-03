@@ -181,10 +181,11 @@ tab:
       number: No.
       name: Description
       count: Qty
-      total: Rough
       cutting: Rough
       bbox: Finished
       final: Actual
+      total_cutting: Σ Rough
+      total_final: Σ Actual
       length: Length
       length_short: L
       width: Width

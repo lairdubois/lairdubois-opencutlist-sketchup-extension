@@ -181,10 +181,11 @@ tab:
       number: N°
       name: Désignation
       count: Qte.
-      total: Cumul brut
       cutting: Débit
       bbox: Capable
       final: Finie
+      total_cutting: Σ Débit
+      total_final: Σ Finie
       length: Longueur
       length_short: Long.
       width: Largeur
