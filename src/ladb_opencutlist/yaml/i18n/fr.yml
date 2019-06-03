@@ -101,6 +101,10 @@ tab:
       name: Nom
       material: Matière
       cumulable: Cumulable
+      cumulable_help: |
+        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire multipliée par la quantité.
+
+        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
@@ -211,10 +215,10 @@ tab:
       option_encoding: Encodage
       number: N°
       name: Désignation
-      total_cutting_length: Longueur - cumul brut
-      total_cutting_area: Surface - cumul brut
-      total_cutting_volume: Volume - cumul brut
-      total_final_area: Surface - finie
+      total_cutting_length: Longueur - cumul débit
+      total_cutting_area: Surface - cumul débit
+      total_cutting_volume: Volume - cumul débit
+      total_final_area: Surface - cumul fini
       cutting_length: Longueur - débit
       cutting_width: Largeur - débit
       cutting_thickness: Épaisseur - débit
