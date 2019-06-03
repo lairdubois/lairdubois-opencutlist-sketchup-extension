@@ -94,6 +94,8 @@ tab:
       group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'...
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
+      expand_all: Déplier toutes les pièces identiques
+      collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       name: Bezeichnung

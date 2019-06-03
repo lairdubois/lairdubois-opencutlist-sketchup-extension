@@ -210,7 +210,7 @@
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
                 </tr>
             {% endif %}
-            <tr id="ladb_part_{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %}">
+            <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %}">
                 <td class="text-center ladb-cutlist-highlighted-value">
                     {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                 </td>
@@ -234,7 +234,7 @@
             </tr>
             {% if part.children %}
                 {% for partChild in part.children %}
-                    <tr id="ladb_part_{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
+                    <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
                         <td class="text-center" style="color: red;">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
                         </td>
