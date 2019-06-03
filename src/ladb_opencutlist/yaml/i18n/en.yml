@@ -81,6 +81,8 @@ tab:
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers :<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
+      invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
+      invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -137,8 +139,8 @@ tab:
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
       part_folding: Group identical parts
       part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.
-      hide_entity_names: Masquer les noms d'instance
-      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
+      hide_entity_names: Hide instance names
+      hide_entity_names_help: If this option is selected, **instance names** of parts will not be displayed.
       hide_labels: Hide labels
       hide_labels_help: If this option is selected, **labels** will be hidden.
       hide_cutting_dimensions: Hide rough dimensions
@@ -179,10 +181,11 @@ tab:
       number: No.
       name: Description
       count: Qty
-      total: Rough
       cutting: Rough
       bbox: Finished
       final: Actual
+      total_cutting: Σ Rough
+      total_final: Σ Actual
       length: Length
       length_short: L
       width: Width
@@ -206,9 +209,10 @@ tab:
       option_encoding: Encoding
       number: No.
       name: Description
-      total_length: Length - raw
-      total_area: Area - raw
-      total_volume: Volume - raw
+      total_cutting_length: Length - raw
+      total_cutting_area: Area - raw
+      total_cutting_volume: Volume - raw
+      total_final_area: Area - final
       cutting_length: Length - raw
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw

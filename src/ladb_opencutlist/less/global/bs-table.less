@@ -4,6 +4,15 @@
 
 table.table-bordered {
 
+  & > thead > tr.text-middle > th,
+  & > tbody > tr.text-middle > th,
+  & > tfoot > tr.text-middle > th,
+  & > thead > tr.text-middle > td,
+  & > tbody > tr.text-middle > td,
+  & > tfoot > tr.text-middle > td {
+    vertical-align: middle;
+  }
+
   &.table-danger {
     border-color: darken(spin(#f2dede, -10), 5%);
 

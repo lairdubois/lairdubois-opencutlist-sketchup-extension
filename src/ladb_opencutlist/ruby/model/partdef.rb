@@ -29,7 +29,7 @@ module Ladb::OpenCutList
       @auto_oriented = false
       @not_aligned_on_axes = false
       @layers = []
-      @final_area = nil
+      @final_area = 0
 
       @children_warning_count = 0
       @children = []
@@ -170,7 +170,7 @@ module Ladb::OpenCutList
             :not_aligned_on_axes => @not_aligned_on_axes,
             :layers => @layers.map(&:name),
             :multiple_layers => multiple_layers,
-            :final_area => DimensionUtils.instance.format_to_readable_area(@final_area),
+            :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
         }
       else
         {
@@ -185,7 +185,7 @@ module Ladb::OpenCutList
             :saved_number => nil,
             :material_name => @material_name,
             :labels => @labels,
-            :final_area => DimensionUtils.instance.format_to_readable_area(@final_area),
+            :final_area =>  @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
             :children_warning_count => @children_warning_count,
             :children => []
         }

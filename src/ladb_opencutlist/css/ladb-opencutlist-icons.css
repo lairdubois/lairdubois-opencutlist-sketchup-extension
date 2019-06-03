@@ -97,6 +97,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-sort-desc:before {
   content: "\e916";
 }
+.ladb-opencutlist-icon-sort-col:before {
+  content: "\e93d";
+}
 .ladb-opencutlist-icon-reorder:before {
   content: "\e917";
 }

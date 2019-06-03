@@ -704,12 +704,19 @@ module Ladb::OpenCutList
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
           if group_def.material_type == MaterialAttributes::TYPE_BAR
-            group_def.total_length += part_def.cutting_size.length
+            group_def.total_cutting_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            group_def.total_area += part_def.cutting_size.area
+            group_def.total_cutting_area += part_def.cutting_size.area
           end
-          group_def.total_volume += part_def.cutting_size.volume
+          if group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            if part_def.final_area.nil?
+              group_def.invalid_final_area_part_count += 1
+            else
+              group_def.total_final_area += part_def.final_area
+            end
+          end
+          group_def.total_cutting_volume += part_def.cutting_size.volume
         end
         group_def.part_count += 1
 
@@ -783,7 +790,7 @@ module Ladb::OpenCutList
         if part_folding
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and (folder_part_def.final_area == part_def.final_area or hide_final_areas)
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas)    # final_area workaround for rounding error
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
@@ -930,9 +937,12 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_type'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_area'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_volume'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_length'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_area'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_volume'))
+                    unless hide_final_areas
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_final_area'))
+                    end
 
                     csv << header
 
@@ -943,9 +953,12 @@ module Ladb::OpenCutList
                       row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group[:material_type]}"))
                       row.push((group[:material_name] ? group[:material_name] : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group[:material_type] > 0 ? ' / ' + group[:std_dimension] : ''))
                       row.push(group[:part_count])
-                      row.push(group[:total_length].nil? ? '' : _sanitize_value_string(group[:total_length]))
-                      row.push(group[:total_area].nil? ? '' : _sanitize_value_string(group[:total_area]))
-                      row.push(group[:total_volume].nil? ? '' : _sanitize_value_string(group[:total_volume]))
+                      row.push(group[:total_cutting_length].nil? ? '' : _sanitize_value_string(group[:total_cutting_length]))
+                      row.push(group[:total_cutting_area].nil? ? '' : _sanitize_value_string(group[:total_cutting_area]))
+                      row.push(group[:total_cutting_volume].nil? ? '' : _sanitize_value_string(group[:total_cutting_volume]))
+                      unless hide_final_areas
+                        row.push((group[:total_final_area].nil? or group[:invalid_final_area_part_count] > 0) ? '' : _sanitize_value_string(group[:total_final_area]))
+                      end
 
                       csv << row
                     }
