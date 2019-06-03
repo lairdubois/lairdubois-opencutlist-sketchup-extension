@@ -658,7 +658,7 @@
                                 var $part = $('#ladb_part_' + partId);
                                 if ($part.length > 0) {
                                     if ($part.hasClass('hide')) {
-                                        that.expandFoldingPart($part.data('folder-id'))
+                                        that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
                                     }
                                     $part.effect("highlight", {}, 1500);
                                     that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
