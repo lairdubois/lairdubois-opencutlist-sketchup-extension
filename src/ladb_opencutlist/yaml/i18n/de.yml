@@ -177,7 +177,7 @@ tab:
       filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
       labels_filter: "Filteretiketten"
-      dimensions_help: Comprendre les dimensions
+      dimensions_help: Comprendre les dimensions...
       summary: Übersicht
       material_type: Typ
       material_thickness: Material / Dicke

@@ -177,7 +177,7 @@ tab:
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       labels_filter: "Labels to filter"
-      dimensions_help: Comprendre les dimensions
+      dimensions_help: Comprendre les dimensions...
       summary: Summary
       material_type: Type
       material_thickness: Material / Thickness

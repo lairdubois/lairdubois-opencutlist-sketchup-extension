@@ -3,6 +3,9 @@
 {% set id = 'ladb_cutlist_modal_help' %}
 {% set title = 'tab.cutlist.list.dimensions_help'|i18next %}
 
+{% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
+{% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+
 {% block bodyInner %}
     <div style="font-size: 120%;">
         {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':true } %} {% include 'tabs/cutlist/_group-label.twig' %}
@@ -103,56 +106,58 @@
                         <path d="M1041.3,238.17l-45.065,-19.009" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
                     </g>
                 </g>
-                <g class="ladb-cutting">
-                    <g>
-                        <path d="M1102.87,215.352l106.181,42.644" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M326.366,764.909l116.537,107.959" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M1205.65,256.632l-273.59,218.688" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M890.776,508.321l-451.67,361.031" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M1205.65,256.632l-2.311,6.9l-8.379,-3.391l10.69,-3.509Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M439.106,869.352l7.434,-10.927l5.821,5.333l-13.255,5.594Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="906.253px" y="498.471px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
+                {% if showCuttingDimensions %}
+                    <g class="ladb-cutting">
+                        <g>
+                            <path d="M1102.87,215.352l106.181,42.644" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M326.366,764.909l116.537,107.959" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M1205.65,256.632l-273.59,218.688" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M890.776,508.321l-451.67,361.031" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M1205.65,256.632l-2.311,6.9l-8.379,-3.391l10.69,-3.509Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M439.106,869.352l7.434,-10.927l5.821,5.333l-13.255,5.594Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="906.253px" y="498.471px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
+                        </g>
+                        <g>
+                            <path d="M108.23,477.255l-56.64,-49.066" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M141.469,586.833l-54.338,-50.086" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M53.93,430.216l12.903,39.526" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M77.605,502.742l11.779,36.081" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M55.087,438.711l-1.157,-8.495l5.681,12.438l-4.524,-3.943Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M88.481,531.032l0.903,7.791l-5.577,-12.076l4.674,4.285Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="66.632px" y="495.742px">{{ group.std_thickness }}</text>
+                        </g>
+                        <g>
+                            <path d="M143.035,600.481l-67.727,39.436" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M319.984,764.739l-70.619,49.892" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M79.165,637.671l65.479,65.439" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M177.664,736.11l75.725,75.678" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M79.165,637.671l11.048,4.57l-8.172,4.796l-2.876,-9.366Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M253.389,811.788l-11.544,-5.108l7.55,-5.289l3.994,10.397Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="155.567px" y="729.11px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
+                        </g>
+                        <g>
+                            <path d="M297.612,641.312l826.435,-530.943" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1124.05,110.369l-183.49,-65.155" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M940.557,45.214l-830.009,434.049" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M110.548,479.263l187.064,162.049" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M323.501,762.255l776.025,-548.244" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M146.62,598.393l176.881,163.862" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M279.725,520.889l-133.105,77.504" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1099.53,214.011l-140.254,-56.328" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M940.557,45.214l-9.475,65.744" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M110.548,479.263l36.072,119.13" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1124.05,110.369l-24.521,103.642" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M297.612,641.312l25.889,120.943" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                        </g>
                     </g>
-                    <g>
-                        <path d="M108.23,477.255l-56.64,-49.066" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M141.469,586.833l-54.338,-50.086" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M53.93,430.216l12.903,39.526" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M77.605,502.742l11.779,36.081" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M55.087,438.711l-1.157,-8.495l5.681,12.438l-4.524,-3.943Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M88.481,531.032l0.903,7.791l-5.577,-12.076l4.674,4.285Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="66.632px" y="495.742px">{{ group.std_thickness }}</text>
-                    </g>
-                    <g>
-                        <path d="M143.035,600.481l-67.727,39.436" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M319.984,764.739l-70.619,49.892" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M79.165,637.671l65.479,65.439" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M177.664,736.11l75.725,75.678" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M79.165,637.671l11.048,4.57l-8.172,4.796l-2.876,-9.366Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M253.389,811.788l-11.544,-5.108l7.55,-5.289l3.994,10.397Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="155.567px" y="729.11px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
-                    </g>
-                    <g>
-                        <path d="M297.612,641.312l826.435,-530.943" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1124.05,110.369l-183.49,-65.155" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M940.557,45.214l-830.009,434.049" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M110.548,479.263l187.064,162.049" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M323.501,762.255l776.025,-548.244" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M146.62,598.393l176.881,163.862" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M279.725,520.889l-133.105,77.504" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1099.53,214.011l-140.254,-56.328" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M940.557,45.214l-9.475,65.744" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M110.548,479.263l36.072,119.13" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1124.05,110.369l-24.521,103.642" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M297.612,641.312l25.889,120.943" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                    </g>
-                </g>
+                {% endif %}
             </g>
             {% elseif group.material_type == 2 %}
             <g>
                 <g>
                     <path d="M319.914,628.938l-183.979,-341.744l-10.568,-41.301l185.767,337.78l8.78,45.265Z" style="fill:#bfbfbf;fill-rule:nonzero;"/>
                     <path d="M311.134,583.673l-185.767,-337.78l428.875,-109.426l80.947,73.843l138.879,-39.263l298.483,231.055l-572.055,222.064l-189.362,-40.493Zm31.234,-275.199l13.329,-2.775l11.97,-4.482l4.513,-2.701l2.347,-1.405l2.905,-1.739l4.643,-4.554l2.259,-2.216l2.473,-4.932l1.141,-2.276l0.143,-7.146l-3.267,-6.605l-6.398,-5.642l-9.068,-4.33l-11.126,-2.759l-12.465,-1.026l-13.015,0.767l-12.746,2.515l-11.663,4.116l-9.818,5.472l-7.301,6.49l-4.249,7.096l-0.848,7.23l2.683,6.865l0.777,0.766l5.315,5.241l1.126,0.581l7.994,4.122l1.019,0.269l3.929,1.036l6.576,1.735l13.102,1.139l13.72,-0.852Z" style="fill:#ededed;fill-rule:nonzero;"/>
-                    {% if not uiOptions.hide_final_areas %}
+                    {% if showFinalAreas %}
                         <path d="M311.134,583.673l-185.767,-337.78l428.875,-109.426l80.947,73.843l138.879,-39.263l298.483,231.055l-572.055,222.064l-189.362,-40.493Zm31.234,-275.199l13.329,-2.775l11.97,-4.482l4.513,-2.701l2.347,-1.405l2.905,-1.739l4.643,-4.554l2.259,-2.216l2.473,-4.932l1.141,-2.276l0.143,-7.146l-3.267,-6.605l-6.398,-5.642l-9.068,-4.33l-11.126,-2.759l-12.465,-1.026l-13.015,0.767l-12.746,2.515l-11.663,4.116l-9.818,5.472l-7.301,6.49l-4.249,7.096l-0.848,7.23l2.683,6.865l0.777,0.766l5.315,5.241l1.126,0.581l7.994,4.122l1.019,0.269l3.929,1.036l6.576,1.735l13.102,1.139l13.72,-0.852Z" style="fill:#ffff00;fill-rule:nonzero;" class="ladb-final"/>
                     {% endif %}
                     <path d="M500.496,624.166l572.055,-222.064l-11.022,43.739l-557.494,223.74l-3.539,-45.415Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
@@ -256,42 +261,44 @@
                         <text x="176.104px" y="490.871px">{{ 'tab.cutlist.list.width_short'|i18next }}</text>
                     </g>
                 </g>
-                <g class="ladb-cutting">
-                    <g>
-                        <path d="M1100.02,406.632l-409.245,-312.311" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M690.774,94.321l-585.832,148.204" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M104.942,242.525l244.162,459.452" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M349.104,701.977l750.915,-295.346" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M104.942,242.525l10.966,41.236" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M115.908,283.761l241.563,463.726" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M349.104,701.977l8.367,45.51" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M690.774,94.321l-1.238,37.928" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M689.536,132.249l-108.502,28.658" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M133.844,279.024l-17.936,4.737" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1100.02,406.632l-11.739,43.794" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1088.28,450.426l-23.234,-18.54" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M747.553,178.543l-58.017,-46.294" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M357.471,747.487l730.809,-297.061" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                {% if showCuttingDimensions %}
+                    <g class="ladb-cutting">
+                        <g>
+                            <path d="M1100.02,406.632l-409.245,-312.311" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M690.774,94.321l-585.832,148.204" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M104.942,242.525l244.162,459.452" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M349.104,701.977l750.915,-295.346" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M104.942,242.525l10.966,41.236" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M115.908,283.761l241.563,463.726" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M349.104,701.977l8.367,45.51" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M690.774,94.321l-1.238,37.928" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M689.536,132.249l-108.502,28.658" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M133.844,279.024l-17.936,4.737" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1100.02,406.632l-11.739,43.794" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1088.28,450.426l-23.234,-18.54" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M747.553,178.543l-58.017,-46.294" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M357.471,747.487l730.809,-297.061" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                        </g>
+                        <g>
+                            <path d="M359.069,750.554l42.294,81.19" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M1091.03,452.623l64.557,51.512" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M399.423,828.02l391.759,-169.677" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M847.182,634.088l305.464,-132.302" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M399.423,828.02l10.81,-8.691l3.467,6.533l-14.277,2.158Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M1152.65,501.787l-6.759,6.981l-6.53,-5.263l13.289,-1.719Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="812.151px" y="654.72px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
+                        </g>
+                        <g>
+                            <path d="M112.028,284.786l-77.692,20.521" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M353.047,749.285l-107.242,43.592" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M38.225,304.28l79.428,181.428" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M132.1,518.708l119.075,271.987" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M38.225,304.28l7.54,5.421l-9.267,2.465l1.727,-7.886Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M251.175,790.695l-8.54,-7.822l8.684,-3.505l-0.144,11.327Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="120.695px" y="509.084px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
+                        </g>
                     </g>
-                    <g>
-                        <path d="M359.069,750.554l42.294,81.19" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M1091.03,452.623l64.557,51.512" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M399.423,828.02l391.759,-169.677" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M847.182,634.088l305.464,-132.302" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M399.423,828.02l10.81,-8.691l3.467,6.533l-14.277,2.158Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M1152.65,501.787l-6.759,6.981l-6.53,-5.263l13.289,-1.719Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="812.151px" y="654.72px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
-                    </g>
-                    <g>
-                        <path d="M112.028,284.786l-77.692,20.521" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M353.047,749.285l-107.242,43.592" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M38.225,304.28l79.428,181.428" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M132.1,518.708l119.075,271.987" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M38.225,304.28l7.54,5.421l-9.267,2.465l1.727,-7.886Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M251.175,790.695l-8.54,-7.822l8.684,-3.505l-0.144,11.327Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="120.695px" y="509.084px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
-                    </g>
-                </g>
+                {% endif %}
                 <g>
                     <path d="M1075.86,400.817l98.391,-38.194" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                     <path d="M1064.81,444.525l96.382,-38.681" style="fill:none;stroke:#505050;stroke-width:1px;"/>
@@ -340,31 +347,33 @@
                         <text x="806.333px" y="492.752px">{{ 'tab.cutlist.list.length_short'|i18next }}</text>
                     </g>
                 </g>
-                <g class="ladb-cutting">
-                    <g>
-                        <path d="M1062.68,128.939l-777.32,444.626" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M315.981,724.734l720.921,-467.667" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M285.358,573.565l30.623,151.169" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1036.9,257.067l25.775,-128.128" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M913.094,74.093l-773.442,374.614" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M907.342,118.938l5.752,-44.845" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M179.284,596.353l99.263,-55.168" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M139.652,448.707l39.632,147.646" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1036.9,257.067l-41.119,-17.603" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M1062.68,128.939l-149.583,-54.846" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M315.981,724.734l-136.697,-128.381" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
-                        <path d="M285.358,573.565l-145.706,-124.858" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                {% if showCuttingDimensions %}
+                    <g class="ladb-cutting">
+                        <g>
+                            <path d="M1062.68,128.939l-777.32,444.626" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M315.981,724.734l720.921,-467.667" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M285.358,573.565l30.623,151.169" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1036.9,257.067l25.775,-128.128" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M913.094,74.093l-773.442,374.614" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M907.342,118.938l5.752,-44.845" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M179.284,596.353l99.263,-55.168" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M139.652,448.707l39.632,147.646" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1036.9,257.067l-41.119,-17.603" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M1062.68,128.939l-149.583,-54.846" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M315.981,724.734l-136.697,-128.381" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                            <path d="M285.358,573.565l-145.706,-124.858" style="fill:none;stroke:#ff2500;stroke-width:2px;"/>
+                        </g>
+                        <g>
+                            <path d="M318.674,727.263l131.093,123.118" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M1040.13,258.45l125.653,53.791" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M446.164,846.997l411.054,-307.725" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M901.299,506.272l261.113,-195.476" style="fill:none;stroke:#505050;stroke-width:1px;"/>
+                            <path d="M446.164,846.997l7.657,-10.497l5.692,5.285l-13.349,5.212Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <path d="M1162.41,310.796l-2.841,6.957l-8.172,-3.526l11.013,-3.431Z" style="fill:#505050;fill-rule:nonzero;"/>
+                            <text x="871.073px" y="530.987px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
+                        </g>
                     </g>
-                    <g>
-                        <path d="M318.674,727.263l131.093,123.118" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M1040.13,258.45l125.653,53.791" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M446.164,846.997l411.054,-307.725" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M901.299,506.272l261.113,-195.476" style="fill:none;stroke:#505050;stroke-width:1px;"/>
-                        <path d="M446.164,846.997l7.657,-10.497l5.692,5.285l-13.349,5.212Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <path d="M1162.41,310.796l-2.841,6.957l-8.172,-3.526l11.013,-3.431Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="871.073px" y="530.987px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
-                    </g>
-                </g>
+                {% endif %}
                 <g>
                     <path d="M275.152,543.072l-160.532,89.22" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                     <path d="M245.472,397.453l-177.531,85.987" style="fill:none;stroke:#505050;stroke-width:1px;"/>
@@ -389,9 +398,11 @@
     </div>
     <div class="text-center">
         <div class="btn-group" role="group">
-            <button id="ladb_btn_cutting_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.cutting'|i18next }}</button>
+            {% if showCuttingDimensions %}
+                <button id="ladb_btn_cutting_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.cutting'|i18next }}</button>
+            {% endif %}
             <button id="ladb_btn_bbox_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.bbox'|i18next }}</button>
-            {% if group.material_type == 2 and not uiOptions.hide_final_areas %}   {# 2 = TYPE_SHEET_GOOD #}
+            {% if showFinalAreas %}
                 <button id="ladb_btn_final_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.final'|i18next }}</button>
             {% endif %}
         </div>
