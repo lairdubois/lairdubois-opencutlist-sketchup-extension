@@ -8,11 +8,14 @@
 {% include 'core/_alert-tips.twig' %}
 
 {% if usedLabels is not empty or ignoredInstanceCount > 0 %}
-    <table id="ladb_group_filters" data-group-id="filters" class="{% if 'filters' in uiOptions.hidden_group_ids or generateFilters.labels_filter is empty %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
+
+    {% set groupFiltersHidden = 'filters' in uiOptions.hidden_group_ids or generateFilters.labels_filter is empty %}
+
+    <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
         <thead>
         <tr>
             <td>
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-open"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupFiltersHidden %}open{% else %}close{% endif %}"></i></button>
                 <div>
                     <span class="ladb-heading"><i class="ladb-opencutlist-icon-filter"></i> {{ 'tab.cutlist.list.filters'|i18next }}</span>
                 </div>
@@ -54,11 +57,14 @@
 {% endif %}
 
 {% if groups|length > 0 %}
-    <table id="ladb_group_summary" data-group-id="summary" class="{% if 'summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
+
+    {% set groupSummaryHidden = 'summary' in uiOptions.hidden_group_ids %}
+
+    <table id="ladb_group_summary" data-group-id="summary" class="{% if groupSummaryHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
         <thead>
         <tr>
             <td colspan="{% if uiOptions.hide_final_areas %}6{% else %}7{% endif %}">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-open"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
@@ -113,6 +119,7 @@
 {% endif %}
 {% for group in groups %}
 
+    {% set groupHidden = group.id in uiOptions.hidden_group_ids %}
     {% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
     {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_bbox_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
@@ -136,11 +143,11 @@
         {% set colspan = colspan - 1 %}
     {% endif %}
 
-    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if group.id in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
+    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
         <thead>
         <tr>
             <td colspan="{{ colspan }}">
-                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     {% if group.material_type == 2 %}
                         <button class="no-print btn btn-default btn-sm ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
