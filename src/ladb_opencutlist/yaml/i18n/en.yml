@@ -94,11 +94,17 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       edit_material: Edit material '{{ material }}'...
       edit_group_properties: Edit properties of this group
+      expand_all: Déplier toutes les pièces identiques
+      collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Properties of Part '{{ name }}'
       name: Description
       material: Material
       cumulable: Summable
+      cumulable_help: |
+        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire multipliée par la quantité.
+
+        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width

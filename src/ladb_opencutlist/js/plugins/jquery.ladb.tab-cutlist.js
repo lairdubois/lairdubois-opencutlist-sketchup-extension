@@ -117,6 +117,8 @@
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
+        this.$itemExpendAll = $('#ladb_item_expand_all', this.$header);
+        this.$itemCollapseAll = $('#ladb_item_collapse_all', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
         this.$itemHelp = $('#ladb_item_help', this.$header);
 
@@ -183,6 +185,8 @@
             that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersSave.closest('li').toggleClass('disabled', groups.length == 0);
             that.$itemNumbersReset.closest('li').toggleClass('disabled', groups.length == 0);
+            that.$itemExpendAll.closest('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
+            that.$itemCollapseAll.closest('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
 
             // Update page
             that.$page.empty();
@@ -366,8 +370,8 @@
                 return false;
             });
             $('a.ladb-btn-folding-toggle-part', that.$page).on('click', function() {
-                var partId = $(this).data('part-id');
-                that.toggleFoldingPart(partId);
+                var $part = $(this).closest('.ladb-cutlist-row-folder');
+                that.toggleFoldingPart($part);
                 $(this).blur();
                 return false;
             });
@@ -655,7 +659,7 @@
                                 var $part = $('#ladb_part_' + partId);
                                 if ($part.length > 0) {
                                     if ($part.hasClass('hide')) {
-                                        that.expendFoldingPart($part.data('folder-id'))
+                                        that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
                                     }
                                     $part.effect("highlight", {}, 1500);
                                     that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
@@ -703,20 +707,19 @@
         }
     };
 
-    LadbTabCutlist.prototype.toggleFoldingPart = function (id) {
-        var $part = $('#ladb_part_' + id, this.$page);
+    LadbTabCutlist.prototype.toggleFoldingPart = function ($part) {
         var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
         if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
-            this.expendFoldingPart(id);
+            this.expandFoldingPart($part);
         } else {
-            this.shrinkFoldingPart(id);
+            this.collapseFoldingPart($part);
         }
     };
 
-    LadbTabCutlist.prototype.expendFoldingPart = function (id) {
-        var $part = $('#ladb_part_' + id, this.$page);
+    LadbTabCutlist.prototype.expandFoldingPart = function ($part) {
+        var partId = $part.data('part-id');
         var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
@@ -724,12 +727,12 @@
         $i.removeClass('ladb-opencutlist-icon-arrow-down');
 
         // Show children
-        $('tr[data-folder-id=' + id + ']', this.$page).removeClass('hide');
+        $('tr[data-folder-id=' + partId + ']', this.$page).removeClass('hide');
 
     };
 
-    LadbTabCutlist.prototype.shrinkFoldingPart = function (id) {
-        var $part = $('#ladb_part_' + id, this.$page);
+    LadbTabCutlist.prototype.collapseFoldingPart = function ($part) {
+        var partId = $part.data('part-id');
         var $btn = $('.ladb-btn-folding-toggle-part', $part);
         var $i = $('i', $btn);
 
@@ -737,8 +740,22 @@
         $i.removeClass('ladb-opencutlist-icon-arrow-up');
 
         // Hide children
-        $('tr[data-folder-id=' + id + ']', this.$page).addClass('hide');
+        $('tr[data-folder-id=' + partId + ']', this.$page).addClass('hide');
 
+    };
+
+    LadbTabCutlist.prototype.expandAllFoldingPart = function () {
+        var that = this;
+        $('.ladb-cutlist-row-folder', this.$page).each(function() {
+            that.expandFoldingPart($(this));
+        });
+    };
+
+    LadbTabCutlist.prototype.collapseAllFoldingPart = function () {
+        var that = this;
+        $('.ladb-cutlist-row-folder', this.$page).each(function() {
+            that.collapseFoldingPart($(this));
+        });
     };
 
     // Groups /////
@@ -1185,10 +1202,6 @@
 
     };
 
-    LadbTabCutlist.prototype.slide = function() {
-
-    };
-
     // Numbers /////
 
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
@@ -1244,7 +1257,9 @@
                     hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
                     dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
-                    hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
+                    hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS),
+
+                    part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING) /* SHARED */
                 };
 
                 that.generateOptions = {
@@ -1254,6 +1269,7 @@
                     part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                     part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
                     part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
+
                     hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS) /* SHARED */
                 };
 
@@ -1402,6 +1418,7 @@
             that.uiOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.uiOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.uiOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
+            that.uiOptions.part_folding = $inputPartFolding.is(':checked');  /* SHARED */
 
             var properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {
@@ -1528,6 +1545,14 @@
             }
             this.blur();
         });
+        this.$itemExpendAll.on('click', function() {
+            that.expandAllFoldingPart();
+            $(this).blur();
+        });
+        this.$itemCollapseAll.on('click', function() {
+            that.collapseAllFoldingPart();
+            $(this).blur();
+        });
         this.$itemOptions.on('click', function () {
             that.editOptions();
             this.blur();
@@ -1536,6 +1561,7 @@
             that.showHelp();
             this.blur();
         });
+
 
         // Events
 

@@ -787,6 +787,7 @@ module Ladb::OpenCutList
         group = group_def.to_struct
         response[:groups].push(group)
 
+        # Folding
         if part_folding
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|

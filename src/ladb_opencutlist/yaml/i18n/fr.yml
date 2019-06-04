@@ -94,11 +94,17 @@ tab:
       group_cuttingdiagram: Calepinage
       edit_material: Éditer la matière '{{ material }}'...
       edit_group_properties: Éditer les propriétés du groupe
+      expand_all: Déplier toutes les pièces identiques
+      collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       name: Nom
       material: Matière
       cumulable: Cumulable
+      cumulable_help: |
+        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire multipliée par la quantité.
+
+        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
@@ -138,7 +144,7 @@ tab:
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       part_folding: Regrouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille capable** et avec les **mêmes étiquettes** seront regroupées sur une même ligne.
+      part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes étiquettes** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
       hide_entity_names: Masquer les noms d'instance
       hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
       hide_labels: Masquer les étiquettes
@@ -209,10 +215,10 @@ tab:
       option_encoding: Encodage
       number: N°
       name: Désignation
-      total_cutting_length: Longueur - cumul brut
-      total_cutting_area: Surface - cumul brut
-      total_cutting_volume: Volume - cumul brut
-      total_final_area: Surface - finie
+      total_cutting_length: Longueur - cumul débit
+      total_cutting_area: Surface - cumul débit
+      total_cutting_volume: Volume - cumul débit
+      total_final_area: Surface - cumul fini
       cutting_length: Longueur - débit
       cutting_width: Largeur - débit
       cutting_thickness: Épaisseur - débit
