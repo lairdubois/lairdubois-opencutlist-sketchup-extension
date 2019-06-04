@@ -945,7 +945,7 @@
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', $.extend({ material_attributes: response }, { group: group }));
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', { material_attributes: response, group: group });
 
                     // Fetch UI elements
                     var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
@@ -1218,9 +1218,32 @@
 
         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            console.log(response);
+            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, uiOptions: that.uiOptions });
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-help.twig', $.extend({ material_attributes: response }, { group: group }));
+            // Fetch UI elements
+            var $btnCuttingToggle = $('#ladb_btn_cutting_toggle', $modal);
+            var $btnBboxToggle = $('#ladb_btn_bbox_toggle', $modal);
+            var $btnFinalToggle = $('#ladb_btn_final_toggle', $modal);
+
+            // Bind buttons
+            $btnCuttingToggle.on('click', function() {
+                $('i', $(this)).toggleClass('ladb-opacity-hide');
+                $('svg .ladb-cutting', $modal).toggleClass('hide');
+                $(this).blur();
+                return false;
+            });
+            $btnBboxToggle.on('click', function() {
+                $('i', $(this)).toggleClass('ladb-opacity-hide');
+                $('svg .ladb-bbox', $modal).toggleClass('hide');
+                $(this).blur();
+                return false;
+            });
+            $btnFinalToggle.on('click', function() {
+                $('i', $(this)).toggleClass('ladb-opacity-hide');
+                $('svg .ladb-final', $modal).toggleClass('hide');
+                $(this).blur();
+                return false;
+            });
 
             // Show modal
             $modal.modal('show');

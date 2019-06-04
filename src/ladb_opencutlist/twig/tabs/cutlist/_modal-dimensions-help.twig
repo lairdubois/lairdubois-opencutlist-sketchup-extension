@@ -1,9 +1,12 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_help' %}
-{% set title = 'default.help'|i18next %}
+{% set title = 'tab.cutlist.list.dimensions_help'|i18next %}
 
 {% block bodyInner %}
+    <div style="font-size: 120%;">
+        {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':true } %} {% include 'tabs/cutlist/_group-label.twig' %}
+    </div>
     <div>
         <style>
             svg text {
@@ -149,7 +152,9 @@
                 <g>
                     <path d="M319.914,628.938l-183.979,-341.744l-10.568,-41.301l185.767,337.78l8.78,45.265Z" style="fill:#bfbfbf;fill-rule:nonzero;"/>
                     <path d="M311.134,583.673l-185.767,-337.78l428.875,-109.426l80.947,73.843l138.879,-39.263l298.483,231.055l-572.055,222.064l-189.362,-40.493Zm31.234,-275.199l13.329,-2.775l11.97,-4.482l4.513,-2.701l2.347,-1.405l2.905,-1.739l4.643,-4.554l2.259,-2.216l2.473,-4.932l1.141,-2.276l0.143,-7.146l-3.267,-6.605l-6.398,-5.642l-9.068,-4.33l-11.126,-2.759l-12.465,-1.026l-13.015,0.767l-12.746,2.515l-11.663,4.116l-9.818,5.472l-7.301,6.49l-4.249,7.096l-0.848,7.23l2.683,6.865l0.777,0.766l5.315,5.241l1.126,0.581l7.994,4.122l1.019,0.269l3.929,1.036l6.576,1.735l13.102,1.139l13.72,-0.852Z" style="fill:#ededed;fill-rule:nonzero;"/>
-                    <path d="M311.134,583.673l-185.767,-337.78l428.875,-109.426l80.947,73.843l138.879,-39.263l298.483,231.055l-572.055,222.064l-189.362,-40.493Zm31.234,-275.199l13.329,-2.775l11.97,-4.482l4.513,-2.701l2.347,-1.405l2.905,-1.739l4.643,-4.554l2.259,-2.216l2.473,-4.932l1.141,-2.276l0.143,-7.146l-3.267,-6.605l-6.398,-5.642l-9.068,-4.33l-11.126,-2.759l-12.465,-1.026l-13.015,0.767l-12.746,2.515l-11.663,4.116l-9.818,5.472l-7.301,6.49l-4.249,7.096l-0.848,7.23l2.683,6.865l0.777,0.766l5.315,5.241l1.126,0.581l7.994,4.122l1.019,0.269l3.929,1.036l6.576,1.735l13.102,1.139l13.72,-0.852Z" style="fill:#ffff00;fill-rule:nonzero;" class="ladb-final"/>
+                    {% if not uiOptions.hide_final_areas %}
+                        <path d="M311.134,583.673l-185.767,-337.78l428.875,-109.426l80.947,73.843l138.879,-39.263l298.483,231.055l-572.055,222.064l-189.362,-40.493Zm31.234,-275.199l13.329,-2.775l11.97,-4.482l4.513,-2.701l2.347,-1.405l2.905,-1.739l4.643,-4.554l2.259,-2.216l2.473,-4.932l1.141,-2.276l0.143,-7.146l-3.267,-6.605l-6.398,-5.642l-9.068,-4.33l-11.126,-2.759l-12.465,-1.026l-13.015,0.767l-12.746,2.515l-11.663,4.116l-9.818,5.472l-7.301,6.49l-4.249,7.096l-0.848,7.23l2.683,6.865l0.777,0.766l5.315,5.241l1.126,0.581l7.994,4.122l1.019,0.269l3.929,1.036l6.576,1.735l13.102,1.139l13.72,-0.852Z" style="fill:#ffff00;fill-rule:nonzero;" class="ladb-final"/>
+                    {% endif %}
                     <path d="M500.496,624.166l572.055,-222.064l-11.022,43.739l-557.494,223.74l-3.539,-45.415Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
                     <path d="M311.134,583.673l189.362,40.493l3.539,45.415l-184.121,-40.643l-8.78,-45.265Z" style="fill:#fcfcfc;fill-rule:nonzero;"/>
                     <path d="M288.81,294.437l-2.683,-6.865l0.848,-7.23l2.612,14.861l-0.777,-0.766Z" style="fill:#8a8a8a;fill-rule:nonzero;"/>
@@ -239,7 +244,7 @@
                         <path d="M820.257,604.095l287.515,-120.835" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                         <path d="M401.325,780.16l10.8,-8.429l3.475,6.336l-14.275,2.093Z" style="fill:#505050;fill-rule:nonzero;"/>
                         <path d="M1107.77,483.26l-7.008,6.879l-6.343,-5.185l13.351,-1.694Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="786.606px" y="622.755px">{{ 'tab.cutlist.list.width_short'|i18next }}</text>
+                        <text x="786.606px" y="622.755px">{{ 'tab.cutlist.list.length_short'|i18next }}</text>
                     </g>
                     <g>
                         <path d="M132.041,288.231l-45.798,12.198" style="fill:none;stroke:#505050;stroke-width:1px;"/>
@@ -248,7 +253,7 @@
                         <path d="M188.615,500.882l120.677,246.856" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                         <path d="M90.119,299.397l7.805,5.396l-9.147,2.454l1.342,-7.85Z" style="fill:#505050;fill-rule:nonzero;"/>
                         <path d="M309.292,747.738l-8.833,-7.605l8.552,-3.407l0.281,11.012Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="176.104px" y="490.871px">{{ 'tab.cutlist.list.length_short'|i18next }}</text>
+                        <text x="176.104px" y="490.871px">{{ 'tab.cutlist.list.width_short'|i18next }}</text>
                     </g>
                 </g>
                 <g class="ladb-cutting">
@@ -275,7 +280,7 @@
                         <path d="M847.182,634.088l305.464,-132.302" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                         <path d="M399.423,828.02l10.81,-8.691l3.467,6.533l-14.277,2.158Z" style="fill:#505050;fill-rule:nonzero;"/>
                         <path d="M1152.65,501.787l-6.759,6.981l-6.53,-5.263l13.289,-1.719Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="812.151px" y="654.72px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
+                        <text x="812.151px" y="654.72px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
                     </g>
                     <g>
                         <path d="M112.028,284.786l-77.692,20.521" style="fill:none;stroke:#505050;stroke-width:1px;"/>
@@ -284,7 +289,7 @@
                         <path d="M132.1,518.708l119.075,271.987" style="fill:none;stroke:#505050;stroke-width:1px;"/>
                         <path d="M38.225,304.28l7.54,5.421l-9.267,2.465l1.727,-7.886Z" style="fill:#505050;fill-rule:nonzero;"/>
                         <path d="M251.175,790.695l-8.54,-7.822l8.684,-3.505l-0.144,11.327Z" style="fill:#505050;fill-rule:nonzero;"/>
-                        <text x="120.695px" y="509.084px">{{ 'tab.cutlist.list.length_short'|i18next }} + {{ material_attributes.length_increase }}</text>
+                        <text x="120.695px" y="509.084px">{{ 'tab.cutlist.list.width_short'|i18next }} + {{ material_attributes.width_increase }}</text>
                     </g>
                 </g>
                 <g>
@@ -384,10 +389,10 @@
     </div>
     <div class="text-center">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default active" data-toggle="button" onclick="$('.ladb-cutting').toggleClass('hide');"><i class="ladb-opencutlist-icon-size" style="color: #f00;"></i> {{ 'tab.cutlist.list.cutting'|i18next }}</button>
-            <button type="button" class="btn btn-default active" data-toggle="button" onclick="$('.ladb-bbox').toggleClass('hide');"><i class="ladb-opencutlist-icon-size" style="color: #00f"></i> {{ 'tab.cutlist.list.bbox'|i18next }}</button>
-            {% if group.material_type == 2 %}  {# 2 = TYPE_SHEET_GOOD #}
-                <button type="button" class="btn btn-default active" data-toggle="button" onclick="$('.ladb-final').toggleClass('hide');"><i class="ladb-opencutlist-icon-tip" style="color: #ff0"></i> {{ 'tab.cutlist.list.final'|i18next }}</button>
+            <button id="ladb_btn_cutting_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.cutting'|i18next }}</button>
+            <button id="ladb_btn_bbox_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.bbox'|i18next }}</button>
+            {% if group.material_type == 2 and not uiOptions.hide_final_areas %}   {# 2 = TYPE_SHEET_GOOD #}
+                <button id="ladb_btn_final_toggle" type="button" class="btn btn-default"><i class="ladb-opencutlist-icon-tick"></i> {{ 'tab.cutlist.list.final'|i18next }}</button>
             {% endif %}
         </div>
     </div>

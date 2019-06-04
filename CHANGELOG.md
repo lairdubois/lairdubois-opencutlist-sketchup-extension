@@ -13,6 +13,7 @@ in 1.x and 0.x versions.
   * Added cutlist auto orient display
   * Added cutlist part orientation check 
   * Added cutlist multiple layers check 
+  * Added cutlist dimensions help modals 
   * Added "more" leftbar submenu 
   * Added new extension icon
   

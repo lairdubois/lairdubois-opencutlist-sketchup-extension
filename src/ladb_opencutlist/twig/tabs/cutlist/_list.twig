@@ -153,7 +153,7 @@
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     {% if group.material_type > 0 %}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-dimensions-help" data-toggle="tooltip" title="{{ 'tab.cutlist.list.dimensions_help'|i18next }}"><i class="ladb-opencutlist-icon-dimensions-help"></i></button>
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">

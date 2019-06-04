@@ -177,6 +177,7 @@ tab:
       filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       labels_filter: "Etiquettes à filtrer"
+      dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
       material_type: Type
       material_thickness: Matière / Dimension
