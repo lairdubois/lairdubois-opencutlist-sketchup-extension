@@ -357,6 +357,12 @@
                 that.cuttingdiagram2dGroup(groupId);
                 $(this).blur();
             });
+            $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function() {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.dimensionsHelpGroup(groupId);
+                $(this).blur();
+            });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function() {
                 $(this).blur();
                 var partId = $(this).data('part-id');
@@ -1202,6 +1208,27 @@
 
     };
 
+    LadbTabCutlist.prototype.dimensionsHelpGroup = function (groupId) {
+        var that = this;
+
+        var group = this.findGroupById(groupId);
+
+        console.log(group);
+        console.log(this.materialUsages);
+
+        rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
+
+            console.log(response);
+
+            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-help.twig', $.extend({ material_attributes: response }, { group: group }));
+
+            // Show modal
+            $modal.modal('show');
+
+        });
+
+    };
+
     // Numbers /////
 
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
@@ -1467,16 +1494,6 @@
 
         // Setup popovers
         this.opencutlist.setupPopovers();
-
-    };
-
-    LadbTabCutlist.prototype.showHelp = function () {
-        var that = this;
-
-        var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-help.twig');
-
-        // Show modal
-        $modal.modal('show');
 
     };
 

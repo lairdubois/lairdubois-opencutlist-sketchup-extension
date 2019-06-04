@@ -150,9 +150,12 @@
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     {% if group.material_type == 2 %}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
-                    <button class="no-print btn btn-default btn-sm ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
+                    {% if group.material_type > 0 %}
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i></button>
+                    {% endif %}
+                    <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="#" class="ladb-item-edit-group"><i class="ladb-opencutlist-icon-edit"></i> {{ 'tab.cutlist.menu.edit_group_properties'|i18next }}</a></li>
                         {% if group.material_name is not empty %}

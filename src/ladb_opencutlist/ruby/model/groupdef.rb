@@ -66,6 +66,8 @@ module Ladb::OpenCutList
           :material_type => @material_type,
           :part_count => @part_count,
           :std_dimension => @std_dimension,
+          :std_width => @std_width.to_s,
+          :std_thickness => @std_thickness.to_s,
           :std_available => @std_available,
           :std_availability_message => @std_availability_message,
           :total_cutting_length => @total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(@total_cutting_length),
