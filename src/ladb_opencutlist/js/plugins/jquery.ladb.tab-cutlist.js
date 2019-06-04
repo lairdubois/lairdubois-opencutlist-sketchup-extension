@@ -1213,9 +1213,6 @@
 
         var group = this.findGroupById(groupId);
 
-        console.log(group);
-        console.log(this.materialUsages);
-
         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, uiOptions: that.uiOptions });
