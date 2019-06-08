@@ -98,7 +98,7 @@
                 <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}</td>
                 <td>
                     {% include 'tabs/cutlist/_group-label.twig' %}
-                    <div class="ladb-minitools no-print">
+                    <div class="ladb-minitools ladb-minitools-right no-print">
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                     </div>
                 </td>

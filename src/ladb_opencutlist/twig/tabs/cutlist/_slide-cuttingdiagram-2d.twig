@@ -66,7 +66,7 @@
                         {{ part.number }}
                     </td>
                     <td>
-                        <div class="ladb-minitools no-print">
+                        <div class="ladb-minitools ladb-minitools-right no-print">
                             <span class="ladb-separator"></span>
                             <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                         </div>
@@ -131,7 +131,7 @@
                             <td>
                                 <i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}
                                 {% if sheet.is_used %}
-                                    <div class="ladb-minitools no-print">
+                                    <div class="ladb-minitools ladb-minitools-right no-print">
                                         <a href="#ladb_cuttingdiagram_group_{{ sheet.index }}" class="ladb-btn-scrollto ladb-click-tool"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                                     </div>
                                 {% endif %}
