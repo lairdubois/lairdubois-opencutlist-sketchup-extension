@@ -1225,19 +1225,19 @@
             // Bind buttons
             $btnCuttingToggle.on('click', function() {
                 $('i', $(this)).toggleClass('ladb-opacity-hide');
-                $('svg .ladb-cutting', $modal).toggleClass('hide');
+                $('svg .cutting', $modal).toggleClass('hide');
                 $(this).blur();
                 return false;
             });
             $btnBboxToggle.on('click', function() {
                 $('i', $(this)).toggleClass('ladb-opacity-hide');
-                $('svg .ladb-bbox', $modal).toggleClass('hide');
+                $('svg .bbox', $modal).toggleClass('hide');
                 $(this).blur();
                 return false;
             });
             $btnFinalToggle.on('click', function() {
                 $('i', $(this)).toggleClass('ladb-opacity-hide');
-                $('svg .ladb-final', $modal).toggleClass('hide');
+                $('svg .final', $modal).toggleClass('hide');
                 $(this).blur();
                 return false;
             });

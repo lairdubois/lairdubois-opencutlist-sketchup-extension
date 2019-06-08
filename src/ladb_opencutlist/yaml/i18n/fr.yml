@@ -102,7 +102,7 @@ tab:
       material: Matière
       cumulable: Cumulable
       cumulable_help: |
-        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire multipliée par la quantité.
+        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire de débit multipliée par la quantité.
 
         <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
       cumulable_0: Non cumulable
