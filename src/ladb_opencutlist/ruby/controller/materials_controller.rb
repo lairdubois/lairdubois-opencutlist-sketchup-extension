@@ -104,6 +104,8 @@ module Ladb::OpenCutList
                 :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,
                 :texture_height => material.texture.nil? ? nil : material.texture.height.to_l.to_s,
                 :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
+                :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
+                :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
                 :attributes => {
                     :type => material_attributes.type,
                     :length_increase => material_attributes.length_increase,

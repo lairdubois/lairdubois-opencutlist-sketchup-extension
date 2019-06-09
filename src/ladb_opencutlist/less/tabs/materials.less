@@ -88,15 +88,23 @@
 }
 
 .ladb-material-texture-preview {
-  min-width: @material-texture-preview-size;
-  min-height: @material-texture-preview-size;
+  display: table-cell;
+  height: 285px;
+  width: 600px;
   text-align: center;
-  line-height: @material-texture-preview-size;
+  vertical-align: middle;
+  padding-bottom: 20px;
 
-  img {
+  .thumbnail {
+    position: relative;
     display: inline-block;
-    max-width: @material-texture-preview-size;
-    max-height: @material-texture-preview-size;
+    margin: 0;
+
+    img {
+      max-width: @material-texture-preview-size;
+      max-height: @material-texture-preview-size;
+    }
+
   }
 
 }

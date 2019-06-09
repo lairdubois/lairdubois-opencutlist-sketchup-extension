@@ -96,7 +96,10 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="tab_texture">
                 <div class="ladb-material-texture-preview">
-                    <img id="ladb_materials_img_texture" src="" class="thumbnail">
+                    <div class="thumbnail">
+                        <img id="ladb_materials_img_texture" src="">
+                        <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;">{{ material.texture_image_width }} x {{ material.texture_image_height }} px</div>
+                    </div>
                 </div>
                 <div class="text-center">
                     <input id="ladb_materials_input_texture_rotation" type="hidden" value="{{ material.texture_rotation }}"/>

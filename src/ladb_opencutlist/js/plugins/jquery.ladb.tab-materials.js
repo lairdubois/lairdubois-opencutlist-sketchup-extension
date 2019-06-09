@@ -381,12 +381,12 @@
 
             var rotateTexture = function (angle) {
                 var rotation = parseInt($inputTextureRotation.val());
-                $imgTexture.removeClass("ladb-rotate" + rotation);
+                $imgTexture.parent().removeClass("ladb-rotate" + rotation);
                 if (angle < 0 && rotation === 0) {
                     rotation = 360;
                 }
                 rotation = (rotation + angle) % 360;
-                $imgTexture.addClass("ladb-rotate" + rotation);
+                $imgTexture.parent().addClass("ladb-rotate" + rotation);
                 $inputTextureRotation.val(rotation);
                 if (Math.abs(angle) === 90) {
                     var tw = $inputTextureWidth.val();
