@@ -45,7 +45,7 @@ gulp.task('i18n_compile', function () {
 
     var languageLabels = {};
     var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/*.yml');
-    ymlFiles.forEach(function(ymlFile) {
+    ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.safeLoad(contents);
         if ('_label' in ymlDocument) {

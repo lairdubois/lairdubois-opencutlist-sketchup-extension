@@ -1,0 +1,21 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_unknow_part' %}
+
+{% block header %}{% endblock %}
+
+{% block bodyInner %}
+    <div class="media">
+        <div class="media-left">
+            <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{ 'default.error'|i18next }}</h4>
+            {{ 'tab.cutlist.error.unknow_part'|i18next }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+{% endblock %}

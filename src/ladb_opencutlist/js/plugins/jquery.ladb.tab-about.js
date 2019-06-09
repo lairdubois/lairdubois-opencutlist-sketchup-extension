@@ -38,7 +38,7 @@
                 $this.data('ladb.tabAbout', (data = new LadbTabAbout(this, options, options.opencutlist)));
             }
             if (typeof option == 'string') {
-                data[option](params);
+                data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);
             }

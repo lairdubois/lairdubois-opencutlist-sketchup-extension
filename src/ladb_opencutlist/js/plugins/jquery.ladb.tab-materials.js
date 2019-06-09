@@ -65,7 +65,7 @@
         this.$page.empty();
         this.$btnList.prop('disabled', true);
 
-        rubyCallCommand('materials_list', null, function(response) {
+        rubyCallCommand('materials_list', null, function (response) {
 
             var errors = response.errors;
             var warnings = response.warnings;
@@ -96,10 +96,10 @@
             that.opencutlist.setupTooltips();
 
             // Bind rows
-            $('.ladb-material-box', that.$page).each(function(index) {
+            $('.ladb-material-box', that.$page).each(function (index) {
                 var $box = $(this);
                 var materialId = $box.data('material-id');
-                $box.on('click', function() {
+                $box.on('click', function () {
                     that.editMaterial(materialId);
                 });
             });
@@ -130,7 +130,7 @@
         var $btnRemove = $('#ladb_materials_remove', $modal);
 
         // Bind buttons
-        $btnRemove.on('click', function() {
+        $btnRemove.on('click', function () {
 
             // Flag to ignore next material change event
             that.ignoreNextMaterialChangeEvent = true;
@@ -138,7 +138,7 @@
             rubyCallCommand('materials_remove', {
                 name: material.name,
                 display_name: material.display_name
-            }, function(response) {
+            }, function (response) {
 
                 if (response.errors && response.errors.length > 0) {
 
@@ -171,7 +171,7 @@
         // Flag to ignore next material change event
         that.ignoreNextMaterialChangeEvent = true;
 
-        rubyCallCommand('materials_import_from_skm', null, function(response) {
+        rubyCallCommand('materials_import_from_skm', null, function (response) {
 
             if (response.errors && response.errors.length > 0) {
 
@@ -195,7 +195,7 @@
         rubyCallCommand('materials_export_to_skm', {
             name: material.name,
             display_name: material.display_name
-        }, function(response) {
+        }, function (response) {
 
             var i;
 
@@ -261,10 +261,10 @@
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Define usefull functions
-            var disableBtnExport = function() {
+            var disableBtnExport = function () {
                 $btnExportToSkm.prop('disabled', true);
             };
-            var computeFieldsVisibility = function(type) {
+            var computeFieldsVisibility = function (type) {
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
                         $inputLengthIncrease.closest('section').hide();
@@ -312,7 +312,7 @@
             };
             computeFieldsVisibility(material.attributes.type);
 
-            var setFiledValuesToDefaults = function(type) {
+            var setFiledValuesToDefaults = function (type) {
                 var defaultLengthIncrease,
                     defaultWidthIncrease,
                     defaultThicknessIncrease,
@@ -358,7 +358,7 @@
                         defaultGrained = false;
                         break;
                 }
-                var setTokens = function($input, tokens) {
+                var setTokens = function ($input, tokens) {
                     // Workaround for empty string tokens
                     $input.tokenfield('setTokens', tokens === ''  ? ' ' : tokens);
                 };
@@ -372,7 +372,7 @@
             };
 
             // Bind change
-            $('input', $modal).on('change', function() {
+            $('input', $modal).on('change', function () {
                 disableBtnExport();
             });
 
@@ -389,7 +389,7 @@
             $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
 
             // Bind buttons
-            $btnCutOptionsDefaultsSave.on('click', function() {
+            $btnCutOptionsDefaultsSave.on('click', function () {
 
                 var type = parseInt($selectType.val());
                 var length_increase = $inputLengthIncrease.val();
@@ -415,7 +415,7 @@
 
                 this.blur();
             });
-            $btnCutOptionsDefaultsReset.on('click', function() {
+            $btnCutOptionsDefaultsReset.on('click', function () {
                 var type = parseInt($selectType.val());
                 setFiledValuesToDefaults(type);
                 this.blur();
@@ -443,7 +443,7 @@
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialChangeEvent = true;
 
-                rubyCallCommand('materials_update', that.editedMaterial, function(response) {
+                rubyCallCommand('materials_update', that.editedMaterial, function (response) {
 
                     if (response['errors']) {
 
@@ -531,10 +531,10 @@
 
         // Events
 
-        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function(params) {
+        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showOutdated('core.event.model_change');
         });
-        addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function() {
+        addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialChangeEvent) {
                 that.showOutdated('core.event.material_change');
                 that.ignoreNextMaterialChangeEvent = false;
@@ -547,11 +547,11 @@
         var that = this;
 
         // Register commands
-        this.registerCommand('edit_material', function(parameters) {
+        this.registerCommand('edit_material', function (parameters) {
             var materialId = parameters.material_id;
             var callback = parameters.callback;
-            setTimeout(function() {     // Use setTimer to give time tu UI to refresh
-                that.loadList(function() {
+            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
+                that.loadList(function () {
                     that.editMaterial(materialId, callback);
                 });
             }, 1);
@@ -569,14 +569,14 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED);
         }
 
-        this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function() {
+        this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function () {
 
             that.bind();
 
             if (initializedCallback && typeof(initializedCallback) == 'function') {
                 initializedCallback(that.$element);
             } else {
-                setTimeout(function() {     // Use setTimer to give time tu UI to refresh
+                setTimeout(function () {     // Use setTimer to give time tu UI to refresh
                     that.loadList();
                 }, 1);
             }
@@ -602,7 +602,7 @@
                 $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, options, options.opencutlist)));
             }
             if (typeof option == 'string') {
-                data[option](params);
+                data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);
             }

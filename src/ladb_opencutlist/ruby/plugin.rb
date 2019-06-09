@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative 'controller/cutlist_controller'
   require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
+  require_relative 'utils/path_utils'
 
   class Plugin
     
@@ -248,6 +249,25 @@ module Ladb::OpenCutList
           controller.setup_commands
         }
 
+        # --- Context Menu ---
+
+        UI.add_context_menu_handler do |context_menu|
+          if @dialog
+            entity = (Sketchup.active_model.nil? or Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
+            if !entity.nil? and entity.is_a? Sketchup::ComponentInstance
+
+              context_menu.add_separator
+              submenu = context_menu.add_submenu(Plugin.instance.get_i18n_string('core.menu.submenu'))
+
+              # Edit part item
+              submenu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
+                Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [entity ] : Sketchup.active_model.active_path + [entity ])}' }")
+              }
+
+            end
+          end
+        end
+
         @started = true
 
       end
@@ -393,6 +413,16 @@ module Ladb::OpenCutList
           write_default(SETTINGS_KEY_DIALOG_TOP, top)
         end
       end
+    end
+
+    def execute_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
+
+      # parameters and callback must be formatted as JS code
+
+      if @dialog and @dialog.visible? and tab_name and command
+        @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
+      end
+
     end
 
     private

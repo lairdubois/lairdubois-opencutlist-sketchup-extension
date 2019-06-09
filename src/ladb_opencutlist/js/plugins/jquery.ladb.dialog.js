@@ -79,7 +79,7 @@
         var that = this;
 
         // Read settings values from SU default or Model attributes according to the strategy
-        rubyCallCommand('core_read_settings', { keys: keys, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ }, function(data) {
+        rubyCallCommand('core_read_settings', { keys: keys, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ }, function (data) {
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
@@ -136,7 +136,7 @@
     LadbDialog.prototype.maximize = function () {
         var that = this;
         if (!that.maximized) {
-            rubyCallCommand('core_dialog_maximize', null, function() {
+            rubyCallCommand('core_dialog_maximize', null, function () {
                 that.$wrapper.show();
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
@@ -163,7 +163,7 @@
 
         var $tab = this.tabs[tabName];
         var $freshTab = false;
-        if (tabName != this.activeTabName) {
+        if (tabName !== this.activeTabName) {
             if (this.activeTabName) {
                 this.unselectActiveTab();
             }
@@ -230,10 +230,10 @@
         return $tab;
     };
 
-    LadbDialog.prototype.executeCommandOnTab = function(tabName, command, parameters, callback) {
+    LadbDialog.prototype.executeCommandOnTab = function (tabName, command, parameters, callback) {
 
         // Select tab and execute command
-        this.selectTab(tabName, function($tab) {
+        this.selectTab(tabName, function ($tab) {
             var jQueryPlugin = $tab.data('ladb.tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
             if (jQueryPlugin) {
                 jQueryPlugin.executeCommand(command, parameters, callback);
@@ -244,7 +244,7 @@
 
     // Internals /////
 
-    LadbDialog.prototype.notify = function(text, type, buttons, timeout) {
+    LadbDialog.prototype.notify = function (text, type, buttons, timeout) {
         if (undefined === type) {
             type = 'alert';
         }
@@ -266,7 +266,7 @@
         return n;
     };
 
-    LadbDialog.prototype.notifyErrors = function(errors) {
+    LadbDialog.prototype.notifyErrors = function (errors) {
         if (Array.isArray(errors)) {
             for (var i = 0; i < errors.length; i++) {
                 this.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(errors[i]), 'error');
@@ -274,14 +274,14 @@
         }
     };
 
-    LadbDialog.prototype.setupTooltips = function() {
+    LadbDialog.prototype.setupTooltips = function () {
         $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
         $('[data-toggle="tooltip"]').tooltip({
             container: 'body'
         });
     };
 
-    LadbDialog.prototype.setupPopovers = function() {
+    LadbDialog.prototype.setupPopovers = function () {
         $('[data-toggle="popover"]').popover({
             html: true
         });
@@ -372,7 +372,7 @@
                 $this.data('ladb.dialog', (data = new LadbDialog(this, options)));
             }
             if (typeof option == 'string') {
-                data[option](params);
+                data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();
             }

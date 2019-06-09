@@ -38,7 +38,7 @@
     LadbTabSettings.prototype.bind = function () {
         var that = this;
 
-        var fnUpdate = function() {
+        var fnUpdate = function () {
 
             // Adjust min limits
             that.opencutlist.capabilities.dialogMaximizedWidth = Math.max(580, that.opencutlist.capabilities.dialogMaximizedWidth);
@@ -60,12 +60,12 @@
         this.$selectLanguage.val(this.opencutlist.capabilities.language);
         this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
 
-        this.$selectLanguage.on('change', function() {
+        this.$selectLanguage.on('change', function () {
             that.opencutlist.capabilities.language = that.$selectLanguage.val();
             fnUpdate();
             that.showReloadDialogWarning();
         });
-        this.$btnReset.on('click', function() {
+        this.$btnReset.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.language = 'auto';
             that.opencutlist.capabilities.dialogMaximizedWidth = 1100;
@@ -76,49 +76,49 @@
             that.showReloadDialogWarning();
             return false;
         });
-        this.$btnWidthUp.on('click', function() {
+        this.$btnWidthUp.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogMaximizedWidth += 20;
             fnUpdate();
             return false;
         });
-        this.$btnWidthDown.on('click', function() {
+        this.$btnWidthDown.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogMaximizedWidth -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnHeightUp.on('click', function() {
+        this.$btnHeightUp.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogMaximizedHeight += 20;
             fnUpdate();
             return false;
         });
-        this.$btnHeightDown.on('click', function() {
+        this.$btnHeightDown.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogMaximizedHeight -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnLeftUp.on('click', function() {
+        this.$btnLeftUp.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogLeft += 20;
             fnUpdate();
             return false;
         });
-        this.$btnLeftDown.on('click', function() {
+        this.$btnLeftDown.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogLeft -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnTopUp.on('click', function() {
+        this.$btnTopUp.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogTop += 20;
             fnUpdate();
             return false;
         });
-        this.$btnTopDown.on('click', function() {
+        this.$btnTopDown.on('click', function () {
             $(this).blur();
             that.opencutlist.capabilities.dialogTop -= 20;
             fnUpdate();
@@ -156,7 +156,7 @@
                 $this.data('ladb.tabSettings', (data = new LadbTabSettings(this, options, options.opencutlist)));
             }
             if (typeof option == 'string') {
-                data[option](params);
+                data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);
             }

@@ -314,6 +314,7 @@ tab:
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
+      unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).

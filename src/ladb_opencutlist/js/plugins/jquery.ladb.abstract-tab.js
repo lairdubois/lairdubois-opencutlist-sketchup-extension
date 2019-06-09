@@ -15,14 +15,14 @@ function LadbAbstractTab(element, options, opencutlist) {
 
 // Slide /////
 
-LadbAbstractTab.prototype.topSlide = function() {
+LadbAbstractTab.prototype.topSlide = function () {
     if (this._$slides.length > 0) {
         return this._$slides[this._$slides.length - 1];
     }
     return null;
 };
 
-LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams, callback) {
+LadbAbstractTab.prototype.pushNewSlide = function (id, twigFile, renderParams, callback) {
 
     // Check if top slide has the same id
     var $topSlide = this.topSlide();
@@ -40,7 +40,7 @@ LadbAbstractTab.prototype.pushNewSlide = function(id, twigFile, renderParams, ca
     return this.pushSlide($slide, callback);
 };
 
-LadbAbstractTab.prototype.pushSlide = function($slide, callback) {
+LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
     var that = this;
 
     var $topSlide = this.topSlide();
@@ -52,7 +52,7 @@ LadbAbstractTab.prototype.pushSlide = function($slide, callback) {
     $slide.addClass('animated');
     $slide.switchClass('out', 'in', {
         duration: 300,
-        complete: function() {
+        complete: function () {
             $slide.removeClass('animated');
             that.stickSlideHeader($slide);
             if ($topSlide) {
@@ -70,7 +70,7 @@ LadbAbstractTab.prototype.pushSlide = function($slide, callback) {
     return $slide;
 };
 
-LadbAbstractTab.prototype.popSlide = function() {
+LadbAbstractTab.prototype.popSlide = function () {
     if (this._$slides.length > 1) {
         var $poppedSlide = this._$slides.pop();
         var $topSlide = this.topSlide();
@@ -82,7 +82,7 @@ LadbAbstractTab.prototype.popSlide = function() {
         $poppedSlide.addClass('animated');
         $poppedSlide.switchClass('in', 'out', {
             duration: 300,
-            complete: function() {
+            complete: function () {
                 $poppedSlide.removeClass('animated');
                 $poppedSlide.remove();
             }
@@ -90,14 +90,14 @@ LadbAbstractTab.prototype.popSlide = function() {
     }
 };
 
-LadbAbstractTab.prototype.removeSlide = function($slide) {
+LadbAbstractTab.prototype.removeSlide = function ($slide) {
     var $removedSlides = this._$slides.splice(this._$slides.indexOf($slide), 1);    // Remove from slide stack
     if ($removedSlides.length > 0) {
         $removedSlides[0].remove(); // Remove from DOM
     }
 };
 
-LadbAbstractTab.prototype.stickSlideHeader = function($slide) {
+LadbAbstractTab.prototype.stickSlideHeader = function ($slide) {
     var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
     var $header = $('.ladb-header', $slide).first();
     var $container = $('.ladb-container', $slide).first();
@@ -110,7 +110,7 @@ LadbAbstractTab.prototype.stickSlideHeader = function($slide) {
         .addClass('stuck');
 };
 
-LadbAbstractTab.prototype.unstickSlideHeader = function($slide) {
+LadbAbstractTab.prototype.unstickSlideHeader = function ($slide) {
     var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
     var $header = $('.ladb-header', $slide).first();
     $headerWrapper
@@ -120,7 +120,7 @@ LadbAbstractTab.prototype.unstickSlideHeader = function($slide) {
         .removeClass('stuck');
 };
 
-LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function($slide) {
+LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
     // Compute stuck slide header width
     var $header = $('.ladb-header', $slide).first();
@@ -134,7 +134,7 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function($slide) {
 
 // Modal /////
 
-LadbAbstractTab.prototype.appendModalInside = function(id, twigFile, renderParams) {
+LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams) {
     var that = this;
 
     // Hide previously opened modal
@@ -171,7 +171,7 @@ LadbAbstractTab.prototype.appendModalInside = function(id, twigFile, renderParam
 
 // Action /////
 
-LadbAbstractTab.prototype.registerCommand = function(command, block) {
+LadbAbstractTab.prototype.registerCommand = function (command, block) {
     if (typeof(block) == 'function') {
         this._commands[command] = block;
     } else {
@@ -179,7 +179,7 @@ LadbAbstractTab.prototype.registerCommand = function(command, block) {
     }
 };
 
-LadbAbstractTab.prototype.executeCommand = function(command, parameters, callback) {
+LadbAbstractTab.prototype.executeCommand = function (command, parameters, callback) {
     if (this._commands.hasOwnProperty(command)) {
 
         // Retrieve action block
@@ -218,13 +218,13 @@ LadbAbstractTab.prototype.tokenfieldValidatorFn_dxd = function (e) {
 
 // Bind /////
 
-LadbAbstractTab.prototype.bind = function() {
+LadbAbstractTab.prototype.bind = function () {
     var that = this;
 
-    var fnComputeStuckSlideHeadersWidth = function(event) {
+    var fnComputeStuckSlideHeadersWidth = function (event) {
 
         // Recompute stuck slides header width
-        $('.ladb-slide:visible', that.$element).each(function(index) {
+        $('.ladb-slide:visible', that.$element).each(function (index) {
             that.computeStuckSlideHeaderWidth($(this));
         });
 
