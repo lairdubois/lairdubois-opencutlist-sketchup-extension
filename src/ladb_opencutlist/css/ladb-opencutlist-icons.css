@@ -28,50 +28,20 @@ i, span.ladb-opencutlist-icon {
 }
 
 
-.ladb-opencutlist-icon-dimensions-help:before {
-  content: "\e93f";
+.ladb-opencutlist-icon-lock:before {
+  content: "\e943";
 }
-.ladb-opencutlist-icon-label:before {
-  content: "\e934";
+.ladb-opencutlist-icon-unlock:before {
+  content: "\e944";
 }
-.ladb-opencutlist-icon-minus:before {
-  content: "\e92f";
+.ladb-opencutlist-icon-rotate-right:before {
+  content: "\e941";
 }
-.ladb-opencutlist-icon-plus:before {
-  content: "\e92e";
+.ladb-opencutlist-icon-rotate-left:before {
+  content: "\e942";
 }
-.ladb-opencutlist-icon-size:before {
-  content: "\e928";
-}
-.ladb-opencutlist-icon-close:before {
-  content: "\e927";
-}
-.ladb-opencutlist-icon-cuttingdiagram:before {
-  content: "\e923";
-}
-.ladb-opencutlist-icon-save:before {
-  content: "\e91f";
-}
-.ladb-opencutlist-icon-refresh:before {
-  content: "\e918";
-}
-.ladb-opencutlist-icon-tick:before {
-  content: "\e90e";
-}
-.ladb-opencutlist-icon-link:before {
-  content: "\e90c";
-}
-.ladb-opencutlist-icon-eye-close:before {
-  content: "\e90a";
-}
-.ladb-opencutlist-icon-eye-open:before {
-  content: "\e90b";
-}
-.ladb-opencutlist-icon-tip:before {
-  content: "\e914";
-}
-.ladb-opencutlist-icon-solid-wood:before {
-  content: "\e903";
+.ladb-opencutlist-icon-texture:before {
+  content: "\e940";
 }
 .ladb-opencutlist-icon-review:before {
   content: "\e93e";
@@ -192,6 +162,51 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e939";
+}
+.ladb-opencutlist-icon-dimensions-help:before {
+  content: "\e93f";
+}
+.ladb-opencutlist-icon-label:before {
+  content: "\e934";
+}
+.ladb-opencutlist-icon-minus:before {
+  content: "\e92f";
+}
+.ladb-opencutlist-icon-plus:before {
+  content: "\e92e";
+}
+.ladb-opencutlist-icon-size:before {
+  content: "\e928";
+}
+.ladb-opencutlist-icon-close:before {
+  content: "\e927";
+}
+.ladb-opencutlist-icon-cuttingdiagram:before {
+  content: "\e923";
+}
+.ladb-opencutlist-icon-save:before {
+  content: "\e91f";
+}
+.ladb-opencutlist-icon-refresh:before {
+  content: "\e918";
+}
+.ladb-opencutlist-icon-tick:before {
+  content: "\e90e";
+}
+.ladb-opencutlist-icon-link:before {
+  content: "\e90c";
+}
+.ladb-opencutlist-icon-eye-close:before {
+  content: "\e90a";
+}
+.ladb-opencutlist-icon-eye-open:before {
+  content: "\e90b";
+}
+.ladb-opencutlist-icon-tip:before {
+  content: "\e914";
+}
+.ladb-opencutlist-icon-solid-wood:before {
+  content: "\e903";
 }
 .ladb-opencutlist-icon-arrow-right:before {
   content: "\e930";

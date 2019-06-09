@@ -244,6 +244,9 @@ module Ladb::OpenCutList
         register_command('core_open_external_file') do |params|
           open_external_file_command(params)
         end
+        register_command('core_compute_size_aspect_ratio_command') do |params|
+          compute_size_aspect_ratio_command(params)
+        end
 
         @controllers.each { |controller|
           controller.setup_commands
@@ -538,6 +541,28 @@ module Ladb::OpenCutList
       if path
         UI.openURL("file:///#{path}")
       end
+    end
+
+    def compute_size_aspect_ratio_command(params)    # Waiting params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
+      width = params['width']
+      height = params['height']
+      ratio = params['ratio']
+      is_width_master = params['is_width_master']
+
+      # Convert input values to Length
+      w = DimensionUtils.instance.dd_to_ifloats(width).to_l
+      h = DimensionUtils.instance.dd_to_ifloats(height).to_l
+
+      if is_width_master
+        h = (w / ratio).to_l
+      else
+        w = (h * ratio).to_l
+      end
+
+      {
+          :width => w.to_s,
+          :height => h.to_s
+      }
     end
 
   end

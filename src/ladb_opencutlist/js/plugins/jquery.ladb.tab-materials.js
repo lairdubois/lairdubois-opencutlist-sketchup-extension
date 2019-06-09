@@ -242,6 +242,7 @@
             });
 
             // Fetch UI elements
+            var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
             var $inputName = $('#ladb_materials_input_name', $modal);
             var $selectType = $('#ladb_materials_input_type', $modal);
             var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
@@ -256,6 +257,13 @@
             var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
             var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
             var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
+            var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
+            var $imgTexture = $('#ladb_materials_img_texture', $modal);
+            var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
+            var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
+            var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
+            var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
+            var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
             var $btnRemove = $('#ladb_materials_remove', $modal);
             var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
@@ -371,6 +379,54 @@
                 $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
             };
 
+            var rotateTexture = function (angle) {
+                var rotation = parseInt($inputTextureRotation.val());
+                $imgTexture.removeClass("ladb-rotate" + rotation);
+                if (angle < 0 && rotation === 0) {
+                    rotation = 360;
+                }
+                rotation = (rotation + angle) % 360;
+                $imgTexture.addClass("ladb-rotate" + rotation);
+                $inputTextureRotation.val(rotation);
+                if (Math.abs(angle) === 90) {
+                    var tw = $inputTextureWidth.val();
+                    var th = $inputTextureHeight.val();
+                    $inputTextureWidth.val(th);
+                    $inputTextureHeight.val(tw)
+                }
+            };
+
+            var computeSizeAspectRatio = function (isWidthMaster) {
+                if ($btnTextureSizeLock.data('locked')) {
+                    rubyCallCommand('core_compute_size_aspect_ratio_command', {
+                        width: $inputTextureWidth.val(),
+                        height: $inputTextureHeight.val(),
+                        ratio: material.texture_ratio,
+                        is_width_master: isWidthMaster
+                    }, function (response) {
+                        $inputTextureWidth.val(response.width);
+                        $inputTextureHeight.val(response.height);
+                    });
+                }
+            };
+
+            // Bin tabs
+            $btnTabTexture.on('shown.bs.tab', function (e) {
+
+                rubyCallCommand('materials_get_texture_command', { name: material.name }, function (response) {
+
+                    // Add texture file to material
+                    material.texture_file = response.texture_file;
+
+                    // Update img src with generated texture file
+                    $imgTexture.attr('src', material.texture_file);
+
+                });
+
+                // Unbind event
+                $btnTabTexture.off('shown.bs.tab');
+            });
+
             // Bind change
             $('input', $modal).on('change', function () {
                 disableBtnExport();
@@ -420,6 +476,27 @@
                 setFiledValuesToDefaults(type);
                 this.blur();
             });
+            $btnTextureRotateLeft.on('click', function () {
+                rotateTexture(-90);
+                this.blur();
+            });
+            $btnTextureRotateRight.on('click', function () {
+                rotateTexture(90);
+                this.blur();
+            });
+            $btnTextureSizeLock.on('click', function () {
+                var $i = $('i', $btnTextureSizeLock);
+                if ($btnTextureSizeLock.data('locked')) {
+                    $i.addClass('ladb-opencutlist-icon-unlock');
+                    $i.removeClass('ladb-opencutlist-icon-lock');
+                    $btnTextureSizeLock.data('locked', false);
+                } else {
+                    $i.removeClass('ladb-opencutlist-icon-unlock');
+                    $i.addClass('ladb-opencutlist-icon-lock');
+                    $btnTextureSizeLock.data('locked', true);
+                }
+                this.blur();
+            });
             $btnRemove.on('click', function () {
                 that.remove(that.editedMaterial);
                 this.blur();
@@ -431,6 +508,9 @@
             $btnUpdate.on('click', function () {
 
                 that.editedMaterial.display_name = $inputName.val();
+                that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
+                that.editedMaterial.texture_width = $inputTextureWidth.val();
+                that.editedMaterial.texture_height = $inputTextureHeight.val();
                 that.editedMaterial.attributes.type = $selectType.val();
                 that.editedMaterial.attributes.length_increase = $inputLengthIncrease.val();
                 that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
@@ -464,6 +544,14 @@
 
                 });
 
+            });
+
+            // Bind inputs
+            $inputTextureWidth.on('blur', function () {
+                computeSizeAspectRatio(true);
+            });
+            $inputTextureHeight.on('blur', function () {
+                computeSizeAspectRatio(false);
             });
 
             // Show modal

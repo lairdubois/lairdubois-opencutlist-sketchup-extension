@@ -2,6 +2,8 @@
 // Materials
 //
 
+@material-texture-preview-size: 250px;
+
 .ladb-material-box {
   .list-box();
   .list-box-hover();
@@ -81,6 +83,20 @@
       background-color: @ladb-material-type-3;
     }
 
+  }
+
+}
+
+.ladb-material-texture-preview {
+  min-width: @material-texture-preview-size;
+  min-height: @material-texture-preview-size;
+  text-align: center;
+  line-height: @material-texture-preview-size;
+
+  img {
+    display: inline-block;
+    max-width: @material-texture-preview-size;
+    max-height: @material-texture-preview-size;
   }
 
 }

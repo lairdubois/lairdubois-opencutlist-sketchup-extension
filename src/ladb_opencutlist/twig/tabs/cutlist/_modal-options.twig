@@ -3,13 +3,17 @@
 {% set id = 'ladb_cutlist_modal_options' %}
 {% set title = 'default.options'|i18next %}
 
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation" class="active"><a href="#tab_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.general'|i18next }}</a></li>
+        <li role="presentation"><a href="#tab_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
+        <li role="presentation"><a href="#tab_dimension_column_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-col"></i> {{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
 {% block bodyInner %}
     <div class="form form-horizontal">
-        <ul class="nav nav-tabs nav-justified" role="tablist">
-            <li role="presentation" class="active"><a href="#tab_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.general'|i18next }}</a></li>
-            <li role="presentation"><a href="#tab_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
-            <li role="presentation"><a href="#tab_dimension_column_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-col"></i> {{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
-        </ul>
         <div class="tab-content" style="margin-top: 10px;">
             <div role="tabpanel" class="tab-pane active" id="tab_general">
                 <div class="checkbox">

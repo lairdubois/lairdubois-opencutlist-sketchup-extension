@@ -348,6 +348,8 @@ tab:
       purge_unused: Purger les matières inutilisées
     edit_material:
       title: Propriétés de la matière '{{ name }}'
+      general: Générales
+      texture: Texture
       name: Nom
       type: Type
       cut_options: Options de débit
@@ -380,6 +382,8 @@ tab:
           **{{ type_name }}**
           *Options de débit* par défaut enregistrées
         reset: Restaurer aux valeurs par défaut
+      texture_width: Largeur de la texture
+      texture_height: Hauteur de la texture
       export_to_skm: Exporter (.skm)
     import_from_skm:
       title: Importer un fichier .skm

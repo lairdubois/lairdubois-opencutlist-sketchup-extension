@@ -348,6 +348,8 @@ tab:
       purge_unused: Purge unused materials
     edit_material:
       title: Properties of Material '{{ name }}'
+      general: Générales
+      texture: Texture
       name: Name
       type: Type
       cut_options: Cutting Parameters
@@ -380,6 +382,8 @@ tab:
           **{{ type_name }}**
           default *Cutting Parameters* saved
         reset: Restore to default values
+      texture_width: Largeur de la texture
+      texture_height: Hauteur de la texture
       export_to_skm: Export (.skm)
     import_from_skm:
       title: Import .skm file

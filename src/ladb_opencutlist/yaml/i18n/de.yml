@@ -348,6 +348,8 @@ tab:
       purge_unused: Nicht verwendete Materialien löschen
     edit_material:
       title: Eigenschaften des Materials '{{ name }}'
+      general: Générales
+      texture: Texture
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
@@ -380,6 +382,8 @@ tab:
           **{{ type_name }}**
           *Schnittparameter* als vorgegebene Werte gespeichert
         reset: Auf vorgegebene Werte zurücksetzen
+      texture_width: Largeur de la texture
+      texture_height: Hauteur de la texture
       export_to_skm: Exportieren (.skm)
     import_from_skm:
       title: Aus .skm Datei importieren

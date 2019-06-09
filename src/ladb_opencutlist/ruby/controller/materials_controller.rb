@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require 'securerandom'
   require_relative 'controller'
   require_relative '../model/material_attributes'
+  require_relative '../utils/image_utils'
 
   class MaterialsController < Controller
 
@@ -34,6 +35,9 @@ module Ladb::OpenCutList
       end
       Plugin.instance.register_command("materials_get_attributes_command") do |material_data|
         get_attributes_command(material_data)
+      end
+      Plugin.instance.register_command("materials_get_texture_command") do |material_data|
+        get_texture_command(material_data)
       end
 
     end
@@ -68,7 +72,21 @@ module Ladb::OpenCutList
       materials.each { |material|
 
         thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
-        material.write_thumbnail(thumbnail_file, 128)
+        size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
+        material.write_thumbnail(thumbnail_file, size)
+
+        # ImageUtils.rotate(thumbnail_file, '-90')
+        # if material.materialType == Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+        #   puts "colorize_type = #{material.colorize_type}"
+        #   puts "colorize_deltas = #{material.colorize_deltas}"
+        #   puts "color = #{material.color}"
+        #   case material.colorize_type
+        #     when Sketchup::Material::COLORIZE_SHIFT
+        #       ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
+        #     when Sketchup::Material::COLORIZE_TINT
+        #       ImageUtils.colorize(thumbnail_file, material.color)
+        #   end
+        # end
 
         material_attributes = MaterialAttributes.new(material)
 
@@ -80,6 +98,12 @@ module Ladb::OpenCutList
                 :thumbnail_file => thumbnail_file,
                 :color => '#' + material.color.to_i.to_s(16),
                 :alpha => material.alpha,
+                :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+                :texture_rotation => 0,
+                :texture_file => nil,
+                :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,
+                :texture_height => material.texture.nil? ? nil : material.texture.height.to_l.to_s,
+                :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
                 :attributes => {
                     :type => material_attributes.type,
                     :length_increase => material_attributes.length_increase,
@@ -138,6 +162,10 @@ module Ladb::OpenCutList
       name = material_data['name']
       display_name = material_data['display_name']
       attributes = material_data['attributes']
+      texture_rotation = material_data['texture_rotation']
+      texture_file = material_data['texture_file']
+      texture_width = material_data['texture_width']
+      texture_height = material_data['texture_height']
       type = MaterialAttributes.valid_type(attributes['type'])
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
@@ -156,6 +184,29 @@ module Ladb::OpenCutList
         # Update properties
         if display_name != material.name
           material.name = display_name
+        end
+
+        # Update texture
+        unless texture_file.nil?
+
+          if texture_rotation > 0
+
+            # Rotate texture
+            ImageUtils.rotate(texture_file, texture_rotation)
+
+            # Keep previous material color
+            color = material.color
+
+            # Set new texture to the material and re-apply previous color
+            material.texture = texture_file
+            material.color = color
+
+          end
+
+          unless texture_width.nil? or texture_height.nil?
+            material.texture.size = [ DimensionUtils.instance.dd_to_ifloats(texture_width).to_l, DimensionUtils.instance.dd_to_ifloats(texture_height).to_l ]
+          end
+
         end
 
         # Update attributes
@@ -305,6 +356,67 @@ module Ladb::OpenCutList
         response[:std_sizes] = material_attributes.std_sizes
         response[:grained] = material_attributes.grained
 
+      end
+
+      response
+    end
+
+    def get_texture_command(material_data)
+
+      response = {
+          :texture_file => ''
+      }
+
+      model = Sketchup.active_model
+      return response unless model
+
+      name = material_data['name']
+
+      # Fetch material
+      materials = model.materials
+      material = materials[name]
+
+      if material
+
+        temp_dir = Plugin.instance.temp_dir
+        material_textures_dir = File.join(temp_dir, 'material_thumbnails')
+        if Dir.exist?(material_textures_dir)
+          FileUtils.remove_dir(material_textures_dir, true)   # Temp dir exists we clean it
+        end
+        Dir.mkdir(material_textures_dir)
+
+        texture_file = File.join(material_textures_dir, "#{SecureRandom.uuid}.png")
+
+        if Sketchup.version_number >= 16000000
+
+          material.texture.write(texture_file, false)
+
+        else
+
+          # Workaround to write texture to file from SU prior to 2016
+
+          # Create a fake face
+          model = Sketchup.active_model
+          entities = model.active_entities
+          group = entities.add_group
+          pts = []
+          pts[0] = [0, 0, 0]
+          pts[1] = [1, 0, 0]
+          pts[2] = [1, 1, 0]
+          pts[3] = [0, 1, 0]
+          face = group.entities.add_face(pts)
+          face.material = material
+
+          tw = Sketchup.create_texture_writer
+          tw.load(face, true)
+          tw.write(face, true, texture_file)
+
+          # Erease the group
+          group.erase!
+
+        end
+
+        response[:texture_file] = texture_file
       end
 
       response
