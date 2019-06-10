@@ -19,6 +19,8 @@ default:
   error: Zut !
   warning: Attention
   tip: Astuce
+  good: Bon
+  bad: Mauvais
   date_format: d/m/Y G:i
   unit_0: Pouces
   unit_1: Pieds
@@ -346,7 +348,7 @@ tab:
       type_3: Type de matière '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      colorized: Une teinte sera appliquée à la texture de cette matière lors du rendu dans la modèle
+      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
@@ -386,8 +388,8 @@ tab:
           **{{ type_name }}**
           *Options de débit* par défaut enregistrées
         reset: Restaurer aux valeurs par défaut
-      texture_width: Largeur de la texture
-      texture_height: Hauteur de la texture
+      texture_width: Largeur
+      texture_height: Hauteur
       export_to_skm: Exporter (.skm)
     import_from_skm:
       title: Importer un fichier .skm

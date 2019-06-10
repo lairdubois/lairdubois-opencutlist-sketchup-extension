@@ -7,8 +7,8 @@
     {{ parent() }}
     {% if material.textured %}
         <ul class="nav nav-tabs nav-justified" role="tablist">
-            <li role="presentation" class="active"><a href="#tab_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
-            <li role="presentation"><a id="ladb_materials_btn_tab_texture" href="#tab_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
+            <li role="presentation" class="active"><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
+            <li role="presentation"><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
         </ul>
     {% endif %}
 {% endblock %}
@@ -16,7 +16,7 @@
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="tab-content" style="margin-top: 10px;">
-            <div role="tabpanel" class="tab-pane active" id="tab_general">
+            <div role="tabpanel" class="tab-pane active" id="tab_edit_material_general">
                 <div class="form-group">
                     <label for="ladb_materials_input_name" class="control-label col-xs-4">{{ 'tab.materials.edit_material.name'|i18next }}</label>
                     <div class="col-xs-7">
@@ -94,7 +94,7 @@
                     </div>
                 </section>
             </div>
-            <div role="tabpanel" class="tab-pane" id="tab_texture">
+            <div role="tabpanel" class="tab-pane" id="tab_edit_material_texture">
                 <div class="ladb-material-texture-preview">
                     <div class="thumbnail">
                         <img id="ladb_materials_img_texture" src="">
@@ -108,7 +108,7 @@
                 </div>
                 <hr>
                 <div class="row">
-                    <div class="media col-xs-11">
+                    <div class="media col-xs-10">
                         <div class="media-body">
                             <div class="form-group">
                                 <label for="ladb_materials_input_texture_width" class="control-label col-xs-5">{{ 'tab.materials.edit_material.texture_width'|i18next }}</label>

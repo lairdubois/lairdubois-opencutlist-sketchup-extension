@@ -101,7 +101,6 @@ module Ladb::OpenCutList
       # Clear previously generated cutlist
       @cutlist = nil
 
-
       # Clear layer0 cache
       @layer0 = nil
 

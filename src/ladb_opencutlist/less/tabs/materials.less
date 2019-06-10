@@ -41,8 +41,8 @@
 
   .ladb-overlay-drop {
     position: absolute;
-    left: 3px;
-    top: 5px;
+    left: 4px;
+    top: 6px;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
   }
 
@@ -53,6 +53,18 @@
 
     .ladb-material-type-icon {
       border-radius: 0 0 0 4px;
+
+      &.ladb-material-type-0 {
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        margin-top: 3px;
+
+        i.ladb-opencutlist-icon-unknow:before {
+          opacity: 0.5;
+        }
+
+      }
+
     }
 
   }

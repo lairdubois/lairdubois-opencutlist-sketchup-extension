@@ -76,12 +76,12 @@ module Ladb::OpenCutList
         material.write_thumbnail(thumbnail_file, size)
 
         # if Sketchup.version_number >= 15000000 and material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-        #   # case material.colorize_type
-        #   #   when Sketchup::Material::COLORIZE_SHIFT
-        #   #     ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
-        #   #   when Sketchup::Material::COLORIZE_TINT
+        #   case material.colorize_type
+        #     when Sketchup::Material::COLORIZE_SHIFT
+        #       ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
+        #     when Sketchup::Material::COLORIZE_TINT
         #       ImageUtils.colorize(thumbnail_file, material.color)
-        #   # end
+        #   end
         # end
 
         material_attributes = MaterialAttributes.new(material)
@@ -193,14 +193,18 @@ module Ladb::OpenCutList
             # Rotate texture
             ImageUtils.rotate(texture_file, texture_rotation)
 
-            # Keep previous material color
-            color = material.color
+            # Keep previous material color if colorized material
+            if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+              color = material.color
+            else
+              color = nil
+            end
 
             # Set new texture to the material and re-apply previous color
             material.texture = texture_file
 
             # Re-apply color if colorized material
-            if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+            if color
               material.color = color
             end
 

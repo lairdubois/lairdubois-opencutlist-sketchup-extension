@@ -19,6 +19,8 @@ default:
   error: Verflixt!
   warning: Achtung
   tip: Hinweis
+  good: Gut
+  bad: Schlecht
   date_format: Y-m-d G:i
   unit_0: Zoll
   unit_1: Fuss
@@ -94,10 +96,13 @@ tab:
       group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'...
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
-      expand_all: Déplier toutes les pièces identiques
-      collapse_all: Replier toutes les pièces identiques
+      expand_all: Falte alle identischen Teile auseinander
+      collapse_all: Falten Sie alle identischen Teile
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
+      general: Allgemein
+      infos: Infos
+      warnings: Warnungen
       name: Bezeichnung
       material: Material
       cumulable: Summierbar
@@ -343,14 +348,14 @@ tab:
       type_3: Materialtyp '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      colorized: Une teinte sera appliquée à la texture de cette matière lors du rendu dans la modèle
+      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen
     edit_material:
       title: Eigenschaften des Materials '{{ name }}'
-      general: Générales
-      texture: Texture
+      general: Allgemein
+      texture: Textur
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
@@ -383,8 +388,8 @@ tab:
           **{{ type_name }}**
           *Schnittparameter* als vorgegebene Werte gespeichert
         reset: Auf vorgegebene Werte zurücksetzen
-      texture_width: Largeur de la texture
-      texture_height: Hauteur de la texture
+      texture_width: Breite
+      texture_height: Höhe
       export_to_skm: Exportieren (.skm)
     import_from_skm:
       title: Aus .skm Datei importieren

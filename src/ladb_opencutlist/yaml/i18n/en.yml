@@ -19,6 +19,8 @@ default:
   error: Darn!
   warning: Warning
   tip: Tip
+  good: Good
+  bad: Bad
   date_format: m/d/Y g:ia
   unit_0: Inches
   unit_1: Feet
@@ -94,10 +96,13 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       edit_material: Edit material '{{ material }}'...
       edit_group_properties: Edit properties of this group
-      expand_all: Déplier toutes les pièces identiques
-      collapse_all: Replier toutes les pièces identiques
+      expand_all: Unfold all identical parts
+      collapse_all: Fold all identical parts
     edit_part:
       title: Properties of Part '{{ name }}'
+      general: General
+      infos: Infos
+      warnings: Warnings
       name: Description
       material: Material
       cumulable: Summable
@@ -343,13 +348,13 @@ tab:
       type_3: Material type '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      colorized: Une teinte sera appliquée à la texture de cette matière lors du rendu dans la modèle
+      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
     edit_material:
       title: Properties of Material '{{ name }}'
-      general: Générales
+      general: General
       texture: Texture
       name: Name
       type: Type
@@ -383,8 +388,8 @@ tab:
           **{{ type_name }}**
           default *Cutting Parameters* saved
         reset: Restore to default values
-      texture_width: Largeur de la texture
-      texture_height: Hauteur de la texture
+      texture_width: Width
+      texture_height: Height
       export_to_skm: Export (.skm)
     import_from_skm:
       title: Import .skm file
