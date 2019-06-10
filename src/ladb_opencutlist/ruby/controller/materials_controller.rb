@@ -75,17 +75,13 @@ module Ladb::OpenCutList
         size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
         material.write_thumbnail(thumbnail_file, size)
 
-        # ImageUtils.rotate(thumbnail_file, '-90')
-        # if material.materialType == Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-        #   puts "colorize_type = #{material.colorize_type}"
-        #   puts "colorize_deltas = #{material.colorize_deltas}"
-        #   puts "color = #{material.color}"
-        #   case material.colorize_type
-        #     when Sketchup::Material::COLORIZE_SHIFT
-        #       ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
-        #     when Sketchup::Material::COLORIZE_TINT
+        # if Sketchup.version_number >= 15000000 and material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+        #   # case material.colorize_type
+        #   #   when Sketchup::Material::COLORIZE_SHIFT
+        #   #     ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
+        #   #   when Sketchup::Material::COLORIZE_TINT
         #       ImageUtils.colorize(thumbnail_file, material.color)
-        #   end
+        #   # end
         # end
 
         material_attributes = MaterialAttributes.new(material)
@@ -96,8 +92,9 @@ module Ladb::OpenCutList
                 :name => material.name,
                 :display_name => material.display_name,
                 :thumbnail_file => thumbnail_file,
-                :color => '#' + material.color.to_i.to_s(16),
+                :color => "#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue],
                 :alpha => material.alpha,
+                :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
                 :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
                 :texture_rotation => 0,
                 :texture_file => nil,
@@ -201,7 +198,11 @@ module Ladb::OpenCutList
 
             # Set new texture to the material and re-apply previous color
             material.texture = texture_file
-            material.color = color
+
+            # Re-apply color if colorized material
+            if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+              material.color = color
+            end
 
           end
 
@@ -381,7 +382,7 @@ module Ladb::OpenCutList
       if material
 
         temp_dir = Plugin.instance.temp_dir
-        material_textures_dir = File.join(temp_dir, 'material_thumbnails')
+        material_textures_dir = File.join(temp_dir, 'material_textures')
         if Dir.exist?(material_textures_dir)
           FileUtils.remove_dir(material_textures_dir, true)   # Temp dir exists we clean it
         end

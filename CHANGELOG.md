@@ -14,6 +14,7 @@ in 1.x and 0.x versions.
   * Added cutlist part orientation check 
   * Added cutlist multiple layers check 
   * Added cutlist dimensions help modals 
+  * Added cutlist part edit tabs 
   * Added materials texture rotation feature 
   * Added context menu to edit selected part properties from model selection
   * Added "more" leftbar submenu 

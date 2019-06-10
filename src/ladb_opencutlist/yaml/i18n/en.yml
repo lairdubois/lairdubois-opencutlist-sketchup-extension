@@ -343,6 +343,7 @@ tab:
       type_3: Material type '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      colorized: Une teinte sera appliquée à la texture de cette matière lors du rendu dans la modèle
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials

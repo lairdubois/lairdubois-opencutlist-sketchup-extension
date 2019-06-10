@@ -74,7 +74,7 @@ tab:
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition de composant
-      auto_oriented: Cette pièce a été réorienté automatiquement
+      auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
@@ -98,6 +98,9 @@ tab:
       collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
+      general: Générales
+      infos: Infos
+      warnings: Avertissements
       name: Nom
       material: Matière
       cumulable: Cumulable
@@ -343,6 +346,7 @@ tab:
       type_3: Type de matière '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      colorized: Une teinte sera appliquée à la texture de cette matière lors du rendu dans la modèle
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées

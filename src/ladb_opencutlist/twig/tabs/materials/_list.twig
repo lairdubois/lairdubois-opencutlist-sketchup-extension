@@ -26,6 +26,9 @@
                     {% endif %}
                     {{ material.display_name|escape }}
                 </div>
+                {% if material.colorized %}
+                    <div class="ladb-overlay-drop"><i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}; font-size: 150%;" data-toggle='tooltip' title="{{ 'tab.materials.tooltip.colorized'|i18next }}"></i></div>
+                {% endif %}
                 <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type, 'filled':true } %}</div>
             </div>
         </div>

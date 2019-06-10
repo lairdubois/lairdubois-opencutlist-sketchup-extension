@@ -3,57 +3,122 @@
 {% set id = 'ladb_cutlist_modal_part' %}
 {% set title = 'tab.cutlist.edit_part.title'|i18next({ 'name':part.name }) %}
 
+{% set has_warnings = part.not_aligned_on_axes or part.multiple_layers %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation" class="active"><a href="#tab_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
+        <li role="presentation"><a href="#tab_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i> {{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
+        {% if has_warnings %}
+            <li role="presentation"><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> {{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
 {% block bodyInner %}
-    <div class="ladb-part-thumbnail">
-        <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
-    </div>
-    <div class="form form-horizontal">
-        <div class="form-group">
-            <label for="ladb_cutlist_part_input_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}">
+    <div class="tab-content" style="margin-top: 10px;">
+        <div role="tabpanel" class="tab-pane active" id="tab_general">
+            <div class="ladb-part-thumbnail">
+                <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
             </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_cutlist_part_select_material_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
-            <div class="col-xs-7">
-                <select class="form-control" id="ladb_cutlist_part_select_material_name">
-                    {% include 'tabs/cutlist/_material-usages.twig' %}
-                </select>
-                <div class="ladb-material-origins help-block">
-                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+            <div class="form form-horizontal">
+                <div class="form-group">
+                    <label for="ladb_cutlist_part_input_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ladb_cutlist_part_select_material_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <select class="form-control" id="ladb_cutlist_part_select_material_name">
+                            {% include 'tabs/cutlist/_material-usages.twig' %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.cumulable_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label for="ladb_cutlist_part_select_cumulable" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.cumulable'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <select class="form-control" id="ladb_cutlist_part_select_cumulable">
+                            <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.cumulable_0'|i18next }}</span>">0</option>
+                            <option value="1" data-content="{{ 'tab.cutlist.edit_part.cumulable_1'|i18next }}">1</option>
+                            <option value="2" data-content="{{ 'tab.cutlist.edit_part.cumulable_2'|i18next }}">2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';') }}">
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.cumulable_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-            <label for="ladb_cutlist_part_select_cumulable" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.cumulable'|i18next }}</label>
-            <div class="col-xs-7">
-                <select class="form-control" id="ladb_cutlist_part_select_cumulable">
-                    <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.cumulable_0'|i18next }}</span>">0</option>
-                    <option value="1" data-content="{{ 'tab.cutlist.edit_part.cumulable_1'|i18next }}">1</option>
-                    <option value="2" data-content="{{ 'tab.cutlist.edit_part.cumulable_2'|i18next }}">2</option>
-                </select>
+        <div role="tabpanel" class="tab-pane row" id="tab_infos">
+            <div class="col-sm-offset-1 col-sm-10">
+                {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                {% if part.auto_oriented %}
+                    <div class="media">
+                        <div class="media-left"><i class="ladb-opencutlist-icon-auto-oriented ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                        <div class="media-body">
+                            {{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if part.resized %}
+                    <div class="media">
+                        <div class="media-left"><i class="ladb-opencutlist-icon-resized ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                        <div class="media-body">
+                            {{ 'tab.cutlist.tooltip.resized'|i18next }}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if part.orientation_locked_on_axis %}
+                    <div class="media">
+                        <div class="media-left"><i class="ladb-opencutlist-icon-orientation-locked-on-axis ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                        <div class="media-body">
+                            {{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div class="form-group">
-            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-            <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>
-            <div class="col-xs-7">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
-                    </label>
+        {% if has_warnings %}
+            <div role="tabpanel" class="tab-pane row" id="tab_warnings">
+                <div class="col-sm-offset-1 col-sm-10">
+                    {% if part.not_aligned_on_axes %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-not-aligned-on-axes ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if part.multiple_layers %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-            <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';') }}">
-            </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
 

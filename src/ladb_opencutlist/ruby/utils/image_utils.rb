@@ -4,40 +4,57 @@ module Ladb::OpenCutList
 
   class ImageUtils
 
-    def self.exe(in_file, options, out_file = nil)
-
-      is_mac = Plugin.instance.current_os == :MAC
-
-      exe_dir = File.join(File.dirname(__FILE__), '/../../bin', (is_mac ? 'osx' : 'x86'))
-      exe = File.join(exe_dir, (is_mac ? "bin/convert" : "convert.exe"))
-
-      if is_mac
-
-        # Make sure it's executable before we try to run it
-        File.chmod(0755, exe)
-
-        # Prepend the environment variables we need
-        exe = "DYLD_LIBRARY_PATH=\"#{File.join(exe_dir, 'lib')}\" \"#{exe}\""
-
-      else
-        exe = "\"#{exe}\""
-      end
-
-      cmd = "#{exe} \"#{in_file}\" #{options} \"#{out_file.nil? ? in_file : out_file}\""
-      system(cmd)
-
-    end
-
     def self.rotate(in_file, angle, out_file = nil)
-      self.exe(in_file, "-rotate \"#{angle}\"", out_file)
+      self.convert(in_file, "-rotate \"#{angle}\"", out_file)
     end
 
     def self.colorize(in_file, color, out_file = nil)
-      self.exe(in_file, "-colorize #{color.red / 2.55},#{color.green / 2.55},#{color.blue / 2.55}", out_file)
+      self.convert(in_file, "-type GrayscaleAlpha -colorize #{color.red / 2.55},#{color.green / 2.55},#{color.blue / 2.55}", out_file)
     end
 
     def self.modulate(in_file, colorize_deltas, out_file = nil)
-      self.exe(in_file, "-colorize 255,0,0 -set option:modulate:colorspace hsl -modulate #{colorize_deltas[2] + 100},#{colorize_deltas[1] + 100},#{colorize_deltas[0] + 100}", out_file)
+      self.convert(in_file, "-set option:modulate:colorspace hsl -modulate #{colorize_deltas[1] + 100},#{colorize_deltas[2] + 100},#{colorize_deltas[0] + 100}", out_file)
+    end
+
+    # -----
+
+    def self.convert(in_file, options, out_file = nil)
+
+      # Force out_file to be in_file if nil
+      out_file = in_file if out_file.nil?
+
+      bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'bin'))
+      case Plugin.instance.current_os
+
+        when :MAC
+
+          bin_dir = File.join(bin_dir, 'osx')
+          convert_path = File.join(bin_dir, 'bin', 'convert')
+
+          # Make sure it's executable before we try to run it
+          File.chmod(0755, convert_path)
+
+          # Prepend the environment variables we need
+          lib_path = "DYLD_LIBRARY_PATH=\"#{File.join(bin_dir, 'lib')}\""
+
+        when :WIN
+
+          bin_dir = File.join(bin_dir, 'x86')
+          convert_path = File.absolute_path(File.join(bin_dir, 'convert.exe'))
+          lib_path = ''
+
+        else
+          raise "This platform doesn't support ImageMagick."
+
+      end
+
+      # Create 'convert' command
+      cmd = [ lib_path, "\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
+
+      # System call
+      puts cmd
+      system(cmd)
+
     end
 
   end

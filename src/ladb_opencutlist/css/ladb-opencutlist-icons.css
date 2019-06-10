@@ -23,11 +23,22 @@ i, span.ladb-opencutlist-icon {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ladb-opencutlist-icon-lg:before {
+  font-size: 150%;
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+}
+
+
 .ladb-opencutlist-icon-unknow:before {
   opacity: 0.3;
 }
 
 
+.ladb-opencutlist-icon-drop:before {
+  content: "\e945";
+}
 .ladb-opencutlist-icon-lock:before {
   content: "\e943";
 }
@@ -147,6 +158,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-warning:before {
   content: "\e908";
+}
+.ladb-opencutlist-icon-info:before {
+  content: "\e946";
 }
 .ladb-opencutlist-icon-help:before {
   content: "\e909";
