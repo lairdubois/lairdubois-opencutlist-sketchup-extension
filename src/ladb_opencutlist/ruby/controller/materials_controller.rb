@@ -103,6 +103,8 @@ module Ladb::OpenCutList
                 :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
                 :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
                 :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
+                :texture_colorizable => Sketchup.version_number >= 16000000,
+                :texture_colorized => Sketchup.version_number < 16000000,
                 :attributes => {
                     :type => material_attributes.type,
                     :length_increase => material_attributes.length_increase,
@@ -165,6 +167,8 @@ module Ladb::OpenCutList
       texture_file = material_data['texture_file']
       texture_width = material_data['texture_width']
       texture_height = material_data['texture_height']
+      texture_colorizable = material_data['texture_colorizable']
+      texture_colorized = material_data['texture_colorized']
       type = MaterialAttributes.valid_type(attributes['type'])
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
@@ -188,13 +192,13 @@ module Ladb::OpenCutList
         # Update texture
         unless texture_file.nil?
 
-          if texture_rotation > 0
+          if texture_rotation > 0 or (texture_colorized and texture_colorizable)
 
             # Rotate texture
-            ImageUtils.rotate(texture_file, texture_rotation)
+            ImageUtils.rotate(texture_file, texture_rotation) if texture_rotation > 0
 
             # Keep previous material color if colorized material
-            if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+            if !texture_colorized and material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
               color = material.color
             else
               color = nil
@@ -371,13 +375,15 @@ module Ladb::OpenCutList
     def get_texture_command(material_data)
 
       response = {
-          :texture_file => ''
+          :texture_file => '',
+          :texture_colorized => false
       }
 
       model = Sketchup.active_model
       return response unless model
 
       name = material_data['name']
+      colorized = material_data['colorized']
 
       # Fetch material
       materials = model.materials
@@ -396,7 +402,9 @@ module Ladb::OpenCutList
 
         if Sketchup.version_number >= 16000000
 
-          material.texture.write(texture_file, false)
+          material.texture.write(texture_file, colorized)
+
+          response[:texture_colorized] = colorized
 
         else
 
@@ -420,6 +428,9 @@ module Ladb::OpenCutList
 
           # Erease the group
           group.erase!
+
+          # This BC workaround force texture to be colorized
+          response[:texture_colorized] = true
 
         end
 

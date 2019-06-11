@@ -52,7 +52,6 @@ module Ladb::OpenCutList
       cmd = [ lib_path, "\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
 
       # System call
-      puts cmd
       system(cmd)
 
     end

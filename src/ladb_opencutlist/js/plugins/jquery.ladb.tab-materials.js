@@ -261,6 +261,7 @@
             var $imgTexture = $('#ladb_materials_img_texture', $modal);
             var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
+            var $btnTextureColorized = $('#ladb_materials_btn_texture_colorized', $modal);
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
@@ -396,6 +397,22 @@
                 }
             };
 
+            var getMaterialTexture = function (colorized) {
+                rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: colorized }, function (response) {
+
+                    // Add texture file to material
+                    material.texture_file = response.texture_file;
+
+                    if (response.texture_colorized) {
+                        $btnTextureColorized.addClass('active')
+                    }
+
+                    // Update img src with generated texture file
+                    $imgTexture.attr('src', material.texture_file);
+
+                });
+            };
+
             var computeSizeAspectRatio = function (isWidthMaster) {
                 if ($btnTextureSizeLock.data('locked')) {
                     rubyCallCommand('core_compute_size_aspect_ratio_command', {
@@ -413,15 +430,7 @@
             // Bin tabs
             $btnTabTexture.on('shown.bs.tab', function (e) {
 
-                rubyCallCommand('materials_get_texture_command', { name: material.name }, function (response) {
-
-                    // Add texture file to material
-                    material.texture_file = response.texture_file;
-
-                    // Update img src with generated texture file
-                    $imgTexture.attr('src', material.texture_file);
-
-                });
+                getMaterialTexture(false);
 
                 // Unbind event
                 $btnTabTexture.off('shown.bs.tab');
@@ -484,6 +493,11 @@
                 rotateTexture(90);
                 this.blur();
             });
+            $btnTextureColorized.on('click', function () {
+                $btnTextureColorized.toggleClass('active');
+                getMaterialTexture($btnTextureColorized.hasClass('active'));
+                this.blur();
+            });
             $btnTextureSizeLock.on('click', function () {
                 var $i = $('i', $btnTextureSizeLock);
                 if ($btnTextureSizeLock.data('locked')) {
@@ -511,6 +525,7 @@
                 that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
+                that.editedMaterial.texture_colorized = $btnTextureColorized.hasClass('active');
                 that.editedMaterial.attributes.type = $selectType.val();
                 that.editedMaterial.attributes.length_increase = $inputLengthIncrease.val();
                 that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
@@ -562,7 +577,8 @@
             $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
             $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
 
-            // Setup popovers
+            // Setup tooltips & popovers
+            this.opencutlist.setupTooltips();
             this.opencutlist.setupPopovers();
 
             /// Callback
