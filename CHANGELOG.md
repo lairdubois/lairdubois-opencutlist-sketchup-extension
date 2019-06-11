@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.7.1
+
+  * Added metariel tint capabilities
+ 
 * 1.7.0 (2019-06-10) 
 
   * Added cutlist same size part grouping option
