@@ -349,7 +349,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_add_or_remove_tint: Combiner ou retirer la teinte à la texture
+      texture_colorized: Combiner la teinte à la texture
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
