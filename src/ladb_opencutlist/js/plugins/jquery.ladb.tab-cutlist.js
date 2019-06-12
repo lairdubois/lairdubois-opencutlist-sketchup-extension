@@ -98,7 +98,6 @@
         };
 
         this.generateAt = null;
-        this.isMetric = false;
         this.filename = null;
         this.pageLabel = null;
         this.lengthUnit = null;
@@ -148,7 +147,6 @@
             var warnings = response.warnings;
             var tips = response.tips;
             var lengthUnit = response.length_unit;
-            var isMetric = response.is_metric;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
@@ -158,7 +156,6 @@
             var groups = response.groups;
 
             // Keep usefull data
-            that.isMetric = isMetric;
             that.filename = filename;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
@@ -199,7 +196,6 @@
                 errors: errors,
                 warnings: warnings,
                 tips: tips,
-                isMetric: isMetric,
                 instanceCount: instanceCount,
                 ignoredInstanceCount: ignoredInstanceCount,
                 usedLabels: usedLabels,
@@ -638,6 +634,7 @@
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
+                var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -648,6 +645,12 @@
                 $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectCumulable.val(part.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+
+                // Bind sorter
+                $sortablePartAxes.sortable({
+                    cursor: 'ns-resize',
+                    handle: '.ladb-handle'
+                });
 
                 // Bind buttons
                 $btnHighlight.on('click', function () {
@@ -662,6 +665,12 @@
                     that.editedPart.cumulable = $selectCumulable.val();
                     that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                     that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
+
+                    var axes = [];
+                    $sortablePartAxes.children('li').each(function () {
+                        axes.push($(this).data('axis'));
+                    });
+                    that.editedPart.ordered_axes = axes;
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 
@@ -1123,7 +1132,6 @@
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                 uiOptions: that.uiOptions,
-                                isMetric: that.isMetric,
                                 filename: that.filename,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,

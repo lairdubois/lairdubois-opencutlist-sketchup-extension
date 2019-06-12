@@ -108,6 +108,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-numbers-save:before {
   content: "\e91e";
 }
+.ladb-opencutlist-icon-axes:before {
+  content: "\e947";
+}
 .ladb-opencutlist-icon-auto-oriented:before {
   content: "\e937";
 }

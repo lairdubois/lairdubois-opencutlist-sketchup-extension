@@ -127,6 +127,13 @@ tab:
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
         Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
+      axes: Axes
+      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes_tip: |
+        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
+         - La *longueur* est lue sur l'axe <strong style='color:red'>Rouge</strong>
+         - La *largeur* est lue sur l'axe <strong style='color:green'>Vert</strong>
+         - L'*épaisseur* est lue sur l'axe <strong style='color:blue'>Bleu</strong>
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile

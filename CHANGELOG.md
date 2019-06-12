@@ -6,7 +6,8 @@ in 1.x and 0.x versions.
 
 * 1.7.1
 
-  * Added metariel tint capabilities
+  * Added materiel tint capabilities
+  * Added part axes managment
  
 * 1.7.0 (2019-06-10) 
 

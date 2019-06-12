@@ -9,6 +9,7 @@
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
+        <li role="presentation"><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i> {{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i> {{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
         {% if has_warnings %}
             <li role="presentation"><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> {{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
@@ -64,6 +65,37 @@
                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
                     <div class="col-xs-7">
                         <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane row" id="tab_edit_part_axes">
+            <div class="row">
+                <div class="col-xs-offset-2 col-xs-8">
+                    <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
+                </div>
+                <div class="col-xs-offset-2 col-xs-1">
+                    <ul class="ladb-sortable-list">
+                        <li style="background-color: #ff0000;">&nbsp;</li>
+                        <li style="background-color: #00ff00;">&nbsp;</li>
+                        <li style="background-color: #0000ff;">&nbsp;</li>
+                    </ul>
+                </div>
+                <div class="col-xs-7">
+                    <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
+                        <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.serialized_normals.x] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.serialized_normals.x)|i18next }}</span></li>
+                        <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.serialized_normals.y] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.serialized_normals.y)|i18next }}</span></li>
+                        <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.serialized_normals.z] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.serialized_normals.z)|i18next }}</span></li>
+                    </ul>
+                </div>
+                <div class="col-xs-offset-2 col-xs-8 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
+                    <div class="media">
+                        <div class="media-left">
+                            <i class="ladb-opencutlist-icon-tip" style="font-size: 150%;"></i>
+                        </div>
+                        <div class="media-body" style="font-size: 80%">
+                            {{ 'tab.cutlist.edit_part.axes_tip'|i18next }}
+                        </div>
                     </div>
                 </div>
             </div>

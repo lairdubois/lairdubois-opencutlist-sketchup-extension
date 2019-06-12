@@ -171,6 +171,7 @@ module Ladb::OpenCutList
             :layers => @layers.map(&:name),
             :multiple_layers => multiple_layers,
             :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
+            :serialized_normals => @size.serialized_normals
         }
       else
         {

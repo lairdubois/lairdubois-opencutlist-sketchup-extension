@@ -127,6 +127,13 @@ tab:
         With *Labels* you can add keywords to customize the part definitions.
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
+      axes: Axes
+      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes_tip: |
+        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
+         - La *longueur* est lue sur l'axe <strong style='color:red'>Rouge</strong>
+         - La *largeur* est lue sur l'axe <strong style='color:green'>Vert</strong>
+         - L'*épaisseur* est lue sur l'axe <strong style='color:blue'>Bleu</strong>
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts

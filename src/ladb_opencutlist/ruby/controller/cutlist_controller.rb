@@ -100,6 +100,7 @@ module Ladb::OpenCutList
 
       # Clear previously generated cutlist
       @cutlist = nil
+      @cutlist_def = nil
 
       # Clear layer0 cache
       @layer0 = nil
@@ -752,7 +753,6 @@ module Ladb::OpenCutList
           :warnings => cutlist_def.warnings,
           :tips => cutlist_def.tips,
           :length_unit => cutlist_def.length_unit,
-          :is_metric => cutlist_def.is_metric?,
           :dir => cutlist_def.dir,
           :filename => cutlist_def.filename,
           :page_label => cutlist_def.page_label,
@@ -860,6 +860,7 @@ module Ladb::OpenCutList
 
       # Keep generated cutlist
       @cutlist = response
+      @cutlist_def = cutlist_def
 
       # Clear caches
       @material_attributes_cache = nil
@@ -1232,12 +1233,14 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Extract parameters
+      id = part_data['id']
       definition_id = part_data['definition_id']
       name = part_data['name']
       material_name = part_data['material_name']
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
       labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
+      ordered_axes = part_data['ordered_axes']
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions
@@ -1261,6 +1264,7 @@ module Ladb::OpenCutList
 
         # Update component instance material
         materials = model.materials
+        material = nil
         if material_name.nil? or material_name.empty? or (material = materials[material_name])
 
           entity_ids.each { |entity_id|
@@ -1272,6 +1276,25 @@ module Ladb::OpenCutList
                 entity.material = material
               end
             end
+          }
+
+        end
+
+        # Try to retieve part_def
+        if ordered_axes
+
+          ordered_axes.map! { |axis|
+            (axis == 'x' ? X_AXIS : (axis == 'y' ? Y_AXIS : Z_AXIS))
+          }
+
+          t = Geom::Transformation.axes(ORIGIN, ordered_axes[0], ordered_axes[1], ordered_axes[2])
+          ti = t.inverse
+
+          entities = definition.entities
+          entities.transform_entities(ti, entities.to_a)
+
+          definition.instances.each { |instance|
+            instance.transformation *= t
           }
 
         end

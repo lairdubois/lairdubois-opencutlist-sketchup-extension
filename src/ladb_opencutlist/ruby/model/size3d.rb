@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Size3d < Size2d
 
-    DEFAULT_NORMALS = [X_AXIS, Y_AXIS, Z_AXIS ]
+    DEFAULT_NORMALS = [ X_AXIS, Y_AXIS, Z_AXIS ]
 
     attr_accessor :thickness
 
@@ -22,7 +22,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.create_from_bounds(bounds, scale, auto_orient = true)
+    def self.create_from_bounds(bounds, scale, auto_orient = false)
       if auto_orient
         ordered = [
             { :value => (bounds.width * scale.x).to_l, :normal => X_AXIS },
@@ -52,6 +52,14 @@ module Ladb::OpenCutList
         else
           raise 'Invalid axis'
       end
+    end
+
+    def serialized_normals
+      r = {}
+      r[@normals[0] == X_AXIS ? 'x' : @normals[0] == Y_AXIS ? 'y' : 'z'] = 'length'
+      r[@normals[1] == X_AXIS ? 'x' : @normals[1] == Y_AXIS ? 'y' : 'z'] = 'width'
+      r[@normals[2] == X_AXIS ? 'x' : @normals[2] == Y_AXIS ? 'y' : 'z'] = 'thickness'
+      r
     end
 
     # -----

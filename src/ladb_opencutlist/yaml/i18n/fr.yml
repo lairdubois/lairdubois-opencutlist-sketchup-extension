@@ -127,6 +127,13 @@ tab:
         Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
         Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
         Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
+      axes: Axes
+      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes_tip: |
+        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
+         - La *longueur* est lue sur l'axe <strong style='color:red'>Rouge</strong>
+         - La *largeur* est lue sur l'axe <strong style='color:green'>Vert</strong>
+         - L'*épaisseur* est lue sur l'axe <strong style='color:blue'>Bleu</strong>
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces

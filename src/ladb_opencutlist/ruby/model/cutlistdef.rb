@@ -59,10 +59,6 @@ module Ladb::OpenCutList
       nil
     end
 
-    def is_metric?
-      @length_unit == Length::Millimeter || @length_unit == Length::Centimeter ||@length_unit == Length::Meter
-    end
-
     def include_number?(number)
       @group_defs.each { |key, group_def|
         if group_def.include_number? number
