@@ -393,7 +393,8 @@
                     var tw = $inputTextureWidth.val();
                     var th = $inputTextureHeight.val();
                     $inputTextureWidth.val(th);
-                    $inputTextureHeight.val(tw)
+                    $inputTextureHeight.val(tw);
+                    material.texture_ratio = 1 / material.texture_ratio;
                 }
             };
 

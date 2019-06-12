@@ -31,6 +31,7 @@ default:
   part_plural: pièces
   more: Plus
   more_docs: Docs
+  more_reviews: Avis
   more_plans: Plans
   more_extensions: Plugins
 core:

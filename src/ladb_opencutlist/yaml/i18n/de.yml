@@ -31,6 +31,7 @@ default:
   part_plural: Teile
   more: Mehr
   more_docs: Dokus
+  more_reviews: Avis
   more_plans: Pläne
   more_extensions: Plugins
 core:

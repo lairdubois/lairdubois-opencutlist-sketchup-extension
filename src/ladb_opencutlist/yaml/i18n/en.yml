@@ -31,6 +31,7 @@ default:
   part_plural: parts
   more: More
   more_docs: Docs
+  more_reviews: Avis
   more_plans: Plans
   more_extensions: Extensions
 core:
