@@ -54,7 +54,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def serialized_normals
+    def normals_to_dimensions
       r = {}
       r[@normals[0] == X_AXIS ? 'x' : @normals[0] == Y_AXIS ? 'y' : 'z'] = 'length'
       r[@normals[1] == X_AXIS ? 'x' : @normals[1] == Y_AXIS ? 'y' : 'z'] = 'width'

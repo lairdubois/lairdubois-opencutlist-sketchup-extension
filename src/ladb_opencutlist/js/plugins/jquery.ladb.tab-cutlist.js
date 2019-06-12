@@ -634,6 +634,7 @@
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
+                var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
@@ -649,7 +650,14 @@
                 // Bind sorter
                 $sortablePartAxes.sortable({
                     cursor: 'ns-resize',
-                    handle: '.ladb-handle'
+                    handle: '.ladb-handle',
+                    stop: function (event, ui) {
+                        var axes = [];
+                        $sortablePartAxes.children('li').each(function () {
+                            axes.push($(this).data('axis'));
+                        });
+                        $inputPartAxes.val(axes);
+                    }
                 });
 
                 // Bind buttons
@@ -666,11 +674,7 @@
                     that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                     that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
 
-                    var axes = [];
-                    $sortablePartAxes.children('li').each(function () {
-                        axes.push($(this).data('axis'));
-                    });
-                    that.editedPart.ordered_axes = axes;
+                    that.editedPart.ordered_axes = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 

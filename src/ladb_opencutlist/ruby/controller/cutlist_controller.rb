@@ -1280,21 +1280,23 @@ module Ladb::OpenCutList
 
         end
 
-        # Try to retieve part_def
-        if ordered_axes
+        # Transform part axes if ordered axes exist
+        if ordered_axes.is_a?(Array) and ordered_axes.length == 3
 
           ordered_axes.map! { |axis|
             (axis == 'x' ? X_AXIS : (axis == 'y' ? Y_AXIS : Z_AXIS))
           }
 
-          t = Geom::Transformation.axes(ORIGIN, ordered_axes[0], ordered_axes[1], ordered_axes[2])
-          ti = t.inverse
+          ti = Geom::Transformation.axes(ORIGIN, ordered_axes[0], ordered_axes[1], ordered_axes[2])
+          t = ti.inverse
 
+          # Transform definition's entities
           entities = definition.entities
-          entities.transform_entities(ti, entities.to_a)
+          entities.transform_entities(t, entities.to_a)
 
+          # Inverse transform definition's instances
           definition.instances.each { |instance|
-            instance.transformation *= t
+            instance.transformation *= ti
           }
 
         end
