@@ -8,18 +8,18 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation" class="active"><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
-        <li role="presentation"><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
-        <li role="presentation"><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
         {% if has_warnings %}
-            <li role="presentation"><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>&nbsp;{{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>&nbsp;{{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
         {% endif %}
     </ul>
 {% endblock %}
 
 {% block bodyInner %}
     <div class="tab-content" style="margin-top: 10px;">
-        <div role="tabpanel" class="tab-pane active" id="tab_edit_part_general">
+        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             <div class="ladb-part-thumbnail">
                 <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
             </div>
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane row" id="tab_edit_part_axes">
+        <div role="tabpanel" class="tab-pane row{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
             <div class="row">
                 <div class="col-xs-offset-2 col-xs-8">
                     <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
@@ -101,7 +101,7 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane row" id="tab_edit_part_infos">
+        <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
             <div class="col-sm-offset-1 col-sm-10">
                 {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
                 {% if part.auto_oriented %}
@@ -131,7 +131,7 @@
             </div>
         </div>
         {% if has_warnings %}
-            <div role="tabpanel" class="tab-pane row" id="tab_warnings">
+            <div role="tabpanel" class="tab-pane row{% if tab == 'warnings' %} active{% endif %}" id="tab_warnings">
                 <div class="col-sm-offset-1 col-sm-10">
                     {% if part.not_aligned_on_axes %}
                         <div class="media">

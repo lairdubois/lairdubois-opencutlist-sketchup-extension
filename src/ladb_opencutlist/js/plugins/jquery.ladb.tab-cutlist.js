@@ -353,6 +353,12 @@
                 that.dimensionsHelpGroup(groupId);
                 $(this).blur();
             });
+            $('a.ladb-btn-auto-oriented', that.$page).on('click', function () {
+                $(this).blur();
+                var partId = $(this).data('part-id');
+                that.editPart(partId, null, 'axes');
+                return false;
+            });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
                 $(this).blur();
                 var partId = $(this).data('part-id');
@@ -601,7 +607,7 @@
         return null;
     };
 
-    LadbTabCutlist.prototype.editPart = function (id, serializedPath) {
+    LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab) {
         var that = this;
 
         var part = id ? this.findPartById(id) : (serializedPath ? this.findPartBySerializedPath(serializedPath) : null);
@@ -617,7 +623,8 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     part: part,
                     thumbnailFile: thumbnailFile,
-                    materialUsages: that.materialUsages
+                    materialUsages: that.materialUsages,
+                    tab: tab === undefined ? 'general' : tab
                 });
 
                 var isOwnedMaterial = true;

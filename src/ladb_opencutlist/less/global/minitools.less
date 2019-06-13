@@ -33,6 +33,15 @@
 
     &[href]:hover, &[href]:focus, &[data-toggle=popover]:hover {
       color: #888;
+
+      &.ladb-tool-info {
+        color: darken(@ladb-brand-info, 30%);
+      }
+
+      &.ladb-tool-warning {
+        color: darken(@ladb-brand-warning, 30%);
+      }
+
     }
 
     &:hover, &:focus {

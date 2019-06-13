@@ -132,9 +132,9 @@ tab:
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
       axes_tip: |
         Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
-         - La *longueur* est lue sur l'axe <strong style='color:red'>Rouge</strong>
-         - La *largeur* est lue sur l'axe <strong style='color:green'>Vert</strong>
-         - L'*épaisseur* est lue sur l'axe <strong style='color:blue'>Bleu</strong>
+         - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
+         - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
+         - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -357,7 +357,9 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: Combiner la teinte à la texture
+      texture_colorized: |
+        Combiner la teinte dans l'image de la texture
+        *(Cette ation est irréversible)*
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen
