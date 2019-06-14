@@ -1301,7 +1301,7 @@ module Ladb::OpenCutList
               when 'min-center'
                 origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
               else
-                raise 'Invalid axes position'
+                origin = ORIGIN
             end
 
           else
