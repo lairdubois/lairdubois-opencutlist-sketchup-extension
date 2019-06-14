@@ -643,8 +643,18 @@
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
+                var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
+
+                // Utils function
+                var computeAxesOrder = function () {
+                    var axes = [];
+                    $sortablePartAxes.children('li').each(function () {
+                        axes.push($(this).data('axis'));
+                    });
+                    $inputPartAxes.val(axes);
+                };
 
                 // Bind select
                 if (isOwnedMaterial) {
@@ -653,17 +663,18 @@
                 $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectCumulable.val(part.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartAxesOriginPosition
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        computeAxesOrder();
+                    });
 
                 // Bind sorter
                 $sortablePartAxes.sortable({
                     cursor: 'ns-resize',
                     handle: '.ladb-handle',
                     stop: function (event, ui) {
-                        var axes = [];
-                        $sortablePartAxes.children('li').each(function () {
-                            axes.push($(this).data('axis'));
-                        });
-                        $inputPartAxes.val(axes);
+                        computeAxesOrder();
                     }
                 });
 
@@ -681,7 +692,8 @@
                     that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                     that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
 
-                    that.editedPart.ordered_axes = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
+                    that.editedPart.axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
+                    that.editedPart.axes_origin_position = parseInt($selectPartAxesOriginPosition.val());
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 

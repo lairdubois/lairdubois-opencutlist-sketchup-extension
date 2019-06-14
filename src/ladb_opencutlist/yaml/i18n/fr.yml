@@ -135,6 +135,9 @@ tab:
          - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
          - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
          - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
+      axes_origin_position_none: Ne pas changer l'origine
+      axes_origin_position_0: Placer l'origine au début
+      axes_origin_position_8: Placer l'origine au centre
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces

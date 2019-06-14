@@ -88,6 +88,11 @@
                         <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
                         <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
                     </ul>
+                    <select class="form-control" id="ladb_cutlist_part_select_axes_origin_position">
+                        <option data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.axes_origin_position_none'|i18next }}</span>"></option>
+                        <option value="0">{{ 'tab.cutlist.edit_part.axes_origin_position_0'|i18next }}</option>
+                        <option value="8">{{ 'tab.cutlist.edit_part.axes_origin_position_8'|i18next }}</option>
+                    </select>
                 </div>
                 <div class="col-xs-offset-2 col-xs-8 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
                     <div class="media">

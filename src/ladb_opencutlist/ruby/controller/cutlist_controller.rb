@@ -100,7 +100,6 @@ module Ladb::OpenCutList
 
       # Clear previously generated cutlist
       @cutlist = nil
-      @cutlist_def = nil
 
       # Clear layer0 cache
       @layer0 = nil
@@ -170,7 +169,7 @@ module Ladb::OpenCutList
             if face_count > 0
 
               bounds = _compute_faces_bounds(entity.definition, nil)
-              unless bounds.empty? or [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty and flat bounds
+              unless bounds.empty? or [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
                 # Create the instance info
                 instance_info = InstanceInfo.new(path + [ entity ])
@@ -860,7 +859,6 @@ module Ladb::OpenCutList
 
       # Keep generated cutlist
       @cutlist = response
-      @cutlist_def = cutlist_def
 
       # Clear caches
       @material_attributes_cache = nil
@@ -1240,7 +1238,8 @@ module Ladb::OpenCutList
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
       labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
-      ordered_axes = part_data['ordered_axes']
+      axes_order = part_data['axes_order']
+      axes_origin_position = part_data['axes_origin_position']
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions
@@ -1262,7 +1261,7 @@ module Ladb::OpenCutList
           definition_attributes.write_to_attributes
         end
 
-        # Update component instance material
+        # Update instances material
         materials = model.materials
         material = nil
         if material_name.nil? or material_name.empty? or (material = materials[material_name])
@@ -1280,14 +1279,28 @@ module Ladb::OpenCutList
 
         end
 
-        # Transform part axes if ordered axes exist
-        if ordered_axes.is_a?(Array) and ordered_axes.length == 3
+        # Transform part axes if axes order exist
+        if axes_order.is_a?(Array) and axes_order.length == 3
 
-          ordered_axes.map! { |axis|
+          # Convert axes order to Vector3D array
+          axes_order.map! { |axis|
             (axis == 'x' ? X_AXIS : (axis == 'y' ? Y_AXIS : Z_AXIS))
           }
 
-          ti = Geom::Transformation.axes(ORIGIN, ordered_axes[0], ordered_axes[1], ordered_axes[2])
+          # Manage origin
+          if axes_origin_position
+
+            # Compute definition bounds
+            bounds = _compute_faces_bounds(definition)
+
+            origin = (axes_origin_position >= 0 and axes_origin_position <= 7) ? bounds.corner(axes_origin_position) : bounds.center
+
+          else
+            origin = ORIGIN
+          end
+
+          # Create transformations
+          ti = Geom::Transformation.axes(origin, axes_order[0], axes_order[1], axes_order[2])
           t = ti.inverse
 
           # Transform definition's entities
