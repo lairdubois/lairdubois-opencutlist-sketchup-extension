@@ -1293,7 +1293,16 @@ module Ladb::OpenCutList
             # Compute definition bounds
             bounds = _compute_faces_bounds(definition)
 
-            origin = (axes_origin_position >= 0 and axes_origin_position <= 7) ? bounds.corner(axes_origin_position) : bounds.center
+            case axes_origin_position
+              when 'min'
+                origin = bounds.min
+              when 'center'
+                origin = bounds.center
+              when 'min-center'
+                origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
+              else
+                raise 'Invalid axes position'
+            end
 
           else
             origin = ORIGIN

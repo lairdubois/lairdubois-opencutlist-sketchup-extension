@@ -136,8 +136,9 @@ tab:
          - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
          - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
       axes_origin_position_none: Ne pas changer l'origine
-      axes_origin_position_0: Placer l'origine au début
-      axes_origin_position_8: Placer l'origine au centre
+      axes_origin_position_min: Placer l'origine au début
+      axes_origin_position_center: Placer l'origine au centre
+      axes_origin_position_min_center: Placer l'origine au centre du début
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile

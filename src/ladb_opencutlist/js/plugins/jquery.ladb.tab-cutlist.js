@@ -693,7 +693,7 @@
                     that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
 
                     that.editedPart.axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                    that.editedPart.axes_origin_position = parseInt($selectPartAxesOriginPosition.val());
+                    that.editedPart.axes_origin_position = $selectPartAxesOriginPosition.val();
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 
