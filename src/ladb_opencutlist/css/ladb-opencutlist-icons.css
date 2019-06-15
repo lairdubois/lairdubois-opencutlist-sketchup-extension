@@ -36,6 +36,15 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-origin-min-center:before {
+  content: "\e948";
+}
+.ladb-opencutlist-icon-origin-center:before {
+  content: "\e949";
+}
+.ladb-opencutlist-icon-origin-min:before {
+  content: "\e94a";
+}
 .ladb-opencutlist-icon-drop:before {
   content: "\e945";
 }
