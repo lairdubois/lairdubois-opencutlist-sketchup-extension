@@ -39,6 +39,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_get_texture_command") do |material_data|
         get_texture_command(material_data)
       end
+      Plugin.instance.register_command("materials_add_std_dimension_command") do |settings|
+        add_std_dimension_command(settings)
+      end
 
     end
 
@@ -74,15 +77,6 @@ module Ladb::OpenCutList
         thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
         size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
         material.write_thumbnail(thumbnail_file, size)
-
-        # if Sketchup.version_number >= 15000000 and material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-        #   case material.colorize_type
-        #     when Sketchup::Material::COLORIZE_SHIFT
-        #       ImageUtils.modulate(thumbnail_file, material.colorize_deltas)
-        #     when Sketchup::Material::COLORIZE_TINT
-        #       ImageUtils.colorize(thumbnail_file, material.color)
-        #   end
-        # end
 
         material_attributes = MaterialAttributes.new(material)
 
@@ -438,6 +432,36 @@ module Ladb::OpenCutList
       end
 
       response
+    end
+
+    def add_std_dimension_command(settings) # Waiting settings = { :material_name => MATERIAL_NAME, :std_dimension => STD_DIMENSION }
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      material_name = settings['material_name']
+      std_dimension = settings['std_dimension']
+
+      # Fetch material
+      materials = model.materials
+      material = materials[material_name]
+
+      if material
+
+        material_attributes = MaterialAttributes.new(material)
+        case material_attributes.type
+          when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
+            material_attributes.append_std_thickness(std_dimension)
+          when MaterialAttributes::TYPE_BAR
+            material_attributes.append_std_section(std_dimension)
+          else
+            return { :errors => [ 'tab.materials.error.no_type_material' ] }
+        end
+        material_attributes.write_to_attributes
+
+      end
+
+      { :success => true }
     end
 
   end

@@ -293,6 +293,39 @@
                 $(this).blur();
                 return false;
             });
+            $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
+                var $group = $(this).closest('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                var group = that.findGroupById(groupId);
+                if (group) {
+                    rubyCallCommand('materials_add_std_dimension_command', { material_name:group.material_name, std_dimension: group.std_dimension }, function (response) {
+
+                        if (response['errors']) {
+
+                            that.opencutlist.notifyErrors(response['errors']);
+
+                        } else {
+
+                            var wTop = $group.offset().top - $(window).scrollTop();
+
+                            // Refresh the list
+                            that.generateCutlist(function () {
+
+                                // Try to scroll to the edited group's block
+                                var $group = $('#ladb_group_' + groupId, that.$page);
+                                if ($group.length > 0) {
+                                    that.$rootSlide.animate({ scrollTop: $group.offset().top - wTop }, 0).promise().then(function () {
+                                        $group.effect("highlight", {}, 1500);
+                                    });
+                                }
+
+                            });
+
+                        }
+                    });
+                }
+                $(this).blur();
+            });
             $('a.ladb-item-edit-material', that.$page).on('click', function () {
                 var $group = $(this).closest('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
@@ -710,7 +743,7 @@
                             that.generateCutlist(function () {
 
                                 // Try to scroll to the edited part's row
-                                var $part = $('#ladb_part_' + partId);
+                                var $part = $('#ladb_part_' + partId, that.$page);
                                 if ($part.length > 0) {
                                     if ($part.hasClass('hide')) {
                                         that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));

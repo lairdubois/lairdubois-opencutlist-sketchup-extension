@@ -8,6 +8,7 @@ in 1.x and 0.x versions.
 
   * Added materiel tint capabilities
   * Added part axes managment
+  * Added add 'unavailable' std dimension to material on cutlist group
  
 * 1.7.0 (2019-06-10) 
 

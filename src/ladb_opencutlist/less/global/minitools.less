@@ -13,6 +13,10 @@
     float: left;
   }
 
+  &.ladb-minitools-inline {
+    display: inline-block;
+  }
+
   &.ladb-minitools-lg {
     margin-right: 20px;
     font-size: 150%;
@@ -23,6 +27,11 @@
   .ladb-separator {
     border-right: 1px solid #eee;
     margin: 0 8px;
+
+    &.ladb-separator-white {
+      border-color: #fff;
+    }
+
   }
 
   a {
@@ -42,6 +51,10 @@
         color: darken(@ladb-brand-warning, 30%);
       }
 
+      &.ladb-tool-white {
+        color: darken(#fff, 30%);
+      }
+
     }
 
     &:hover, &:focus {
@@ -54,6 +67,10 @@
 
     &.ladb-tool-warning {
       color: @ladb-brand-warning;
+    }
+
+    &.ladb-tool-white {
+      color: #fff;
     }
 
   }

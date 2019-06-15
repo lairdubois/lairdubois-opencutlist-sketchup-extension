@@ -170,7 +170,7 @@
                     </ul>
                 </div>
                 {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
-                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' %}</div>
+                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}</div>
             </td>
         </tr>
         </thead>

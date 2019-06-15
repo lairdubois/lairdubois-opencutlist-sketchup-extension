@@ -1,1 +1,21 @@
-<span{% if group.material_type == 0 %} class="text-muted" style="font-style: italic;"{% endif %}>{% if group.material_name is empty %}{{ 'tab.cutlist.material_undefined'|i18next }}{% else %}{{ group.material_name|escape }}{% endif %}</span>{% if group.material_type > 0 %} / <strong{% if not group.std_available %} class="text-danger"{% endif %}>{{ group.std_dimension }}</strong>{% if not group.std_available %}&nbsp;&nbsp;<span class="label label-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ group.std_availability_message|i18next }}{% endif %}</span>{% endif %}
+<span{% if group.material_type == 0 %} class="text-muted" style="font-style: italic;"{% endif %}>
+    {% if group.material_name is empty %}
+        {{ 'tab.cutlist.material_undefined'|i18next }}
+    {% else %}
+        {{ group.material_name|escape }}
+    {% endif %}
+</span>
+{% if group.material_type > 0 %}
+    / <strong{% if not group.std_available %} class="text-danger"{% endif %}>{{ group.std_dimension }}</strong>
+    {% if not group.std_available %}
+        &nbsp;&nbsp;
+        <span class="label label-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ group.std_availability_message|i18next }}
+        {% if not hideAddBtn|default(true) %}
+            <div class="ladb-minitools ladb-minitools-inline">
+                <span class="ladb-separator ladb-separator-white"></span>
+                <a href="#" class="ladb-btn-add-std-dimension-to-material ladb-tool-white" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.add_std_dimension_to_material'|i18next({ 'std_dimension':group.std_dimension, 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-plus"></i></a>
+            </div>
+        {% endif %}
+        </span>
+    {% endif %}
+{% endif %}

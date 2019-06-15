@@ -154,6 +154,10 @@
       end
     end
 
+    def append_std_thickness(std_thickness)
+      @std_thicknesses = @std_thicknesses.split(';').push(std_thickness).join(';')
+    end
+
     def l_std_thicknesses
       a = []
       @std_thicknesses.split(';').each { |std_thickness|
@@ -170,6 +174,10 @@
         else
           get_default(:std_sections)
       end
+    end
+
+    def append_std_section(std_section)
+      @std_sections = @std_sections.split(';').push(std_section).join(';')
     end
 
     def l_std_sections

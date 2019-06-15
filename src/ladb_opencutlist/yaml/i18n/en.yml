@@ -66,6 +66,7 @@ tab:
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
+      add_std_dimension_to_material: Ajouter la dimension {{ std_dimension }} à la matière '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Edit part properties
       folding_part: Unfold / Fold

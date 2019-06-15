@@ -8,14 +8,6 @@ module Ladb::OpenCutList
       self.convert(in_file, "-rotate \"#{angle}\"", out_file)
     end
 
-    def self.colorize(in_file, color, out_file = nil)
-      self.convert(in_file, "-type GrayscaleAlpha -colorize #{color.red / 2.55},#{color.green / 2.55},#{color.blue / 2.55}", out_file)
-    end
-
-    def self.modulate(in_file, colorize_deltas, out_file = nil)
-      self.convert(in_file, "-set option:modulate:colorspace hsl -modulate #{colorize_deltas[1] + 100},#{colorize_deltas[2] + 100},#{colorize_deltas[0] + 100}", out_file)
-    end
-
     # -----
 
     def self.convert(in_file, options, out_file = nil)
