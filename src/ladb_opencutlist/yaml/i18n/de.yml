@@ -66,7 +66,12 @@ tab:
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
-      add_std_dimension_to_material: Ajouter la dimension {{ std_dimension }} à la matière '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Ajouter l'épaisseur *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
+      add_std_section_to_material: |
+        Ajouter la section *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Eigenschaften bearbeiten
       folding_part: Aufklappen / Zuklappen
@@ -362,9 +367,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: |
-        Combiner la teinte dans l'image de la texture
-        *(Cette ation est irréversible)*
+      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen

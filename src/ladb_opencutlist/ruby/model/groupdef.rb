@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_availability_message, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions
+    attr_accessor :material_id, :material_name, :material_type, :part_count, :std_dimension, :std_available, :std_dimension_stipped_name, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -14,7 +14,7 @@ module Ladb::OpenCutList
       @material_type = MaterialAttributes::TYPE_UNKNOW
       @std_dimension = ''
       @std_available = true,
-      @std_availability_message = ''
+      @std_dimension_stipped_name = ''
       @std_width = 0
       @std_thickness = 0
       @max_number = nil
@@ -69,7 +69,8 @@ module Ladb::OpenCutList
           :std_width => @std_width.to_s,
           :std_thickness => @std_thickness.to_s,
           :std_available => @std_available,
-          :std_availability_message => @std_availability_message,
+          :std_dimension_stipped_name => @std_dimension_stipped_name,
+          :std_add_dimension_message => @std_add_dimension_message,
           :total_cutting_length => @total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(@total_cutting_length),
           :total_cutting_area => @total_cutting_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@total_cutting_area),
           :total_cutting_volume => @total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(@total_cutting_volume),
