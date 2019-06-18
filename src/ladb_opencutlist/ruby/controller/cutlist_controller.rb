@@ -243,7 +243,7 @@ module Ladb::OpenCutList
         return x_face_infos, y_face_infos, z_face_infos, layers
       end
 
-      def _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
+      def _face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
         case normal
           when X_AXIS
             x_face_infos
@@ -260,7 +260,7 @@ module Ladb::OpenCutList
 
         # Groups faces by plane
         plane_grouped_face_infos = {}
-        _faces_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
+        _face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos).each { |face_info|
           t = TransformationUtils.multiply(transformation, face_info.transformation)
           transformed_plane = t.nil? ? face_info.face.plane : t * face_info.face.plane
           transformed_plane.map! { |v| v.round(4) }   # Round plane values with only 4 digits
@@ -283,7 +283,7 @@ module Ladb::OpenCutList
         return plane_grouped_face_infos.length, areas.max
       end
 
-      def _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+      def _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
         plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos, instance_info.transformation)
         area = instance_info.size.area_by_axis(axis)
@@ -639,28 +639,28 @@ module Ladb::OpenCutList
             when MaterialAttributes::TYPE_SOLID_WOOD
 
               x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
-              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
-              y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 or y_area_ratio >= 0.7)
+              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 or w_area_ratio >= 0.7)
               part_def.layers = layers
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
               x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
-              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
-              part_def.final_area = z_final_area
-              part_def.not_aligned_on_axes = !(z_plane_count >= 2 and (_faces_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _faces_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.final_area = t_final_area
+              part_def.not_aligned_on_axes = !(t_plane_count >= 2 and (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
               part_def.layers = layers
 
             when MaterialAttributes::TYPE_BAR
 
               x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
-              z_plane_count, z_final_area, z_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
-              y_plane_count, y_final_area, y_area_ratio = _compute_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+              w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.not_aligned_on_axes = !(z_area_ratio >= 0.7 and y_area_ratio >= 0.7 and (z_plane_count >= 2 and y_plane_count >= 2))
+              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 and w_area_ratio >= 0.7 and (t_plane_count >= 2 and w_plane_count >= 2))
               part_def.layers = layers
 
             else
