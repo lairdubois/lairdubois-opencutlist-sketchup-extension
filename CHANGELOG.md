@@ -6,39 +6,39 @@ in 1.x and 0.x versions.
 
 * 1.7.1
 
-  * Added materiel tint capabilities
-  * Added part axes managment
-  * Added add 'unavailable' std dimension to material on cutlist group
- 
-* 1.7.0 (2019-06-10) 
+  * Added material tint capabilities
+  * Added part axes management
+  * Added 'add unavailable' std dimension to material on cutlist group
+
+* 1.7.0 (2019-06-10)
 
   * Added cutlist same size part grouping option
   * Added cutlist export source option
   * Added cutlist hide entity names option
   * Added cutlist real area for sheet good part
   * Added cutlist auto orient display
-  * Added cutlist part orientation check 
-  * Added cutlist multiple layers check 
-  * Added cutlist dimensions help modals 
-  * Added cutlist part edit tabs 
-  * Added materials texture rotation feature 
+  * Added cutlist part orientation check
+  * Added cutlist multiple layers check
+  * Added cutlist dimensions help modals
+  * Added cutlist part edit tabs
+  * Added materials texture rotation feature
   * Added context menu to edit selected part properties from model selection
-  * Added "more" leftbar submenu 
+  * Added "more" leftbar submenu
   * Added new extension icon
-  
+
 * 1.6.3 (2019-05-09)
 
   * Export cutlist labels
-  * New language managment improvement
+  * New language management improvement
   * Fixed cutlist crash on Sketchup 2014
 
 * 1.6.2 (2019-04-23)
 
-  * Add custom language option in settings
-  * Add raw volume in all type of material in cutlist summary
-  * Add cutlist "width" separators if first sort order is width on solid wood material parts
+  * Added custom language option in settings
+  * Added raw volume in all type of material in cutlist summary
+  * Added cutlist "width" separators if first sort order is width on solid wood material parts
   * Fixed Highlight tool bug with simple ComponentInstance children
-  
+
 * 1.6.1 (2019-02-15)
 
   * Reverted i18next javascript lib for compatibility issues

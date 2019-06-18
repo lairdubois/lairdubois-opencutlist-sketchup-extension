@@ -31,7 +31,7 @@ default:
   part_plural: Teile
   more: Mehr
   more_docs: Dokus
-  more_reviews: Avis
+  more_reviews: Meinungen
   more_plans: Pläne
   more_extensions: Plugins
 core:
@@ -67,11 +67,11 @@ tab:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
       add_std_thickness_to_material: |
-        Ajouter l'épaisseur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        Dicke *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
       add_std_section_to_material: |
-        Ajouter la section *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        Querschnitt *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Eigenschaften bearbeiten
       folding_part: Aufklappen / Zuklappen
@@ -103,8 +103,8 @@ tab:
       group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'...
       edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
-      expand_all: Falte alle identischen Teile auseinander
-      collapse_all: Falten Sie alle identischen Teile
+      expand_all: Identische Teile aufklappen
+      collapse_all: Identische Teile zuklappen
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       general: Allgemein
@@ -114,12 +114,12 @@ tab:
       material: Material
       cumulable: Summierbar
       cumulable_help: |
-        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire de débit multipliée par la quantité.
+        Ist diese Option aktiv, wird die **Länge** oder die **Breite** beim Sortieren der Holzliste als **Einheitslänge** oder **Einheitsbreite** mal Anzahl gerechnet.
 
-        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
+        <i class='ladb-opencutlist-icon-warning'></i> *Diese Option wird nicht berücksichtigt, wenn dieses Teil mit anderen identischen Teilen gruppiert wird.*
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
-      cumulable_2: Summierbar über die Breiteachse
+      cumulable_2: Summierbar über die Breitachse
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -134,17 +134,17 @@ tab:
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
         Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
-      axes: Axes
-      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes: Achsen
+      axes_help: Zuordnen der Dimensionen um diese mit den Achsenfarben übereinstimmen zu lassen.
       axes_tip: |
-        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
-         - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
-         - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
-         - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
-      axes_origin_position_none: Ne pas changer l'origine
-      axes_origin_position_min: Placer l'origine à l'extrémité
-      axes_origin_position_center: Placer l'origine au centre
-      axes_origin_position_min_center: Placer l'origine au centre de l'extrémité
+        Als Hinweis gilt, wenn *Automatische Orientierung der Teile* nicht aktiv ist oder das Teil *An das Koordinatensystem gebunden ist*, dann wird :
+         - die **Länge** auf der <strong style='color:red'>roten</strong> Achse,
+         - die **Breite** auf der <strong style='color:green'>grünen</strong> Achse und
+         - die **Dicke** auf der <strong style='color:blue'>blauen</strong> Achse gelesen.
+      axes_origin_position_none: Koordinatenursprung nicht ändern
+      axes_origin_position_min: Koordinatenursprung in einer Ecke
+      axes_origin_position_center: Koordinatenursprung im Zentrum
+      axes_origin_position_min_center: Koordinatenursprung in der Mitte einer Seite
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -200,7 +200,7 @@ tab:
       filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
       labels_filter: "Filteretiketten"
-      dimensions_help: Comprendre les dimensions...
+      dimensions_help: Erklärung der Dimensionen...
       summary: Übersicht
       material_type: Typ
       material_thickness: Material / Dicke
@@ -214,7 +214,7 @@ tab:
       cutting: Rohmass
       bbox: Fertigmass
       final: Effektiv
-      total_cutting: Σ Rohmass
+      total_cutting: Σ Rohmasse
       total_final: Σ Effektiv
       length: Länge
       length_short: L
@@ -337,7 +337,7 @@ tab:
       no_component_in_selection: Keine Instanz einer Komponente wurde in der Auswahl gefunden.
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei.
-      unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
+      unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).
@@ -366,8 +366,8 @@ tab:
       type_3: Materialtyp '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
+      colorized: Diese Farbschattierung wird bei der Wiedergabe im Modell auf die Textur des Material angewendet
+      texture_colorized: Farbschattierung definitiv auf die Textur anwenden
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen
@@ -397,7 +397,7 @@ tab:
         Erwartetes Format : **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       grained: Faserrichtung
-      grained_help: Konfiguriert die Faserrichtung der Platte.
+      grained_help: Faserrichtung der Platte.
       grained_0: keine Faserrichtung
       grained_1: Faser in Längsrichtung
       cut_options_defaults:

@@ -31,7 +31,7 @@ default:
   part_plural: parts
   more: More
   more_docs: Docs
-  more_reviews: Avis
+  more_reviews: Opinions
   more_plans: Plans
   more_extensions: Extensions
 core:
@@ -67,11 +67,11 @@ tab:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
       add_std_thickness_to_material: |
-        Ajouter l'épaisseur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        Add thickness *{{ std_dimension }}*
+        to material '{{ material_name }}'
       add_std_section_to_material: |
-        Ajouter la section *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        Add cross section *{{ std_dimension }}*
+        to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: Edit part properties
       folding_part: Unfold / Fold
@@ -103,8 +103,8 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       edit_material: Edit material '{{ material }}'...
       edit_group_properties: Edit properties of this group
-      expand_all: Unfold all identical parts
-      collapse_all: Fold all identical parts
+      expand_all: Unfold identical parts
+      collapse_all: Fold identical parts
     edit_part:
       title: Properties of Part '{{ name }}'
       general: General
@@ -135,16 +135,16 @@ tab:
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
       axes: Axes
-      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
-        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
-         - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
-         - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
-         - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
-      axes_origin_position_none: Ne pas changer l'origine
-      axes_origin_position_min: Placer l'origine à l'extrémité
-      axes_origin_position_center: Placer l'origine au centre
-      axes_origin_position_min_center: Placer l'origine au centre de l'extrémité
+        It must be noted that if the option *Automatic orientation of parts* is not active or if the part is *locked on its axes* then :
+         - the **length** is read on the <strong style='color:red'>red</strong> axes,
+         - the **width** is read on the <strong style='color:green'>green</strong> axes and
+         - the **thickness** is read on the <strong style='color:blue'>blue</strong> axes.
+      axes_origin_position_none: Do not change the origin
+      axes_origin_position_min: Place the origin in a corner
+      axes_origin_position_center: Place the origin in the center
+      axes_origin_position_min_center: Place the origin in the middle of an end
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -200,7 +200,7 @@ tab:
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       labels_filter: "Labels to filter"
-      dimensions_help: Comprendre les dimensions...
+      dimensions_help: Illustration of the dimensions...
       summary: Summary
       material_type: Type
       material_thickness: Material / Thickness
@@ -337,7 +337,7 @@ tab:
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: Failed to write the export file.
-      unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
+      unknow_part: The selected part does not exist in the parts list.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).
@@ -366,8 +366,8 @@ tab:
       type_3: Material type '$t(tab.materials.type_3)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
+      colorized: This tone will be applied to the texture of this material when it is rendered in the model
+      texture_colorized: Combine definitely this tone in the texture image
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
