@@ -1706,7 +1706,7 @@
                 that.showOutdated('core.event.options_change');
             }
         });
-        addEventCallback('on_material_change', function () {
+        addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
             if (that.generateAt) {
                 that.showOutdated('core.event.material_change');
             }

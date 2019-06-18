@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require 'singleton'
+
   class SelectionObserver < Sketchup::SelectionObserver
+
+    include Singleton
 
     def onSelectionBulkChange(selection)
       # puts "onSelectionBulkChange: #{selection}"

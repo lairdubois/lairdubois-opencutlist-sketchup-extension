@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require 'singleton'
+
   class OptionsProviderObserver < Sketchup::OptionsProviderObserver
+
+    include Singleton
 
     def onOptionsProviderChanged(provider, name)
       # puts "onOptionsProviderChanged: #{name}"

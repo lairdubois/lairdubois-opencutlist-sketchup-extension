@@ -217,7 +217,7 @@ module Ladb::OpenCutList
 
         # -- Observers --
 
-        Sketchup.add_observer(AppObserver.new)
+        Sketchup.add_observer(AppObserver.instance)
 
         # -- Controllers --
 

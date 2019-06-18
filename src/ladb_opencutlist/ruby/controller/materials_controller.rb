@@ -178,9 +178,16 @@ module Ladb::OpenCutList
 
       if material
 
+        trigger_change_event = true
+
         # Update properties
         if display_name != material.name
+
           material.name = display_name
+
+          # In this case the event will be triggered by SU itself
+          trigger_change_event = false
+
         end
 
         # Update texture
@@ -225,6 +232,11 @@ module Ladb::OpenCutList
         material_attributes.std_sizes = std_sizes
         material_attributes.grained = grained
         material_attributes.write_to_attributes
+
+        # Trigger change event on materials observer if needed
+        if trigger_change_event
+          MaterialsObserver.instance.onMaterialChange(materials, material)
+        end
 
       end
 

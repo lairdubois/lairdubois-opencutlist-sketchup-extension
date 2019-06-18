@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require 'singleton'
+
   class MaterialsObserver < Sketchup::MaterialsObserver
+
+    include Singleton
 
     def onMaterialAdd(materials, material)
       # puts "onMaterialAdd: #{material}"

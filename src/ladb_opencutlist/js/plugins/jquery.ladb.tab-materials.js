@@ -212,7 +212,27 @@
     };
 
     LadbTabMaterials.prototype.purgeUnused = function () {
-        rubyCallCommand('materials_purge_unused');
+        var that = this;
+
+        // Flag to ignore next material change event
+        that.ignoreNextMaterialChangeEvent = true;
+
+        rubyCallCommand('materials_purge_unused', null, function (response) {
+
+            if (response.errors && response.errors.length > 0) {
+
+                // Flag to stop ignoring next material change event
+                that.ignoreNextMaterialChangeEvent = false;
+
+                for (var i = 0; i < response.errors.length; i++) {
+                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                }
+
+            } else {
+                that.loadList();
+            }
+
+        });
     };
 
     // Material /////
