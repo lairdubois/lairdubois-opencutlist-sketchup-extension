@@ -2,6 +2,7 @@
 {# set materialOrigin #}
 {# set displayOwned (facultative) #}
 {# set flat (facultative) #}
+{# set attr (facultative) #}
 
 {% set displayOwned = displayOwned|default(false) %}
 {% set flat = flat|default(false) %}
@@ -16,7 +17,7 @@
                 </div>
             </div>
         {% else %}
-            <a class="ladb-tool-info" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
+            <a{% if attr is defined %} href="#"{% endif %} class="ladb-tool-info"{% if attr is defined %} {{ attr }}{% endif %} data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
         {% endif %}
     {% endif %}
 {% endfor %}
