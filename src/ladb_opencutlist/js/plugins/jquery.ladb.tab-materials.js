@@ -416,6 +416,9 @@
                     $inputTextureHeight.val(tw);
                     material.texture_ratio = 1 / material.texture_ratio;
                 }
+                if (!material.texture_colorizable) {
+                    $btnTextureColorized.removeClass('hide');
+                }
             };
 
             var getMaterialTexture = function (colorized) {

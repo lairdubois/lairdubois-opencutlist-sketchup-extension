@@ -34,6 +34,7 @@ default:
   more_reviews: Opinions
   more_plans: Plans
   more_extensions: Extensions
+  feature_locked: "*Not deactivable in this version of Sketchup*"
 core:
   menu:
     submenu: OpenCutList
