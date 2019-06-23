@@ -471,6 +471,9 @@ module Ladb::OpenCutList
         end
         material_attributes.write_to_attributes
 
+        # Trigger change event on materials observer
+        MaterialsObserver.instance.onMaterialChange(materials, material)
+
       end
 
       { :success => true }

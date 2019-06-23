@@ -41,7 +41,7 @@
 
         this.materials = [];
         this.editedMaterial = null;
-        this.ignoreNextMaterialChangeEvent = false;
+        this.ignoreNextMaterialEvent = false;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -133,7 +133,7 @@
         $btnRemove.on('click', function () {
 
             // Flag to ignore next material change event
-            that.ignoreNextMaterialChangeEvent = true;
+            that.ignoreNextMaterialEvent = true;
 
             rubyCallCommand('materials_remove', {
                 name: material.name,
@@ -143,11 +143,9 @@
                 if (response.errors && response.errors.length > 0) {
 
                     // Flag to stop ignoring next material change event
-                    that.ignoreNextMaterialChangeEvent = false;
+                    that.ignoreNextMaterialEvent = false;
 
-                    for (var i = 0; i < response.errors.length; i++) {
-                        that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                    }
+                    that.opencutlist.notifyErrors(response.errors);
 
                 } else {
                     that.loadList();
@@ -169,18 +167,16 @@
         var that = this;
 
         // Flag to ignore next material change event
-        that.ignoreNextMaterialChangeEvent = true;
+        that.ignoreNextMaterialEvent = true;
 
         rubyCallCommand('materials_import_from_skm', null, function (response) {
 
             if (response.errors && response.errors.length > 0) {
 
                 // Flag to stop ignoring next material change event
-                that.ignoreNextMaterialChangeEvent = false;
+                that.ignoreNextMaterialEvent = false;
 
-                for (var i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                }
+                that.opencutlist.notifyErrors(response.errors);
 
             } else {
                 that.loadList();
@@ -215,18 +211,16 @@
         var that = this;
 
         // Flag to ignore next material change event
-        that.ignoreNextMaterialChangeEvent = true;
+        that.ignoreNextMaterialEvent = true;
 
         rubyCallCommand('materials_purge_unused', null, function (response) {
 
             if (response.errors && response.errors.length > 0) {
 
                 // Flag to stop ignoring next material change event
-                that.ignoreNextMaterialChangeEvent = false;
+                that.ignoreNextMaterialEvent = false;
 
-                for (var i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                }
+                that.opencutlist.notifyErrors(response.errors);
 
             } else {
                 that.loadList();
@@ -527,11 +521,15 @@
                 if ($btnTextureSizeLock.data('locked')) {
                     $i.addClass('ladb-opencutlist-icon-unlock');
                     $i.removeClass('ladb-opencutlist-icon-lock');
-                    $btnTextureSizeLock.data('locked', false);
+                    $btnTextureSizeLock
+                        .data('locked', false)
+                        .removeClass('active');
                 } else {
                     $i.removeClass('ladb-opencutlist-icon-unlock');
                     $i.addClass('ladb-opencutlist-icon-lock');
-                    $btnTextureSizeLock.data('locked', true);
+                    $btnTextureSizeLock
+                        .data('locked', true)
+                        .addClass('active');
                 }
                 this.blur();
             });
@@ -560,7 +558,7 @@
                 that.editedMaterial.attributes.grained = $selectGrained.val() === '1';
 
                 // Flag to ignore next material change event
-                that.ignoreNextMaterialChangeEvent = true;
+                that.ignoreNextMaterialEvent = true;
 
                 rubyCallCommand('materials_update', that.editedMaterial, function (response) {
 
@@ -663,10 +661,10 @@
             that.showOutdated('core.event.model_change');
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
-            if (!that.ignoreNextMaterialChangeEvent) {
+            if (!that.ignoreNextMaterialEvent) {
                 that.showOutdated('core.event.material_change');
-                that.ignoreNextMaterialChangeEvent = false;
             }
+            that.ignoreNextMaterialEvent = false;
         });
 
     };
