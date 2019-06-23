@@ -4,8 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.7.1
+* 1.7.1 (2019-06-23)
 
+  * Adding missing translations
   * Added material tint capabilities
   * Added part axes management
   * Added 'add unavailable' std dimension to material on cutlist group
