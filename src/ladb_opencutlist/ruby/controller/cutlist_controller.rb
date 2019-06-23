@@ -1282,34 +1282,51 @@ module Ladb::OpenCutList
         # Transform part axes if axes order exist
         if axes_order.is_a?(Array) and axes_order.length == 3
 
-          # Convert axes order to Vector3D array
-          axes_order.map! { |axis|
-            (axis == 'x' ? X_AXIS : (axis == 'y' ? Y_AXIS : Z_AXIS))
+          axes_convertor = {
+              'x' => X_AXIS,
+              'y' => Y_AXIS,
+              'z' => Z_AXIS
           }
 
-          # Manage origin
-          if axes_origin_position
+          # Convert axes order to Vector3D array
+          axes_order.map! { |axis|
+            axes_convertor[axis]
+          }
 
-            # Compute definition bounds
-            bounds = _compute_faces_bounds(definition)
+          # Create transformations
+          ti = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2])
+          t = ti.inverse
 
-            case axes_origin_position
-              when 'min'
-                origin = bounds.min
-              when 'center'
-                origin = bounds.center
-              when 'min-center'
-                origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
-              else
-                origin = ORIGIN
-            end
+          # Transform definition's entities
+          entities = definition.entities
+          entities.transform_entities(t, entities.to_a)
 
-          else
-            origin = ORIGIN
+          # Inverse transform definition's instances
+          definition.instances.each { |instance|
+            instance.transformation *= ti
+          }
+
+        end
+
+        # Manage origin if position exist
+        if axes_origin_position
+
+          # Compute definition bounds
+          bounds = _compute_faces_bounds(definition)
+
+          case axes_origin_position
+            when 'min'
+              origin = bounds.min
+            when 'center'
+              origin = bounds.center
+            when 'min-center'
+              origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
+            else
+              origin = ORIGIN
           end
 
           # Create transformations
-          ti = Geom::Transformation.axes(origin, axes_order[0], axes_order[1], axes_order[2])
+          ti = Geom::Transformation.axes(origin, X_AXIS, Y_AXIS, Z_AXIS)
           t = ti.inverse
 
           # Transform definition's entities

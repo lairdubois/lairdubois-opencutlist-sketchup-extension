@@ -145,7 +145,7 @@ tab:
       axes_origin_position_none: Ne pas changer l'origine
       axes_origin_position_min: Placer l'origine à l'extrémité
       axes_origin_position_center: Placer l'origine au centre
-      axes_origin_position_min_center: Placer l'origine au centre de l'extrémité
+      axes_origin_position_min_center: Placer l'origine au centre d'une face
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
