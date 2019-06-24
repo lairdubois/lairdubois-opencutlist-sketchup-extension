@@ -41,7 +41,7 @@
 
         this.materials = [];
         this.editedMaterial = null;
-        this.ignoreNextMaterialEvent = false;
+        this.ignoreNextMaterialEvents = false;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -133,20 +133,18 @@
         $btnRemove.on('click', function () {
 
             // Flag to ignore next material change event
-            that.ignoreNextMaterialEvent = true;
+            that.ignoreNextMaterialEvents = true;
 
             rubyCallCommand('materials_remove', {
                 name: material.name,
                 display_name: material.display_name
             }, function (response) {
 
+                // Flag to stop ignoring next material change event
+                that.ignoreNextMaterialEvents = false;
+
                 if (response.errors && response.errors.length > 0) {
-
-                    // Flag to stop ignoring next material change event
-                    that.ignoreNextMaterialEvent = false;
-
                     that.opencutlist.notifyErrors(response.errors);
-
                 } else {
                     that.loadList();
                 }
@@ -167,17 +165,15 @@
         var that = this;
 
         // Flag to ignore next material change event
-        that.ignoreNextMaterialEvent = true;
+        that.ignoreNextMaterialEvents = true;
 
         rubyCallCommand('materials_import_from_skm', null, function (response) {
 
+            // Flag to stop ignoring next material change event
+            that.ignoreNextMaterialEvents = false;
+
             if (response.errors && response.errors.length > 0) {
-
-                // Flag to stop ignoring next material change event
-                that.ignoreNextMaterialEvent = false;
-
                 that.opencutlist.notifyErrors(response.errors);
-
             } else {
                 that.loadList();
             }
@@ -211,17 +207,15 @@
         var that = this;
 
         // Flag to ignore next material change event
-        that.ignoreNextMaterialEvent = true;
+        that.ignoreNextMaterialEvents = true;
 
         rubyCallCommand('materials_purge_unused', null, function (response) {
 
+            // Flag to stop ignoring next material change event
+            that.ignoreNextMaterialEvents = false;
+
             if (response.errors && response.errors.length > 0) {
-
-                // Flag to stop ignoring next material change event
-                that.ignoreNextMaterialEvent = false;
-
                 that.opencutlist.notifyErrors(response.errors);
-
             } else {
                 that.loadList();
             }
@@ -558,19 +552,17 @@
                 that.editedMaterial.attributes.grained = $selectGrained.val() === '1';
 
                 // Flag to ignore next material change event
-                that.ignoreNextMaterialEvent = true;
+                that.ignoreNextMaterialEvents = true;
 
                 rubyCallCommand('materials_update', that.editedMaterial, function (response) {
 
+                    // Flag to stop ignoring next material change event
+                    that.ignoreNextMaterialEvents = false;
+
                     if (response['errors']) {
-
                         that.opencutlist.notifyErrors(response['errors']);
-
                     } else {
-
-                        // Refresh the list
                         that.loadList();
-
                     }
 
                     // Reset edited material
@@ -661,10 +653,9 @@
             that.showOutdated('core.event.model_change');
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
-            if (!that.ignoreNextMaterialEvent) {
+            if (!that.ignoreNextMaterialEvents) {
                 that.showOutdated('core.event.material_change');
             }
-            that.ignoreNextMaterialEvent = false;
         });
 
     };

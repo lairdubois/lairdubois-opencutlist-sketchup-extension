@@ -106,7 +106,7 @@
         this.groups = [];
         this.editedPart = null;
         this.editedGroup = null;
-        this.ignoreNextMaterialEvent = false;
+        this.ignoreNextMaterialEvents = false;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -302,17 +302,15 @@
                 if (group) {
 
                     // Flag to ignore next material change event
-                    that.ignoreNextMaterialEvent = true;
+                    that.ignoreNextMaterialEvents = true;
 
                     rubyCallCommand('materials_add_std_dimension_command', { material_name:group.material_name, std_dimension: group.std_dimension }, function (response) {
 
+                        // Flag to stop ignoring next material change event
+                        that.ignoreNextMaterialEvents = false;
+
                         if (response['errors']) {
-
-                            // Flag to stop ignoring next material change event
-                            that.ignoreNextMaterialEvent = false;
-
                             that.opencutlist.notifyErrors(response['errors']);
-
                         } else {
 
                             var wTop = $group.offset().top - $(window).scrollTop();
@@ -1720,12 +1718,11 @@
             }
         });
         addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
-            if (!that.ignoreNextMaterialEvent) {
+            if (!that.ignoreNextMaterialEvents) {
                 if (that.generateAt) {
                     that.showOutdated('core.event.material_change');
                 }
             }
-            that.ignoreNextMaterialEvent = false;
         });
         addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function () {
             if (that.generateAt) {

@@ -17,7 +17,7 @@ module Ladb::OpenCutList
     end
 
     def onMaterialChange(materials, material)
-      # puts "onMaterialChange: #{material}"
+      puts "onMaterialChange: #{material}"
       Plugin.instance.trigger_event('on_material_change', { :material_name => material.name })
     end
 

@@ -155,7 +155,7 @@
     end
 
     def append_std_thickness(std_thickness)
-      @std_thicknesses = @std_thicknesses.split(';').push(std_thickness).join(';')
+      @std_thicknesses = @std_thicknesses.empty? ? std_thickness : [ @std_thicknesses, std_thickness].join(';')
     end
 
     def l_std_thicknesses
@@ -177,7 +177,7 @@
     end
 
     def append_std_section(std_section)
-      @std_sections = @std_sections.split(';').push(std_section).join(';')
+      @std_sections = @std_sections.empty? ? std_thickness : [ @std_sections, std_section].join(';')
     end
 
     def l_std_sections

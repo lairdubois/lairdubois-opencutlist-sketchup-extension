@@ -29,12 +29,6 @@ default:
   unit_4: Meter
   part_single: part
   part_plural: parts
-  more: More
-  more_docs: Docs
-  more_reviews: Opinions
-  more_plans: Plans
-  more_extensions: Extensions
-  feature_locked: "*Not deactivable in this version of Sketchup*"
 core:
   menu:
     submenu: OpenCutList
@@ -43,10 +37,17 @@ core:
     command: OpenCutList
   dialog:
     title: OpenCutList by L'Air du Bois
+  leftbar:
+    more: More
+    more_docs: Docs
+    more_reviews: Reviews
+    more_plans: Plans
+    more_extensions: Extensions
   warning:
     old_su: |
       You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
       To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
+    feature_locked: "*Not deactivable in this version of Sketchup*"
   event:
     model_change: The active model has been changed.
     options_change: Options in the model have changed.

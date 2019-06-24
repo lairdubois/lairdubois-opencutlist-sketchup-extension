@@ -29,12 +29,6 @@ default:
   unit_4: Mètres
   part_single: pièce
   part_plural: pièces
-  more: Plus
-  more_docs: Docs
-  more_reviews: Avis
-  more_plans: Plans
-  more_extensions: Plugins
-  feature_locked: "*Non désactivable dans cette version de Sketchup*"
 core:
   menu:
     submenu: OpenCutList
@@ -43,10 +37,17 @@ core:
     command: OpenCutList
   dialog:
     title: OpenCutList by L'Air du Bois
+  leftbar:
+    more: Plus
+    more_docs: Docs
+    more_reviews: Avis
+    more_plans: Plans
+    more_extensions: Plugins
   warning:
     old_su: |
       Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
       Pour profiter pleinement de ce plugin, il est préconisé d'utiliser **Sketchup 2017**.
+    feature_locked: "*Non désactivable dans cette version de Sketchup*"
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
