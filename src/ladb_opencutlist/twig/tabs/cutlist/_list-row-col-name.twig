@@ -4,9 +4,9 @@
     {% else %}
         {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
         {% if part.multiple_layers %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
-        {% if part.auto_oriented %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
-        {% if part.resized %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
-        {% if part.orientation_locked_on_axis %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
+        {% if part.auto_oriented and not uiOptions.hide_untyped_material_dimensions %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
+        {% if part.resized and not uiOptions.hide_untyped_material_dimensions %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
+        {% if part.orientation_locked_on_axis and not uiOptions.hide_untyped_material_dimensions %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
         {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'attr':'data-tab="infos"' } %}
     {% endif %}
     <span class="ladb-separator"></span>

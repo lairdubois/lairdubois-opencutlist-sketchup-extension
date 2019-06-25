@@ -94,7 +94,7 @@
         </tr>
         {% for group in groups %}
             <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in uiOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
-                <td class="text-center">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}</td>
+                <td class="text-center">{% if group.material_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
@@ -169,7 +169,9 @@
                         <li><a class="ladb-item-numbers-reset" href="#"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_numbers_reset'|i18next }}</a></li>
                     </ul>
                 </div>
-                {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
+                {% if group.material_name is not empty %}
+                    {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
+                {% endif %}
                 <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}</div>
             </td>
         </tr>

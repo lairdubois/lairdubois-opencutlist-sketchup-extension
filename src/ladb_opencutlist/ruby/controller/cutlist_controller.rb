@@ -578,6 +578,7 @@ module Ladb::OpenCutList
           group_def.material_id = material_id
           group_def.material_name = material_name
           group_def.material_type = material_attributes.type
+          group_def.material_color = material.color if material
           group_def.std_dimension = std_info[:dimension]
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
@@ -776,7 +777,8 @@ module Ladb::OpenCutList
       part_number = cutlist_def.max_number ? cutlist_def.max_number.succ : (part_number_with_letters ? 'A' : '1')
 
       # Sort and browse groups
-      cutlist_def.group_defs.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_type), v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each { |key, group_def|
+
+      cutlist_def.group_defs.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_type), v.material_name.empty? ? '~' : v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each { |key, group_def|
 
         if part_number_sequence_by_group
           part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
