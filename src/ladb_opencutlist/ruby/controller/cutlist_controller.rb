@@ -428,6 +428,8 @@ module Ladb::OpenCutList
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_folding = settings['part_folding']
       part_order_strategy = settings['part_order_strategy']
+      hide_labels = settings['hide_labels']
+      hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
       hide_final_areas = settings['hide_final_areas']
       labels_filter = settings['labels_filter']
 
@@ -791,7 +793,7 @@ module Ladb::OpenCutList
         if part_folding and group_def.material_type > MaterialAttributes::TYPE_UNKNOW   # Only parts with typed material can be grouped
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and folder_part_def.labels == part_def.labels and ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas)    # final_area workaround for rounding error
+            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and (folder_part_def.labels == part_def.labels or hide_labels) and ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas)    # final_area workaround for rounding error
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
