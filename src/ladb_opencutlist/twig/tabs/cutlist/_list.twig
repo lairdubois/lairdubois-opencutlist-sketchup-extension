@@ -245,7 +245,7 @@
             </tr>
             {% if part.children %}
                 {% for partChild in part.children %}
-                    <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
+                    <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
                         <td class="text-center" style="color: red;">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
                         </td>

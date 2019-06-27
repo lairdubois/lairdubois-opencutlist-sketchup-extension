@@ -179,12 +179,12 @@
             // Update buttons and items state
             that.$btnPrint.prop('disabled', groups.length == 0);
             that.$btnExport.prop('disabled', groups.length == 0);
-            that.$itemHighlightAllParts.closest('li').toggleClass('disabled', groups.length == 0);
-            that.$itemShowAllGroups.closest('li').toggleClass('disabled', groups.length == 0);
-            that.$itemNumbersSave.closest('li').toggleClass('disabled', groups.length == 0);
-            that.$itemNumbersReset.closest('li').toggleClass('disabled', groups.length == 0);
-            that.$itemExpendAll.closest('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
-            that.$itemCollapseAll.closest('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
+            that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length == 0);
+            that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length == 0);
+            that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length == 0);
+            that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length == 0);
+            that.$itemExpendAll.parents('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
+            that.$itemCollapseAll.parents('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
 
             // Update page
             that.$page.empty();
@@ -276,7 +276,7 @@
             });
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 if ($group.hasClass('no-print')) {
                     that.showGroup($group);
                 } else {
@@ -296,7 +296,7 @@
             });
             $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 var group = that.findGroupById(groupId);
                 if (group) {
@@ -335,7 +335,7 @@
             });
             $('a.ladb-item-edit-material', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 var group = that.findGroupById(groupId);
                 if (group) {
@@ -346,26 +346,26 @@
             });
             $('a.ladb-item-edit-group', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.editGroup(groupId);
             });
             $('a.ladb-item-highlight-group-parts', that.$page).on('click', function () {
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.highlightGroupParts(groupId);
                 $(this).blur();
             });
             $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
                 that.$rootSlide.animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersSave({ group_id: groupId }, function () {
@@ -374,7 +374,7 @@
             });
             $('a.ladb-item-numbers-reset', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 var wTop = $group.offset().top - $(window).scrollTop();
                 that.numbersReset({ group_id: groupId }, function () {
@@ -383,19 +383,19 @@
             });
             $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.cuttingdiagram2dGroup(groupId);
             });
             $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
                 $(this).blur();
-                var $group = $(this).closest('.ladb-cutlist-group');
+                var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.dimensionsHelpGroup(groupId);
             });
             $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
                 $(this).blur();
-                var $part = $(this).closest('.ladb-cutlist-row');
+                var $part = $(this).parents('.ladb-cutlist-row');
                 var partId = $part.data('part-id');
                 var tab = $(this).data('tab');
                 that.editPart(partId, null, tab);
@@ -403,21 +403,21 @@
             });
             $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
                 $(this).blur();
-                var $part = $(this).closest('.ladb-cutlist-row');
+                var $part = $(this).parents('.ladb-cutlist-row');
                 var partId = $part.data('part-id');
                 that.highlightPart(partId);
                 return false;
             });
             $('a.ladb-btn-edit-part', that.$page).on('click', function () {
                 $(this).blur();
-                var $part = $(this).closest('.ladb-cutlist-row');
+                var $part = $(this).parents('.ladb-cutlist-row');
                 var partId = $part.data('part-id');
                 that.editPart(partId);
                 return false;
             });
             $('a.ladb-btn-folding-toggle-part', that.$page).on('click', function () {
                 $(this).blur();
-                var $part = $(this).closest('.ladb-cutlist-row-folder');
+                var $part = $(this).parents('.ladb-cutlist-row-folder');
                 that.toggleFoldingPart($part);
                 return false;
             });
@@ -1225,7 +1225,7 @@
                             });
 
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                var $group = $(this).closest('.ladb-cutlist-group');
+                                var $group = $(this).parents('.ladb-cutlist-group');
                                 if ($group.hasClass('no-print')) {
                                     that.showGroup($group);
                                 } else {
@@ -1234,7 +1234,7 @@
                                 $(this).blur();
                             });
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                                var $group = $(this).closest('.ladb-cutlist-group');
+                                var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
@@ -1244,7 +1244,7 @@
                                 return false;
                             });
                             $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                                var $group = $(this).closest('.ladb-cutlist-group');
+                                var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
@@ -1657,25 +1657,25 @@
             this.blur();
         });
         this.$itemHighlightAllParts.on('click', function () {
-            if (!$(this).closest('li').hasClass('disabled')) {
+            if (!$(this).parents('li').hasClass('disabled')) {
                 that.highlightAllParts();
             }
             this.blur();
         });
         this.$itemShowAllGroups.on('click', function () {
-            if (!$(this).closest('li').hasClass('disabled')) {
+            if (!$(this).parents('li').hasClass('disabled')) {
                 that.showAllGroups();
             }
             this.blur();
         });
         this.$itemNumbersSave.on('click', function () {
-            if (!$(this).closest('li').hasClass('disabled')) {
+            if (!$(this).parents('li').hasClass('disabled')) {
                 that.numbersSave();
             }
             this.blur();
         });
         this.$itemNumbersReset.on('click', function () {
-            if (!$(this).closest('li').hasClass('disabled')) {
+            if (!$(this).parents('li').hasClass('disabled')) {
                 that.numbersReset();
             }
             this.blur();
