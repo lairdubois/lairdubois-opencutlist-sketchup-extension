@@ -116,9 +116,9 @@ tab:
       material: Material
       cumulable: Summable
       cumulable_help: |
-        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire de débit multipliée par la quantité.
+        If this option is selected, the **length** or the **width** will be considered **unit length** or **unit width** multiplied by the count when sorting the parts list.
 
-        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
+        <i class='ladb-opencutlist-icon-warning'></i> *This option will not be considered when this part is grouped with other identical parts.*
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
@@ -139,7 +139,7 @@ tab:
       axes: Axes
       axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
-        It must be noted that if the option *Automatic orientation of parts* is not active or if the part is *locked on its axes* then :
+        Note that if the option *Automatic orientation of parts* is not active or the part is *locked on its axes* then :
          - the **length** is read on the <strong style='color:red'>red</strong> axes,
          - the **width** is read on the <strong style='color:green'>green</strong> axes and
          - the **thickness** is read on the <strong style='color:blue'>blue</strong> axes.
