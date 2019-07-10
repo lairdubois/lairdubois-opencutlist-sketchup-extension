@@ -424,6 +424,7 @@ module Ladb::OpenCutList
       # Check settings
       auto_orient = settings['auto_orient']
       smart_material = settings['smart_material']
+      dynamic_attributes_name = settings['dynamic_attributes_name']
       part_number_with_letters = settings['part_number_with_letters']
       part_number_sequence_by_group = settings['part_number_sequence_by_group']
       part_folding = settings['part_folding']
@@ -625,7 +626,7 @@ module Ladb::OpenCutList
           part_def.definition_id = definition.name
           part_def.number = number
           part_def.saved_number = definition_attributes.number
-          part_def.name = definition.name
+          part_def.name, part_def.is_dynamic_attributes_name = definition_attributes.read_name(dynamic_attributes_name)
           part_def.scale = instance_info.scale
           part_def.cutting_size = cutting_size
           part_def.size = size

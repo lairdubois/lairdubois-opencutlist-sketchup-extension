@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-dynamic-component:before {
+  content: "\e94b";
+}
 .ladb-opencutlist-icon-origin-min-center:before {
   content: "\e948";
 }

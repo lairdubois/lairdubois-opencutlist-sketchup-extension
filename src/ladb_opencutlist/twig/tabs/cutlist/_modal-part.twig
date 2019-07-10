@@ -110,6 +110,14 @@
         <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
             <div class="col-sm-offset-1 col-sm-10">
                 {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                {% if part.is_dynamic_attributes_name %}
+                    <div class="media">
+                        <div class="media-left"><i class="ladb-opencutlist-icon-dynamic-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                        <div class="media-body">
+                            {{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}
+                        </div>
+                    </div>
+                {% endif %}
                 {% if part.auto_oriented %}
                     <div class="media">
                         <div class="media-left"><i class="ladb-opencutlist-icon-auto-oriented ladb-opencutlist-icon-lg ladb-color-info"></i></div>

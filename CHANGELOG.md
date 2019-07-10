@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.7.2
 
+  * Added cutlist dynamic component names option
   * Export cutlist instance names
   
 * 1.7.1 (2016-06-30)

@@ -94,6 +94,7 @@ tab:
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
+      is_dynamic_attributes_name: La désignation de cette pièce est issue de l'attribut 'Name' du composant dynamique
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -164,6 +165,8 @@ tab:
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       smart_material: "*Intelligente* Zuweisung des Materials"
       smart_material_help: Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen.
+      dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
+      dynamic_attributes_name_help: Si cette option est activée, la désignation des pièces étant des composants dynamiques sera extraite de l'attribut *Name* s'il est défini.
       part_number_with_letters: Buchstaben zur Aufzählung verwenden
       part_number_with_letters_help: Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) aufgezählt, andernfalls werden sie mit Nummern versehen.
       part_number_sequence_by_group: Aufzählung der Teile für jede Gruppe neu initialisieren

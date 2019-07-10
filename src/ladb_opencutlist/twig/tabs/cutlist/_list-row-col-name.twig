@@ -4,6 +4,7 @@
     {% else %}
         {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
         {% if part.multiple_layers %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
+        {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
         {% if showBoxDimensions %}
             {% if part.auto_oriented %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
             {% if part.resized %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}

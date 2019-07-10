@@ -94,6 +94,7 @@ tab:
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
+      is_dynamic_attributes_name: La désignation de cette pièce est issue de l'attribut 'Name' du composant dynamique
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -164,6 +165,8 @@ tab:
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       smart_material: Attribution *intelligente* des matières
       smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
+      dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
+      dynamic_attributes_name_help: Si cette option est activée, la désignation des pièces étant des composants dynamiques sera extraite de l'attribut *Name* s'il est défini.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
       part_number_with_letters_help: Si cette option est activée, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe

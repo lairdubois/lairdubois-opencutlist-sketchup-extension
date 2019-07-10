@@ -94,6 +94,7 @@ tab:
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
+      is_dynamic_attributes_name: La désignation de cette pièce est issue de l'attribut 'Name' du composant dynamique
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -164,6 +165,8 @@ tab:
          - *thickness* is on the <span style='color:blue'>blue</span> axis
       smart_material: "*Smart* assignment of material"
       smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
+      dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
+      dynamic_attributes_name_help: Si cette option est activée, la désignation des pièces étant des composants dynamiques sera extraite de l'attribut *Name* s'il est défini.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group

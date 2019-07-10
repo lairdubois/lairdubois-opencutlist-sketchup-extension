@@ -17,6 +17,7 @@
 
     var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
     var SETTING_KEY_OPTION_SMART_MATERIAL = 'cutlist.option.smart_material';
+    var SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME = 'cutlist.option.dynamic_attributes_name';
     var SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS = 'cutlist.option.part_number_with_letters';
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist.option.part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_FOLDING = 'cutlist.option.part_folding';
@@ -50,6 +51,7 @@
 
     var OPTION_DEFAULT_AUTO_ORIENT = true;
     var OPTION_DEFAULT_SMART_MATERIAL = true;
+    var OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME = false;
     var OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS = true;
     var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_FOLDING = false;
@@ -1385,6 +1387,7 @@
 
                 SETTING_KEY_OPTION_AUTO_ORIENT,
                 SETTING_KEY_OPTION_SMART_MATERIAL,
+                SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME,
                 SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS,
                 SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
                 SETTING_KEY_OPTION_PART_FOLDING,
@@ -1408,6 +1411,7 @@
                 that.generateOptions = {
                     auto_orient: that.opencutlist.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
                     smart_material: that.opencutlist.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
+                    dynamic_attributes_name: that.opencutlist.getSetting(SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME),
                     part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
                     part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                     part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
@@ -1431,6 +1435,7 @@
         // Fetch UI elements
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
         var $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
+        var $inputDynamicAttributesName = $('#ladb_input_dynamic_attributes_name', $modal);
         var $inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', $modal);
         var $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
         var $inputPartFolding = $('#ladb_input_part_folding', $modal);
@@ -1452,6 +1457,7 @@
 
             $inputAutoOrient.prop('checked', generateOptions.auto_orient);
             $inputSmartMaterial.prop('checked', generateOptions.smart_material);
+            $inputDynamicAttributesName.prop('checked', generateOptions.dynamic_attributes_name);
             $inputPartNumberWithLetters.prop('checked', generateOptions.part_number_with_letters);
             $inputPartNumberSequenceByGroup.prop('checked', generateOptions.part_number_sequence_by_group);
             $inputPartFolding.prop('checked', generateOptions.part_folding);
@@ -1549,6 +1555,7 @@
 
             that.generateOptions.auto_orient = $inputAutoOrient.is(':checked');
             that.generateOptions.smart_material = $inputSmartMaterial.is(':checked');
+            that.generateOptions.dynamic_attributes_name = $inputDynamicAttributesName.is(':checked');
             that.generateOptions.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
@@ -1577,6 +1584,7 @@
             that.opencutlist.setSettings([
                 { key:SETTING_KEY_OPTION_AUTO_ORIENT, value:that.generateOptions.auto_orient },
                 { key:SETTING_KEY_OPTION_SMART_MATERIAL, value:that.generateOptions.smart_material },
+                { key:SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, value:that.generateOptions.dynamic_attributes_name },
                 { key:SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, value:that.generateOptions.part_number_with_letters },
                 { key:SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, value:that.generateOptions.part_number_sequence_by_group },
                 { key:SETTING_KEY_OPTION_PART_FOLDING, value:that.generateOptions.part_folding },

@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :count, :scale, :cutting_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
+    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
@@ -13,6 +13,7 @@ module Ladb::OpenCutList
       @number = nil
       @saved_number = nil
       @name = ''
+      @is_dynamic_attributes_name = false
       @count = 0
       @cutting_size = Size3d.new
       @size = Size3d.new
@@ -145,6 +146,7 @@ module Ladb::OpenCutList
             :id => @id,
             :definition_id => @definition_id,
             :name => @name,
+            :is_dynamic_attributes_name => @is_dynamic_attributes_name,
             :resized => !@scale.identity?,
             :length => @size.length.to_s,
             :width => @size.width.to_s,
