@@ -257,6 +257,7 @@ tab:
       material_type: Type
       material_thickness: Matière / Dimension
       material_name: Matière
+      entity_names: Noms d'instance
       labels: Etiquettes
     cuttingdiagram:
       title: Calepinage

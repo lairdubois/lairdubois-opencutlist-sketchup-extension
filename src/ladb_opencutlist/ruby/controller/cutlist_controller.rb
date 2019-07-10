@@ -429,7 +429,6 @@ module Ladb::OpenCutList
       part_folding = settings['part_folding']
       part_order_strategy = settings['part_order_strategy']
       hide_labels = settings['hide_labels']
-      hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
       hide_final_areas = settings['hide_final_areas']
       labels_filter = settings['labels_filter']
 
@@ -877,8 +876,9 @@ module Ladb::OpenCutList
       source = settings['source']
       col_sep = settings['col_sep']
       encoding = settings['encoding']
+      hide_entity_names = settings['hide_entity_names']
       hide_labels = settings['hide_labels']
-      hide_cutting_dimensions = settings['hide_cuttong_dimensions']
+      hide_cutting_dimensions = settings['hide_cutting_dimensions']
       hide_bbox_dimensions = settings['hide_bbox_dimensions']
       hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
       hide_final_areas = settings['hide_final_areas']
@@ -987,6 +987,9 @@ module Ladb::OpenCutList
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.final_area'))
                     end
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
+                    unless hide_entity_names
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.entity_names'))
+                    end
                     unless hide_labels
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
                     end
@@ -1019,6 +1022,9 @@ module Ladb::OpenCutList
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                         end
                         row.push(part[:material_name])
+                        unless hide_entity_names
+                          row.push(part[:entity_names].map(&:first).join(','))
+                        end
                         unless hide_labels
                           row.push(part[:labels].join(','))
                         end

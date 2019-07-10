@@ -257,6 +257,7 @@ tab:
       material_type: Typ
       material_thickness: Material / Dicke
       material_name: Material
+      entity_names: Instanzbezeichnungen
       labels: Etiketten
     cuttingdiagram:
       title: Schnittplan

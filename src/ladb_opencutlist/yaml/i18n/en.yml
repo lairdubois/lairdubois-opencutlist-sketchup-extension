@@ -257,6 +257,7 @@ tab:
       material_type: Type
       material_thickness: Material / Thickness
       material_name: Material
+      entity_names: Instance names
       labels: Labels
     cuttingdiagram:
       title: Cutting Diagram
