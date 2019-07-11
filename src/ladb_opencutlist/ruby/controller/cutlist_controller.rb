@@ -618,7 +618,7 @@ module Ladb::OpenCutList
 
         # Define part
 
-        part_id = PartDef.generate_part_id(group_id, definition, size)
+        part_id = PartDef.generate_part_id(group_id, definition, instance_info, dynamic_attributes_name)
         part_def = group_def.get_part_def(part_id)
         unless part_def
 
@@ -626,7 +626,7 @@ module Ladb::OpenCutList
           part_def.definition_id = definition.name
           part_def.number = number
           part_def.saved_number = definition_attributes.number
-          part_def.name, part_def.is_dynamic_attributes_name = definition_attributes.read_name(dynamic_attributes_name)
+          part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
           part_def.scale = instance_info.scale
           part_def.cutting_size = cutting_size
           part_def.size = size

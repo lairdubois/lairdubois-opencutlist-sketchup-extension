@@ -51,16 +51,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def read_name(try_from_dynamic_attributes = false)
-      if try_from_dynamic_attributes
-        name = @definition.get_attribute('dynamic_attributes', 'name', nil)
-        return name, true unless name.nil?
-      end
-      return @definition.name, false
-    end
-
-    # -----
-
     def read_from_attributes
       if @definition
         @number = Plugin.instance.get_attribute(@definition, 'number', nil)

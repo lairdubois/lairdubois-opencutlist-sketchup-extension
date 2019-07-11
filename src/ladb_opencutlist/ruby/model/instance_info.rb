@@ -13,6 +13,14 @@ module Ladb::OpenCutList
       @path = path
     end
 
+    def read_name(try_from_dynamic_attributes = false)
+      if try_from_dynamic_attributes
+        name = entity.get_attribute('dynamic_attributes', 'name', nil)
+        return name, true unless name.nil?
+      end
+      return entity.definition.name, false
+    end
+
     # -----
 
     def entity
