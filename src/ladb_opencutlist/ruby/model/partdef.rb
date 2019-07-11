@@ -39,9 +39,9 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_part_id(group_id, definition, instance_info, dynamic_attributes_name = false)
-      entity_id = definition.entityID
 
       # Uses name for dynamic components to separate instances with the same definition, but different name
+      entity_id = definition.entityID
       if dynamic_attributes_name
         name, is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
         entity_id = name if is_dynamic_attributes_name
