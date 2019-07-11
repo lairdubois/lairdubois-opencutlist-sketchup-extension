@@ -94,7 +94,7 @@ tab:
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
-      is_dynamic_attributes_name: La désignation de cette pièce est issue de l'attribut 'Name' du composant dynamique
+      is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups

@@ -1529,14 +1529,17 @@
 
         // Bind buttons
         $btnReset.on('click', function () {
+            $(this).blur();
+
             var generateOptions = $.extend($.extend({}, that.generateOptions), {
                 auto_orient: OPTION_DEFAULT_AUTO_ORIENT,
                 smart_material: OPTION_DEFAULT_SMART_MATERIAL,
+                dynamic_attributes_name: OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME,
                 part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
                 part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
                 part_folding: OPTION_DEFAULT_PART_FOLDING,
                 part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY,
-                hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS /* SHARED */
+                hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS
             });
             var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_entity_names: OPTION_DEFAULT_HIDE_ENTITY_NAMES,
@@ -1559,14 +1562,14 @@
             that.generateOptions.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
-            that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');  /* SHARED */
+            that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
             that.uiOptions.hide_entity_names = $inputHideInstanceNames.is(':checked');
             that.uiOptions.hide_labels = $inputHideLabels.is(':checked');
             that.uiOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
             that.uiOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.uiOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.uiOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
-            that.uiOptions.part_folding = $inputPartFolding.is(':checked');  /* SHARED */
+            that.uiOptions.part_folding = $inputPartFolding.is(':checked');
 
             var properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {

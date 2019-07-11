@@ -1245,6 +1245,7 @@ module Ladb::OpenCutList
       id = part_data['id']
       definition_id = part_data['definition_id']
       name = part_data['name']
+      is_dynamic_attributes_name = part_data['is_dynamic_attributes_name']
       material_name = part_data['material_name']
       cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
       orientation_locked_on_axis = part_data['orientation_locked_on_axis']
@@ -1259,7 +1260,7 @@ module Ladb::OpenCutList
       if definition
 
         # Update definition's name
-        if definition.name != name
+        if definition.name != name and !is_dynamic_attributes_name
           definition.name = name
         end
 
