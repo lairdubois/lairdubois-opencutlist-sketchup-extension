@@ -1068,7 +1068,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         definitions = model ? model.definitions : []
 
-        def _apply_on_part(definitions, part, reset)
+        def _numbers_command_apply_on_part(definitions, part, reset)
           definition = definitions[part[:definition_id]]
           if definition
 
@@ -1088,10 +1088,10 @@ module Ladb::OpenCutList
           group[:parts].each { |part|
 
             if part[:children].nil?
-              _apply_on_part(definitions, part, reset)
+              _numbers_command_apply_on_part(definitions, part, reset)
             else
               part[:children].each { |child_part|
-                _apply_on_part(definitions, child_part, reset)
+                _numbers_command_apply_on_part(definitions, child_part, reset)
               }
             end
 
@@ -1362,16 +1362,17 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Extract parameters
+      id = group_data['id']
       material_name = group_data['material_name']
-      parts = group_data['parts']
 
       materials = model.materials
+      material = nil
 
       # Update component instance material
       if material_name.nil? or material_name.empty? or (material = materials[material_name])
 
-        parts.each { |part_data|
-          entity_ids = part_data['entity_ids']
+        def _group_update_command_apply_on_part(part, model, material, material_name)
+          entity_ids = part[:entity_ids]
           entity_ids.each { |component_id|
             entity = ModelUtils::find_entity_by_id(model, component_id)
             if entity
@@ -1381,6 +1382,25 @@ module Ladb::OpenCutList
                 entity.material = material
               end
             end
+          }
+        end
+
+        @cutlist[:groups].each { |group|
+
+          if id && group[:id] != id
+            next
+          end
+
+          group[:parts].each { |part|
+
+            if part[:children].nil?
+              _group_update_command_apply_on_part(part, model, material, material_name)
+            else
+              part[:children].each { |child_part|
+                _group_update_command_apply_on_part(child_part, model, material, material_name)
+              }
+            end
+
           }
         }
 
