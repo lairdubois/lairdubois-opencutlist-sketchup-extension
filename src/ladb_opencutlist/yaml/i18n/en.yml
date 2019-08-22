@@ -238,14 +238,16 @@ tab:
         <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
       options: Export Options
       option_source: Source
-      option_source_cutlist: $t(tab.cutlist.title)
       option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Liste des instances
       option_col_sep: Separator
       option_col_sep_tab: Tabulator
       option_col_sep_comma: Comma
       option_col_sep_semicolon: Semicolon
       option_encoding: Encoding
       number: No.
+      path: Chemin
       name: Description
       total_cutting_length: Length - raw
       total_cutting_area: Area - raw

@@ -238,14 +238,16 @@ tab:
         <i class="ladb-opencutlist-icon-warning"></i> *Die in maskierten Gruppen enthaltenen Teile werden nicht exportiert*.
       options: Dateioptionen
       option_source: Quelle
-      option_source_cutlist: $t(tab.cutlist.title)
       option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Liste des instances
       option_col_sep: Trennzeichen
       option_col_sep_tab: Tabulator
       option_col_sep_comma: Komma
       option_col_sep_semicolon: Strichpunkt
       option_encoding: Kodierung
       number: Nr.
+      path: Chemin
       name: Bezeichnung
       total_cutting_length: Länge - roh
       total_cutting_area: Fläche - roh

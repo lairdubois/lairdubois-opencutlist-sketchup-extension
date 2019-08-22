@@ -238,14 +238,16 @@ tab:
         <i class="ladb-opencutlist-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
       option_source: Source
-      option_source_cutlist: $t(tab.cutlist.title)
       option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Liste des instances
       option_col_sep: Séparateur
       option_col_sep_tab: Tabulation
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
       option_encoding: Encodage
       number: N°
+      path: Chemin
       name: Désignation
       total_cutting_length: Longueur - cumul débit
       total_cutting_area: Surface - cumul débit
