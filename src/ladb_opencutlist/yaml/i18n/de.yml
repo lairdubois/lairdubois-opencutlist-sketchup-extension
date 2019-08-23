@@ -248,6 +248,8 @@ tab:
       option_encoding: Kodierung
       number: Nr.
       path: Chemin
+      instance_name: Instance
+      definition_name: Définition
       name: Bezeichnung
       total_cutting_length: Länge - roh
       total_cutting_area: Fläche - roh

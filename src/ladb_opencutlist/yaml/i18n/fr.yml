@@ -248,6 +248,8 @@ tab:
       option_encoding: Encodage
       number: N°
       path: Chemin
+      instance_name: Instance
+      definition_name: Définition
       name: Désignation
       total_cutting_length: Longueur - cumul débit
       total_cutting_area: Surface - cumul débit

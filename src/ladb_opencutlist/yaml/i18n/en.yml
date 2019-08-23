@@ -248,6 +248,8 @@ tab:
       option_encoding: Encoding
       number: No.
       path: Chemin
+      instance_name: Instance
+      definition_name: Définition
       name: Description
       total_cutting_length: Length - raw
       total_cutting_area: Area - raw

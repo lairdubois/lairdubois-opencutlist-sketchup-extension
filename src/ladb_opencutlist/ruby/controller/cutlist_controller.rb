@@ -1040,7 +1040,8 @@ module Ladb::OpenCutList
                     # Header row
                     header = []
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.path'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.name'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.instance_name'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.definition_name'))
                     unless hide_cutting_dimensions
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_length'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_width'))
@@ -1084,9 +1085,12 @@ module Ladb::OpenCutList
                               # Uses entityID if instance name is empty
                               path_names.push(entity.name.empty? ? "##{entity.entityID}" : entity.name)
                             }
+                            # Pop the instance name to put it in a separated column
+                            instance_name = path_names.pop
 
                             row = []
                             row.push(path_names.join('/'))
+                            row.push(instance_name)
                             row.push(part[:name])
                             unless hide_cutting_dimensions
                               row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part[:cutting_length]))
