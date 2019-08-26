@@ -197,12 +197,47 @@
 
     };
 
+    LadbTabImporter.prototype.importParts = function () {
+        var that = this;
+
+        rubyCallCommand('importer_import', null, function (response) {
+
+            var i;
+
+            if (response.errors) {
+                for (i = 0; i < response.errors.length; i++) {
+                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                }
+            }
+            if (response.imported_part_count) {
+
+                // Update filename
+                that.$fileTabs.empty();
+
+                // Update page
+                that.$page.empty();
+
+                // Hide import button
+                that.$btnImport.hide();
+
+                // Success notification
+                that.opencutlist.notify(response.imported_part_count, 'success');
+
+            }
+
+        });
+
+    };
 
     LadbTabImporter.prototype.bind = function () {
         var that = this;
 
         this.$btnOpen.on('click', function () {
             that.openCSV();
+            this.blur();
+        });
+        this.$btnImport.on('click', function () {
+            that.importParts();
             this.blur();
         });
 

@@ -444,7 +444,7 @@ tab:
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
   importer:
     label: Importer
-    title: Importer
+    title: Importer des pièces
   about:
     label: A propos
     title: A propos

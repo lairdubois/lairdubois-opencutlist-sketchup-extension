@@ -101,6 +101,9 @@ module Ladb::OpenCutList
 
     def load_command(settings)
 
+      # Clear previously generated parts
+      @parts = nil
+
       # Check settings
       csv_path = settings['csv_path']
       with_headers = settings['with_headers']
@@ -262,6 +265,9 @@ module Ladb::OpenCutList
         response[:columns] = columns
         response[:parts] = parts
 
+        # Keep generated parts
+        @parts = parts
+
       end
 
       response
@@ -269,7 +275,67 @@ module Ladb::OpenCutList
 
     def import_command(settings)
 
+      response = {
+          :errors => [],
+      }
 
+      model = Sketchup.active_model
+      definitions = model.definitions
+      materials = model.materials
+      active_entities = model.active_entities
+
+      # Start an operation
+      model.start_operation('Create parts', true)
+
+      offset_y = 0
+      imported_part_count = 0
+      @parts.each do |part|
+
+        next unless part[:errors].empty?
+
+        # Create the definition
+        definition = definitions.add(part[:name])
+        entities = definition.entities
+
+        # Create the base face
+        face = entities.add_face([
+                                     Geom::Point3d.new(0,             0,            0),
+                                     Geom::Point3d.new(part[:length], 0,            0),
+                                     Geom::Point3d.new(part[:length], part[:width], 0),
+                                     Geom::Point3d.new(0,             part[:width], 0)
+                                 ])
+
+        # Extrude the part
+        face.pushpull(-part[:thickness])
+
+        # Retrieve material (or create it)
+        material = nil
+        unless part[:material].nil?
+          material = materials[part[:material]]
+          unless material
+            material = materials.add(part[:material])
+            material.color = Sketchup::Color.new(rand(255), rand(255), rand(255))
+          end
+        end
+
+        # Create definition instance(s)
+        count = part[:count].nil? ? 1 : part[:count]
+        for i in 0..count-1
+          instance = active_entities.add_instance(definition, Geom::Transformation.new(Geom::Point3d.new(0, offset_y, i * part[:thickness])))
+          instance.material = material if material
+          imported_part_count += 1
+        end
+
+        offset_y += part[:width]
+
+      end
+
+      # Commit operation
+      model.commit_operation
+
+      response[:imported_part_count] = imported_part_count
+
+      response
     end
 
   end
