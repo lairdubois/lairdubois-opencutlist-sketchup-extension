@@ -39,7 +39,7 @@
             {% for part in parts if loop.index > 0 %}
                 {% set hasErrors = not part.errors is empty %}
                 {% set hasWarnings = not part.warnings is empty %}
-                <tr class="ladb-importer-row{% if hasErrors %} ladb-invalid-part{% endif %}">
+                <tr class="ladb-importer-row{% if hasErrors %} ladb-importer-row-error{% else %} ladb-importer-row-success{% endif %}">
                     <td>
                         {% if hasErrors %}
                             <i class="ladb-opencutlist-icon-warning ladb-color-danger" data-toggle="tooltip" data-html="true" title="<div style='text-align: left;'>Cette pièce ne sera pas importée car elle contient les erreurs suivantes :<ul>{% for error in part.errors %}<li>{{ error }}</li>{% endfor %}</ul></div>"></i>

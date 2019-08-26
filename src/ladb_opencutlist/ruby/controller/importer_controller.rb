@@ -146,7 +146,7 @@ module Ladb::OpenCutList
         headers = with_headers ? rows.headers : nil
 
         # Columns
-        column_count = rows[0].length
+        column_count = rows.empty? ? 0 : rows[0].length
         columns = []
 
         for i in 0..column_count - 1

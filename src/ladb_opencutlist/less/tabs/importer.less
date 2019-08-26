@@ -4,12 +4,20 @@
 
 .ladb-importer-row {
 
-  &.ladb-invalid-part {
+  &.ladb-importer-row-success {
+    background-color: lighten(#00ff00, 49%);
+
+    .ladb-importer-column-mapped {
+      background-color: lighten(#00ff00, 46%);
+    }
+
+  }
+
+  &.ladb-importer-row-error {
     background-color: lighten(#ff0000, 49%);
 
     .ladb-importer-column-mapped {
-      //text-decoration: line-through;
-      background-color: lighten(#ff0000, 48%);
+      background-color: lighten(#ff0000, 46%);
     }
 
   }
