@@ -61,6 +61,11 @@
                 icon: 'ladb-opencutlist-icon-cutlist'
             },
             {
+                name: 'importer',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-import'
+            },
+            {
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings'

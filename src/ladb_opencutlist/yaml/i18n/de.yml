@@ -12,6 +12,8 @@ default:
   generate: Generieren
   print: Drucken
   export: Export
+  import: Importer
+  load: Charger
   options: Einstellungen
   caution: Vorsicht
   remove: Löschen
@@ -440,6 +442,9 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
+  importer:
+    label: Importer
+    title: Importer
   about:
     label: Über
     title: Über

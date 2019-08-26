@@ -11,6 +11,7 @@ module Ladb::OpenCutList
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
+  require_relative 'controller/importer_controller'
   require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
@@ -223,6 +224,7 @@ module Ladb::OpenCutList
 
         @controllers.push(MaterialsController.new)
         @controllers.push(CutlistController.new)
+        @controllers.push(ImporterController.new)
         @controllers.push(SettingsController.new)
 
         # -- Commands --

@@ -1,0 +1,60 @@
+{# set errors #}
+{# set warnings #}
+{# set parts #}
+
+{% include 'core/_alert-errors.twig' %}
+{% include 'core/_alert-warnings.twig' %}
+
+{% if parts|length > 0 %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td></td>
+                {% for column in columns %}
+                    <td class="ladb-importer-column{% if column.mapping %} ladb-importer-column-mapped{% endif %}">
+                        <div>
+                            <select id="ladb_select_column_{{ loop.index0 }}" class="form-control" data-column="{{ loop.index0 }}">
+                                <option data-content="<span style='color: #ccc; font-style: italic;'>Non utilisé</span>"></option>
+                                <optgroup label="Champs obligatoires">
+                                    <option value="name">Désignation</option>
+                                    <option value="length">Longueur capable</option>
+                                    <option value="width">Largeur capable</option>
+                                    <option value="thickness">Epaisseur capable</option>
+                                </optgroup>
+                                <optgroup label="Champs facultatifs">
+                                    <option value="count">Quantité</option>
+                                    <option value="material">Matière</option>
+                                    <option value="labels">Etiquettes</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        {% if column.header %}
+                            <div class="ladb-importer-header">{{ column.header }}</div>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for part in parts if loop.index > 0 %}
+                {% set hasErrors = not part.errors is empty %}
+                {% set hasWarnings = not part.warnings is empty %}
+                <tr class="ladb-importer-row{% if hasErrors %} ladb-invalid-part{% endif %}">
+                    <td>
+                        {% if hasErrors %}
+                            <i class="ladb-opencutlist-icon-warning ladb-color-danger" data-toggle="tooltip" data-html="true" title="<div style='text-align: left;'>Cette pièce ne sera pas importée car elle contient les erreurs suivantes :<ul>{% for error in part.errors %}<li>{{ error }}</li>{% endfor %}</ul></div>"></i>
+                        {% elseif hasWarnings %}
+                            <i class="ladb-opencutlist-icon-tick ladb-color-warning" data-toggle="tooltip" data-html="true" title="<div style='text-align: left;'>Cette pièce sera importée mais elle contient les avertissements suivants :<ul>{% for warning in part.warnings %}<li>{{ warning }}</li>{% endfor %}</ul></div>"></i>
+                        {% else %}
+                            <i class="ladb-opencutlist-icon-tick ladb-color-success"></i>
+                        {% endif %}
+                    </td>
+                    {% for raw_value in part.raw_values %}
+                        {% set column = columns[loop.index0] %}
+                        <td  class="ladb-importer-column ladb-importer-column-{% if column and column.mapping is null %}not-mapped{% else %}mapped{% endif %} text-{{ column.align }}{% if column and column.mapping and not raw_value.valid %} ladb-invalid-value{% endif %}">{{ raw_value.value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

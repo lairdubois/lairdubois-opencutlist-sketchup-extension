@@ -12,6 +12,8 @@ default:
   generate: Generate
   print: Print
   export: Export
+  import: Importer
+  load: Charger
   options: Options
   caution: Caution
   remove: Remove
@@ -440,6 +442,9 @@ tab:
     success:
       exported_to: Export to {{ export_path }} successful.
     outdated_base: To remain synchronized, you must refresh the material list.
+  importer:
+    label: Importer
+    title: Importer
   about:
     label: About
     title: About

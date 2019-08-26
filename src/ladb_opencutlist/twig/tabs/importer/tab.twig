@@ -1,0 +1,13 @@
+{% extends 'tabs/base-tab.twig' %}
+
+{% set slideClasses = 'ladb-overflow-x-auto' %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_open" class="btn btn-default">{{ 'default.open'|i18next }} CSV...</button>
+    <button id="ladb_btn_import" class="btn btn-primary" style="display: none;"><i class="ladb-opencutlist-icon-import"></i> {{ 'default.import'|i18next }}...</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page"></div>
+{% endblock %}

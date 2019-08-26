@@ -1,0 +1,47 @@
+//
+// Cutlist
+//
+
+.ladb-importer-row {
+
+  &.ladb-invalid-part {
+    background-color: lighten(#ff0000, 49%);
+
+    .ladb-importer-column-mapped {
+      //text-decoration: line-through;
+      background-color: lighten(#ff0000, 48%);
+    }
+
+  }
+
+}
+
+.ladb-importer-column {
+  white-space: nowrap;
+
+  .ladb-importer-header {
+    font-size: 80%;
+    font-style: italic;
+    color: #aaa;
+    text-align: center;
+    margin-top: 5px;
+  }
+
+  &.ladb-invalid-value {
+    color: @ladb-brand-danger;
+  }
+
+}
+
+thead .ladb-importer-column-mapped {
+  background-color: #efefef;
+}
+
+tbody .ladb-importer-column-mapped {
+  background-color: #fafafa;
+}
+
+.ladb-importer-column-not-mapped {
+  color: @ladb-global-lighter-color;
+}
+

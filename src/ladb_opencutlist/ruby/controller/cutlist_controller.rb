@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       end
 
       Plugin.instance.register_command("cutlist_highlight_all_parts") do
-        highlight_parts_command()
+        highlight_parts_command
       end
 
       Plugin.instance.register_command("cutlist_highlight_group_parts") do |group_id|

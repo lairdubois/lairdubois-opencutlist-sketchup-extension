@@ -12,6 +12,8 @@ default:
   generate: Générer
   print: Imprimer
   export: Exporter
+  import: Importer
+  load: Charger
   options: Options
   caution: Attention
   remove: Supprimer
@@ -440,6 +442,9 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
+  importer:
+    label: Importer
+    title: Importer
   about:
     label: A propos
     title: A propos
