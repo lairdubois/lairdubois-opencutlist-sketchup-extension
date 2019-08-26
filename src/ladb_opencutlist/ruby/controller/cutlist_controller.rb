@@ -898,7 +898,7 @@ module Ladb::OpenCutList
         export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist[:dir], File.basename(@cutlist[:filename], '.skp') + '.csv')
         if export_path
 
-          # begin
+          begin
 
             # Convert col_sep
             case col_sep.to_i
@@ -1024,7 +1024,7 @@ module Ladb::OpenCutList
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                         end
                         row.push(part[:material_name])
-                        unless hide_entity_names
+                        unless hide_entity_names || part[:entity_names].nil?
                           row.push(part[:entity_names].map(&:first).join(','))
                         end
                         unless hide_labels
@@ -1132,10 +1132,10 @@ module Ladb::OpenCutList
 
             end
 
-          # rescue => e
-          #   puts e.backtrace
-          #   response[:errors] << 'tab.cutlist.error.failed_to_write_export_file'
-          # end
+          rescue => e
+            puts e.backtrace
+            response[:errors] << 'tab.cutlist.error.failed_to_write_export_file'
+          end
 
         end
 
