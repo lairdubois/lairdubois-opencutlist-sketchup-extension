@@ -5,6 +5,7 @@ default:
   cancel: Annuler
   validate: Valider
   open: Ouvrir
+  see: Voir
   close: Fermer
   clear: Effacer
   empty_filename: Sans titre

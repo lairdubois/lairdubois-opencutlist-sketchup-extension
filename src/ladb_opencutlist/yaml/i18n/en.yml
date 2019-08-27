@@ -5,6 +5,7 @@ default:
   cancel: Cancel
   validate: Apply
   open: Open
+  see: Voir
   close: Close
   clear: Clear
   empty_filename: Untitled

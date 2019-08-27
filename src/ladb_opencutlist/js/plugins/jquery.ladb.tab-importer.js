@@ -261,7 +261,7 @@
 
                     // Success notification
                     that.opencutlist.notify(i18next.t('tab.importer.success.imported', { count: response.imported_part_count }), 'success', [
-                        Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                        Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
                             that.opencutlist.minimize();
                         })
                     ]);
