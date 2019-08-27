@@ -4,8 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.7.2
+* 1.8.0
 
+  * Added new tab to import parts
   * Added cutlist dynamic component names option
   * Added instances list to cutlist export sources
   * Export cutlist instance names
