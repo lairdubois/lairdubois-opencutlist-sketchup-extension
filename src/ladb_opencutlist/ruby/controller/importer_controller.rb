@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../model/definition_attributes'
+
   class ImporterController < Controller
 
     LOAD_OPTION_COL_SEP_TAB = 0
@@ -363,6 +365,15 @@ module Ladb::OpenCutList
           instance = active_entities.add_instance(definition, Geom::Transformation.new(Geom::Point3d.new(0, offset_y, i * part[:thickness])))
           instance.material = material if material
           imported_part_count += 1
+        end
+
+        # Add labels if exists
+        unless part[:labels].nil?
+
+          definition_attributes = DefinitionAttributes.new(definition)
+          definition_attributes.labels = part[:labels]
+          definition_attributes.write_to_attributes
+
         end
 
         offset_y += part[:width]
