@@ -444,7 +444,36 @@ tab:
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
   importer:
     label: Importer
-    title: Importer
+    title: Importer des pièces
+    help: |
+      Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
+      Cliquez sur le bouton **Ouvrir un fichier CSV** pour continuer.
+    load:
+      title: Chargement d'un fichier CSV
+      info: |
+        Choisissez les options nécessaires à la bonne lecture du fichier **{{ filename }}**.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans le modèle sera utilisée pour les valeurs sans unité*.
+      options: Options de chargement
+      option_col_sep: Séparateur
+      option_col_sep_tab: Tabulation
+      option_col_sep_comma: Virgule
+      option_col_sep_semicolon: Point virgule
+      option_encoding: Encodage
+      option_with_headers: Le fichier contient une ligne de titres
+    error:
+      file_not_found: Fichier introuvable.
+      no_csv_extension: Le fichier n'a pas l'extension **.CSV**.
+      failed_to_load_csv_file: Impossible de charger le fichier CSV.
+      no_importable_part: Aucune pièce ne peut être importée. Attribuez les bons champs sur les colonnes correspondantes.
+      invalid_name: Pas de désignation valide
+      invalid_length: Pas de longueur valide
+      invalid_width: Pas de largeur valide
+      invalid_thickness: Pas de d'épaisseur valide
+    warning:
+      invalid_count: Pas de quantité valide
+      invalid_material: Pas de matière valide
   about:
     label: Über
     title: Über

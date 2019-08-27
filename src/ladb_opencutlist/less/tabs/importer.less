@@ -2,62 +2,66 @@
 // Cutlist
 //
 
-.ladb-importer-row {
+.ladb-importer-table {
 
-  &.ladb-importer-row-success {
-    background-color: lighten(#00ff00, 49%);
+  .ladb-importer-row {
 
-    .ladb-importer-column-mapped {
-      background-color: lighten(#00ff00, 46%);
+    &.ladb-importer-row-success {
+      background-color: lighten(#00ff00, 49%);
+
+      .ladb-importer-column-mapped {
+        background-color: lighten(#00ff00, 46%);
+      }
+
+    }
+
+    &.ladb-importer-row-error {
+      background-color: lighten(#ff0000, 49%);
+
+      .ladb-importer-column-mapped {
+        background-color: lighten(#ff0000, 46%);
+      }
+
     }
 
   }
 
-  &.ladb-importer-row-error {
-    background-color: lighten(#ff0000, 49%);
+  .ladb-importer-column {
+    white-space: nowrap;
 
-    .ladb-importer-column-mapped {
-      background-color: lighten(#ff0000, 46%);
+    .ladb-importer-header {
+      font-size: 80%;
+      font-style: italic;
+      color: #aaa;
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    &.ladb-invalid-value {
+      color: @ladb-brand-danger;
     }
 
   }
 
-}
+  thead {
 
-.ladb-importer-column {
-  white-space: nowrap;
+    td {
+      background-color: #fafafa;
+    }
 
-  .ladb-importer-header {
-    font-size: 80%;
-    font-style: italic;
-    color: #aaa;
-    text-align: center;
-    margin-top: 5px;
+    .ladb-importer-column-mapped {
+      background-color: #efefef;
+    }
+
   }
 
-  &.ladb-invalid-value {
-    color: @ladb-brand-danger;
-  }
-
-}
-
-thead {
-
-  td {
+  tbody .ladb-importer-column-mapped {
     background-color: #fafafa;
   }
 
-  .ladb-importer-column-mapped {
-    background-color: #efefef;
+  .ladb-importer-column-not-mapped {
+    color: @ladb-global-lighter-color;
   }
 
-}
-
-tbody .ladb-importer-column-mapped {
-  background-color: #fafafa;
-}
-
-.ladb-importer-column-not-mapped {
-  color: @ladb-global-lighter-color;
 }
 

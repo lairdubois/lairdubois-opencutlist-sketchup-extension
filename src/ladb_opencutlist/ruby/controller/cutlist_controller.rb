@@ -1133,6 +1133,7 @@ module Ladb::OpenCutList
             end
 
           rescue => e
+            puts e.message
             puts e.backtrace
             response[:errors] << 'tab.cutlist.error.failed_to_write_export_file'
           end

@@ -29,11 +29,14 @@
     var LadbTabImporter = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
+        this.importablePartCount = 0;
+
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnOpen = $('#ladb_btn_open', this.$header);
         this.$btnImport = $('#ladb_btn_import', this.$header);
 
+        this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
 
     };
@@ -53,7 +56,9 @@
                     that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
                 }
             }
-            if (response.csv_path) {
+            if (response.path) {
+
+                var lengthUnit = response.length_unit;
 
                 // Retrieve load option options
                 that.opencutlist.pullSettings([
@@ -68,14 +73,17 @@
                     function () {
 
                         var loadOptions = {
-                            csv_path: response.csv_path,
+                            path: response.path,
+                            filename: response.filename,
                             col_sep: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
                             encoding: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_ENCODING, OPTION_DEFAULT_ENCODING),
                             with_headers: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_WITH_HEADERS, OPTION_DEFAULT_WITH_HEADERS),
                             column_mapping: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
                         };
 
-                        var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', loadOptions);
+                        var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
+                            lengthUnit: lengthUnit
+                        }));
 
                         // Fetch UI elements
                         var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
@@ -92,6 +100,20 @@
 
                         // Bind buttons
                         $btnLoad.on('click', function () {
+
+                            // Fetch options
+
+                            loadOptions.col_sep = $selectColSep.val();
+                            loadOptions.encoding = $selectEncoding.val();
+                            loadOptions.with_headers = $inputWithHeader.prop('checked');
+
+                            // Store options
+                            that.opencutlist.setSettings([
+                                { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
+                                { key:SETTING_KEY_LOAD_OPTION_ENCODING, value:loadOptions.encoding },
+                                { key:SETTING_KEY_LOAD_OPTION_WITH_HEADERS, value:loadOptions.with_headers },
+                                { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
+                            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                             that.loadCSV(loadOptions);
 
@@ -113,50 +135,48 @@
     LadbTabImporter.prototype.loadCSV = function (loadOptions) {
         var that = this;
 
-        // Store options
-        that.opencutlist.setSettings([
-            { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
-            { key:SETTING_KEY_LOAD_OPTION_ENCODING, value:loadOptions.encoding },
-            { key:SETTING_KEY_LOAD_OPTION_WITH_HEADERS, value:loadOptions.with_headers },
-            { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
-        ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
-
         rubyCallCommand('importer_load', loadOptions, function (response) {
 
             var i;
 
-            if (response.errors) {
+            if (response.errors && !response.path) {
                 for (i = 0; i < response.errors.length; i++) {
                     that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
                 }
             }
-            if (response.warnings) {
-                for (i = 0; i < response.warnings.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
-                }
-            }
-            if (response.csv_path) {
+            if (response.path) {
 
                 var errors = response.errors;
                 var warnings = response.warnings;
-                var csv_path = response.csv_path;
+                var filename = response.filename;
                 var columns = response.columns;
                 var parts = response.parts;
+                var importablePartCount = response.importable_part_count;
+                var lengthUnit = response.length_unit;
+
+                // Keep usefull data
+                that.importablePartCount = importablePartCount;
 
                 // Update filename
                 that.$fileTabs.empty();
                 that.$fileTabs.append(Twig.twig({ ref: "tabs/importer/_file-tab.twig" }).render({
-                    filename: csv_path
+                    filename: filename,
+                    importablePartCount: importablePartCount,
+                    lengthUnit: lengthUnit
                 }));
+
+                // Hide help panel
+                that.$panelHelp.hide();
 
                 // Update page
                 that.$page.empty();
                 that.$page.append(Twig.twig({ ref: "tabs/importer/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
-                    csv_path: csv_path,
+                    filename: filename,
                     columns: columns,
-                    parts: parts
+                    parts: parts,
+                    importablePartCount: importablePartCount
                 }));
 
                 // Setup tooltips
@@ -179,14 +199,15 @@
                                 loadOptions.column_mapping[mapping] = column;
                             }
                             that.loadCSV(loadOptions)
-                        });
+                        })
+                        .selectpicker(SELECT_PICKER_OPTIONS);
                 }
 
-                // Display import button
+                // Manage buttons
+                that.$btnOpen.removeClass('btn-primary');
+                that.$btnOpen.addClass('btn-default');
                 that.$btnImport.show();
-
-                // Bind selects
-                $('select', that.$page).selectpicker(SELECT_PICKER_OPTIONS);
+                that.$btnImport.prop( "disabled", importablePartCount === 0);
 
                 // Stick header
                 that.stickSlideHeader(that.$rootSlide);
@@ -200,32 +221,62 @@
     LadbTabImporter.prototype.importParts = function () {
         var that = this;
 
-        rubyCallCommand('importer_import', null, function (response) {
+        var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', {
+            importablePartCount: that.importablePartCount
+        });
 
-            var i;
+        // Fetch UI elements
+        var $btnImport = $('#ladb_importer_import', $modal);
 
-            if (response.errors) {
-                for (i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+        // Bind buttons
+        $btnImport.on('click', function () {
+
+            rubyCallCommand('importer_import', null, function (response) {
+
+                var i;
+
+                if (response.errors) {
+                    for (i = 0; i < response.errors.length; i++) {
+                        that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
+                    }
                 }
-            }
-            if (response.imported_part_count) {
+                if (response.imported_part_count) {
 
-                // Update filename
-                that.$fileTabs.empty();
+                    // Update filename
+                    that.$fileTabs.empty();
 
-                // Update page
-                that.$page.empty();
+                    // Unstick header
+                    that.unstickSlideHeader(that.$rootSlide);
 
-                // Hide import button
-                that.$btnImport.hide();
+                    // Show help panel
+                    that.$panelHelp.show();
 
-                // Success notification
-                that.opencutlist.notify(response.imported_part_count, 'success');
+                    // Update page
+                    that.$page.empty();
 
-            }
+                    // Manage buttons
+                    that.$btnOpen.removeClass('btn-default');
+                    that.$btnOpen.addClass('btn-primary');
+                    that.$btnImport.hide();
+
+                    // Success notification
+                    that.opencutlist.notify(i18next.t('tab.importer.success.imported', { count: response.imported_part_count }), 'success', [
+                        Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                            that.opencutlist.minimize();
+                        })
+                    ]);
+
+                }
+
+            });
+
+            // Hide modal
+            $modal.modal('hide');
 
         });
+
+        // Show modal
+        $modal.modal('show');
 
     };
 

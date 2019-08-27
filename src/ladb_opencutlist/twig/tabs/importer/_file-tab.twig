@@ -1,3 +1,3 @@
 {% extends 'tabs/base-file-tab.twig' %}
 
-{% block inner %}{{ parent() }}{% endblock %}
+{% block inner %}{{ parent() }}<span class="ladb-extra ladb-horizontal-left-separator">{{ importablePartCount }} {{ ('default.part_'~(importablePartCount > 0 ? 'plural' : 'single'))|i18next }}</span><span class="ladb-extra ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endblock %}

@@ -3,11 +3,12 @@
 {% set slideClasses = 'ladb-overflow-x-auto' %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_open" class="btn btn-default">{{ 'default.open'|i18next }} CSV...</button>
-    <button id="ladb_btn_import" class="btn btn-primary" style="display: none;"><i class="ladb-opencutlist-icon-plus"></i> {{ 'default.import'|i18next }} dans le modèle...</button>
+    <button id="ladb_btn_open" class="btn btn-primary">{{ 'tab.importer.open_csv'|i18next }}...</button>
+    <button id="ladb_btn_import" class="btn btn-primary" style="display: none;"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.importer.import_to_model'|i18next }}...</button>
 {% endblock %}
 
 {% block containerInner %}
+    {% include 'tabs/importer/_panel-help.twig' with { 'classes':'no-print' } %}
     {{ parent() }}
     <div class="ladb-page"></div>
 {% endblock %}

@@ -78,21 +78,34 @@ module Ladb::OpenCutList
 
     def open_command
 
+      model = Sketchup.active_model
+      length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
+
       response = {
           :errors => [],
-          :open_path => ''
+          :length_unit => length_unit,
       }
 
-      # Fetch component instances in given entities
-      model = Sketchup.active_model
-      dir, filename = File.split(model ? model.path : '')
-
       # Ask for open file path
-      csv_path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), dir, "CSV|*.csv||")
-      if csv_path
+      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv||")
+      if path
 
-        # Add load_path to response
-        response[:csv_path] = csv_path.tr("\\", '/')  # Standardize path by replacing \ by /
+        filename = File.basename(path)
+        extname = File.extname(path)
+
+        # Errors
+        unless File.exist?(path)
+          response[:errors] << 'tab.importer.error.file_not_found'
+          return response
+        end
+        if extname.nil? || extname.downcase != '.csv'
+          response[:errors] << 'tab.importer.error.no_csv_extension'
+          return response
+        end
+
+        # Add file infos to response
+        response[:path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
+        response[:filename] = filename
 
       end
 
@@ -105,168 +118,194 @@ module Ladb::OpenCutList
       @parts = nil
 
       # Check settings
-      csv_path = settings['csv_path']
+      path = settings['path']
+      filename = settings['filename']
       with_headers = settings['with_headers']
       col_sep = settings['col_sep']
       encoding = settings['encoding']
       column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
 
+      model = Sketchup.active_model
+      length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
+
       response = {
           :warnings => [],
           :errors => [],
-          :csv_path => csv_path
+          :length_unit => length_unit,
       }
 
-      if csv_path
+      if path
 
-        # Convert col_sep
-        case col_sep.to_i
-          when LOAD_OPTION_COL_SEP_COMMA
-            col_sep = ','
-          when LOAD_OPTION_COL_SEP_SEMICOLON
-            col_sep = ';'
-          else
-            col_sep = "\t"
-        end
+        begin
 
-        # Convert col_sep
-        case encoding.to_i
-          when LOAD_OPTION_ENCODING_UTF16LE
-            encoding = 'UTF-16LE'
-          when LOAD_OPTION_ENCODING_UTF16BE
-            encoding = 'UTF-16BE'
-          else
-            encoding = 'UTF-8'
-        end
+          # Convert col_sep
+          case col_sep.to_i
+            when LOAD_OPTION_COL_SEP_COMMA
+              col_sep = ','
+            when LOAD_OPTION_COL_SEP_SEMICOLON
+              col_sep = ';'
+            else
+              col_sep = "\t"
+          end
 
-        rows = CSV.read(csv_path, {
-            :encoding => encoding + ':utf-8',
-            :headers => with_headers,
-            :col_sep => col_sep
-        })
+          # Convert col_sep
+          case encoding.to_i
+            when LOAD_OPTION_ENCODING_UTF16LE
+              encoding = 'UTF-16LE'
+            when LOAD_OPTION_ENCODING_UTF16BE
+              encoding = 'UTF-16BE'
+            else
+              encoding = 'UTF-8'
+          end
 
-        # Extract headers
-        headers = with_headers ? rows.headers : nil
+          rows = CSV.read(path, {
+              :encoding => encoding + ':utf-8',
+              :headers => with_headers,
+              :col_sep => col_sep
+          })
 
-        # Columns
-        column_count = rows.empty? ? 0 : rows[0].length
-        columns = []
+          # Extract headers
+          headers = with_headers ? rows.headers : nil
 
-        for i in 0..column_count - 1
-          mapping = column_mapping.key(i)
-          column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
-          columns[i] = {
-              :header => with_headers ? headers[i] : nil,
-              :mapping => mapping,
-              :align => column_info ? column_info[:align] : 'left',
-          }
-        end
+          # Columns
+          column_count = rows.empty? ? 0 : rows[0].length
+          columns = []
 
-        # Parts
-        parts = []
-        rows.each do |row|
-          next if row.header_row?
-
-          part = {
-              :name => nil,
-              :count => nil,
-              :length => nil,
-              :width => nil,
-              :thickness => nil,
-              :material => nil,
-              :labels => nil,
-              :errors => [],
-              :warnings => [],
-              :raw_values => []
-          }
-
-          i = 0
-          row.to_hash.each { |k, v|
-
-            value = v
-            valid = false
-
+          for i in 0..column_count - 1
             mapping = column_mapping.key(i)
-            if mapping
+            column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
+            columns[i] = {
+                :header => with_headers ? headers[i] : nil,
+                :mapping => mapping,
+                :align => column_info ? column_info[:align] : 'left',
+            }
+          end
 
-              column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
-              if column_info
+          # Parts
+          parts = []
+          importable_part_count = 0
+          rows.each do |row|
 
-                case column_info[:data_type]
-                  when DATA_TYPE_INTEGER
-                    begin
-                      valid = !v.empty? && v.to_i > 0
-                      value = v.to_i if valid
-                    rescue => e
-                      valid = false
-                    end
-                  when DATA_TYPE_LENGTH
-                    begin
-                      valid = !v.empty?
-                      value = v.to_l if valid
-                    rescue => e
-                      valid = false
-                    end
-                  when DATA_TYPE_STRING_ARRAY
-                    begin
-                    value = v.split(',')
-                    valid = true
-                    rescue => e
-                      valid = false
-                    end
-                  else
-                    value = v
-                    valid = true
+            # Ignore header row if it exists
+            next if row.is_a?(CSV::Row) && row.header_row?
+
+            part = {
+                :name => nil,
+                :count => nil,
+                :length => nil,
+                :width => nil,
+                :thickness => nil,
+                :material => nil,
+                :labels => nil,
+                :errors => [],
+                :warnings => [],
+                :raw_values => []
+            }
+
+            i = 0
+            row.each { |row_value|
+
+              value = row.is_a?(CSV::Row) ? row_value[1] : row_value
+              valid = false
+
+              mapping = column_mapping.key(i)
+              if mapping
+
+                column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
+                if column_info
+
+                  case column_info[:data_type]
+                    when DATA_TYPE_INTEGER
+                      begin
+                        valid = !value.empty? && value.to_i > 0
+                        value = value.to_i if valid
+                      rescue => e
+                        valid = false
+                      end
+                    when DATA_TYPE_LENGTH
+                      begin
+                        valid = !value.empty? && value.to_l > 0
+                        value = value.to_l if valid
+                      rescue => e
+                        valid = false
+                      end
+                    when DATA_TYPE_STRING_ARRAY
+                      begin
+                      value = value.split(',')
+                      valid = true
+                      rescue => e
+                        valid = false
+                      end
+                    else
+                      valid = true
+                  end
+
+                end
+
+                if valid
+                  part.store(mapping.to_sym, value)
                 end
 
               end
 
-              if valid
-                part.store(mapping.to_sym, value)
-              end
+              part[:raw_values].push({
+                  :mapped => !mapping.nil?,
+                  :value => value,
+                  :valid => valid
+              })
 
+              i += 1
+            }
+
+            # Errors
+            if part[:name].nil?
+              part[:errors] << 'tab.importer.error.invalid_name'
+            end
+            if part[:length].nil?
+              part[:errors] << 'tab.importer.error.invalid_length'
+            end
+            if part[:width].nil?
+              part[:errors] << 'tab.importer.error.invalid_width'
+            end
+            if part[:thickness].nil?
+              part[:errors] << 'tab.importer.error.invalid_thickness'
             end
 
-            part[:raw_values].push({
-                :mapped => !mapping.nil?,
-                :value => value,
-                :valid => valid
-            })
+            # Warnings
+            if part[:count].nil?
+              part[:warnings] << 'tab.importer.warning.invalid_count'
+            end
+            if part[:material].nil?
+              part[:warnings] << 'tab.importer.warning.invalid_material'
+            end
 
-            i += 1
-          }
+            # Add part to list
+            parts.push(part)
 
-          # Errors
-          if part[:name].nil?
-            part[:errors].push('pas de désignation valide')
-          end
-          if part[:length].nil?
-            part[:errors].push('pas de longueur valide')
-          end
-          if part[:width].nil?
-            part[:errors].push('pas de largeur valide')
-          end
-          if part[:thickness].nil?
-            part[:errors].push('pas d\'épaisseur valide')
+            # Increment importable part count if applicable
+            importable_part_count += part[:count].nil? ? 1 : part[:count] if part[:errors].empty?
+
           end
 
-          # Warnings
-          if part[:count].nil?
-            part[:warnings].push('pas de quantité valide')
-          end
-          if part[:material].nil?
-            part[:warnings].push('pas de matière valide')
+          if importable_part_count == 0
+            response[:errors] << 'tab.importer.error.no_importable_part'
           end
 
-          parts.push(part)
+          # Populate response
+          response[:path] = path
+          response[:filename] = filename
+          response[:columns] = columns
+          response[:parts] = parts
+          response[:importable_part_count] = importable_part_count
+
+          # Keep generated parts
+          @parts = parts
+
+        rescue => e
+          puts e.message
+          puts e.backtrace
+          response[:errors] << 'tab.importer.error.failed_to_load_csv_file'
         end
-
-        # Populate response
-        response[:columns] = columns
-        response[:parts] = parts
-
-        # Keep generated parts
-        @parts = parts
 
       end
 

@@ -2,10 +2,10 @@
 
 {% set id = 'ladb_importer_modal_load' %}
 {% set title = 'tab.importer.load.title'|i18next %}
+{% set unit = ('default.unit_'~lengthUnit)|i18next %}
 
 {% block bodyInner %}
-    <div>{{ csv_path }}</div>
-    {{ 'tab.importer.load.info'|i18next }}
+    {{ 'tab.importer.load.info'|i18next({ 'filename':filename, 'unit':unit }) }}
     <hr>
     <h4 class="text-center">{{ 'tab.importer.load.options'|i18next }}</h4>
     <div class="form form-horizontal">
@@ -33,7 +33,7 @@
             <div class="col-xs-6 col-xs-push-4">
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" id="ladb_importer_load_input_with_headers">{{ 'tab.importer.load.with_header'|i18next }}
+                        <input type="checkbox" id="ladb_importer_load_input_with_headers">{{ 'tab.importer.load.option_with_headers'|i18next }}
                     </label>
                 </div>
             </div>
