@@ -464,7 +464,6 @@ tab:
       option_col_sep_tab: Tabulation
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
-      option_encoding: Encodage
       option_with_headers: Le fichier contient une ligne de titres
     import:
       title: Importation des pièces dans le modèle
@@ -490,7 +489,7 @@ tab:
     error:
       file_not_found: Fichier introuvable.
       no_csv_extension: Le fichier n'a pas l'extension **.CSV**.
-      failed_to_load_csv_file: Impossible de charger le fichier CSV.
+      failed_to_load_csv_file: Impossible de charger le fichier CSV. *Vérifiez que vous avez choisi le bon séparateur de données.*
       no_importable_part: Aucune pièce ne peut être importée. Attribuez les bons champs sur les colonnes correspondantes.
       invalid_name: Pas de désignation valide
       invalid_length: Pas de longueur valide

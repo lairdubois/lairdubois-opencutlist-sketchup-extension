@@ -15,6 +15,9 @@ module Ladb
       submenu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.title')) {
         Plugin.instance.show_dialog('cutlist')
       }
+      submenu.add_item(Plugin.instance.get_i18n_string('tab.importer.title')) {
+        Plugin.instance.show_dialog('importer')
+      }
 
       # Setup Toolbar
       toolbar = UI::Toolbar.new(Plugin.instance.get_i18n_string('core.toolbar.name'))

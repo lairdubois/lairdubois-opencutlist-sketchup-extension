@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../lib/rchardet'
   require_relative '../model/definition_attributes'
 
   class ImporterController < Controller
@@ -54,6 +55,19 @@ module Ladb::OpenCutList
             :data_type => DATA_TYPE_STRING_ARRAY
         },
     }
+
+    MATERIALS_PALETTE = [
+        '#4F78A7',
+        '#EF8E2C',
+        '#DE545A',
+        '#79B8B2',
+        '#5CA34D',
+        '#ECCA48',
+        '#AE78A2',
+        '#FC9CA8',
+        '#9B755F',
+        '#BAB0AC',
+    ]
 
     def initialize()
       super('importer')
@@ -124,7 +138,6 @@ module Ladb::OpenCutList
       filename = settings['filename']
       with_headers = settings['with_headers']
       col_sep = settings['col_sep']
-      encoding = settings['encoding']
       column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
 
       model = Sketchup.active_model
@@ -150,15 +163,9 @@ module Ladb::OpenCutList
               col_sep = "\t"
           end
 
-          # Convert col_sep
-          case encoding.to_i
-            when LOAD_OPTION_ENCODING_UTF16LE
-              encoding = 'UTF-16LE'
-            when LOAD_OPTION_ENCODING_UTF16BE
-              encoding = 'UTF-16BE'
-            else
-              encoding = 'UTF-8'
-          end
+          # Try to detect file encoding with rchardet lib
+          cd = CharDet.detect(File.read(path))
+          encoding = cd['encoding']
 
           rows = CSV.read(path, {
               :encoding => encoding + ':utf-8',
@@ -219,15 +226,17 @@ module Ladb::OpenCutList
                   case column_info[:data_type]
                     when DATA_TYPE_INTEGER
                       begin
-                        valid = !value.empty? && value.to_i > 0
-                        value = value.to_i if valid
+                        integer_value = value.to_i
+                        valid = !value.empty? && integer_value > 0
+                        value = integer_value if valid
                       rescue => e
                         valid = false
                       end
                     when DATA_TYPE_LENGTH
                       begin
-                        valid = !value.empty? && value.to_l > 0
-                        value = value.to_l if valid
+                        length_value = DimensionUtils.instance.dd_to_ifloats(value).to_l
+                        valid = !value.empty? && length_value > 0
+                        value = length_value if valid
                       rescue => e
                         valid = false
                       end
@@ -239,7 +248,7 @@ module Ladb::OpenCutList
                         valid = false
                       end
                     else
-                      valid = true
+                      valid = !value.empty?
                   end
 
                 end
@@ -330,6 +339,7 @@ module Ladb::OpenCutList
 
       offset_y = 0
       imported_part_count = 0
+      material_palette_index = 0
       @parts.each do |part|
 
         next unless part[:errors].empty?
@@ -355,7 +365,8 @@ module Ladb::OpenCutList
           material = materials[part[:material]]
           unless material
             material = materials.add(part[:material])
-            material.color = Sketchup::Color.new(rand(255), rand(255), rand(255))
+            material.color = MATERIALS_PALETTE[material_palette_index]
+            material_palette_index = (material_palette_index + 1) % MATERIALS_PALETTE.length
           end
         end
 
@@ -369,11 +380,9 @@ module Ladb::OpenCutList
 
         # Add labels if exists
         unless part[:labels].nil?
-
           definition_attributes = DefinitionAttributes.new(definition)
           definition_attributes.labels = part[:labels]
           definition_attributes.write_to_attributes
-
         end
 
         offset_y += part[:width]

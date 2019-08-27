@@ -2,14 +2,12 @@
     'use strict';
 
     var SETTING_KEY_LOAD_OPTION_COL_SEP = 'importer.load.option.col_sep';
-    var SETTING_KEY_LOAD_OPTION_ENCODING = 'importer.load.option.encoding';
     var SETTING_KEY_LOAD_OPTION_WITH_HEADERS = 'importer.load.option.with_headers';
     var SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING = 'importer.load.option.column_mapping';
 
     // Options defaults
 
-    var OPTION_DEFAULT_COL_SEP = 0;     // \t
-    var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
+    var OPTION_DEFAULT_COL_SEP = 1;     // ,
     var OPTION_DEFAULT_WITH_HEADERS = true;
     var OPTION_DEFAULT_COLUMN_MAPPGING = {};
 
@@ -64,7 +62,6 @@
                 that.opencutlist.pullSettings([
 
                         SETTING_KEY_LOAD_OPTION_COL_SEP,
-                        SETTING_KEY_LOAD_OPTION_ENCODING,
                         SETTING_KEY_LOAD_OPTION_WITH_HEADERS,
                         SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING
 
@@ -76,7 +73,6 @@
                             path: response.path,
                             filename: response.filename,
                             col_sep: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                            encoding: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_ENCODING, OPTION_DEFAULT_ENCODING),
                             with_headers: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_WITH_HEADERS, OPTION_DEFAULT_WITH_HEADERS),
                             column_mapping: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
                         };
@@ -87,15 +83,12 @@
 
                         // Fetch UI elements
                         var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
-                        var $selectEncoding = $('#ladb_importer_load_select_encoding', $modal);
                         var $inputWithHeader = $('#ladb_importer_load_input_with_headers', $modal);
                         var $btnLoad = $('#ladb_importer_load', $modal);
 
                         // Bind select
                         $selectColSep.val(loadOptions.col_sep);
                         $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                        $selectEncoding.val(loadOptions.encoding);
-                        $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
                         $inputWithHeader.prop('checked', loadOptions.with_headers);
 
                         // Bind buttons
@@ -104,15 +97,12 @@
                             // Fetch options
 
                             loadOptions.col_sep = $selectColSep.val();
-                            loadOptions.encoding = $selectEncoding.val();
                             loadOptions.with_headers = $inputWithHeader.prop('checked');
 
                             // Store options
                             that.opencutlist.setSettings([
                                 { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
-                                { key:SETTING_KEY_LOAD_OPTION_ENCODING, value:loadOptions.encoding },
-                                { key:SETTING_KEY_LOAD_OPTION_WITH_HEADERS, value:loadOptions.with_headers },
-                                { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
+                                { key:SETTING_KEY_LOAD_OPTION_WITH_HEADERS, value:loadOptions.with_headers }
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                             that.loadCSV(loadOptions);
@@ -134,6 +124,11 @@
 
     LadbTabImporter.prototype.loadCSV = function (loadOptions) {
         var that = this;
+
+        // Store options
+        that.opencutlist.setSettings([
+            { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
+        ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
         rubyCallCommand('importer_load', loadOptions, function (response) {
 
