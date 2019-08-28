@@ -50,9 +50,7 @@
             var i;
 
             if (response.errors) {
-                for (i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                }
+                that.opencutlist.notifyErrors(response.errors);
             }
             if (response.path) {
 
@@ -84,6 +82,7 @@
                         // Fetch UI elements
                         var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
                         var $inputWithHeader = $('#ladb_importer_load_input_with_headers', $modal);
+                        var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
                         var $btnLoad = $('#ladb_importer_load', $modal);
 
                         // Bind select
@@ -111,6 +110,11 @@
                             $modal.modal('hide');
 
                         });
+                        $btnSetupModelUnits.on('click', function () {
+                            rubyCallCommand('core_open_model_info_page', {
+                                page: 'Units'
+                            });
+                        });
 
                         // Show modal
                         $modal.modal('show');
@@ -135,9 +139,7 @@
             var i;
 
             if (response.errors && !response.path) {
-                for (i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                }
+                that.opencutlist.notifyErrors(response.errors);
             }
             if (response.path) {
 
@@ -231,9 +233,7 @@
                 var i;
 
                 if (response.errors) {
-                    for (i = 0; i < response.errors.length; i++) {
-                        that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                    }
+                    that.opencutlist.notifyErrors(response.errors);
                 }
                 if (response.imported_part_count) {
 

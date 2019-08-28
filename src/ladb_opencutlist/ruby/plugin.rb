@@ -247,6 +247,9 @@ module Ladb::OpenCutList
         register_command('core_open_external_file') do |params|
           open_external_file_command(params)
         end
+        register_command('core_open_model_info_page') do |params|
+          open_model_info_page_command(params)
+        end
         register_command('core_compute_size_aspect_ratio_command') do |params|
           compute_size_aspect_ratio_command(params)
         end
@@ -543,6 +546,13 @@ module Ladb::OpenCutList
       path = params['path']
       if path
         UI.openURL("file:///#{path}")
+      end
+    end
+
+    def open_model_info_page_command(params)    # Waiting params = { page: PAGE_TO_SHOW }
+      page = params['page']
+      if page
+        UI.show_model_info(page)
       end
     end
 

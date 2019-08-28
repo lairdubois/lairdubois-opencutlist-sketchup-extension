@@ -887,7 +887,6 @@ module Ladb::OpenCutList
       hidden_group_ids = settings['hidden_group_ids']
 
       response = {
-          :warnings => [],
           :errors => [],
           :export_path => ''
       }
@@ -1135,7 +1134,7 @@ module Ladb::OpenCutList
           rescue => e
             puts e.message
             puts e.backtrace
-            response[:errors] << 'tab.cutlist.error.failed_to_write_export_file'
+            response[:errors] << [ 'tab.cutlist.error.failed_to_write_export_file', { :error => e.message } ]
           end
 
         end

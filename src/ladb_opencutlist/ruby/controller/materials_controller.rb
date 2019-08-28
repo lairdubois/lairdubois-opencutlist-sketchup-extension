@@ -269,12 +269,12 @@ module Ladb::OpenCutList
 
         begin
           materials.remove(material)
-        rescue
-          response[:errors] << 'tab.materials.error.failed_removing_material'
+        rescue => e
+          response[:errors] << [ 'tab.materials.error.failed_removing_material', { :error => e.message } ]
         end
 
       else
-        response[:errors] << 'tab.materials.error.failed_removing_material'
+        response[:errors] << [ 'tab.materials.error.failed_removing_material', { :error => '' }]
       end
 
       response
@@ -298,8 +298,8 @@ module Ladb::OpenCutList
 
         begin
           material = materials.load(path)
-        rescue
-          response[:errors] << 'tab.materials.error.failed_import_skm_file'
+        rescue => e
+          response[:errors] << [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ]
         end
 
       end
@@ -335,13 +335,13 @@ module Ladb::OpenCutList
             end
             material.save_as(path)
             response[:export_path] = path
-          rescue
-            response[:errors] << 'tab.materials.error.failed_export_skm_file'
+          rescue => e
+            response[:errors] << [ 'tab.materials.error.failed_export_skm_file', { :error => e.message } ]
           end
         end
 
       else
-        response[:errors] << 'tab.materials.error.failed_export_skm_file'
+        response[:errors] << [ 'tab.materials.error.failed_export_skm_file', { :error => '' } ]
       end
 
       response

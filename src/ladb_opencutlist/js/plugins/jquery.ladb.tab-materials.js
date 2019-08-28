@@ -192,9 +192,7 @@
             var i;
 
             if (response.errors) {
-                for (i = 0; i < response.errors.length; i++) {
-                    that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                }
+                that.opencutlist.notifyErrors(response.errors);
             }
             if (response.export_path) {
                 that.opencutlist.notify(i18next.t('tab.materials.success.exported_to', { export_path: response.export_path }), 'success');
@@ -229,7 +227,7 @@
         var material;
         for (var i = 0; i < this.materials.length; i++) {
             material = this.materials[i];
-            if (material.id == id) {
+            if (material.id === id) {
                 return material;
             }
         }

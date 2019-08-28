@@ -513,14 +513,7 @@
                         var i;
 
                         if (response.errors) {
-                            for (i = 0; i < response.errors.length; i++) {
-                                that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.errors[i]), 'error');
-                            }
-                        }
-                        if (response.warnings) {
-                            for (i = 0; i < response.warnings.length; i++) {
-                                that.opencutlist.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response.warnings[i]), 'warning');
-                            }
+                            that.opencutlist.notifyErrors(response.errors);
                         }
                         if (response.export_path) {
                             that.opencutlist.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [

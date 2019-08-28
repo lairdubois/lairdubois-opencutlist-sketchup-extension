@@ -274,7 +274,17 @@
     LadbDialog.prototype.notifyErrors = function (errors) {
         if (Array.isArray(errors)) {
             for (var i = 0; i < errors.length; i++) {
-                this.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(errors[i]), 'error');
+                var error = errors[i];
+                var key = error;
+                var options = {};
+                if (Array.isArray(error) && error.length > 0) {
+                    key = error[0];
+                    if (error.length > 1) {
+                        options = error[1];
+                    }
+                }
+                console.log(options);
+                this.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(key, options), 'error');
             }
         }
     };
