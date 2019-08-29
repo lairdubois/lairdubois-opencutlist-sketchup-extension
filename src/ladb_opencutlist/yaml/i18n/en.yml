@@ -488,8 +488,8 @@ tab:
       errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
       warnings: Cette pièce sera importée mais elle contient les avertissements suivants
     error:
-      file_not_found: Fichier introuvable.
-      no_csv_extension: Le fichier n'a pas l'extension **.CSV**.
+      file_not_found: "Fichier introuvable : **{{ filename }}**"
+      no_csv_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV**.
       failed_to_load_csv_file: |
         Impossible de charger le fichier CSV : **{{ error }}**
         *Vérifiez que vous avez choisi le bon séparateur de données.*

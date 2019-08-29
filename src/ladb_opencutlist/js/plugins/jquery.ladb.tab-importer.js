@@ -276,6 +276,8 @@
     };
 
     LadbTabImporter.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
         var that = this;
 
         this.$btnOpen.on('click', function () {

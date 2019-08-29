@@ -36,6 +36,8 @@
     };
 
     LadbTabSettings.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
         var that = this;
 
         var fnUpdate = function () {

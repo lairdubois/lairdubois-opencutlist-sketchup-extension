@@ -21,37 +21,30 @@ module Ladb::OpenCutList
     COLUMN_INFOS = {
         :name => {
             :align => 'left',
-            :is_numeric => false,
             :data_type => DATA_TYPE_STRING
         },
         :count => {
             :align => 'center',
-            :is_numeric => false,
             :data_type => DATA_TYPE_INTEGER
         },
         :length => {
             :align => 'right',
-            :is_numeric => false,
             :data_type => DATA_TYPE_LENGTH
         },
         :width => {
             :align => 'right',
-            :is_numeric => false,
             :data_type => DATA_TYPE_LENGTH
         },
         :thickness => {
             :align => 'right',
-            :is_numeric => false,
             :data_type => DATA_TYPE_LENGTH
         },
         :material => {
             :align => 'left',
-            :is_numeric => false,
             :data_type => DATA_TYPE_STRING
         },
         :labels => {
             :align => 'left',
-            :is_numeric => false,
             :data_type => DATA_TYPE_STRING_ARRAY
         },
     }
@@ -111,11 +104,11 @@ module Ladb::OpenCutList
 
         # Errors
         unless File.exist?(path)
-          response[:errors] << 'tab.importer.error.file_not_found'
+          response[:errors] << [ 'tab.importer.error.file_not_found', { :filename => filename } ]
           return response
         end
         if extname.nil? || extname.downcase != '.csv'
-          response[:errors] << 'tab.importer.error.no_csv_extension'
+          response[:errors] << [ 'tab.importer.error.no_csv_extension', { :filename => filename } ]
           return response
         end
 
@@ -166,6 +159,8 @@ module Ladb::OpenCutList
           # Try to detect file encoding with rchardet lib
           cd = CharDet.detect(File.read(path))
           encoding = cd['encoding']
+
+          puts cd['confidence']
 
           rows = CSV.read(path, {
               :encoding => encoding + ':utf-8',
@@ -218,7 +213,7 @@ module Ladb::OpenCutList
               valid = false
 
               mapping = column_mapping.key(i)
-              if mapping
+              if value and mapping
 
                 column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
                 if column_info
