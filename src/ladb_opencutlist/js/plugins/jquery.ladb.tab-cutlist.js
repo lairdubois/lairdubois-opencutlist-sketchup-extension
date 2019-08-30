@@ -13,6 +13,7 @@
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_AREAS = 'cutlist.option.hide_final_areas';
     var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
+    var SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT = 'cutlist.option.minimize_on_highlight';
     var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist.option.hidden_group_ids';
 
     var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
@@ -47,6 +48,7 @@
     var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
+    var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
     var OPTION_DEFAULT_AUTO_ORIENT = true;
@@ -555,12 +557,8 @@
         rubyCallCommand('cutlist_highlight_all_parts', null, function (response) {
 
             if (response['errors']) {
-                var errMessages = [];
-                for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
-                }
-                that.opencutlist.notify(errMessages.join('\n'), 'error');
-            } else {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else if (that.uiOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -574,12 +572,8 @@
         rubyCallCommand('cutlist_highlight_group_parts', group_id, function (response) {
 
             if (response['errors']) {
-                var errMessages = [];
-                for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
-                }
-                that.opencutlist.notify(errMessages.join('\n'), 'error');
-            } else {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else if (that.uiOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -593,12 +587,8 @@
         rubyCallCommand('cutlist_highlight_part', part_id, function (response) {
 
             if (response['errors']) {
-                var errMessages = [];
-                for (var i = 0; i < response['errors'].length; i++) {
-                    errMessages.push('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(response['errors']))
-                }
-                that.opencutlist.notify(errMessages.join('\n'), 'error');
-            } else {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else if (that.uiOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -1382,6 +1372,7 @@
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
                 SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
+                SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
                 SETTING_KEY_OPTION_HIDDEN_GROUP_IDS,
 
                 SETTING_KEY_OPTION_AUTO_ORIENT,
@@ -1404,6 +1395,7 @@
                     hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
                     dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
+                    minimize_on_highlight: that.opencutlist.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
                     hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
                 };
 
@@ -1444,6 +1436,7 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
+        var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
         var $btnReset = $('#ladb_cutlist_options_reset', $modal);
@@ -1468,6 +1461,7 @@
                 .prop('checked', uiOptions.hide_untyped_material_dimensions)
                 .prop('disabled', uiOptions.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', uiOptions.hide_final_areas);
+            $inputMinimizeOnHighlight.prop('checked', uiOptions.minimize_on_highlight);
 
             // Sortables
 
@@ -1537,8 +1531,7 @@
                 part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
                 part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
                 part_folding: OPTION_DEFAULT_PART_FOLDING,
-                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY,
-                hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS
+                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
             });
             var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_entity_names: OPTION_DEFAULT_HIDE_ENTITY_NAMES,
@@ -1547,7 +1540,8 @@
                 hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
                 hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS,
-                dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY
+                dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY,
+                minimize_on_highlight: OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT
             });
             populateOptionsInputs(generateOptions, uiOptions);
         });
@@ -1561,13 +1555,13 @@
             that.generateOptions.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
-            that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
             that.uiOptions.hide_entity_names = $inputHideInstanceNames.is(':checked');
             that.uiOptions.hide_labels = $inputHideLabels.is(':checked');
             that.uiOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
             that.uiOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.uiOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.uiOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
+            that.uiOptions.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             that.uiOptions.part_folding = $inputPartFolding.is(':checked');
 
             var properties = [];
@@ -1597,7 +1591,8 @@
                 { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.uiOptions.hide_bbox_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.uiOptions.hide_untyped_material_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.uiOptions.hide_final_areas },
-                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.uiOptions.dimension_column_order_strategy }
+                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.uiOptions.dimension_column_order_strategy },
+                { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.uiOptions.minimize_on_highlight }
             ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
             // Hide modal

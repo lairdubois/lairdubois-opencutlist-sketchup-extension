@@ -9,6 +9,7 @@ in 1.x and 0.x versions.
   * Added new tab to import parts
   * Added cutlist dynamic component names option
   * Added instances list to cutlist export sources
+  * Added 'Minimize on highlight' as an option
   * Export cutlist instance names
   
 * 1.7.1 (2016-06-30)

@@ -128,6 +128,7 @@
         var that = this;
         if (that.maximized) {
             rubyCallCommand('core_dialog_minimize', null, function () {
+                Noty.closeAll();
                 that.$wrapper.hide();
                 that.$btnMinimize.hide();
                 that.$btnMaximize.show();
@@ -227,6 +228,9 @@
 
         }
 
+        // Close all Noty
+        Noty.closeAll();
+
         // Trigger event
         if ($tab) {
             $tab.trigger(jQuery.Event('shown.ladb.tab'));
@@ -283,7 +287,6 @@
                         options = error[1];
                     }
                 }
-                console.log(options);
                 this.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(key, options), 'error');
             }
         }
