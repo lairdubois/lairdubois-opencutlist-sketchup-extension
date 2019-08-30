@@ -4,9 +4,42 @@
 {% set title = 'tab.importer.import.title'|i18next %}
 
 {% block bodyInner %}
-    {{ 'tab.importer.import.info_0'|i18next({ 'count':importablePartCount }) }}
-    <br>
-    {{ 'tab.importer.import.info_1'|i18next }}
+    <p>{{ 'tab.importer.import.info_0'|i18next({ 'count':importablePartCount }) }}</p>
+    {% if not model_is_empty %}
+        <div class="alert alert-warning">
+            <div class="media">
+                <div class="media-left"><i class="ladb-opencutlist-icon-warning ladb-opencutlist-icon-lg"></i></div>
+                <div class="media-body">{{ 'tab.importer.import.options'|i18next }}</div>
+            </div>
+            <hr>
+            <div class="form form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="ladb_importer_import_input_remove_all"> <span>{{ 'tab.importer.import.option_remove_all'|i18next }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <div class="checkbox" style="padding-left: 10px;">
+                            <label>
+                                <input type="checkbox" id="ladb_importer_import_input_keep_definitions_settings" disabled> <span>{{ 'tab.importer.import.option_keep_definitions_settings'|i18next }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <div class="checkbox" style="padding-left: 10px;">
+                            <label>
+                                <input type="checkbox" id="ladb_importer_import_input_keep_materials_settings" disabled> <span>{{ 'tab.importer.import.option_keep_materials_settings'|i18next }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <p>{{ 'tab.importer.import.info_1'|i18next }}</p>
 {% endblock %}
 
 {% block footerInner %}

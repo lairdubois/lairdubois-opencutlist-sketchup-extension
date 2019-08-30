@@ -55,7 +55,7 @@
 
     def fetch_length_options
       model = Sketchup.active_model
-      @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : DECIMAL
+      @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : nil
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : INCHES
       @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
     end

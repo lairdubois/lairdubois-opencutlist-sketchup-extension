@@ -5,11 +5,17 @@
     var SETTING_KEY_LOAD_OPTION_WITH_HEADERS = 'importer.load.option.with_headers';
     var SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING = 'importer.load.option.column_mapping';
 
+    var SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS = 'importer.import.option.keep_definitions_settings';
+    var SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS = 'importer.import.option.keep_materials_settings';
+
     // Options defaults
 
     var OPTION_DEFAULT_COL_SEP = 1;     // ,
     var OPTION_DEFAULT_WITH_HEADERS = true;
     var OPTION_DEFAULT_COLUMN_MAPPGING = {};
+
+    var OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS = true;
+    var OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS = true;
 
     // Select picker options
 
@@ -29,6 +35,7 @@
 
         this.loadOptions = null;
         this.importablePartCount = 0;
+        this.model_is_empty = false;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -65,7 +72,7 @@
                         SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING
 
                     ],
-                    3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
+                    0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
                     function () {
 
                         var loadOptions = {
@@ -151,11 +158,13 @@
                 var columns = response.columns;
                 var parts = response.parts;
                 var importablePartCount = response.importable_part_count;
+                var model_is_empty = response.model_is_empty;
                 var lengthUnit = response.length_unit;
 
                 // Keep usefull data
                 that.loadOptions = loadOptions;
                 that.importablePartCount = importablePartCount;
+                that.model_is_empty = model_is_empty;
 
                 // Update filename
                 that.$fileTabs.empty();
@@ -229,60 +238,110 @@
     LadbTabImporter.prototype.importParts = function () {
         var that = this;
 
-        var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', {
-            importablePartCount: that.importablePartCount
-        });
+        // Retrieve load option options
+        that.opencutlist.pullSettings([
 
-        // Fetch UI elements
-        var $btnImport = $('#ladb_importer_import', $modal);
+                SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS,
+                SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS
 
-        // Bind buttons
-        $btnImport.on('click', function () {
+            ],
+            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
+            function () {
 
-            rubyCallCommand('importer_import', null, function (response) {
+                var importOptions = {
+                    remove_all: false,      // This option is not stored to force user to know the option status
+                    keep_definitions_settings: that.opencutlist.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS),
+                    keep_materials_settings: that.opencutlist.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS)
+                };
 
-                var i;
+                var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
+                    importablePartCount: that.importablePartCount,
+                    model_is_empty: that.model_is_empty
+                }));
 
-                if (response.errors) {
-                    that.opencutlist.notifyErrors(response.errors);
-                }
-                if (response.imported_part_count) {
+                // Fetch UI elements
+                var $inputRemoveAll = $('#ladb_importer_import_input_remove_all', $modal);
+                var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
+                var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
+                var $btnImport = $('#ladb_importer_import', $modal);
 
-                    // Update filename
-                    that.$fileTabs.empty();
+                $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
+                $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
 
-                    // Unstick header
-                    that.unstickSlideHeader(that.$rootSlide);
+                // Bind inputs
+                $inputRemoveAll.on('change', function() {
+                    $inputKeepDefinitionsSettings.prop('disabled', !$(this).is(':checked'));
+                    $inputKeepMaterialsSettings.prop('disabled', !$(this).is(':checked'));
+                });
 
-                    // Show help panel
-                    that.$panelHelp.show();
+                // Bind buttons
+                $btnImport.on('click', function () {
 
-                    // Update page
-                    that.$page.empty();
+                    // Fetch options
 
-                    // Manage buttons
-                    that.$btnOpen.removeClass('btn-default');
-                    that.$btnOpen.addClass('btn-primary');
-                    that.$btnImport.hide();
+                    importOptions.remove_all = $inputRemoveAll.prop('checked');
+                    importOptions.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
+                    importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
 
-                    // Success notification
-                    that.opencutlist.notify(i18next.t('tab.importer.success.imported', { count: response.imported_part_count }), 'success', [
-                        Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
-                            that.opencutlist.minimize();
-                        })
-                    ]);
+                    // Store options
+                    that.opencutlist.setSettings([
+                        { key:SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, value:importOptions.keep_definitions_settings },
+                        { key:SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, value:importOptions.keep_materials_settings }
+                    ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
-                }
+                    rubyCallCommand('importer_import', importOptions, function (response) {
 
-            });
+                        var i;
 
-            // Hide modal
-            $modal.modal('hide');
+                        if (response.errors) {
+                            that.opencutlist.notifyErrors(response.errors);
+                        }
+                        if (response.imported_part_count) {
 
-        });
+                            // Update filename
+                            that.$fileTabs.empty();
 
-        // Show modal
-        $modal.modal('show');
+                            // Unstick header
+                            that.unstickSlideHeader(that.$rootSlide);
+
+                            // Show help panel
+                            that.$panelHelp.show();
+
+                            // Update page
+                            that.$page.empty();
+
+                            // Manage buttons
+                            that.$btnOpen.removeClass('btn-default');
+                            that.$btnOpen.addClass('btn-primary');
+                            that.$btnImport.hide();
+
+                            // Cleanup keeped data
+                            that.loadOptions = null;
+                            that.importablePartCount = 0;
+                            that.model_is_empty = false;
+
+                            // Success notification
+                            that.opencutlist.notify(i18next.t('tab.importer.success.imported', {count: response.imported_part_count}), 'success', [
+                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                    that.opencutlist.minimize();
+                                })
+                            ]);
+
+                        }
+
+                    });
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
+
+                // Show modal
+                $modal.modal('show');
+
+            }
+
+        );
 
     };
 

@@ -49,18 +49,7 @@ module Ladb::OpenCutList
         },
     }
 
-    MATERIALS_PALETTE = [
-        '#4F78A7',
-        '#EF8E2C',
-        '#DE545A',
-        '#79B8B2',
-        '#5CA34D',
-        '#ECCA48',
-        '#AE78A2',
-        '#FC9CA8',
-        '#9B755F',
-        '#BAB0AC',
-    ]
+    MATERIALS_PALETTE = %w(#4F78A7 #EF8E2C #DE545A #79B8B2 #5CA34D #ECCA48 #AE78A2 #FC9CA8 #9B755F #BAB0AC)
 
     def initialize()
       super('importer')
@@ -94,6 +83,12 @@ module Ladb::OpenCutList
           :errors => [],
           :length_unit => length_unit,
       }
+
+      # Check model
+      unless model
+        response[:errors] << 'tab.importer.error.no_model'
+        return response
+      end
 
       # Ask for open file path
       path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv||")
@@ -134,13 +129,21 @@ module Ladb::OpenCutList
       column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
 
       model = Sketchup.active_model
-      length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
 
       response = {
           :warnings => [],
           :errors => [],
-          :length_unit => length_unit,
       }
+
+      # Check model
+      unless model
+        response[:errors] << 'tab.importer.error.no_model'
+        return response
+      end
+
+      # Add model infos to response
+      response[:length_unit] = model.options["UnitsOptions"]["LengthUnit"]
+      response[:model_is_empty] = model.active_entities.length == 0 && model.definitions.length == 0 && model.materials.length == 0
 
       if path
 
@@ -318,17 +321,39 @@ module Ladb::OpenCutList
 
     def import_command(settings)
 
+      remove_all = settings['remove_all']
+      keep_definitions_settings = settings['keep_definitions_settings']
+      keep_materials_settings = settings['keep_materials_settings']
+
       response = {
           :errors => [],
       }
 
       model = Sketchup.active_model
+
+      # Check model
+      unless model
+        response[:errors] << 'tab.importer.error.no_model'
+        return response
+      end
+
       definitions = model.definitions
       materials = model.materials
       active_entities = model.active_entities
 
       # Start an operation
-      model.start_operation('Create parts', true)
+      model.start_operation('Importing parts...', true)
+
+      # Remove all instances, definitions and materials if needed
+      if remove_all
+        active_entities.clear!
+        unless keep_definitions_settings
+          definitions.purge_unused
+        end
+        unless keep_materials_settings
+          materials.purge_unused
+        end
+      end
 
       offset_y = 0
       imported_part_count = 0
@@ -337,8 +362,21 @@ module Ladb::OpenCutList
 
         next unless part[:errors].empty?
 
-        # Create the definition
-        definition = definitions.add(part[:name])
+        # Retrieve or Create the definition
+        definition = nil
+        if remove_all && keep_definitions_settings
+
+          # Try to retrieve definition from list
+          definition = definitions[part[:name]]
+
+          # Definition exists ? -> clear it
+          if definition
+            definition.entities.clear!
+          end
+
+        end
+
+        definition = definitions.add(part[:name]) unless definition   # Add new definition it it doesn't exist
         entities = definition.entities
 
         # Create the base face
@@ -380,12 +418,33 @@ module Ladb::OpenCutList
 
         offset_y += part[:width]
 
+        # Purge extra definitions and materials if needed
+        if remove_all
+          if keep_definitions_settings
+            definitions.purge_unused
+          end
+          if keep_materials_settings
+            materials.purge_unused
+          end
+        end
+
       end
 
       # Commit operation
-      model.commit_operation
+      if model.commit_operation
 
-      response[:imported_part_count] = imported_part_count
+        # Cleanup data
+        @parts = nil
+
+        # Operation success -> send imported part count
+        response[:imported_part_count] = imported_part_count
+
+      else
+
+        # Opetation failed
+        response[:errors] << 'tab.importer.failed_to_import'
+
+      end
 
       response
     end
