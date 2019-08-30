@@ -2,7 +2,7 @@
     'use strict';
 
     var SETTING_KEY_LOAD_OPTION_COL_SEP = 'importer.load.option.col_sep';
-    var SETTING_KEY_LOAD_OPTION_WITH_HEADERS = 'importer.load.option.with_headers';
+    var SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS = 'importer.load.option.first_line_headers';
     var SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING = 'importer.load.option.column_mapping';
 
     var SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS = 'importer.import.option.keep_definitions_settings';
@@ -11,7 +11,7 @@
     // Options defaults
 
     var OPTION_DEFAULT_COL_SEP = 1;     // ,
-    var OPTION_DEFAULT_WITH_HEADERS = true;
+    var OPTION_DEFAULT_FIRST_LINE_HEADERS = 1;  // headers
     var OPTION_DEFAULT_COLUMN_MAPPGING = {};
 
     var OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS = true;
@@ -68,7 +68,7 @@
                 that.opencutlist.pullSettings([
 
                         SETTING_KEY_LOAD_OPTION_COL_SEP,
-                        SETTING_KEY_LOAD_OPTION_WITH_HEADERS,
+                        SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS,
                         SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING
 
                     ],
@@ -79,7 +79,7 @@
                             path: response.path,
                             filename: response.filename,
                             col_sep: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                            with_headers: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_WITH_HEADERS, OPTION_DEFAULT_WITH_HEADERS),
+                            first_line_headers: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, OPTION_DEFAULT_FIRST_LINE_HEADERS),
                             column_mapping: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
                         };
 
@@ -89,14 +89,15 @@
 
                         // Fetch UI elements
                         var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
-                        var $inputWithHeader = $('#ladb_importer_load_input_with_headers', $modal);
+                        var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
                         var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
                         var $btnLoad = $('#ladb_importer_load', $modal);
 
                         // Bind select
                         $selectColSep.val(loadOptions.col_sep);
                         $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                        $inputWithHeader.prop('checked', loadOptions.with_headers);
+                        $selectFirstLineHeaders.val(loadOptions.first_line_headers ? '1' : '0');
+                        $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
 
                         // Bind buttons
                         $btnLoad.on('click', function () {
@@ -104,12 +105,12 @@
                             // Fetch options
 
                             loadOptions.col_sep = $selectColSep.val();
-                            loadOptions.with_headers = $inputWithHeader.prop('checked');
+                            loadOptions.first_line_headers = $selectFirstLineHeaders.val() === '1';
 
                             // Store options
                             that.opencutlist.setSettings([
                                 { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
-                                { key:SETTING_KEY_LOAD_OPTION_WITH_HEADERS, value:loadOptions.with_headers }
+                                { key:SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, value:loadOptions.first_line_headers }
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                             that.loadCSV(loadOptions);
@@ -260,7 +261,7 @@
                 }));
 
                 // Fetch UI elements
-                var $inputRemoveAll = $('#ladb_importer_import_input_remove_all', $modal);
+                var $SelectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
                 var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
                 var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
                 var $btnImport = $('#ladb_importer_import', $modal);
@@ -268,18 +269,24 @@
                 $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
                 $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
 
-                // Bind inputs
-                $inputRemoveAll.on('change', function() {
-                    $inputKeepDefinitionsSettings.prop('disabled', !$(this).is(':checked'));
-                    $inputKeepMaterialsSettings.prop('disabled', !$(this).is(':checked'));
-                });
+                // Bind select
+                $SelectRemoveAll
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        var removeAll = $(e.currentTarget).selectpicker('val');
+                        if (removeAll === '1') {
+                            $inputKeepDefinitionsSettings.closest('.form-group').show();
+                        } else {
+                            $inputKeepDefinitionsSettings.closest('.form-group').hide();
+                        }
+                    })
+                    .selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind buttons
                 $btnImport.on('click', function () {
 
                     // Fetch options
 
-                    importOptions.remove_all = $inputRemoveAll.prop('checked');
+                    importOptions.remove_all = $SelectRemoveAll.selectpicker('val') === '1';
                     importOptions.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
                     importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
 
@@ -324,6 +331,9 @@
                             that.opencutlist.notify(i18next.t('tab.importer.success.imported', {count: response.imported_part_count}), 'success', [
                                 Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
                                     that.opencutlist.minimize();
+                                }),
+                                Noty.button(i18next.t('tab.cutlist.title'), 'btn btn-default', function () {
+                                    that.opencutlist.executeCommandOnTab('cutlist', 'generate_cutlist');
                                 })
                             ]);
 

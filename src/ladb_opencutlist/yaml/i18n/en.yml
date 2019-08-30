@@ -465,7 +465,9 @@ tab:
       option_col_sep_tab: Tabulation
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
-      option_with_headers: Le fichier contient une ligne de titres
+      option_first_line_headers: Première ligne
+      option_first_line_headers_0: Données
+      option_first_line_headers_1: Titres de colonne
     import:
       title: Importation des pièces dans le modèle
       info_0: |
@@ -478,7 +480,9 @@ tab:
       options: |
         Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
         Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all: Effacer tout !
+      option_remove_all_?: Que faire ?
+      option_remove_all_false: Ajouter les pièces à l'existant
+      option_remove_all_true: Effacer tout !
       option_keep_definitions_settings: Conserver les paramètres sur les définitions
       option_keep_materials_settings: Conserver les paramètres sur les matières
     column:

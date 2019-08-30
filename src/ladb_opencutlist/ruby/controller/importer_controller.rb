@@ -124,7 +124,7 @@ module Ladb::OpenCutList
       # Check settings
       path = settings['path']
       filename = settings['filename']
-      with_headers = settings['with_headers']
+      first_line_headers = settings['first_line_headers']
       col_sep = settings['col_sep']
       column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
 
@@ -165,12 +165,12 @@ module Ladb::OpenCutList
 
           rows = CSV.read(path, {
               :encoding => encoding + ':utf-8',
-              :headers => with_headers,
+              :headers => first_line_headers,
               :col_sep => col_sep
           })
 
           # Extract headers
-          headers = with_headers ? rows.headers : nil
+          headers = first_line_headers ? rows.headers : nil
 
           # Columns
           column_count = rows.empty? ? 0 : rows[0].length
@@ -180,7 +180,7 @@ module Ladb::OpenCutList
             mapping = column_mapping.key(i)
             column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
             columns[i] = {
-                :header => with_headers ? headers[i] : nil,
+                :header => first_line_headers ? headers[i] : nil,
                 :mapping => mapping,
                 :align => column_info ? column_info[:align] : 'left',
             }

@@ -14,24 +14,26 @@
             <hr>
             <div class="form form-horizontal">
                 <div class="form-group">
+                    <label for="ladb_importer_import_select_remove_all" class="control-label col-xs-3">{{ 'tab.importer.import.option_remove_all_?'|i18next }}</label>
+                    <div class="col-xs-8">
+                        <select class="form-control" id="ladb_importer_import_select_remove_all">
+                            <option value="0" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.importer.import.option_remove_all_false'|i18next }}">0</option>
+                            <option value="1" data-content="<span class='ladb-color-danger'><i class='ladb-opencutlist-icon-warning'></i> {{ 'tab.importer.import.option_remove_all_true'|i18next }}</span>">1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="display: none;">
                     <div class="col-xs-offset-1 col-xs-10">
-                        <div class="checkbox">
+                        <div class="checkbox" style="padding-left: 10px;">
                             <label>
-                                <input type="checkbox" id="ladb_importer_import_input_remove_all"> <span>{{ 'tab.importer.import.option_remove_all'|i18next }}</span>
+                                <input type="checkbox" id="ladb_importer_import_input_keep_definitions_settings"> <span>{{ 'tab.importer.import.option_keep_definitions_settings'|i18next }}</span>
                             </label>
                         </div>
                     </div>
                     <div class="col-xs-offset-1 col-xs-10">
                         <div class="checkbox" style="padding-left: 10px;">
                             <label>
-                                <input type="checkbox" id="ladb_importer_import_input_keep_definitions_settings" disabled> <span>{{ 'tab.importer.import.option_keep_definitions_settings'|i18next }}</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-xs-offset-1 col-xs-10">
-                        <div class="checkbox" style="padding-left: 10px;">
-                            <label>
-                                <input type="checkbox" id="ladb_importer_import_input_keep_materials_settings" disabled> <span>{{ 'tab.importer.import.option_keep_materials_settings'|i18next }}</span>
+                                <input type="checkbox" id="ladb_importer_import_input_keep_materials_settings"> <span>{{ 'tab.importer.import.option_keep_materials_settings'|i18next }}</span>
                             </label>
                         </div>
                     </div>

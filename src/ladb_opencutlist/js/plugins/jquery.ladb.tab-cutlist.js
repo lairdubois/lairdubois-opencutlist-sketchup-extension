@@ -1742,6 +1742,12 @@
         var that = this;
 
         // Register commands
+        this.registerCommand('generate_cutlist', function (parameters) {
+            var callback = parameters ? parameters.callback : null;
+            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
+                that.generateCutlist(callback);
+            }, 1);
+        });
         this.registerCommand('edit_part', function (parameters) {
             var partId = parameters.part_id;
             var partSerializedPath = parameters.part_serialized_path;
