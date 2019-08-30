@@ -271,6 +271,12 @@
             ;
 
             // Bind buttons
+            $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
+                $(this).blur();
+                rubyCallCommand('core_open_model_info_page', {
+                    page: 'Units'
+                });
+            });
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function () {
                 $(this).blur();
                 that.generateFilters.labels_filter = [];

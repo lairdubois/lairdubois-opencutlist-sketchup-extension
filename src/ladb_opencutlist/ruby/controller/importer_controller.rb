@@ -160,8 +160,6 @@ module Ladb::OpenCutList
           cd = CharDet.detect(File.read(path))
           encoding = cd['encoding']
 
-          puts cd['confidence']
-
           rows = CSV.read(path, {
               :encoding => encoding + ':utf-8',
               :headers => with_headers,

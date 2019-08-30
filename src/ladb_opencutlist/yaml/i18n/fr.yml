@@ -468,11 +468,13 @@ tab:
       option_with_headers: Le fichier contient une ligne de titres
     import:
       title: Importation des pièces dans le modèle
-      info: |
+      info_0: |
+        Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
+        Cette pièce va être placée sur la scène principale à l'origine.
+      info_0_plural: |
         Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
         Ces pièces vont être empilées sur la scène principale depuis l'origine.
-
-        Cliquez sur **Importer** pour confirmer l'action.
+      info_1: Cliquez sur **Importer** pour confirmer l'action.
     column:
       unused: Non utilisé
       mandatory: Champs obligatoires
@@ -503,6 +505,7 @@ tab:
       invalid_material: Pas de matière valide
     success:
       imported: "{{ count }} pièces importées avec succes !"
+    outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   about:
     label: A propos
     title: A propos

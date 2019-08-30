@@ -27,6 +27,7 @@
     var LadbTabImporter = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
+        this.loadOptions = null;
         this.importablePartCount = 0;
 
         this.$header = $('.ladb-header', this.$element);
@@ -111,6 +112,7 @@
 
                         });
                         $btnSetupModelUnits.on('click', function () {
+                            $(this).blur();
                             rubyCallCommand('core_open_model_info_page', {
                                 page: 'Units'
                             });
@@ -152,6 +154,7 @@
                 var lengthUnit = response.length_unit;
 
                 // Keep usefull data
+                that.loadOptions = loadOptions;
                 that.importablePartCount = importablePartCount;
 
                 // Update filename
@@ -199,6 +202,14 @@
                         })
                         .selectpicker(SELECT_PICKER_OPTIONS);
                 }
+
+                // Bind buttons
+                $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
+                    $(this).blur();
+                    rubyCallCommand('core_open_model_info_page', {
+                        page: 'Units'
+                    });
+                });
 
                 // Manage buttons
                 that.$btnOpen.removeClass('btn-primary');
@@ -275,11 +286,35 @@
 
     };
 
+    // Internals /////
+
+    LadbTabImporter.prototype.showOutdated = function (messageI18nKey) {
+        var that = this;
+
+        var $modal = this.appendModalInside('ladb_importer_modal_outdated', 'tabs/importer/_modal-outdated.twig', {
+            messageI18nKey: messageI18nKey
+        });
+
+        // Fetch UI elements
+        var $btnLoad = $('#ladb_importer_outdated_load', $modal);
+
+        // Bind buttons
+        $btnLoad.on('click', function () {
+            $modal.modal('hide');
+            that.loadCSV(that.loadOptions);
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     LadbTabImporter.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
         var that = this;
 
+        // Bind buttons
         this.$btnOpen.on('click', function () {
             that.openCSV();
             this.blur();
@@ -287,6 +322,14 @@
         this.$btnImport.on('click', function () {
             that.importParts();
             this.blur();
+        });
+
+        // Events
+
+        addEventCallback('on_options_provider_changed', function () {
+            if (that.loadOptions) {
+                that.showOutdated('core.event.options_change');
+            }
         });
 
     };

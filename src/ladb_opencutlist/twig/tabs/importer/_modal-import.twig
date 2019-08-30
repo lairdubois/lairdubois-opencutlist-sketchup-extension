@@ -4,7 +4,9 @@
 {% set title = 'tab.importer.import.title'|i18next %}
 
 {% block bodyInner %}
-    {{ 'tab.importer.import.info'|i18next({ 'count':importablePartCount }) }}
+    {{ 'tab.importer.import.info_0'|i18next({ 'count':importablePartCount }) }}
+    <br>
+    {{ 'tab.importer.import.info_1'|i18next }}
 {% endblock %}
 
 {% block footerInner %}

@@ -4,13 +4,26 @@
 
 .nav.nav-tabs li {
 
-  a {
+  > a, .ladb-fake-tab {
     color: #333 !important;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border-radius: 0 0 0 0;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
   }
 
-  &.active a {
-    background-color: #fff !important;
-    font-weight: bold;
+  &.active {
+
+    > a, .ladb-fake-tab {
+      background-color: #fff !important;
+      font-weight: bold;
+    }
+
   }
 
 }
