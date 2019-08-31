@@ -6,23 +6,22 @@
 
     // Options keys
 
-    var SETTING_KEY_OPTION_HIDE_ENTITY_NAMES = 'cutlist.option.hide_entity_names';
-    var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_labels';
-    var SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS = 'cutlist.option.hide_cutting_dimensions';
-    var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
-    var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
-    var SETTING_KEY_OPTION_HIDE_FINAL_AREAS = 'cutlist.option.hide_final_areas';
-    var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
-    var SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT = 'cutlist.option.minimize_on_highlight';
-    var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist.option.hidden_group_ids';
-
     var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
     var SETTING_KEY_OPTION_SMART_MATERIAL = 'cutlist.option.smart_material';
     var SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME = 'cutlist.option.dynamic_attributes_name';
     var SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS = 'cutlist.option.part_number_with_letters';
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist.option.part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_FOLDING = 'cutlist.option.part_folding';
+    var SETTING_KEY_OPTION_HIDE_ENTITY_NAMES = 'cutlist.option.hide_entity_names';
+    var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_labels';
+    var SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS = 'cutlist.option.hide_cutting_dimensions';
+    var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
+    var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
+    var SETTING_KEY_OPTION_HIDE_FINAL_AREAS = 'cutlist.option.hide_final_areas';
+    var SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT = 'cutlist.option.minimize_on_highlight';
     var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist.option.part_order_strategy';
+    var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
+    var SETTING_KEY_OPTION_HIDDEN_GROUP_IDS = 'cutlist.option.hidden_group_ids';
 
     var SETTING_KEY_EXPORT_OPTION_SOURCE = 'cutlist.export.option.source';
     var SETTING_KEY_EXPORT_OPTION_COL_SEP = 'cutlist.export.option.col_sep';
@@ -41,23 +40,22 @@
 
     // Options defaults
 
-    var OPTION_DEFAULT_HIDE_ENTITY_NAMES = false;
-    var OPTION_DEFAULT_HIDE_LABELS = false;
-    var OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
-    var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
-    var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
-    var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
-
     var OPTION_DEFAULT_AUTO_ORIENT = true;
     var OPTION_DEFAULT_SMART_MATERIAL = true;
     var OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME = false;
     var OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS = true;
     var OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP = true;
     var OPTION_DEFAULT_PART_FOLDING = false;
+    var OPTION_DEFAULT_HIDE_ENTITY_NAMES = false;
+    var OPTION_DEFAULT_HIDE_LABELS = false;
+    var OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
+    var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
+    var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
+    var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
+    var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
     var OPTION_DEFAULT_SOURCE = 1;      // cutlist
     var OPTION_DEFAULT_COL_SEP = 0;     // \t
@@ -124,7 +122,6 @@
         this.$itemExpendAll = $('#ladb_item_expand_all', this.$header);
         this.$itemCollapseAll = $('#ladb_item_collapse_all', this.$header);
         this.$itemOptions = $('#ladb_item_options', this.$header);
-        this.$itemHelp = $('#ladb_item_help', this.$header);
 
         this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
@@ -144,7 +141,7 @@
         this.$btnGenerate.prop('disabled', true);
         this.popSlide();
 
-        rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters, this.uiOptions), function (response) {
+        rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
             that.generateAt = new Date().getTime() / 1000;
 
@@ -181,22 +178,22 @@
             that.$panelHelp.hide();
 
             // Update buttons and items state
-            that.$btnPrint.prop('disabled', groups.length == 0);
-            that.$btnExport.prop('disabled', groups.length == 0);
-            that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length == 0);
-            that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length == 0);
-            that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length == 0);
-            that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length == 0);
-            that.$itemExpendAll.parents('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
-            that.$itemCollapseAll.parents('li').toggleClass('disabled', groups.length == 0 || !that.uiOptions.part_folding);
+            that.$btnPrint.prop('disabled', groups.length === 0);
+            that.$btnExport.prop('disabled', groups.length === 0);
+            that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
+            that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
+            that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
+            that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
+            that.$itemExpendAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
+            that.$itemCollapseAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
 
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
                 showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
                 showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
-                dimensionColumnOrderStrategy: that.uiOptions.dimension_column_order_strategy.split('>'),
-                uiOptions: that.uiOptions,
+                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                generateOptions: that.generateOptions,
                 generateFilters: that.generateFilters,
                 errors: errors,
                 warnings: warnings,
@@ -211,24 +208,24 @@
             that.opencutlist.setupTooltips();
 
             // Cleanup nonexistent hidden group ids
-            var hiddenGroupIdsLength = that.uiOptions.hidden_group_ids.length;
+            var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.uiOptions.hidden_group_ids[i].endsWith('summary')) {
+                if (that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
                     continue;
                 }
                 var exists = false;
                 for (var j = 0; j < groups.length; j++) {
-                    if (that.uiOptions.hidden_group_ids[i] === groups[j].id) {
+                    if (that.generateOptions.hidden_group_ids[i] === groups[j].id) {
                         exists = true;
                         break;
                     }
                 }
                 if (!exists) {
-                    that.uiOptions.hidden_group_ids.splice(i, 1);
+                    that.generateOptions.hidden_group_ids.splice(i, 1);
                 }
             }
-            if (hiddenGroupIdsLength > that.uiOptions.hidden_group_ids.length) {
-                that.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, that.uiOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+            if (hiddenGroupIdsLength > that.generateOptions.hidden_group_ids.length) {
+                that.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, that.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
             }
 
             // Bind inputs
@@ -516,7 +513,7 @@
                         { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding }
                     ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                    rubyCallCommand('cutlist_export', $.extend(exportOptions, that.uiOptions), function (response) {
+                    rubyCallCommand('cutlist_export', $.extend(exportOptions, that.generateOptions), function (response) {
 
                         var i;
 
@@ -558,7 +555,7 @@
 
             if (response['errors']) {
                 that.opencutlist.notifyErrors(response['errors']);
-            } else if (that.uiOptions.minimize_on_highlight) {
+            } else if (that.generateOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -573,7 +570,7 @@
 
             if (response['errors']) {
                 that.opencutlist.notifyErrors(response['errors']);
-            } else if (that.uiOptions.minimize_on_highlight) {
+            } else if (that.generateOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -588,7 +585,7 @@
 
             if (response['errors']) {
                 that.opencutlist.notifyErrors(response['errors']);
-            } else if (that.uiOptions.minimize_on_highlight) {
+            } else if (that.generateOptions.minimize_on_highlight) {
                 that.opencutlist.minimize();
             }
 
@@ -924,7 +921,7 @@
     };
 
     LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function () {
-        this.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.uiOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+        this.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
     };
 
     LadbTabCutlist.prototype.showGroup = function ($group, doNotFlushSettings) {
@@ -938,9 +935,9 @@
         $i.removeClass('ladb-opencutlist-icon-eye-open');
         $summaryRow.removeClass('ladb-mute');
 
-        var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
+        var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
         if (idx !== -1) {
-            this.uiOptions.hidden_group_ids.splice(idx, 1);
+            this.generateOptions.hidden_group_ids.splice(idx, 1);
             if (doNotFlushSettings === undefined || !doNotFlushSettings) {
                 this.saveUIOptionsHiddenGroupIds();
             }
@@ -959,9 +956,9 @@
         $i.addClass('ladb-opencutlist-icon-eye-open');
         $summaryRow.addClass('ladb-mute');
 
-        var idx = this.uiOptions.hidden_group_ids.indexOf(groupId);
+        var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
         if (idx === -1) {
-            this.uiOptions.hidden_group_ids.push(groupId);
+            this.generateOptions.hidden_group_ids.push(groupId);
             if (doNotFlushSettings === undefined || !doNotFlushSettings) {
                 this.saveUIOptionsHiddenGroupIds();
             }
@@ -1186,10 +1183,10 @@
 
                         ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram2dOptions, that.uiOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
-                                uiOptions: that.uiOptions,
+                                generateOptions: that.generateOptions,
                                 filename: that.filename,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
@@ -1304,7 +1301,7 @@
 
         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, uiOptions: that.uiOptions });
+            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, generateOptions: that.generateOptions });
 
             // Fetch UI elements
             var $btnCuttingToggle = $('#ladb_btn_cutting_toggle', $modal);
@@ -1365,39 +1362,26 @@
 
         this.opencutlist.pullSettings([
 
-                SETTING_KEY_OPTION_HIDE_ENTITY_NAMES,
-                SETTING_KEY_OPTION_HIDE_LABELS,
-                SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
-                SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
-                SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
-                SETTING_KEY_OPTION_HIDDEN_GROUP_IDS,
-
                 SETTING_KEY_OPTION_AUTO_ORIENT,
                 SETTING_KEY_OPTION_SMART_MATERIAL,
                 SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME,
                 SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS,
                 SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
                 SETTING_KEY_OPTION_PART_FOLDING,
-                SETTING_KEY_OPTION_PART_ORDER_STRATEGY
+                SETTING_KEY_OPTION_HIDE_ENTITY_NAMES,
+                SETTING_KEY_OPTION_HIDE_LABELS,
+                SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS,
+                SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
+                SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
+                SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
+                SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
+                SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
+                SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
+                SETTING_KEY_OPTION_HIDDEN_GROUP_IDS
 
             ],
             3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
             function () {
-
-                that.uiOptions = {
-                    hide_entity_names: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, OPTION_DEFAULT_HIDE_ENTITY_NAMES),
-                    hide_labels: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
-                    hide_cutting_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
-                    hide_bbox_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
-                    hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
-                    hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
-                    dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
-                    minimize_on_highlight: that.opencutlist.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
-                    hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
-                };
 
                 that.generateOptions = {
                     auto_orient: that.opencutlist.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
@@ -1406,7 +1390,16 @@
                     part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
                     part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                     part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
-                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY)
+                    hide_entity_names: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, OPTION_DEFAULT_HIDE_ENTITY_NAMES),
+                    hide_labels: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
+                    hide_cutting_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
+                    hide_bbox_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
+                    hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
+                    hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
+                    minimize_on_highlight: that.opencutlist.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
+                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
+                    dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
+                    hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
                 };
 
                 // Callback
@@ -1443,7 +1436,7 @@
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
         // Define useful functions
-        var populateOptionsInputs = function (generateOptions, uiOptions) {
+        var populateOptionsInputs = function (generateOptions) {
 
             // Checkboxes
 
@@ -1453,15 +1446,15 @@
             $inputPartNumberWithLetters.prop('checked', generateOptions.part_number_with_letters);
             $inputPartNumberSequenceByGroup.prop('checked', generateOptions.part_number_sequence_by_group);
             $inputPartFolding.prop('checked', generateOptions.part_folding);
-            $inputHideInstanceNames.prop('checked', uiOptions.hide_entity_names);
-            $inputHideLabels.prop('checked', uiOptions.hide_labels);
-            $inputHideCuttingDimensions.prop('checked', uiOptions.hide_cutting_dimensions);
-            $inputHideBBoxDimensions.prop('checked', uiOptions.hide_bbox_dimensions);
+            $inputHideInstanceNames.prop('checked', generateOptions.hide_entity_names);
+            $inputHideLabels.prop('checked', generateOptions.hide_labels);
+            $inputHideCuttingDimensions.prop('checked', generateOptions.hide_cutting_dimensions);
+            $inputHideBBoxDimensions.prop('checked', generateOptions.hide_bbox_dimensions);
             $inputHideUntypedMaterialDimensions
-                .prop('checked', uiOptions.hide_untyped_material_dimensions)
-                .prop('disabled', uiOptions.hide_bbox_dimensions);
-            $inputHideFinalAreas.prop('checked', uiOptions.hide_final_areas);
-            $inputMinimizeOnHighlight.prop('checked', uiOptions.minimize_on_highlight);
+                .prop('checked', generateOptions.hide_untyped_material_dimensions)
+                .prop('disabled', generateOptions.hide_bbox_dimensions);
+            $inputHideFinalAreas.prop('checked', generateOptions.hide_final_areas);
+            $inputMinimizeOnHighlight.prop('checked', generateOptions.minimize_on_highlight);
 
             // Sortables
 
@@ -1500,7 +1493,7 @@
 
             // Dimension column order sortables
 
-            properties = uiOptions.dimension_column_order_strategy.split('>');
+            properties = generateOptions.dimension_column_order_strategy.split('>');
             $sortableDimensionColumnOrderStrategy.empty();
             for (i = 0; i < properties.length; i++) {
                 property = properties[i];
@@ -1531,19 +1524,17 @@
                 part_number_with_letters: OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS,
                 part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
                 part_folding: OPTION_DEFAULT_PART_FOLDING,
-                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY
-            });
-            var uiOptions = $.extend($.extend({}, that.uiOptions), {
                 hide_entity_names: OPTION_DEFAULT_HIDE_ENTITY_NAMES,
                 hide_labels: OPTION_DEFAULT_HIDE_LABELS,
                 hide_cutting_dimensions: OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS,
                 hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
                 hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS,
-                dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY,
-                minimize_on_highlight: OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT
+                minimize_on_highlight: OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT,
+                part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY,
+                dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY
             });
-            populateOptionsInputs(generateOptions, uiOptions);
+            populateOptionsInputs(generateOptions);
         });
         $btnUpdate.on('click', function () {
 
@@ -1555,14 +1546,13 @@
             that.generateOptions.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
-            that.uiOptions.hide_entity_names = $inputHideInstanceNames.is(':checked');
-            that.uiOptions.hide_labels = $inputHideLabels.is(':checked');
-            that.uiOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
-            that.uiOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
-            that.uiOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
-            that.uiOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
-            that.uiOptions.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
-            that.uiOptions.part_folding = $inputPartFolding.is(':checked');
+            that.generateOptions.hide_entity_names = $inputHideInstanceNames.is(':checked');
+            that.generateOptions.hide_labels = $inputHideLabels.is(':checked');
+            that.generateOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
+            that.generateOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
+            that.generateOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
+            that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
+            that.generateOptions.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
 
             var properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {
@@ -1574,7 +1564,7 @@
             $sortableDimensionColumnOrderStrategy.children('li').each(function () {
                 properties.push($(this).data('property'));
             });
-            that.uiOptions.dimension_column_order_strategy = properties.join('>');
+            that.generateOptions.dimension_column_order_strategy = properties.join('>');
 
             // Store options
             that.opencutlist.setSettings([
@@ -1584,15 +1574,15 @@
                 { key:SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, value:that.generateOptions.part_number_with_letters },
                 { key:SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, value:that.generateOptions.part_number_sequence_by_group },
                 { key:SETTING_KEY_OPTION_PART_FOLDING, value:that.generateOptions.part_folding },
+                { key:SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, value:that.generateOptions.hide_entity_names },
+                { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.generateOptions.hide_labels },
+                { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.generateOptions.hide_cutting_dimensions },
+                { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.generateOptions.hide_bbox_dimensions },
+                { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.generateOptions.hide_untyped_material_dimensions },
+                { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.generateOptions.hide_final_areas },
+                { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.generateOptions.minimize_on_highlight },
                 { key:SETTING_KEY_OPTION_PART_ORDER_STRATEGY, value:that.generateOptions.part_order_strategy },
-                { key:SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, value:that.uiOptions.hide_entity_names },
-                { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.uiOptions.hide_labels },
-                { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.uiOptions.hide_cutting_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.uiOptions.hide_bbox_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.uiOptions.hide_untyped_material_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.uiOptions.hide_final_areas },
-                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.uiOptions.dimension_column_order_strategy },
-                { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.uiOptions.minimize_on_highlight }
+                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.generateOptions.dimension_column_order_strategy }
             ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
             // Hide modal
@@ -1606,7 +1596,7 @@
         });
 
         // Populate inputs
-        populateOptionsInputs(that.generateOptions, that.uiOptions);
+        populateOptionsInputs(that.generateOptions);
 
         // Show modal
         $modal.modal('show');
@@ -1693,11 +1683,6 @@
             that.editOptions();
             this.blur();
         });
-        this.$itemHelp.on('click', function () {
-            that.showHelp();
-            this.blur();
-        });
-
 
         // Events
 

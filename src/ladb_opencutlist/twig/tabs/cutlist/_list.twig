@@ -8,7 +8,7 @@
 
 {% if usedLabels is not empty or ignoredInstanceCount > 0 %}
 
-    {% set groupFiltersHidden = 'filters' in uiOptions.hidden_group_ids or generateFilters.labels_filter is empty %}
+    {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or generateFilters.labels_filter is empty %}
 
     <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
         <thead>
@@ -57,12 +57,12 @@
 
 {% if groups|length > 0 %}
 
-    {% set groupSummaryHidden = 'summary' in uiOptions.hidden_group_ids %}
+    {% set groupSummaryHidden = 'summary' in generateOptions.hidden_group_ids %}
 
     <table id="ladb_group_summary" data-group-id="summary" class="{% if groupSummaryHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
         <thead>
         <tr>
-            <td colspan="{% if uiOptions.hide_final_areas %}6{% else %}7{% endif %}">
+            <td colspan="{% if generateOptions.hide_final_areas %}6{% else %}7{% endif %}">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-reorder"></i> <span class="caret"></span></button>
@@ -80,7 +80,7 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
             <td class="text-center" colspan="3">{{ 'tab.cutlist.list.total_cutting'|i18next }}</td>
-            {% if not uiOptions.hide_final_areas %}
+            {% if not generateOptions.hide_final_areas %}
                 <td class="text-center" colspan="3">{{ 'tab.cutlist.list.total_final'|i18next }}</td>
             {% endif %}
         </tr>
@@ -88,12 +88,12 @@
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.length'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
-            {% if not uiOptions.hide_final_areas %}
+            {% if not generateOptions.hide_final_areas %}
                 <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             {% endif %}
         </tr>
         {% for group in groups %}
-            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in uiOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
+            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in generateOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
                 <td class="text-center">{% if group.material_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
@@ -105,7 +105,7 @@
                 <td class="ladb-cutlist-dimension-value">{% if group.total_cutting_length is null %}-{% else %}{{ group.total_cutting_length }}{% endif %}</td>
                 <td class="ladb-cutlist-dimension-value">{% if group.total_cutting_area is null %}-{% else %}{{ group.total_cutting_area }}{% endif %}</td>
                 <td class="ladb-cutlist-dimension-value">{% if group.total_cutting_volume is null %}-{% else %}{{ group.total_cutting_volume }}{% endif %}</td>
-                {% if not uiOptions.hide_final_areas %}
+                {% if not generateOptions.hide_final_areas %}
                     <td class="ladb-cutlist-dimension-value">{% if group.invalid_final_area_part_count > 0 %}<div class="ladb-minitools ladb-minitools-left no-print"><a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.invalid_final_area')|i18next({ 'count':group.invalid_final_area_part_count, 'total':group.part_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>{% endif %}{% if group.total_final_area is null or group.invalid_final_area_part_count > 0 %}-{% else %}{{ group.total_final_area }}{% endif %}</td>
                 {% endif %}
             </tr>
@@ -118,11 +118,11 @@
 {% endif %}
 {% for group in groups %}
 
-    {% set groupHidden = group.id in uiOptions.hidden_group_ids %}
-    {% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
-    {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not uiOptions.hide_untyped_material_dimensions) and not uiOptions.hide_bbox_dimensions %}
+    {% set groupHidden = group.id in generateOptions.hidden_group_ids %}
+    {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
+    {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not generateOptions.hide_untyped_material_dimensions) and not generateOptions.hide_bbox_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
-    {% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+    {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
     {% set colspan = 9 %}
     {% if showCuttingDimensions %}
         {% if showLengthOnly %}

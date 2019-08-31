@@ -3,8 +3,8 @@
 {% set id = 'ladb_cutlist_modal_help' %}
 {% set title = 'tab.cutlist.list.dimensions_help'|i18next %}
 
-{% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
-{% set showFinalAreas = group.material_type == 2 and not uiOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+{% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
+{% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
 
 {% block bodyInner %}
     <div style="font-size: 120%;">

@@ -14,7 +14,7 @@
 {% set partOutlineWidth = 2 %}
 {% set cutOutlineWidth = 2 %}
 
-{% set showCuttingDimensions = group.show_cutting_dimensions and not uiOptions.hide_cutting_dimensions %}
+{% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -42,7 +42,7 @@
         {% include 'core/_alert-tips.twig' %}
 
         {% if unplaced_parts|length > 0 %}
-            <table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
+            <table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
                 <thead>
                 <tr>
                     <td colspan="5">
@@ -89,7 +89,7 @@
             </table>
         {% endif %}
         {% if summary.sheets is not empty  %}
-            <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in uiOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
+            <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
                 <thead>
                 <tr>
                     <td colspan="5">
