@@ -57,14 +57,34 @@
 
             var i;
 
-            if (response.errors) {
-                that.opencutlist.notifyErrors(response.errors);
+            if (response.errors.length > 0) {
+
+                // Update filename
+                that.$fileTabs.empty();
+
+                // Hide help panel
+                that.$panelHelp.hide();
+
+                // Update page
+                that.$page.empty();
+                that.$page.append(Twig.twig({ ref: "tabs/importer/_list.twig" }).render({
+                    errors: response.errors
+                }));
+
+                // Manage buttons
+                that.$btnOpen.removeClass('btn-default');
+                that.$btnOpen.addClass('btn-primary');
+                that.$btnImport.hide();
+
+                // Stick header
+                that.stickSlideHeader(that.$rootSlide);
+
             }
             if (response.path) {
 
                 var lengthUnit = response.length_unit;
 
-                // Retrieve load option options
+                // Retrieve load options
                 that.opencutlist.pullSettings([
 
                         SETTING_KEY_LOAD_OPTION_COL_SEP,
@@ -148,9 +168,6 @@
 
             var i;
 
-            if (response.errors && !response.path) {
-                that.opencutlist.notifyErrors(response.errors);
-            }
             if (response.path) {
 
                 var errors = response.errors;
@@ -183,7 +200,6 @@
                 that.$page.append(Twig.twig({ ref: "tabs/importer/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
-                    filename: filename,
                     columns: columns,
                     parts: parts,
                     importablePartCount: importablePartCount
@@ -300,7 +316,7 @@
 
                         var i;
 
-                        if (response.errors) {
+                        if (response.errors.length > 0) {
                             that.opencutlist.notifyErrors(response.errors);
                         }
                         if (response.imported_part_count) {

@@ -77,11 +77,10 @@ module Ladb::OpenCutList
     def open_command
 
       model = Sketchup.active_model
-      length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
 
       response = {
           :errors => [],
-          :length_unit => length_unit,
+          :length_unit => DimensionUtils.instance.length_unit,
       }
 
       # Check model
@@ -91,7 +90,7 @@ module Ladb::OpenCutList
       end
 
       # Ask for open file path
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv||")
+      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")
       if path
 
         filename = File.basename(path)
@@ -102,8 +101,8 @@ module Ladb::OpenCutList
           response[:errors] << [ 'tab.importer.error.file_not_found', { :filename => filename } ]
           return response
         end
-        if extname.nil? || extname.downcase != '.csv'
-          response[:errors] << [ 'tab.importer.error.no_csv_extension', { :filename => filename } ]
+        if extname.nil? || extname.downcase != '.csv' && extname.downcase != '.tsv'
+          response[:errors] << [ 'tab.importer.error.bad_extension', { :filename => filename } ]
           return response
         end
 
@@ -133,6 +132,12 @@ module Ladb::OpenCutList
       response = {
           :warnings => [],
           :errors => [],
+          :path => path,
+          :filename => filename,
+          :length_unit => DimensionUtils.instance.length_unit,
+          :columns => [],
+          :parts => [],
+          :importable_part_count => 0,
       }
 
       # Check model
@@ -142,7 +147,6 @@ module Ladb::OpenCutList
       end
 
       # Add model infos to response
-      response[:length_unit] = model.options["UnitsOptions"]["LengthUnit"]
       response[:model_is_empty] = model.active_entities.length == 0 && model.definitions.length == 0 && model.materials.length == 0
 
       if path
@@ -174,12 +178,11 @@ module Ladb::OpenCutList
 
           # Columns
           column_count = rows.empty? ? 0 : rows[0].length
-          columns = []
 
           for i in 0..column_count - 1
             mapping = column_mapping.key(i)
             column_info = mapping ? COLUMN_INFOS[mapping.to_sym] : nil
-            columns[i] = {
+            response[:columns][i] = {
                 :header => first_line_headers ? headers[i] : nil,
                 :mapping => mapping,
                 :align => column_info ? column_info[:align] : 'left',
@@ -187,8 +190,6 @@ module Ladb::OpenCutList
           end
 
           # Parts
-          parts = []
-          importable_part_count = 0
           rows.each do |row|
 
             # Ignore header row if it exists
@@ -287,26 +288,23 @@ module Ladb::OpenCutList
             end
 
             # Add part to list
-            parts.push(part)
+            response[:parts].push(part)
 
             # Increment importable part count if applicable
-            importable_part_count += part[:count].nil? ? 1 : part[:count] if part[:errors].empty?
+            response[:importable_part_count] += part[:count].nil? ? 1 : part[:count] if part[:errors].empty?
 
           end
 
-          if importable_part_count == 0
-            response[:errors] << 'tab.importer.error.no_importable_part'
+          if response[:importable_part_count] == 0
+            if response[:parts].length == 0
+              response[:errors] << 'tab.importer.error.empty_file'
+            else
+              response[:errors] << 'tab.importer.error.no_importable_part'
+            end
           end
-
-          # Populate response
-          response[:path] = path
-          response[:filename] = filename
-          response[:columns] = columns
-          response[:parts] = parts
-          response[:importable_part_count] = importable_part_count
 
           # Keep generated parts
-          @parts = parts
+          @parts = response[:parts]
 
         rescue => e
           puts e.message
@@ -409,25 +407,24 @@ module Ladb::OpenCutList
           imported_part_count += 1
         end
 
-        # Add labels if exists
-        unless part[:labels].nil?
-          definition_attributes = DefinitionAttributes.new(definition)
-          definition_attributes.labels = part[:labels]
-          definition_attributes.write_to_attributes
-        end
+        # Set part attributes
+        definition_attributes = DefinitionAttributes.new(definition)
+        definition_attributes.orientation_locked_on_axis = true                 # Force part to be locked on its axis
+        definition_attributes.labels = part[:labels] unless part[:labels].nil?  # Add labels if defined
+        definition_attributes.write_to_attributes
 
         offset_y += part[:width]
 
-        # Purge extra definitions and materials if needed
-        if remove_all
-          if keep_definitions_settings
-            definitions.purge_unused
-          end
-          if keep_materials_settings
-            materials.purge_unused
-          end
-        end
+      end
 
+      # Purge extra definitions and materials if needed
+      if remove_all
+        if keep_definitions_settings
+          definitions.purge_unused
+        end
+        if keep_materials_settings
+          materials.purge_unused
+        end
       end
 
       # Commit operation

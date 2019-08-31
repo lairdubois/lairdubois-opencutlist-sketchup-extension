@@ -452,7 +452,7 @@ tab:
     help: |
       Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
-      Cliquez sur le bouton **Ouvrir un fichier CSV** pour continuer.
+      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
     open_csv: Ouvrir un fichier CSV
     import_to_model: Importer dans le modèle
     load:
@@ -504,10 +504,11 @@ tab:
     error:
       no_model: Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
       file_not_found: "Fichier introuvable : **{{ filename }}**"
-      no_csv_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV**.
+      bad_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
         Impossible de charger le fichier CSV : **{{ error }}**
         *Vérifiez que vous avez choisi le bon séparateur de données.*
+      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
       no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
       invalid_name: Pas de désignation valide
       invalid_length: Pas de longueur valide
@@ -518,7 +519,8 @@ tab:
       invalid_count: Pas de quantité valide
       invalid_material: Pas de matière valide
     success:
-      imported: "{{ count }} pièces importées avec succes !"
+      imported: "{{ count }} pièce importée avec succes !"
+      imported_plural: "{{ count }} pièces importées avec succes !"
     outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   about:
     label: About

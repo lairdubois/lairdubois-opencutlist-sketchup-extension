@@ -32,7 +32,7 @@
 
     include Singleton
 
-    attr_accessor :decimal_separator
+    attr_accessor :decimal_separator, :length_unit
 
     # Separators
     LIST_SEPARATOR = ';'.freeze
