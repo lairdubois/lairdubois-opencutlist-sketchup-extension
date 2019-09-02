@@ -355,6 +355,7 @@ module Ladb::OpenCutList
 
       offset_y = 0
       imported_part_count = 0
+      imported_definition_names = {}
       material_palette_index = 0
       @parts.each do |part|
 
@@ -364,8 +365,13 @@ module Ladb::OpenCutList
         definition = nil
         if remove_all && keep_definitions_settings
 
-          # Try to retrieve definition from list
-          definition = definitions[part[:name]]
+          # Check if definition name already used in import
+          unless imported_definition_names.has_key?(part[:name])
+
+            # Try to retrieve definition from list
+            definition = definitions[part[:name]]
+
+          end
 
           # Definition exists ? -> clear it
           if definition
@@ -374,8 +380,11 @@ module Ladb::OpenCutList
 
         end
 
-        definition = definitions.add(part[:name]) unless definition   # Add new definition it it doesn't exist
+        definition = definitions.add(part[:name]) unless definition   # Add new definition if it doesn't exist
         entities = definition.entities
+
+        # Flag definition name as imported (to avoid reuse)
+        imported_definition_names[definition.name] = true
 
         # Create the base face
         face = entities.add_face([
