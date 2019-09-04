@@ -438,14 +438,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabSettings');
+            var data = $this.data('ladb.tabImporter');
             var options = $.extend({}, LadbTabImporter.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
                 if (undefined === options.opencutlist) {
                     throw 'opencutlist option is mandatory.';
                 }
-                $this.data('ladb.tabSettings', (data = new LadbTabImporter(this, options, options.opencutlist)));
+                $this.data('ladb.tabImporter', (data = new LadbTabImporter(this, options, options.opencutlist)));
             }
             if (typeof option == 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

@@ -44,11 +44,11 @@
 <script src="../js/lib/base64.min.js"></script>
 <script src="../js/lib/i18next.min.js"></script>
 <script src="../js/lib/noty.min.js"></script>
-<script src="../js/lib/freeze-table.min.js"></script>
 <script src="../js/plugins/jquery.ladb.abstract-tab.js"></script>
 <script src="../js/plugins/jquery.ladb.dialog.js"></script>
 <script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
 <script src="../js/plugins/jquery.ladb.tab-cutlist.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-edges.js"></script>
 <script src="../js/plugins/jquery.ladb.tab-importer.js"></script>
 <script src="../js/plugins/jquery.ladb.tab-settings.js"></script>
 <script src="../js/plugins/jquery.ladb.tab-about.js"></script>
@@ -57,7 +57,7 @@
 <script type="text/javascript">
 
     // Add .ie class on boby tag if running on IE. Used for special workarounds
-    if (navigator.appName == 'Microsoft Internet Explorer') {
+    if (navigator.appName === 'Microsoft Internet Explorer') {
         if (navigator.appVersion.indexOf("MSIE 9")) {
             $('body').addClass('ie ie-9');
         } else if (navigator.appVersion.indexOf("MSIE 10")) {
