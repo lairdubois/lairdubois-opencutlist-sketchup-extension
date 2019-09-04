@@ -61,6 +61,11 @@
                 icon: 'ladb-opencutlist-icon-cutlist'
             },
             {
+                name: 'edges',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-edges'
+            },
+            {
                 name: 'importer',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-import'

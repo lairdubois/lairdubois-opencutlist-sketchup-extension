@@ -446,6 +446,9 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
+  edges:
+    label: Chants
+    title: Bandes de chant
   importer:
     label: Importer
     title: Importer des pièces
