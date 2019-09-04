@@ -1,0 +1,15 @@
+<div class="alert alert-success ladb-alert-success">
+    <div class="media">
+        <div class="media-left">
+            <i class="ladb-opencutlist-icon-info" style="font-size: 150%;"></i>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{ 'tab.importer.success.imported_title'|i18next }}</h4>
+            {{ 'tab.importer.success.imported_body'|i18next({ 'count':importedPartCount })}}
+        </div>
+        <div class="media-right" style="white-space: nowrap;">
+            <button id="ladb_importer_success_btn_see" class="btn btn-default"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'default.see'|i18next }}</button>
+            <button id="ladb_importer_success_btn_cutlist" class="btn btn-default"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.title'|i18next }}</button>
+        </div>
+    </div>
+</div>

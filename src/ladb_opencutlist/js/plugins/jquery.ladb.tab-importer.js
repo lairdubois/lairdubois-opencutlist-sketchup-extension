@@ -327,11 +327,22 @@
                             // Unstick header
                             that.unstickSlideHeader(that.$rootSlide);
 
-                            // Show help panel
-                            that.$panelHelp.show();
-
                             // Update page
                             that.$page.empty();
+                            that.$page.append(Twig.twig({ ref: "tabs/importer/_alert-success.twig" }).render({
+                                importedPartCount: response.imported_part_count
+                            }));
+
+                            // Bind buttons
+                            $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
+                                this.blur();
+                                that.opencutlist.minimize();
+                                rubyCallCommand('core_zoom_extents')
+                            });
+                            $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
+                                this.blur();
+                                that.opencutlist.executeCommandOnTab('cutlist', 'generate_cutlist');
+                            });
 
                             // Manage buttons
                             that.$btnOpen.removeClass('btn-default');
@@ -342,16 +353,6 @@
                             that.loadOptions = null;
                             that.importablePartCount = 0;
                             that.model_is_empty = false;
-
-                            // Success notification
-                            that.opencutlist.notify(i18next.t('tab.importer.success.imported', { count: response.imported_part_count }), 'success', [
-                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
-                                    that.opencutlist.minimize();
-                                }),
-                                Noty.button(i18next.t('tab.cutlist.title'), 'btn btn-default', function () {
-                                    that.opencutlist.executeCommandOnTab('cutlist', 'generate_cutlist');
-                                })
-                            ]);
 
                         }
 
