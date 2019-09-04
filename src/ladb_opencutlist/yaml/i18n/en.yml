@@ -522,8 +522,9 @@ tab:
       invalid_count: Pas de quantité valide
       invalid_material: Pas de matière valide
     success:
-      imported: "{{ count }} pièce importée avec succes !"
-      imported_plural: "{{ count }} pièces importées avec succes !"
+      imported_title: Importation terminée
+      imported_body: "{{ count }} pièce importée avec succes !"
+      imported_body_plural: "{{ count }} pièces importées avec succes !"
     outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   about:
     label: About
