@@ -71,7 +71,7 @@
         },
     }
 
-    attr_accessor :uuid, :type, :length_increase, :width_increase, :thickness_increase, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :thickness
+    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained
     attr_reader :material
 
     @@used_uuids = []
@@ -80,6 +80,7 @@
       @material = material
       @uuid = nil
       @type = TYPE_UNKNOW
+      @thickness = get_default(:thickness)
       @length_increase = get_default(:length_increase)
       @width_increase = get_default(:width_increase)
       @thickness_increase = get_default(:thickness_increase)
@@ -88,7 +89,6 @@
       @std_sections = get_default(:std_sections)
       @std_sizes = get_default(:std_sizes)
       @grained = get_default(:grained)
-      @thickness = get_default(:thickness)
 
       # Reload properties from attributes
       read_from_attributes(force_unique_uuid)
@@ -129,6 +129,19 @@
     end
 
     # -----
+
+    def thickness
+      case @type
+      when TYPE_EDGE
+        @thickness
+      else
+        get_default(:thickness)
+      end
+    end
+
+    def l_thickness
+      DimensionUtils.instance.dd_to_ifloats(thickness).to_l
+    end
 
     def length_increase
       case @type
@@ -245,19 +258,6 @@
         a << Size2d.new(DimensionUtils.instance.dxd_to_ifloats(std_size))
       }
       a
-    end
-
-    def thickness
-      case @type
-        when TYPE_EDGE
-          @thickness
-        else
-          get_default(:thickness)
-        end
-    end
-
-    def l_thickness
-      DimensionUtils.instance.dd_to_ifloats(thickness).to_l
     end
 
     # -----

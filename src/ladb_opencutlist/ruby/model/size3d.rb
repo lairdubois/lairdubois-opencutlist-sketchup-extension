@@ -37,6 +37,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def increment_thickness(inc)
+      @thickness += inc
+      @thickness = @thickness.to_l
+    end
+
+    # -----
+
     def auto_oriented
       @normals != DEFAULT_NORMALS
     end

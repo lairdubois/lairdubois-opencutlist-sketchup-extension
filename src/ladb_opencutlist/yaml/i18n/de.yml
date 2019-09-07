@@ -65,6 +65,7 @@ tab:
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
     material_undefined: Material nicht definiert
+    not_available_width: Largeur non disponible
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
@@ -99,6 +100,7 @@ tab:
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
+      has_edges: Cette pièce contient des chants plaqués
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -379,7 +381,7 @@ tab:
     type_1: Massivholz
     type_2: Platte
     type_3: Stangenware
-    type_4: Chant
+    type_4: Bande de chant
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
@@ -455,9 +457,6 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
-  edges:
-    label: Chants
-    title: Bandes de chant
   importer:
     label: Importer
     title: Importer des pièces

@@ -65,6 +65,7 @@ tab:
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
     material_undefined: Matière non définie
+    not_available_width: Largeur non disponible
     not_available_thickness: Épaisseur non disponible
     not_available_section: Section non disponible
     highlight_part: Voir la pièce dans le modèle
@@ -99,6 +100,7 @@ tab:
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
+      has_edges: Cette pièce contient des chants plaqués
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -379,7 +381,7 @@ tab:
     type_1: Bois massif
     type_2: Panneau
     type_3: Barre
-    type_4: Chant
+    type_4: Bande de chant
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
@@ -455,9 +457,6 @@ tab:
     success:
       exported_to: Export réussi vers {{ export_path }}.
     outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
-  edges:
-    label: Chants
-    title: Bandes de chant
   importer:
     label: Importer
     title: Importer des pièces

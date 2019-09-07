@@ -65,6 +65,7 @@ tab:
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
     material_undefined: Material Undefined
+    not_available_width: Largeur non disponible
     not_available_thickness: Thickness not available
     not_available_section: Cross section not available
     highlight_part: Highlight the part in the model
@@ -99,6 +100,7 @@ tab:
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
+      has_edges: Cette pièce contient des chants plaqués
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -379,7 +381,7 @@ tab:
     type_1: Solid Wood
     type_2: Sheet Good
     type_3: Dimensional
-    type_4: Chant
+    type_4: Bande de chant
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -455,9 +457,6 @@ tab:
     success:
       exported_to: Export to {{ export_path }} successful.
     outdated_base: To remain synchronized, you must refresh the material list.
-  edges:
-    label: Chants
-    title: Bandes de chant
   importer:
     label: Importer
     title: Importer des pièces

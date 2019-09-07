@@ -317,24 +317,16 @@ module Ladb::OpenCutList
         return min_face_infos, max_face_infos
       end
 
-      def _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+      def _grab_face_edge_materials(face_infos)
 
-        min_face_infos, max_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
-
-        min_materials = Set[]
-        min_face_infos.each { |face_info|
+        materials = Set[]
+        face_infos.each { |face_info|
           if face_info.face.material && _get_material_attributes(face_info.face.material).type == MaterialAttributes::TYPE_EDGE
-            min_materials.add(face_info.face.material)
-          end
-        }
-        max_materials = Set[]
-        max_face_infos.each { |face_info|
-          if face_info.face.material && _get_material_attributes(face_info.face.material).type == MaterialAttributes::TYPE_EDGE
-            max_materials.add(face_info.face.material)
+            materials.add(face_info.face.material)
           end
         }
 
-        return min_materials, max_materials
+        materials
       end
 
       # -- Std utils --
@@ -387,13 +379,16 @@ module Ladb::OpenCutList
           return nil, MATERIAL_ORIGIN_UNKNOW
         end
         material = entity.material
+        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
         material_origin = MATERIAL_ORIGIN_OWNED
         unless material or !smart
           material = _get_dominant_child_material(entity)
+          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
           if material
             material_origin = MATERIAL_ORIGIN_CHILD
           else
             material = _get_inherited_material(path)
+            material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
             if material
               material_origin = MATERIAL_ORIGIN_INHERITED
             end
@@ -462,6 +457,51 @@ module Ladb::OpenCutList
           material = _get_inherited_material(path.take(path.size - 1))
         end
         material
+      end
+
+      # -- Edge Utils --
+
+      def _edge_group_def(material, part_def, cutlist_def)
+        return if material.nil?
+
+        material_attributes = _get_material_attributes(material)
+
+        std_width_info = _find_std_thickness(
+            part_def.size.thickness,
+            _get_material_attributes(material).l_std_widths,
+            true
+        )
+        std_info = {
+            :available => std_width_info[:available],
+            :dimension_stipped_name => 'width',
+            :dimension => "#{material_attributes.l_thickness} x #{std_width_info[:value].to_s}",
+            :width => 0,
+            :thickness => 0,
+            :cutting_size => nil
+        }
+
+        group_id = GroupDef.generate_group_id(material, material_attributes, std_info)
+        group_def = cutlist_def.get_group_def(group_id)
+        unless group_def
+
+          group_def = GroupDef.new(group_id)
+          group_def.material_id = material ? material.entityID : ''
+          group_def.material_name = material.name
+          group_def.material_type = MaterialAttributes::TYPE_EDGE
+          group_def.material_color = material.color if material
+          group_def.std_dimension = std_info[:dimension]
+          group_def.std_available = std_info[:available]
+          group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
+          group_def.std_width = std_info[:width]
+          group_def.std_thickness = std_info[:thickness]
+          group_def.show_cutting_dimensions = true
+
+          cutlist_def.set_group_def(group_id, group_def)
+
+        end
+
+        group_def.total_cutting_length += part_def.cutting_size.length + material_attributes.l_length_increase
+
       end
 
       # [END] -- Utils definitions --
@@ -682,7 +722,7 @@ module Ladb::OpenCutList
           part_def.labels = definition_attributes.labels
           part_def.auto_oriented = size.auto_oriented
 
-          # Compute axes alignment and real area
+          # Compute axes alignment, real area and edges
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
@@ -703,20 +743,52 @@ module Ladb::OpenCutList
               part_def.not_aligned_on_axes = !(t_plane_count >= 2 and (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
               part_def.layers = layers
 
-              # Edges #####
+              # -- Edges --
 
-              x_min_materials, x_max_materials = _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
-              y_min_materials, y_max_materials = _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              # Grab min/max face infos
+              x_min_face_infos, x_max_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
+              y_min_face_infos, y_max_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              edge_top_material = y_min_materials.length == 1 ? y_min_materials.first : nil
-              edge_right_material = x_max_materials.length == 1 ? x_max_materials.first : nil
-              edge_bottom_material = y_max_materials.length == 1 ? y_max_materials.first : nil
-              edge_left_material = x_min_materials.length == 1 ? x_min_materials.first : nil
+              part_def.edge_top_entity_ids = y_min_face_infos.collect { |face_info| face_info.face.entityID }
+              part_def.edge_right_entity_ids = x_max_face_infos.collect { |face_info| face_info.face.entityID }
+              part_def.edge_bottom_entity_ids = y_max_face_infos.collect { |face_info| face_info.face.entityID }
+              part_def.edge_left_entity_ids = x_min_face_infos.collect { |face_info| face_info.face.entityID }
 
-              part_def.edge_top = edge_top_material.name unless edge_top_material.nil?
-              part_def.edge_right = edge_right_material.name unless edge_right_material.nil?
-              part_def.edge_bottom = edge_bottom_material.name unless edge_bottom_material.nil?
-              part_def.edge_left = edge_left_material.name unless edge_left_material.nil?
+              # Grab edge materials
+              x_min_edge_materials = _grab_face_edge_materials(x_min_face_infos)
+              x_max_edge_materials = _grab_face_edge_materials(x_max_face_infos)
+              y_min_edge_materials = _grab_face_edge_materials(y_min_face_infos)
+              y_max_edge_materials = _grab_face_edge_materials(y_max_face_infos)
+
+              edge_top_material = y_min_edge_materials.length == 1 ? y_min_edge_materials.first : nil
+              edge_right_material = x_max_edge_materials.length == 1 ? x_max_edge_materials.first : nil
+              edge_bottom_material = y_max_edge_materials.length == 1 ? y_max_edge_materials.first : nil
+              edge_left_material = x_min_edge_materials.length == 1 ? x_min_edge_materials.first : nil
+
+              part_def.edge_top_material_name = edge_top_material.name unless edge_top_material.nil?
+              part_def.edge_right_material_name = edge_right_material.name unless edge_right_material.nil?
+              part_def.edge_bottom_material_name = edge_bottom_material.name unless edge_bottom_material.nil?
+              part_def.edge_left_material_name = edge_left_material.name unless edge_left_material.nil?
+
+              # Edge GroupDefs
+              _edge_group_def(edge_top_material, part_def, cutlist_def)
+              _edge_group_def(edge_right_material, part_def, cutlist_def)
+              _edge_group_def(edge_bottom_material, part_def, cutlist_def)
+              _edge_group_def(edge_left_material, part_def, cutlist_def)
+
+              # Length and Width Decrements
+
+              length_decrement = 0
+              length_decrement += _get_material_attributes(edge_left_material).l_thickness if edge_left_material
+              length_decrement += _get_material_attributes(edge_right_material).l_thickness if edge_right_material
+              width_decrement = 0
+              width_decrement += _get_material_attributes(edge_top_material).l_thickness if edge_top_material
+              width_decrement += _get_material_attributes(edge_bottom_material).l_thickness if edge_bottom_material
+
+              part_def.cutting_size.increment_length(-length_decrement)
+              part_def.cutting_size.increment_width(-width_decrement)
+              part_def.size.increment_length(-length_decrement)
+              part_def.size.increment_width(-width_decrement)
 
             when MaterialAttributes::TYPE_BAR
 
@@ -1383,6 +1455,26 @@ module Ladb::OpenCutList
 
     def part_update_command(part_data)
 
+      def _apply_material(material_name, entity_ids, model)
+        unless entity_ids.nil?
+          material = nil
+          if material_name.nil? or material_name.empty? or (material = model.materials[material_name])
+
+            entity_ids.each { |entity_id|
+              entity = ModelUtils::find_entity_by_id(model, entity_id)
+              if entity
+                if material_name.nil? or material_name.empty?
+                  entity.material = nil
+                elsif entity.material != material
+                  entity.material = material
+                end
+              end
+            }
+
+          end
+        end
+      end
+
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
@@ -1397,10 +1489,14 @@ module Ladb::OpenCutList
       labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
       axes_order = part_data['axes_order']
       axes_origin_position = part_data['axes_origin_position']
-      edge_top = part_data['edge_top']
-      edge_right = part_data['edge_right']
-      edge_bottom = part_data['edge_bottom']
-      edge_left = part_data['edge_left']
+      edge_top_material_name = part_data['edge_top_material_name']
+      edge_top_entity_ids = part_data['edge_top_entity_ids']
+      edge_right_material_name = part_data['edge_right_material_name']
+      edge_right_entity_ids = part_data['edge_right_entity_ids']
+      edge_bottom_material_name = part_data['edge_bottom_material_name']
+      edge_bottom_entity_ids = part_data['edge_bottom_entity_ids']
+      edge_left_material_name = part_data['edge_left_material_name']
+      edge_left_entity_ids = part_data['edge_left_entity_ids']
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions
@@ -1422,23 +1518,12 @@ module Ladb::OpenCutList
           definition_attributes.write_to_attributes
         end
 
-        # Update instances material
-        materials = model.materials
-        material = nil
-        if material_name.nil? or material_name.empty? or (material = materials[material_name])
-
-          entity_ids.each { |entity_id|
-            entity = ModelUtils::find_entity_by_id(model, entity_id)
-            if entity
-              if material_name.nil? or material_name.empty?
-                entity.material = nil
-              elsif entity.material != material
-                entity.material = material
-              end
-            end
-          }
-
-        end
+        # Update materials
+        _apply_material(material_name, entity_ids, model)
+        _apply_material(edge_top_material_name, edge_top_entity_ids, model)
+        _apply_material(edge_right_material_name, edge_right_entity_ids, model)
+        _apply_material(edge_bottom_material_name, edge_bottom_entity_ids, model)
+        _apply_material(edge_left_material_name, edge_left_entity_ids, model)
 
         # Transform part axes if axes order exist
         if axes_order.is_a?(Array) and axes_order.length == 3

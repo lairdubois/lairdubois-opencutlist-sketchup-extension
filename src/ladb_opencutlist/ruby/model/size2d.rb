@@ -18,6 +18,18 @@ module Ladb::OpenCutList
 
     # -----
 
+    def increment_length(inc)
+      @length += inc
+      @length = @length.to_l
+    end
+
+    def increment_width(inc)
+      @width += inc
+      @width = @width.to_l
+    end
+
+    # -----
+
     def area
       @length * @width
     end

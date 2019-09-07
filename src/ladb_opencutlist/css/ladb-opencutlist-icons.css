@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-edge-1111:before {
+  content: "\e950";
+}
 .ladb-opencutlist-icon-edge-1010:before {
   content: "\e955";
 }

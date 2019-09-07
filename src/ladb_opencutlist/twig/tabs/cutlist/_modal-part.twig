@@ -11,7 +11,7 @@
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
         {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
-            <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_top ? '1' : '0' }}{{ part.edge_right ? '1' : '0' }}{{ part.edge_bottom ? '1' : '0' }}{{ part.edge_left ? '1' : '0' }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_top_material_name ? '1' : '0' }}{{ part.edge_right_material_name ? '1' : '0' }}{{ part.edge_bottom_material_name ? '1' : '0' }}{{ part.edge_left_material_name ? '1' : '0' }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
         {% endif %}
         <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
         {% if has_warnings %}
@@ -115,36 +115,55 @@
         </div>
         {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
             <div role="tabpanel" class="tab-pane row{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
+                <div class="text-center">
+                    {% set areaSize = 250 %}
+                    {% set partLength = 210 * part.l_ratio %}
+                    {% set partWidth = 210 * part.w_ratio %}
+                    <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" style="width: {{ areaSize }}px;">
+
+                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" style="fill: #eee; stroke: #aaa; stroke-width: 0.5px;" />
+
+                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 }} h {{ partLength }}" class="edge edge-top" />
+                        <path d="M{{ (areaSize - partLength) / 2 + partLength }} {{ (areaSize - partWidth) / 2 }} v {{ partWidth }}" class="edge edge-right" />
+                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 + partWidth }} h {{ partLength }}" class="edge edge-bottom" />
+                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 }} v {{ partWidth }}" class="edge edge-left" />
+
+                        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 5 }}" font-family="Verdana" font-size="10">{{ part.length }}</text>
+                        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 5 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ part.width }}</text>
+                        <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+
+                    </svg>
+                </div>
                 <div class="form form-horizontal">
                     <div class="form-group">
                         <label class="control-label col-xs-3">Haut</label>
                         <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_top">
-                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_top_material_name">
+                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-3">Droite</label>
                         <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_right">
-                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_right_material_name">
+                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-3">Bas</label>
                         <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_bottom">
-                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_bottom_material_name">
+                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-3">Gauche</label>
                         <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_left">
-                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_left_material_name">
+                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                             </select>
                         </div>
                     </div>

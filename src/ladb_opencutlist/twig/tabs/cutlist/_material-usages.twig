@@ -1,4 +1,6 @@
+{# set typeFilters (facutative) #}
+
 <option value="" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.material_undefined'|i18next }}</span>"></option>
-{% for materialUsage in materialUsages %}
+{% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters  %}
     <option value="{{ materialUsage.name }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {{ materialUsage.display_name|escape|escape }}">{{ materialUsage.display_name|escape }}</option>
 {% endfor %}
