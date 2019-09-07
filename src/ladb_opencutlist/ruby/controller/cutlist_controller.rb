@@ -175,6 +175,7 @@ module Ladb::OpenCutList
                 # Create the instance info
                 instance_info = InstanceInfo.new(path + [ entity ])
                 instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
+                instance_info.definition_bounds = bounds
 
                 @instance_infos_cache[instance_info.serialized_path] = instance_info
 
@@ -257,7 +258,7 @@ module Ladb::OpenCutList
         end
       end
 
-      def _compute_largest_final_area(normal, x_face_infos, y_face_infos, z_face_infos, transformation = nil)
+      def _populate_plane_grouped_face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos, transformation = nil)
 
         # Groups faces by plane
         plane_grouped_face_infos = {}
@@ -270,6 +271,13 @@ module Ladb::OpenCutList
           end
           plane_grouped_face_infos[transformed_plane].push(face_info)
         }
+
+        plane_grouped_face_infos
+      end
+
+      def _compute_largest_final_area(normal, x_face_infos, y_face_infos, z_face_infos, transformation = nil)
+
+        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos, transformation)
 
         # Compute area of each group
         areas = []
@@ -291,6 +299,42 @@ module Ladb::OpenCutList
         area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
 
         return plane_count, final_area, area_ratio
+      end
+
+      def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+
+        min_face_infos = []
+        max_face_infos = []
+        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        plane_grouped_face_infos.each { |plane, face_infos|
+          if instance_info.definition_bounds.min.on_plane?(plane)
+            min_face_infos += face_infos
+          elsif instance_info.definition_bounds.max.on_plane?(plane)
+            max_face_infos += face_infos
+          end
+        }
+
+        return min_face_infos, max_face_infos
+      end
+
+      def _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+
+        min_face_infos, max_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+
+        min_materials = Set[]
+        min_face_infos.each { |face_info|
+          if face_info.face.material && _get_material_attributes(face_info.face.material).type == MaterialAttributes::TYPE_EDGE
+            min_materials.add(face_info.face.material)
+          end
+        }
+        max_materials = Set[]
+        max_face_infos.each { |face_info|
+          if face_info.face.material && _get_material_attributes(face_info.face.material).type == MaterialAttributes::TYPE_EDGE
+            max_materials.add(face_info.face.material)
+          end
+        }
+
+        return min_materials, max_materials
       end
 
       # -- Std utils --
@@ -632,6 +676,7 @@ module Ladb::OpenCutList
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
+          part_def.material_type = material_attributes.type
           part_def.cumulable = definition_attributes.cumulable
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.labels = definition_attributes.labels
@@ -657,6 +702,21 @@ module Ladb::OpenCutList
               part_def.final_area = t_final_area
               part_def.not_aligned_on_axes = !(t_plane_count >= 2 and (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
               part_def.layers = layers
+
+              # Edges #####
+
+              x_min_materials, x_max_materials = _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
+              y_min_materials, y_max_materials = _grab_oriented_min_max_edge_materials(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+
+              edge_top_material = y_min_materials.length == 1 ? y_min_materials.first : nil
+              edge_right_material = x_max_materials.length == 1 ? x_max_materials.first : nil
+              edge_bottom_material = y_max_materials.length == 1 ? y_max_materials.first : nil
+              edge_left_material = x_min_materials.length == 1 ? x_min_materials.first : nil
+
+              part_def.edge_top = edge_top_material.name unless edge_top_material.nil?
+              part_def.edge_right = edge_right_material.name unless edge_right_material.nil?
+              part_def.edge_bottom = edge_bottom_material.name unless edge_bottom_material.nil?
+              part_def.edge_left = edge_left_material.name unless edge_left_material.nil?
 
             when MaterialAttributes::TYPE_BAR
 
@@ -1337,6 +1397,10 @@ module Ladb::OpenCutList
       labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
       axes_order = part_data['axes_order']
       axes_origin_position = part_data['axes_origin_position']
+      edge_top = part_data['edge_top']
+      edge_right = part_data['edge_right']
+      edge_bottom = part_data['edge_bottom']
+      edge_left = part_data['edge_left']
       entity_ids = part_data['entity_ids']
 
       definitions = model.definitions

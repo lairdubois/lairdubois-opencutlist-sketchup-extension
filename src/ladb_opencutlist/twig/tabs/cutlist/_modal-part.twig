@@ -10,6 +10,9 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
+        {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
+            <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_top ? '1' : '0' }}{{ part.edge_right ? '1' : '0' }}{{ part.edge_bottom ? '1' : '0' }}{{ part.edge_left ? '1' : '0' }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
+        {% endif %}
         <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
         {% if has_warnings %}
             <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>&nbsp;{{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
@@ -110,6 +113,44 @@
                 </div>
             </div>
         </div>
+        {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
+            <div role="tabpanel" class="tab-pane row{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
+                <div class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-xs-3">Haut</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_top">
+                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3">Droite</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_right">
+                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3">Bas</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_bottom">
+                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3">Gauche</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_cutlist_part_select_edge_left">
+                                {% include 'tabs/cutlist/_material-usages.twig' %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
             <div class="col-sm-offset-1 col-sm-10">
                 {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}

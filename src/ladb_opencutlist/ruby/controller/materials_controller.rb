@@ -68,6 +68,7 @@ module Ladb::OpenCutList
           :solidwood_material_count => 0,
           :sheetgood_material_count => 0,
           :bar_material_count => 0,
+          :edge_material_count => 0,
           :untyped_material_count => 0,
           :materials => []
       }
@@ -101,9 +102,11 @@ module Ladb::OpenCutList
                 :texture_colorized => Sketchup.version_number < 16000000,
                 :attributes => {
                     :type => material_attributes.type,
+                    :thickness => material_attributes.thickness,
                     :length_increase => material_attributes.length_increase,
                     :width_increase => material_attributes.width_increase,
                     :thickness_increase => material_attributes.thickness_increase,
+                    :std_widths => material_attributes.std_widths,
                     :std_thicknesses => material_attributes.std_thicknesses,
                     :std_sections => material_attributes.std_sections,
                     :std_sizes => material_attributes.std_sizes,
@@ -119,6 +122,8 @@ module Ladb::OpenCutList
             response[:sheetgood_material_count] += 1
           when MaterialAttributes::TYPE_BAR
             response[:bar_material_count] += 1
+          when MaterialAttributes::TYPE_EDGE
+            response[:edge_material_count] += 1
           else
             response[:untyped_material_count] += 1
         end
@@ -164,9 +169,11 @@ module Ladb::OpenCutList
       texture_colorizable = material_data['texture_colorizable']
       texture_colorized = material_data['texture_colorized']
       type = MaterialAttributes.valid_type(attributes['type'])
+      thickness = attributes['thickness']
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
       thickness_increase = attributes['thickness_increase']
+      std_widths = attributes['std_widths']
       std_thicknesses = attributes['std_thicknesses']
       std_sections = attributes['std_sections']
       std_sizes = attributes['std_sizes']
@@ -232,9 +239,11 @@ module Ladb::OpenCutList
         # Update attributes
         material_attributes = MaterialAttributes.new(material)
         material_attributes.type = type
+        material_attributes.thickness = thickness
         material_attributes.length_increase = length_increase
         material_attributes.width_increase = width_increase
         material_attributes.thickness_increase = thickness_increase
+        material_attributes.std_widths = std_widths
         material_attributes.std_thicknesses = std_thicknesses
         material_attributes.std_sections = std_sections
         material_attributes.std_sizes = std_sizes
@@ -356,9 +365,11 @@ module Ladb::OpenCutList
 
       response = {
           :errors => [],
+          :thickness => '',
           :length_increase => '',
           :width_increase => '',
           :thickness_increase => '',
+          :std_widths => [],
           :std_thicknesses => [],
           :std_sections => [],
           :std_sizes => [],
@@ -373,9 +384,11 @@ module Ladb::OpenCutList
 
         material_attributes = MaterialAttributes.new(material)
 
+        response[:thickness] = material_attributes.thickness
         response[:length_increase] = material_attributes.length_increase
         response[:width_increase] = material_attributes.width_increase
         response[:thickness_increase] = material_attributes.thickness_increase
+        response[:std_widths] = material_attributes.std_widths
         response[:std_thicknesses] = material_attributes.std_thicknesses
         response[:std_section] = material_attributes.std_sections
         response[:std_sizes] = material_attributes.std_sizes

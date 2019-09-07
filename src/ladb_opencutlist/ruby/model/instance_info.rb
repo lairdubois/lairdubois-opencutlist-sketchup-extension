@@ -4,10 +4,11 @@ module Ladb::OpenCutList
 
   class InstanceInfo
 
-    attr_accessor :size
+    attr_accessor :size, :definition_bounds
     attr_reader :path
 
-    @size
+    @size = nil
+    @definition_bounds = nil
 
     def initialize(path = [])
       @path = path

@@ -42,7 +42,7 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
     DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 800
     DIALOG_MINIMIZED_WIDTH = 90
-    DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 4    # = 4 Tab buttons
+    DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
     DIALOG_DEFAULT_LEFT = 100
     DIALOG_DEFAULT_TOP = 100
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'

@@ -9,9 +9,11 @@
     var SETTING_KEY_OPTION_PREFIX = 'materials.option.';
     var SETTING_KEY_OPTION_PREFIX_TYPE = SETTING_KEY_OPTION_PREFIX + 'type_';
 
+    var SETTING_KEY_OPTION_SUFFIX_THICKNESS = '_thickness';
     var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
     var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
     var SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE = '_thickness_increase';
+    var SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS = '_std_widths';
     var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
     var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
     var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
@@ -251,9 +253,11 @@
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
             var $inputName = $('#ladb_materials_input_name', $modal);
             var $selectType = $('#ladb_materials_input_type', $modal);
+            var $inputThickness = $('#ladb_materials_input_thickness', $modal);
             var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
             var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
             var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
+            var $inputStdWidths = $('#ladb_materials_input_std_widths', $modal);
             var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
             var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
             var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
@@ -261,6 +265,7 @@
             var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
             var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
+            var $spanCutOptionsDefaultsType4 = $('#ladb_materials_span_cut_options_defaults_type_4', $modal);
             var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
             var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
             var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
@@ -285,10 +290,12 @@
                         $inputLengthIncrease.closest('section').hide();
                         break;
                     case 1:   // TYPE_SOLID_WOOD
+                        $inputThickness.closest('.form-group').hide();
                         $inputLengthIncrease.closest('section').show();
                         $inputLengthIncrease.closest('.form-group').show();
                         $inputWidthIncrease.closest('.form-group').show();
                         $inputThicknessIncrease.closest('.form-group').show();
+                        $inputStdWidths.closest('.form-group').hide();
                         $inputStdThicknesses.closest('.form-group').show();
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').hide();
@@ -296,12 +303,15 @@
                         $spanCutOptionsDefaultsType1.show();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.hide();
+                        $spanCutOptionsDefaultsType4.hide();
                         break;
                     case 2:   // TYPE_SHEET_GOOD
+                        $inputThickness.closest('.form-group').hide();
                         $inputLengthIncrease.closest('section').show();
                         $inputLengthIncrease.closest('.form-group').show();
                         $inputWidthIncrease.closest('.form-group').show();
                         $inputThicknessIncrease.closest('.form-group').hide();
+                        $inputStdWidths.closest('.form-group').hide();
                         $inputStdThicknesses.closest('.form-group').show();
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').show();
@@ -309,12 +319,15 @@
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.show();
                         $spanCutOptionsDefaultsType3.hide();
+                        $spanCutOptionsDefaultsType4.hide();
                         break;
                     case 3:   // TYPE_BAR
+                        $inputThickness.closest('.form-group').hide();
                         $inputLengthIncrease.closest('section').show();
                         $inputLengthIncrease.closest('.form-group').show();
                         $inputWidthIncrease.closest('.form-group').hide();
                         $inputThicknessIncrease.closest('.form-group').hide();
+                        $inputStdWidths.closest('.form-group').hide();
                         $inputStdThicknesses.closest('.form-group').hide();
                         $inputStdSections.closest('.form-group').show();
                         $inputStdSizes.closest('.form-group').hide();
@@ -322,53 +335,91 @@
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.show();
+                        $spanCutOptionsDefaultsType4.hide();
+                        break;
+                    case 4:   // TYPE_EDGE
+                        $inputThickness.closest('.form-group').show();
+                        $inputLengthIncrease.closest('section').show();
+                        $inputLengthIncrease.closest('.form-group').show();
+                        $inputWidthIncrease.closest('.form-group').hide();
+                        $inputThicknessIncrease.closest('.form-group').hide();
+                        $inputStdWidths.closest('.form-group').show();
+                        $inputStdThicknesses.closest('.form-group').hide();
+                        $inputStdSections.closest('.form-group').hide();
+                        $inputStdSizes.closest('.form-group').hide();
+                        $selectGrained.closest('.form-group').hide();
+                        $spanCutOptionsDefaultsType1.hide();
+                        $spanCutOptionsDefaultsType2.hide();
+                        $spanCutOptionsDefaultsType3.hide();
+                        $spanCutOptionsDefaultsType4.show();
                         break;
                 }
             };
             computeFieldsVisibility(material.attributes.type);
 
             var setFiledValuesToDefaults = function (type) {
-                var defaultLengthIncrease,
+                var defaultThickness,
+                    defaultLengthIncrease,
                     defaultWidthIncrease,
                     defaultThicknessIncrease,
+                    defaultStdWidths,
                     defaultStdThicknesses,
                     defaultStdSections,
                     defaultStdSizes,
                     defaultGrained;
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
+                        defaultThickness = '0';
                         defaultLengthIncrease = '0';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
+                        defaultStdWidths = '';
                         defaultStdThicknesses = '';
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
                         break;
                     case 1:   // TYPE_SOLID_WOOD
+                        defaultThickness = '0';
                         defaultLengthIncrease = '50mm';
                         defaultWidthIncrease = '5mm';
                         defaultThicknessIncrease = '5mm';
+                        defaultStdWidths = '';
                         defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = true;
                         break;
                     case 2:   // TYPE_SHEET_GOOD
+                        defaultThickness = '0';
                         defaultLengthIncrease = '0';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
+                        defaultStdWidths = '';
                         defaultStdThicknesses = '5mm;8mm;10mm;15mm;18mm;22mm';
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
                         break;
                     case 3:   // TYPE_BAR
+                        defaultThickness = '0';
                         defaultLengthIncrease = '50mm';
                         defaultWidthIncrease = '0';
                         defaultThicknessIncrease = '0';
+                        defaultStdWidths = '';
                         defaultStdThicknesses = '';
                         defaultStdSections = '30mm x 40mm;40mm x 50mm';
+                        defaultStdSizes = '';
+                        defaultGrained = false;
+                        break;
+                    case 4:   // TYPE_EDGE
+                        defaultThickness = '2mm';
+                        defaultLengthIncrease = '50mm';
+                        defaultWidthIncrease = '0';
+                        defaultThicknessIncrease = '0';
+                        defaultStdWidths = '23mm;33mm;43mm';
+                        defaultStdThicknesses = '';
+                        defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
                         break;
@@ -377,9 +428,11 @@
                     // Workaround for empty string tokens
                     $input.tokenfield('setTokens', tokens === ''  ? ' ' : tokens);
                 };
+                $inputThickness.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
                 $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
                 $inputWidthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
                 $inputThicknessIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
+                setTokens($inputStdWidths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
                 setTokens($inputStdThicknesses, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
                 setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
                 setTokens($inputStdSizes, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
@@ -467,9 +520,11 @@
             $btnCutOptionsDefaultsSave.on('click', function () {
 
                 var type = parseInt($selectType.val());
+                var thickness = $inputThickness.val();
                 var length_increase = $inputLengthIncrease.val();
                 var width_increase = $inputWidthIncrease.val();
                 var thickness_increase = $inputThicknessIncrease.val();
+                var std_widths = $inputStdWidths.val();
                 var std_thicknesses = $inputStdThicknesses.val();
                 var std_sections = $inputStdSections.val();
                 var std_sizes = $inputStdSizes.val();
@@ -477,9 +532,11 @@
 
                 // Update default cut options for specific type to last used
                 that.opencutlist.setSettings([
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, value:thickness, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:length_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:width_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:thickness_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, value:std_widths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
@@ -541,9 +598,11 @@
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
                 that.editedMaterial.texture_colorized = $btnTextureColorized.hasClass('active');
                 that.editedMaterial.attributes.type = $selectType.val();
+                that.editedMaterial.attributes.thickness = $inputThickness.val();
                 that.editedMaterial.attributes.length_increase = $inputLengthIncrease.val();
                 that.editedMaterial.attributes.width_increase = $inputWidthIncrease.val();
                 that.editedMaterial.attributes.thickness_increase = $inputThicknessIncrease.val();
+                that.editedMaterial.attributes.std_widths = $inputStdWidths.val();
                 that.editedMaterial.attributes.std_thicknesses = $inputStdThicknesses.val();
                 that.editedMaterial.attributes.std_sections = $inputStdSections.val();
                 that.editedMaterial.attributes.std_sizes = $inputStdSizes.val();
@@ -585,6 +644,7 @@
             $modal.modal('show');
 
             // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+            $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
             $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);

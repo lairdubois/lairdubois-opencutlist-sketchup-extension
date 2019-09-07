@@ -115,6 +115,7 @@ tab:
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       general: Générales
+      edges: Chants
       infos: Infos
       warnings: Avertissements
       name: Nom
@@ -378,11 +379,13 @@ tab:
     type_1: Bois massif
     type_2: Panneau
     type_3: Barre
+    type_4: Chant
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
       type_2: Type de matière '$t(tab.materials.type_2)'
       type_3: Type de matière '$t(tab.materials.type_3)'
+      type_4: Type de matière '$t(tab.materials.type_4)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
@@ -397,9 +400,15 @@ tab:
       name: Nom
       type: Type
       cut_options: Options de débit
+      thickness: Epaisseur
       length_increase: Surcote de longueur
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
+      std_widths: Largeurs standards
+      std_widths_placeholder: largeur ; ...
+      std_widths_help: |
+        Largeurs standards des bandes.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_thicknesses: Épaisseurs standards
       std_thicknesses_placeholder: épaisseur ; ...
       std_thicknesses_help: |

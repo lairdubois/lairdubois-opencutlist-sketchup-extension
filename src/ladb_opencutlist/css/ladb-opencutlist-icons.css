@@ -36,7 +36,52 @@ i, span.ladb-opencutlist-icon {
 }
 
 
-.ladb-opencutlist-icon-edges:before {
+.ladb-opencutlist-icon-edge-1010:before {
+  content: "\e955";
+}
+.ladb-opencutlist-icon-edge-0101:before {
+  content: "\e956";
+}
+.ladb-opencutlist-icon-edge-1110:before {
+  content: "\e94f";
+}
+.ladb-opencutlist-icon-edge-1101:before {
+  content: "\e957";
+}
+.ladb-opencutlist-icon-edge-1011:before {
+  content: "\e958";
+}
+.ladb-opencutlist-icon-edge-0111:before {
+  content: "\e951";
+}
+.ladb-opencutlist-icon-edge-1001:before {
+  content: "\e94e";
+}
+.ladb-opencutlist-icon-edge-0011:before {
+  content: "\e959";
+}
+.ladb-opencutlist-icon-edge-0110:before {
+  content: "\e95a";
+}
+.ladb-opencutlist-icon-edge-1100:before {
+  content: "\e952";
+}
+.ladb-opencutlist-icon-edge-0001:before {
+  content: "\e94d";
+}
+.ladb-opencutlist-icon-edge-0010:before {
+  content: "\e95b";
+}
+.ladb-opencutlist-icon-edge-0100:before {
+  content: "\e95c";
+}
+.ladb-opencutlist-icon-edge-1000:before {
+  content: "\e953";
+}
+.ladb-opencutlist-icon-edge-0000:before {
+  content: "\e954";
+}
+.ladb-opencutlist-icon-edge:before {
   content: "\e94c";
 }
 .ladb-opencutlist-icon-dynamic-component:before {

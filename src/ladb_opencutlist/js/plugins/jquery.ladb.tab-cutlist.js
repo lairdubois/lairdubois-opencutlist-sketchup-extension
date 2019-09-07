@@ -676,6 +676,10 @@
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+                var $selectEdgeTop = $('#ladb_cutlist_part_select_edge_top', $modal);
+                var $selectEdgeRight = $('#ladb_cutlist_part_select_edge_right', $modal);
+                var $selectEdgeBottom = $('#ladb_cutlist_part_select_edge_bottom', $modal);
+                var $selectEdgeLeft = $('#ladb_cutlist_part_select_edge_left', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -700,6 +704,14 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         computeAxesOrder();
                     });
+                $selectEdgeTop.val(part.edge_top);
+                $selectEdgeTop.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectEdgeRight.val(part.edge_right);
+                $selectEdgeRight.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectEdgeBottom.val(part.edge_bottom);
+                $selectEdgeBottom.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectEdgeLeft.val(part.edge_left);
+                $selectEdgeLeft.selectpicker(SELECT_PICKER_OPTIONS);
 
                 // Bind sorter
                 $sortablePartAxes.sortable({
@@ -726,6 +738,11 @@
 
                     that.editedPart.axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
                     that.editedPart.axes_origin_position = $selectPartAxesOriginPosition.val();
+
+                    that.editedPart.edge_top = $selectEdgeTop.val();
+                    that.editedPart.edge_right = $selectEdgeRight.val();
+                    that.editedPart.edge_bottom = $selectEdgeBottom.val();
+                    that.editedPart.edge_left = $selectEdgeLeft.val();
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 
