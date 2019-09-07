@@ -155,6 +155,11 @@ tab:
       axes_origin_position_min: Place the origin in a corner
       axes_origin_position_center: Place the origin in the center
       axes_origin_position_min_center: Place the origin in the middle of an end
+      edge_top: Haut
+      edge_right: Droit
+      edge_bottom: Bas
+      edge_left: Gauche
+      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts

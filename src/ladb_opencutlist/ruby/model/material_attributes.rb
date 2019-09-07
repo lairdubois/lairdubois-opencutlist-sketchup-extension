@@ -232,7 +232,7 @@
     end
 
     def append_std_section(std_section)
-      @std_sections = @std_sections.empty? ? std_thickness : [ @std_sections, std_section].join(';')
+      @std_sections = @std_sections.empty? ? std_section : [ @std_sections, std_section].join(';')
     end
 
     def l_std_sections
@@ -296,7 +296,7 @@
       if @material
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', @thickness)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', DimensionUtils.instance.str_add_units(@thickness))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))

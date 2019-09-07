@@ -461,7 +461,7 @@ module Ladb::OpenCutList
 
       # -- Edge Utils --
 
-      def _edge_group_def(material, part_def, cutlist_def)
+      def _populate_edge_group_def(material, part_def, cutlist_def)
         return if material.nil?
 
         material_attributes = _get_material_attributes(material)
@@ -770,11 +770,11 @@ module Ladb::OpenCutList
               part_def.edge_bottom_material_name = edge_bottom_material.name unless edge_bottom_material.nil?
               part_def.edge_left_material_name = edge_left_material.name unless edge_left_material.nil?
 
-              # Edge GroupDefs
-              _edge_group_def(edge_top_material, part_def, cutlist_def)
-              _edge_group_def(edge_right_material, part_def, cutlist_def)
-              _edge_group_def(edge_bottom_material, part_def, cutlist_def)
-              _edge_group_def(edge_left_material, part_def, cutlist_def)
+              # Populate edge GroupDefs
+              _populate_edge_group_def(edge_top_material, part_def, cutlist_def)
+              _populate_edge_group_def(edge_right_material, part_def, cutlist_def)
+              _populate_edge_group_def(edge_bottom_material, part_def, cutlist_def)
+              _populate_edge_group_def(edge_left_material, part_def, cutlist_def)
 
               # Length and Width Decrements
 
