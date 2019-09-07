@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_type, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_top_material_name, :edge_top_entity_ids, :edge_right_material_name, :edge_right_entity_ids, :edge_bottom_material_name, :edge_bottom_entity_ids, :edge_left_material_name, :edge_left_entity_ids, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
+    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_type, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_top_material_name, :edge_top_entity_ids, :edge_bottom_material_name, :edge_bottom_entity_ids, :edge_left_material_name, :edge_left_entity_ids, :edge_right_material_name, :edge_right_entity_ids, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
@@ -24,14 +24,15 @@ module Ladb::OpenCutList
       @cumulable = DefinitionAttributes::CUMULABLE_NONE
       @orientation_locked_on_axis = false
       @labels = ''
+      @edge_count = 0
       @edge_top_material_name = nil
       @edge_top_entity_ids = nil
-      @edge_right_material_name = nil
-      @edge_right_entity_ids = nil
       @edge_bottom_material_name = nil
       @edge_bottom_entity_ids = nil
       @edge_left_material_name = nil
       @edge_left_entity_ids = nil
+      @edge_right_material_name = nil
+      @edge_right_entity_ids = nil
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = count)
@@ -91,6 +92,9 @@ module Ladb::OpenCutList
             when 'count'
               a_value = part_def_a.count
               b_value = part_def_b.count
+            when 'edge_count'
+              a_value = part_def_a.edge_count
+              b_value = part_def_b.edge_count
             else
               next
           end
@@ -190,14 +194,15 @@ module Ladb::OpenCutList
             :auto_oriented => @auto_oriented,
             :not_aligned_on_axes => @not_aligned_on_axes,
             :layers => @layers.map(&:name),
+            :edge_count => @edge_count,
             :edge_top_material_name => @edge_top_material_name,
             :edge_top_entity_ids => @edge_top_entity_ids,
-            :edge_right_material_name => @edge_right_material_name,
-            :edge_right_entity_ids => @edge_right_entity_ids,
             :edge_bottom_material_name => @edge_bottom_material_name,
             :edge_bottom_entity_ids => @edge_bottom_entity_ids,
             :edge_left_material_name => @edge_left_material_name,
             :edge_left_entity_ids => @edge_left_entity_ids,
+            :edge_right_material_name => @edge_right_material_name,
+            :edge_right_entity_ids => @edge_right_entity_ids,
             :multiple_layers => multiple_layers,
             :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
             :normals_to_dimensions => @size.normals_to_dimensions,

@@ -100,7 +100,8 @@ tab:
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient des chants plaqués
+      has_edges: Cette pièce contient {{ count }} chant plaqué
+      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -155,10 +156,6 @@ tab:
       axes_origin_position_min: Placer l'origine à l'extrémité
       axes_origin_position_center: Placer l'origine au centre
       axes_origin_position_min_center: Placer l'origine au centre d'une face
-      edge_top: Haut
-      edge_right: Droit
-      edge_bottom: Bas
-      edge_left: Gauche
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
     edit_group:
       title: Propriétés du groupe '{{ name }}'
@@ -215,6 +212,7 @@ tab:
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
+      property_edge_count: Nombre de chant
       reset: Restaurer aux valeurs par défaut
     list:
       filters: Filtres

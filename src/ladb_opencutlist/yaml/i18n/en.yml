@@ -100,7 +100,8 @@ tab:
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient des chants plaqués
+      has_edges: Cette pièce contient {{ count }} chant plaqué
+      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -155,10 +156,6 @@ tab:
       axes_origin_position_min: Place the origin in a corner
       axes_origin_position_center: Place the origin in the center
       axes_origin_position_min_center: Place the origin in the middle of an end
-      edge_top: Haut
-      edge_right: Droit
-      edge_bottom: Bas
-      edge_left: Gauche
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
     edit_group:
       title: Properties of Group '{{ name }}'
@@ -215,6 +212,7 @@ tab:
       property_width: Width
       property_name: Description
       property_count: Quantity
+      property_edge_count: Nombre de chant
       reset: Restore Default Values
     list:
       filters: Filters

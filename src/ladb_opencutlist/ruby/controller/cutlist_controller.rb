@@ -761,20 +761,21 @@ module Ladb::OpenCutList
               y_max_edge_materials = _grab_face_edge_materials(y_max_face_infos)
 
               edge_top_material = y_min_edge_materials.length == 1 ? y_min_edge_materials.first : nil
-              edge_right_material = x_max_edge_materials.length == 1 ? x_max_edge_materials.first : nil
               edge_bottom_material = y_max_edge_materials.length == 1 ? y_max_edge_materials.first : nil
               edge_left_material = x_min_edge_materials.length == 1 ? x_min_edge_materials.first : nil
+              edge_right_material = x_max_edge_materials.length == 1 ? x_max_edge_materials.first : nil
 
+              part_def.edge_count = [ edge_top_material, edge_right_material, edge_bottom_material, edge_left_material ].select { |m| !m.nil? }.length
               part_def.edge_top_material_name = edge_top_material.name unless edge_top_material.nil?
-              part_def.edge_right_material_name = edge_right_material.name unless edge_right_material.nil?
               part_def.edge_bottom_material_name = edge_bottom_material.name unless edge_bottom_material.nil?
               part_def.edge_left_material_name = edge_left_material.name unless edge_left_material.nil?
+              part_def.edge_right_material_name = edge_right_material.name unless edge_right_material.nil?
 
               # Populate edge GroupDefs
               _populate_edge_group_def(edge_top_material, part_def, cutlist_def)
-              _populate_edge_group_def(edge_right_material, part_def, cutlist_def)
               _populate_edge_group_def(edge_bottom_material, part_def, cutlist_def)
               _populate_edge_group_def(edge_left_material, part_def, cutlist_def)
+              _populate_edge_group_def(edge_right_material, part_def, cutlist_def)
 
               # Length and Width Decrements
 

@@ -100,7 +100,8 @@ tab:
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient des chants plaqués
+      has_edges: Cette pièce contient {{ count }} chant plaqué
+      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -155,10 +156,6 @@ tab:
       axes_origin_position_min: Koordinatenursprung in einer Ecke
       axes_origin_position_center: Koordinatenursprung im Zentrum
       axes_origin_position_min_center: Koordinatenursprung in der Mitte einer Seite
-      edge_top: Haut
-      edge_right: Droit
-      edge_bottom: Bas
-      edge_left: Gauche
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
@@ -215,6 +212,7 @@ tab:
       property_width: Breite
       property_name: Bezeichnung
       property_count: Anzahl
+      property_edge_count: Nombre de chant
       reset: Einstellungen zurücksetzen
     list:
       filters: Filter

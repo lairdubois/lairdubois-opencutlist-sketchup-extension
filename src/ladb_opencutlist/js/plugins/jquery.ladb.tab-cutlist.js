@@ -53,7 +53,7 @@
     var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
     var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
-    var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name';
+    var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name>-edge_count';
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
@@ -685,9 +685,9 @@
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
                 var $selectEdgeTopMaterialName = $('#ladb_cutlist_part_select_edge_top_material_name', $modal);
-                var $selectEdgeRightMaterialName = $('#ladb_cutlist_part_select_edge_right_material_name', $modal);
                 var $selectEdgeBottomMaterialName = $('#ladb_cutlist_part_select_edge_bottom_material_name', $modal);
                 var $selectEdgeLeftMaterialName = $('#ladb_cutlist_part_select_edge_left_material_name', $modal);
+                var $selectEdgeRightMaterialName = $('#ladb_cutlist_part_select_edge_right_material_name', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -705,11 +705,6 @@
                     } else {
                         $('svg .edge-top').show();
                     }
-                    if ($selectEdgeRightMaterialName.val() === '') {
-                        $('svg .edge-right').hide();
-                    } else {
-                        $('svg .edge-right').show();
-                    }
                     if ($selectEdgeBottomMaterialName.val() === '') {
                         $('svg .edge-bottom').hide();
                     } else {
@@ -719,6 +714,11 @@
                         $('svg .edge-left').hide();
                     } else {
                         $('svg .edge-left').show();
+                    }
+                    if ($selectEdgeRightMaterialName.val() === '') {
+                        $('svg .edge-right').hide();
+                    } else {
+                        $('svg .edge-right').show();
                     }
                 };
 
@@ -740,12 +740,6 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
                     });
-                $selectEdgeRightMaterialName.val(part.edge_right_material_name);
-                $selectEdgeRightMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        updateEdgesPreview();
-                    });
                 $selectEdgeBottomMaterialName.val(part.edge_bottom_material_name);
                 $selectEdgeBottomMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
@@ -754,6 +748,12 @@
                     });
                 $selectEdgeLeftMaterialName.val(part.edge_left_material_name);
                 $selectEdgeLeftMaterialName
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        updateEdgesPreview();
+                    });
+                $selectEdgeRightMaterialName.val(part.edge_right_material_name);
+                $selectEdgeRightMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
@@ -786,9 +786,9 @@
                     that.editedPart.axes_origin_position = $selectPartAxesOriginPosition.val();
 
                     that.editedPart.edge_top_material_name = $selectEdgeTopMaterialName.val();
-                    that.editedPart.edge_right_material_name = $selectEdgeRightMaterialName.val();
                     that.editedPart.edge_bottom_material_name = $selectEdgeBottomMaterialName.val();
                     that.editedPart.edge_left_material_name = $selectEdgeLeftMaterialName.val();
+                    that.editedPart.edge_right_material_name = $selectEdgeRightMaterialName.val();
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 

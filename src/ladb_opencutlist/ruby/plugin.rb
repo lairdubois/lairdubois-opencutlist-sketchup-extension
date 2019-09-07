@@ -253,6 +253,9 @@ module Ladb::OpenCutList
         register_command('core_zoom_extents') do |params|
           zoom_extents_command
         end
+        register_command('core_send_action') do |params|
+          send_action_command(params)
+        end
         register_command('core_compute_size_aspect_ratio_command') do |params|
           compute_size_aspect_ratio_command(params)
         end
@@ -563,6 +566,17 @@ module Ladb::OpenCutList
       if Sketchup.active_model
         Sketchup.active_model.active_view.zoom_extents
       end
+    end
+
+    def send_action_command(params)
+      action = params['action']
+
+      # Send action
+      success = Sketchup.send_action(action)
+
+      {
+          :success => success,
+      }
     end
 
     def compute_size_aspect_ratio_command(params)    # Waiting params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
