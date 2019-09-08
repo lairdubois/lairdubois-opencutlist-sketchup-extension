@@ -18,6 +18,7 @@
     var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_AREAS = 'cutlist.option.hide_final_areas';
+    var SETTING_KEY_OPTION_HIDE_EDGES = 'cutlist.option.hide_edges';
     var SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT = 'cutlist.option.minimize_on_highlight';
     var SETTING_KEY_OPTION_PART_ORDER_STRATEGY = 'cutlist.option.part_order_strategy';
     var SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY = 'cutlist.option.dimension_column_order_strategy';
@@ -52,6 +53,7 @@
     var OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
+    var OPTION_DEFAULT_HIDE_EDGES = false;
     var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
     var OPTION_DEFAULT_PART_ORDER_STRATEGY = '-thickness>-length>-width>-count>name>-edge_pattern';
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
@@ -1440,6 +1442,7 @@
                 SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
+                SETTING_KEY_OPTION_HIDE_EDGES,
                 SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
                 SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
                 SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
@@ -1462,6 +1465,7 @@
                     hide_bbox_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
                     hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
+                    hide_edges: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_EDGES, OPTION_DEFAULT_HIDE_EDGES),
                     minimize_on_highlight: that.opencutlist.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
                     part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
                     dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
@@ -1495,6 +1499,7 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
+        var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
@@ -1520,6 +1525,7 @@
                 .prop('checked', generateOptions.hide_untyped_material_dimensions)
                 .prop('disabled', generateOptions.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', generateOptions.hide_final_areas);
+            $inputHideEdges.prop('checked', generateOptions.hide_edges);
             $inputMinimizeOnHighlight.prop('checked', generateOptions.minimize_on_highlight);
 
             // Sortables
@@ -1596,6 +1602,7 @@
                 hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
                 hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS,
+                hide_edges: OPTION_DEFAULT_HIDE_EDGES,
                 minimize_on_highlight: OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT,
                 part_order_strategy: OPTION_DEFAULT_PART_ORDER_STRATEGY,
                 dimension_column_order_strategy: OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY
@@ -1618,6 +1625,7 @@
             that.generateOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.generateOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
+            that.generateOptions.hide_edges = $inputHideEdges.is(':checked');
             that.generateOptions.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
 
             var properties = [];
@@ -1646,6 +1654,7 @@
                 { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.generateOptions.hide_bbox_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.generateOptions.hide_untyped_material_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.generateOptions.hide_final_areas },
+                { key:SETTING_KEY_OPTION_HIDE_EDGES, value:that.generateOptions.hide_edges },
                 { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.generateOptions.minimize_on_highlight },
                 { key:SETTING_KEY_OPTION_PART_ORDER_STRATEGY, value:that.generateOptions.part_order_strategy },
                 { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.generateOptions.dimension_column_order_strategy }

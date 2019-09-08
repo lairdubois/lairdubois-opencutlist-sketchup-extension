@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_type, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_ymin_material_name, :edge_ymin_entity_ids, :edge_ymax_material_name, :edge_ymax_entity_ids, :edge_xmin_material_name, :edge_xmin_entity_ids, :edge_xmax_material_name, :edge_xmax_entity_ids, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
+    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_type, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_ymin_material_name, :edge_ymin_std_dimension, :edge_ymin_entity_ids, :edge_ymax_material_name, :edge_ymax_std_dimension, :edge_ymax_entity_ids, :edge_xmin_material_name, :edge_xmin_std_dimension, :edge_xmin_entity_ids, :edge_xmax_material_name, :edge_xmax_std_dimension, :edge_xmax_entity_ids, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children
 
     def initialize(id)
@@ -27,12 +27,16 @@ module Ladb::OpenCutList
       @edge_count = 0
       @edge_pattern = nil                 # A string from 0000 to 1111
       @edge_ymin_material_name = nil
+      @edge_ymin_std_dimension = nil
       @edge_ymin_entity_ids = nil
       @edge_ymax_material_name = nil
+      @edge_ymax_std_dimension = nil
       @edge_ymax_entity_ids = nil
       @edge_xmin_material_name = nil
+      @edge_xmin_std_dimension = nil
       @edge_xmin_entity_ids = nil
       @edge_xmax_material_name = nil
+      @edge_xmax_std_dimension = nil
       @edge_xmax_entity_ids = nil
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
@@ -94,8 +98,8 @@ module Ladb::OpenCutList
               a_value = part_def_a.count
               b_value = part_def_b.count
             when 'edge_pattern'
-              a_value = part_def_a.edge_pattern
-              b_value = part_def_b.edge_pattern
+              a_value = part_def_a.edge_pattern.nil? ? '' : part_def_a.edge_pattern
+              b_value = part_def_b.edge_pattern.nil? ? '' : part_def_b.edge_pattern
             else
               next
           end
@@ -195,17 +199,21 @@ module Ladb::OpenCutList
             :auto_oriented => @auto_oriented,
             :not_aligned_on_axes => @not_aligned_on_axes,
             :layers => @layers.map(&:name),
+            :multiple_layers => multiple_layers,
             :edge_count => @edge_count,
             :edge_pattern => @edge_pattern,
             :edge_ymin_material_name => @edge_ymin_material_name,
+            :edge_ymin_std_dimension => @edge_ymin_std_dimension,
             :edge_ymin_entity_ids => @edge_ymin_entity_ids,
             :edge_ymax_material_name => @edge_ymax_material_name,
+            :edge_ymax_std_dimension => @edge_ymax_std_dimension,
             :edge_ymax_entity_ids => @edge_ymax_entity_ids,
             :edge_xmin_material_name => @edge_xmin_material_name,
+            :edge_xmin_std_dimension => @edge_xmin_std_dimension,
             :edge_xmin_entity_ids => @edge_xmin_entity_ids,
             :edge_xmax_material_name => @edge_xmax_material_name,
+            :edge_xmax_std_dimension => @edge_xmax_std_dimension,
             :edge_xmax_entity_ids => @edge_xmax_entity_ids,
-            :multiple_layers => multiple_layers,
             :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
             :normals_to_dimensions => @size.normals_to_dimensions,
             :l_ratio => @size.length / [@size.length, @size.width].max,
@@ -224,6 +232,15 @@ module Ladb::OpenCutList
             :saved_number => nil,
             :material_name => @material_name,
             :labels => @labels,
+            :edge_pattern => @edge_pattern,
+            :edge_ymin_material_name => @edge_ymin_material_name,
+            :edge_ymin_std_dimension => @edge_ymin_std_dimension,
+            :edge_ymax_material_name => @edge_ymax_material_name,
+            :edge_ymax_std_dimension => @edge_ymax_std_dimension,
+            :edge_xmin_material_name => @edge_xmin_material_name,
+            :edge_xmin_std_dimension => @edge_xmin_std_dimension,
+            :edge_xmax_material_name => @edge_xmax_material_name,
+            :edge_xmax_std_dimension => @edge_xmax_std_dimension,
             :final_area =>  @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
             :children_warning_count => @children_warning_count,
             :children => []

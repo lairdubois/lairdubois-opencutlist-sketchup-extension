@@ -197,6 +197,8 @@ tab:
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
+      hide_edges: Masquer les colonnes de chants
+      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
       general: Allgemein
@@ -242,6 +244,7 @@ tab:
       width_short: B
       thickness: Dicke
       thickness_short: D
+      edges: Chants
     export:
       title: CSV Format exportieren
       info: |
@@ -281,6 +284,10 @@ tab:
       material_name: Material
       entity_names: Instanzbezeichnungen
       labels: Etiketten
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
+      edge_xmin: Chant Largeur 1
+      edge_xmax: Chant Largeur 2
     cuttingdiagram:
       title: Schnittplan
       option_saw_kerf: Sägeblattdicke

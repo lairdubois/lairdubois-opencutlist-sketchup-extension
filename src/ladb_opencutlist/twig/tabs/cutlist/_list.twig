@@ -128,7 +128,8 @@
     {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not generateOptions.hide_untyped_material_dimensions) and not generateOptions.hide_bbox_dimensions %}
     {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
-    {% set colspan = 9 %}
+    {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
+    {% set colspan = 13 %}
     {% if showCuttingDimensions %}
         {% if showLengthOnly %}
             {% set colspan = colspan - 1 %}
@@ -145,6 +146,9 @@
     {% endif %}
     {% if not showFinalAreas %}
         {% set colspan = colspan - 1 %}
+    {% endif %}
+    {% if not showEdges %}
+        {% set colspan = colspan - 4 %}
     {% endif %}
 
     <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
@@ -195,20 +199,29 @@
             {% if showFinalAreas %}
                 <td class="text-center" width="10%">{{ ('tab.cutlist.list.final')|i18next }}</td>
             {% endif %}
+            {% if showEdges %}
+                <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+            {% endif %}
         </tr>
         <tr>
             {% if showCuttingDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
-                    <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
             {% if showBoxDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
-                    <td class="text-center" width="10%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
             {% if showFinalAreas %}
                 <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
+            {% endif %}
+            {% if showEdges %}
+                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
+                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
         </tr>
         {% set thickness = 0 %}
@@ -247,6 +260,12 @@
                 {% if showFinalAreas %}
                     <td class="ladb-cutlist-dimension-value">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
                 {% endif %}
+                {% if showEdges %}
+                    <td>{% if part.edge_ymin_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_ymin_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_ymin_std_dimension }}</span>{% endif %}</td>
+                    <td>{% if part.edge_ymax_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_ymax_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_ymax_std_dimension }}</span>{% endif %}</td>
+                    <td>{% if part.edge_xmin_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_xmin_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_xmin_std_dimension }}</span>{% endif %}</td>
+                    <td>{% if part.edge_xmax_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_xmax_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_xmax_std_dimension }}</span>{% endif %}</td>
+                {% endif %}
             </tr>
             {% if part.children %}
                 {% for partChild in part.children %}
@@ -269,6 +288,12 @@
                             {% endfor %}
                         {% endif %}
                         {% if showFinalAreas %}
+                            <td></td>
+                        {% endif %}
+                        {% if showEdges %}
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                         {% endif %}
                     </tr>

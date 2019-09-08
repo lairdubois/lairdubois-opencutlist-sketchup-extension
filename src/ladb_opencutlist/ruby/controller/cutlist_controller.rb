@@ -462,7 +462,7 @@ module Ladb::OpenCutList
       # -- Edge Utils --
 
       def _populate_edge_group_def(material, part_def, cutlist_def)
-        return if material.nil?
+        return nil if material.nil?
 
         material_attributes = _get_material_attributes(material)
 
@@ -500,6 +500,7 @@ module Ladb::OpenCutList
 
         group_def.total_cutting_length += part_def.cutting_size.length + material_attributes.l_length_increase
 
+        group_def
       end
 
       # [END] -- Utils definitions --
@@ -767,6 +768,12 @@ module Ladb::OpenCutList
               width_decrement += _get_material_attributes(edge_ymin_material).l_thickness if edge_ymin_material
               width_decrement += _get_material_attributes(edge_ymax_material).l_thickness if edge_ymax_material
 
+              # Populate edge GroupDefs
+              edge_ymin_group_def = _populate_edge_group_def(edge_ymin_material, part_def, cutlist_def)
+              edge_ymax_group_def = _populate_edge_group_def(edge_ymax_material, part_def, cutlist_def)
+              edge_xmin_group_def = _populate_edge_group_def(edge_xmin_material, part_def, cutlist_def)
+              edge_xmax_group_def = _populate_edge_group_def(edge_xmax_material, part_def, cutlist_def)
+
               # Populate PartDef
               part_def.edge_count = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].select { |m| !m.nil? }.length
 
@@ -777,6 +784,11 @@ module Ladb::OpenCutList
               part_def.edge_xmin_material_name = edge_xmin_material.name unless edge_xmin_material.nil?
               part_def.edge_xmax_material_name = edge_xmax_material.name unless edge_xmax_material.nil?
 
+              part_def.edge_ymin_std_dimension = edge_ymin_group_def.std_dimension unless edge_ymin_group_def.nil?
+              part_def.edge_ymax_std_dimension = edge_ymax_group_def.std_dimension unless edge_ymax_group_def.nil?
+              part_def.edge_xmin_std_dimension = edge_xmin_group_def.std_dimension unless edge_xmin_group_def.nil?
+              part_def.edge_xmax_std_dimension = edge_xmax_group_def.std_dimension unless edge_xmax_group_def.nil?
+
               part_def.edge_ymin_entity_ids = ymin_face_infos.collect { |face_info| face_info.face.entityID }
               part_def.edge_ymax_entity_ids = ymax_face_infos.collect { |face_info| face_info.face.entityID }
               part_def.edge_xmin_entity_ids = xmin_face_infos.collect { |face_info| face_info.face.entityID }
@@ -786,12 +798,6 @@ module Ladb::OpenCutList
               part_def.cutting_size.increment_width(-width_decrement)
               part_def.size.increment_length(-length_decrement)
               part_def.size.increment_width(-width_decrement)
-
-              # Populate edge GroupDefs
-              _populate_edge_group_def(edge_ymin_material, part_def, cutlist_def)
-              _populate_edge_group_def(edge_ymax_material, part_def, cutlist_def)
-              _populate_edge_group_def(edge_xmin_material, part_def, cutlist_def)
-              _populate_edge_group_def(edge_xmax_material, part_def, cutlist_def)
 
             when MaterialAttributes::TYPE_BAR
 
@@ -807,6 +813,7 @@ module Ladb::OpenCutList
 
           end
 
+          group_def.show_edges = part_def.edge_count > 0 || group_def.show_edges
           group_def.set_part_def(part_id, part_def)
 
           if number
@@ -923,7 +930,14 @@ module Ladb::OpenCutList
         if part_folding and group_def.material_type > MaterialAttributes::TYPE_UNKNOW   # Only parts with typed material can be grouped
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
-            if !(folder_part_def = part_defs.last).nil? and folder_part_def.cutting_size == part_def.cutting_size and (folder_part_def.labels == part_def.labels or hide_labels) and ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas)    # final_area workaround for rounding error
+            if !(folder_part_def = part_defs.last).nil? &&
+                folder_part_def.cutting_size == part_def.cutting_size &&
+                (folder_part_def.labels == part_def.labels || hide_labels) &&
+                ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas) &&      # final_area workaround for rounding error
+                folder_part_def.edge_ymin_material_name == part_def.edge_ymin_material_name &&
+                folder_part_def.edge_ymax_material_name == part_def.edge_ymax_material_name &&
+                folder_part_def.edge_xmin_material_name == part_def.edge_xmin_material_name &&
+                folder_part_def.edge_xmax_material_name == part_def.edge_xmax_material_name
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
@@ -935,6 +949,15 @@ module Ladb::OpenCutList
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.labels = first_child_part_def.labels
                 folder_part_def.final_area = first_child_part_def.final_area
+                folder_part_def.edge_pattern = first_child_part_def.edge_pattern
+                folder_part_def.edge_ymin_material_name = first_child_part_def.edge_ymin_material_name
+                folder_part_def.edge_ymin_std_dimension = first_child_part_def.edge_ymin_std_dimension
+                folder_part_def.edge_ymax_material_name = first_child_part_def.edge_ymax_material_name
+                folder_part_def.edge_ymax_std_dimension = first_child_part_def.edge_ymax_std_dimension
+                folder_part_def.edge_xmin_material_name = first_child_part_def.edge_xmin_material_name
+                folder_part_def.edge_xmin_std_dimension = first_child_part_def.edge_xmin_std_dimension
+                folder_part_def.edge_xmax_material_name = first_child_part_def.edge_xmax_material_name
+                folder_part_def.edge_xmax_std_dimension = first_child_part_def.edge_xmax_std_dimension
 
                 folder_part_def.children.push(first_child_part_def)
                 folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
@@ -1013,6 +1036,7 @@ module Ladb::OpenCutList
       hide_bbox_dimensions = settings['hide_bbox_dimensions']
       hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
       hide_final_areas = settings['hide_final_areas']
+      hide_edges = settings['hide_edges']
       hidden_group_ids = settings['hidden_group_ids']
 
       response = {
@@ -1123,6 +1147,12 @@ module Ladb::OpenCutList
                     unless hide_labels
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
                     end
+                    unless hide_edges
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
+                    end
 
                     csv << header
 
@@ -1152,11 +1182,17 @@ module Ladb::OpenCutList
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                         end
                         row.push(part[:material_name])
-                        unless hide_entity_names || part[:entity_names].nil?
-                          row.push(part[:entity_names].map(&:first).join(','))
+                        unless hide_entity_names
+                          row.push(part[:entity_names].nil? ? '' : part[:entity_names].map(&:first).join(','))
                         end
                         unless hide_labels
                           row.push(part[:labels].join(','))
+                        end
+                        unless hide_edges
+                          row.push("#{part[:edge_ymin_material_name]} #{part[:edge_ymin_std_dimension]}")
+                          row.push("#{part[:edge_ymax_material_name]} #{part[:edge_ymax_std_dimension]}")
+                          row.push("#{part[:edge_xmin_material_name]} #{part[:edge_xmin_std_dimension]}")
+                          row.push("#{part[:edge_xmax_material_name]} #{part[:edge_xmax_std_dimension]}")
                         end
 
                         csv << row
@@ -1186,6 +1222,12 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
                     unless hide_labels
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
+                    end
+                    unless hide_edges
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
                     end
 
                     csv << header
@@ -1236,6 +1278,12 @@ module Ladb::OpenCutList
                             row.push(part[:material_name])
                             unless hide_labels
                               row.push(part[:labels].join(','))
+                            end
+                            unless hide_edges
+                              row.push("#{part[:edge_ymin_material_name]} #{part[:edge_ymin_std_dimension]}")
+                              row.push("#{part[:edge_ymax_material_name]} #{part[:edge_ymax_std_dimension]}")
+                              row.push("#{part[:edge_xmin_material_name]} #{part[:edge_xmin_std_dimension]}")
+                              row.push("#{part[:edge_xmax_material_name]} #{part[:edge_xmax_std_dimension]}")
                             end
 
                             csv << row

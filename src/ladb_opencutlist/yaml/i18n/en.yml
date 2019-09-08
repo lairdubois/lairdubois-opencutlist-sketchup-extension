@@ -197,6 +197,8 @@ tab:
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_final_areas: Hide actual area of parts of type *Sheet Good*
       hide_final_areas_help: If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden.
+      hide_edges: Masquer les colonnes de chants
+      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
       general: General
@@ -242,6 +244,7 @@ tab:
       width_short: W
       thickness: Thickness
       thickness_short: T
+      edges: Chants
     export:
       title: CSV Formatted Export
       info: |
@@ -281,6 +284,10 @@ tab:
       material_name: Material
       entity_names: Instance names
       labels: Labels
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
+      edge_xmin: Chant Largeur 1
+      edge_xmax: Chant Largeur 2
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness

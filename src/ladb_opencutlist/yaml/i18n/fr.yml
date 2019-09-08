@@ -197,6 +197,8 @@ tab:
       hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_final_areas: Masquer les surfaces finies des *Panneaux*
       hide_final_areas_help: Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées.
+      hide_edges: Masquer les colonnes de chants
+      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
       general: Générales
@@ -242,6 +244,7 @@ tab:
       width_short: Larg.
       thickness: Épaisseur
       thickness_short: Ép.
+      edges: Chants
     export:
       title: Exporter au format CSV
       info: |
@@ -281,6 +284,10 @@ tab:
       material_name: Matière
       entity_names: Noms d'instance
       labels: Etiquettes
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
+      edge_xmin: Chant Largeur 1
+      edge_xmax: Chant Largeur 2
     cuttingdiagram:
       title: Calepinage
       option_saw_kerf: Épaisseur de lame de scie
