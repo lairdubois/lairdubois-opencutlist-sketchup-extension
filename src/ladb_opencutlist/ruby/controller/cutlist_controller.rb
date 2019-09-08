@@ -952,6 +952,8 @@ module Ladb::OpenCutList
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
                 folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
+                folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
+                folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
 
                 folder_part_def.children.push(first_child_part_def)
                 folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
