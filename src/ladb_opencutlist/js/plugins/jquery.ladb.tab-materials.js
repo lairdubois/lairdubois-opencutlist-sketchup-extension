@@ -18,6 +18,7 @@
     var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
     var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
     var SETTING_KEY_OPTION_SUFFIX_GRAINED = '_grained';
+    var SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENT = '_edge_decrement';
 
     // Select picker options
 
@@ -262,6 +263,7 @@
             var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
             var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
             var $selectGrained = $('#ladb_materials_select_grained', $modal);
+            var $selectEdgeDecrement = $('#ladb_materials_select_edge_decrement', $modal);
             var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
             var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
             var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
@@ -300,6 +302,7 @@
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').hide();
                         $selectGrained.closest('.form-group').hide();
+                        $selectEdgeDecrement.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.show();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.hide();
@@ -316,6 +319,7 @@
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').show();
                         $selectGrained.closest('.form-group').show();
+                        $selectEdgeDecrement.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.show();
                         $spanCutOptionsDefaultsType3.hide();
@@ -332,6 +336,7 @@
                         $inputStdSections.closest('.form-group').show();
                         $inputStdSizes.closest('.form-group').hide();
                         $selectGrained.closest('.form-group').hide();
+                        $selectEdgeDecrement.closest('.form-group').hide();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.show();
@@ -348,6 +353,7 @@
                         $inputStdSections.closest('.form-group').hide();
                         $inputStdSizes.closest('.form-group').hide();
                         $selectGrained.closest('.form-group').hide();
+                        $selectEdgeDecrement.closest('.form-group').show();
                         $spanCutOptionsDefaultsType1.hide();
                         $spanCutOptionsDefaultsType2.hide();
                         $spanCutOptionsDefaultsType3.hide();
@@ -366,7 +372,8 @@
                     defaultStdThicknesses,
                     defaultStdSections,
                     defaultStdSizes,
-                    defaultGrained;
+                    defaultGrained,
+                    defaultEdgeDecrement;
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
                         defaultThickness = '0';
@@ -378,6 +385,7 @@
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
+                        defaultEdgeDecrement = false;
                         break;
                     case 1:   // TYPE_SOLID_WOOD
                         defaultThickness = '0';
@@ -389,6 +397,7 @@
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = true;
+                        defaultEdgeDecrement = true;
                         break;
                     case 2:   // TYPE_SHEET_GOOD
                         defaultThickness = '0';
@@ -400,6 +409,7 @@
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
+                        defaultEdgeDecrement = false;
                         break;
                     case 3:   // TYPE_BAR
                         defaultThickness = '0';
@@ -411,6 +421,7 @@
                         defaultStdSections = '30mm x 40mm;40mm x 50mm';
                         defaultStdSizes = '';
                         defaultGrained = false;
+                        defaultEdgeDecrement = false;
                         break;
                     case 4:   // TYPE_EDGE
                         defaultThickness = '2mm';
@@ -422,6 +433,7 @@
                         defaultStdSections = '';
                         defaultStdSizes = '';
                         defaultGrained = false;
+                        defaultEdgeDecrement = true;
                         break;
                 }
                 var setTokens = function ($input, tokens) {
@@ -437,6 +449,7 @@
                 setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
                 setTokens($inputStdSizes, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
                 $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
+                $selectEdgeDecrement.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENT, defaultEdgeDecrement) ? '1' : '0');
             };
 
             var rotateTexture = function (angle) {
@@ -515,6 +528,7 @@
             });
             $selectType.selectpicker(SELECT_PICKER_OPTIONS);
             $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectEdgeDecrement.selectpicker(SELECT_PICKER_OPTIONS);
 
             // Bind buttons
             $btnCutOptionsDefaultsSave.on('click', function () {
@@ -529,6 +543,7 @@
                 var std_sections = $inputStdSections.val();
                 var std_sizes = $inputStdSizes.val();
                 var grained = $selectGrained.val() === '1';
+                var edgeDecrement = $selectEdgeDecrement.val() === '1';
 
                 // Update default cut options for specific type to last used
                 that.opencutlist.setSettings([
@@ -540,7 +555,8 @@
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
                     { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
-                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained }
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained },
+                    { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENT, value:edgeDecrement }
                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                 that.opencutlist.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
@@ -607,6 +623,7 @@
                 that.editedMaterial.attributes.std_sections = $inputStdSections.val();
                 that.editedMaterial.attributes.std_sizes = $inputStdSizes.val();
                 that.editedMaterial.attributes.grained = $selectGrained.val() === '1';
+                that.editedMaterial.attributes.edge_decrement = $selectEdgeDecrement.val() === '1';
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialEvents = true;
@@ -744,6 +761,7 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENT);
         }
 
         this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function () {

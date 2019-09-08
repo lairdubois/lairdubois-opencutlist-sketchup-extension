@@ -111,6 +111,7 @@ module Ladb::OpenCutList
                     :std_sections => material_attributes.std_sections,
                     :std_sizes => material_attributes.std_sizes,
                     :grained => material_attributes.grained,
+                    :edge_decrement => material_attributes.edge_decrement,
                 }
             }
         )
@@ -178,6 +179,7 @@ module Ladb::OpenCutList
       std_sections = attributes['std_sections']
       std_sizes = attributes['std_sizes']
       grained = attributes['grained']
+      edge_decrement = attributes['edge_decrement']
 
       # Fetch material
       materials = model.materials
@@ -248,6 +250,7 @@ module Ladb::OpenCutList
         material_attributes.std_sections = std_sections
         material_attributes.std_sizes = std_sizes
         material_attributes.grained = grained
+        material_attributes.edge_decrement = edge_decrement
         material_attributes.write_to_attributes
 
         # Trigger change event on materials observer if needed

@@ -736,25 +736,25 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         computeAxesOrder();
                     });
-                $selectEdgeYminMaterialName.val(part.edge_ymin_material_name);
+                $selectEdgeYminMaterialName.val(part.edge_material_names.ymin);
                 $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
                     });
-                $selectEdgeYmaxMaterialName.val(part.edge_ymax_material_name);
+                $selectEdgeYmaxMaterialName.val(part.edge_material_names.ymax);
                 $selectEdgeYmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
                     });
-                $selectEdgeXminMaterialName.val(part.edge_xmin_material_name);
+                $selectEdgeXminMaterialName.val(part.edge_material_names.xmin);
                 $selectEdgeXminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
                     });
-                $selectEdgeXmaxMaterialName.val(part.edge_xmax_material_name);
+                $selectEdgeXmaxMaterialName.val(part.edge_material_names.xmax);
                 $selectEdgeXmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -787,10 +787,10 @@
                     that.editedPart.axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
                     that.editedPart.axes_origin_position = $selectPartAxesOriginPosition.val();
 
-                    that.editedPart.edge_ymin_material_name = $selectEdgeYminMaterialName.val();
-                    that.editedPart.edge_ymax_material_name = $selectEdgeYmaxMaterialName.val();
-                    that.editedPart.edge_xmin_material_name = $selectEdgeXminMaterialName.val();
-                    that.editedPart.edge_xmax_material_name = $selectEdgeXmaxMaterialName.val();
+                    that.editedPart.edge_material_names.ymin = $selectEdgeYminMaterialName.val();
+                    that.editedPart.edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
+                    that.editedPart.edge_material_names.xmin = $selectEdgeXminMaterialName.val();
+                    that.editedPart.edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
 
                     rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
 

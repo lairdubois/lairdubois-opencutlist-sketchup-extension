@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-asterisk:before {
+  content: "\e95d";
+}
 .ladb-opencutlist-icon-edge-1111:before {
   content: "\e950";
 }

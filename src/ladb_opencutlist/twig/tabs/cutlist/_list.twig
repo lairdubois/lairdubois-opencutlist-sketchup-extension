@@ -99,8 +99,6 @@
                     <div class="ladb-minitools ladb-minitools-right no-print">
                         {% if group.part_count > 0 %}
                             <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
-                        {% else %}
-                            <a href="#" class="ladb-btn-filter ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-filter"></i></a>
                         {% endif %}
                         <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
                     </div>
@@ -218,10 +216,10 @@
                 <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
             {% endif %}
             {% if showEdges %}
-                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
-                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
-                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
-                <td class="text-center" width="8%"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                <td class="text-center" width="10%"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                <td class="text-center" width="10%"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                <td class="text-center" width="10%"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
+                <td class="text-center" width="10%"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
         </tr>
         {% set thickness = 0 %}
@@ -254,17 +252,17 @@
                 {% endif %}
                 {% if showBoxDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
-                        <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                        <td class="ladb-cutlist-dimension-value">{% if part.edge_decrements[property] %}<i class="ladb-opencutlist-icon-asterisk" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_decrement'|i18next({ 'decrement':part.edge_decrements[property] }) }}"></i>{% endif %}{{ part[property] }}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showFinalAreas %}
                     <td class="ladb-cutlist-dimension-value">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
                 {% endif %}
                 {% if showEdges %}
-                    <td>{% if part.edge_ymin_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_ymin_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_ymin_std_dimension }}</span>{% endif %}</td>
-                    <td>{% if part.edge_ymax_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_ymax_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_ymax_std_dimension }}</span>{% endif %}</td>
-                    <td>{% if part.edge_xmin_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_xmin_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_xmin_std_dimension }}</span>{% endif %}</td>
-                    <td>{% if part.edge_xmax_material_name %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_xmax_material_name }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_xmax_std_dimension }}</span>{% endif %}</td>
+                    <td>{% if part.edge_material_names.ymin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymin }}</span>{% endif %}</td>
+                    <td>{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
+                    <td>{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
+                    <td>{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
                 {% endif %}
             </tr>
             {% if part.children %}

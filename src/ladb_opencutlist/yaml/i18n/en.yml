@@ -102,6 +102,7 @@ tab:
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
+      edge_decrement: Réduit de l'épaisseur des chants ({{ decrement }})
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -440,6 +441,10 @@ tab:
       grained_help: Configures the grain direction of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
+      edge_decrement: Reduction
+      edge_decrement_help: Permet d'indiquer si les dimension des pièces doivent être réduite de la taille des chants.
+      edge_decrement_0: Pas de réduction
+      edge_decrement_1: Réduire la pièce de l'épaisseur du chant
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values
