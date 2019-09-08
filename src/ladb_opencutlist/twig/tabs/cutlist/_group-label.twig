@@ -1,6 +1,4 @@
-{% if group.material_color %}
-    <i class="ladb-opencutlist-icon-drop no-print ladb-text-shadow" style="color: {{ group.material_color}};"></i>
-{% endif %}
+{% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}
 <span{% if group.material_type == 0 %} class="text-muted" style="font-style: italic;"{% endif %}>
     {% if group.material_name is empty %}
         {{ 'tab.cutlist.material_undefined'|i18next }}

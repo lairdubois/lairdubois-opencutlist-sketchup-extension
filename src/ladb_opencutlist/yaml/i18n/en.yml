@@ -212,7 +212,7 @@ tab:
       property_width: Width
       property_name: Description
       property_count: Quantity
-      property_edge_count: Nombre de chant
+      property_edge_pattern: Motif de chant
       reset: Restore Default Values
     list:
       filters: Filters
