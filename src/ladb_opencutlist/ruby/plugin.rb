@@ -226,10 +226,11 @@ module Ladb::OpenCutList
       }
       menu.set_validation_proc(edit_part_item)  {
         entity = _get_selected_component_entity
-        unless entity.nil?
-          return MF_ENABLED
+        if entity.nil?
+          MF_GRAYED
+        else
+          MF_ENABLED
         end
-        MF_GRAYED
       }
 
       # Setup Context Menu
