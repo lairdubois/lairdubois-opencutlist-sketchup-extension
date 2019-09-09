@@ -128,55 +128,61 @@
                         <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 + partWidth }} h {{ partLength }}" class="edge edge-ymax" />
                         <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 }} v {{ partWidth }}" class="edge edge-xmin" />
 
-                        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 5 }}" font-family="Verdana" font-size="10">{{ part.length }}</text>
-                        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 5 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ part.width }}</text>
+                        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
+                        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
                         <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
 
                     </svg>
                 </div>
-                <div class="form form-horizontal">
-                    <div class="form-group">
-                        {% if part.edge_entity_ids.ymin is empty %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                        {% endif %}
-                        <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
-                        <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
-                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
-                            </select>
+                <div class="row">
+                    <div class="form form-horizontal col-xs-6">
+                        <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_length'|i18next }}</h5>
+                        <div class="form-group">
+                            {% if part.edge_entity_ids.ymin is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-10">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {% if part.edge_entity_ids.ymax is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-10">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        {% if part.edge_entity_ids.ymax is empty %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                        {% endif %}
-                        <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
-                        <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
-                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
-                            </select>
+                    <div class="form form-horizontal col-xs-6">
+                        <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_width'|i18next }}</h5>
+                        <div class="form-group">
+                            {% if part.edge_entity_ids.xmin is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-10">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmin_material_name"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        {% if part.edge_entity_ids.xmin is empty %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                        {% endif %}
-                        <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
-                        <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_xmin_material_name"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
-                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {% if part.edge_entity_ids.xmax is empty %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                        {% endif %}
-                        <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
-                        <div class="col-xs-7">
-                            <select class="form-control" id="ladb_cutlist_part_select_edge_xmax_material_name"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
-                                {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
-                            </select>
+                        <div class="form-group">
+                            {% if part.edge_entity_ids.xmax is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-10">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmax_material_name"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

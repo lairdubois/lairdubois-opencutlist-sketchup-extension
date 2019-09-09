@@ -98,7 +98,8 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.generateFilters = {
-          labels_filter: []
+          labels_filter: [],
+          edge_material_names_filter: []
         };
 
         this.generateAt = null;
@@ -106,6 +107,7 @@
         this.pageLabel = null;
         this.lengthUnit = null;
         this.usedLabels = [];
+        this.usedEdgeMaterialNames = [];
         this.materialUsages = [];
         this.groups = [];
         this.editedPart = null;
@@ -164,8 +166,16 @@
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
             that.usedLabels = usedLabels;
+            that.usedEdgeMaterialNames = [];
             that.materialUsages = materialUsages;
             that.groups = groups;
+
+            // Compute usedEdgeMaterialNames
+            for (var i = 0; i < materialUsages.length; i++) {
+                if (materialUsages[i].type === 4) {     // TYPE_EDGE
+                    that.usedEdgeMaterialNames.push(materialUsages[i].name);
+                }
+            }
 
             // Update filename
             that.$fileTabs.empty();
@@ -203,6 +213,7 @@
                 instanceCount: instanceCount,
                 ignoredInstanceCount: ignoredInstanceCount,
                 usedLabels: usedLabels,
+                usedEdgeMaterialNames: that.usedEdgeMaterialNames,
                 groups: groups
             }));
 
@@ -270,6 +281,45 @@
                     });
                 })
             ;
+            $('#ladb_cutlist_edge_material_names_filter', that.$page)
+                .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    autocomplete: {
+                        source: that.usedEdgeMaterialNames,
+                        delay: 100
+                    },
+                    showAutocompleteOnFocus: false
+                }))
+                .on('tokenfield:createtoken', function (e) {
+
+                    // Unique token
+                    var existingTokens = $(this).tokenfield('getTokens');
+                    $.each(existingTokens, function (index, token) {
+                        if (token.value === e.attrs.value) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    // Available token only
+                    var available = false;
+                    $.each(that.usedEdgeMaterialNames, function (index, token) {
+                        if (token === e.attrs.value) {
+                            available = true;
+                            return false;
+                        }
+                    });
+                    if (!available) {
+                        e.preventDefault();
+                    }
+
+                })
+                .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
+                    var tokenList = $(this).tokenfield('getTokensList');
+                    that.generateFilters.edge_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                    that.generateCutlist(function () {
+                        $('#ladb_cutlist_edge_material_names_filter-tokenfield', that.$page).focus();
+                    });
+                })
+            ;
 
             // Bind buttons
             $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
@@ -281,6 +331,11 @@
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function () {
                 $(this).blur();
                 that.generateFilters.labels_filter = [];
+                that.generateCutlist();
+            });
+            $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
+                $(this).blur();
+                that.generateFilters.edge_material_names_filter = [];
                 that.generateCutlist();
             });
             $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
@@ -301,6 +356,18 @@
                 that.$rootSlide.animate({ scrollTop: $target.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function () {
                     $target.effect("highlight", {}, 1500);
                 });
+                return false;
+            });
+            $('a.ladb-btn-material-filter', that.$page).on('click', function () {
+                $(this).blur();
+                var materialFilter = $(this).data('material-name');
+                var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
+                if (indexOf > -1) {
+                    that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
+                } else {
+                    that.generateFilters.edge_material_names_filter.push(materialFilter);
+                }
+                that.generateCutlist();
                 return false;
             });
             $('a.ladb-btn-edit-material', that.$page).on('click', function () {

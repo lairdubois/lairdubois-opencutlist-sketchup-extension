@@ -93,6 +93,8 @@ tab:
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
+      add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
+      remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
       not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht richtig nach den Hauptachsen ausgerichtet
       multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen erscheinen:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
@@ -103,6 +105,10 @@ tab:
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decrement: Réduit de l'épaisseur des chants ({{ decrement }})
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
+      edge_xmin: Chant Largeur 1
+      edge_xmax: Chant Largeur 2
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -157,6 +163,8 @@ tab:
       axes_origin_position_min: Koordinatenursprung in einer Ecke
       axes_origin_position_center: Koordinatenursprung im Zentrum
       axes_origin_position_min_center: Koordinatenursprung in der Mitte einer Seite
+      over_length: Sur la longueur
+      over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
@@ -222,7 +230,8 @@ tab:
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
       filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
-      labels_filter: "Filteretiketten"
+      edge_material_names_filter: Matières de chant à filtrer
+      labels_filter: Filteretiketten
       dimensions_help: Erklärung der Dimensionen...
       summary: Übersicht
       material_type: Typ

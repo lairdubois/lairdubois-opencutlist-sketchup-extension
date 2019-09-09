@@ -517,7 +517,7 @@ module Ladb::OpenCutList
       hide_labels = settings['hide_labels']
       hide_final_areas = settings['hide_final_areas']
       labels_filter = settings['labels_filter']
-      materials_filter = settings['materials_filter']
+      edge_material_names_filter = settings['edge_material_names_filter']
 
       # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
@@ -598,10 +598,18 @@ module Ladb::OpenCutList
         material_attributes = _get_material_attributes(material)
 
         if material
+
           material_usage = cutlist_def.get_material_usage(material.name)
           if material_usage
             material_usage.use_count += 1
           end
+
+          # Materials filter -> exclude all non sheet good parts
+          if !edge_material_names_filter.empty? and material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
+            cutlist_def.ignored_instance_count += 1
+            next
+          end
+
         end
 
         # Compute transformation, scale and sizes
@@ -760,6 +768,12 @@ module Ladb::OpenCutList
               edge_ymax_material = edge_ymax_materials.length == 1 ? edge_ymax_materials.first : nil
               edge_xmin_material = edge_xmin_materials.length == 1 ? edge_xmin_materials.first : nil
               edge_xmax_material = edge_xmax_materials.length == 1 ? edge_xmax_materials.first : nil
+
+              # Materials filter
+              if !edge_material_names_filter.empty? && !(edge_material_names_filter - [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq.map { |m| m.name }).empty?
+                cutlist_def.ignored_instance_count += 1
+                next
+              end
 
               # Grab material attributes
               edge_ymin_material_attributes = _get_material_attributes(edge_ymin_material)
@@ -930,6 +944,9 @@ module Ladb::OpenCutList
       # Sort and browse groups
 
       cutlist_def.group_defs.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_type), v.material_name.empty? ? '~' : v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each { |key, group_def|
+
+        # Exclude empty groupDef
+        next if group_def.part_count == 0
 
         if part_number_sequence_by_group
           part_number = group_def.max_number ? group_def.max_number.succ : (part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
