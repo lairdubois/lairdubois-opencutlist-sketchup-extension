@@ -91,32 +91,32 @@ module Ladb::OpenCutList
           end
           case property
             when 'length'
-              a_value = part_def_a.cumulative_cutting_length
-              b_value = part_def_b.cumulative_cutting_length
+              a_value = [ part_def_a.cumulative_cutting_length ]
+              b_value = [ part_def_b.cumulative_cutting_length ]
             when 'width'
-              a_value = part_def_a.cumulative_cutting_width
-              b_value = part_def_b.cumulative_cutting_width
+              a_value = [ part_def_a.cumulative_cutting_width ]
+              b_value = [ part_def_b.cumulative_cutting_width ]
             when 'thickness'
-              a_value = part_def_a.size.thickness
-              b_value = part_def_b.size.thickness
+              a_value = [ part_def_a.size.thickness ]
+              b_value = [ part_def_b.size.thickness ]
             when 'name'
-              a_value = part_def_a.name.downcase
-              b_value = part_def_b.name.downcase
+              a_value = [ part_def_a.name.downcase ]
+              b_value = [ part_def_b.name.downcase ]
             when 'count'
-              a_value = part_def_a.count
-              b_value = part_def_b.count
+              a_value = [ part_def_a.count ]
+              b_value = [ part_def_b.count ]
             when 'edge_pattern'
-              a_value = part_def_a.edge_pattern.nil? ? '' : part_def_a.edge_pattern
-              b_value = part_def_b.edge_pattern.nil? ? '' : part_def_b.edge_pattern
+              a_value = [ part_def_a.edge_count, part_def_a.edge_pattern.nil? ? '' : part_def_a.edge_pattern ]
+              b_value = [ part_def_b.edge_count, part_def_b.edge_pattern.nil? ? '' : part_def_b.edge_pattern ]
             else
               next
           end
           if asc
-            a_values.push(a_value)
-            b_values.push(b_value)
+            a_values.concat(a_value)
+            b_values.concat(b_value)
           else
-            a_values.push(b_value)
-            b_values.push(a_value)
+            a_values.concat(b_value)
+            b_values.concat(a_value)
           end
         }
       end

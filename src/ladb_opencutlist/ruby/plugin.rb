@@ -206,6 +206,63 @@ module Ladb::OpenCutList
 
     # -----
 
+    def setup
+
+      # Setup Menu
+      menu = UI.menu
+      submenu = menu.add_submenu(get_i18n_string('core.menu.submenu'))
+      submenu.add_item(get_i18n_string('tab.materials.title')) {
+        show_dialog('materials')
+      }
+      submenu.add_item(get_i18n_string('tab.cutlist.title')) {
+        show_dialog('cutlist')
+      }
+      submenu.add_item(get_i18n_string('tab.importer.title')) {
+        show_dialog('importer')
+      }
+      submenu.add_separator
+      edit_part_item = submenu.add_item(get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
+        _edit_part_properties(_get_selected_component_entity)
+      }
+      menu.set_validation_proc(edit_part_item)  {
+        entity = _get_selected_component_entity
+        unless entity.nil?
+          return MF_ENABLED
+        end
+        MF_GRAYED
+      }
+
+      # Setup Context Menu
+      UI.add_context_menu_handler do |context_menu|
+        entity = _get_selected_component_entity
+        unless entity.nil?
+
+          context_menu.add_separator
+          submenu = context_menu.add_submenu(get_i18n_string('core.menu.submenu'))
+
+          # Edit part item
+          submenu.add_item(get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
+            _edit_part_properties(entity)
+          }
+
+        end
+      end
+
+      # Setup Toolbar
+      toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name'))
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command')) {
+        toggle_dialog
+      }
+      cmd.small_icon = '../img/icon-72x72.png'
+      cmd.large_icon = '../img/icon-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command')
+      cmd.menu_text = get_i18n_string('core.toolbar.command')
+      toolbar = toolbar.add_item(cmd)
+      toolbar.restore
+
+    end
+
     def start
 
       # Clear Ruby console if debug enabled
@@ -238,6 +295,9 @@ module Ladb::OpenCutList
         register_command('core_dialog_loaded') do |params|
           dialog_loaded_command
         end
+        register_command('core_dialog_ready') do |params|
+          dialog_ready_command
+        end
         register_command('core_dialog_minimize') do |params|
           dialog_minimize_command
         end
@@ -263,25 +323,6 @@ module Ladb::OpenCutList
         @controllers.each { |controller|
           controller.setup_commands
         }
-
-        # --- Context Menu ---
-
-        UI.add_context_menu_handler do |context_menu|
-          if @dialog
-            entity = (Sketchup.active_model.nil? or Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
-            if !entity.nil? and entity.is_a? Sketchup::ComponentInstance
-
-              context_menu.add_separator
-              submenu = context_menu.add_submenu(Plugin.instance.get_i18n_string('core.menu.submenu'))
-
-              # Edit part item
-              submenu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
-                Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [entity ] : Sketchup.active_model.active_path + [entity ])}' }")
-              }
-
-            end
-          end
-        end
 
         @started = true
 
@@ -349,7 +390,7 @@ module Ladb::OpenCutList
 
     end
 
-    def show_dialog(tab_name = nil)
+    def show_dialog(tab_name = nil, &ready_block)
 
       unless @dialog
         create_dialog
@@ -362,10 +403,18 @@ module Ladb::OpenCutList
           @dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
         end
 
+        if ready_block
+          # Immediatly invoke the read block
+          ready_block.call
+        end
+
       else
 
         # Store the startup tab name
         @dialog_startup_tab_name = tab_name
+
+        # Store the ready block
+        @dialog_ready_block = ready_block
 
         # Show dialog
         if html_dialog_compatible
@@ -432,15 +481,32 @@ module Ladb::OpenCutList
 
     def execute_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
 
-      # parameters and callback must be formatted as JS code
-
-      if @dialog and @dialog.visible? and tab_name and command
-        @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
+      show_dialog(nil) do
+        # parameters and callback must be formatted as JS code
+        if tab_name and command
+          @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
+        end
       end
 
     end
 
     private
+
+    # -- Utils ---
+
+    def _get_selected_component_entity
+      entity = (Sketchup.active_model.nil? || Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
+      if !entity.nil? && entity.is_a?(Sketchup::ComponentInstance)
+        return entity
+      end
+      nil
+    end
+
+    def _edit_part_properties(entity)
+      unless entity.nil?
+        execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}' }")
+      end
+    end
 
     # -- Commands ---
 
@@ -534,6 +600,13 @@ module Ladb::OpenCutList
           :dialog_top => @dialog_top,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
+    end
+
+    def dialog_ready_command
+      if @dialog_ready_block
+        @dialog_ready_block.call
+        @dialog_ready_block = nil
+      end
     end
 
     def dialog_minimize_command

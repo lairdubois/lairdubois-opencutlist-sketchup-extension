@@ -148,6 +148,7 @@
     $(document).ready(function () {
         rubyCallCommand('core_dialog_loaded', null, function (response) {
             $('body').ladbDialog(response);
+            rubyCallCommand('core_dialog_ready');
         });
     });
 
