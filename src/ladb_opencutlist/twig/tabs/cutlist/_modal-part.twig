@@ -119,7 +119,7 @@
                     {% set areaSize = 280 %}
                     {% set partLength = (areaSize - 40) * part.l_ratio %}
                     {% set partWidth = (areaSize - 40) * part.w_ratio %}
-                    <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px;">
+                    <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
                         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" style="fill: #fafafa; stroke: #aaa; stroke-width: 0.5px;" />
 

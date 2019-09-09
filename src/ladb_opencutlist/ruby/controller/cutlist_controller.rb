@@ -476,8 +476,8 @@ module Ladb::OpenCutList
             :available => std_width_info[:available],
             :dimension_stipped_name => 'width',
             :dimension => "#{material_attributes.l_thickness} x #{std_width_info[:value].to_s}",
-            :width => 0,
-            :thickness => 0,
+            :width => std_width_info[:value],
+            :thickness => material_attributes.l_thickness,
         }
 
         group_id = GroupDef.generate_group_id(material, material_attributes, std_info)
@@ -498,6 +498,8 @@ module Ladb::OpenCutList
           cutlist_def.set_group_def(group_id, group_def)
 
         end
+
+        group_def.part_count += 1
 
         group_def
       end
@@ -855,12 +857,18 @@ module Ladb::OpenCutList
             if part_def.edge_count > 0
               PartDef::EDGES_Y.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
-                  edge_group_def.total_cutting_length += part_def.size.length + _get_material_attributes(edge_material).l_length_increase
+                  edge_cutting_length = part_def.size.length + _get_material_attributes(edge_material).l_length_increase
+                  edge_group_def.total_cutting_length += edge_cutting_length
+                  edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
+                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
                 end
               }
               PartDef::EDGES_X.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
-                  edge_group_def.total_cutting_length += part_def.size.width + _get_material_attributes(edge_material).l_length_increase
+                  edge_cutting_length = part_def.size.width + _get_material_attributes(edge_material).l_length_increase
+                  edge_group_def.total_cutting_length += edge_cutting_length
+                  edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
+                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
                 end
               }
             end

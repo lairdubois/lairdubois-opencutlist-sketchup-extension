@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.8.0
 
+  * Added edge band material type and management
   * Added new tab to import parts
   * Added cutlist dynamic component names option
   * Added instances list to cutlist export sources
