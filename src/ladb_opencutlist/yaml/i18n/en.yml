@@ -8,7 +8,7 @@ default:
   see: Voir
   close: Close
   clear: Clear
-  empty_filename: Untitled
+  empty_filename: Untitled.skp
   refresh: Refresh
   generate: Generate
   print: Print

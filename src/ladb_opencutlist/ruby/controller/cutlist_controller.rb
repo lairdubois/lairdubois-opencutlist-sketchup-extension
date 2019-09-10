@@ -543,7 +543,7 @@ module Ladb::OpenCutList
 
       # Retrieve model infos
       length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
-      dir, filename = File.split(model ? model.path : '')
+      dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
       # Create cut list def
@@ -1211,10 +1211,10 @@ module Ladb::OpenCutList
                           row.push(part[:labels].join(','))
                         end
                         unless hide_edges
-                          row.push("#{part[:edge_ymin_material_name]} #{part[:edge_ymin_std_dimension]}")
-                          row.push("#{part[:edge_ymax_material_name]} #{part[:edge_ymax_std_dimension]}")
-                          row.push("#{part[:edge_xmin_material_name]} #{part[:edge_xmin_std_dimension]}")
-                          row.push("#{part[:edge_xmax_material_name]} #{part[:edge_xmax_std_dimension]}")
+                          row.push("#{part[:edge_material_names][:ymin]} #{part[:edge_std_dimensions][:ymin]}")
+                          row.push("#{part[:edge_material_names][:ymax]} #{part[:edge_std_dimensions][:ymax]}")
+                          row.push("#{part[:edge_material_names][:xmin]} #{part[:edge_std_dimensions][:xmin]}")
+                          row.push("#{part[:edge_material_names][:xmax]} #{part[:edge_std_dimensions][:xmax]}")
                         end
 
                         csv << row
@@ -1302,10 +1302,10 @@ module Ladb::OpenCutList
                               row.push(part[:labels].join(','))
                             end
                             unless hide_edges
-                              row.push("#{part[:edge_ymin_material_name]} #{part[:edge_ymin_std_dimension]}")
-                              row.push("#{part[:edge_ymax_material_name]} #{part[:edge_ymax_std_dimension]}")
-                              row.push("#{part[:edge_xmin_material_name]} #{part[:edge_xmin_std_dimension]}")
-                              row.push("#{part[:edge_xmax_material_name]} #{part[:edge_xmax_std_dimension]}")
+                              row.push("#{part[:edge_material_names][:ymin]} #{part[:edge_std_dimensions][:ymin]}")
+                              row.push("#{part[:edge_material_names][:ymax]} #{part[:edge_std_dimensions][:ymax]}")
+                              row.push("#{part[:edge_material_names][:xmin]} #{part[:edge_std_dimensions][:xmin]}")
+                              row.push("#{part[:edge_material_names][:xmax]} #{part[:edge_std_dimensions][:xmax]}")
                             end
 
                             csv << row

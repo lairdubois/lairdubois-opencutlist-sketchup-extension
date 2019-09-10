@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       response = {
           :errors => [],
           :warnings => [],
-          :filename => model ? Pathname.new(model.path).basename : '',
+          :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
           :solidwood_material_count => 0,
           :sheetgood_material_count => 0,
           :bar_material_count => 0,

@@ -8,7 +8,7 @@ default:
   see: Voir
   close: Fermer
   clear: Effacer
-  empty_filename: Sans titre
+  empty_filename: Sans titre.skp
   refresh: Rafraîchir
   generate: Générer
   print: Imprimer

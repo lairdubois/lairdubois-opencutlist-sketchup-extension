@@ -8,7 +8,7 @@ default:
   see: Voir
   close: Schliessen
   clear: Löschen
-  empty_filename: ohne Titel
+  empty_filename: ohne Titel.skp
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
