@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :material_color, :part_count, :std_dimension, :std_available, :std_dimension_stipped_name, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges
+    attr_accessor :material_id, :material_name, :material_type, :material_color, :part_count, :std_dimension, :std_available, :std_dimension_stipped_name, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -28,6 +28,7 @@ module Ladb::OpenCutList
       @invalid_final_area_part_count = 0
       @show_cutting_dimensions = false
       @show_edges = false
+      @edge_decremented = false
     end
 
     # -----
@@ -81,6 +82,7 @@ module Ladb::OpenCutList
           :invalid_final_area_part_count => @invalid_final_area_part_count,
           :show_cutting_dimensions => @show_cutting_dimensions,
           :show_edges => @show_edges,
+          :edge_decremented => @edge_decremented,
           :parts => []
       }
     end

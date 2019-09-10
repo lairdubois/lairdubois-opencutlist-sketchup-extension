@@ -104,7 +104,7 @@ tab:
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
-      edge_decrement: Réduit de l'épaisseur des chants ({{ decrement }})
+      edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
@@ -372,7 +372,10 @@ tab:
       warning:
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
+        cutting_dimensions_increase: |
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
+        cutting_dimensions_edge_decrement: |
+          *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
@@ -450,10 +453,10 @@ tab:
       grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
       grained_0: Pas de grain
       grained_1: Le grain suit la longueur
-      edge_decrement: Reduction
-      edge_decrement_help: Permet d'indiquer si les dimension des pièces doivent être réduite de la taille des chants.
-      edge_decrement_0: Pas de réduction
-      edge_decrement_1: Réduire la pièce de l'épaisseur du chant
+      edge_decremented: Reduction
+      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
+      edge_decremented_0: Pas de réduction
+      edge_decremented_1: Réduire le débit de l'épaisseur du chant
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
         save: Enregistrer comme valeurs par défaut

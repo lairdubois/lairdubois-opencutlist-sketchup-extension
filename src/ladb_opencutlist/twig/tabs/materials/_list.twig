@@ -23,6 +23,8 @@
                 <div class="ladb-overlay-caption ladb-ellipsis">
                     {% if material.attributes.type == 2 %}  {# 2 = TYPE_SHEET_GOOD #}
                         <i class="ladb-opencutlist-icon-grained-{{ material.attributes.grained ? '1' : '0' }}" data-toggle='tooltip' title="{{ ('tab.materials.tooltip.grained_'~(material.attributes.grained ? '1' : '0'))|i18next }}"></i>
+                    {% elseif material.attributes.type == 4 and material.attributes.edge_decremented %}  {# 2 = TYPE_EDGE #}
+                        <i class="ladb-opencutlist-icon-edge-decremented" data-toggle='tooltip' title="{{ 'tab.materials.edit_material.edge_decremented_1'|i18next }}"></i>
                     {% endif %}
                     {{ material.display_name|escape }}
                 </div>

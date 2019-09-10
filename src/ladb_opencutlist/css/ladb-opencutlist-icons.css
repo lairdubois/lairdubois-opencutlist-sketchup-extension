@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-edge-decremented:before {
+  content: "\e935";
+}
 .ladb-opencutlist-icon-filter-on:before {
   content: "\e95e";
 }

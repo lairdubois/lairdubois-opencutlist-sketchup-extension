@@ -24,7 +24,7 @@
             :std_sections => '',
             :std_sizes => '',
             :grained => false,
-            :edge_decrement => false,
+            :edge_decremented => false,
         },
         TYPE_SOLID_WOOD => {
             :thickness => '0',
@@ -36,7 +36,7 @@
             :std_sections => '',
             :std_sizes => '',
             :grained => true,
-            :edge_decrement => false,
+            :edge_decremented => false,
         },
         TYPE_SHEET_GOOD => {
             :thickness => '0',
@@ -48,7 +48,7 @@
             :std_sections => '',
             :std_sizes => '',
             :grained => false,
-            :edge_decrement => false,
+            :edge_decremented => false,
         },
         TYPE_BAR => {
             :thickness => '0',
@@ -60,7 +60,7 @@
             :std_sections => '30mm x 40mm;40mm x 50mm',
             :std_sizes => '',
             :grained => false,
-            :edge_decrement => false,
+            :edge_decremented => false,
         },
         TYPE_EDGE => {
             :thickness => '2mm',
@@ -72,11 +72,11 @@
             :std_sections => '',
             :std_sizes => '',
             :grained => false,
-            :edge_decrement => true,
+            :edge_decremented => true,
         },
     }
 
-    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decrement
+    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented
     attr_reader :material
 
     @@used_uuids = []
@@ -94,7 +94,7 @@
       @std_sections = get_default(:std_sections)
       @std_sizes = get_default(:std_sizes)
       @grained = get_default(:grained)
-      @edge_decrement = get_default(:edge_decrement)
+      @edge_decremented = get_default(:edge_decremented)
 
       # Reload properties from attributes
       read_from_attributes(force_unique_uuid)
@@ -295,7 +295,7 @@
         @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', get_default(:std_sections))
         @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
         @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(:grained))
-        @edge_decrement = Plugin.instance.get_attribute(@material, 'edge_decrement', get_default(:edge_decrement))
+        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(:edge_decremented))
       end
     end
 
@@ -312,7 +312,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', DimensionUtils.instance.dxd_add_units(@std_sections))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.instance.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decrement', @edge_decrement)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
       end
     end
 

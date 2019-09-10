@@ -104,7 +104,7 @@ tab:
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
-      edge_decrement: Réduit de l'épaisseur des chants ({{ decrement }})
+      edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
@@ -372,7 +372,10 @@ tab:
       warning:
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
+        cutting_dimensions_increase: |
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
+        cutting_dimensions_edge_decrement: |
+          *Dimensions réduite de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -450,10 +453,10 @@ tab:
       grained_help: Faserrichtung der Platte.
       grained_0: keine Faserrichtung
       grained_1: Faser in Längsrichtung
-      edge_decrement: Reduction
-      edge_decrement_help: Permet d'indiquer si les dimension des pièces doivent être réduite de la taille des chants.
-      edge_decrement_0: Pas de réduction
-      edge_decrement_1: Réduire la pièce de l'épaisseur du chant
+      edge_decremented: Reduction
+      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
+      edge_decremented_0: Pas de réduction
+      edge_decremented_1: Réduire le débit de l'épaisseur du chant
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern

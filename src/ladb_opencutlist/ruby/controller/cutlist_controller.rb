@@ -781,13 +781,14 @@ module Ladb::OpenCutList
               edge_xmin_material_attributes = _get_material_attributes(edge_xmin_material)
               edge_xmax_material_attributes = _get_material_attributes(edge_xmax_material)
 
-              # Compute Length and Width Decrements
+              # Compute Length and Width decrements
               length_decrement = 0
-              length_decrement += edge_xmin_material_attributes.l_thickness if edge_xmin_material_attributes.edge_decrement && edge_xmin_material
-              length_decrement += edge_xmax_material_attributes.l_thickness if edge_xmax_material_attributes.edge_decrement && edge_xmax_material
+              length_decrement += edge_xmin_material_attributes.l_thickness if edge_xmin_material_attributes.edge_decremented
+              length_decrement += edge_xmax_material_attributes.l_thickness if edge_xmax_material_attributes.edge_decremented
               width_decrement = 0
-              width_decrement += edge_ymin_material_attributes.l_thickness if edge_ymin_material_attributes.edge_decrement && edge_ymin_material
-              width_decrement += edge_ymax_material_attributes.l_thickness if edge_ymax_material_attributes.edge_decrement && edge_ymax_material
+              width_decrement += edge_ymin_material_attributes.l_thickness if edge_ymin_material_attributes.edge_decremented
+              width_decrement += edge_ymax_material_attributes.l_thickness if edge_ymax_material_attributes.edge_decremented
+              edge_decremented = edge_xmin_material_attributes.edge_decremented || edge_xmax_material_attributes.edge_decremented || edge_ymin_material_attributes.edge_decremented || edge_ymax_material_attributes.edge_decremented
 
               # Populate edge GroupDefs
               edge_ymin_group_def = _populate_edge_group_def(edge_ymin_material, part_def, cutlist_def)
@@ -806,6 +807,10 @@ module Ladb::OpenCutList
               part_def.set_edge_group_defs(edge_ymin_group_def, edge_ymax_group_def, edge_xmin_group_def, edge_xmax_group_def)
               part_def.edge_length_decrement = length_decrement.to_l
               part_def.edge_width_decrement = width_decrement.to_l
+              part_def.edge_decremented = edge_decremented
+
+              group_def.show_cutting_dimensions ||= length_decrement > 0 || width_decrement > 0
+              group_def.edge_decremented ||= length_decrement > 0 || width_decrement > 0
 
             when MaterialAttributes::TYPE_BAR
 
@@ -1808,8 +1813,14 @@ module Ladb::OpenCutList
             materials = Sketchup.active_model.materials
             material = materials[group[:material_name]]
             material_attributes = MaterialAttributes.new(material)
-            if material_attributes.l_length_increase > 0 or material_attributes.l_width_increase > 0
-              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+            if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group[:edge_decremented]
+              response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
+            end
+            if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+            end
+            if group[:edge_decremented]
+              response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
             end
 
             # Unplaced boxes

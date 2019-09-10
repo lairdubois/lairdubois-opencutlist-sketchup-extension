@@ -278,12 +278,12 @@
                 <td class="text-center">{{ part.count }}</td>
                 {% if showCuttingDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and property != 'thickness' %}
-                        <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{{ part['cutting_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['cutting_'~property] }} = {{ part['cumulative_cutting_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_cutting_'~property] }}</em></small>{% endif %}</td>
+                        <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{% if part.edge_decrements[property] %}<i class="ladb-opencutlist-icon-asterisk" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_decremented'|i18next({ 'decrement':part.edge_decrements[property] }) }}"></i>{% endif %}{{ part['cutting_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['cutting_'~property] }} = {{ part['cumulative_cutting_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_cutting_'~property] }}</em></small>{% endif %}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showBoxDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not showLengthOnly or property != 'width') and (not showLengthOnly or property != 'thickness') %}
-                        <td class="ladb-cutlist-dimension-value">{% if part.edge_decrements[property] %}<i class="ladb-opencutlist-icon-asterisk" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_decrement'|i18next({ 'decrement':part.edge_decrements[property] }) }}"></i>{% endif %}{{ part[property] }}</td>
+                        <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
                     {% endfor %}
                 {% endif %}
                 {% if showFinalAreas %}
