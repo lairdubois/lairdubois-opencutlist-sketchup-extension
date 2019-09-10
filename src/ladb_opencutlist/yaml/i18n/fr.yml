@@ -165,7 +165,7 @@ tab:
       axes_origin_position_min_center: Placer l'origine au centre d'une face
       over_length: Sur la longueur
       over_width: Sur la largeur
-      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée de ce côté sur le volume de la pièce dans le modèle.
+      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces
