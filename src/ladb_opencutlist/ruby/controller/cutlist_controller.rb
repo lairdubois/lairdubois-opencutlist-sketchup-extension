@@ -1907,6 +1907,8 @@ module Ladb::OpenCutList
                         :length => box.length.to_l.to_s,
                         :width => box.width.to_l.to_s,
                         :rotated => box.rotated,
+                        :edge_material_names => box.data[:edge_material_names],
+                        :edge_std_dimensions => box.data[:edge_std_dimensions],
                     }
                 )
               }

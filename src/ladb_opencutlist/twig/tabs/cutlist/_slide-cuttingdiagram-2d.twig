@@ -13,6 +13,7 @@
 {% set sheetOutlineWidth = 1 %}
 {% set partOutlineWidth = 2 %}
 {% set cutOutlineWidth = 2 %}
+{% set edgeWidth = 3 %}
 
 {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
 
@@ -200,6 +201,18 @@
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                    {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
+                                        <rect class="part-edge" x="{{ part.px_x }}" y="{{ part.px_y + part.px_width - edgeWidth }}" width="{{ part.px_length }}" height="{{ edgeWidth }}"></rect>
+                                    {% endif %}
+                                    {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymax %}
+                                        <rect class="part-edge" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ edgeWidth }}"></rect>
+                                    {% endif %}
+                                    {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmin %}
+                                        <rect class="part-edge" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ edgeWidth }}" height="{{ part.px_width }}"></rect>
+                                    {% endif %}
+                                    {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmax %}
+                                        <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth }}" y="{{ part.px_y }}" width="{{ edgeWidth }}" height="{{ part.px_width }}"></rect>
+                                    {% endif %}
                                     {% set numberTextLength = part.number|length %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / (part.rotated ? 1 : numberTextLength), (part.px_width - dimensionOffset * 2) / (part.rotated ? numberTextLength : 1))  }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
                                     {% set centredLength = part.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
