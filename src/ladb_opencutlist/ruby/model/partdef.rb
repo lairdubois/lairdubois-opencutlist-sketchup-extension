@@ -265,6 +265,7 @@ module Ladb::OpenCutList
             :edge_decrements => { :length => @edge_length_decrement > 0 ? @edge_length_decrement.to_s : nil, :width => @edge_width_decrement > 0 ? @edge_width_decrement.to_s : nil },
             :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
             :normals_to_dimensions => @size.normals_to_dimensions,
+            :dimensions_to_normals => @size.dimensions_to_normals,
             :l_ratio => @size.length / [@size.length, @size.width].max,
             :w_ratio => @size.width / [@size.length, @size.width].max,
         }

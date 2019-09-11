@@ -117,6 +117,9 @@
             <div role="tabpanel" class="tab-pane{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
                 <div class="text-center">
                     {% set areaSize = 280 %}
+                    {% set axisWidth = 2 %}
+                    {% set axisLength = 20 %}
+                    {% set axisOffset = 10 %}
                     {% set partOutlineWidth = 2 %}
                     {% set edgeOutlineWidth = 4 %}
                     {% set edgeWidth = 3 %}
@@ -145,6 +148,16 @@
                             <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
                             <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
                         </g>
+
+                        {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
+                            <g class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
+                                {% set axisWLength = min(axisLength, partWidth - axisOffset * 2 - axisWidth) %}
+                                {% set axisLLength = min(axisLength, partLength - axisOffset * 2 - axisWidth) %}
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisWLength - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWLength }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset + axisWidth }}" y="{{ (areaSize + partWidth) / 2 - axisWidth - axisOffset }}" width="{{ axisLLength}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                            </g>
+                        {% endif %}
 
                         <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
                         <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>

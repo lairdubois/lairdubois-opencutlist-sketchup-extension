@@ -938,8 +938,9 @@
                         });
                     });
 
-                // Setup popovers
+                // Setup popovers and tooltips
                 that.opencutlist.setupPopovers();
+                that.opencutlist.setupTooltips();
 
             });
 

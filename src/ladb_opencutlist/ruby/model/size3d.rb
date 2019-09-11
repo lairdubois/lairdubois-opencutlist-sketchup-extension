@@ -63,9 +63,17 @@ module Ladb::OpenCutList
 
     def normals_to_dimensions
       r = {}
-      r[@normals[0] == X_AXIS ? 'x' : @normals[0] == Y_AXIS ? 'y' : 'z'] = 'length'
-      r[@normals[1] == X_AXIS ? 'x' : @normals[1] == Y_AXIS ? 'y' : 'z'] = 'width'
-      r[@normals[2] == X_AXIS ? 'x' : @normals[2] == Y_AXIS ? 'y' : 'z'] = 'thickness'
+      r[@normals[0] == X_AXIS ? :x : @normals[0] == Y_AXIS ? :y : :z] = 'length'
+      r[@normals[1] == X_AXIS ? :x : @normals[1] == Y_AXIS ? :y : :z] = 'width'
+      r[@normals[2] == X_AXIS ? :x : @normals[2] == Y_AXIS ? :y : :z] = 'thickness'
+      r
+    end
+
+    def dimensions_to_normals
+      r = {}
+      r[:length] = @normals[0] == X_AXIS ? 'x' : @normals[0] == Y_AXIS ? 'y' : 'z'
+      r[:width] = @normals[1] == X_AXIS ? 'x' : @normals[1] == Y_AXIS ? 'y' : 'z'
+      r[:thickness] = @normals[2] == X_AXIS ? 'x' : @normals[2] == Y_AXIS ? 'y' : 'z'
       r
     end
 

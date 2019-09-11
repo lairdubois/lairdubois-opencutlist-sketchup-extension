@@ -109,6 +109,7 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      part_axes: Axes internes de la pièce
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
