@@ -117,16 +117,34 @@
             <div role="tabpanel" class="tab-pane{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
                 <div class="text-center">
                     {% set areaSize = 280 %}
+                    {% set partOutlineWidth = 2 %}
+                    {% set edgeOutlineWidth = 4 %}
+                    {% set edgeWidth = 3 %}
                     {% set partLength = (areaSize - 40) * part.l_ratio %}
                     {% set partWidth = (areaSize - 40) * part.w_ratio %}
                     <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
-                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" style="fill: #fafafa; stroke: #aaa; stroke-width: 0.5px;" />
+                        <g class="part">
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="part-outer" />
+                            <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
+                        </g>
 
-                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 }} h {{ partLength }}" class="edge edge-ymax" />
-                        <path d="M{{ (areaSize - partLength) / 2 + partLength }} {{ (areaSize - partWidth) / 2 }} v {{ partWidth }}" class="edge edge-xmax" />
-                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 + partWidth }} h {{ partLength }}" class="edge edge-ymin" />
-                        <path d="M{{ (areaSize - partLength) / 2 }} {{ (areaSize - partWidth) / 2 }} v {{ partWidth }}" class="edge edge-xmin" />
+                        <g class="edge edge-ymin{% if part.edge_entity_ids.ymin is empty %} ladb-disabled{% endif %}">
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                        </g>
+                        <g class="edge edge-ymax{% if part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                        </g>
+                        <g class="edge edge-xmin{% if part.edge_entity_ids.xmin is empty %} ladb-disabled{% endif %}">
+                            <rect x="{{ (areaSize - partLength) / 2 - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
+                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
+                        </g>
+                        <g class="edge edge-xmax{% if part.edge_entity_ids.xmax is empty %} ladb-disabled{% endif %}">
+                            <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
+                            <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
+                        </g>
 
                         <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
                         <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>

@@ -757,6 +757,10 @@
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
+                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
+                var $rectEdgeYmax = $('svg .edge-ymax', $modal);
+                var $rectEdgeXmin = $('svg .edge-xmin', $modal);
+                var $rectEdgeXmax = $('svg .edge-xmax', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -770,24 +774,24 @@
                 };
                 var updateEdgesPreview = function() {
                     if ($selectEdgeYminMaterialName.val() === '') {
-                        $('svg .edge-ymin').hide();
+                        $rectEdgeYmin.removeClass('ladb-active');
                     } else {
-                        $('svg .edge-ymin').show();
+                        $rectEdgeYmin.addClass('ladb-active');
                     }
                     if ($selectEdgeYmaxMaterialName.val() === '') {
-                        $('svg .edge-ymax').hide();
+                        $rectEdgeYmax.removeClass('ladb-active');
                     } else {
-                        $('svg .edge-ymax').show();
+                        $rectEdgeYmax.addClass('ladb-active');
                     }
                     if ($selectEdgeXminMaterialName.val() === '') {
-                        $('svg .edge-xmin').hide();
+                        $rectEdgeXmin.removeClass('ladb-active');
                     } else {
-                        $('svg .edge-xmin').show();
+                        $rectEdgeXmin.addClass('ladb-active');
                     }
                     if ($selectEdgeXmaxMaterialName.val() === '') {
-                        $('svg .edge-xmax').hide();
+                        $rectEdgeXmax.removeClass('ladb-active');
                     } else {
-                        $('svg .edge-xmax').show();
+                        $rectEdgeXmax.addClass('ladb-active');
                     }
                 };
 
@@ -827,6 +831,20 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         updateEdgesPreview();
                     });
+
+                // Bind edges
+                $rectEdgeYmin.on('click', function() {
+                    $selectEdgeYminMaterialName.selectpicker('toggle');
+                });
+                $rectEdgeYmax.on('click', function() {
+                    $selectEdgeYmaxMaterialName.selectpicker('toggle');
+                });
+                $rectEdgeXmin.on('click', function() {
+                    $selectEdgeXminMaterialName.selectpicker('toggle');
+                });
+                $rectEdgeXmax.on('click', function() {
+                    $selectEdgeXmaxMaterialName.selectpicker('toggle');
+                });
 
                 // Bind sorter
                 $sortablePartAxes.sortable({

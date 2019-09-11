@@ -398,10 +398,43 @@ body.no-ie, body.ie-gt10 {
 
 #ladb_cutlist_modal_part svg {
 
-  path.edge {
-    stroke: @ladb-material-type-4;
-    stroke-width: 4px;
-    stroke-linecap: round;
+  .part {
+
+    .part-outer {
+      fill: #ccc;
+    }
+
+    .part-inner {
+      fill: #fafafa;
+    }
+
+  }
+
+  .edge {
+    cursor: pointer;
+
+    &:hover {
+      .edge-inner {
+        fill: @ladb-brand-primary !important;
+      }
+    }
+
+    &.ladb-active {
+      .edge-inner {
+        fill: @ladb-material-type-4;
+      }
+    }
+
+    &.ladb-disabled {
+      .edge-inner {
+        fill: #efefef !important;
+      }
+    }
+
+    .edge-outer, .edge-inner {
+      fill: rgba(0, 0, 0, 0.01);
+    }
+
   }
 
 }
