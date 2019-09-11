@@ -151,11 +151,12 @@
 
                         {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
                             <g class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
-                                {% set axisWLength = min(axisLength, partWidth - axisOffset * 2 - axisWidth) %}
-                                {% set axisLLength = min(axisLength, partLength - axisOffset * 2 - axisWidth) %}
+                                {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
+                                {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWLength }}" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
                                 <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisWLength - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWLength }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset + axisWidth }}" y="{{ (areaSize + partWidth) / 2 - axisWidth - axisOffset }}" width="{{ axisLLength}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisWLength - axisOffset }}" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
+                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset + axisWidth }}" y="{{ (areaSize + partWidth) / 2 - axisWidth - axisOffset }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
                             </g>
                         {% endif %}
 

@@ -8,8 +8,8 @@
 <div class="row">
 {% for material in materials %}
     <div class="col-md-2 col-sm-3 col-xs-6">
-        <div class="ladb-material-box" data-material-id="{{ material.id }}">
-            <div class="ladb-content" style="background-color: #fff;">
+        <div class="ladb-material-box{% if material.name == currentMaterialName %} ladb-active{% endif %}" data-material-id="{{ material.id }}">
+            <div class="ladb-content">
                 <div class="ladb-image">
                     <div class="ladb-img-sizer" style="padding-top: 100%;">
                         {% if material.alpha < 1 %}
@@ -19,19 +19,25 @@
                         {% endif %}
                         <img src="{{ material.thumbnail_file }}" style="opacity: {{ material.alpha }}">
                     </div>
-                </div>
-                <div class="ladb-overlay-caption ladb-ellipsis">
-                    {% if material.attributes.type == 2 %}  {# 2 = TYPE_SHEET_GOOD #}
-                        <i class="ladb-opencutlist-icon-grained-{{ material.attributes.grained ? '1' : '0' }}" data-toggle='tooltip' title="{{ ('tab.materials.tooltip.grained_'~(material.attributes.grained ? '1' : '0'))|i18next }}"></i>
-                    {% elseif material.attributes.type == 4 and material.attributes.edge_decremented %}  {# 2 = TYPE_EDGE #}
-                        <i class="ladb-opencutlist-icon-edge-decremented" data-toggle='tooltip' title="{{ 'tab.materials.edit_material.edge_decremented_1'|i18next }}"></i>
+                    <div class="ladb-overlay-caption ladb-ellipsis">
+                        {% if material.attributes.type == 2 %}  {# 2 = TYPE_SHEET_GOOD #}
+                            <i class="ladb-opencutlist-icon-grained-{{ material.attributes.grained ? '1' : '0' }}" data-toggle='tooltip' title="{{ ('tab.materials.tooltip.grained_'~(material.attributes.grained ? '1' : '0'))|i18next }}"></i>
+                        {% elseif material.attributes.type == 4 and material.attributes.edge_decremented %}  {# 2 = TYPE_EDGE #}
+                            <i class="ladb-opencutlist-icon-edge-decremented" data-toggle='tooltip' title="{{ 'tab.materials.edit_material.edge_decremented_1'|i18next }}"></i>
+                        {% endif %}
+                        {{ material.display_name|escape }}
+                    </div>
+                    {% if material.colorized %}
+                        <div class="ladb-overlay-drop"><i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}; font-size: 150%;" data-toggle='tooltip' title="{{ 'tab.materials.tooltip.colorized'|i18next }}"></i></div>
                     {% endif %}
-                    {{ material.display_name|escape }}
+                    <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type, 'filled':material.attributes.type > 0 } %}</div>
                 </div>
-                {% if material.colorized %}
-                    <div class="ladb-overlay-drop"><i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}; font-size: 150%;" data-toggle='tooltip' title="{{ 'tab.materials.tooltip.colorized'|i18next }}"></i></div>
-                {% endif %}
-                <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type, 'filled':material.attributes.type > 0 } %}</div>
+                <div class="ladb-footer">
+                    <div class="ladb-minitools ladb-minitools-right">
+                        <a href="#" class="ladb-btn-use-material" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.set_current'|i18next({ 'name':material.name }) }}"><i class="ladb-opencutlist-icon-materials"></i></a>
+                        <a href="#" class="ladb-btn-edit-material ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.edit'|i18next({ 'name':material.name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

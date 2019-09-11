@@ -42,6 +42,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_add_std_dimension_command") do |settings|
         add_std_dimension_command(settings)
       end
+      Plugin.instance.register_command("materials_set_current_command") do |settings|
+        set_current_command(settings)
+      end
 
     end
 
@@ -70,7 +73,8 @@ module Ladb::OpenCutList
           :bar_material_count => 0,
           :edge_material_count => 0,
           :untyped_material_count => 0,
-          :materials => []
+          :materials => [],
+          :current_material_name => materials && materials.current ? materials.current.name : nil
       }
 
       materials.each { |material|
@@ -501,6 +505,32 @@ module Ladb::OpenCutList
       end
 
       { :success => true }
+    end
+
+    def set_current_command(settings)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      name = settings['name']
+
+      # Fetch material
+      materials = model.materials
+      material = materials[name]
+
+      if material
+
+        # Set material as current
+        materials.current = material
+
+        # Send action
+        success = Sketchup.send_action('selectPaintTool:')
+
+      end
+
+      {
+          :success => true,
+      }
     end
 
   end

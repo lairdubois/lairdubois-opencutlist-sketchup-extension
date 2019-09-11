@@ -43,6 +43,7 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.materials = [];
+        this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
 
@@ -74,6 +75,7 @@
             var warnings = response.warnings;
             var filename = response.filename;
             var materials = response.materials;
+            var currentMaterialName = response.current_material_name;
 
             // Keep useful data
             that.materials = materials;
@@ -85,14 +87,15 @@
             }));
 
             // Update items state
-            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials == null || materials.length == 0);
+            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials == null || materials.length === 0);
 
             // Update page
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
                 errors: errors,
                 warnings: warnings,
-                materials: materials
+                materials: materials,
+                currentMaterialName: currentMaterialName
             }));
 
             // Setup tooltips
@@ -101,10 +104,28 @@
             // Bind rows
             $('.ladb-material-box', that.$page).each(function (index) {
                 var $box = $(this);
-                var materialId = $box.data('material-id');
-                $box.on('click', function () {
-                    that.editMaterial(materialId);
+                $box.on('click', function (e) {
+                    $(this).blur();
+                    $('.ladb-click-tool', $(this)).click();
+                    return false;
                 });
+            });
+            $('.ladb-btn-edit-material', that.$page).on('click', function() {
+                $(this).blur();
+                var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                that.editMaterial(materialId);
+                return false;
+            });
+            $('.ladb-btn-use-material', that.$page).on('click', function() {
+                $(this).blur();
+                var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                var material = that.findMaterialById(materialId);
+                if (material) {
+                    rubyCallCommand('materials_set_current_command', {
+                        name: material.name
+                    });
+                }
+                return false;
             });
 
             // Restore button state
@@ -730,6 +751,18 @@
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
                 that.showOutdated('core.event.material_change');
+            }
+        });
+        addEventCallback([ 'on_material_set_current' ], function (params) {
+            for (var i = 0; i < that.materials.length; i++) {
+                if (that.materials[i].name === params.material_name) {
+                    if (that.currentMaterial !== that.materials[i]) {
+                        that.currentMaterial = that.materials[i];
+                        $('.ladb-material-box').removeClass('ladb-active');
+                        $('.ladb-material-box[data-material-id="' + that.currentMaterial.id + '"]').addClass('ladb-active');
+                    }
+                    break;
+                }
             }
         });
 

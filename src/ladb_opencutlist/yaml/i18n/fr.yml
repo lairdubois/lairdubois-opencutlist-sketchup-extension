@@ -416,6 +416,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
       texture_colorized: Combiner définitivement la teinte dans l'image de la texture
+      edit: Editer les propriétes de '{{ name }}'
+      set_current: Sélectionner '{{ name }}'
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées

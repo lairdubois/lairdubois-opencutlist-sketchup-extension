@@ -21,6 +21,11 @@ module Ladb::OpenCutList
       Plugin.instance.trigger_event('on_material_change', { :material_name => material.name })
     end
 
+    def onMaterialSetCurrent(materials, material)
+      # puts "onMaterialSetCurrent: #{material}"
+      Plugin.instance.trigger_event('on_material_set_current', { :material_name => material.name })
+    end
+
   end
 
 end

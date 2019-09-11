@@ -11,6 +11,7 @@ in 1.x and 0.x versions.
   * Added cutlist dynamic component names option
   * Added instances list to cutlist export sources
   * Added 'Minimize on highlight' as an option
+  * Added set_current material
   * Export cutlist instance names
   
 * 1.7.1 (2016-06-30)

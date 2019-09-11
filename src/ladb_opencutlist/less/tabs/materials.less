@@ -7,11 +7,27 @@
 .ladb-material-box {
   .list-box();
   .list-box-hover();
+  .list-box-active();
   width: 100%;
   margin-bottom: @ladb-gutter;
 
+  &:hover {
+
+    a.ladb-click-tool {
+      color: #888;
+    }
+
+  }
+
+  &.ladb-active {
+    .ladb-btn-use-material {
+      color: #555;
+    }
+  }
+
   .ladb-content {
     position: relative;
+    background-color: #fff;
 
     .ladb-image {
       position: relative;
@@ -67,6 +83,11 @@
 
     }
 
+  }
+
+  .ladb-footer {
+    padding-top: 5px;
+    font-size: 120%;
   }
 
 }
