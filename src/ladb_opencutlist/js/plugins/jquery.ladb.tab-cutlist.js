@@ -795,11 +795,24 @@
                     }
                 };
 
+                var fnNewCheck = function($select) {
+                    if ($select.val() === 'new') {
+                        that.opencutlist.executeCommandOnTab('materials', 'new_material');
+                        $modal.modal('hide');
+                        return true;
+                    }
+                    return false;
+                };
+
                 // Bind select
                 if (isOwnedMaterial) {
                     $selectMaterialName.val(part.material_name);
                 }
-                $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectMaterialName
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        fnNewCheck($(this));
+                    });
                 $selectCumulable.val(part.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartAxesOriginPosition
@@ -811,25 +824,33 @@
                 $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        updateEdgesPreview();
+                        if (!fnNewCheck($(this))) {
+                            updateEdgesPreview();
+                        }
                     });
                 $selectEdgeYmaxMaterialName.val(part.edge_material_names.ymax);
                 $selectEdgeYmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        updateEdgesPreview();
+                        if (!fnNewCheck($(this))) {
+                            updateEdgesPreview();
+                        }
                     });
                 $selectEdgeXminMaterialName.val(part.edge_material_names.xmin);
                 $selectEdgeXminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        updateEdgesPreview();
+                        if (!fnNewCheck($(this))) {
+                            updateEdgesPreview();
+                        }
                     });
                 $selectEdgeXmaxMaterialName.val(part.edge_material_names.xmax);
                 $selectEdgeXmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        updateEdgesPreview();
+                        if (!fnNewCheck($(this))) {
+                            updateEdgesPreview();
+                        }
                     });
 
                 // Bind edges

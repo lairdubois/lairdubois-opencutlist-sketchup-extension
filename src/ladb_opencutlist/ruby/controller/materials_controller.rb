@@ -18,6 +18,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_list") do ||
         list_command
       end
+      Plugin.instance.register_command("materials_create") do |material_data|
+        create_command(material_data)
+      end
       Plugin.instance.register_command("materials_purge_unused") do ||
         purge_unused_command
       end
@@ -91,7 +94,7 @@ module Ladb::OpenCutList
                 :name => material.name,
                 :display_name => material.display_name,
                 :thumbnail_file => thumbnail_file,
-                :color => "#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue],
+                :color => ("#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue]),
                 :alpha => material.alpha,
                 :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
                 :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
@@ -149,6 +152,23 @@ module Ladb::OpenCutList
       response
     end
 
+    def create_command(material_data)
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      name = material_data['name']
+      color = material_data['color']
+
+      materials = model.materials
+      material = materials.add(name)
+      material.color = Sketchup::Color.new(color)
+
+      {
+          :id => material.entityID,
+      }
+    end
+
     def purge_unused_command()
 
       model = Sketchup.active_model
@@ -166,6 +186,7 @@ module Ladb::OpenCutList
 
       name = material_data['name']
       display_name = material_data['display_name']
+      color = material_data['color']
       attributes = material_data['attributes']
       texture_rotation = material_data['texture_rotation']
       texture_file = material_data['texture_file']
@@ -197,6 +218,15 @@ module Ladb::OpenCutList
         if display_name != material.name
 
           material.name = display_name
+
+          # In this case the event will be triggered by SU itself
+          trigger_change_event = false
+
+        end
+
+        if color != material.color
+
+          material.color = color
 
           # In this case the event will be triggered by SU itself
           trigger_change_event = false

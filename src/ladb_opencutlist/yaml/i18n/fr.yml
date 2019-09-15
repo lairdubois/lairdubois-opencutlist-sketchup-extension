@@ -18,6 +18,7 @@ default:
   options: Options
   caution: Attention
   remove: Supprimer
+  create: Créer
   help: Aide
   error: Zut !
   warning: Attention
@@ -401,6 +402,7 @@ tab:
   materials:
     label: Matières
     title: Matières
+    new: Nouvelle matière
     type_0: Non défini
     type_1: Bois massif
     type_2: Panneau
@@ -421,6 +423,11 @@ tab:
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
+    new_material:
+      title: Nouvelle matière
+      name: Nom
+      color: Couleur
+      type: Type
     edit_material:
       title: Propriétés de la matière '{{ name }}'
       general: Générales

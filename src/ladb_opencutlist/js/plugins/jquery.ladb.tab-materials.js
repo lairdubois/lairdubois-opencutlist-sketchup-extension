@@ -50,6 +50,7 @@
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnList = $('#ladb_btn_list', this.$header);
+        this.$btnNew = $('#ladb_btn_new', this.$header);
         this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
 
@@ -116,17 +117,18 @@
                 that.editMaterial(materialId);
                 return false;
             });
-            $('.ladb-btn-use-material', that.$page).on('click', function() {
-                $(this).blur();
-                var materialId = $(this).closest('.ladb-material-box').data('material-id');
-                var material = that.findMaterialById(materialId);
-                if (material) {
-                    rubyCallCommand('materials_set_current_command', {
-                        name: material.name
-                    });
-                }
-                return false;
-            });
+            $('.ladb-btn-set-current', that.$page)
+                .on('click', function () {
+                    $(this).blur();
+                    var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                    that.setCurrentMaterial(materialId);
+                    return false;
+                })
+                .on('dblclick', function () {
+                    $(this).blur();
+                    that.opencutlist.minimize();
+                    return false;
+                });
 
             // Restore button state
             that.$btnList.prop('disabled', false);
@@ -143,7 +145,79 @@
 
     };
 
-    LadbTabMaterials.prototype.remove = function (material) {
+    LadbTabMaterials.prototype.newMaterial = function () {
+        var that = this;
+
+        var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig');
+
+        // Fetch UI elements
+        var $inputName = $('#ladb_materials_input_name', $modal);
+        var $inputColor = $('#ladb_materials_input_color', $modal);
+        var $btnCreate = $('#ladb_materials_create', $modal);
+
+        var fnUpdateBtnCreate = function() {
+            $btnCreate.prop( "disabled", $inputName.val().length === 0 || !$inputColor.val().match(/^#[0-9a-fA-F]{6}$/))
+        };
+
+        // Bind inputs
+        $inputName.on('keyup change', fnUpdateBtnCreate);
+        $inputColor.on('keyup change', fnUpdateBtnCreate);
+
+        // Create color picker
+        var hueb = new Huebee($inputColor.get(0) , {
+            notation: 'hex',
+            saturations: 2,
+            shades: 7,
+            customColors: [ '#4F78A7', '#EF8E2C', '#DE545A', '#79B8B2', '#5CA34D', '#ECCA48', '#AE78A2', '#FC9CA8', '#9B755F', '#BAB0AC' ]
+        });
+        hueb.on('change', function() {
+            hueb.close();
+            fnUpdateBtnCreate();
+        });
+
+        // Bind buttons
+        $btnCreate.on('click', function () {
+
+            var name = $inputName.val();
+            var color = $inputColor.val();
+
+            // Flag to ignore next material change event
+            that.ignoreNextMaterialEvents = true;
+
+            rubyCallCommand('materials_create', {
+                name: name,
+                color: color
+            }, function (response) {
+
+                var materialId = response.id;
+
+                // Flag to stop ignoring next material change event
+                that.ignoreNextMaterialEvents = false;
+
+                if (response.errors && response.errors.length > 0) {
+                    that.opencutlist.notifyErrors(response.errors);
+                } else {
+                    that.loadList(function() {
+                        that.editMaterial(materialId, null);
+                    });
+                }
+
+            });
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+        // Focus
+        $inputName.focus();
+
+    };
+
+    LadbTabMaterials.prototype.removeMaterial = function (material) {
         var that = this;
 
         var $modal = this.appendModalInside('ladb_materials_modal_remove', 'tabs/materials/_modal-remove.twig', {
@@ -274,6 +348,7 @@
             // Fetch UI elements
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
             var $inputName = $('#ladb_materials_input_name', $modal);
+            var $inputColor = $('#ladb_materials_input_color', $modal);
             var $selectType = $('#ladb_materials_input_type', $modal);
             var $inputThickness = $('#ladb_materials_input_thickness', $modal);
             var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
@@ -304,10 +379,10 @@
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Define usefull functions
-            var disableBtnExport = function () {
+            var fnDisableBtnExport = function () {
                 $btnExportToSkm.prop('disabled', true);
             };
-            var computeFieldsVisibility = function (type) {
+            var fnComputeFieldsVisibility = function (type) {
                 switch (type) {
                     case 0:   // TYPE_UNKNOW
                         $inputLengthIncrease.closest('section').hide();
@@ -382,7 +457,7 @@
                         break;
                 }
             };
-            computeFieldsVisibility(material.attributes.type);
+            fnComputeFieldsVisibility(material.attributes.type);
 
             var setFiledValuesToDefaults = function (type) {
                 var defaultThickness,
@@ -473,7 +548,7 @@
                 $selectEdgeDecremented.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
             };
 
-            var rotateTexture = function (angle) {
+            var fnRotateTexture = function (angle) {
                 var rotation = parseInt($inputTextureRotation.val());
                 $imgTexture.parent().removeClass("ladb-rotate" + rotation);
                 if (angle < 0 && rotation === 0) {
@@ -494,7 +569,7 @@
                 }
             };
 
-            var getMaterialTexture = function (colorized) {
+            var fnGetMaterialTexture = function (colorized) {
                 rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: colorized }, function (response) {
 
                     // Add texture file to material
@@ -510,7 +585,7 @@
                 });
             };
 
-            var computeSizeAspectRatio = function (isWidthMaster) {
+            var fnComputeSizeAspectRatio = function (isWidthMaster) {
                 if ($btnTextureSizeLock.data('locked')) {
                     rubyCallCommand('core_compute_size_aspect_ratio_command', {
                         width: $inputTextureWidth.val(),
@@ -527,7 +602,7 @@
             // Bin tabs
             $btnTabTexture.on('shown.bs.tab', function (e) {
 
-                getMaterialTexture(false);
+                fnGetMaterialTexture(false);
 
                 // Unbind event
                 $btnTabTexture.off('shown.bs.tab');
@@ -535,21 +610,29 @@
 
             // Bind change
             $('input', $modal).on('change', function () {
-                disableBtnExport();
+                fnDisableBtnExport();
             });
 
             // Bind select
             $selectType.on('change', function () {
                 var type = parseInt($(this).val());
 
-                disableBtnExport();
-                computeFieldsVisibility(type);
+                fnDisableBtnExport();
+                fnComputeFieldsVisibility(type);
                 setFiledValuesToDefaults(type);
 
             });
             $selectType.selectpicker(SELECT_PICKER_OPTIONS);
             $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
             $selectEdgeDecremented.selectpicker(SELECT_PICKER_OPTIONS);
+
+            // Create color picker
+            var hueb = new Huebee($inputColor.get(0) , {
+                notation: 'hex',
+                saturations: 2,
+                shades: 7,
+                customColors: [ '#4F78A7', '#EF8E2C', '#DE545A', '#79B8B2', '#5CA34D', '#ECCA48', '#AE78A2', '#FC9CA8', '#9B755F', '#BAB0AC' ]
+            });
 
             // Bind buttons
             $btnCutOptionsDefaultsSave.on('click', function () {
@@ -590,16 +673,16 @@
                 this.blur();
             });
             $btnTextureRotateLeft.on('click', function () {
-                rotateTexture(-90);
+                fnRotateTexture(-90);
                 this.blur();
             });
             $btnTextureRotateRight.on('click', function () {
-                rotateTexture(90);
+                fnRotateTexture(90);
                 this.blur();
             });
             $btnTextureColorized.on('click', function () {
                 $btnTextureColorized.toggleClass('active');
-                getMaterialTexture($btnTextureColorized.hasClass('active'));
+                fnGetMaterialTexture($btnTextureColorized.hasClass('active'));
                 this.blur();
             });
             $btnTextureSizeLock.on('click', function () {
@@ -620,7 +703,7 @@
                 this.blur();
             });
             $btnRemove.on('click', function () {
-                that.remove(that.editedMaterial);
+                that.removeMaterial(that.editedMaterial);
                 this.blur();
             });
             $btnExportToSkm.on('click', function () {
@@ -630,6 +713,7 @@
             $btnUpdate.on('click', function () {
 
                 that.editedMaterial.display_name = $inputName.val();
+                that.editedMaterial.color = $inputColor.val();
                 that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
@@ -672,10 +756,10 @@
 
             // Bind inputs
             $inputTextureWidth.on('blur', function () {
-                computeSizeAspectRatio(true);
+                fnComputeSizeAspectRatio(true);
             });
             $inputTextureHeight.on('blur', function () {
-                computeSizeAspectRatio(false);
+                fnComputeSizeAspectRatio(false);
             });
 
             // Show modal
@@ -698,6 +782,15 @@
 
         } else {
             alert('Material not found (id=' + id + ')');
+        }
+    };
+
+    LadbTabMaterials.prototype.setCurrentMaterial = function (materialId) {
+        var material = this.findMaterialById(materialId);
+        if (material) {
+            rubyCallCommand('materials_set_current_command', {
+                name: material.name
+            });
         }
     };
 
@@ -732,6 +825,10 @@
         // Bind buttons
         this.$btnList.on('click', function () {
             that.loadList();
+            this.blur();
+        });
+        this.$btnNew.on('click', function () {
+            that.newMaterial();
             this.blur();
         });
         this.$itemImportFromSkm.on('click', function () {
@@ -772,6 +869,11 @@
         var that = this;
 
         // Register commands
+        this.registerCommand('new_material', function (parameters) {
+            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
+                that.newMaterial();
+            }, 1);
+        });
         this.registerCommand('edit_material', function (parameters) {
             var materialId = parameters.material_id;
             var callback = parameters.callback;

@@ -121,7 +121,7 @@
             {% endif %}
         </tr>
         {% for group in groups %}
-            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row{% if group.id in generateOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
+            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row ladb-minitools-holder{% if group.id in generateOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
                 <td class="text-center">{% if group.material_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
@@ -247,8 +247,8 @@
                 <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
             {% endif %}
             {% if showEdges %}
-                <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
-                <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
                 <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
                 <td class="text-center" width="8%" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
@@ -268,7 +268,7 @@
                     <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
                 </tr>
             {% endif %}
-            <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %}">
+            <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %} ladb-minitools-holder">
                 <td class="text-center ladb-cutlist-highlighted-value">
                     {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                 </td>

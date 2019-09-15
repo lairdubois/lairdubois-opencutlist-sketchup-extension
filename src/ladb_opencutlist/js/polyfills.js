@@ -24,6 +24,25 @@ if (!String.prototype.endsWith) {
     };
 }
 
+// https://vanillajstoolkit.com/polyfills/stringpadstart/
+if (!String.prototype.padStart) {
+    Object.defineProperty(String.prototype, 'padStart', {
+        value: function (targetLength, padString) {
+            targetLength = targetLength >> 0; //truncate if number or convert non-number to 0;
+            padString = String((typeof padString !== 'undefined' ? padString : ' '));
+            if (this.length > targetLength) {
+                return String(this);
+            } else {
+                targetLength = targetLength - this.length;
+                if (targetLength > padString.length) {
+                    padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+                }
+                return padString.slice(0, targetLength) + String(this);
+            }
+        }
+    });
+}
+
 // https://tc39.github.io/ecma262/#sec-array.prototype.includes
 if (!Array.prototype.includes) {
     Object.defineProperty(Array.prototype, 'includes', {

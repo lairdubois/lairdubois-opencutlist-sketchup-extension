@@ -18,6 +18,7 @@ default:
   options: Options
   caution: Caution
   remove: Remove
+  create: Créer
   help: Help
   error: Darn!
   warning: Warning
@@ -401,6 +402,7 @@ tab:
   materials:
     label: Materials
     title: Materials
+    new: Nouvelle matière
     type_0: Undefined
     type_1: Solid Wood
     type_2: Sheet Good
@@ -421,6 +423,11 @@ tab:
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
+    new_material:
+      title: Nouvelle matière
+      name: Nom
+      color: Couleur
+      type: Type
     edit_material:
       title: Properties of Material '{{ name }}'
       general: General
