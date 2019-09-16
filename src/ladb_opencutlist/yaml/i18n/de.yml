@@ -419,7 +419,9 @@ tab:
       colorized: Diese Farbschattierung wird bei der Wiedergabe im Modell auf die Textur des Material angewendet
       texture_colorized: Farbschattierung definitiv auf die Textur anwenden
       edit: Editer les propriétes de la matière
-      set_current: Sélectionner cette matière
+      set_current: |
+        Sélectionner '{{ name }}'
+        *Double-clic pour utiliser*
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen

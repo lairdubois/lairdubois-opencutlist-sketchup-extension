@@ -419,7 +419,9 @@ tab:
       colorized: This tone will be applied to the texture of this material when it is rendered in the model
       texture_colorized: Combine definitely this tone in the texture image
       edit: Editer les propriétes de la matière
-      set_current: Sélectionner cette matière
+      set_current: |
+        Sélectionner '{{ name }}'
+        *Double-clic pour utiliser*
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
