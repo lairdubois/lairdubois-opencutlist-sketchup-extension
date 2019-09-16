@@ -797,7 +797,7 @@
 
                 var fnNewCheck = function($select) {
                     if ($select.val() === 'new') {
-                        that.opencutlist.executeCommandOnTab('materials', 'new_material');
+                        that.opencutlist.executeCommandOnTab('materials', 'new_material', { type: 4 /* TYPE_EDGE */ });
                         $modal.modal('hide');
                         return true;
                     }
