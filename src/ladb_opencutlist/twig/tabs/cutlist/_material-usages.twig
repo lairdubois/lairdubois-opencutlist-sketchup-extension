@@ -2,6 +2,7 @@
 
 <option value="" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.material_undefined'|i18next }}</span>"></option>
 {% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters  %}
+    {% if loop.index0 == 0 %}<option data-divider="true"></option>{% endif %}
     <option value="{{ materialUsage.name }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':materialUsage.color } %} {{ materialUsage.display_name|escape|escape }}">{{ materialUsage.display_name|escape }}</option>
 {% endfor %}
 <option data-divider="true"></option>

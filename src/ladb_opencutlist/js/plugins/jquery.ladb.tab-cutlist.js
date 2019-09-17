@@ -795,9 +795,9 @@
                     }
                 };
 
-                var fnNewCheck = function($select) {
+                var fnNewCheck = function($select, type) {
                     if ($select.val() === 'new') {
-                        that.opencutlist.executeCommandOnTab('materials', 'new_material', { type: 4 /* TYPE_EDGE */ });
+                        that.opencutlist.executeCommandOnTab('materials', 'new_material', { type: type });
                         $modal.modal('hide');
                         return true;
                     }
@@ -824,7 +824,7 @@
                 $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this))) {
+                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             updateEdgesPreview();
                         }
                     });
@@ -832,7 +832,7 @@
                 $selectEdgeYmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this))) {
+                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             updateEdgesPreview();
                         }
                     });
@@ -840,7 +840,7 @@
                 $selectEdgeXminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this))) {
+                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             updateEdgesPreview();
                         }
                     });
@@ -848,7 +848,7 @@
                 $selectEdgeXmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this))) {
+                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             updateEdgesPreview();
                         }
                     });

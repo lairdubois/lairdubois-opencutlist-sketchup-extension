@@ -9,7 +9,6 @@ module Ladb::OpenCutList
     EDGE_XMIN = :xmin
     EDGE_XMAX = :xmax
 
-    EDGES = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX, PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
     EDGES_Y = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX ]
     EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
 

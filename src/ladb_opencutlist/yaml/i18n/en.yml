@@ -296,8 +296,8 @@ tab:
       material_name: Material
       entity_names: Instance names
       labels: Labels
-      edge_ymin: Chant Longueur 1
-      edge_ymax: Chant Longueur 2
+      edge_ymax: Chant Longueur 1
+      edge_ymin: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
     cuttingdiagram:

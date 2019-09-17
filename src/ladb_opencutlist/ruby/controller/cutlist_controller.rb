@@ -1112,6 +1112,12 @@ module Ladb::OpenCutList
                 def _sanitize_value_string(value)
                   value.gsub(/^~ /, '') unless value.nil?
                 end
+                def _format_edge_value(material_name, std_dimension)
+                  if material_name
+                    return "#{material_name} (#{std_dimension})"
+                  end
+                  ''
+                end
 
                 case source.to_i
 
@@ -1176,8 +1182,8 @@ module Ladb::OpenCutList
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
                     end
                     unless hide_edges
-                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
                     end
@@ -1217,10 +1223,10 @@ module Ladb::OpenCutList
                           row.push(part[:labels].join(','))
                         end
                         unless hide_edges
-                          row.push("#{part[:edge_material_names][:ymin]} #{part[:edge_std_dimensions][:ymin]}")
-                          row.push("#{part[:edge_material_names][:ymax]} #{part[:edge_std_dimensions][:ymax]}")
-                          row.push("#{part[:edge_material_names][:xmin]} #{part[:edge_std_dimensions][:xmin]}")
-                          row.push("#{part[:edge_material_names][:xmax]} #{part[:edge_std_dimensions][:xmax]}")
+                          row.push(_format_edge_value(part[:edge_material_names][:ymax], part[:edge_std_dimensions][:ymax]))
+                          row.push(_format_edge_value(part[:edge_material_names][:ymin], part[:edge_std_dimensions][:ymin]))
+                          row.push(_format_edge_value(part[:edge_material_names][:xmin], part[:edge_std_dimensions][:xmin]))
+                          row.push(_format_edge_value(part[:edge_material_names][:xmax], part[:edge_std_dimensions][:xmax]))
                         end
 
                         csv << row
@@ -1252,8 +1258,8 @@ module Ladb::OpenCutList
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
                     end
                     unless hide_edges
-                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
+                      header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
                       header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
                     end
@@ -1308,10 +1314,10 @@ module Ladb::OpenCutList
                               row.push(part[:labels].join(','))
                             end
                             unless hide_edges
-                              row.push("#{part[:edge_material_names][:ymin]} #{part[:edge_std_dimensions][:ymin]}")
-                              row.push("#{part[:edge_material_names][:ymax]} #{part[:edge_std_dimensions][:ymax]}")
-                              row.push("#{part[:edge_material_names][:xmin]} #{part[:edge_std_dimensions][:xmin]}")
-                              row.push("#{part[:edge_material_names][:xmax]} #{part[:edge_std_dimensions][:xmax]}")
+                              row.push(_format_edge_value(part[:edge_material_names][:ymax], part[:edge_std_dimensions][:ymax]))
+                              row.push(_format_edge_value(part[:edge_material_names][:ymin], part[:edge_std_dimensions][:ymin]))
+                              row.push(_format_edge_value(part[:edge_material_names][:xmin], part[:edge_std_dimensions][:xmin]))
+                              row.push(_format_edge_value(part[:edge_material_names][:xmax], part[:edge_std_dimensions][:xmax]))
                             end
 
                             csv << row
