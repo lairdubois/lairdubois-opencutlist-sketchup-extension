@@ -980,6 +980,7 @@ module Ladb::OpenCutList
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.labels = first_child_part_def.labels
                 folder_part_def.final_area = first_child_part_def.final_area
+                folder_part_def.edge_count = first_child_part_def.edge_count
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
                 folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)

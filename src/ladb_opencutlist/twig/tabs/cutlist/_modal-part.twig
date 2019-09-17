@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block bodyInner %}
-    <div class="tab-content" style="margin-top: 10px;">
+    <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             <div class="ladb-part-thumbnail">
                 <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
@@ -55,17 +55,17 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
-                            </label>
-                        </div>
-                    </div>
-                </div>
+{#                <div class="form-group">#}
+{#                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>#}
+{#                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>#}
+{#                    <div class="col-xs-7">#}
+{#                        <div class="checkbox">#}
+{#                            <label>#}
+{#                                <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}#}
+{#                            </label>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
@@ -77,17 +77,17 @@
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
             <div class="row">
-                <div class="col-xs-offset-2 col-xs-8">
+                <div class="col-xs-offset-1 col-xs-10">
                     <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
                 </div>
-                <div class="col-xs-offset-2 col-xs-1">
+                <div class="col-xs-offset-1 col-xs-1">
                     <ul class="ladb-sortable-list">
                         <li style="background-color: red;">&nbsp;</li>
                         <li style="background-color: green;">&nbsp;</li>
                         <li style="background-color: blue;">&nbsp;</li>
                     </ul>
                 </div>
-                <div class="col-xs-7">
+                <div class="col-xs-9">
                     <input type="hidden" id="ladb_cutlist_part_input_axes" value="">
                     <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
                         <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
@@ -100,8 +100,20 @@
                         <option value="center" data-content="<i class='ladb-opencutlist-icon-origin-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_center'|i18next }}"></option>
                         <option value="min-center" data-content="<i class='ladb-opencutlist-icon-origin-min-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min_center'|i18next }}"></option>
                     </select>
+                    <div class="media">
+                        <div class="media-body">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="media-right">
+                            <div class="ladb-minitools ladb-minitools-inline ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-xs-offset-2 col-xs-8 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
+                <div class="col-xs-offset-1 col-xs-10 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
                     <div class="media">
                         <div class="media-left">
                             <i class="ladb-opencutlist-icon-tip" style="font-size: 150%;"></i>

@@ -106,8 +106,8 @@ tab:
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymin: Chant Longueur 1
-      edge_ymax: Chant Longueur 2
+      edge_ymin: Chant Longueur 2
+      edge_ymax: Chant Longueur 1
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       part_axes: Axes internes de la pièce
@@ -426,7 +426,7 @@ tab:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
     new_material:
-      title: Nouvelle matière
+      title: Créer une nouvelle matière
       name: Nom
       color: Couleur
       type: Type

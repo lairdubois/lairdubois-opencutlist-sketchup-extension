@@ -106,8 +106,8 @@ tab:
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymin: Chant Longueur 1
-      edge_ymax: Chant Longueur 2
+      edge_ymin: Chant Longueur 2
+      edge_ymax: Chant Longueur 1
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       part_axes: Axes internes de la pièce
@@ -141,7 +141,7 @@ tab:
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
       orientation: Orientation
-      orientation_locked_on_axis: Verrouiller sur les axes de la pièce
+      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
       orientation_locked_on_axis_help: |
         Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
 
@@ -426,7 +426,7 @@ tab:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
     new_material:
-      title: Nouvelle matière
+      title: Créer une nouvelle matière
       name: Nom
       color: Couleur
       type: Type

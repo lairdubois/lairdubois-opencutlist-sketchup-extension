@@ -150,8 +150,6 @@
     LadbTabMaterials.prototype.newMaterial = function (name, color, type) {
         var that = this;
 
-        console.log(name, color, type);
-
         var material = {
             name: name ? name : '',
             color: color ? color : color,
@@ -247,7 +245,7 @@
             // Keep the edited material
             this.editedMaterial = material;
 
-            var $modal = this.appendModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-material.twig', {
+            var $modal = this.appendModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-edit.twig', {
                 material: material
             });
 
@@ -588,29 +586,29 @@
 
     };
 
-    LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($container, material, setAttributeToDefaults) {
+    LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($modal, material, setAttributeToDefaults) {
         var that = this;
 
         // Fetch UI elements
-        var $inputName = $('#ladb_materials_input_name', $container);
-        var $inputColor = $('#ladb_materials_input_color', $container);
-        var $selectType = $('#ladb_materials_input_type', $container);
-        var $inputThickness = $('#ladb_materials_input_thickness', $container);
-        var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $container);
-        var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $container);
-        var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $container);
-        var $inputStdWidths = $('#ladb_materials_input_std_widths', $container);
-        var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $container);
-        var $inputStdSections = $('#ladb_materials_input_std_sections', $container);
-        var $inputStdSizes = $('#ladb_materials_input_std_sizes', $container);
-        var $selectGrained = $('#ladb_materials_select_grained', $container);
-        var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $container);
-        var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $container);
-        var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $container);
-        var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $container);
-        var $spanCutOptionsDefaultsType4 = $('#ladb_materials_span_cut_options_defaults_type_4', $container);
-        var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $container);
-        var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $container);
+        var $inputName = $('#ladb_materials_input_name', $modal);
+        var $inputColor = $('#ladb_materials_input_color', $modal);
+        var $selectType = $('#ladb_materials_input_type', $modal);
+        var $inputThickness = $('#ladb_materials_input_thickness', $modal);
+        var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
+        var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
+        var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
+        var $inputStdWidths = $('#ladb_materials_input_std_widths', $modal);
+        var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
+        var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
+        var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
+        var $selectGrained = $('#ladb_materials_select_grained', $modal);
+        var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
+        var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
+        var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
+        var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
+        var $spanCutOptionsDefaultsType4 = $('#ladb_materials_span_cut_options_defaults_type_4', $modal);
+        var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
+        var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
 
         // Define usefull functions
         var fnComputeFieldsVisibility = function (type) {
@@ -778,9 +776,6 @@
             $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
         };
-        if (setAttributeToDefaults) {
-            setFieldValuesToDefaults(material.attributes.type);
-        }
 
         // Bind select
         $selectType.on('change', function () {
@@ -845,11 +840,20 @@
             this.blur();
         });
 
-        // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-        $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
-        $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
-        $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
-        $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+        // Bind modal event
+        $modal.on('shown.bs.modal', function() {
+
+            // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+            $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
+            $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
+            $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+            $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+
+            if (setAttributeToDefaults) {
+                setFieldValuesToDefaults(material.attributes.type);
+            }
+
+        });
 
         return {
             inputName: $inputName,

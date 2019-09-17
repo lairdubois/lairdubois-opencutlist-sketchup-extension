@@ -21,9 +21,6 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_create") do |material_data|
         create_command(material_data)
       end
-      Plugin.instance.register_command("materials_purge_unused") do ||
-        purge_unused_command
-      end
       Plugin.instance.register_command("materials_update") do |material_data|
         update_command(material_data)
       end
@@ -47,6 +44,9 @@ module Ladb::OpenCutList
       end
       Plugin.instance.register_command("materials_set_current_command") do |settings|
         set_current_command(settings)
+      end
+      Plugin.instance.register_command("materials_purge_unused") do ||
+        purge_unused_command
       end
 
     end
@@ -147,7 +147,7 @@ module Ladb::OpenCutList
       end
 
       # Sort materials by type ASC, display_name ASC
-      response[:materials].sort_by! { |v| [v[:display_name]] }
+      response[:materials].sort_by! { |v| [ v[:attributes][:type], v[:display_name] ] }
 
       response
     end
@@ -194,16 +194,6 @@ module Ladb::OpenCutList
       {
           :id => material.entityID,
       }
-    end
-
-    def purge_unused_command()
-
-      model = Sketchup.active_model
-      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
-
-      materials = model.materials
-      materials.purge_unused
-
     end
 
     def update_command(material_data)
@@ -588,6 +578,16 @@ module Ladb::OpenCutList
       {
           :success => true,
       }
+    end
+
+    def purge_unused_command()
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
+      materials = model.materials
+      materials.purge_unused
+
     end
 
   end

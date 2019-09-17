@@ -282,6 +282,7 @@ module Ladb::OpenCutList
             :saved_number => nil,
             :material_name => @material_name,
             :labels => @labels,
+            :edge_count => @edge_count,
             :edge_pattern => @edge_pattern,
             :edge_material_names => @edge_material_names,
             :edge_std_dimensions => @edge_std_dimensions,
