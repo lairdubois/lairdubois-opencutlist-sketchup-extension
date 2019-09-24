@@ -39,7 +39,7 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-reorder:before {
   content: "\e917";
 }
-.ladb-opencutlist-icon-edge-decrement:before {
+.ladb-opencutlist-icon-edge-decremented:before {
   content: "\e935";
 }
 .ladb-opencutlist-icon-filter-on:before {
