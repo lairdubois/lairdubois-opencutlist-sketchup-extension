@@ -757,31 +757,31 @@
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
-                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeYmax = $('svg .edge-ymax', $modal);
+                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeXmin = $('svg .edge-xmin', $modal);
                 var $rectEdgeXmax = $('svg .edge-xmax', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Utils function
-                var computeAxesOrder = function () {
+                var fnComputeAxesOrder = function () {
                     var axes = [];
                     $sortablePartAxes.children('li').each(function () {
                         axes.push($(this).data('axis'));
                     });
                     $inputPartAxes.val(axes);
                 };
-                var updateEdgesPreview = function() {
-                    if ($selectEdgeYminMaterialName.val() === '') {
-                        $rectEdgeYmin.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeYmin.addClass('ladb-active');
-                    }
+                var fnUpdateEdgesPreview = function() {
                     if ($selectEdgeYmaxMaterialName.val() === '') {
                         $rectEdgeYmax.removeClass('ladb-active');
                     } else {
                         $rectEdgeYmax.addClass('ladb-active');
+                    }
+                    if ($selectEdgeYminMaterialName.val() === '') {
+                        $rectEdgeYmin.removeClass('ladb-active');
+                    } else {
+                        $rectEdgeYmin.addClass('ladb-active');
                     }
                     if ($selectEdgeXminMaterialName.val() === '') {
                         $rectEdgeXmin.removeClass('ladb-active');
@@ -818,14 +818,14 @@
                 $selectPartAxesOriginPosition
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        computeAxesOrder();
+                        fnComputeAxesOrder();
                     });
                 $selectEdgeYminMaterialName.val(part.edge_material_names.ymin);
                 $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            updateEdgesPreview();
+                            fnUpdateEdgesPreview();
                         }
                     });
                 $selectEdgeYmaxMaterialName.val(part.edge_material_names.ymax);
@@ -833,7 +833,7 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            updateEdgesPreview();
+                            fnUpdateEdgesPreview();
                         }
                     });
                 $selectEdgeXminMaterialName.val(part.edge_material_names.xmin);
@@ -841,7 +841,7 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            updateEdgesPreview();
+                            fnUpdateEdgesPreview();
                         }
                     });
                 $selectEdgeXmaxMaterialName.val(part.edge_material_names.xmax);
@@ -849,7 +849,7 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            updateEdgesPreview();
+                            fnUpdateEdgesPreview();
                         }
                     });
 
@@ -872,7 +872,7 @@
                     cursor: 'ns-resize',
                     handle: '.ladb-handle',
                     stop: function (event, ui) {
-                        computeAxesOrder();
+                        fnComputeAxesOrder();
                     }
                 });
 
@@ -937,7 +937,7 @@
                 });
 
                 // Init edges preview
-                updateEdgesPreview();
+                fnUpdateEdgesPreview();
 
                 // Show modal
                 $modal.modal('show');

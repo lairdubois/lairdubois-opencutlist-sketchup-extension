@@ -36,7 +36,10 @@ i, span.ladb-opencutlist-icon {
 }
 
 
-.ladb-opencutlist-icon-edge-decremented:before {
+.ladb-opencutlist-icon-reorder:before {
+  content: "\e917";
+}
+.ladb-opencutlist-icon-edge-decrement:before {
   content: "\e935";
 }
 .ladb-opencutlist-icon-filter-on:before {
@@ -84,8 +87,11 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-extension:before {
   content: "\e93b";
 }
-.ladb-opencutlist-icon-more:before {
+.ladb-opencutlist-icon-submenu:before {
   content: "\e938";
+}
+.ladb-opencutlist-icon-more:before {
+  content: "\e961";
 }
 .ladb-opencutlist-icon-height:before {
   content: "\e92b";
@@ -146,9 +152,6 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-sort-col:before {
   content: "\e93d";
-}
-.ladb-opencutlist-icon-reorder:before {
-  content: "\e917";
 }
 .ladb-opencutlist-icon-material-origin-1:before {
   content: "\e913";
