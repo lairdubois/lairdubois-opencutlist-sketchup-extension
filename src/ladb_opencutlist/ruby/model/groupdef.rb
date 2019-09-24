@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class GroupDef
 
-    attr_accessor :material_id, :material_name, :material_type, :material_color, :part_count, :std_dimension, :std_available, :std_dimension_stipped_name, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented
+    attr_accessor :material_id, :material_name, :material_type, :material_color, :material_grained, :part_count, :std_dimension, :std_available, :std_dimension_stipped_name, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented
     attr_reader :id, :part_defs
 
     def initialize(id)
@@ -13,6 +13,7 @@ module Ladb::OpenCutList
       @material_name = ''
       @material_type = MaterialAttributes::TYPE_UNKNOW
       @material_color = nil
+      @material_grained = false
       @std_dimension = ''
       @std_available = true,
       @std_dimension_stipped_name = ''
@@ -68,6 +69,7 @@ module Ladb::OpenCutList
           :material_name => @material_name,
           :material_type => @material_type,
           :material_color => @material_color.nil? ? nil : "#%02x%02x%02x" % [ @material_color.red, @material_color.green, @material_color.blue ],
+          :material_grained => @material_grained,
           :part_count => @part_count,
           :std_dimension => @std_dimension,
           :std_width => @std_width.to_s,

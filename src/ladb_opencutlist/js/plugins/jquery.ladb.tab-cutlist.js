@@ -672,7 +672,7 @@
 
     // Parts /////
 
-    LadbTabCutlist.prototype.findPartById = function (id) {
+    LadbTabCutlist.prototype.findGroupAndPartById = function (id) {
         for (var i = 0; i < this.groups.length; i++) {
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
@@ -681,12 +681,12 @@
                     for (var k = 0; k < part.children.length; k++) {
                         var childPart = part.children[k];
                         if (childPart.id === id) {
-                            return childPart;
+                            return { group: group, part: childPart };
                         }
                     }
                 } else {
                     if (part.id === id) {
-                        return part;
+                        return { group: group, part: part };
                     }
                 }
             }
@@ -694,7 +694,7 @@
         return null;
     };
 
-    LadbTabCutlist.prototype.findPartBySerializedPath = function (serializedPath) {
+    LadbTabCutlist.prototype.findGroupAndPartBySerializedPath = function (serializedPath) {
         for (var i = 0; i < this.groups.length; i++) {
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
@@ -703,12 +703,12 @@
                     for (var k = 0; k < part.children.length; k++) {
                         var childPart = part.children[k];
                         if (childPart.entity_serialized_paths.includes(serializedPath)) {
-                            return childPart;
+                            return { group: group, part: childPart };
                         }
                     }
                 } else {
                     if (part.entity_serialized_paths.includes(serializedPath)) {
-                        return part;
+                        return { group: group, part: part };
                     }
                 }
             }
@@ -719,8 +719,11 @@
     LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab) {
         var that = this;
 
-        var part = id ? this.findPartById(id) : (serializedPath ? this.findPartBySerializedPath(serializedPath) : null);
-        if (part) {
+        var groupAndPart = id ? this.findGroupAndPartById(id) : (serializedPath ? this.findGroupAndPartBySerializedPath(serializedPath) : null);
+        if (groupAndPart) {
+
+            var group = groupAndPart.group;
+            var part = groupAndPart.part;
 
             rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
 
@@ -730,6 +733,7 @@
                 that.editedPart = part;
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
+                    group: group,
                     part: part,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,

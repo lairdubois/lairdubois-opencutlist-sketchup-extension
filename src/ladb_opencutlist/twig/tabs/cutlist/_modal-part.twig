@@ -55,17 +55,6 @@
                         </select>
                     </div>
                 </div>
-{#                <div class="form-group">#}
-{#                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>#}
-{#                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.orientation'|i18next }}</label>#}
-{#                    <div class="col-xs-7">#}
-{#                        <div class="checkbox">#}
-{#                            <label>#}
-{#                                <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}#}
-{#                            </label>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
@@ -125,10 +114,13 @@
                 </div>
             </div>
         </div>
-        {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
+        {% if part.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
             <div role="tabpanel" class="tab-pane{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
                 <div class="text-center">
                     {% set areaSize = 280 %}
+                    {% set arrowLength = 100 %}
+                    {% set arrowMarkerWidth = 16 %}
+                    {% set arrowMarkerHeight = 8 %}
                     {% set axisWidth = 2 %}
                     {% set axisLength = 20 %}
                     {% set axisOffset = 10 %}
@@ -175,6 +167,18 @@
                         <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
                         <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
                         <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+
+                        {% if group.material_grained %}
+                            <defs>
+                                <marker id="arrow" markerWidth="{{ arrowMarkerWidth }}" markerHeight="{{ arrowMarkerHeight }}" refX="0" refY="{{ arrowMarkerHeight / 2 }}" orient="auto" markerUnits="userSpaceOnUse">
+                                    <path d="M0,0 L0,{{ arrowMarkerHeight }} L{{ arrowMarkerWidth }},{{ arrowMarkerHeight / 2 }} z" class="grain grain-marker" />
+                                </marker>
+                            </defs>
+                            <g class="grain" data-toggle="tooltip" title="{{ 'tab.materials.edit_material.grained_1'|i18next }}">
+                                <rect x="{{ (areaSize - arrowLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 + 10 }}" width="{{ arrowLength }}" height="{{ arrowMarkerHeight }}" class="grain grain-bg" />
+                                <line x1="{{ (areaSize - arrowLength) / 2 }}" y1="{{ (areaSize + partWidth + arrowMarkerHeight) / 2 + 10 }}" x2="{{ (areaSize - arrowLength) / 2 + arrowLength - arrowMarkerWidth }}" y2="{{ (areaSize + partWidth + arrowMarkerHeight) / 2 + 10 }}" marker-end="url(#arrow)" class="grain grain-line" />
+                            </g>
+                        {% endif %}
 
                     </svg>
                 </div>

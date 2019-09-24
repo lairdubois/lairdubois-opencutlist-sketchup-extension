@@ -125,7 +125,7 @@
                 <td class="text-center">{% if group.material_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
-                        {% if group.material_type == 4 %} {# TYPE_EDGE #}
+                        {% if group.material_type == 4 %}    {# 4 = TYPE_EDGE #}
                             {% set filtered = group.material_name in generateFilters.edge_material_names_filter %}
                             <a href="#ladb_group_{{ group.id }}" class="ladb-btn-material-filter ladb-click-tool" data-material-name="{{ group.material_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
                         {% else %}
@@ -150,13 +150,14 @@
 {% if groups.length > 0 %}
     <hr class="no-print">
 {% endif %}
-{% for group in groups if group.material_type != 4 %} {# TYPE_EDGE #}
+{% for group in groups if group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
 
     {% set groupHidden = group.id in generateOptions.hidden_group_ids %}
+    {% set showGrain = group.material_type == 1 or group.material_type == 2 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
     {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
     {% set showBoxDimensions = (group.material_type > 0 or group.material_type == 0 and not generateOptions.hide_untyped_material_dimensions) and not generateOptions.hide_bbox_dimensions %}
-    {% set showLengthOnly = group.material_type == 3 %}  {# 3 = TYPE_BAR #}
-    {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}  {# 2 = TYPE_SHEET_GOOD #}
+    {% set showLengthOnly = group.material_type == 3 %}    {# 3 = TYPE_BAR #}
+    {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
     {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
     {% set colspan = 13 %}
     {% if showCuttingDimensions %}
@@ -210,7 +211,7 @@
                 {% if group.material_name is not empty %}
                     {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
                 {% endif %}
-                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}</div>
+                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}{% if showGrain %}<span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}</div>
             </td>
         </tr>
         </thead>
