@@ -5,7 +5,7 @@ default:
   cancel: Cancel
   validate: Apply
   open: Open
-  see: Voir
+  see: See
   close: Close
   clear: Clear
   empty_filename: Untitled.skp
@@ -13,12 +13,12 @@ default:
   generate: Generate
   print: Print
   export: Export
-  import: Importer
-  load: Charger
+  import: Import
+  load: Load
   options: Options
   caution: Caution
   remove: Remove
-  create: Créer
+  create: Create
   help: Help
   error: Darn!
   warning: Warning
@@ -33,7 +33,7 @@ default:
   unit_4: Meter
   part_single: part
   part_plural: parts
-  setup_model_units: Configurer l'unité du modèle
+  setup_model_units: Setup the model units
 core:
   menu:
     submenu: OpenCutList
@@ -65,8 +65,8 @@ tab:
     help: |
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
-    material_undefined: Material Undefined
-    not_available_width: Largeur non disponible
+    material_undefined: Material undefined
+    not_available_width: Width not available
     not_available_thickness: Thickness not available
     not_available_section: Cross section not available
     highlight_part: Highlight the part in the model
@@ -94,23 +94,23 @@ tab:
       auto_oriented: This part has been automatically reoriented
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
-      add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
-      remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
+      add_edge_material_name_filter: Filter on '{{ material_name }}'
+      remove_edge_material_name_filter: Do not filter on '{{ material_name }}'
       not_aligned_on_axes: Caution, this part may not be oriented correctly with respect to its axes
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
-      is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient {{ count }} chant plaqué
-      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
-      edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymin: Chant Longueur 2
-      edge_ymax: Chant Longueur 1
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
-      part_axes: Axes internes de la pièce
+      is_dynamic_attributes_name: The description of this part is extracted from the attribute 'Name' of the dynamic component
+      has_edges: This part contains {{ count }} edge banding
+      has_edges_plural: This part contains {{ count }} edge bandings
+      edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
+      edge_ymin: Edge length 2
+      edge_ymax: Edge length 1
+      edge_xmin: Edge width 1
+      edge_xmax: Edge width 2
+      part_axes: Internal axes of the part
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -127,7 +127,7 @@ tab:
     edit_part:
       title: Properties of Part '{{ name }}'
       general: General
-      edges: Chants
+      edges: Edge bandings
       infos: Infos
       warnings: Warnings
       name: Description
@@ -162,12 +162,12 @@ tab:
          - the **width** is read on the <strong style='color:green'>green</strong> axes and
          - the **thickness** is read on the <strong style='color:blue'>blue</strong> axes.
       axes_origin_position_none: Do not change the origin
-      axes_origin_position_min: Place the origin in a corner
-      axes_origin_position_center: Place the origin in the center
-      axes_origin_position_min_center: Place the origin in the middle of an end
-      over_length: Sur la longueur
-      over_width: Sur la largeur
-      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      axes_origin_position_min: Place the origin at a corner
+      axes_origin_position_center: Place the origin at the center
+      axes_origin_position_min_center: Place the origin in the middle of a face
+      over_length: Across the length
+      over_width: Across the width
+      edge_disabled_help: This edge banding is not configurable because no face has been detected that could carry edge banding material in the model.
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
@@ -208,10 +208,10 @@ tab:
       hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_final_areas: Hide actual area of parts of type *Sheet Good*
       hide_final_areas_help: If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden.
-      hide_edges: Masquer les colonnes de chants
-      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
-      minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
+      hide_edges: Hide the column of edge bandings
+      hide_edges_help: If this option is selected, the **edge banding columns** of parts of type *Sheet Good* will be hidden.
+      minimize_on_highlight: Mimimize after *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is applied.
       general: General
       part_order_strategy: Parts Sorting
       part_order_strategy_help: |
@@ -225,14 +225,14 @@ tab:
       property_width: Width
       property_name: Description
       property_count: Quantity
-      property_edge_pattern: Nombre de chant
+      property_edge_pattern: Number of edge bandings
       reset: Restore Default Values
     list:
       filters: Filters
       filters_warning_0: "This filter masks all parts!"
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
-      edge_material_names_filter: Matières de chant à filtrer
+      edge_material_names_filter: Material of edge banding to filter
       labels_filter: Labels to filter
       dimensions_help: Illustration of the dimensions...
       summary: Summary
@@ -256,7 +256,7 @@ tab:
       width_short: W
       thickness: Thickness
       thickness_short: T
-      edges: Chants
+      edges: Edge Bandings
     export:
       title: CSV Formatted Export
       info: |
@@ -296,10 +296,10 @@ tab:
       material_name: Material
       entity_names: Instance names
       labels: Labels
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
+      edge_ymax: Edge length 1
+      edge_ymin: Edge length 2
+      edge_xmin: Edge width 1
+      edge_xmax: Edge width 2
     cuttingdiagram:
       title: Cutting Diagram
       option_saw_kerf: Blade Thickness
@@ -377,7 +377,7 @@ tab:
         cutting_dimensions_increase: |
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
-          *Dimensions réduite de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+          *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -402,12 +402,12 @@ tab:
   materials:
     label: Materials
     title: Materials
-    new: Nouvelle matière
+    new: New Material
     type_0: Undefined
     type_1: Solid Wood
     type_2: Sheet Good
     type_3: Dimensional
-    type_4: Bande de chant
+    type_4: Edge Banding
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -418,17 +418,17 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       colorized: This tone will be applied to the texture of this material when it is rendered in the model
       texture_colorized: Combine definitely this tone in the texture image
-      edit: Editer les propriétes de la matière
+      edit: Edit the properties of the material
       set_current: |
-        Sélectionner '{{ name }}'
-        *Double-clic pour utiliser*
+        Select '{{ name }}'
+        *Double-click to use*
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
     new_material:
-      title: Créer une nouvelle matière
-      name: Nom
-      color: Couleur
+      title: Create a new material
+      name: Name
+      color: Color
       type: Type
     edit_material:
       title: Properties of Material '{{ name }}'
@@ -437,15 +437,15 @@ tab:
       name: Name
       type: Type
       cut_options: Cutting Parameters
-      thickness: Epaisseur
+      thickness: Thickness
       length_increase: Length Oversize
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
-      std_widths: Largeurs standards
-      std_widths_placeholder: largeur ; ...
+      std_widths: Standard Widths
+      std_widths_placeholder: width ; ...
       std_widths_help: |
-        Largeurs standards des bandes.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+        Standard widths of edge bandings.
+        *Widths without units are considered to be in model units.*
       std_thicknesses: Available Thicknesses
       std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
@@ -465,10 +465,10 @@ tab:
       grained_help: Configures the grain direction of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
-      edge_decremented: Reduction
-      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
-      edge_decremented_0: Pas de réduction
-      edge_decremented_1: Réduire le débit de l'épaisseur du chant
+      edge_decremented: Reduce
+      edge_decremented_help: Indicates whether the dimensions of parts must be reduced by the thickness of the edge banding.
+      edge_decremented_0: No Reduction
+      edge_decremented_1: Reduce by Edge Banding Thickness
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values
@@ -497,82 +497,82 @@ tab:
       exported_to: Export to {{ export_path }} successful.
     outdated_base: To remain synchronized, you must refresh the material list.
   importer:
-    label: Importer
-    title: Importer des pièces
+    label: Import
+    title: Import Parts
     help: |
-      Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
-      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: Ouvrir un fichier CSV
-    import_to_model: Importer dans le modèle
+      This section will help you import parts (defined by a rectangular bounding box) from a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file into a model.
+      You may then use the possibilities of *OpenCutList* for parts that have been generated by a software other than *Sketchup*.
+      Click on the button **Open CSV file** to load.
+    open_csv: Open CSV file
+    import_to_model: Import into the model
     load:
-      title: Chargement d'un fichier CSV
+      title: Loading CSV File
       info: |
-        Choisissez les options nécessaires à la bonne lecture du fichier **{{ filename }}**.
+        Choose the necessary options to read **{{ filename }}**.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans le modèle est : **{{ unit }}**.
-        Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: Options de chargement
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_first_line_headers: Première ligne
-      option_first_line_headers_0: Données
-      option_first_line_headers_1: Titres de colonne
+        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
+        This unit will be used to interpret dimensions given without units*.
+      options: Loading Options
+      option_col_sep: Separator
+      option_col_sep_tab: Tabulator
+      option_col_sep_comma: Comma
+      option_col_sep_semicolon: Semicolon
+      option_first_line_headers: Header Line
+      option_first_line_headers_0: Data
+      option_first_line_headers_1: Column Titles
     import:
-      title: Importation des pièces dans le modèle
+      title: Import Parts into the Model
       info_0: |
-        Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
-        Cette pièce va être placée sur la scène principale, à l'origine.
+        You are about to import **{{ count }} part** into the model.
+        This part will be placed at the origin of the the main scene.
       info_0_plural: |
-        Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
-        Ces pièces vont être empilées sur la scène principale depuis l'origine.
-      info_1: Cliquez sur **Importer** pour confirmer l'action.
+        You are about to import **{{ count }} parts** into the model.
+        These parts will be stacked starting at the origin of the main scene.
+      info_1: Click on **Import** to confirm the action.
       options: |
-        Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
-        Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all_?: Que faire ?
-      option_remove_all_false: Ajouter les pièces à l'existant
-      option_remove_all_true: Effacer tout !
-      option_keep_definitions_settings: Conserver les paramètres sur les définitions
-      option_keep_materials_settings: Conserver les paramètres sur les matières
+        The model already contains *parts*, *definitions* or *materials*.
+        Select the import options you need.
+      option_remove_all_?: What next?
+      option_remove_all_false: Add parts to the existing
+      option_remove_all_true: Remove existing!
+      option_keep_definitions_settings: Keep definition settings
+      option_keep_materials_settings: Keep material settings
     column:
-      unused: Non utilisé
-      mandatory: Champs obligatoires
-      optional: Champs facultatifs
-      name: Désignation
-      count: Quantité
-      bbox_length: Longueur capable
-      bbox_width: Largeur capable
-      bbox_thickness: Epaisseur capable
-      material: Matière
-      labels: Etiquettes
+      unused: Unused
+      mandatory: Mandatory fields
+      optional: Optional fields
+      name: Description
+      count: Quantity
+      bbox_length: Length
+      bbox_width: Width
+      bbox_thickness: Thickness
+      material: Material
+      labels: Labels
     tooltip:
-      errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-      warnings: Cette pièce sera importée mais elle contient les avertissements suivants
+      errors: This part will not be imported because it produced the following errors
+      warnings: This part will be imported but it produced the following warnings
     error:
-      no_model: Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: "Fichier introuvable : **{{ filename }}**"
-      bad_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
+      no_model: No model is open. It is not possible to import parts into the void ;)
+      file_not_found: "File not found : **{{ filename }}**"
+      bad_extension: The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**.
       failed_to_load_csv_file: |
-        Impossible de charger le fichier CSV : **{{ error }}**
-        *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: Pas de désignation valide
-      invalid_length: Pas de longueur valide
-      invalid_width: Pas de largeur valide
-      invalid_thickness: Pas de d'épaisseur valide
-      failed_to_import: L'importation a échouée.
+        Unable to load the CSV file : **{{ error }}**
+        *Verify that you have selected the correct field separator.*
+      empty_file: The file seems empty or could not be interpreted.
+      no_importable_part: No part can be imported. Assign the mandatory fields to the corresponding columns.
+      invalid_name: Invalid description
+      invalid_length: Invalid length
+      invalid_width: Invalid width
+      invalid_thickness: Invalid thickness
+      failed_to_import: The import process failed.
     warning:
-      invalid_count: Pas de quantité valide
-      invalid_material: Pas de matière valide
+      invalid_count: Invalid count
+      invalid_material: Invalid material
     success:
-      imported_title: Importation terminée
-      imported_body: "{{ count }} pièce importée avec succes !"
-      imported_body_plural: "{{ count }} pièces importées avec succes !"
-    outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
+      imported_title: Import done
+      imported_body: "{{ count }} part was successfully imported!"
+      imported_body_plural: "{{ count }} parts were successfully imported!"
+    outdated_base: To remain synchronized, you must reload the CSV file.
   about:
     label: About
     title: About
