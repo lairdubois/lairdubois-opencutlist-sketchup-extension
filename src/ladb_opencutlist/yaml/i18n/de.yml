@@ -430,7 +430,9 @@ tab:
     new_material:
       title: Créer une nouvelle matière
       name: Nom
+      name_warning: Nom invalide
       color: Couleur
+      color_warning: Couleur invalide
       type: Type
     edit_material:
       title: Eigenschaften des Materials '{{ name }}'

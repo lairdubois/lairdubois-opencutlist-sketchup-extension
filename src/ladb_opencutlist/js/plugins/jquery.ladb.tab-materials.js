@@ -170,7 +170,7 @@
 
         // Define usefull functions
         var fnUpdateBtnCreateStatus = function() {
-            $btnCreate.prop( "disabled", $inputs.inputName.val().length === 0 || !$inputs.inputColor.val().match(/^#[0-9a-fA-F]{6}$/))
+            $btnCreate.prop( "disabled", $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
         };
 
         // Bind inputs
@@ -315,9 +315,16 @@
                     });
                 }
             };
+            var fnUpdateBtnUpdateStatus = function() {
+                $btnUpdate.prop( "disabled", $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
+            };
 
             // Bind form
             var $inputs = this.bindMaterialPropertiesForm($modal, material);
+
+            // Bind inputs
+            $inputs.inputName.on('keyup change', fnUpdateBtnUpdateStatus);
+            $inputs.inputColor.on('keyup change', fnUpdateBtnUpdateStatus);
 
             // Bind tabs
             $btnTabTexture.on('shown.bs.tab', function (e) {
@@ -591,7 +598,9 @@
 
         // Fetch UI elements
         var $inputName = $('#ladb_materials_input_name', $modal);
+        var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
         var $inputColor = $('#ladb_materials_input_color', $modal);
+        var $inputColorWarning = $('#ladb_materials_input_color_warning', $modal);
         var $selectType = $('#ladb_materials_input_type', $modal);
         var $inputThickness = $('#ladb_materials_input_thickness', $modal);
         var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
@@ -688,7 +697,7 @@
         };
         fnComputeFieldsVisibility(material.attributes.type);
 
-        var setFieldValuesToDefaults = function (type) {
+        var fnSetFieldValuesToDefaults = function (type) {
             var defaultThickness,
                 defaultLengthIncrease,
                 defaultWidthIncrease,
@@ -777,13 +786,32 @@
             $selectEdgeDecremented.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
         };
 
+        var fnCheckInputNameValue = function() {
+            if ($inputName.val().length > 0) {
+                $inputName.data('ladb-invalid', false);
+                $inputNameWarning.hide();
+            } else {
+                $inputName.data('ladb-invalid', true);
+                $inputNameWarning.show();
+            }
+        };
+        var fnCheckInputColorValue = function() {
+            if ($inputColor.val().match(/^#[0-9a-fA-F]{6}$/)) {
+                $inputColor.data('ladb-invalid', false);
+                $inputColorWarning.hide();
+            } else {
+                $inputColor.data('ladb-invalid', true);
+                $inputColorWarning.show();
+            }
+        };
+
         // Bind select
         $selectType.on('change', function () {
             var type = parseInt($(this).val());
 
             // fnDisableBtnExport();
             fnComputeFieldsVisibility(type);
-            setFieldValuesToDefaults(type);
+            fnSetFieldValuesToDefaults(type);
 
         });
         $selectType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -799,7 +827,12 @@
         });
         hueb.on('change', function() {
             hueb.close();
+            $inputColor.trigger('change');
         });
+
+        // Bind inputs
+        $inputName.on('keyup change', fnCheckInputNameValue);
+        $inputColor.on('keyup change', fnCheckInputColorValue);
 
         // Bind buttons
         $btnCutOptionsDefaultsSave.on('click', function () {
@@ -836,7 +869,7 @@
         });
         $btnCutOptionsDefaultsReset.on('click', function () {
             var type = parseInt($selectType.val());
-            setFieldValuesToDefaults(type);
+            fnSetFieldValuesToDefaults(type);
             this.blur();
         });
 
@@ -850,7 +883,7 @@
             $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
 
             if (setAttributeToDefaults) {
-                setFieldValuesToDefaults(material.attributes.type);
+                fnSetFieldValuesToDefaults(material.attributes.type);
             }
 
         });
