@@ -10,7 +10,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
-        {% if part.material_type == 2 %} {# TYPE_SHEET_GOOD #}
+        {% if group.material_type == 2 %} {# TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
         {% endif %}
         <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
@@ -114,7 +114,7 @@
                 </div>
             </div>
         </div>
-        {% if part.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
+        {% if group.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
             <div role="tabpanel" class="tab-pane{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
                 <div class="text-center">
                     {% set areaSize = 280 %}

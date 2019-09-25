@@ -58,6 +58,8 @@ core:
     options_change: Options in the model have changed.
     material_change: At least one material has been changed.
     selection_change: The selection of the active model has been changed.
+  model_info_page:
+    units: Units
 tab:
   cutlist:
     label: Parts List
@@ -106,8 +108,8 @@ tab:
       has_edges: This part contains {{ count }} edge banding
       has_edges_plural: This part contains {{ count }} edge bandings
       edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
-      edge_ymin: Edge length 2
       edge_ymax: Edge length 1
+      edge_ymin: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       part_axes: Internal axes of the part

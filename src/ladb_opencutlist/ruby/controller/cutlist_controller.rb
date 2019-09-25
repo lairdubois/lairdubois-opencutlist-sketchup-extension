@@ -499,9 +499,29 @@ module Ladb::OpenCutList
 
         end
 
-        group_def.part_count += 1
-
         group_def
+      end
+
+      def _populate_edge_part_def(part_def, edge, edge_group_def, cutting_length, cutting_width, cutting_thickness)
+
+        edge_part_id = PartDef.generate_edge_part_id(part_def.id, edge, cutting_length, cutting_width, cutting_thickness)
+        edge_part_def = edge_group_def.get_part_def(edge_part_id)
+        unless edge_part_def
+
+          edge_part_def = PartDef.new(edge_part_id)
+          edge_part_def.name = "#{part_def.name} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
+          edge_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
+          edge_part_def.size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
+          edge_part_def.material_name = edge_group_def.material_name
+
+          edge_group_def.set_part_def(edge_part_id, edge_part_def)
+
+        end
+
+        edge_part_def.count += 1
+        edge_group_def.part_count += 1
+
+        edge_part_def
       end
 
       # [END] -- Utils definitions --
@@ -726,7 +746,6 @@ module Ladb::OpenCutList
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
-          part_def.material_type = material_attributes.type
           part_def.cumulable = definition_attributes.cumulable
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.labels = definition_attributes.labels
@@ -881,6 +900,7 @@ module Ladb::OpenCutList
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
+                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
                 end
               }
               PartDef::EDGES_X.each { |edge|
@@ -889,6 +909,7 @@ module Ladb::OpenCutList
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
+                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
                 end
               }
             end
@@ -1221,7 +1242,7 @@ module Ladb::OpenCutList
                           row.push(part[:entity_names].nil? ? '' : part[:entity_names].map(&:first).join(','))
                         end
                         unless hide_labels
-                          row.push(part[:labels].join(','))
+                          row.push(part[:labels].empty? ? '' : part[:labels].join(','))
                         end
                         unless hide_edges
                           row.push(_format_edge_value(part[:edge_material_names][:ymax], part[:edge_std_dimensions][:ymax]))
@@ -1270,6 +1291,7 @@ module Ladb::OpenCutList
                     # Content rows
                     @cutlist[:groups].each { |group|
                       next if hidden_group_ids.include? group[:id]
+                      next if group[:material_type] == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
                       group[:parts].each { |part|
 
                         no_cutting_dimensions = group[:material_type] == MaterialAttributes::TYPE_UNKNOW
@@ -1312,7 +1334,7 @@ module Ladb::OpenCutList
                             end
                             row.push(part[:material_name])
                             unless hide_labels
-                              row.push(part[:labels].join(','))
+                              row.push(part[:labels].empty? ? '' : part[:labels].join(','))
                             end
                             unless hide_edges
                               row.push(_format_edge_value(part[:edge_material_names][:ymax], part[:edge_std_dimensions][:ymax]))

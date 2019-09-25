@@ -142,7 +142,7 @@
                         $btnSetupModelUnits.on('click', function () {
                             $(this).blur();
                             rubyCallCommand('core_open_model_info_page', {
-                                page: 'Units'
+                                page: i18next.t('core.model_info_page.units')
                             });
                         });
 
@@ -233,7 +233,7 @@
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
                     $(this).blur();
                     rubyCallCommand('core_open_model_info_page', {
-                        page: 'Units'
+                        page: i18next.t('core.model_info_page.units')
                     });
                 });
 

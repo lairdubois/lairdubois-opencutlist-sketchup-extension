@@ -2,7 +2,22 @@ module Ladb::OpenCutList
 
   require 'digest'
 
-  class PartDef
+  class AbstractPartDef
+
+    attr_accessor :definition_id, :number, :name, :count, :cutting_size, :material_name
+
+    def initialize(id)
+      @id = id
+      @number = nil
+      @name = ''
+      @count = 0
+      @cutting_size = Size3d.new
+      @material_name = ''
+    end
+
+  end
+
+  class PartDef < AbstractPartDef
 
     EDGE_YMIN = :ymin
     EDGE_YMAX = :ymax
@@ -12,22 +27,16 @@ module Ladb::OpenCutList
     EDGES_Y = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX ]
     EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
 
-    attr_accessor :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :scale, :cutting_size, :size, :material_name, :material_type, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
+    attr_accessor :definition_id, :saved_number, :is_dynamic_attributes_name, :scale, :size, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children, :edge_materials, :edge_group_defs
 
     def initialize(id)
-      @id = id
-      @definition_id = ''
-      @number = nil
+      super(id)
+      @definition_id = nil
       @saved_number = nil
-      @name = ''
       @is_dynamic_attributes_name = false
-      @count = 0
-      @cutting_size = Size3d.new
       @size = Size3d.new
       @scale = Scale3d.new
-      @material_name = ''
-      @material_type = MaterialAttributes::TYPE_UNKNOW
       @material_origins = []
       @cumulable = DefinitionAttributes::CUMULABLE_NONE
       @orientation_locked_on_axis = false
@@ -73,6 +82,10 @@ module Ladb::OpenCutList
       # Include size into part_id to separate instances with the same definition, but different scale
       Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{instance_info.size.length.to_s}|#{instance_info.size.width.to_s}|#{instance_info.size.thickness.to_s}")
 
+    end
+
+    def self.generate_edge_part_id(part_id, edge, length, width, thickness)
+      Digest::MD5.hexdigest("#{part_id}|#{edge}|#{length}|#{width}|#{thickness}")
     end
 
     def self.part_order(part_def_a, part_def_b, strategy)
@@ -243,7 +256,6 @@ module Ladb::OpenCutList
             :number => @number ? @number : part_number,
             :saved_number => @saved_number,
             :material_name => @material_name,
-            :material_type => @material_type,
             :material_origins => @material_origins,
             :cumulable => @cumulable,
             :orientation_locked_on_axis => @orientation_locked_on_axis,

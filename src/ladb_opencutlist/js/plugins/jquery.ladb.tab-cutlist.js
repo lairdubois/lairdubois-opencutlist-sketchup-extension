@@ -325,7 +325,7 @@
             $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
                 $(this).blur();
                 rubyCallCommand('core_open_model_info_page', {
-                    page: 'Units'
+                    page: i18next.t('core.model_info_page.units')
                 });
             });
             $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function () {

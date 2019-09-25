@@ -58,6 +58,8 @@ core:
     options_change: Les options du modèle ont été modifiées.
     material_change: Au moins une matière a été modifiée.
     selection_change: La sélection dans le modèle actif a changée.
+  model_info_page:
+    units: Unités
 tab:
   cutlist:
     label: Débit
@@ -106,8 +108,8 @@ tab:
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymin: Chant Longueur 2
       edge_ymax: Chant Longueur 1
+      edge_ymin: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       part_axes: Axes internes de la pièce
