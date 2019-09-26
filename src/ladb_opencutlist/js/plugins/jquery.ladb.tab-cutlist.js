@@ -756,6 +756,7 @@
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
+                var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
@@ -776,6 +777,23 @@
                     });
                     $inputPartAxes.val(axes);
                 };
+                var fnDisplayAxisDimensions = function () {
+                    if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
+                        $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
+                        $sortablePartAxesExtra.closest('div').show();
+                        $('li .ladb-info', $sortablePartAxes).each(function () {
+                            $(this).hide();
+                        });
+                    } else {
+                        $sortablePartAxes.closest('div').switchClass('col-xs-10', 'col-xs-12', 0);
+                        $sortablePartAxesExtra.closest('div').hide();
+                        $('li .ladb-info', $sortablePartAxes).each(function () {
+                            $(this).show();
+                        });
+                    }
+                };
+                fnDisplayAxisDimensions();
+
                 var fnUpdateEdgesPreview = function() {
                     if ($selectEdgeYmaxMaterialName.val() === '') {
                         $rectEdgeYmax.removeClass('ladb-active');
@@ -879,6 +897,9 @@
                         fnComputeAxesOrder();
                     }
                 });
+
+                // Bin checkbox
+                $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
 
                 // Bind buttons
                 $btnHighlight.on('click', function () {

@@ -203,7 +203,7 @@ module Ladb::OpenCutList
 
       name = material_data['name']
       display_name = material_data['display_name']
-      color = material_data['color']
+      color = Sketchup::Color.new(material_data['color'])
       attributes = material_data['attributes']
       texture_rotation = material_data['texture_rotation']
       texture_file = material_data['texture_file']
@@ -241,7 +241,7 @@ module Ladb::OpenCutList
 
         end
 
-        if color != material.color
+        if color.to_i != material.color.to_i
 
           material.color = color
 

@@ -78,11 +78,22 @@
                 </div>
                 <div class="col-xs-9">
                     <input type="hidden" id="ladb_cutlist_part_input_axes" value="">
-                    <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
-                        <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
-                        <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
-                        <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="pull-right" style="color: #bbb; line-height: 20px; font-size: 80%;">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
-                    </ul>
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <ul id="ladb_sortable_part_axes_extra" class="ladb-sortable-list-extra">
+                                <li style="color: red;">{{ 'tab.cutlist.list.length'|i18next }}</li>
+                                <li style="color: green;">{{ 'tab.cutlist.list.width'|i18next }}</li>
+                                <li style="color: blue;">{{ 'tab.cutlist.list.thickness'|i18next }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-10">
+                            <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
+                                <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
+                                <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
+                                <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
+                            </ul>
+                        </div>
+                    </div>
                     <select class="form-control" id="ladb_cutlist_part_select_axes_origin_position">
                         <option data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.axes_origin_position_none'|i18next }}</span>"></option>
                         <option value="min" data-content="<i class='ladb-opencutlist-icon-origin-min ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min'|i18next }}"></option>
