@@ -182,7 +182,7 @@ tab:
         Si cette option est activée, les trois dimensions des pièces sont triées pour que la plus grande représente la *longueur* et la plus petite l'*épaisseur*.
 
         Sinon,
-        - la *longueur* est sur l'axe <span style='color:red'>rouge</span>
+        - la *longueur* est lue sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
       smart_material: Attribution *intelligente* des matières
@@ -465,10 +465,10 @@ tab:
       std_sizes_help: |
         Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      grained: Grain
+      grained: Fil
       grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
-      grained_0: Pas de grain
-      grained_1: Le grain suit la longueur
+      grained_0: Pas de fil
+      grained_1: Le fil suit la longueur
       edge_decremented: Reduction
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
