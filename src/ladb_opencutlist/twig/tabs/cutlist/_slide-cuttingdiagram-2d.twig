@@ -229,6 +229,9 @@
                                     <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
                                 </g>
                             {% endfor %}
+                            {% if group.material_grained %}
+                                {% include 'core/_grain-direction-arrow.twig' with { 'centerX':sheet.px_length / 2, 'centerY':sheet.px_width + 20 } %}
+                            {% endif %}
                         </svg>
 
                     </td>

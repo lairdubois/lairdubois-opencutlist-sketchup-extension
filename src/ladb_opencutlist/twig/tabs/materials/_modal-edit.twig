@@ -1,6 +1,6 @@
 {% extends 'core/_modal.twig' %}
 
-{% set id = 'ladb_materials_modal_material' %}
+{% set id = 'ladb_materials_modal_edit' %}
 {% set title = 'tab.materials.edit_material.title'|i18next({ 'name':material.display_name }) %}
 
 {% block headerInner %}
@@ -25,6 +25,13 @@
                         <img id="ladb_materials_img_texture" src="">
                         <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;">{{ material.texture_image_width }} x {{ material.texture_image_height }} px</div>
                     </div>
+                </div>
+                <div class="text-center">
+                    {% set areaWidth = 280 %}
+                    {% set areaHeight = 20 %}
+                    <svg viewBox="0 0 {{ areaWidth }} {{ areaHeight }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaWidth }}px; height: {{ areaHeight }}px;">
+                        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaWidth / 2, 'centerY':areaHeight / 2 } %}
+                    </svg>
                 </div>
                 <div class="text-center">
                     <input id="ladb_materials_input_texture_rotation" type="hidden" value="{{ material.texture_rotation }}"/>

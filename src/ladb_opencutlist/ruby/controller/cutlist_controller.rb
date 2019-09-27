@@ -1240,7 +1240,7 @@ module Ladb::OpenCutList
                         unless hide_final_areas
                           row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                         end
-                        row.push(part[:material_name])
+                        row.push(group[:material_display_name])
                         unless hide_entity_names
                           row.push(part[:entity_names].nil? ? '' : part[:entity_names].map(&:first).join(','))
                         end
@@ -1335,7 +1335,7 @@ module Ladb::OpenCutList
                             unless hide_final_areas
                               row.push(no_dimensions ? '' : _sanitize_value_string(part[:final_area]))
                             end
-                            row.push(part[:material_name])
+                            row.push(group[:material_display_name])
                             unless hide_labels
                               row.push(part[:labels].empty? ? '' : part[:labels].join(','))
                             end

@@ -423,6 +423,7 @@ tab:
       type_4: Material type '$t(tab.materials.type_4)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Direction du fil
       colorized: This tone will be applied to the texture of this material when it is rendered in the model
       texture_colorized: Combine definitely this tone in the texture image
       edit: Edit the properties of the material

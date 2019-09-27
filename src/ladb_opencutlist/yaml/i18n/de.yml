@@ -423,6 +423,7 @@ tab:
       type_4: Materialtyp '$t(tab.materials.type_4)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Direction du fil
       colorized: Diese Farbschattierung wird bei der Wiedergabe im Modell auf die Textur des Material angewendet
       texture_colorized: Farbschattierung definitiv auf die Textur anwenden
       edit: Editer les propriétes de la matière

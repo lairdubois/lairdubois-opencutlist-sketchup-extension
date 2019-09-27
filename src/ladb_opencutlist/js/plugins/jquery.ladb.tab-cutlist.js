@@ -1411,6 +1411,12 @@
                             $btnClose.on('click', function () {
                                 that.popSlide();
                             });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                                $(this).blur();
+                                rubyCallCommand('core_open_model_info_page', {
+                                    page: i18next.t('core.model_info_page.units')
+                                });
+                            });
 
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');

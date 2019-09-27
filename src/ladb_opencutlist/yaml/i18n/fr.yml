@@ -37,6 +37,9 @@ default:
 core:
   menu:
     submenu: OpenCutList
+    item:
+      edit_part_properties: Editer les propriétés de la pièce
+      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -420,6 +423,7 @@ tab:
       type_4: Type de matière '$t(tab.materials.type_4)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Direction du fil
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
       texture_colorized: Combiner définitivement la teinte dans l'image de la texture
       edit: Editer les propriétes de '{{ name }}'
