@@ -246,6 +246,7 @@
             this.editedMaterial = material;
 
             var $modal = this.appendModalInside('ladb_materials_modal_material', 'tabs/materials/_modal-edit.twig', {
+                capabilities: that.opencutlist.capabilities,
                 material: material
             });
 

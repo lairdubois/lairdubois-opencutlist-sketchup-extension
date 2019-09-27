@@ -37,6 +37,9 @@ default:
 core:
   menu:
     submenu: OpenCutList
+    item:
+      edit_part_properties: Editer les propriétés de la pièce
+      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -73,6 +76,8 @@ tab:
     not_available_section: Cross section not available
     highlight_part: Highlight the part in the model
     highlight_parts: Highlight the parts in the model
+    edit_part_properties: Edit part properties
+    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
@@ -83,7 +88,7 @@ tab:
         Add cross section *{{ std_dimension }}*
         to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
-      edit_part_properties: Edit part properties
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       folding_part: Unfold / Fold
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements

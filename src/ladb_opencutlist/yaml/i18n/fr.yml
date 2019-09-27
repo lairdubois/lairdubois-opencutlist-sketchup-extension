@@ -73,6 +73,8 @@ tab:
     not_available_section: Section non disponible
     highlight_part: Voir la pièce dans le modèle
     highlight_parts: Voir les pièces dans le modèle
+    edit_part_properties: Éditer les propriétés de la pièce
+    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
@@ -83,7 +85,7 @@ tab:
         Ajouter la section *{{ std_dimension }}*
         à la matière '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
-      edit_part_properties: Éditer les propriétés de la pièce
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       folding_part: Déplier / Replier
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents

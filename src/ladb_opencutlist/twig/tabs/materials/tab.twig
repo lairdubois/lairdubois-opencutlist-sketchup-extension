@@ -8,7 +8,9 @@
     <div class="btn-group">
         <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="ladb_item_import_from_skm" href="#"><i class="ladb-opencutlist-icon-import"></i> {{ 'tab.materials.menu.import_from_skm'|i18next }}</a></li>
+            {% if capabilities.sketchupVersionNumber >= 1700000000 %}
+                <li><a id="ladb_item_import_from_skm" href="#"><i class="ladb-opencutlist-icon-import"></i> {{ 'tab.materials.menu.import_from_skm'|i18next }}</a></li>
+            {% endif %}
             <li class="disabled"><a id="ladb_item_purge_unused" href="#"><i class="ladb-opencutlist-icon-trash"></i> {{ 'tab.materials.menu.purge_unused'|i18next }}</a></li>
         </ul>
     </div>

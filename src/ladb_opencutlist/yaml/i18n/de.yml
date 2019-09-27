@@ -37,6 +37,9 @@ default:
 core:
   menu:
     submenu: OpenCutList
+    item:
+      edit_part_properties: Editer les propriétés de la pièce
+      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -73,6 +76,8 @@ tab:
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
+    edit_part_properties: Eigenschaften bearbeiten
+    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -83,7 +88,7 @@ tab:
         Querschnitt *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
-      edit_part_properties: Eigenschaften bearbeiten
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt

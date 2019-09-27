@@ -221,10 +221,21 @@ module Ladb::OpenCutList
         show_dialog('importer')
       }
       submenu.add_separator
-      edit_part_item = submenu.add_item(get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
+      edit_part_item = submenu.add_item(get_i18n_string('tab.cutlist.edit_part_properties')) {
         _edit_part_properties(_get_selected_component_entity)
       }
-      menu.set_validation_proc(edit_part_item)  {
+      menu.set_validation_proc(edit_part_item) {
+        entity = _get_selected_component_entity
+        if entity.nil?
+          MF_GRAYED
+        else
+          MF_ENABLED
+        end
+      }
+      edit_part_axes_item = submenu.add_item(get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
+        _edit_part_properties(_get_selected_component_entity, 'axes')
+      }
+      menu.set_validation_proc(edit_part_axes_item) {
         entity = _get_selected_component_entity
         if entity.nil?
           MF_GRAYED
@@ -242,8 +253,11 @@ module Ladb::OpenCutList
           submenu = context_menu.add_submenu(get_i18n_string('core.menu.submenu'))
 
           # Edit part item
-          submenu.add_item(get_i18n_string('tab.cutlist.tooltip.edit_part_properties')) {
+          submenu.add_item(get_i18n_string('tab.cutlist.edit_part_properties')) {
             _edit_part_properties(entity)
+          }
+          submenu.add_item(get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
+            _edit_part_properties(entity, 'axes')
           }
 
         end
@@ -503,9 +517,9 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _edit_part_properties(entity)
+    def _edit_part_properties(entity, tab = 'general')
       unless entity.nil?
-        execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}' }")
+        execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}', tab: '#{tab}' }")
       end
     end
 
@@ -587,7 +601,8 @@ module Ladb::OpenCutList
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
           :sketchup_is_pro => Sketchup.is_pro?,
-          :sketchup_version => Sketchup.version.to_s,
+          :sketchup_version => Sketchup.version,
+          :sketchup_version_number => Sketchup.version_number,
           :ruby_version => RUBY_VERSION,
           :current_os => "#{current_os}",
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,

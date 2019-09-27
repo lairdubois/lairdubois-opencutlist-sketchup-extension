@@ -107,7 +107,7 @@
         this.pageLabel = null;
         this.lengthUnit = null;
         this.usedLabels = [];
-        this.usedEdgeMaterialNames = [];
+        this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
         this.editedPart = null;
@@ -166,14 +166,14 @@
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
             that.usedLabels = usedLabels;
-            that.usedEdgeMaterialNames = [];
+            that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
             that.groups = groups;
 
-            // Compute usedEdgeMaterialNames
+            // Compute usedEdgeMaterialDisplayNames
             for (var i = 0; i < materialUsages.length; i++) {
-                if (materialUsages[i].type === 4) {     // TYPE_EDGE
-                    that.usedEdgeMaterialNames.push(materialUsages[i].name);
+                if (materialUsages[i].type === 4) {     // 4 = TYPE_EDGE
+                    that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
                 }
             }
 
@@ -213,7 +213,7 @@
                 instanceCount: instanceCount,
                 ignoredInstanceCount: ignoredInstanceCount,
                 usedLabels: usedLabels,
-                usedEdgeMaterialNames: that.usedEdgeMaterialNames,
+                usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
                 groups: groups
             }));
 
@@ -284,7 +284,7 @@
             $('#ladb_cutlist_edge_material_names_filter', that.$page)
                 .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                     autocomplete: {
-                        source: that.usedEdgeMaterialNames,
+                        source: that.usedEdgeMaterialDisplayNames,
                         delay: 100
                     },
                     showAutocompleteOnFocus: false
@@ -301,7 +301,7 @@
 
                     // Available token only
                     var available = false;
-                    $.each(that.usedEdgeMaterialNames, function (index, token) {
+                    $.each(that.usedEdgeMaterialDisplayNames, function (index, token) {
                         if (token === e.attrs.value) {
                             available = true;
                             return false;
@@ -360,7 +360,7 @@
             });
             $('a.ladb-btn-material-filter', that.$page).on('click', function () {
                 $(this).blur();
-                var materialFilter = $(this).data('material-name');
+                var materialFilter = $(this).data('material-display-name');
                 var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
                 if (indexOf > -1) {
                     that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
@@ -737,7 +737,7 @@
                     part: part,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
-                    tab: tab === undefined ? 'general' : tab
+                    tab: tab === undefined || tab.length === 0 ? 'general' : tab
                 });
 
                 var isOwnedMaterial = true;
@@ -1938,10 +1938,10 @@
         this.registerCommand('edit_part', function (parameters) {
             var partId = parameters.part_id;
             var partSerializedPath = parameters.part_serialized_path;
-            var callback = parameters.callback;
+            var tab = parameters.tab;
             setTimeout(function () {     // Use setTimer to give time tu UI to refresh
                 that.generateCutlist(function () {
-                    that.editPart(partId, partSerializedPath);
+                    that.editPart(partId, partSerializedPath, tab);
                 });
             }, 1);
         });

@@ -147,7 +147,7 @@ module Ladb::OpenCutList
       end
 
       # Sort materials by type ASC, display_name ASC
-      response[:materials].sort_by! { |v| [ v[:attributes][:type], v[:display_name] ] }
+      response[:materials].sort_by! { |v| [ MaterialAttributes.type_order(v[:attributes][:type]), v[:display_name] ] }
 
       response
     end

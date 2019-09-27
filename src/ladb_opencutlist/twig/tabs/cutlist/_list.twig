@@ -6,7 +6,7 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
-{% if usedEdgeMaterialNames is not empty or usedLabels is not empty or ignoredInstanceCount > 0 %}
+{% if usedEdgeMaterialDisplayNames is not empty or usedLabels is not empty or ignoredInstanceCount > 0 %}
 
     {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.labels_filter is empty) %}
 
@@ -22,7 +22,7 @@
         </tr>
         </thead>
         <tbody>
-        {% if usedEdgeMaterialNames is not empty %}
+        {% if usedEdgeMaterialDisplayNames is not empty %}
             <tr>
                 <td>
                     <div class="media">
@@ -122,15 +122,15 @@
         </tr>
         {% for group in groups %}
             <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row ladb-minitools-holder{% if group.id in generateOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
-                <td class="text-center">{% if group.material_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
+                <td class="text-center">{% if group.material_display_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
                         {% if group.material_type == 4 %}    {# 4 = TYPE_EDGE #}
-                            {% set filtered = group.material_name in generateFilters.edge_material_names_filter %}
-                            <a href="#ladb_group_{{ group.id }}" class="ladb-btn-material-filter" data-material-name="{{ group.material_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
+                            {% set filtered = group.material_display_name in generateFilters.edge_material_names_filter %}
+                            <a href="#ladb_group_{{ group.id }}" class="ladb-btn-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
                         {% endif %}
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
-                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                 </td>
@@ -197,8 +197,8 @@
                         {% if group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
                             <li><a href="#" class="ladb-item-edit-group"><i class="ladb-opencutlist-icon-edit"></i> {{ 'tab.cutlist.menu.edit_group_properties'|i18next }}</a></li>
                         {% endif %}
-                        {% if group.material_name is not empty %}
-                            <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</a></li>
+                        {% if group.material_display_name is not empty %}
+                            <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}</a></li>
                         {% endif %}
                         {% if group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
                             <li role="separator" class="divider"></li>
@@ -213,7 +213,7 @@
                         {% endif %}
                     </ul>
                 </div>
-                {% if group.material_name is not empty %}
+                {% if group.material_display_name is not empty %}
                     {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
                 {% endif %}
                 <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}{% if showGrain %}<span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}</div>

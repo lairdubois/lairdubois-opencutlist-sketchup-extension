@@ -487,6 +487,7 @@ module Ladb::OpenCutList
           group_def = GroupDef.new(group_id)
           group_def.material_id = material ? material.entityID : ''
           group_def.material_name = material.name
+          group_def.material_display_name = material.display_name
           group_def.material_type = MaterialAttributes::TYPE_EDGE
           group_def.material_color = material.color if material
           group_def.std_dimension = std_info[:dimension]
@@ -615,6 +616,7 @@ module Ladb::OpenCutList
         material, material_origin = _get_material(instance_info.path, smart_material)
         material_id = material ? material.entityID : ''
         material_name = material ? material.name : ''
+        material_display_name = material ? material.display_name : ''
         material_attributes = _get_material_attributes(material)
 
         if material
@@ -693,6 +695,7 @@ module Ladb::OpenCutList
           group_def = GroupDef.new(group_id)
           group_def.material_id = material_id
           group_def.material_name = material_name
+          group_def.material_display_name = material_display_name
           group_def.material_type = material_attributes.type
           group_def.material_color = material.color if material
           group_def.material_grained = material_attributes.grained
@@ -790,7 +793,7 @@ module Ladb::OpenCutList
               edge_xmax_material = edge_xmax_materials.length == 1 ? edge_xmax_materials.first : nil
 
               # Materials filter
-              if !edge_material_names_filter.empty? && !(edge_material_names_filter - [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq.map { |m| m.name }).empty?
+              if !edge_material_names_filter.empty? && !(edge_material_names_filter - [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq.map { |m| m.display_name }).empty?
                 cutlist_def.ignored_instance_count += 1
                 next
               end

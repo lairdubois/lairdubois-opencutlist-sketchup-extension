@@ -12,8 +12,11 @@ in 1.x and 0.x versions.
   * Added instances list to cutlist export sources
   * Added 'Minimize on highlight' as an option
   * Added create material from materials tab
-  * Added 'set current' material
+  * Added 'set current' material from materials tab
+  * Added 'Edit part properties' menu item
+  * Added 'Edit part axes properties' menu item
   * Export cutlist instance names
+  * Show only material display names
   
 * 1.7.1 (2016-06-30)
 

@@ -18,6 +18,7 @@
             build: options.build,
             sketchupIsPro: options.sketchup_is_pro,
             sketchupVersion: options.sketchup_version,
+            sketchupVersionNumber: options.sketchup_version_number,
             rubyVersion: options.ruby_version,
             currentOS: options.current_os,
             is64bit: options.is_64bit,
