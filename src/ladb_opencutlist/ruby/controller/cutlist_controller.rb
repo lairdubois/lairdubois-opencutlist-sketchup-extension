@@ -139,7 +139,7 @@ module Ladb::OpenCutList
       # -- Components utils --
 
       def _fetch_useful_instance_infos(entity, path, auto_orient)
-        return 0 if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
+        return 0 if entity.is_a? Sketchup::Edge   # Minor Speed improvement when there's a lot of edges
         face_count = 0
         if entity.visible? and (entity.layer.visible? or (entity.layer.equal?(@layer0) and !path.empty?))   # Layer0 hide entities only on root scene
 
@@ -178,6 +178,7 @@ module Ladb::OpenCutList
                 instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
                 instance_info.definition_bounds = bounds
 
+                # Add instance info to cache
                 @instance_infos_cache[instance_info.serialized_path] = instance_info
 
                 return 0
@@ -222,7 +223,7 @@ module Ladb::OpenCutList
 
       # -- Faces Utils --
 
-      def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = [], transformation = nil)
+      def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = Set[], transformation = nil)
         definition_or_group.entities.each { |entity|
           next if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
           if entity.visible? and (entity.layer.visible? or entity.layer.equal?(@layer0))
@@ -235,11 +236,11 @@ module Ladb::OpenCutList
               elsif transformed_normal.parallel?(Z_AXIS)
                 z_face_infos.push(FaceInfo.new(entity, transformation))
               end
-              layers = (layers + [ entity.layer ]).uniq
+              layers = layers + Set[ entity.layer ]
             elsif entity.is_a? Sketchup::Group
-              _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, (layers + [entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
             elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
-              _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, (layers + [entity.layer ]).uniq, transformation ? transformation * entity.transformation : entity.transformation)
+              _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
             end
           end
         }
@@ -332,25 +333,25 @@ module Ladb::OpenCutList
 
       # -- Std utils --
 
-      def _find_std_thickness(thickness, std_thicknesses, nearest_highest)
-        std_thicknesses.each { |std_thickness|
-          if thickness <= std_thickness
+      def _find_std_value(value, std_values, nearest_highest)
+        std_values.each { |std_value|
+          if value <= std_value
             if nearest_highest
               return {
                   :available => true,
-                  :value => std_thickness
+                  :value => std_value
               }
             else
               return {
-                  :available => thickness == std_thickness,
-                  :value => thickness
+                  :available => value == std_value,
+                  :value => value
               }
             end
           end
         }
         {
             :available => false,
-            :value => thickness
+            :value => value
         }
       end
 
@@ -467,7 +468,7 @@ module Ladb::OpenCutList
 
         material_attributes = _get_material_attributes(material)
 
-        std_width_info = _find_std_thickness(
+        std_width_info = _find_std_value(
             part_def.size.thickness,
             _get_material_attributes(material).l_std_widths,
             true
@@ -626,7 +627,7 @@ module Ladb::OpenCutList
             material_usage.use_count += 1
           end
 
-          # Materials filter -> exclude all non sheet good parts
+          # Edge materials filter -> exclude all non sheet good parts
           if !edge_material_names_filter.empty? and material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist_def.ignored_instance_count += 1
             next
@@ -639,7 +640,7 @@ module Ladb::OpenCutList
         size = instance_info.size
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
-            std_thickness_info = _find_std_thickness(
+            std_thickness_info = _find_std_value(
                 (size.thickness + material_attributes.l_thickness_increase).to_l,
                 material_attributes.l_std_thicknesses,
                 material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
@@ -754,7 +755,7 @@ module Ladb::OpenCutList
           part_def.labels = definition_attributes.labels
           part_def.auto_oriented = size.auto_oriented
 
-          # Compute axes alignment, real area and edges
+          # Compute axes alignment, final area and edges
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD

@@ -233,7 +233,7 @@
                 <td class="text-center" colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
             {% endif %}
             {% if showBoxDimensions %}
-                <td class="text-center" colspan="{{ hideWidth ? (hideThickness ? '1' : '2') : '3' }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                <td class="text-center" colspan="{{ 3 - (hideWidth ? 1 : 0) - (hideThickness ? 1 : 0) }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
             {% endif %}
             {% if showFinalAreas %}
                 <td class="text-center" width="10%">{{ ('tab.cutlist.list.final')|i18next }}</td>
