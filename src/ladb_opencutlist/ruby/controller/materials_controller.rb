@@ -245,9 +245,6 @@ module Ladb::OpenCutList
 
           material.color = color
 
-          # In this case the event will be triggered by SU itself
-          trigger_change_event = false
-
         end
 
         # Update texture

@@ -990,6 +990,7 @@ module Ladb::OpenCutList
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
+                folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
                 (folder_part_def.labels == part_def.labels || hide_labels) &&
                 ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or hide_final_areas) &&      # final_area workaround for rounding error
