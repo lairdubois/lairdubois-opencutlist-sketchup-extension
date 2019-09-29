@@ -38,8 +38,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Editer les propriétés de la pièce
-      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
+      edit_part_properties: Edit the part's properties
+      edit_part_axes_properties: Edit the axes properties of the part
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -77,7 +77,7 @@ tab:
     highlight_part: Highlight the part in the model
     highlight_parts: Highlight the parts in the model
     edit_part_properties: Edit part properties
-    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+    edit_part_axes_properties: Edit the axes properties of the part
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
@@ -436,9 +436,9 @@ tab:
     new_material:
       title: Create a new material
       name: Name
-      name_warning: Nom invalide
+      name_warning: Invalid name
       color: Color
-      color_warning: Couleur invalide
+      color_warning: Invalid color
       type: Type
     edit_material:
       title: Properties of Material '{{ name }}'
