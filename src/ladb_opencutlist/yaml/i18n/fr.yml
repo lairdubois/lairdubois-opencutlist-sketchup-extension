@@ -573,7 +573,7 @@ tab:
       invalid_name: Pas de désignation valide
       invalid_length: Pas de longueur valide
       invalid_width: Pas de largeur valide
-      invalid_thickness: Pas de d'épaisseur valide
+      invalid_thickness: Pas d'épaisseur valide
       failed_to_import: L'importation a échouée.
     warning:
       invalid_count: Pas de quantité valide

@@ -5,20 +5,20 @@ default:
   cancel: Abbrechen
   validate: Bestätigen
   open: Öffnen
-  see: Voir
+  see: Sehen
   close: Schliessen
   clear: Löschen
   empty_filename: ohne Titel.skp
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
-  export: Export
-  import: Importer
-  load: Charger
+  export: Exportieren
+  import: Importieren
+  load: Laden
   options: Einstellungen
   caution: Vorsicht
   remove: Löschen
-  create: Créer
+  create: Anlegen
   help: Hilfe
   error: Verflixt!
   warning: Achtung
@@ -33,13 +33,13 @@ default:
   unit_4: Meter
   part_single: Teil
   part_plural: Teile
-  setup_model_units: Configurer l'unité du modèle
+  setup_model_units: Die Einheit des Modells konfigurieren
 core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Editer les propriétés de la pièce
-      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
+      edit_part_properties: Eigenschaften des Teils editieren
+      edit_part_axes_properties: Eigenschaften der Achsen des Teils editieren
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -71,13 +71,13 @@ tab:
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
     material_undefined: Material nicht definiert
-    not_available_width: Largeur non disponible
+    not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften bearbeiten
-    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+    edit_part_axes_properties: Eigenschaften der Achsen des Teils editieren
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -101,23 +101,23 @@ tab:
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
-      add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
-      remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
+      add_edge_material_name_filter: Nach '{{ material_name }}' auslesen
+      remove_edge_material_name_filter: Auslese nach '{{ material_name }}' aufheben
       not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht richtig nach den Hauptachsen ausgerichtet
       multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen erscheinen:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
-      is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient {{ count }} chant plaqué
-      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
-      edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
-      part_axes: Axes internes de la pièce
+      is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
+      has_edges: Dieses Teil enthält {{ count }} Kantenband
+      has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
+      edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
+      edge_ymax: Kantenband Länge 1
+      edge_ymin: Kantenband Länge 2
+      edge_xmin: Kantenband Breite 1
+      edge_xmax: Kantenband Breite 2
+      part_axes: Interne Achse des Teils
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -134,7 +134,7 @@ tab:
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       general: Allgemein
-      edges: Chants
+      edges: Kantenbänder
       infos: Infos
       warnings: Warnungen
       name: Bezeichnung
@@ -172,9 +172,9 @@ tab:
       axes_origin_position_min: Koordinatenursprung in einer Ecke
       axes_origin_position_center: Koordinatenursprung im Zentrum
       axes_origin_position_min_center: Koordinatenursprung in der Mitte einer Seite
-      over_length: Sur la longueur
-      over_width: Sur la largeur
-      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      over_length: Der Länge nach
+      over_width: Der Breite nach
+      edge_disabled_help: Dieses Kantenband kann nicht konfiguriert werden, weil keine Fläche auf dieser Seite des Teils gefunden wurde, die ein Kantenband tragen könnte.
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -215,10 +215,10 @@ tab:
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
-      hide_edges: Masquer les colonnes de chants
-      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
-      minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
+      hide_edges: Spalten der Kantenbänder ausblenden
+      hide_edges_help: Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt.
+      minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: Ist diese Option aktiv, wird das OpenCutList Fenster nach der Funktion *'$t(tab.cutlist.highlight_part)'* minimiert.
       general: Allgemein
       part_order_strategy: Sortierfolge der Teile
       part_order_strategy_help: |
@@ -232,7 +232,7 @@ tab:
       property_width: Breite
       property_name: Bezeichnung
       property_count: Anzahl
-      property_edge_pattern: Nombre de chant
+      property_edge_pattern: Anzahl Kantenbänder
       reset: Einstellungen zurücksetzen
     list:
       filters: Filter
@@ -241,7 +241,7 @@ tab:
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
       edge_material_names_filter: Matières de chant à filtrer
       labels_filter: Filteretiketten
-      dimensions_help: Erklärung der Dimensionen...
+      dimensions_help: Erklärung zu den Dimensionen...
       summary: Übersicht
       material_type: Typ
       material_thickness: Material / Dicke
@@ -263,7 +263,7 @@ tab:
       width_short: B
       thickness: Dicke
       thickness_short: D
-      edges: Chants
+      edges: Kantenbänder
     export:
       title: CSV Format exportieren
       info: |
@@ -303,10 +303,10 @@ tab:
       material_name: Material
       entity_names: Instanzbezeichnungen
       labels: Etiketten
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
+      edge_ymax: Kantenband Länge 1
+      edge_ymin: Kantenband Länge 2
+      edge_xmin: Kantenband Breite 1
+      edge_xmax: Kantenband Breite 2
     cuttingdiagram:
       title: Schnittplan
       option_saw_kerf: Sägeblattdicke
@@ -384,7 +384,7 @@ tab:
         cutting_dimensions_increase: |
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
-          *Dimensions réduite de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+          *Masse reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -394,8 +394,8 @@ tab:
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
-      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz** oder **Platte** oder **Stangenware**).
+      no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**).
+      no_typed_materials_in_selection: Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**).
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: Export in Datei {{ export_path }} erfolgreich.
@@ -409,12 +409,12 @@ tab:
   materials:
     label: Materialien
     title: Materialien
-    new: Nouvelle matière
+    new: Neues Material
     type_0: Unbekannt
     type_1: Massivholz
     type_2: Platte
     type_3: Stangenware
-    type_4: Bande de chant
+    type_4: Kantenband
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
@@ -423,23 +423,23 @@ tab:
       type_4: Materialtyp '$t(tab.materials.type_4)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Direction du fil
+      grain_direction: Faserrichtung
       colorized: Diese Farbschattierung wird bei der Wiedergabe im Modell auf die Textur des Material angewendet
       texture_colorized: Farbschattierung definitiv auf die Textur anwenden
-      edit: Editer les propriétes de la matière
+      edit: Eigenschaften des Materials editieren
       set_current: |
-        Sélectionner '{{ name }}'
-        *Double-clic pour utiliser*
+        Auswählen '{{ name }}'
+        *Doppel-click zum Verwenden*
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen
     new_material:
-      title: Créer une nouvelle matière
-      name: Nom
-      name_warning: Nom invalide
-      color: Couleur
-      color_warning: Couleur invalide
-      type: Type
+      title: Ein neues Material anlegen
+      name: Name
+      name_warning: Ungültiger Name
+      color: Farbe
+      color_warning: Ungültige Farbe
+      type: Typ
     edit_material:
       title: Eigenschaften des Materials '{{ name }}'
       general: Allgemein
@@ -447,15 +447,15 @@ tab:
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
-      thickness: Epaisseur
+      thickness: Dicke
       length_increase: Längenzumass
       width_increase: Breitenzumass
       thickness_increase: Dickenzumass
-      std_widths: Largeurs standards
-      std_widths_placeholder: largeur ; ...
+      std_widths: Standardbreiten
+      std_widths_placeholder: Breite ; ...
       std_widths_help: |
-        Largeurs standards des bandes.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+        Standardbreiten der Kantenbänder.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_thicknesses: Verfügbare Dicken
       std_thicknesses_placeholder: Dicke ; ...
       std_thicknesses_help: |
@@ -473,12 +473,12 @@ tab:
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       grained: Faserrichtung
       grained_help: Faserrichtung der Platte.
-      grained_0: keine Faserrichtung
+      grained_0: Keine Faserrichtung
       grained_1: Faser in Längsrichtung
-      edge_decremented: Reduction
-      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
-      edge_decremented_0: Pas de réduction
-      edge_decremented_1: Réduire le débit de l'épaisseur du chant
+      edge_decremented: Verringern
+      edge_decremented_help: Zeigt an ob die Masse der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden muss.
+      edge_decremented_0: Keine Verringerung
+      edge_decremented_1: Verringerung um Stärke des Kantenbands
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern
@@ -507,82 +507,82 @@ tab:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
   importer:
-    label: Importer
-    title: Importer des pièces
+    label: Importieren
+    title: Teile importieren
     help: |
-      Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
-      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: Ouvrir un fichier CSV
-    import_to_model: Importer dans le modèle
+      An dieser Stelle können Sie (rechteckige Volumen) Teile aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in ihr Modell importieren.
+      Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *Sketchup* generieren.
+      Clicken Sie auf **Öffnen einer CSV Datei** zum Starten.
+    open_csv: Öffnen einer CSV Datei
+    import_to_model: Ins Modell importieren
     load:
-      title: Chargement d'un fichier CSV
+      title: Laden einer CSV Datei
       info: |
-        Choisissez les options nécessaires à la bonne lecture du fichier **{{ filename }}**.
+        Wählen Sie die notwendigen Optionen zum Lesen von **{{ filename }}**.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans le modèle est : **{{ unit }}**.
-        Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: Options de chargement
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_first_line_headers: Première ligne
-      option_first_line_headers_0: Données
-      option_first_line_headers_1: Titres de colonne
+        <i class="ladb-opencutlist-icon-warning"></i> *Die Einheit des Modells ist : **{{ unit }}**.
+        Diese Einheit wird für die Masse verwendet, wo keine Einheiten stehen*.
+      options: Optionen zum Laden
+      option_col_sep: Trennzeichen
+      option_col_sep_tab: Tabulartor
+      option_col_sep_comma: Komma
+      option_col_sep_semicolon: Semikolon
+      option_first_line_headers: Erste Zeile
+      option_first_line_headers_0: Daten
+      option_first_line_headers_1: Spaltentitel
     import:
-      title: Importation des pièces dans le modèle
+      title: Importieren der Teile ins Modell
       info_0: |
-        Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
-        Cette pièce va être placée sur la scène principale, à l'origine.
+        Sie sind dabei **{{ count }} Teil** ins Modell zu importieren.
+        Dieses Teil wird im Ursprung der Hauptszene platziert.
       info_0_plural: |
-        Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
-        Ces pièces vont être empilées sur la scène principale depuis l'origine.
-      info_1: Cliquez sur **Importer** pour confirmer l'action.
+        Sie sind dabei **{{ count }} Teile** ins Modell zu importieren.
+        Diese Teile werden im Ursprung der Hauptszene platziert.
+      info_1: Clicken Sie auf **Importieren** um den Vorgang zu bestätigen.
       options: |
-        Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
-        Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all_?: Que faire ?
-      option_remove_all_false: Ajouter les pièces à l'existant
-      option_remove_all_true: Effacer tout !
-      option_keep_definitions_settings: Conserver les paramètres sur les définitions
-      option_keep_materials_settings: Conserver les paramètres sur les matières
+        Das Modell enthält schon *Teile*, *Definitionen* oder *Materialien*.
+        Wählen Sie aus den Ladeoptionen.
+      option_remove_all_?: Was tun?
+      option_remove_all_false: Die Teile hinzufügen
+      option_remove_all_true: Alles löschen!
+      option_keep_definitions_settings: Definitionen beibehalten
+      option_keep_materials_settings: Materialien beibehalten
     column:
-      unused: Non utilisé
-      mandatory: Champs obligatoires
-      optional: Champs facultatifs
-      name: Désignation
-      count: Quantité
-      bbox_length: Longueur capable
-      bbox_width: Largeur capable
-      bbox_thickness: Epaisseur capable
-      material: Matière
-      labels: Etiquettes
+      unused: Nicht Verwendet
+      mandatory: Pflichtspalten
+      optional: Optionale Spalten
+      name: Bezeichnung
+      count: Menge
+      bbox_length: Länge
+      bbox_width: Breite
+      bbox_thickness: Dicke
+      material: Material
+      labels: Etiketten
     tooltip:
-      errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-      warnings: Cette pièce sera importée mais elle contient les avertissements suivants
+      errors: Dieses Teil wird nicht importiert, weil es folgende Fehler enthält
+      warnings: DieseS Teil wird importiert, aber es enthält folgende Fehler
     error:
-      no_model: Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: "Fichier introuvable : **{{ filename }}**"
-      bad_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
+      no_model: Kein Modell ist offen. Man kann Teil nicht ins Nichts importieren;)
+      file_not_found: "Datei nicht gefunden: **{{ filename }}**"
+      bad_extension: Die Datei *{{ filename }}* hat nicht eine **.CSV** oder **.TSV** Endung.
       failed_to_load_csv_file: |
-        Impossible de charger le fichier CSV : **{{ error }}**
-        *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: Pas de désignation valide
-      invalid_length: Pas de longueur valide
-      invalid_width: Pas de largeur valide
-      invalid_thickness: Pas de d'épaisseur valide
-      failed_to_import: L'importation a échouée.
+        CSV Datei kann nicht geladen werden : **{{ error }}**
+        *Stellen Sie sicher, dass Sie das korrekte Trennzeichen gewählt haben.*
+      empty_file: Die Datei scheint leer zu sein oder konnte nicht richtige gelesen werden.
+      no_importable_part: Kein Teil konnte importiert werden. Achten Sie auf die richtige Zuweisung der Felder zu den obligatorischen Spalten.
+      invalid_name: Ungültige Bezeichnung
+      invalid_length: Ungültige Länge
+      invalid_width: Ungültige Breite
+      invalid_thickness: Ungültige Dicke
+      failed_to_import: Das Importieren ist fehlgeschlagen.
     warning:
-      invalid_count: Pas de quantité valide
-      invalid_material: Pas de matière valide
+      invalid_count: Ungültige Menge
+      invalid_material: Ungültiges Material
     success:
-      imported_title: Importation terminée
-      imported_body: "{{ count }} pièce importée avec succes !"
-      imported_body_plural: "{{ count }} pièces importées avec succes !"
-    outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
+      imported_title: Importieren abgeschlossen
+      imported_body: "{{ count }} Teil erfolgreich importiert!"
+      imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
+    outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
   about:
     label: Über
     title: Über
