@@ -22,7 +22,7 @@
         </tr>
         </thead>
         <tbody>
-        {% if usedEdgeMaterialDisplayNames is not empty %}
+        {% if usedEdgeMaterialDisplayNames is not empty or generateFilters.edge_material_names_filter is not empty %}
             <tr>
                 <td>
                     <div class="media">
@@ -48,7 +48,7 @@
                 </td>
             </tr>
         {% endif %}
-        {% if usedLabels is not empty %}
+        {% if usedLabels is not empty or generateFilters.labels_filter is not empty %}
             <tr>
                 <td>
                     <div class="media">
@@ -155,8 +155,8 @@
     {% set showGrain = group.material_type == 1 or group.material_type == 2 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
     {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions or group.material_type == 4 %}    {# 4 = TYPE_EDGE #}
     {% set showBoxDimensions = (group.material_type > 0 and group.material_type != 4 or group.material_type == 0 and not generateOptions.hide_untyped_material_dimensions) and not generateOptions.hide_bbox_dimensions %}    {# 4 = TYPE_EDGE #}
-    {% set hideWidth = group.material_type == 3 %}    {# 3 = TYPE_BAR #}
-    {% set hideThickness = group.material_type == 2 or group.material_type == 3 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+    {% set hideWidth = group.material_type == 3 or group.material_type == 4  %}    {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+    {% set hideThickness = group.material_type == 2 or group.material_type == 3 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
     {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
     {% set colspan = 13 %}

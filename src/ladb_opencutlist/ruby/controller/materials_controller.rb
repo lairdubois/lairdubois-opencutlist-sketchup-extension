@@ -58,7 +58,7 @@ module Ladb::OpenCutList
     def list_command()
 
       model = Sketchup.active_model
-      materials = model ? model.materials : []
+      materials = model ? model.materials : nil
 
       temp_dir = Plugin.instance.temp_dir
       material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
@@ -71,71 +71,73 @@ module Ladb::OpenCutList
           :errors => [],
           :warnings => [],
           :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
-          :solidwood_material_count => 0,
-          :sheetgood_material_count => 0,
-          :bar_material_count => 0,
+          :solid_wood_material_count => 0,
+          :sheet_good_material_count => 0,
+          :dimensional_material_count => 0,
           :edge_material_count => 0,
           :untyped_material_count => 0,
           :materials => [],
           :current_material_name => materials && materials.current ? materials.current.name : nil
       }
 
-      materials.each { |material|
+      if materials
+        materials.each { |material|
 
-        thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
-        size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
-        material.write_thumbnail(thumbnail_file, size)
+          thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
+          size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
+          material.write_thumbnail(thumbnail_file, size)
 
-        material_attributes = MaterialAttributes.new(material)
+          material_attributes = MaterialAttributes.new(material)
 
-        response[:materials].push(
-            {
-                :id => material.entityID,
-                :name => material.name,
-                :display_name => material.display_name,
-                :thumbnail_file => thumbnail_file,
-                :color => ("#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue]),
-                :alpha => material.alpha,
-                :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-                :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-                :texture_rotation => 0,
-                :texture_file => nil,
-                :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,
-                :texture_height => material.texture.nil? ? nil : material.texture.height.to_l.to_s,
-                :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
-                :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
-                :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
-                :texture_colorizable => Sketchup.version_number >= 16000000,
-                :texture_colorized => Sketchup.version_number < 16000000,
-                :attributes => {
-                    :type => material_attributes.type,
-                    :thickness => material_attributes.thickness,
-                    :length_increase => material_attributes.length_increase,
-                    :width_increase => material_attributes.width_increase,
-                    :thickness_increase => material_attributes.thickness_increase,
-                    :std_widths => material_attributes.std_widths,
-                    :std_thicknesses => material_attributes.std_thicknesses,
-                    :std_sections => material_attributes.std_sections,
-                    :std_sizes => material_attributes.std_sizes,
-                    :grained => material_attributes.grained,
-                    :edge_decremented => material_attributes.edge_decremented,
-                }
-            }
-        )
+          response[:materials].push(
+              {
+                  :id => material.entityID,
+                  :name => material.name,
+                  :display_name => material.display_name,
+                  :thumbnail_file => thumbnail_file,
+                  :color => ("#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue]),
+                  :alpha => material.alpha,
+                  :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+                  :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+                  :texture_rotation => 0,
+                  :texture_file => nil,
+                  :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,
+                  :texture_height => material.texture.nil? ? nil : material.texture.height.to_l.to_s,
+                  :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
+                  :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
+                  :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
+                  :texture_colorizable => Sketchup.version_number >= 16000000,
+                  :texture_colorized => Sketchup.version_number < 16000000,
+                  :attributes => {
+                      :type => material_attributes.type,
+                      :thickness => material_attributes.thickness,
+                      :length_increase => material_attributes.length_increase,
+                      :width_increase => material_attributes.width_increase,
+                      :thickness_increase => material_attributes.thickness_increase,
+                      :std_widths => material_attributes.std_widths,
+                      :std_thicknesses => material_attributes.std_thicknesses,
+                      :std_sections => material_attributes.std_sections,
+                      :std_sizes => material_attributes.std_sizes,
+                      :grained => material_attributes.grained,
+                      :edge_decremented => material_attributes.edge_decremented,
+                  }
+              }
+          )
 
-        case material_attributes.type
-          when MaterialAttributes::TYPE_SOLID_WOOD
-            response[:solidwood_material_count] += 1
-          when MaterialAttributes::TYPE_SHEET_GOOD
-            response[:sheetgood_material_count] += 1
-          when MaterialAttributes::TYPE_BAR
-            response[:bar_material_count] += 1
-          when MaterialAttributes::TYPE_EDGE
-            response[:edge_material_count] += 1
-          else
-            response[:untyped_material_count] += 1
-        end
-      }
+          case material_attributes.type
+            when MaterialAttributes::TYPE_SOLID_WOOD
+              response[:solid_wood_material_count] += 1
+            when MaterialAttributes::TYPE_SHEET_GOOD
+              response[:sheet_good_material_count] += 1
+            when MaterialAttributes::TYPE_DIMENSIONAL
+              response[:dimensional_material_count] += 1
+            when MaterialAttributes::TYPE_EDGE
+              response[:edge_material_count] += 1
+            else
+              response[:untyped_material_count] += 1
+          end
+        }
+      end
 
       # Errors
       if model
@@ -158,7 +160,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       name = material_data['name']
-      color = material_data['color']
+      color = Sketchup::Color.new(material_data['color'])
       attributes = material_data['attributes']
       type = MaterialAttributes.valid_type(attributes['type'])
       thickness = attributes['thickness']
@@ -174,7 +176,7 @@ module Ladb::OpenCutList
 
       materials = model.materials
       material = materials.add(name)
-      material.color = Sketchup::Color.new(color)
+      material.color = color
 
       # Set attributes
       material_attributes = MaterialAttributes.new(material)
@@ -444,6 +446,7 @@ module Ladb::OpenCutList
         response[:std_section] = material_attributes.std_sections
         response[:std_sizes] = material_attributes.std_sizes
         response[:grained] = material_attributes.grained
+        response[:edge_decremented] = material_attributes.edge_decremented
 
       end
 
@@ -536,7 +539,7 @@ module Ladb::OpenCutList
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
             material_attributes.append_std_thickness(std_dimension)
-          when MaterialAttributes::TYPE_BAR
+          when MaterialAttributes::TYPE_DIMENSIONAL
             material_attributes.append_std_section(std_dimension)
           else
             return { :errors => [ 'tab.materials.error.no_type_material' ] }

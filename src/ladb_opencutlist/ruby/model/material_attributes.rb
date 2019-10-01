@@ -10,7 +10,7 @@
     TYPE_UNKNOW = 0
     TYPE_SOLID_WOOD = 1
     TYPE_SHEET_GOOD = 2
-    TYPE_BAR = 3
+    TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
 
     DEFAULTS = {
@@ -50,7 +50,7 @@
             :grained => false,
             :edge_decremented => false,
         },
-        TYPE_BAR => {
+        TYPE_DIMENSIONAL => {
             :thickness => '0',
             :length_increase => '50mm',
             :width_increase => '0',
@@ -110,7 +110,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOW or i_type > TYPE_BAR
+        if i_type < TYPE_UNKNOW or i_type > TYPE_DIMENSIONAL
           TYPE_UNKNOW
         end
         i_type
@@ -125,7 +125,7 @@
           1
         when TYPE_SHEET_GOOD
           2
-        when TYPE_BAR
+        when TYPE_DIMENSIONAL
           3
         when TYPE_EDGE
           4
@@ -151,7 +151,7 @@
 
     def length_increase
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_BAR, TYPE_EDGE
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
           @length_increase
         else
           get_default(:length_increase)
@@ -230,7 +230,7 @@
 
     def std_sections
       case @type
-        when TYPE_BAR
+        when TYPE_DIMENSIONAL
           @std_sections
         else
           get_default(:std_sections)

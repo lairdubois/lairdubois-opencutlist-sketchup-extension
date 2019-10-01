@@ -172,7 +172,7 @@
 
             // Compute usedEdgeMaterialDisplayNames
             for (var i = 0; i < materialUsages.length; i++) {
-                if (materialUsages[i].type === 4) {     // 4 = TYPE_EDGE
+                if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
                     that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
                 }
             }

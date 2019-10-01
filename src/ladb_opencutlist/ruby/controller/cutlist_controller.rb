@@ -657,7 +657,7 @@ module Ladb::OpenCutList
                     std_thickness_info[:value]
                 )
             }
-          when MaterialAttributes::TYPE_BAR
+          when MaterialAttributes::TYPE_DIMENSIONAL
             std_section_info = _find_std_section(
                 size.width,
                 size.thickness,
@@ -788,16 +788,25 @@ module Ladb::OpenCutList
               edge_xmin_materials = _grab_face_edge_materials(xmin_face_infos)
               edge_xmax_materials = _grab_face_edge_materials(xmax_face_infos)
 
-              edge_ymin_material = edge_ymin_materials.length == 1 ? edge_ymin_materials.first : nil
-              edge_ymax_material = edge_ymax_materials.length == 1 ? edge_ymax_materials.first : nil
-              edge_xmin_material = edge_xmin_materials.length == 1 ? edge_xmin_materials.first : nil
-              edge_xmax_material = edge_xmax_materials.length == 1 ? edge_xmax_materials.first : nil
+              edge_ymin_material = edge_ymin_materials.empty? ? nil : edge_ymin_materials.first
+              edge_ymax_material = edge_ymax_materials.empty? ? nil : edge_ymax_materials.first
+              edge_xmin_material = edge_xmin_materials.empty? ? nil : edge_xmin_materials.first
+              edge_xmax_material = edge_xmax_materials.empty? ? nil : edge_xmax_materials.first
+              edge_materials = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq
 
               # Materials filter
-              if !edge_material_names_filter.empty? && !(edge_material_names_filter - [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq.map { |m| m.display_name }).empty?
+              if !edge_material_names_filter.empty? && !(edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
                 cutlist_def.ignored_instance_count += 1
                 next
               end
+
+              # Increment material usage
+              edge_materials.each { |edge_material|
+                material_usage = cutlist_def.get_material_usage(edge_material.name)
+                if material_usage
+                  material_usage.use_count += 1
+                end
+              }
 
               # Grab material attributes
               edge_ymin_material_attributes = _get_material_attributes(edge_ymin_material)
@@ -836,7 +845,7 @@ module Ladb::OpenCutList
               group_def.show_cutting_dimensions ||= length_decrement > 0 || width_decrement > 0
               group_def.edge_decremented ||= length_decrement > 0 || width_decrement > 0
 
-            when MaterialAttributes::TYPE_BAR
+            when MaterialAttributes::TYPE_DIMENSIONAL
 
               x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
@@ -885,7 +894,7 @@ module Ladb::OpenCutList
         part_def.add_entity_name(entity.name)
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
-          if group_def.material_type == MaterialAttributes::TYPE_BAR
+          if group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -929,19 +938,22 @@ module Ladb::OpenCutList
         if use_selection
           cutlist_def.add_warning("tab.cutlist.warning.partial_cutlist")
         end
-        hardwood_material_count = 0
-        plywood_material_count = 0
+        solid_wood_material_count = 0
+        sheet_good_material_count = 0
         bar_material_count = 0
+        edge_material_count = 0
         cutlist_def.material_usages.each { |key, material_usage|
           if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
-            hardwood_material_count += material_usage.use_count
+            solid_wood_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
-            plywood_material_count += material_usage.use_count
-          elsif material_usage.type == MaterialAttributes::TYPE_BAR
+            sheet_good_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_DIMENSIONAL
             bar_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_EDGE
+            edge_material_count += material_usage.use_count
           end
         }
-        if cutlist_def.instance_count - cutlist_def.ignored_instance_count > 0 and hardwood_material_count == 0 and plywood_material_count == 0 and bar_material_count == 0
+        if cutlist_def.instance_count - cutlist_def.ignored_instance_count > 0 and solid_wood_material_count == 0 and sheet_good_material_count == 0 and bar_material_count == 0
           cutlist_def.add_warning("tab.cutlist.warning.no_typed_materials_in_#{use_selection ? "selection" : "model"}")
           cutlist_def.add_tip("tab.cutlist.tip.no_typed_materials")
         end

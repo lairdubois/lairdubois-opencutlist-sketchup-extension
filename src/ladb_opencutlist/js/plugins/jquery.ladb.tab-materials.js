@@ -660,7 +660,7 @@
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.hide();
                     break;
-                case 3:   // TYPE_BAR
+                case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('section').show();
                     $inputLengthIncrease.closest('.form-group').show();
@@ -746,7 +746,7 @@
                     defaultGrained = false;
                     defaultEdgeDecremented = false;
                     break;
-                case 3:   // TYPE_BAR
+                case 3:   // TYPE_DIMENSIONAL
                     defaultThickness = '0';
                     defaultLengthIncrease = '50mm';
                     defaultWidthIncrease = '0';
@@ -979,7 +979,7 @@
 
         // Load settings
         var settingsKeys = [];
-        for (var type = 0; type <= 3; type++) {     // 3 = TYPE_BAR
+        for (var type = 0; type <= 3; type++) {     // 3 = TYPE_DIMENSIONAL
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
