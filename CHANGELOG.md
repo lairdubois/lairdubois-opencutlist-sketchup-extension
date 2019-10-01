@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.8.0
+* 1.8.0 (2019-10-01)
 
   * Added edge band material type and management
   * Added new tab to import parts
@@ -18,7 +18,7 @@ in 1.x and 0.x versions.
   * Export cutlist instance names
   * Show only material display names
   
-* 1.7.1 (2016-06-30)
+* 1.7.1 (2019-06-30)
 
   * Added missing translations
   * Added material tint capabilities
