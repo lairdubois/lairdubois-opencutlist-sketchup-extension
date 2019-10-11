@@ -117,7 +117,7 @@ tab:
       edge_ymin: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer la valeur aux autres chants
+      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
       part_axes: Internal axes of the part
     menu:
       show_all_groups: Show all groups

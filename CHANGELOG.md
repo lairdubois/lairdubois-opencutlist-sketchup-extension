@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.8.1
+
+  * Added edge 'copy to all' shortcut
+
 * 1.8.0 (2019-10-01)
 
   * Added edge band material type and management

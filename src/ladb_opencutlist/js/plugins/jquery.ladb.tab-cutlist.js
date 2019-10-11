@@ -843,6 +843,7 @@
                     if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
                         $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
                     }
+                    fnUpdateEdgesPreview();
                 };
 
                 // Bind select
