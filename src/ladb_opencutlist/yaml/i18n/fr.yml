@@ -117,6 +117,7 @@ tab:
       edge_ymin: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer la valeur aux autres chants
       part_axes: Axes internes de la pièce
     menu:
       show_all_groups: Afficher tous les groupes

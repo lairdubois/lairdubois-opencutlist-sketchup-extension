@@ -758,14 +758,18 @@
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-                var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
+                var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
                 var $rectEdgeYmax = $('svg .edge-ymax', $modal);
                 var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeXmin = $('svg .edge-xmin', $modal);
                 var $rectEdgeXmax = $('svg .edge-xmax', $modal);
+                var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
+                var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
+                var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
+                var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -824,6 +828,21 @@
                         return true;
                     }
                     return false;
+                };
+
+                var fnMaterialNameCopyToAllEdges = function(materialName) {
+                    if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
+                        $selectEdgeYmaxMaterialName.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeYminMaterialName.prop( "disabled")) {
+                        $selectEdgeYminMaterialName.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeXminMaterialName.prop( "disabled")) {
+                        $selectEdgeXminMaterialName.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
+                        $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
+                    }
                 };
 
                 // Bind select
@@ -898,8 +917,22 @@
                     }
                 });
 
-                // Bin checkbox
+                // Bind checkbox
                 $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
+
+                // Bind labels
+                $labelEdgeYmax.on('dblclick', function() {
+                    fnMaterialNameCopyToAllEdges($selectEdgeYmaxMaterialName.val());
+                });
+                $labelEdgeYmin.on('dblclick', function() {
+                    fnMaterialNameCopyToAllEdges($selectEdgeYminMaterialName.val());
+                });
+                $labelEdgeXmin.on('dblclick', function() {
+                    fnMaterialNameCopyToAllEdges($selectEdgeXminMaterialName.val());
+                });
+                $labelEdgeXmax.on('dblclick', function() {
+                    fnMaterialNameCopyToAllEdges($selectEdgeXmaxMaterialName.val());
+                });
 
                 // Bind buttons
                 $btnHighlight.on('click', function () {
