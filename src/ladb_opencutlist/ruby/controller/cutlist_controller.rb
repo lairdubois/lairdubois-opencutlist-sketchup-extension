@@ -80,8 +80,8 @@ module Ladb::OpenCutList
         part_get_thumbnail_command(part_data)
       end
 
-      Plugin.instance.register_command("cutlist_part_update") do |part_data|
-        part_update_command(part_data)
+      Plugin.instance.register_command("cutlist_part_update") do |settings|
+        part_update_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_group_update") do |group_data|
@@ -1572,7 +1572,7 @@ module Ladb::OpenCutList
       response
     end
 
-    def part_update_command(part_data)
+    def part_update_command(settings)
 
       def _apply_material(material_name, entity_ids, model)
         unless entity_ids.nil?
@@ -1598,108 +1598,113 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Extract parameters
-      id = part_data['id']
-      definition_id = part_data['definition_id']
-      name = part_data['name']
-      is_dynamic_attributes_name = part_data['is_dynamic_attributes_name']
-      material_name = part_data['material_name']
-      cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
-      orientation_locked_on_axis = part_data['orientation_locked_on_axis']
-      labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
-      axes_order = part_data['axes_order']
-      axes_origin_position = part_data['axes_origin_position']
-      edge_material_names = part_data['edge_material_names']
-      edge_entity_ids = part_data['edge_entity_ids']
-      entity_ids = part_data['entity_ids']
+      parts_data = settings['parts_data']
 
       definitions = model.definitions
-      definition = definitions[definition_id]
+      parts_data.each { |part_data|
 
-      if definition
+        definition_id = part_data['definition_id']
+        name = part_data['name']
+        is_dynamic_attributes_name = part_data['is_dynamic_attributes_name']
+        material_name = part_data['material_name']
+        cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
+        orientation_locked_on_axis = part_data['orientation_locked_on_axis']
+        labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
+        axes_order = part_data['axes_order']
+        axes_origin_position = part_data['axes_origin_position']
+        edge_material_names = part_data['edge_material_names']
+        edge_entity_ids = part_data['edge_entity_ids']
+        entity_ids = part_data['entity_ids']
 
-        # Update definition's name
-        if definition.name != name and !is_dynamic_attributes_name
-          definition.name = name
-        end
+        definition = definitions[definition_id]
 
-        # Update definition's attributes
-        definition_attributes = DefinitionAttributes.new(definition)
-        if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis or labels != definition_attributes.labels
-          definition_attributes.cumulable = cumulable
-          definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
-          definition_attributes.labels = labels
-          definition_attributes.write_to_attributes
-        end
+        if definition
 
-        # Update materials
-        _apply_material(material_name, entity_ids, model)
-        _apply_material(edge_material_names['ymin'], edge_entity_ids['ymin'], model)
-        _apply_material(edge_material_names['ymax'], edge_entity_ids['ymax'], model)
-        _apply_material(edge_material_names['xmin'], edge_entity_ids['xmin'], model)
-        _apply_material(edge_material_names['xmax'], edge_entity_ids['xmax'], model)
-
-        # Transform part axes if axes order exist
-        if axes_order.is_a?(Array) and axes_order.length == 3
-
-          axes_convertor = {
-              'x' => X_AXIS,
-              'y' => Y_AXIS,
-              'z' => Z_AXIS
-          }
-
-          # Convert axes order to Vector3D array
-          axes_order.map! { |axis|
-            axes_convertor[axis]
-          }
-
-          # Create transformations
-          ti = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2])
-          t = ti.inverse
-
-          # Transform definition's entities
-          entities = definition.entities
-          entities.transform_entities(t, entities.to_a)
-
-          # Inverse transform definition's instances
-          definition.instances.each { |instance|
-            instance.transformation *= ti
-          }
-
-        end
-
-        # Manage origin if position exist
-        if axes_origin_position
-
-          # Compute definition bounds
-          bounds = _compute_faces_bounds(definition)
-
-          case axes_origin_position
-            when 'min'
-              origin = bounds.min
-            when 'center'
-              origin = bounds.center
-            when 'min-center'
-              origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
-            else
-              origin = ORIGIN
+          # Update definition's name
+          if definition.name != name and !is_dynamic_attributes_name
+            definition.name = name
           end
 
-          # Create transformations
-          ti = Geom::Transformation.axes(origin, X_AXIS, Y_AXIS, Z_AXIS)
-          t = ti.inverse
+          # Update definition's attributes
+          definition_attributes = DefinitionAttributes.new(definition)
+          if cumulable != definition_attributes.cumulable or orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis or labels != definition_attributes.labels
+            definition_attributes.cumulable = cumulable
+            definition_attributes.orientation_locked_on_axis = orientation_locked_on_axis
+            definition_attributes.labels = labels
+            definition_attributes.write_to_attributes
+          end
 
-          # Transform definition's entities
-          entities = definition.entities
-          entities.transform_entities(t, entities.to_a)
+          # Update materials
+          _apply_material(material_name, entity_ids, model)
+          _apply_material(edge_material_names['ymin'], edge_entity_ids['ymin'], model)
+          _apply_material(edge_material_names['ymax'], edge_entity_ids['ymax'], model)
+          _apply_material(edge_material_names['xmin'], edge_entity_ids['xmin'], model)
+          _apply_material(edge_material_names['xmax'], edge_entity_ids['xmax'], model)
 
-          # Inverse transform definition's instances
-          definition.instances.each { |instance|
-            instance.transformation *= ti
-          }
+          # Transform part axes if axes order exist
+          if axes_order.is_a?(Array) and axes_order.length == 3
+
+            axes_convertor = {
+                'x' => X_AXIS,
+                'y' => Y_AXIS,
+                'z' => Z_AXIS
+            }
+
+            # Convert axes order to Vector3D array
+            axes_order.map! { |axis|
+              axes_convertor[axis]
+            }
+
+            # Create transformations
+            ti = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2])
+            t = ti.inverse
+
+            # Transform definition's entities
+            entities = definition.entities
+            entities.transform_entities(t, entities.to_a)
+
+            # Inverse transform definition's instances
+            definition.instances.each { |instance|
+              instance.transformation *= ti
+            }
+
+          end
+
+          # Manage origin if position exist
+          if axes_origin_position
+
+            # Compute definition bounds
+            bounds = _compute_faces_bounds(definition)
+
+            case axes_origin_position
+              when 'min'
+                origin = bounds.min
+              when 'center'
+                origin = bounds.center
+              when 'min-center'
+                origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
+              else
+                origin = ORIGIN
+            end
+
+            # Create transformations
+            ti = Geom::Transformation.axes(origin, X_AXIS, Y_AXIS, Z_AXIS)
+            t = ti.inverse
+
+            # Transform definition's entities
+            entities = definition.entities
+            entities.transform_entities(t, entities.to_a)
+
+            # Inverse transform definition's instances
+            definition.instances.each { |instance|
+              instance.transformation *= ti
+            }
+
+          end
 
         end
 
-      end
+      }
 
     end
 

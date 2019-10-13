@@ -134,6 +134,7 @@ tab:
       collapse_all: Fold identical parts
     edit_part:
       title: Properties of Part '{{ name }}'
+      title_multiple: Propriétés des pièces
       general: General
       edges: Edge bandings
       infos: Infos

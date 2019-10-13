@@ -36,6 +36,18 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-check-box:before {
+  content: "\e960";
+}
+.ladb-opencutlist-icon-check-box-with-check-sign:before {
+  content: "\e962";
+}
+.ladb-opencutlist-icon-uncheck-mark:before {
+  content: "\e963";
+}
+.ladb-opencutlist-icon-check-mark:before {
+  content: "\e964";
+}
 .ladb-opencutlist-icon-reorder:before {
   content: "\e917";
 }
@@ -164,6 +176,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-edit:before {
   content: "\e90d";
+}
+.ladb-opencutlist-icon-edit-multiple:before {
+  content: "\e965";
 }
 .ladb-opencutlist-icon-magnifier:before {
   content: "\e924";

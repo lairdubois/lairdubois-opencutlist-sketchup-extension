@@ -110,9 +110,9 @@
         this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
-        this.editedPart = null;
         this.editedGroup = null;
         this.ignoreNextMaterialEvents = false;
+        this.selection = {};
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -220,6 +220,10 @@
             // Setup tooltips
             that.opencutlist.setupTooltips();
 
+            // Cleanup and Render selection
+            that.cleanupSelection();
+            that.renderSelection();
+
             // Cleanup nonexistent hidden group ids
             var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
@@ -310,7 +314,6 @@
                     if (!available) {
                         e.preventDefault();
                     }
-
                 })
                 .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                     var tokenList = $(this).tokenfield('getTokensList');
@@ -482,9 +485,32 @@
                 var $part = $(this).parents('.ladb-cutlist-row');
                 var partId = $part.data('part-id');
                 var tab = $(this).data('tab');
-                that.editPart(partId, null, tab);
+                that.editPart(partId, undefined, tab);
                 return false;
             });
+            $('a.ladb-btn-select-group-parts', that.$page).on('click', function () {
+                $(this).blur();
+                var $group = $(this).parents('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.selectGroupParts(groupId);
+                return false;
+            });
+            $('a.ladb-btn-select-part, td.ladb-btn-select-part', that.$page)
+                .on('click', function () {
+                    $(this).blur();
+                    var $part = $(this).parents('.ladb-cutlist-row');
+                    var partId = $part.data('part-id');
+                    that.selectPart(partId);
+                    return false;
+                })
+                .on('dblclick', function() {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.selectGroupParts(groupId);
+                    return false;
+                })
+            ;
             $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
                 $(this).blur();
                 var $part = $(this).parents('.ladb-cutlist-row');
@@ -519,7 +545,7 @@
             });
             $('.ladb-cutlist-row', that.$page).on('click', function () {
                 $(this).blur();
-                $('.ladb-click-tool', $(this)).click();
+                $('.ladb-click-tool', $(this)).first().click();
                 return false;
             });
 
@@ -673,20 +699,19 @@
     // Parts /////
 
     LadbTabCutlist.prototype.findGroupAndPartById = function (id) {
+        console.log(this.groups);
         for (var i = 0; i < this.groups.length; i++) {
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
                 var part = group.parts[j];
-                if (part.children !== undefined) {
+                if (part.id === id) {
+                    return { group: group, part: part };
+                } else if (part.children !== undefined) {
                     for (var k = 0; k < part.children.length; k++) {
                         var childPart = part.children[k];
                         if (childPart.id === id) {
                             return { group: group, part: childPart };
                         }
-                    }
-                } else {
-                    if (part.id === id) {
-                        return { group: group, part: part };
                     }
                 }
             }
@@ -716,6 +741,86 @@
         return null;
     };
 
+    LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
+        var $row = $('#ladb_part_' + id, this.$page);
+        var $editPartBtn = $('a.ladb-btn-edit-part', $row);
+        var $selectPartBtn = $('a.ladb-btn-select-part', $row);
+
+        if (selected) {
+            $selectPartBtn.addClass('ladb-active');
+            $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
+            $('i', $selectPartBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
+        } else {
+            $selectPartBtn.removeClass('ladb-active');
+            if ($('i', $editPartBtn).hasClass('ladb-opencutlist-icon-edit')) {
+                $('i', $editPartBtn).removeClass('ladb-opencutlist-icon-edit-multiple');
+            }
+            $('i', $selectPartBtn).removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
+        }
+    };
+
+    LadbTabCutlist.prototype.renderSelection = function () {
+        var groupIds = Object.keys(this.selection);
+        for (var i = 0; i < groupIds.length; i++) {
+            for (var j = 0; j < this.selection[groupIds[i]].length; j++) {
+                this.renderSelectionOnPart(this.selection[groupIds[i]][j], true);
+            }
+        }
+    };
+
+    LadbTabCutlist.prototype.cleanupSelection = function () {
+        var groupIds = Object.keys(this.selection);
+        var partId;
+        for (var i = 0; i < groupIds.length; i++) {
+            for (var j = this.selection[groupIds[i]].length - 1; j >= 0 ; j--) {
+                partId = this.selection[groupIds[i]][j];
+                if (!this.findGroupAndPartById(partId)) {
+                    this.selection[groupIds[i]].splice(j, 1)
+                }
+            }
+        }
+    };
+
+    LadbTabCutlist.prototype.selectPart = function (id, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
+        var groupAndPart = this.findGroupAndPartById(id);
+        if (groupAndPart) {
+
+            // Add to selection
+            var groupSelection = this.selection[groupAndPart.group.id];
+            var selected = groupSelection && groupSelection.includes(id);
+            if (selected) {
+                if (state === undefined || state === false) {
+                    if (groupSelection) {
+                        groupSelection.splice(groupSelection.indexOf(id), 1)
+                    }
+                    selected = false;
+                }
+            } else {
+                if (state === undefined || state === true) {
+                    if (groupSelection == null) {
+                        groupSelection = this.selection[groupAndPart.group.id] = []
+                    }
+                    groupSelection.push(id);
+                    selected = true;
+                }
+            }
+
+            // Apply selection
+            this.renderSelectionOnPart(id, selected);
+
+        }
+    };
+
+    LadbTabCutlist.prototype.selectGroupParts = function (id) {
+        var group = this.findGroupById(id);
+
+        var state = this.selection[group.id] && this.selection[group.id].length > 0 ? false : true;
+        for (var i = 0 ; i < group.parts.length; i++) {
+            this.selectPart(group.parts[i].id, state);
+        }
+
+    };
+
     LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab) {
         var that = this;
 
@@ -725,24 +830,26 @@
             var group = groupAndPart.group;
             var part = groupAndPart.part;
 
-            rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
+            var isFolder = part.children && part.children.length > 0;
+            var groupSelection = this.selection[groupAndPart.group.id];
+            var multiple = isFolder || groupSelection && groupSelection.includes(id) && groupSelection.length > 1;
 
-                var thumbnailFile = response['thumbnail_file'];
+            var editedPart = isFolder ? part.children[0] : part;
 
-                // Keep the edited part
-                that.editedPart = part;
+            var fnOpenModal = function(thumbnailFile) {
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     group: group,
-                    part: part,
+                    part: editedPart,
+                    multiple: multiple,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
                     tab: tab === undefined || tab.length === 0 ? 'general' : tab
                 });
 
                 var isOwnedMaterial = true;
-                for (var i = 0; i < part.material_origins.length; i++) {
-                    if (part.material_origins[i] != 1) {    // 1 = MATERIAL_ORIGIN_OWNED
+                for (var i = 0; i < editedPart.material_origins.length; i++) {
+                    if (editedPart.material_origins[i] != 1) {    // 1 = MATERIAL_ORIGIN_OWNED
                         isOwnedMaterial = false;
                         break;
                     }
@@ -848,21 +955,21 @@
 
                 // Bind select
                 if (isOwnedMaterial) {
-                    $selectMaterialName.val(part.material_name);
+                    $selectMaterialName.val(editedPart.material_name);
                 }
                 $selectMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnNewCheck($(this));
                     });
-                $selectCumulable.val(part.cumulable);
+                $selectCumulable.val(editedPart.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartAxesOriginPosition
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnComputeAxesOrder();
                     });
-                $selectEdgeYminMaterialName.val(part.edge_material_names.ymin);
+                $selectEdgeYminMaterialName.val(editedPart.edge_material_names.ymin);
                 $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -870,7 +977,7 @@
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeYmaxMaterialName.val(part.edge_material_names.ymax);
+                $selectEdgeYmaxMaterialName.val(editedPart.edge_material_names.ymax);
                 $selectEdgeYmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -878,7 +985,7 @@
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeXminMaterialName.val(part.edge_material_names.xmin);
+                $selectEdgeXminMaterialName.val(editedPart.edge_material_names.xmin);
                 $selectEdgeXminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -886,7 +993,7 @@
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeXmaxMaterialName.val(part.edge_material_names.xmax);
+                $selectEdgeXmaxMaterialName.val(editedPart.edge_material_names.xmax);
                 $selectEdgeXmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -943,21 +1050,54 @@
                 });
                 $btnUpdate.on('click', function () {
 
-                    that.editedPart.name = $inputName.val();
-                    that.editedPart.material_name = $selectMaterialName.val();
-                    that.editedPart.cumulable = $selectCumulable.val();
-                    that.editedPart.orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
-                    that.editedPart.labels = $inputLabels.tokenfield('getTokensList').split(';');
+                    var editedParts = [];
+                    if (multiple) {
+                        if (part.children && ! groupSelection) {
+                            for (var i = 0; i < part.children.length; i++) {
+                                editedParts.push(part.children[i]);
+                            }
+                        } else {
+                            for (var i = 0; i < groupSelection.length; i++) {
+                                var groupAndPart = that.findGroupAndPartById(groupSelection[i]);
+                                if (groupAndPart) {
+                                    if (groupAndPart.part.children) {
+                                        for (var j = 0; j < groupAndPart.part.children.length; j++) {
+                                            editedParts.push(groupAndPart.part.children[j]);
+                                        }
+                                    } else {
+                                        editedParts.push(groupAndPart.part);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        editedParts.push(editedPart);
+                    }
 
-                    that.editedPart.axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                    that.editedPart.axes_origin_position = $selectPartAxesOriginPosition.val();
+                    for (var i = 0; i < editedParts.length; i++) {
 
-                    that.editedPart.edge_material_names.ymin = $selectEdgeYminMaterialName.val();
-                    that.editedPart.edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
-                    that.editedPart.edge_material_names.xmin = $selectEdgeXminMaterialName.val();
-                    that.editedPart.edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
+                        if (!multiple) {
 
-                    rubyCallCommand('cutlist_part_update', that.editedPart, function (response) {
+                            editedParts[i].name = $inputName.val();
+
+                            editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
+                            editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
+                            editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
+
+                        }
+
+                        editedParts[i].material_name = $selectMaterialName.val();
+                        editedParts[i].cumulable = $selectCumulable.val();
+                        editedParts[i].labels = $inputLabels.tokenfield('getTokensList').split(';');
+
+                        editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();
+                        editedParts[i].edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
+                        editedParts[i].edge_material_names.xmin = $selectEdgeXminMaterialName.val();
+                        editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
+
+                    }
+
+                    rubyCallCommand('cutlist_part_update', { parts_data: editedParts }, function (response) {
 
                         if (response['errors']) {
 
@@ -965,7 +1105,7 @@
 
                         } else {
 
-                            var partId = that.editedPart.id;
+                            var partId = editedPart.id;
                             var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
 
                             // Refresh the list
@@ -984,9 +1124,6 @@
                             });
 
                         }
-
-                        // Reset edited part
-                        that.editedPart = null;
 
                         // Hide modal
                         $modal.modal('hide');
@@ -1022,7 +1159,19 @@
                 that.opencutlist.setupPopovers();
                 that.opencutlist.setupTooltips();
 
-            });
+            };
+
+            if (multiple) {
+                fnOpenModal();
+            } else {
+
+                // Generate and Retrieve part thumbnail file
+                rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
+                    var thumbnailFile = response['thumbnail_file'];
+                    fnOpenModal(thumbnailFile);
+                });
+
+            }
 
         } else {
 
@@ -1883,6 +2032,7 @@
 
         // Bind buttons
         this.$btnGenerate.on('click', function () {
+            that.selection = {};
             that.generateCutlist();
             this.blur();
         });

@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_part' %}
-{% set title = 'tab.cutlist.edit_part.title'|i18next({ 'name':part.name }) %}
+{% set title = multiple ? ('tab.cutlist.edit_part.title_multiple'|i18next) : ('tab.cutlist.edit_part.title'|i18next({ 'name':part.name })) %}
 
 {% set has_warnings = part.not_aligned_on_axes or part.multiple_layers %}
 
@@ -9,12 +9,16 @@
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
+        {% if not multiple %}
+            <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
+        {% endif %}
         {% if group.material_type == 2 %} {# TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
         {% endif %}
-        <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
-        {% if has_warnings %}
+        {% if not multiple %}
+            <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
+        {% endif %}
+        {% if has_warnings and not multiple %}
             <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>&nbsp;{{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
         {% endif %}
     </ul>
@@ -23,19 +27,23 @@
 {% block bodyInner %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
-            <div class="ladb-part-thumbnail">
-                <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
-            </div>
-            <div class="form form-horizontal">
-                <div class="form-group">
-                    {% if part.is_dynamic_attributes_name %}
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a></div>
-                    {% endif %}
-                    <label for="ladb_cutlist_part_input_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}"{% if part.is_dynamic_attributes_name %} disabled{% endif %}>
-                    </div>
+            {% if thumbnailFile is not empty %}
+                <div class="ladb-part-thumbnail">
+                    <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
                 </div>
+            {% endif %}
+            <div class="form form-horizontal">
+                {% if not multiple %}
+                    <div class="form-group">
+                        {% if part.is_dynamic_attributes_name %}
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a></div>
+                        {% endif %}
+                        <label for="ladb_cutlist_part_input_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name }}"{% if part.is_dynamic_attributes_name %} disabled{% endif %}>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="form-group">
                     <label for="ladb_cutlist_part_select_material_name" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
                     <div class="col-xs-7">
@@ -64,124 +72,128 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
-            <div class="row">
-                <div class="col-xs-offset-1 col-xs-10">
-                    <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
-                </div>
-                <div class="col-xs-offset-1 col-xs-1">
-                    <ul class="ladb-sortable-list">
-                        <li style="background-color: red;">&nbsp;</li>
-                        <li style="background-color: green;">&nbsp;</li>
-                        <li style="background-color: blue;">&nbsp;</li>
-                    </ul>
-                </div>
-                <div class="col-xs-9">
-                    <input type="hidden" id="ladb_cutlist_part_input_axes" value="">
-                    <div class="row">
-                        <div class="col-xs-2">
-                            <ul id="ladb_sortable_part_axes_extra" class="ladb-sortable-list-extra">
-                                <li style="color: red;">{{ 'tab.cutlist.list.length'|i18next }}</li>
-                                <li style="color: green;">{{ 'tab.cutlist.list.width'|i18next }}</li>
-                                <li style="color: blue;">{{ 'tab.cutlist.list.thickness'|i18next }}</li>
-                            </ul>
-                        </div>
-                        <div class="col-xs-10">
-                            <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
-                                <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
-                                <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
-                                <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
-                            </ul>
-                        </div>
+        {% if not multiple %}
+            <div role="tabpanel" class="tab-pane{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
+                <div class="row">
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
                     </div>
-                    <select class="form-control" id="ladb_cutlist_part_select_axes_origin_position">
-                        <option data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.axes_origin_position_none'|i18next }}</span>"></option>
-                        <option value="min" data-content="<i class='ladb-opencutlist-icon-origin-min ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min'|i18next }}"></option>
-                        <option value="center" data-content="<i class='ladb-opencutlist-icon-origin-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_center'|i18next }}"></option>
-                        <option value="min-center" data-content="<i class='ladb-opencutlist-icon-origin-min-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min_center'|i18next }}"></option>
-                    </select>
-                    <div class="media">
-                        <div class="media-body">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
-                                </label>
+                    <div class="col-xs-offset-1 col-xs-1">
+                        <ul class="ladb-sortable-list">
+                            <li style="background-color: red;">&nbsp;</li>
+                            <li style="background-color: green;">&nbsp;</li>
+                            <li style="background-color: blue;">&nbsp;</li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-9">
+                        <input type="hidden" id="ladb_cutlist_part_input_axes" value="">
+                        <div class="row">
+                            <div class="col-xs-2">
+                                <ul id="ladb_sortable_part_axes_extra" class="ladb-sortable-list-extra">
+                                    <li style="color: red;">{{ 'tab.cutlist.list.length'|i18next }}</li>
+                                    <li style="color: green;">{{ 'tab.cutlist.list.width'|i18next }}</li>
+                                    <li style="color: blue;">{{ 'tab.cutlist.list.thickness'|i18next }}</li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-10">
+                                <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
+                                    <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
+                                    <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
+                                    <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="media-right">
-                            <div class="ladb-minitools ladb-minitools-inline ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <select class="form-control" id="ladb_cutlist_part_select_axes_origin_position">
+                            <option data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.axes_origin_position_none'|i18next }}</span>"></option>
+                            <option value="min" data-content="<i class='ladb-opencutlist-icon-origin-min ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min'|i18next }}"></option>
+                            <option value="center" data-content="<i class='ladb-opencutlist-icon-origin-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_center'|i18next }}"></option>
+                            <option value="min-center" data-content="<i class='ladb-opencutlist-icon-origin-min-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_min_center'|i18next }}"></option>
+                        </select>
+                        <div class="media">
+                            <div class="media-body">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="media-right">
+                                <div class="ladb-minitools ladb-minitools-inline ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xs-offset-1 col-xs-10 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
-                    <div class="media">
-                        <div class="media-left">
-                            <i class="ladb-opencutlist-icon-tip" style="font-size: 150%;"></i>
-                        </div>
-                        <div class="media-body" style="font-size: 80%">
-                            {{ 'tab.cutlist.edit_part.axes_tip'|i18next }}
+                    <div class="col-xs-offset-1 col-xs-10 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
+                        <div class="media">
+                            <div class="media-left">
+                                <i class="ladb-opencutlist-icon-tip" style="font-size: 150%;"></i>
+                            </div>
+                            <div class="media-body" style="font-size: 80%">
+                                {{ 'tab.cutlist.edit_part.axes_tip'|i18next }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         {% if group.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
             <div role="tabpanel" class="tab-pane{% if tab == 'edges' %} active{% endif %}" id="tab_edit_part_edges">
-                <div class="text-center">
-                    {% set areaSize = 280 %}
-                    {% set axisWidth = 2 %}
-                    {% set axisLength = 20 %}
-                    {% set axisOffset = 10 %}
-                    {% set partOutlineWidth = 2 %}
-                    {% set edgeOutlineWidth = 4 %}
-                    {% set edgeWidth = 3 %}
-                    {% set partLength = (areaSize - 40) * part.l_ratio %}
-                    {% set partWidth = (areaSize - 40) * part.w_ratio %}
-                    <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
+                {% if not multiple %}
+                    <div class="text-center">
+                        {% set areaSize = 280 %}
+                        {% set axisWidth = 2 %}
+                        {% set axisLength = 20 %}
+                        {% set axisOffset = 10 %}
+                        {% set partOutlineWidth = 2 %}
+                        {% set edgeOutlineWidth = 4 %}
+                        {% set edgeWidth = 3 %}
+                        {% set partLength = (areaSize - 40) * part.l_ratio %}
+                        {% set partWidth = (areaSize - 40) * part.w_ratio %}
+                        <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
-                        <g class="part">
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="part-outer" />
-                            <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
-                        </g>
-
-                        <g class="edge edge-ymin{% if part.edge_entity_ids.ymin is empty %} ladb-disabled{% endif %}">
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
-                        </g>
-                        <g class="edge edge-ymax{% if part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
-                        </g>
-                        <g class="edge edge-xmin{% if part.edge_entity_ids.xmin is empty %} ladb-disabled{% endif %}">
-                            <rect x="{{ (areaSize - partLength) / 2 - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
-                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
-                        </g>
-                        <g class="edge edge-xmax{% if part.edge_entity_ids.xmax is empty %} ladb-disabled{% endif %}">
-                            <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
-                            <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
-                        </g>
-
-                        {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
-                            <g class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
-                                {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
-                                {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWLength }}" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisWLength - axisOffset }}" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
-                                <rect x="{{ (areaSize - partLength) / 2 + axisOffset + axisWidth }}" y="{{ (areaSize + partWidth) / 2 - axisWidth - axisOffset }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                            <g class="part">
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="part-outer" />
+                                <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
                             </g>
-                        {% endif %}
 
-                        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
-                        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
-                        <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+                            <g class="edge edge-ymin{% if part.edge_entity_ids.ymin is empty %} ladb-disabled{% endif %}">
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                            </g>
+                            <g class="edge edge-ymax{% if part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                            </g>
+                            <g class="edge edge-xmin{% if part.edge_entity_ids.xmin is empty %} ladb-disabled{% endif %}">
+                                <rect x="{{ (areaSize - partLength) / 2 - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
+                                <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
+                            </g>
+                            <g class="edge edge-xmax{% if part.edge_entity_ids.xmax is empty %} ladb-disabled{% endif %}">
+                                <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
+                                <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
+                            </g>
 
-                        {% if group.material_grained %}
-                            {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
-                        {% endif %}
+                            {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
+                                <g class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
+                                    {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
+                                    {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
+                                    <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWLength }}" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
+                                    <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisOffset - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
+                                    <rect x="{{ (areaSize - partLength) / 2 + axisOffset }}" y="{{ (areaSize + partWidth) / 2 - axisWLength - axisOffset }}" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
+                                    <rect x="{{ (areaSize - partLength) / 2 + axisOffset + axisWidth }}" y="{{ (areaSize + partWidth) / 2 - axisWidth - axisOffset }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                                </g>
+                            {% endif %}
 
-                    </svg>
-                </div>
+                            <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
+                            <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
+                            <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+
+                            {% if group.material_grained %}
+                                {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
+                            {% endif %}
+
+                        </svg>
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="form form-horizontal col-xs-6">
                         <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_length'|i18next }}</h5>
@@ -236,43 +248,45 @@
                 </div>
             </div>
         {% endif %}
-        <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
-            <div class="col-sm-offset-1 col-sm-10">
-                {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
-                {% if part.is_dynamic_attributes_name %}
-                    <div class="media">
-                        <div class="media-left"><i class="ladb-opencutlist-icon-dynamic-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>
-                        <div class="media-body">
-                            {{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}
+        {% if not multiple %}
+            <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
+                <div class="col-sm-offset-1 col-sm-10">
+                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                    {% if part.is_dynamic_attributes_name %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-dynamic-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-                {% if part.auto_oriented %}
-                    <div class="media">
-                        <div class="media-left"><i class="ladb-opencutlist-icon-auto-oriented ladb-opencutlist-icon-lg ladb-color-info"></i></div>
-                        <div class="media-body">
-                            {{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}
+                    {% endif %}
+                    {% if part.auto_oriented %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-auto-oriented ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-                {% if part.resized %}
-                    <div class="media">
-                        <div class="media-left"><i class="ladb-opencutlist-icon-resized ladb-opencutlist-icon-lg ladb-color-info"></i></div>
-                        <div class="media-body">
-                            {{ 'tab.cutlist.tooltip.resized'|i18next }}
+                    {% endif %}
+                    {% if part.resized %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-resized ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.resized'|i18next }}
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-                {% if part.orientation_locked_on_axis %}
-                    <div class="media">
-                        <div class="media-left"><i class="ladb-opencutlist-icon-orientation-locked-on-axis ladb-opencutlist-icon-lg ladb-color-info"></i></div>
-                        <div class="media-body">
-                            {{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}
+                    {% endif %}
+                    {% if part.orientation_locked_on_axis %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-orientation-locked-on-axis ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
         {% if has_warnings %}
             <div role="tabpanel" class="tab-pane row{% if tab == 'warnings' %} active{% endif %}" id="tab_warnings">
                 <div class="col-sm-offset-1 col-sm-10">
@@ -359,7 +373,9 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
+    {% if not multiple %}
+        <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
+    {% endif %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

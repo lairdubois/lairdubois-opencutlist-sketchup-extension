@@ -134,6 +134,7 @@ tab:
       collapse_all: Identische Teile zuklappen
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
+      title_multiple: Propriétés des pièces
       general: Allgemein
       edges: Kantenbänder
       infos: Infos

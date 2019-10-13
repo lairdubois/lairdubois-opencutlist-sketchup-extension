@@ -159,7 +159,7 @@
     {% set hideThickness = group.material_type == 2 or group.material_type == 3 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
     {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
-    {% set colspan = 13 %}
+    {% set colspan = 14 %}
     {% if showCuttingDimensions %}
         {% if hideWidth %}
             {% set colspan = colspan - 1 %}
@@ -225,9 +225,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
+        <tr class="ladb-cutlist-heading-row">
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}{% if group.material_type != 4 %}{# 4 = TYPE_EDGE #}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span>{% endif %}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showCuttingDimensions %}
                 <td class="text-center" colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
@@ -242,7 +242,7 @@
                 <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
             {% endif %}
         </tr>
-        <tr>
+        <tr class="ladb-cutlist-heading-row">
             {% if showCuttingDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
                     <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>

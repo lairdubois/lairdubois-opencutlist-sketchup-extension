@@ -134,6 +134,7 @@ tab:
       collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
+      title_multiple: Propriétés des pièces
       general: Générales
       edges: Chants
       infos: Infos
