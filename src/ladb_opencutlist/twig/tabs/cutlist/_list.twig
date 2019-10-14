@@ -190,7 +190,7 @@
             <td colspan="{{ colspan }}" class="text-middle">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
-                    {% if group.material_type == 2 %}
+                    {% if group.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     {% if group.material_type > 0 and group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
@@ -227,7 +227,7 @@
         <tbody>
         <tr class="ladb-cutlist-heading-row">
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}{% if group.material_type != 4 %}{# 4 = TYPE_EDGE #}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span>{% endif %}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}{% if group.material_type != 4 %}{# 4 = TYPE_EDGE #}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span>{% endif %}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showCuttingDimensions %}
                 <td class="text-center" colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>

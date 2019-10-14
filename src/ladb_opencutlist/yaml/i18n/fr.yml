@@ -70,7 +70,7 @@ tab:
     help: |
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
-    material_undefined: Matière non définie
+    material_undefined: Sans matière
     not_available_width: Largeur non disponible
     not_available_thickness: Épaisseur non disponible
     not_available_section: Section non disponible
@@ -83,12 +83,13 @@ tab:
       scroll_to_block: Défiler vers le groupe
       add_std_thickness_to_material: |
         Ajouter l'épaisseur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        à la matière '{{ material_name }}'edit_part_properties
       add_std_section_to_material: |
         Ajouter la section *{{ std_dimension }}*
         à la matière '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Éditer les propriétés du groupe de pièces
       folding_part: Déplier / Replier
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
@@ -119,6 +120,7 @@ tab:
       edge_xmax: Chant Largeur 2
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
       part_axes: Axes internes de la pièce
+      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -134,7 +136,7 @@ tab:
       collapse_all: Replier toutes les pièces identiques
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
-      title_multiple: Propriétés des pièces
+      title_multiple: Propriétés du groupe de pièces
       general: Générales
       edges: Chants
       infos: Infos
@@ -177,6 +179,7 @@ tab:
       over_length: Sur la longueur
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      multiple_values: Valeurs multiples
     edit_group:
       title: Propriétés du groupe '{{ name }}'
       part_count: Nombre de pièces

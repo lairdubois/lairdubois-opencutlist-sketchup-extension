@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-multiple:before {
+  content: "\e966";
+}
 .ladb-opencutlist-icon-check-box:before {
   content: "\e960";
 }

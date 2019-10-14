@@ -91,6 +91,10 @@
         beautify: false
     };
 
+    // Various Consts
+
+    var MULTIPLE_VALUE = '-1';
+
     // CLASS DEFINITION
     // ======================
 
@@ -748,11 +752,17 @@
 
         if (selected) {
             $selectPartBtn.addClass('ladb-active');
+            $editPartBtn
+                .prop('title', i18next.t('tab.cutlist.tooltip.edit_parts_properties'))
+                .tooltip('fixTitle');
             $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
             $('i', $selectPartBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
         } else {
             $selectPartBtn.removeClass('ladb-active');
             if ($('i', $editPartBtn).hasClass('ladb-opencutlist-icon-edit')) {
+                $editPartBtn
+                    .prop('title', i18next.t('tab.cutlist.tooltip.edit_part_properties'))
+                    .tooltip('fixTitle');
                 $('i', $editPartBtn).removeClass('ladb-opencutlist-icon-edit-multiple');
             }
             $('i', $selectPartBtn).removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
@@ -830,11 +840,53 @@
             var group = groupAndPart.group;
             var part = groupAndPart.part;
 
-            var isFolder = part.children && part.children.length > 0;
             var groupSelection = this.selection[groupAndPart.group.id];
-            var multiple = isFolder || groupSelection && groupSelection.includes(id) && groupSelection.length > 1;
+            var isFolder = part.children && part.children.length > 0;
+            var isSelected = groupSelection && groupSelection.includes(id) && groupSelection.length > 1;
+            var multiple = isFolder || isSelected;
 
-            var editedPart = isFolder ? part.children[0] : part;
+            var editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));
+            var editedParts = [];
+            if (multiple) {
+                if (isFolder && !isSelected) {
+                    for (var i = 0; i < part.children.length; i++) {
+                        editedParts.push(part.children[i]);
+                    }
+                } else if (isSelected) {
+                    for (var i = 0; i < groupSelection.length; i++) {
+                        var groupAndPart = that.findGroupAndPartById(groupSelection[i]);
+                        if (groupAndPart) {
+                            if (groupAndPart.part.children) {
+                                for (var j = 0; j < groupAndPart.part.children.length; j++) {
+                                    editedParts.push(groupAndPart.part.children[j]);
+                                }
+                            } else {
+                                editedParts.push(groupAndPart.part);
+                            }
+                        }
+                    }
+                }
+            } else {
+                editedParts.push(editedPart);
+            }
+
+            for (var i = 0; i < editedParts.length; i++) {
+                if (editedPart.cumulable !== editedParts[i].cumulable) {
+                    editedPart.cumulable = MULTIPLE_VALUE;
+                }
+                if (editedPart.edge_material_names.ymin !== editedParts[i].edge_material_names.ymin) {
+                    editedPart.edge_material_names.ymin = MULTIPLE_VALUE;
+                }
+                if (editedPart.edge_material_names.ymax !== editedParts[i].edge_material_names.ymax) {
+                    editedPart.edge_material_names.ymax = MULTIPLE_VALUE;
+                }
+                if (editedPart.edge_material_names.xmin !== editedParts[i].edge_material_names.xmin) {
+                    editedPart.edge_material_names.xmin = MULTIPLE_VALUE;
+                }
+                if (editedPart.edge_material_names.xmax !== editedParts[i].edge_material_names.xmax) {
+                    editedPart.edge_material_names.xmax = MULTIPLE_VALUE;
+                }
+            }
 
             var fnOpenModal = function(thumbnailFile) {
 
@@ -849,7 +901,7 @@
 
                 var isOwnedMaterial = true;
                 for (var i = 0; i < editedPart.material_origins.length; i++) {
-                    if (editedPart.material_origins[i] != 1) {    // 1 = MATERIAL_ORIGIN_OWNED
+                    if (editedPart.material_origins[i] !== 1) {    // 1 = MATERIAL_ORIGIN_OWNED
                         isOwnedMaterial = false;
                         break;
                     }
@@ -1050,35 +1102,12 @@
                 });
                 $btnUpdate.on('click', function () {
 
-                    var editedParts = [];
-                    if (multiple) {
-                        if (part.children && ! groupSelection) {
-                            for (var i = 0; i < part.children.length; i++) {
-                                editedParts.push(part.children[i]);
-                            }
-                        } else {
-                            for (var i = 0; i < groupSelection.length; i++) {
-                                var groupAndPart = that.findGroupAndPartById(groupSelection[i]);
-                                if (groupAndPart) {
-                                    if (groupAndPart.part.children) {
-                                        for (var j = 0; j < groupAndPart.part.children.length; j++) {
-                                            editedParts.push(groupAndPart.part.children[j]);
-                                        }
-                                    } else {
-                                        editedParts.push(groupAndPart.part);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        editedParts.push(editedPart);
-                    }
-
                     for (var i = 0; i < editedParts.length; i++) {
 
                         if (!multiple) {
 
                             editedParts[i].name = $inputName.val();
+                            editedParts[i].labels = $inputLabels.tokenfield('getTokensList').split(';');
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
@@ -1087,13 +1116,22 @@
                         }
 
                         editedParts[i].material_name = $selectMaterialName.val();
-                        editedParts[i].cumulable = $selectCumulable.val();
-                        editedParts[i].labels = $inputLabels.tokenfield('getTokensList').split(';');
+                        if ($selectCumulable.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].cumulable = $selectCumulable.val();
+                        }
 
-                        editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();
-                        editedParts[i].edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
-                        editedParts[i].edge_material_names.xmin = $selectEdgeXminMaterialName.val();
-                        editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
+                        if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();
+                        }
+                        if ($selectEdgeYmaxMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
+                        }
+                        if ($selectEdgeXminMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmin = $selectEdgeXminMaterialName.val();
+                        }
+                        if ($selectEdgeXmaxMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
+                        }
 
                     }
 

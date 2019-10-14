@@ -1,5 +1,10 @@
+{# set value (facutative) #}
 {# set typeFilters (facutative) #}
 
+{% if value and value == '-1' %}
+    <option value="-1" data-content="<span style='color: #ccc; font-style: italic;'><i class='ladb-opencutlist-icon-multiple'></i> {{ 'tab.cutlist.edit_part.multiple_values'|i18next }}</span>"></option>
+    <option data-divider="true"></option>
+{% endif %}
 <option value="" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.material_undefined'|i18next }}</span>"></option>
 {% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters  %}
     {% if loop.index0 == 0 %}<option data-divider="true"></option>{% endif %}

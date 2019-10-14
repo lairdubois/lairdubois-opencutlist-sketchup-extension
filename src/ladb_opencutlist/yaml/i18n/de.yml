@@ -89,6 +89,7 @@ tab:
         dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Éditer les propriétés du groupe de pièces
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
@@ -119,6 +120,7 @@ tab:
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
       part_axes: Interne Achse des Teils
+      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -134,7 +136,7 @@ tab:
       collapse_all: Identische Teile zuklappen
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
-      title_multiple: Propriétés des pièces
+      title_multiple: Propriétés du groupe de pièces
       general: Allgemein
       edges: Kantenbänder
       infos: Infos
@@ -177,6 +179,7 @@ tab:
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: Dieses Kantenband kann nicht konfiguriert werden, weil keine Fläche auf dieser Seite des Teils gefunden wurde, die ein Kantenband tragen könnte.
+      multiple_values: Valeurs multiples
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
