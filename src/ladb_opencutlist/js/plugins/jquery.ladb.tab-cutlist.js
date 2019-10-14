@@ -990,19 +990,21 @@
                 };
 
                 var fnMaterialNameCopyToAllEdges = function(materialName) {
-                    if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
-                        $selectEdgeYmaxMaterialName.selectpicker('val', materialName);
+                    if (materialName !== MULTIPLE_VALUE) {
+                        if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
+                            $selectEdgeYmaxMaterialName.selectpicker('val', materialName);
+                        }
+                        if (!$selectEdgeYminMaterialName.prop( "disabled")) {
+                            $selectEdgeYminMaterialName.selectpicker('val', materialName);
+                        }
+                        if (!$selectEdgeXminMaterialName.prop( "disabled")) {
+                            $selectEdgeXminMaterialName.selectpicker('val', materialName);
+                        }
+                        if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
+                            $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
+                        }
+                        fnUpdateEdgesPreview();
                     }
-                    if (!$selectEdgeYminMaterialName.prop( "disabled")) {
-                        $selectEdgeYminMaterialName.selectpicker('val', materialName);
-                    }
-                    if (!$selectEdgeXminMaterialName.prop( "disabled")) {
-                        $selectEdgeXminMaterialName.selectpicker('val', materialName);
-                    }
-                    if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
-                        $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
-                    }
-                    fnUpdateEdgesPreview();
                 };
 
                 // Bind select
