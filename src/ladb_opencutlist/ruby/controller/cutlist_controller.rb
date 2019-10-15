@@ -1609,7 +1609,7 @@ module Ladb::OpenCutList
         material_name = part_data['material_name']
         cumulable = DefinitionAttributes.valid_cumulable(part_data['cumulable'])
         orientation_locked_on_axis = part_data['orientation_locked_on_axis']
-        labels = DefinitionAttributes.valid_labels(part_data['labels']).sort
+        labels = DefinitionAttributes.valid_labels(part_data['labels'])
         axes_order = part_data['axes_order']
         axes_origin_position = part_data['axes_origin_position']
         edge_material_names = part_data['edge_material_names']

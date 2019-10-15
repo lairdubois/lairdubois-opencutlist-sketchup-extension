@@ -874,6 +874,9 @@
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
+                editedPart.labels = editedPart.labels.filter(function(label) {  // Extract only commun labels
+                    return -1 !== editedParts[i].labels.indexOf(label);
+                });
                 if (editedPart.edge_material_names.ymin !== editedParts[i].edge_material_names.ymin) {
                     editedPart.edge_material_names.ymin = MULTIPLE_VALUE;
                 }
@@ -893,6 +896,7 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     group: group,
                     part: editedPart,
+                    part_count: editedParts.length,
                     multiple: multiple,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
@@ -1109,7 +1113,6 @@
                         if (!multiple) {
 
                             editedParts[i].name = $inputName.val();
-                            editedParts[i].labels = $inputLabels.tokenfield('getTokensList').split(';');
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
@@ -1121,6 +1124,9 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
+
+                        var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });
+                        editedParts[i].labels = untouchLabels.concat($inputLabels.tokenfield('getTokensList').split(';'));
 
                         if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();

@@ -35,9 +35,9 @@ module Ladb::OpenCutList
     def self.valid_labels(labels)
       if labels
         if labels.is_a? Array and !labels.empty?
-          return labels.map(&:strip).reject { |label| label.empty? }
+          return labels.map(&:strip).reject { |label| label.empty? }.uniq.sort
         elsif labels.is_a? String
-          return labels.split(';').map(&:strip).reject { |label| label.empty? }
+          return labels.split(';').map(&:strip).reject { |label| label.empty? }.uniq.sort
         end
       end
       return []

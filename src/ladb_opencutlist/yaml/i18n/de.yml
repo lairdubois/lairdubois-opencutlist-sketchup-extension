@@ -137,6 +137,7 @@ tab:
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       title_multiple: Propriétés du groupe de pièces
+      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: Allgemein
       edges: Kantenbänder
       infos: Infos
@@ -165,6 +166,7 @@ tab:
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
         Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
+      labels_multiple_info: Seules les étiquettes communes sont visibles
       axes: Achsen
       axes_help: Zuordnen der Dimensionen um diese mit den Achsenfarben übereinstimmen zu lassen.
       axes_tip: |

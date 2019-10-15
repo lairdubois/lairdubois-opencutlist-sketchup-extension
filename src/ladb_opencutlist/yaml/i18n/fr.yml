@@ -137,6 +137,7 @@ tab:
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       title_multiple: Propriétés du groupe de pièces
+      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: Générales
       edges: Chants
       infos: Infos
@@ -165,6 +166,7 @@ tab:
         Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
         Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
         Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
+      labels_multiple_info: Seules les étiquettes communes sont visibles
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
       axes_tip: |

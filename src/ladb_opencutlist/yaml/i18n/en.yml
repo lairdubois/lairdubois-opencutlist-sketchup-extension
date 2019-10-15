@@ -137,6 +137,7 @@ tab:
     edit_part:
       title: Properties of Part '{{ name }}'
       title_multiple: Propriétés du groupe de pièces
+      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: General
       edges: Edge bandings
       infos: Infos
@@ -165,6 +166,7 @@ tab:
         With *Labels* you can add keywords to customize the part definitions.
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
+      labels_multiple_info: Seules les étiquettes communes sont visibles
       axes: Axes
       axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
