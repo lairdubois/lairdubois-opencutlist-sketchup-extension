@@ -89,7 +89,7 @@ tab:
         dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Éditer les propriétés du groupe de pièces
+      edit_parts_properties: Editieren der Eigenschaften der Gruppe von Teilen
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
@@ -118,9 +118,9 @@ tab:
       edge_ymin: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
-      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
+      dblclick_to_copy_all_edges: Doppelclick hier um diesen Wert auf die anderen Kanten zu übertragen
       part_axes: Interne Achse des Teils
-      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
+      select_unselect_all_parts: Wählen/abwählen aller Teile der Gruppe
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -136,8 +136,8 @@ tab:
       collapse_all: Identische Teile zuklappen
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
-      title_multiple: Propriétés du groupe de pièces
-      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
+      title_multiple: Eigenschaften der Gruppe von Teilen
+      multiple_alert: Gemeinsame Eigenschaften der Gruppe von {{ part_count }} Teilen.
       general: Allgemein
       edges: Kantenbänder
       infos: Infos
@@ -166,7 +166,7 @@ tab:
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
         Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
-      labels_multiple_info: Seules les étiquettes communes sont visibles
+      labels_multiple_info: Nur gemeinsame Etiketten werden angezeigt
       axes: Achsen
       axes_help: Zuordnen der Dimensionen um diese mit den Achsenfarben übereinstimmen zu lassen.
       axes_tip: |
@@ -181,7 +181,7 @@ tab:
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: Dieses Kantenband kann nicht konfiguriert werden, weil keine Fläche auf dieser Seite des Teils gefunden wurde, die ein Kantenband tragen könnte.
-      multiple_values: Valeurs multiples
+      multiple_values: Werte mehrfach
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
@@ -246,7 +246,7 @@ tab:
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
       filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
-      edge_material_names_filter: Matières de chant à filtrer
+      edge_material_names_filter: Kantenmateriale zum Filtern
       labels_filter: Filteretiketten
       dimensions_help: Erklärung zu den Dimensionen...
       summary: Übersicht
@@ -436,7 +436,7 @@ tab:
       edit: Eigenschaften des Materials editieren
       set_current: |
         Auswählen '{{ name }}'
-        *Doppel-click zum Verwenden*
+        *Doppelclick zum Verwenden*
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Nicht verwendete Materialien löschen
@@ -555,7 +555,7 @@ tab:
       option_keep_definitions_settings: Definitionen beibehalten
       option_keep_materials_settings: Materialien beibehalten
     column:
-      unused: Nicht Verwendet
+      unused: Nicht verwendet
       mandatory: Pflichtspalten
       optional: Optionale Spalten
       name: Bezeichnung

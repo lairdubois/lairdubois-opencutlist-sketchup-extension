@@ -89,7 +89,7 @@ tab:
         to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Éditer les propriétés du groupe de pièces
+      edit_parts_properties: Edit the properties of the group of parts
       folding_part: Unfold / Fold
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
@@ -118,9 +118,9 @@ tab:
       edge_ymin: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
+      dblclick_to_copy_all_edges: Double-click here to duplicate this value to all other edges
       part_axes: Internal axes of the part
-      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
+      select_unselect_all_parts: Select/deselect all parts in the group
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -136,8 +136,8 @@ tab:
       collapse_all: Fold identical parts
     edit_part:
       title: Properties of Part '{{ name }}'
-      title_multiple: Propriétés du groupe de pièces
-      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
+      title_multiple: Properties of the group of parts
+      multiple_alert: Common properties of the group of {{ part_count }} parts.
       general: General
       edges: Edge bandings
       infos: Infos
@@ -166,7 +166,7 @@ tab:
         With *Labels* you can add keywords to customize the part definitions.
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
-      labels_multiple_info: Seules les étiquettes communes sont visibles
+      labels_multiple_info: Only common labels are shown
       axes: Axes
       axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
@@ -181,7 +181,7 @@ tab:
       over_length: Across the length
       over_width: Across the width
       edge_disabled_help: This edge banding is not configurable because no face has been detected that could carry edge banding material in the model.
-      multiple_values: Valeurs multiples
+      multiple_values: Multiple values
     edit_group:
       title: Properties of Group '{{ name }}'
       part_count: Number of Parts
