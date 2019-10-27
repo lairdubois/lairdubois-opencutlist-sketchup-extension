@@ -200,7 +200,7 @@
                                 </g>
                             {% endfor %}
                             {% for part in sheet.parts|reverse %}
-                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
+                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
