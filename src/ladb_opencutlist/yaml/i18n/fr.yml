@@ -83,7 +83,7 @@ tab:
       scroll_to_block: Défiler vers le groupe
       add_std_thickness_to_material: |
         Ajouter l'épaisseur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'edit_part_properties
+        à la matière '{{ material_name }}'
       add_std_section_to_material: |
         Ajouter la section *{{ std_dimension }}*
         à la matière '{{ material_name }}'
