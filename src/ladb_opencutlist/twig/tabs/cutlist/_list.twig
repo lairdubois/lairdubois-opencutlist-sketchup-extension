@@ -57,7 +57,7 @@
                         </div>
                         <div class="media-body">
                             <div class="no-print">
-                                <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';') }}" placeholder="{{ 'tab.cutlist.list.labels_filter'|i18next() }}">
+                                <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';')|escape }}" placeholder="{{ 'tab.cutlist.list.labels_filter'|i18next() }}">
                             </div>
                             <div class="no-screen">
                                 <ul class="ladb-cutlist-labels-filters-printable">
