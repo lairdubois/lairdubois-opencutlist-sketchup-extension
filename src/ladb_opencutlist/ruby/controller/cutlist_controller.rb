@@ -1769,6 +1769,7 @@ module Ladb::OpenCutList
         std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
         scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
         grained = settings['grained']
+        hide_part_list = settings['hide_part_list']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
         trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
         presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
@@ -1826,6 +1827,7 @@ module Ladb::OpenCutList
 
               :options => {
                 :grained => grained,
+                :hide_part_list => hide_part_list,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
                 :trimming => options.trimming.to_l.to_s,
@@ -1951,12 +1953,14 @@ module Ladb::OpenCutList
                   :total_length_cuts => bin.total_length_cuts.to_l.to_s,
 
                   :parts => [],
+                  :grouped_parts => [],
                   :leftovers => [],
                   :cuts => [],
               }
               response[:sheets].push(sheet)
 
               # Parts
+              grouped_parts = {}
               bin.boxes.each { |box|
                 sheet[:parts].push(
                     {
@@ -1967,14 +1971,30 @@ module Ladb::OpenCutList
                         :px_y => to_px(box.y),
                         :px_length => to_px(box.length),
                         :px_width => to_px(box.width),
-                        :length => box.length.to_l.to_s,
-                        :width => box.width.to_l.to_s,
+                        :length => box.data[:length],
+                        :width => box.data[:width],
                         :rotated => box.rotated,
                         :edge_material_names => box.data[:edge_material_names],
                         :edge_std_dimensions => box.data[:edge_std_dimensions],
                     }
                 )
+                grouped_part = grouped_parts[box.data[:id]]
+                unless grouped_part
+                  grouped_part = {
+                      :id => box.data[:id],
+                      :number => box.data[:number],
+                      :name => box.data[:name],
+                      :count => 0,
+                      :length => box.data[:length],
+                      :width => box.data[:width],
+                      :cutting_length => box.data[:cutting_length],
+                      :cutting_width => box.data[:cutting_width],
+                  }
+                  grouped_parts.store(box.data[:id], grouped_part)
+                end
+                grouped_part[:count] += 1
               }
+              sheet[:grouped_parts] = grouped_parts
 
               # Leftovers
               bin.leftovers.each { |box|

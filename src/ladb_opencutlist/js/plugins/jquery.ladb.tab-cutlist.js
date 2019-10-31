@@ -33,6 +33,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH = 'cutlist.cuttingdiagram2d.option.std_sheet_width';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES = 'cutlist.cuttingdiagram2d.option.scrap_sheet_sizes';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED = 'cutlist.cuttingdiagram2d.option.grained';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram2d.option.saw_kerf';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING = 'cutlist.cuttingdiagram2d.option.trimming';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT = 'cutlist.cuttingdiagram2d.option.presort';
@@ -67,6 +68,7 @@
     var OPTION_DEFAULT_STD_SHEET_LENGTH = '2800mm';
     var OPTION_DEFAULT_STD_SHEET_WIDTH = '2070mm';
     var OPTION_DEFAULT_GRAINED = false;
+    var OPTION_DEFAULT_HIDE_PART_LIST = false;
     var OPTION_DEFAULT_SCRAP_SHEET_SIZES = '';
     var OPTION_DEFAULT_SAW_KERF = '3mm';
     var OPTION_DEFAULT_TRIMMING = '10mm';
@@ -704,7 +706,6 @@
     // Parts /////
 
     LadbTabCutlist.prototype.findGroupAndPartById = function (id) {
-        console.log(this.groups);
         for (var i = 0; i < this.groups.length; i++) {
             var group = this.groups[i];
             for (var j = 0; j < group.parts.length; j++) {
@@ -815,7 +816,6 @@
             this.renderSelectionOnPart(partId, selected);
 
         }
-        console.log(this.selectionGroupId, this.selectionPartIds);
     };
 
     LadbTabCutlist.prototype.selectGroupParts = function (groupId, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
@@ -1425,6 +1425,7 @@
         this.opencutlist.pullSettings([
 
                 // Defaults
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT,
@@ -1436,6 +1437,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + '_' + groupId,
@@ -1452,6 +1454,7 @@
                     std_sheet_width: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, OPTION_DEFAULT_STD_SHEET_WIDTH),
                     scrap_sheet_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, OPTION_DEFAULT_SCRAP_SHEET_SIZES),
                     grained: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, OPTION_DEFAULT_GRAINED),
+                    hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, OPTION_DEFAULT_HIDE_PART_LIST)),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, OPTION_DEFAULT_SAW_KERF)),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, OPTION_DEFAULT_TRIMMING)),
                     presort: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, OPTION_DEFAULT_PRESORT)),
@@ -1469,6 +1472,7 @@
                     var $inputStdSheetWidth = $('#ladb_input_std_sheet_width', $modal);
                     var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                     var $selectGrained = $('#ladb_select_grained', $modal);
+                    var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                     var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                     var $inputTrimming = $('#ladb_input_trimming', $modal);
                     var $selectPresort = $('#ladb_select_presort', $modal);
@@ -1490,6 +1494,8 @@
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectHidePartList.val(cuttingdiagram2dOptions.hide_part_list ? '1' : '0');
+                    $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                     $inputTrimming.val(cuttingdiagram2dOptions.trimming);
                     $selectPresort.val(cuttingdiagram2dOptions.presort);
@@ -1564,12 +1570,14 @@
                     });
                     $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
 
+                        var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, OPTION_DEFAULT_HIDE_PART_LIST);
                         var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, OPTION_DEFAULT_SAW_KERF);
                         var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, OPTION_DEFAULT_TRIMMING);
                         var presort = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, OPTION_DEFAULT_PRESORT);
                         var stacking = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, OPTION_DEFAULT_STACKING);
                         var bbox_optimization = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, OPTION_DEFAULT_BBOX_OPTIMIZATION);
 
+                        $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
                         $selectPresort.selectpicker('val', presort);
@@ -1591,6 +1599,7 @@
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
                         cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.val();
                         cuttingdiagram2dOptions.grained = $selectGrained.val() === '1';
+                        cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
                         cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram2dOptions.trimming = $inputTrimming.val();
                         cuttingdiagram2dOptions.presort = $selectPresort.val();
@@ -1604,6 +1613,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, value:cuttingdiagram2dOptions.grained },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram2dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + '_' + groupId, value:cuttingdiagram2dOptions.presort },
