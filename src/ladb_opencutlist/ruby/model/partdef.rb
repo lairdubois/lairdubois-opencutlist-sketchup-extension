@@ -217,10 +217,10 @@ module Ladb::OpenCutList
       @edge_group_defs.store(PartDef::EDGE_XMAX, edge_xmax_group_def) unless edge_xmax_group_def.nil?
 
       # Store stdDimensions
-      @edge_std_dimensions.store(PartDef::EDGE_YMIN, edge_ymin_group_def.std_dimension) unless edge_ymin_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_YMAX, edge_ymax_group_def.std_dimension) unless edge_ymax_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_XMIN, edge_xmin_group_def.std_dimension) unless edge_xmin_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_XMAX, edge_xmax_group_def.std_dimension) unless edge_xmax_group_def.nil?
+      @edge_std_dimensions.store(PartDef::EDGE_YMIN, "#{edge_ymin_group_def.std_thickness} x #{edge_ymin_group_def.std_dimension}") unless edge_ymin_group_def.nil?
+      @edge_std_dimensions.store(PartDef::EDGE_YMAX, "#{edge_ymax_group_def.std_thickness} x #{edge_ymax_group_def.std_dimension}") unless edge_ymax_group_def.nil?
+      @edge_std_dimensions.store(PartDef::EDGE_XMIN, "#{edge_xmin_group_def.std_thickness} x #{edge_xmin_group_def.std_dimension}") unless edge_xmin_group_def.nil?
+      @edge_std_dimensions.store(PartDef::EDGE_XMAX, "#{edge_xmax_group_def.std_thickness} x #{edge_xmax_group_def.std_dimension}") unless edge_xmax_group_def.nil?
 
     end
 

@@ -476,7 +476,7 @@ module Ladb::OpenCutList
         std_info = {
             :available => std_width_info[:available],
             :dimension_stipped_name => 'width',
-            :dimension => "#{material_attributes.l_thickness} x #{std_width_info[:value].to_s}",
+            :dimension => std_width_info[:value].to_s,
             :width => std_width_info[:value],
             :thickness => material_attributes.l_thickness,
         }
@@ -491,9 +491,9 @@ module Ladb::OpenCutList
           group_def.material_display_name = material.display_name
           group_def.material_type = MaterialAttributes::TYPE_EDGE
           group_def.material_color = material.color if material
-          group_def.std_dimension = std_info[:dimension]
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
+          group_def.std_dimension = std_info[:dimension]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
 
@@ -678,7 +678,7 @@ module Ladb::OpenCutList
           else
             std_info = {
                 :available => true,
-                :std_dimension_stipped_name => '',
+                :dimension_stipped_name => '',
                 :dimension => '',
                 :width => 0,
                 :thickness => 0,
@@ -700,9 +700,9 @@ module Ladb::OpenCutList
           group_def.material_type = material_attributes.type
           group_def.material_color = material.color if material
           group_def.material_grained = material_attributes.grained
-          group_def.std_dimension = std_info[:dimension]
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
+          group_def.std_dimension = std_info[:dimension]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
           group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOW && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)

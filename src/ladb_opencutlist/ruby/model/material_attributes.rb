@@ -197,6 +197,10 @@
       end
     end
 
+    def append_std_width(std_width)
+      @std_widths = @std_widths.empty? ? std_width : [ @std_widths, std_width].join(';')
+    end
+
     def l_std_widths
       a = []
       @std_widths.split(';').each { |std_width|

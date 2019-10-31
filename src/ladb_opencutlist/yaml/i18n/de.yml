@@ -81,6 +81,9 @@ tab:
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
+      add_std_width_to_material: |
+        Ajouter la largeur *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
       add_std_thickness_to_material: |
         Dicke *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen

@@ -116,7 +116,8 @@
         this.groups = [];
         this.editedGroup = null;
         this.ignoreNextMaterialEvents = false;
-        this.selection = {};
+        this.selectionGroupId = null;
+        this.selectionPartIds = [];
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -395,7 +396,7 @@
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    rubyCallCommand('materials_add_std_dimension_command', { material_name:group.material_name, std_dimension: group.std_dimension }, function (response) {
+                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: group.std_dimension }, function (response) {
 
                         // Flag to stop ignoring next material change event
                         that.ignoreNextMaterialEvents = false;
@@ -770,65 +771,65 @@
     };
 
     LadbTabCutlist.prototype.renderSelection = function () {
-        var groupIds = Object.keys(this.selection);
-        for (var i = 0; i < groupIds.length; i++) {
-            for (var j = 0; j < this.selection[groupIds[i]].length; j++) {
-                this.renderSelectionOnPart(this.selection[groupIds[i]][j], true);
-            }
+        for (var i = 0; i < this.selectionPartIds.length; i++) {
+            this.renderSelectionOnPart(this.selectionPartIds[i], true);
         }
     };
 
     LadbTabCutlist.prototype.cleanupSelection = function () {
-        var groupIds = Object.keys(this.selection);
-        var partId;
-        for (var i = 0; i < groupIds.length; i++) {
-            for (var j = this.selection[groupIds[i]].length - 1; j >= 0 ; j--) {
-                partId = this.selection[groupIds[i]][j];
-                if (!this.findGroupAndPartById(partId)) {
-                    this.selection[groupIds[i]].splice(j, 1)
-                }
+        for (var i = this.selectionPartIds.length - 1; i >= 0 ; i--) {
+            if (!this.findGroupAndPartById(this.selectionPartIds[i])) {
+                this.selectionPartIds.splice(i, 1)
             }
         }
     };
 
-    LadbTabCutlist.prototype.selectPart = function (id, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
-        var groupAndPart = this.findGroupAndPartById(id);
+    LadbTabCutlist.prototype.selectPart = function (partId, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
+        var groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
-            // Add to selection
-            var groupSelection = this.selection[groupAndPart.group.id];
-            var selected = groupSelection && groupSelection.includes(id);
+            // Unselect other group selection
+            if (this.selectionGroupId !== null && this.selectionGroupId !== groupAndPart.group.id) {
+                this.selectGroupParts(this.selectionGroupId, false);
+            }
+
+            // Manage selection
+            var selected = this.selectionGroupId === groupAndPart.group.id && this.selectionPartIds.includes(partId);
             if (selected) {
                 if (state === undefined || state === false) {
-                    if (groupSelection) {
-                        groupSelection.splice(groupSelection.indexOf(id), 1)
+                    this.selectionPartIds.splice(this.selectionPartIds.indexOf(partId), 1);
+                    if (this.selectionPartIds.length == 0) {
+                        this.selectionGroupId = null;
                     }
                     selected = false;
                 }
             } else {
                 if (state === undefined || state === true) {
-                    if (groupSelection == null) {
-                        groupSelection = this.selection[groupAndPart.group.id] = []
-                    }
-                    groupSelection.push(id);
+                    this.selectionPartIds.push(partId);
+                    this.selectionGroupId = groupAndPart.group.id;
                     selected = true;
                 }
             }
 
             // Apply selection
-            this.renderSelectionOnPart(id, selected);
+            this.renderSelectionOnPart(partId, selected);
 
         }
+        console.log(this.selectionGroupId, this.selectionPartIds);
     };
 
-    LadbTabCutlist.prototype.selectGroupParts = function (id) {
-        var group = this.findGroupById(id);
+    LadbTabCutlist.prototype.selectGroupParts = function (groupId, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
+        var group = this.findGroupById(groupId);
+        if (group) {
 
-        var state = this.selection[group.id] && this.selection[group.id].length > 0 ? false : true;
-        for (var i = 0 ; i < group.parts.length; i++) {
-            this.selectPart(group.parts[i].id, state);
+            if (state === undefined) {
+                state = !(this.selectionGroupId === group.id && this.selectionPartIds.length > 0);
+            }
+            for (var i = 0 ; i < group.parts.length; i++) {
+                this.selectPart(group.parts[i].id, state);
+            }
+
         }
-
     };
 
     LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab) {
@@ -840,9 +841,8 @@
             var group = groupAndPart.group;
             var part = groupAndPart.part;
 
-            var groupSelection = this.selection[groupAndPart.group.id];
             var isFolder = part.children && part.children.length > 0;
-            var isSelected = groupSelection && groupSelection.includes(id) && groupSelection.length > 1;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(id) && this.selectionPartIds.length > 1;
             var multiple = isFolder || isSelected;
 
             var editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));
@@ -853,8 +853,8 @@
                         editedParts.push(part.children[i]);
                     }
                 } else if (isSelected) {
-                    for (var i = 0; i < groupSelection.length; i++) {
-                        var groupAndPart = that.findGroupAndPartById(groupSelection[i]);
+                    for (var i = 0; i < this.selectionPartIds.length; i++) {
+                        var groupAndPart = that.findGroupAndPartById(this.selectionPartIds[i]);
                         if (groupAndPart) {
                             if (groupAndPart.part.children) {
                                 for (var j = 0; j < groupAndPart.part.children.length; j++) {
@@ -2078,7 +2078,8 @@
 
         // Bind buttons
         this.$btnGenerate.on('click', function () {
-            that.selection = {};
+            that.selectionGroupId = null;
+            that.selectionPartIds = [];
             that.generateCutlist();
             this.blur();
         });

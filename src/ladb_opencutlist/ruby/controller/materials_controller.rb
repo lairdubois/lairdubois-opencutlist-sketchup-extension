@@ -541,6 +541,8 @@ module Ladb::OpenCutList
             material_attributes.append_std_thickness(std_dimension)
           when MaterialAttributes::TYPE_DIMENSIONAL
             material_attributes.append_std_section(std_dimension)
+          when MaterialAttributes::TYPE_EDGE
+            material_attributes.append_std_width(std_dimension)
           else
             return { :errors => [ 'tab.materials.error.no_type_material' ] }
         end
