@@ -43,10 +43,14 @@
         {% include 'core/_alert-tips.twig' %}
 
         {% if unplaced_parts|length > 0 %}
+            {% set colspan = 7 %}
+            {% if not showCuttingDimensions %}
+                {% set colspan = colspan - 2 %}
+            {% endif %}
             <table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
                 <thead>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
                     </td>
@@ -54,37 +58,48 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.number'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.name'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.cuttingdiagram.list.cutting'|i18next }}</td>
+                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    {% if showCuttingDimensions %}
+                        <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                    {% endif %}
+                    <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
                 <tr>
-                    <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
-                    <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
+                    {% if showCuttingDimensions %}
+                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                        {% endfor %}
+                    {% endif %}
+                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    {% endfor %}
                 </tr>
                 {% for part in unplaced_parts  %}
-                <tr class="ladb-cutlist-row">
-                    <td class="text-center">
-                        {{ part.number }}
-                    </td>
-                    <td>
-                        <div class="ladb-minitools ladb-minitools-right no-print">
-                            <span class="ladb-separator"></span>
-                            <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
-                        </div>
-                        {{ part.name|escape }}
-                    </td>
-                    <td class="text-center">
-                        {{ part.count }}
-                    </td>
-                    <td class="text-right">
-                        {{ part.length }}
-                    </td>
-                    <td class="text-right">
-                        {{ part.width }}
-                    </td>
-                </tr>
+                    <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
+                        <td class="text-center">
+                            {{ part.number }}
+                        </td>
+                        <td>
+                            <div class="ladb-minitools ladb-minitools-right no-print">
+                                <span class="ladb-separator"></span>
+                                <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                            </div>
+                            {{ part.name|escape }}
+                        </td>
+                        <td class="text-center">
+                            {{ part.count }}
+                        </td>
+                        {% if showCuttingDimensions %}
+                            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                                {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
+                            {% endfor %}
+                        {% endif %}
+                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                            <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -208,6 +223,7 @@
                                 </g>
                             {% endfor %}
                             {% for part in sheet.parts|reverse %}
+                                {% set hideDimensions = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
@@ -225,10 +241,12 @@
                                     {% endif %}
                                     {% set numberTextLength = part.number|length %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / (part.rotated ? 1 : numberTextLength), (part.px_width - dimensionOffset * 2) / (part.rotated ? numberTextLength : 1))  }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
-                                    {% set centredLength = part.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
-                                    {% set centredWidth = part.px_length > (dimensionOffset + dimensionFontSize + numberFontSize) %}
-                                    <text class="part-dimension" x="{{ centredLength ? part.px_x + part.px_length / 2 : part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ centredLength ? part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}"{% if not centredLength %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
-                                    <text class="part-dimension" x="{{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }}" y="{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredWidth %}middle{% else %}end{% endif %}"{% if not centredWidth %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }},{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }})">{{ part.width }}</text>
+                                    {% if not hideDimensions %}
+                                        {% set centredLength = part.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
+                                        {% set centredWidth = part.px_length > (dimensionOffset + dimensionFontSize + numberFontSize) %}
+                                        <text class="part-dimension" x="{{ centredLength ? part.px_x + part.px_length / 2 : part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ centredLength ? part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}"{% if not centredLength %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
+                                        <text class="part-dimension" x="{{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }}" y="{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredWidth %}middle{% else %}end{% endif %}"{% if not centredWidth %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }},{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }})">{{ part.width }}</text>
+                                    {% endif %}
                                 </g>
                             {% endfor %}
                             {% for cut in sheet.cuts %}
@@ -256,23 +274,35 @@
                     </tr>
                     <tr class="ladb-cutlist-heading-row">
                         {% if showCuttingDimensions %}
-                            <td class="text-center" width="8%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
-                            <td class="text-center" width="8%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+                            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                                <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                            {% endfor %}
                         {% endif %}
-                        <td class="text-center" width="8%">{{ 'tab.cutlist.list.length_short'|i18next }}</td>
-                        <td class="text-center" width="8%">{{ 'tab.cutlist.list.width_short'|i18next }}</td>
+                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                        {% endfor %}
                     </tr>
                     {% for part in sheet.grouped_parts %}
-                        <tr class="ladb-cutlist-row">
-                            <td class="text-center ladb-cutlist-highlighted-value">{{ part.number }}</td>
-                            <td>{{ part.name }}</td>
+                        <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
+                            {% include 'tabs/cutlist/_list-row-col-number.twig' %}
+                            <td>
+                                <div class="ladb-minitools ladb-minitools-right no-print">
+                                    {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                                    <span class="ladb-separator"></span>
+                                    <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                                </div>
+                                {% if part.edge_count > 0 and part.edge_pattern %}<span class="no-screen pull-right"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></span>{% endif %}
+                                <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
+                            </td>
                             <td class="text-center">{{ part.count }}</td>
                             {% if showCuttingDimensions %}
-                                <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{{ part.cutting_length }}</td>
-                                <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{{ part.cutting_width }}</td>
+                                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                                    {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
+                                {% endfor %}
                             {% endif %}
-                            <td class="ladb-cutlist-dimension-value">{{ part.length }}</td>
-                            <td class="ladb-cutlist-dimension-value">{{ part.width }}</td>
+                            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                                <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                            {% endfor %}
                         </tr>
                     {% endfor %}
                 {% endif %}

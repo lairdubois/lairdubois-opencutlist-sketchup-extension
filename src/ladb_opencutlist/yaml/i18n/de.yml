@@ -367,10 +367,6 @@ tab:
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
-        number: Nr.
-        name: Bezeichnung
-        count: Anzahl
-        cutting: Rohmass
         sheet: Platte
         length: Länge
         width: Breite

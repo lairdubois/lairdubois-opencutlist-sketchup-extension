@@ -279,16 +279,12 @@
                 </tr>
             {% endif %}
             <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %} ladb-minitools-holder">
-                <td class="text-center ladb-cutlist-highlighted-value">
-                    {% include 'tabs/cutlist/_list-row-col-number.twig' %}
-                </td>
-                <td>
-                    {% include 'tabs/cutlist/_list-row-col-name.twig' %}
-                </td>
+                {% include 'tabs/cutlist/_list-row-col-number.twig' %}
+                {% include 'tabs/cutlist/_list-row-col-name.twig' %}
                 <td class="text-center">{{ part.count }}</td>
                 {% if showCuttingDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
-                        <td class="ladb-cutlist-dimension-value ladb-cutlist-highlighted-value">{% if part.edge_decrements[property] %}<i class="ladb-opencutlist-icon-asterisk" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_decremented'|i18next({ 'decrement':part.edge_decrements[property] }) }}"></i>{% endif %}{{ part['cutting_'~property] }}{% if part.count > 1 and (part.cumulable == 1 and property == 'length') or (part.cumulable == 2 and property == 'width') %}<br><small title="{{ part.count }} x {{ part['cutting_'~property] }} = {{ part['cumulative_cutting_'~property] }}" data-toggle="tooltip">&Sigma;&nbsp;=&nbsp;<em>{{ part['cumulative_cutting_'~property] }}</em></small>{% endif %}</td>
+                        {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
                     {% endfor %}
                 {% endif %}
                 {% if showBoxDimensions %}
@@ -309,12 +305,8 @@
             {% if part.children %}
                 {% for partChild in part.children %}
                     <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
-                        <td class="text-center" style="color: red;">
-                            {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
-                        </td>
-                        <td>
-                            {% include 'tabs/cutlist/_list-row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
-                        </td>
+                        {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
+                        {% include 'tabs/cutlist/_list-row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
                         <td class="text-center">{{ partChild.count }}</td>
                         {% if showCuttingDimensions %}
                             {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}

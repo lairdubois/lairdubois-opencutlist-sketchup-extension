@@ -1073,6 +1073,7 @@ module Ladb::OpenCutList
             # Folder part takes first child number
             part[:name] = part[:children].first[:name] + ', ...'
             part[:number] = part[:children].first[:number] + '+'
+            part[:saved_number] = part[:children].first[:saved_number] + '+' if part[:children].first[:saved_number]
 
           end
 
@@ -1886,15 +1887,20 @@ module Ladb::OpenCutList
                     :id => box.data[:id],
                     :number => box.data[:number],
                     :name => box.data[:name],
-                    :length => box.length.to_l.to_s,
-                    :width => box.width.to_l.to_s,
+                    :length => box.data[:length],
+                    :width => box.data[:width],
+                    :cutting_length => box.data[:cutting_length],
+                    :cutting_width => box.data[:cutting_width],
+                    :edge_count => box.data[:edge_count],
+                    :edge_pattern => box.data[:edge_pattern],
+                    :edge_decrements => box.data[:edge_decrements],
                     :count => 0,
                 }
                 unplaced_parts[box.data[:number]] = part
               end
               part[:count] += 1
             }
-            unplaced_parts.each { |key, part|
+            unplaced_parts.sort_by { |k, v| v[:number] }.each { |key, part|
               response[:unplaced_parts].push(part)
             }
 
@@ -1983,18 +1989,22 @@ module Ladb::OpenCutList
                   grouped_part = {
                       :id => box.data[:id],
                       :number => box.data[:number],
+                      :saved_number => box.data[:saved_number],
                       :name => box.data[:name],
                       :count => 0,
                       :length => box.data[:length],
                       :width => box.data[:width],
                       :cutting_length => box.data[:cutting_length],
                       :cutting_width => box.data[:cutting_width],
+                      :edge_count => box.data[:edge_count],
+                      :edge_pattern => box.data[:edge_pattern],
+                      :edge_decrements => box.data[:edge_decrements],
                   }
                   grouped_parts.store(box.data[:id], grouped_part)
                 end
                 grouped_part[:count] += 1
               }
-              sheet[:grouped_parts] = grouped_parts
+              sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
 
               # Leftovers
               bin.leftovers.each { |box|

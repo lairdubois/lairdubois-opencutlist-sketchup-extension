@@ -280,7 +280,7 @@ module Ladb::OpenCutList
             :cutting_length => [@cutting_size.length - @edge_length_decrement, 0].max.to_l.to_s,
             :cutting_width => [@cutting_size.width - @edge_width_decrement].max.to_l.to_s,
             :cutting_thickness => @cutting_size.thickness.to_s,
-            :saved_number => nil,
+            :saved_number => @saved_number,
             :material_name => @material_name,
             :labels => @labels,
             :edge_count => @edge_count,

@@ -1626,6 +1626,7 @@
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                 generateOptions: that.generateOptions,
+                                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                                 filename: that.filename,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
@@ -1688,7 +1689,8 @@
                             });
                             $('a.ladb-btn-highlight-part', $slide).on('click', function () {
                                 $(this).blur();
-                                var partId = $(this).data('part-id');
+                                var $part = $(this).parents('.ladb-cutlist-row');
+                                var partId = $part.data('part-id');
                                 that.highlightPart(partId);
                                 return false;
                             });

@@ -367,10 +367,6 @@ tab:
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
-        number: No.
-        name: Description
-        count: Qty
-        cutting: Raw
         sheet: Panel
         length: Length
         width: Width

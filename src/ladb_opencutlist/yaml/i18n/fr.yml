@@ -367,10 +367,7 @@ tab:
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
-        number: N°
-        name: Désignation
         count: Qte.
-        cutting: Débit
         sheet: Panneau
         length: Longueur
         width: Largeur
