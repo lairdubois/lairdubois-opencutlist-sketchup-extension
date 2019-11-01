@@ -594,6 +594,16 @@ tab:
       imported_body: "{{ count }} pièce importée avec succes !"
       imported_body_plural: "{{ count }} pièces importées avec succes !"
     outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
+  sponsor:
+    label: Soutenir
+    title: Soutenir
+  settings:
+    label: Préférences
+    title: Préférences
+    reset: Restaurer aux valeurs par défaut
+    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
+    language: Langue
+    size_and_position: Taille et Position de la fenêtre
   about:
     label: A propos
     title: A propos
@@ -610,13 +620,6 @@ tab:
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
       Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
-  settings:
-    label: Préférences
-    title: Préférences
-    reset: Restaurer aux valeurs par défaut
-    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-    language: Langue
-    size_and_position: Taille et Position de la fenêtre
 tool:
   highlight:
     transparency: Transparence

@@ -593,6 +593,16 @@ tab:
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+  sponsor:
+    label: Soutenir
+    title: Soutenir
+  settings:
+    label: Benutzereinstellungen
+    title: Benutzereinstellungen
+    reset: Auf vorgegebene Werte zurücksetzen
+    reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
+    language: Sprache
+    size_and_position: Grösse und Position des Fensters
   about:
     label: Über
     title: Über
@@ -609,13 +619,6 @@ tab:
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
-  settings:
-    label: Benutzereinstellungen
-    title: Benutzereinstellungen
-    reset: Auf vorgegebene Werte zurücksetzen
-    reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
-    language: Sprache
-    size_and_position: Grösse und Position des Fensters
 tool:
   highlight:
     transparency: Transparenz
