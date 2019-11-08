@@ -487,6 +487,12 @@
                     that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                 });
             });
+            $('button.ladb-btn-group-cuttingdiagram1d', that.$page).on('click', function () {
+                $(this).blur();
+                var $group = $(this).parents('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.cuttingdiagram1dGroup(groupId);
+            });
             $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
                 $(this).blur();
                 var $group = $(this).parents('.ladb-cutlist-group');
@@ -1453,7 +1459,7 @@
                 var cuttingdiagram1dOptions = {
                     std_bar: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, OPTION_DEFAULT_STD_BAR),
                     std_bar_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, OPTION_DEFAULT_STD_BAR_LENGTH),
-                    scrap_bar_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, OPTION_DEFAULT_SCRAP_BAR_SIZES),
+                    scrap_bar_lengths: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, OPTION_DEFAULT_SCRAP_BAR_LENGTHS),
                     hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, OPTION_DEFAULT_HIDE_PART_LIST)),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, OPTION_DEFAULT_SAW_KERF))
                 };
@@ -1474,9 +1480,9 @@
                     var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
 
                     if (cuttingdiagram1dOptions.std_sheet) {
-                        $inputStdBar.val(cuttingdiagram2dOptions.std_sheet);
-                        if ($inputStdBar.val() == null && response.std_sizes.length === 0) {
-                            $inputStdBar.val('0x0|' + response.grained);  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                        $inputStdBar.val(cuttingdiagram1dOptions.std_bar);
+                        if ($inputStdBar.val() == null && response.std_lengths.length === 0) {
+                            $inputStdBar.val('0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
                         }
                     }
                     $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
@@ -1504,10 +1510,7 @@
                                 $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
                             });
                         } else {
-                            var sizeAndGrained = value.split('|');
-                            var size = sizeAndGrained[0].split('x');
-                            var stdSheetLength = size[0].trim();
-                            $inputStdBarLength.val(stdSheetLength);
+                            $inputStdBarLength.val(value);
                         }
                     };
 
@@ -1565,7 +1568,7 @@
 
                         ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                 generateOptions: that.generateOptions,
@@ -1673,7 +1676,7 @@
                     $modal.modal('show');
 
                     // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                    $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+                    $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
 
                     // Setup popovers
                     that.opencutlist.setupPopovers();

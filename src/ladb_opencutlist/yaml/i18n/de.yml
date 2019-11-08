@@ -346,6 +346,19 @@ tab:
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
+      option_std_bar: Barre standard
+      option_std_bar_help: |
+        Sélectionnez ici lea barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_std_bar_add: Ajouter une taille...
+      option_std_bar_none: Aucune
+      option_scrap_bar_lengths: Restes de barre
+      option_scrap_bar_lengths_placeholder: longueur ; ...
+      option_scrap_bar_lengths_help:  |
+        Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
+        Format attendu : **L**. Où **L** est la *longueur* du reste.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.

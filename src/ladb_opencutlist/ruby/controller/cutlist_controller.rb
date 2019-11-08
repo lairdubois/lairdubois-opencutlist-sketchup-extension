@@ -20,6 +20,7 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
+  require_relative '../lib/bin_packing_1d/packengine'
   require_relative '../lib/bin_packing_2d/packengine'
 
   class CutlistController < Controller
@@ -86,6 +87,10 @@ module Ladb::OpenCutList
 
       Plugin.instance.register_command("cutlist_group_update") do |group_data|
         group_update_command(group_data)
+      end
+
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d") do |settings|
+        group_cuttingdiagram_1d_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
@@ -1767,13 +1772,9 @@ module Ladb::OpenCutList
         # Check settings
         group_id = settings['group_id']
         std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
-        scrap_bar_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_bar_sizes'])
+        scrap_bar_lengths = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_bar_lengths'])
         hide_part_list = settings['hide_part_list']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
-        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-        presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
-        stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
-        bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
 
         @cutlist[:groups].each { |group|
 
@@ -1781,7 +1782,28 @@ module Ladb::OpenCutList
             next
           end
 
-          # RUN GOES HERE :)
+          # The dimensions need to be in Sketchup internal units AND float
+          options = BinPacking1D::Options.new
+          options.base_bin_length = std_bar_length
+          options.saw_kerf = saw_kerf
+
+          # Create the bin packing engine with given bins and boxes
+          e = BinPacking1D::PackEngine.new(options)
+
+          # Add bins from scrap sheets
+          scrap_bar_lengths.split(';').each { |scrap_bar_length|
+            e.add_bin(scrap_bar_length.to_f)
+          }
+
+          # Add boxes from parts
+          group[:parts].each { |part|
+            for i in 1..part[:count]
+              e.add_part(part[:cutting_length].to_l.to_f, part)
+            end
+          }
+
+          # Compute the cutting diagram
+          result, err = e.run
 
           # Response
           # --------
@@ -1797,7 +1819,6 @@ module Ladb::OpenCutList
               :tips => [],
 
               :options => {
-                :grained => grained,
                 :hide_part_list => hide_part_list,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
@@ -1821,11 +1842,6 @@ module Ladb::OpenCutList
 
           else
 
-            # Errors
-            if result.unplaced_boxes.length > 0
-              response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
-            end
-
             # Warnings
             materials = Sketchup.active_model.materials
             material = materials[group[:material_name]]
@@ -1837,7 +1853,101 @@ module Ladb::OpenCutList
               response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
             end
 
-            # MODEL GOES HERE :)
+            # Unplaced parts
+            unplaced_parts = {}
+            result.unplaced_parts.each { |box|
+              part = unplaced_parts[box.data[:number]]
+              unless part
+                part = {
+                    :id => box.data[:id],
+                    :number => box.data[:number],
+                    :name => box.data[:name],
+                    :length => box.data[:length],
+                    :cutting_length => box.data[:cutting_length],
+                    :count => 0,
+                }
+                unplaced_parts[box.data[:number]] = part
+              end
+              part[:count] += 1
+            }
+            unplaced_parts.sort_by { |k, v| v[:number] }.each { |key, part|
+              response[:unplaced_parts].push(part)
+            }
+
+            # Bars
+            index = 0
+            result.original_bins.each { |bin|
+
+              index += 1
+              bar = {
+                  :index => index,
+                  :px_length => to_px(bin.length),
+                  :type => 0, # TODO
+                  :length => bin.length.to_l.to_s,
+                  :efficiency => bin.efficiency,
+                  :total_length_cuts => bin.total_length_cuts.to_l.to_s,
+
+                  :parts => [],
+                  :grouped_parts => [],
+                  :leftovers => [],
+                  :cuts => [],
+              }
+              response[:bars].push(bar)
+
+              # Parts
+              grouped_parts = {}
+              bin.parts.each { |box|
+                bar[:parts].push(
+                    {
+                        :id => box.data[:id],
+                        :number => box.data[:number],
+                        :name => box.data[:name],
+                        :px_x => to_px(box.x),
+                        :px_length => to_px(box.length),
+                        :length => box.length.to_l.to_s,
+                    }
+                )
+                grouped_part = grouped_parts[box.data[:id]]
+                unless grouped_part
+                  grouped_part = {
+                      :id => box.data[:id],
+                      :number => box.data[:number],
+                      :saved_number => box.data[:saved_number],
+                      :name => box.data[:name],
+                      :count => 0,
+                      :length => box.data[:length],
+                      :cutting_length => box.data[:cutting_length],
+                  }
+                  grouped_parts.store(box.data[:id], grouped_part)
+                end
+                grouped_part[:count] += 1
+              }
+              sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
+
+              # Leftovers
+              bin.leftovers.each { |box|
+                sheet[:leftovers].push(
+                    {
+                        :px_x => to_px(box.x),
+                        :px_length => to_px(box.length),
+                        :length => box.length.to_l.to_s,
+                    }
+                )
+              }
+
+              # Cuts
+              bin.cuts.each { |cut|
+                sheet[:cuts].push(
+                    {
+                        :px_x => to_px(cut.x),
+                        :px_length => to_px(cut.length),
+                        :x => cut.x.to_l.to_s,
+                        :length => cut.length.to_l.to_s,
+                    }
+                )
+              }
+
+            }
 
           end
 
@@ -1991,7 +2101,7 @@ module Ladb::OpenCutList
             }
 
             # Summary
-            result.unused_bins.each {|bin|
+            result.unused_bins.each { |bin|
               response[:summary][:sheets].push(
                   {
                       :type => bin.type,
