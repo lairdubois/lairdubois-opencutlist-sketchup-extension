@@ -1761,6 +1761,93 @@ module Ladb::OpenCutList
 
     end
     
+    def group_cuttingdiagram_1d_command(settings)
+      if @cutlist
+
+        # Check settings
+        group_id = settings['group_id']
+        std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
+        scrap_bar_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_bar_sizes'])
+        hide_part_list = settings['hide_part_list']
+        saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
+        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
+        presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
+        stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
+        bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
+
+        @cutlist[:groups].each { |group|
+
+          if group_id && group[:id] != group_id
+            next
+          end
+
+          # RUN GOES HERE :)
+
+          # Response
+          # --------
+
+          # Convert inch float value to pixel
+          def to_px(inch_value)
+            inch_value * 7 # 840px = 120" ~ 3m
+          end
+
+          response = {
+              :errors => [],
+              :warnings => [],
+              :tips => [],
+
+              :options => {
+                :grained => grained,
+                :hide_part_list => hide_part_list,
+                :px_saw_kerf => to_px(options.saw_kerf),
+                :saw_kerf => options.saw_kerf.to_l.to_s,
+              },
+
+              :unplaced_parts => [],
+              :summary => {
+                :bars => [],
+              },
+              :bars => [],
+          }
+
+          if err > BinPacking1D::ERROR_NONE
+
+            # Engine error -> returns error only
+
+            case err
+              when BinPacking1D::ERROR_NO_BIN
+                response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
+            end
+
+          else
+
+            # Errors
+            if result.unplaced_boxes.length > 0
+              response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
+            end
+
+            # Warnings
+            materials = Sketchup.active_model.materials
+            material = materials[group[:material_name]]
+            material_attributes = MaterialAttributes.new(material)
+            if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group[:edge_decremented]
+              response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
+            end
+            if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+            end
+
+            # MODEL GOES HERE :)
+
+          end
+
+          return response
+        }
+
+      end
+
+    end
+
     def group_cuttingdiagram_2d_command(settings)
       if @cutlist
 
@@ -1827,7 +1914,6 @@ module Ladb::OpenCutList
               :tips => [],
 
               :options => {
-                :grained => grained,
                 :hide_part_list => hide_part_list,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
