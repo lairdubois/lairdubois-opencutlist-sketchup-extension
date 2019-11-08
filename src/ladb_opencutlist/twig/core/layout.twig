@@ -36,7 +36,7 @@
         <ul>
             <li><a href="https://www.lairdubois.fr" target="_blank"><i class="ladb-opencutlist-icon-link"></i> www.lairdubois.fr</a></li>
             {% for tabDef in tabDefs if tabDef.bar == 'bottombar' %}
-                <li><a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#">{% if tabDef.icon %}<i class="{{ tabDef.icon }}"></i>{% endif %} {{ ('tab.'~tabDef.name~'.label')|i18next }}</a></li>
+                <li{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %}><a id="ladb_tab_btn_{{ tabDef.name }}" href="#">{% if tabDef.icon %}<i class="{{ tabDef.icon }}"></i>{% endif %} {{ ('tab.'~tabDef.name~'.label')|i18next }}</a></li>
             {% endfor %}
         </ul>
     </div>

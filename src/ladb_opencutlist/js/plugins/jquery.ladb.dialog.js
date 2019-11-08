@@ -67,15 +67,15 @@
                 icon: 'ladb-opencutlist-icon-import'
             },
             {
-                name: 'sponsor',
-                bar: 'bottombar',
-                icon: 'ladb-opencutlist-icon-sponsor ladb-color-sponsor',
-                classes: 'ladb-color-sponsor'
-            },
-            {
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings'
+            },
+            {
+                name: 'sponsor',
+                bar: 'bottombar',
+                icon: 'ladb-opencutlist-icon-sponsor',
+                classes: 'ladb-highlighted-sponsor'
             },
             {
                 name: 'about',

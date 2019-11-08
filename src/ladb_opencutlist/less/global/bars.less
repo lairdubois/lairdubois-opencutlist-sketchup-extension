@@ -18,10 +18,21 @@
     margin: 0;
     padding: 0;
     float: right;
+    display: flex;
 
     & li {
       display: inline-block;
       border-left: 1px solid #ddd;
+
+      &.ladb-highlighted-sponsor {
+        background-color: @ladb-brand-sponsor;
+        color: #fff !important;
+
+        & > a {
+          color: #fff;
+        }
+
+      }
 
       & > a {
         color: #3e3b33;
@@ -30,6 +41,7 @@
         text-align: center;
         position: relative;
         padding: 0 10px 0 10px;
+
       }
 
       > a:hover, & > a.ladb-active {
