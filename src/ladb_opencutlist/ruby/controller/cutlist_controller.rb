@@ -20,7 +20,7 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
-  require_relative '../lib/bin_packing_1d/packengine'
+  require_relative '../lib/bin_packing_1d/packing1D'
   require_relative '../lib/bin_packing_2d/packengine'
 
   class CutlistController < Controller
@@ -1784,25 +1784,49 @@ module Ladb::OpenCutList
 
           # The dimensions need to be in Sketchup internal units AND float
           options = BinPacking1D::Options.new
-          options.base_bin_length = std_bar_length
-          options.saw_kerf = saw_kerf
+          options.std_length = DimensionUtils.instance.str_to_ifloat('13000').to_l.to_f
+          options.saw_kerf = saw_kerf # size of saw_kef
+          options.trim_size = 20 # size of trim size (both sides)
+          options.max_time = 4 # the amount of time in seconds for computing, before aborting
+          options.tuning_factor = 1 # a factor
 
           # Create the bin packing engine with given bins and boxes
-          e = BinPacking1D::PackEngine.new(options)
+          e = BinPacking1D::Packing1D.new(options)
 
           # Add bins from scrap sheets
           scrap_bar_lengths.split(';').each { |scrap_bar_length|
             e.add_bin(scrap_bar_length.to_f)
           }
 
-          # Add boxes from parts
+          # Add bars from parts, give them a unique ID
+          id = 1
           group[:parts].each { |part|
             for i in 1..part[:count]
-              e.add_part(part[:cutting_length].to_l.to_f, part)
+              e.add_part(part[:cutting_length].to_l.to_f, id)
+              id += 1
             end
           }
 
+          err = e.run()
+          case err
+          when BinPacking1D::ERROR_NONE
+            msg = 'optimal solution found'
+            e.result(msg, false)
+          when BinPacking1D::ERROR_SUBOPT
+            msg = 'suboptimal solution found'
+            e.result(msg, false)
+          when BinPacking1D::ERROR_NO_BINS
+            puts('no bins available')
+          when BinPacking1D::ERROR_NO_PARTS
+            puts('no parts to pack')
+          when BinPacking1D::ERROR_TIME_EXCEEDED
+            puts('time exceeded and no solution found')
+            #e.result(msg, false)
+          else
+            puts('funky error, contact developpers', err)
+          end
           # Compute the cutting diagram
+=begin
           result, err = e.run
 
           # Response
@@ -1952,10 +1976,10 @@ module Ladb::OpenCutList
           end
 
           return response
+=end
         }
 
       end
-
     end
 
     def group_cuttingdiagram_2d_command(settings)
