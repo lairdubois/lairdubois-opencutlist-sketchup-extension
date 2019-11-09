@@ -23,14 +23,14 @@ module Ladb::OpenCutList::BinPacking1D
         nb_bars[bar.type] += 1
       end
       print("-----------------------------------------------\n")
-      print("Total  [#{format('%<l>8s', l: lengths[0].to_l.to_s)} ")
-      print("#{format('%<l1>8s', l1: lengths[1].to_l.to_s)} /")
-      print("#{format('%<l2>8s', l2: lengths[2].to_l.to_s)} /")
-      print("#{format('%<l3>8s', l3: lengths[3].to_l.to_s)}\n")
+      print("Total  [#{format('%<l>8s', l: lengths[0].to_l.to_l.to_s)} ")
+      print("#{format('%<l1>8s', l1: lengths[1].to_l.to_l.to_s)} /")
+      print("#{format('%<l2>8s', l2: lengths[2].to_l.to_l.to_s)} /")
+      print("#{format('%<l3>8s', l3: lengths[3].to_l.to_l.to_s)}\n")
       print("-----------------------------------------------\n")
       eff = lengths[2].to_f / lengths[0] * 100
-      print("Efficiency  #{format('%<l1>s', l1: lengths[2].to_l.to_s)}/")
-      print("#{format('%<l2>s', l2: lengths[0].to_l.to_s)} = ")
+      print("Efficiency  #{format('%<l1>s', l1: lengths[2].to_l.to_l.to_s)}/")
+      print("#{format('%<l2>s', l2: lengths[0].to_l.to_l.to_s)} = ")
       print("#{format('%<eff>.2f', eff: eff.to_f)} \%\n")
       print("Nb parts            : #{packing.nb_parts}\n")
       print("Placed parts        : #{packing.nb_parts - packing.unplaced_parts.length}\n")

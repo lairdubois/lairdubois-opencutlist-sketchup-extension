@@ -114,7 +114,7 @@ module Ladb::OpenCutList::BinPacking1D
               best_bars_length = bars.length
               llo_bars = lo_bars
               if @options.debug
-                print("     [#{count}]: better best bars #{bars.length}, leftover #{llo_bars}\n")
+                print("     [#{count}]: better best bars #{bars.length}, leftover #{llo_bars.to_l.to_s}\n")
               end
             elsif (bars.length == best_bars_length) && (lo_bars > llo_bars)
               best_bars = bars
@@ -174,8 +174,8 @@ module Ladb::OpenCutList::BinPacking1D
       return unless @options.debug
 
       puts('-> estimate optimal')
-      print('   smallest = ', @smallest, "\n")
-      print('   net length = ', net_length, ' in ', @opt_nb_bars,
+      print('   smallest = ', @smallest.to_l.to_s, "\n")
+      print('   net length = ', net_length.to_l.to_s, ' in ', @opt_nb_bars,
             " bars, over 50\% ", @nb_over_fiftypercent, " parts\n")
     end
 

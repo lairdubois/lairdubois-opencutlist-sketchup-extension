@@ -61,7 +61,7 @@ module Ladb::OpenCutList::BinPacking1D
     end
 
     def to_s
-      print(@parts.to_s)
+      print(@parts.to_l.to_s)
     end
   end
 end
