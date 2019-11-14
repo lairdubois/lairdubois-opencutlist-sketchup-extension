@@ -20,7 +20,7 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
-  require_relative '../lib/bin_packing_1d/packing1D'
+  require_relative '../lib/bin_packing_1d/packengine'
   require_relative '../lib/bin_packing_2d/packengine'
 
   class CutlistController < Controller
@@ -1786,12 +1786,12 @@ module Ladb::OpenCutList
           options = BinPacking1D::Options.new
           options.std_length = DimensionUtils.instance.str_to_ifloat('13000').to_l.to_f
           options.saw_kerf = saw_kerf # size of saw_kef
-          options.trim_size = 20 # size of trim size (both sides)
+          options.trim_size = DimensionUtils.instance.str_to_ifloat('20').to_l.to_f # size of trim size (both sides)
           options.max_time = 4 # the amount of time in seconds for computing, before aborting
-          options.tuning_factor = 1 # a factor
+          options.tuning_level = 1 # a level 0, 1, 2
 
           # Create the bin packing engine with given bins and boxes
-          e = BinPacking1D::Packing1D.new(options)
+          e = BinPacking1D::PackEngine.new(options)
 
           # Add bins from scrap sheets
           scrap_bar_lengths.split(';').each { |scrap_bar_length|
@@ -1799,22 +1799,22 @@ module Ladb::OpenCutList
           }
 
           # Add bars from parts, give them a unique ID
-          id = 1
           group[:parts].each { |part|
-            for i in 1..part[:count]
-              e.add_part(part[:cutting_length].to_l.to_f, id)
-              id += 1
-            end
+            part[:entity_ids].each { |p|
+              e.add_box(part[:cutting_length].to_l.to_f, p)
+            }
           }
 
-          err = e.run()
+          result, err = e.run
+          res = BinPacking1D::Result.new(result)
+          
           case err
           when BinPacking1D::ERROR_NONE
             msg = 'optimal solution found'
-            e.result(msg, false)
+            res.prt_summary(msg, with_id=false)
           when BinPacking1D::ERROR_SUBOPT
             msg = 'suboptimal solution found'
-            e.result(msg, false)
+            res.prt_summary(msg, with_id=false)
           when BinPacking1D::ERROR_NO_BINS
             puts('no bins available')
           when BinPacking1D::ERROR_NO_PARTS
@@ -1822,12 +1822,14 @@ module Ladb::OpenCutList
           when BinPacking1D::ERROR_TIME_EXCEEDED
             puts('time exceeded and no solution found')
             #e.result(msg, false)
+          when BinPacking1D::ERROR_NOT_IMPLEMENTED
+            puts('feature not implemented yet')
           else
             puts('funky error, contact developpers', err)
           end
           # Compute the cutting diagram
-=begin
-          result, err = e.run
+
+          #result, err = e.run
 
           # Response
           # --------
@@ -1900,24 +1902,40 @@ module Ladb::OpenCutList
 
             # Bars
             index = 0
-            result.original_bins.each { |bin|
+            result.bars.each { |bin|
 
               index += 1
               bar = {
                   :index => index,
                   :px_length => to_px(bin.length),
-                  :type => 0, # TODO
+                  :type => bin.type, # TODO
                   :length => bin.length.to_l.to_s,
                   :efficiency => bin.efficiency,
                   :total_length_cuts => bin.total_length_cuts.to_l.to_s,
-
-                  :parts => [],
+                  :parts => bin.parts,
                   :grouped_parts => [],
-                  :leftovers => [],
-                  :cuts => [],
+                  :leftover => bin.leftover,
+                  :cuts => bin.cuts,
               }
+              
+              puts("result")
+              puts(bar[:type])
+              puts(bar[:length])
+              puts(bar[:efficiency])
+              puts(bar[:leftover].to_l.to_s)
+              bar[:parts].each do |p|
+                print(p[:length].to_l.to_s, " (", p[:id], ") ")
+              end
+              puts()
+              
+              bar[:cuts].each do |c|
+                print(c.to_l.to_s, " ")
+              end
+              puts()
+              
               response[:bars].push(bar)
 
+=begin
               # Parts
               grouped_parts = {}
               bin.parts.each { |box|
@@ -1970,13 +1988,12 @@ module Ladb::OpenCutList
                     }
                 )
               }
+=end
 
             }
-
           end
 
           return response
-=end
         }
 
       end

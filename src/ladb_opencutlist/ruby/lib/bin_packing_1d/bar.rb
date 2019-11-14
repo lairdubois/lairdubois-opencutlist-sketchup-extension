@@ -1,67 +1,60 @@
 module Ladb::OpenCutList::BinPacking1D
-  class Bar
-    attr_accessor :ids, :length, :parts, :type
-
+  class Bar < Packing1D
+    attr_accessor :type,:length, :parts,  
+                  :current_leftover, :efficiency, :cuts, :total_length_cuts
+                  
     def initialize(type, length, trim_size, saw_kerf)
+      @type = type                       # NEW, LEFTOVER, UNFIT
+
       @length = length                   # raw length of bar
       @trim_size = trim_size             # trimsize on both ends
       @saw_kerf = saw_kerf               # width of saw kerf
-      @type = type                       # NEW, LEFTOVER, UNFIT
-      @ids = []                          # ids of placed parts
       @parts = []                        # lengths of placed parts
+      
+      @current_leftover = @length - @trim_size - @saw_kerf
+      @current_position = @trim_size + @saw_kerf
+      @net_length_parts = 0
+      
+      @efficiency = 3.1415
+      
+      @cuts = []
+      @total_length_cuts = 3.1415
     end
 
-    def result(with_id = false)
-      tot_raw, tot_net, leftover = length
-      case @type
-      when BAR_TYPE_NEW
-        print(" NEW   [#{format('%8.2f', @length)}]")
-        print("#{format('%8s',tot_raw.to_l.to_s)} /#{format('%8s', tot_net.to_l.to_s)} /#{format('%8s', leftover.to_l.to_s)} = ")
-      when BAR_TYPE_LO
-        print(" LO    [#{format('%8.2f', @length)}]")
-        print("#{format('%8s', tot_raw.to_l.to_s)} /#{format('%8s', tot_net.to_l.to_s)} /#{format('%8s',leftover.to_l.to_s)} = ")
-      when BAR_TYPE_UNFIT
-        print(" UN [#{format('%8.2f', @length)}]")
-      end
-
-      @parts.each_with_index do |l, i|
-        if with_id
-          print("#{format('%9s', l.to_l.to_s)} (#{format('%3s', @ids[i])})")
-        else
-          print("#{format('%9s', l.to_l.to_s)}")
-        end
-      end
-      print("\n")
-      [@length, tot_raw, tot_net, leftover]
+    def add(id, length)
+      @parts << {:length => length, :id => id}
+      @current_leftover = @current_leftover - length - @saw_kerf
+      @current_position += length + @saw_kerf
+      @net_length_parts += length
+    end
+    
+    def leftover
+      @current_leftover
     end
 
-    def add(id, part)
-      @parts << part
-      @ids << id
-    end
-
-    def length
+    def all_lengths
       if @type == BAR_TYPE_UNFIT
         @length
       else
         net = 0
         raw = 0
         raw = @trim_size + @saw_kerf if @trim_size > 0
-        @parts.each do |l|
-          net += l
+        @parts.each do |p|
+          net += p[:length]
         end
-        raw += (@parts.length - 1) * @saw_kerf + net
+        raw += (@parts.length) * @saw_kerf + net
         if raw > @length
           print('DANGER _ ERROR!\n')
           raw = @length
         end
-        leftover = @length - raw
+        leftover = @length - raw - @saw_kerf
         [raw, net, leftover]
       end
     end
-
-    def to_s
-      print(@parts.to_l.to_s)
+    
+    def compute_efficiency
+      @efficiency = (@length - @current_leftover)/@length.to_f
     end
+
   end
 end
