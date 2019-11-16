@@ -82,8 +82,8 @@ tab:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
       add_std_width_to_material: |
-        Ajouter la largeur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
+        Breite *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
       add_std_thickness_to_material: |
         Dicke *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
@@ -319,10 +319,10 @@ tab:
       edge_xmax: Kantenband Breite 2
     cuttingdiagram:
       title: Schnittplan
-      option_hide_part_list: Liste des pièces
-      option_hide_part_list_0: Affichée pour chaque panneau
-      option_hide_part_list_1: Masquée
-      option_hide_part_list_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
+      option_hide_part_list: Liste der Teile
+      option_hide_part_list_0: Anzeigen für jede Platte
+      option_hide_part_list_1: Ausblenden
+      option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Kantenabfallbreite
