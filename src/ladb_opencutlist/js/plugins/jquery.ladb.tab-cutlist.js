@@ -1528,7 +1528,7 @@
                         var value = $inputStdBar.val();
                         if (value === 'add') {
                             fnEditMaterial(function ($editMaterialModal) {
-                                $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                                $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
                             });
                         } else {
                             $inputStdBarLength.val(value);
