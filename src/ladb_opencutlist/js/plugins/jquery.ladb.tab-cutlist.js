@@ -1819,6 +1819,7 @@
                     // Bind buttons
                     $btnCuttingdiagramOptionsDefaultsSave.on('click', function () {
 
+                        var hide_part_list = $selectHidePartList.val();
                         var saw_kerf = $inputSawKerf.val();
                         var trimming = $inputTrimming.val();
                         var presort = $selectPresort.val();
@@ -1827,6 +1828,7 @@
 
                         // Update default cut options for specific type to last used
                         that.opencutlist.setSettings([
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, value:presort },

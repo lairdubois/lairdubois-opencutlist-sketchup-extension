@@ -130,7 +130,9 @@
                             <a href="#ladb_group_{{ group.id }}" class="ladb-btn-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
                         {% endif %}
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
-                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                        {% if group.material_id %}
+                            <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                        {% endif %}
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                 </td>
