@@ -1772,9 +1772,12 @@ module Ladb::OpenCutList
         # Check settings
         group_id = settings['group_id']
         std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
-        scrap_bar_lengths = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_bar_lengths'])
+        scrap_bar_lengths = DimensionUtils.instance.dd_to_ifloats(settings['scrap_bar_lengths'])
         hide_part_list = settings['hide_part_list']
         saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
+        trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
+        max_time = settings['max_time'].to_i
+        tuning_level = settings['tuning_level'].to_i
 
         @cutlist[:groups].each { |group|
 
@@ -1784,11 +1787,11 @@ module Ladb::OpenCutList
 
           # The dimensions need to be in Sketchup internal units AND float
           options = BinPacking1D::Options.new
-          options.std_length = DimensionUtils.instance.str_to_ifloat('13000').to_l.to_f
+          options.std_length = std_bar_length
           options.saw_kerf = saw_kerf # size of saw_kef
-          options.trim_size = DimensionUtils.instance.str_to_ifloat('20').to_l.to_f # size of trim size (both sides)
-          options.max_time = 4 # the amount of time in seconds for computing, before aborting
-          options.tuning_level = 1 # a level 0, 1, 2
+          options.trim_size = trimming # size of trim size (both sides)
+          options.max_time = max_time # the amount of time in seconds for computing, before aborting
+          options.tuning_level = tuning_level # a level 0, 1, 2
 
           # Create the bin packing engine with given bins and boxes
           e = BinPacking1D::PackEngine.new(options)

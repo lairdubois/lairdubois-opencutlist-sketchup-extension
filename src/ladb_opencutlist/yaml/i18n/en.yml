@@ -326,7 +326,15 @@ tab:
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
-      option_trimming_help: The amount of material around the raw panel to be treated as waste.
+      option_trimming_help_1d: Marge à chaque extrémité de la barre considérer comme chute.
+      option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
+      option_max_time: MAX_TIME
+      option_max_time_help: MAX_TIME_HELP.
+      option_tuning_level: TUNING_LEVEL
+      option_tuning_level_help: TUNING_LEVEL_HELP.
+      option_tuning_level_0: TUNING_LEVEL_0
+      option_tuning_level_1: TUNING_LEVEL_1
+      option_tuning_level_2: TUNING_LEVEL_2
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement.
       option_presort_0: None
@@ -380,6 +388,7 @@ tab:
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
+        count: Qte.
         sheet: Panel
         length: Length
         width: Width
@@ -474,6 +483,11 @@ tab:
       length_increase: Length Oversize
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
+      std_lengths: Longueurs standards
+      std_lengths_placeholder: longueur ; ...
+      std_lengths_help: |
+        Longueurs standards des barres.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_widths: Standard Widths
       std_widths_placeholder: width ; ...
       std_widths_help: |

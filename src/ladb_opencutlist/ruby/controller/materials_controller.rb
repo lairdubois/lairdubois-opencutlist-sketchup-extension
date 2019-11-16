@@ -114,6 +114,7 @@ module Ladb::OpenCutList
                       :length_increase => material_attributes.length_increase,
                       :width_increase => material_attributes.width_increase,
                       :thickness_increase => material_attributes.thickness_increase,
+                      :std_lengths => material_attributes.std_lengths,
                       :std_widths => material_attributes.std_widths,
                       :std_thicknesses => material_attributes.std_thicknesses,
                       :std_sections => material_attributes.std_sections,
@@ -167,6 +168,7 @@ module Ladb::OpenCutList
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
       thickness_increase = attributes['thickness_increase']
+      std_lengths = attributes['std_lengths']
       std_widths = attributes['std_widths']
       std_thicknesses = attributes['std_thicknesses']
       std_sections = attributes['std_sections']
@@ -185,6 +187,7 @@ module Ladb::OpenCutList
       material_attributes.length_increase = length_increase
       material_attributes.width_increase = width_increase
       material_attributes.thickness_increase = thickness_increase
+      material_attributes.std_lengths = std_lengths
       material_attributes.std_widths = std_widths
       material_attributes.std_thicknesses = std_thicknesses
       material_attributes.std_sections = std_sections
@@ -218,6 +221,7 @@ module Ladb::OpenCutList
       length_increase = attributes['length_increase']
       width_increase = attributes['width_increase']
       thickness_increase = attributes['thickness_increase']
+      std_lengths = attributes['std_lengths']
       std_widths = attributes['std_widths']
       std_thicknesses = attributes['std_thicknesses']
       std_sections = attributes['std_sections']
@@ -295,6 +299,7 @@ module Ladb::OpenCutList
         material_attributes.length_increase = length_increase
         material_attributes.width_increase = width_increase
         material_attributes.thickness_increase = thickness_increase
+        material_attributes.std_lengths = std_lengths
         material_attributes.std_widths = std_widths
         material_attributes.std_thicknesses = std_thicknesses
         material_attributes.std_sections = std_sections
@@ -422,6 +427,7 @@ module Ladb::OpenCutList
           :length_increase => '',
           :width_increase => '',
           :thickness_increase => '',
+          :std_lengths => [],
           :std_widths => [],
           :std_thicknesses => [],
           :std_sections => [],
@@ -441,6 +447,7 @@ module Ladb::OpenCutList
         response[:length_increase] = material_attributes.length_increase
         response[:width_increase] = material_attributes.width_increase
         response[:thickness_increase] = material_attributes.thickness_increase
+        response[:std_lengths] = material_attributes.std_lengths
         response[:std_widths] = material_attributes.std_widths
         response[:std_thicknesses] = material_attributes.std_thicknesses
         response[:std_section] = material_attributes.std_sections
