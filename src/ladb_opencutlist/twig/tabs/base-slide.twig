@@ -18,10 +18,14 @@
             </div>
         </div>
     </div>
-    <div class="ladb-container">
-        <div class="container-fluid">
-            {% block containerInner %}{% endblock %}
+    {% block containerOuter %}
+        <div class="ladb-container">
+            {% block containerFluidOuter %}
+                <div class="container-fluid">
+                    {% block containerInner %}{% endblock %}
+                </div>
+            {% endblock %}
         </div>
-    </div>
+    {% endblock %}
 </div>
 {% endblock %}

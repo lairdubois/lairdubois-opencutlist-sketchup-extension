@@ -1,4 +1,17 @@
 {% extends 'tabs/base-tab.twig' %}
 
+{% block headerHeadingInner %}<i class="ladb-opencutlist-icon-sponsor"></i> {{ parent() }}{% endblock %}
+
+{% block headerToolsInner %}
+    <a id="ladb_btn_sponsor" class="btn btn-primary" href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> Faire un don</a>
+{% endblock %}
+
+{% block containerFluidOuter %}
+    {{ parent() }}
+{#    <iframe id="ladb_sponsor_iframe" src="{{ capabilities.debug ? 'http://dev' : 'https://www' }}.lairdubois.fr/opencutlist/sponsor-widget?v={{ "now"|date("Ymdhis") }}" width="100%" height="0" frameborder="0" scrolling="no"></iframe>#}
+{% endblock %}
+
 {% block containerInner %}
+    {% include 'core/_loading.twig' with { 'noHidden':true } %}
+    <div id="ladb_sponsor_members"></div>
 {% endblock %}

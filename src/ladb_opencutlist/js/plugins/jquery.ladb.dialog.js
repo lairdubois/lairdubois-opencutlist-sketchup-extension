@@ -16,6 +16,7 @@
         this.capabilities = {
             version: options.version,
             build: options.build,
+            debug: options.debug,
             sketchupIsPro: options.sketchup_is_pro,
             sketchupVersion: options.sketchup_version,
             sketchupVersionNumber: options.sketchup_version_number,

@@ -33,6 +33,7 @@
 .ladb-loading {
   display: block;
   text-align: center;
+  white-space: nowrap;
 
   &.ladb-loading-float {
     position: absolute;
@@ -70,4 +71,19 @@
 
   }
 
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% {
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
 }

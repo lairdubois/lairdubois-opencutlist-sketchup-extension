@@ -1,5 +1,7 @@
 {% extends 'tabs/base-tab.twig' %}
 
+{% block headerHeadingInner %}<i class="ladb-opencutlist-icon-settings"></i> {{ parent() }}{% endblock %}
+
 {% block headerToolsInner %}
     <button id="ladb_btn_reset" class="btn btn-default"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.settings.reset'|i18next }}</button>
 {% endblock %}
