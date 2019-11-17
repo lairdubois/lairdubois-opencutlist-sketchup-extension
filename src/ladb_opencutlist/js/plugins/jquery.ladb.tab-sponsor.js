@@ -3,16 +3,20 @@
 
     var MESSAGE_PREFIX = 'ladb-opencutlist-';
 
+    var GRAPHQL_SLUG = 'babel'; //'lairdubois-opencutlist-sketchup-extension';
+    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
+    var GRAPHQL_PAGE_SIZE = 20;
+
     // CLASS DEFINITION
     // ======================
 
     var LadbTabSponsor = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
-        this.$containerFluid = $('.ladb-container .container-fluid', this.$element);
-        this.$iframe = $('#ladb_sponsor_iframe', this.$element);
+        this.$loading = $('.ladb-loading', this.$element);
 
-        this.$membersDiv = $('#ladb_sponsor_members', this.$element);
+        this.$page = $('.ladb-page', this.$element);
+
     };
     LadbTabSponsor.prototype = new LadbAbstractTab;
 
@@ -21,18 +25,76 @@
     LadbTabSponsor.prototype.bind = function () {
         var that = this;
 
-        // Bind window message event
-        window.addEventListener('message', function (e) {
-            if (typeof e.data !== 'string' || e.data.substr(0, MESSAGE_PREFIX.length) !== MESSAGE_PREFIX) return;
-            var jsonData = JSON.parse(e.data.substr(MESSAGE_PREFIX.length));
+    };
 
-            // Hide default container
-            that.$containerFluid.hide();
+    LadbTabSponsor.prototype.loadBackers = function (page) {
+        var that = this;
 
-            // Update iframe height
-            that.$iframe.height(jsonData.height);
+        // Show loading
+        this.$loading.show();
 
-        });
+        // Init page
+        page = page ? page : 0;
+
+        // Construct GraphQL querry
+        var graph = graphql(GRAPHQL_ENDPOINT);
+        const membersQuery = graph(`
+            query members($slug: String) {
+              collective(slug: $slug) {
+                name
+                slug
+                members(offset: ` + page * GRAPHQL_PAGE_SIZE + `, limit: ` + GRAPHQL_PAGE_SIZE + `, role: BACKER) {
+                  totalCount
+                  nodes {
+                    id
+                    account {
+                      id
+                      slug
+                      name
+                      description
+                      imageUrl
+                      website
+                    }
+                    since
+                    totalDonations {
+                      value
+                      currency
+                    }
+                  }
+                }
+              }
+            }
+        `);
+
+        membersQuery({ slug: GRAPHQL_SLUG})
+            .then(function (response) {
+
+                var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.collective.members.totalCount) ? page + 1 : null;
+
+                // Render members list
+                var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page == 0 ? '0' : 'n') + '.twig'}).render({
+                    members: response.collective.members,
+                    nextPage: nextPage,
+                }));
+                if (page === 0) {
+                    $list.insertBefore(that.$loading);
+                } else {
+                    $('#ladb_sponsor_members').append($list);
+                }
+
+                // Bind button
+                $('.ladb-sponsor-next-page-btn', $list).on('click', function () {
+                    that.loadBackers(nextPage);
+                    $(this).remove();
+                });
+
+                // Hide loading
+                that.$loading.hide();
+
+            }).catch(function (error) {
+                // response is originally response.errors of query result
+                console.log(error)
+            })
 
     };
 
@@ -40,19 +102,7 @@
         var that = this;
 
         this.bind();
-
-        $.getJSON( "https://opencollective.com/lairdubois-opencutlist-sketchup-extension/members/users.json", function( data ) {
-
-            $.each(data, function (index, member) {
-                console.log(member);
-                that.$membersDiv.append(Twig.twig({ ref: "tabs/sponsor/_member.twig" }).render({
-                    member: member
-                }));
-            });
-
-
-        });
-
+        this.loadBackers();
 
         // Callback
         if (initializedCallback && typeof(initializedCallback) == 'function') {

@@ -3,7 +3,7 @@
 {% block headerHeadingInner %}<i class="ladb-opencutlist-icon-sponsor"></i> {{ parent() }}{% endblock %}
 
 {% block headerToolsInner %}
-    <a id="ladb_btn_sponsor" class="btn btn-primary" href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> Faire un don</a>
+    <a id="ladb_btn_sponsor" class="btn btn-default" href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" target="_blank">Open Collective</a>
 {% endblock %}
 
 {% block containerFluidOuter %}
@@ -12,6 +12,21 @@
 {% endblock %}
 
 {% block containerInner %}
-    {% include 'core/_loading.twig' with { 'noHidden':true } %}
-    <div id="ladb_sponsor_members"></div>
+    <div class="media">
+        <div class="media-left"><img src="../img/icon-114x114.png" width="114" height="114"></div>
+        <div class="media-body">
+            <h3>OpenCutList</h3>
+            <p>
+                OpenCutList est un logiciel Open Source qui base son financement sur la participation de ses utilisateurs via la plateforme <a href="https://opencollective.com/">Open Collective</a>.<br>
+                Soutenez ce projet en contribuant vous aussi à son financement !
+            </p>
+        </div>
+    </div>
+    <div class="text-center">
+        <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" class="btn btn-sponsor btn-lg" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> Contribuer...</a>
+    </div>
+    <hr>
+    <div class="ladb-page">
+        {% include 'core/_loading.twig' with { 'noHidden':true } %}
+    </div>
 {% endblock %}

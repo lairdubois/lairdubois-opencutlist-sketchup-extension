@@ -26,6 +26,7 @@ default:
   good: Gut
   bad: Schlecht
   date_format: Y-m-d G:i
+  date_format_short: Y-m-d
   unit_0: Zoll
   unit_1: Fuss
   unit_2: Millimeter
@@ -34,6 +35,7 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
+  since: depuis
 core:
   menu:
     submenu: OpenCutList

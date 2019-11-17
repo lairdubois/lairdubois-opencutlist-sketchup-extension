@@ -26,6 +26,7 @@ default:
   good: Bon
   bad: Mauvais
   date_format: d/m/Y G:i
+  date_format_short: d/m/Y
   unit_0: Pouces
   unit_1: Pieds
   unit_2: Millimètres
@@ -34,6 +35,7 @@ default:
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
+  since: depuis
 core:
   menu:
     submenu: OpenCutList
