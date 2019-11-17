@@ -413,7 +413,9 @@ tab:
       warning:
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmasse der Teile.
-        cutting_dimensions_increase: |
+        cutting_dimensions_increase_1d: |
+          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
+        cutting_dimensions_increase_2d: |
           *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Masse reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>

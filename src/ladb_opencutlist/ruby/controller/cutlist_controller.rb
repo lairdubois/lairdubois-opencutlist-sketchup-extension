@@ -1874,7 +1874,7 @@ module Ladb::OpenCutList
               response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
             end
             if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
             end
 
             # Unplaced parts
@@ -2109,7 +2109,7 @@ module Ladb::OpenCutList
               response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
             end
             if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+              response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
             end
             if group[:edge_decremented]
               response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'

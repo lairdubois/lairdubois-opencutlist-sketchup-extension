@@ -1628,7 +1628,7 @@
 
                             // Bind buttons
                             $btnCuttingDiagram.on('click', function () {
-                                that.cuttingdiagram2dGroup(groupId);
+                                that.cuttingdiagram1dGroup(groupId);
                             });
                             $btnPrint.on('click', function () {
                                 window.print();
