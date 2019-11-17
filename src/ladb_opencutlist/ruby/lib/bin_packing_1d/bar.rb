@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::BinPacking1D
   class Bar < Packing1D
-    attr_accessor :type,:length, :parts,  
+    attr_accessor :type, :length, :parts,  
                   :current_leftover, :efficiency, :cuts, :total_length_cuts
                   
     def initialize(type, length, trim_size, saw_kerf)
@@ -11,25 +11,33 @@ module Ladb::OpenCutList::BinPacking1D
       @saw_kerf = saw_kerf               # width of saw kerf
       @parts = []                        # lengths of placed parts
       
+      @cuts = []
       @current_leftover = @length - @trim_size - @saw_kerf
       @current_position = @trim_size + @saw_kerf
+      @cuts << @current_position if @current_position > 0 # first cut
+      
       @net_length_parts = 0
       
       @efficiency = 3.1415
-      
-      @cuts = []
-      @total_length_cuts = 3.1415
+      @total_length_cuts = 0
     end
 
     def add(id, length)
       @parts << {:length => length, :id => id}
       @current_leftover = @current_leftover - length - @saw_kerf
       @current_position += length + @saw_kerf
+      @cuts << @current_position if @current_position < @length
       @net_length_parts += length
+      
+      @efficiency = (@length - @current_leftover)/@length.to_f
     end
     
     def leftover
       @current_leftover
+    end
+    
+    def nb_of_cuts
+      return @cuts.length
     end
 
     def all_lengths
@@ -52,9 +60,9 @@ module Ladb::OpenCutList::BinPacking1D
       end
     end
     
-    def compute_efficiency
-      @efficiency = (@length - @current_leftover)/@length.to_f
-    end
+    #def compute_efficiency
+    #  @efficiency = (@length - @current_leftover)/@length.to_f
+    #end
 
   end
 end

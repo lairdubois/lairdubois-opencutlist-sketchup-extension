@@ -54,6 +54,7 @@ module Ladb::OpenCutList::BinPacking1D
         print("-> pack start\n") if @options.debug
         count = 1
         tuning = get_tuning(@options.tuning_level)
+        puts(tuning.to_s)
         tuning.each do |factor|
           next if @smallest*factor > @options.std_length
           puts("   pass #{count} factor #{factor}") if @options.debug
@@ -237,8 +238,9 @@ module Ladb::OpenCutList::BinPacking1D
       [bars, ERROR_NONE]
     end
 
-    def get_tuning(factor)
-      case factor
+    def get_tuning(level)
+      puts(level)
+      case level
       when 1
         [@smallest / 10, @smallest / 5, @smallest / 2,
          0, @smallest, @smallest * 2, @smallest * 5, @smallest * 10]
@@ -282,8 +284,7 @@ module Ladb::OpenCutList::BinPacking1D
       llo
     end
 
-    def prep_results
-      @bars.map{ |b| b.compute_efficiency}
+    def prep_results      
       length = 0
       waste = 0
       @bars.each do |b|

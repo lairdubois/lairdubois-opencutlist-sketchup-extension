@@ -4,7 +4,6 @@ module Ladb::OpenCutList::BinPacking1D
   require_relative 'options'
   require_relative 'packer'
   require_relative 'bar'
-  require_relative 'result'
 
   # PackEngine: setup and run bin packing in 1D
   class PackEngine < Packing1D
@@ -20,8 +19,9 @@ module Ladb::OpenCutList::BinPacking1D
     end
     
     # add scrap bars to be used
+    # option useless for now!
     def add_bin(length)
-      @leftovers << length
+      #@leftovers << length
     end
     
     # add boxes (for the 1D case, we will call these "parts")
@@ -33,7 +33,7 @@ module Ladb::OpenCutList::BinPacking1D
     def run
     
       return nil, ERROR_NO_PARTS if @parts.empty?
-      return nil, ERROR_NO_BINS if @options.std_length < EPS && @leftovers.empty?
+      return nil, ERROR_NO_BIN if @options.std_length < EPS && @leftovers.empty?
       return nil, ERROR_NOT_IMPLEMENTED if !@leftovers.empty?
       
       @warnings << WARNING_SAW_KERF_SMALL if @options.saw_kerf < EPS

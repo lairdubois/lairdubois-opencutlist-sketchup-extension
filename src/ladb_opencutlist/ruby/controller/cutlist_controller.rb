@@ -1809,30 +1809,25 @@ module Ladb::OpenCutList
           }
 
           result, err = e.run
-          res = BinPacking1D::Result.new(result)
           
           case err
           when BinPacking1D::ERROR_NONE
-            msg = 'optimal solution found'
-            res.prt_summary(msg, with_id=false)
+            puts('optimal solution found')
           when BinPacking1D::ERROR_SUBOPT
-            msg = 'suboptimal solution found'
-            res.prt_summary(msg, with_id=false)
-          when BinPacking1D::ERROR_NO_BINS
+            puts('suboptimal solution found')
+          when BinPacking1D::ERROR_NO_BIN
             puts('no bins available')
           when BinPacking1D::ERROR_NO_PARTS
             puts('no parts to pack')
           when BinPacking1D::ERROR_TIME_EXCEEDED
             puts('time exceeded and no solution found')
-            #e.result(msg, false)
           when BinPacking1D::ERROR_NOT_IMPLEMENTED
             puts('feature not implemented yet')
           else
             puts('funky error, contact developpers', err)
           end
-          # Compute the cutting diagram
 
-          #result, err = e.run
+          # Compute the cutting diagram
 
           # Response
           # --------
@@ -1921,16 +1916,18 @@ module Ladb::OpenCutList
                   :cuts => bin.cuts,
               }
               
-              puts("result")
-              puts(bar[:type])
-              puts(bar[:length])
-              puts(bar[:efficiency])
-              puts(bar[:leftover].to_l.to_s)
+              puts("result for bar #{index}")
+              puts("type: ", bar[:type])
+              puts("length: ", bar[:length])
+              puts("efficiency [0,1]: ", bar[:efficiency])
+              puts("leftover/waste: ", bar[:leftover].to_l.to_s)
+              puts("parts: ")
               bar[:parts].each do |p|
                 print(p[:length].to_l.to_s, " (", p[:id], ") ")
               end
               puts()
               
+              puts("nb of cuts:", bin.nb_of_cuts)
               bar[:cuts].each do |c|
                 print(c.to_l.to_s, " ")
               end

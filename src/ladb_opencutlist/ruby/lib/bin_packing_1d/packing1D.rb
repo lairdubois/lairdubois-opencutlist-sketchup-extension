@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     ERROR_NONE = 0
     ERROR_SUBOPT = 1
-    ERROR_NO_BINS = 2
+    ERROR_NO_BIN = 2
     ERROR_NO_PLACEMENT_POSSIBLE = 3
     ERROR_BAD_ERROR = 4
     ERROR_TIME_EXCEEDED = 5
@@ -45,8 +45,8 @@ module Ladb::OpenCutList
       end
       
       def to_ls(nb)
-        #return nb.to_l.to_s
-        return nb.to_s
+        return nb.to_l.to_s
+        #return nb.to_s
       end
     end
   end
