@@ -598,6 +598,12 @@ tab:
   sponsor:
     label: Soutenir
     title: Soutenir
+    description: |
+      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Soutenez ce projet en contribuant vous aussi à son financement !
+    contribute: Contribuer
+    backers: "{{count}} contributeur financier"
+    backers_plural: "{{count}} contributeurs financiers"
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen

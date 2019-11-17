@@ -1,6 +1,6 @@
 {% for member in members.nodes %}
     <div class="col-lg-4 col-md-6 col-xs-12">
-        <div id="ladb_sponsor_member_{{ member.id }}" class="ladb-sponsor-member-box" data-member-id="{{ member.id }}">
+        <div class="ladb-sponsor-member-box" data-member-slug="{{ member.account.slug }}">
             <div class="media">
                 <div class="media-left">
                     <img src="{{ member.account.imageUrl }}" width="128" height="128">
@@ -9,7 +9,7 @@
                     <div class="ladb-sponsor-member-name">{{ member.account.name }}</div>
                     {% if member.account.website %}
                         <div class="ladb-sponsor-member-website">
-                            <a href="{{ member.account.website }}">{{ member.account.website }}</a>
+                            <i class="ladb-opencutlist-icon-link"></i> <a href="{{ member.account.website }}">{{ member.account.website|url_beautify }}</a>
                         </div>
                     {% endif %}
                     {% if member.account.description %}
@@ -20,10 +20,9 @@
                     <div class="ladb-sponsor-member-footer">
                         {% if member.totalDonations and member.totalDonations.value %}
                             <span class="ladb-sponsor-member-amount">
-                                    ${{ member.totalDonations.value }}
-                                </span>
+                                ${{ member.totalDonations.value }}
+                            </span>
                         {% endif %}
-{#                        <span class="ladb-sponsor-member-since pull-left">{{ 'default.since'|i18next }} {{ member.since|date(('default.date_format_short'|i18next)) }}</span>#}
                     </div>
                 </div>
             </div>

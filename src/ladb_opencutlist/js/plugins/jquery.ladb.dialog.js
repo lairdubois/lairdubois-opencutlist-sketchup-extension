@@ -355,6 +355,16 @@
                 Twig.extendFilter("i18next", function (value, options) {
                     return i18next.t(value, options ? options[0] : {});
                 });
+                // Add ... filter
+                Twig.extendFilter("url_beautify", function (value, options) {
+                    var parser = document.createElement('a');
+                    parser.href = value;
+                    var str = '<span class="ladb-url-host">' + parser.host + '</span>';
+                    if (parser.pathname && parser.pathname !== '/') {
+                        str += '<span class="ladb-url-path">' + parser.pathname + '</span>';
+                    }
+                    return '<span class="ladb-url">' + str + '</span>';
+                });
 
                 // Render and append layout template
                 that.$element.append(Twig.twig({ref: "core/layout.twig"}).render({

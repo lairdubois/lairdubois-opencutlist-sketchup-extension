@@ -3,9 +3,9 @@
 
     var MESSAGE_PREFIX = 'ladb-opencutlist-';
 
-    var GRAPHQL_SLUG = 'babel'; //'lairdubois-opencutlist-sketchup-extension';
+    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
     var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-    var GRAPHQL_PAGE_SIZE = 20;
+    var GRAPHQL_PAGE_SIZE = 16;
 
     // CLASS DEFINITION
     // ======================
@@ -14,8 +14,6 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.$loading = $('.ladb-loading', this.$element);
-
-        this.$page = $('.ladb-page', this.$element);
 
     };
     LadbTabSponsor.prototype = new LadbAbstractTab;
@@ -46,16 +44,13 @@
                 members(offset: ` + page * GRAPHQL_PAGE_SIZE + `, limit: ` + GRAPHQL_PAGE_SIZE + `, role: BACKER) {
                   totalCount
                   nodes {
-                    id
                     account {
-                      id
                       slug
                       name
                       description
                       imageUrl
                       website
                     }
-                    since
                     totalDonations {
                       value
                       currency
@@ -72,7 +67,7 @@
                 var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.collective.members.totalCount) ? page + 1 : null;
 
                 // Render members list
-                var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page == 0 ? '0' : 'n') + '.twig'}).render({
+                var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
                     members: response.collective.members,
                     nextPage: nextPage,
                 }));
@@ -86,6 +81,17 @@
                 $('.ladb-sponsor-next-page-btn', $list).on('click', function () {
                     that.loadBackers(nextPage);
                     $(this).remove();
+                });
+
+                // Bind
+                $('.ladb-sponsor-member-box', $list).on('click', function(e) {
+                    var $closestAnchor = $(e.target.closest('a'));
+                    if ($closestAnchor.length > 0) {
+                        window.open($closestAnchor.attr('href'), "_blank");
+                        return false;
+                    }
+                    var slug = $(this).data('member-slug');
+                    window.open('https://opencollective.com/' + slug, "_blank");
                 });
 
                 // Hide loading

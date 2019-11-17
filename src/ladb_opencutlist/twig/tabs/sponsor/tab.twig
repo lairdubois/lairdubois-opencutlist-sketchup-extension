@@ -3,30 +3,24 @@
 {% block headerHeadingInner %}<i class="ladb-opencutlist-icon-sponsor"></i> {{ parent() }}{% endblock %}
 
 {% block headerToolsInner %}
-    <a id="ladb_btn_sponsor" class="btn btn-default" href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" target="_blank">Open Collective</a>
-{% endblock %}
-
-{% block containerFluidOuter %}
-    {{ parent() }}
-{#    <iframe id="ladb_sponsor_iframe" src="{{ capabilities.debug ? 'http://dev' : 'https://www' }}.lairdubois.fr/opencutlist/sponsor-widget?v={{ "now"|date("Ymdhis") }}" width="100%" height="0" frameborder="0" scrolling="no"></iframe>#}
+    <a id="ladb_btn_sponsor" class="btn btn-default" href="https://opencollective.com/how-it-works" target="_blank"><img src="../img/opencollective-icon.svg" height="18"> Open Collective...</a>
 {% endblock %}
 
 {% block containerInner %}
-    <div class="media">
-        <div class="media-left"><img src="../img/icon-114x114.png" width="114" height="114"></div>
-        <div class="media-body">
-            <h3>OpenCutList</h3>
-            <p>
-                OpenCutList est un logiciel Open Source qui base son financement sur la participation de ses utilisateurs via la plateforme <a href="https://opencollective.com/">Open Collective</a>.<br>
-                Soutenez ce projet en contribuant vous aussi à son financement !
-            </p>
+    <div class="panel panel-default">
+        <div class="panel-body">
+        <div class="media">
+            <div class="media-left"><img src="../img/icon-114x114.png" width="114" height="114"></div>
+            <div class="media-body ladb-sponsor-panel-body">
+                {{ 'tab.sponsor.description'|i18next }}
+            </div>
+        </div>
+        </div>
+        <div class="panel-footer">
+            <div class="text-center">
+                <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" class="btn btn-sponsor btn-lg" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> {{ 'tab.sponsor.contribute'|i18next }}...</a>
+            </div>
         </div>
     </div>
-    <div class="text-center">
-        <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" class="btn btn-sponsor btn-lg" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> Contribuer...</a>
-    </div>
-    <hr>
-    <div class="ladb-page">
-        {% include 'core/_loading.twig' with { 'noHidden':true } %}
-    </div>
+    {% include 'core/_loading.twig' with { 'noHidden':true } %}
 {% endblock %}
