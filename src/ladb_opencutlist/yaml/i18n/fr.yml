@@ -26,6 +26,7 @@ default:
   good: Bon
   bad: Mauvais
   date_format: d/m/Y G:i
+  date_format_short: d/m/Y
   unit_0: Pouces
   unit_1: Pieds
   unit_2: Millimètres
@@ -34,6 +35,7 @@ default:
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
+  since: depuis
 core:
   menu:
     submenu: OpenCutList
@@ -622,6 +624,22 @@ tab:
       imported_body: "{{ count }} pièce importée avec succes !"
       imported_body_plural: "{{ count }} pièces importées avec succes !"
     outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
+  sponsor:
+    label: Soutenir
+    title: Soutenir
+    description: |
+      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Soutenez ce projet en contribuant vous aussi à son financement !
+    contribute: Contribuer
+    backers: "{{count}} contributeur financier"
+    backers_plural: "{{count}} contributeurs financiers"
+  settings:
+    label: Préférences
+    title: Préférences
+    reset: Restaurer aux valeurs par défaut
+    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
+    language: Langue
+    size_and_position: Taille et Position de la fenêtre
   about:
     label: A propos
     title: A propos
@@ -638,13 +656,6 @@ tab:
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
       Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
-  settings:
-    label: Préférences
-    title: Préférences
-    reset: Restaurer aux valeurs par défaut
-    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-    language: Langue
-    size_and_position: Taille et Position de la fenêtre
 tool:
   highlight:
     transparency: Transparence

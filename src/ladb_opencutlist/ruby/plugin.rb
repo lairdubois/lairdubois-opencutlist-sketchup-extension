@@ -600,6 +600,7 @@ module Ladb::OpenCutList
       {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
+          :debug => DEBUG,
           :sketchup_is_pro => Sketchup.is_pro?,
           :sketchup_version => Sketchup.version,
           :sketchup_version_number => Sketchup.version_number,

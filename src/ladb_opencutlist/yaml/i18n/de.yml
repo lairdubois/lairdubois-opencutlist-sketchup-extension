@@ -26,6 +26,7 @@ default:
   good: Gut
   bad: Schlecht
   date_format: Y-m-d G:i
+  date_format_short: Y-m-d
   unit_0: Zoll
   unit_1: Fuss
   unit_2: Millimeter
@@ -34,6 +35,7 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
+  since: depuis
 core:
   menu:
     submenu: OpenCutList
@@ -622,6 +624,22 @@ tab:
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+  sponsor:
+    label: Soutenir
+    title: Soutenir
+    description: |
+      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Soutenez ce projet en contribuant vous aussi à son financement !
+    contribute: Contribuer
+    backers: "{{count}} contributeur financier"
+    backers_plural: "{{count}} contributeurs financiers"
+  settings:
+    label: Benutzereinstellungen
+    title: Benutzereinstellungen
+    reset: Auf vorgegebene Werte zurücksetzen
+    reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
+    language: Sprache
+    size_and_position: Grösse und Position des Fensters
   about:
     label: Über
     title: Über
@@ -638,13 +656,6 @@ tab:
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
       Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
-  settings:
-    label: Benutzereinstellungen
-    title: Benutzereinstellungen
-    reset: Auf vorgegebene Werte zurücksetzen
-    reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
-    language: Sprache
-    size_and_position: Grösse und Position des Fensters
 tool:
   highlight:
     transparency: Transparenz

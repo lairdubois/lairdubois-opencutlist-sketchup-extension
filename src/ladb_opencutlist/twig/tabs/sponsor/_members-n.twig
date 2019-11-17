@@ -1,0 +1,36 @@
+{% for member in members.nodes %}
+    <div class="col-lg-4 col-md-6 col-xs-12">
+        <div class="ladb-sponsor-member-box" data-member-slug="{{ member.account.slug }}">
+            <div class="media">
+                <div class="media-left">
+                    <img src="{{ member.account.imageUrl }}" width="128" height="128">
+                </div>
+                <div class="media-body">
+                    <div class="ladb-sponsor-member-name">{{ member.account.name }}</div>
+                    {% if member.account.website %}
+                        <div class="ladb-sponsor-member-website">
+                            <i class="ladb-opencutlist-icon-link"></i> <a href="{{ member.account.website }}">{{ member.account.website|url_beautify }}</a>
+                        </div>
+                    {% endif %}
+                    {% if member.account.description %}
+                        <div class="ladb-sponsor-member-description">
+                            {{ member.account.description }}
+                        </div>
+                    {% endif %}
+                    <div class="ladb-sponsor-member-footer">
+                        {% if member.totalDonations and member.totalDonations.value %}
+                            <span class="ladb-sponsor-member-amount">
+                                ${{ member.totalDonations.value }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% if nextPage %}
+    <div class="text-center">
+        <button class="btn btn-default ladb-sponsor-next-page-btn">Charger la suite...</button>
+    </div>
+{% endif %}

@@ -16,6 +16,7 @@
         this.capabilities = {
             version: options.version,
             build: options.build,
+            debug: options.debug,
             sketchupIsPro: options.sketchup_is_pro,
             sketchupVersion: options.sketchup_version,
             sketchupVersionNumber: options.sketchup_version_number,
@@ -70,6 +71,12 @@
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings'
+            },
+            {
+                name: 'sponsor',
+                bar: 'bottombar',
+                icon: 'ladb-opencutlist-icon-sponsor',
+                classes: 'ladb-highlighted-sponsor'
             },
             {
                 name: 'about',
@@ -347,6 +354,16 @@
                 // Add i18next twig filter
                 Twig.extendFilter("i18next", function (value, options) {
                     return i18next.t(value, options ? options[0] : {});
+                });
+                // Add ... filter
+                Twig.extendFilter("url_beautify", function (value, options) {
+                    var parser = document.createElement('a');
+                    parser.href = value;
+                    var str = '<span class="ladb-url-host">' + parser.host + '</span>';
+                    if (parser.pathname && parser.pathname !== '/') {
+                        str += '<span class="ladb-url-path">' + parser.pathname + '</span>';
+                    }
+                    return '<span class="ladb-url">' + str + '</span>';
                 });
 
                 // Render and append layout template

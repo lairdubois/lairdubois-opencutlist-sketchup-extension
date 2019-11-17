@@ -2,7 +2,7 @@
     <a id="ladb_btn_minimize" href="#" style="display: none;"><i class="ladb-opencutlist-icon-chevron-left"></i><div>{{ 'default.minimize'|i18next }}</div></a>
     <a id="ladb_btn_maximize" href="#"><i class="ladb-opencutlist-icon-chevron-right"></i><div>{{ 'default.maximize'|i18next }}</div></a>
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
-        <a id="ladb_tab_btn_{{ tabDef.name }}" href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
+        <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
     <div id="ladb_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-4">
         <div class="ladb-subbar-toggle">
@@ -36,7 +36,7 @@
         <ul>
             <li><a href="https://www.lairdubois.fr" target="_blank"><i class="ladb-opencutlist-icon-link"></i> www.lairdubois.fr</a></li>
             {% for tabDef in tabDefs if tabDef.bar == 'bottombar' %}
-                <li><a id="ladb_tab_btn_{{ tabDef.name }}" href="#">{% if tabDef.icon %}<i class="{{ tabDef.icon }}"></i>{% endif %} {{ ('tab.'~tabDef.name~'.label')|i18next }}</a></li>
+                <li{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %}><a id="ladb_tab_btn_{{ tabDef.name }}" href="#">{% if tabDef.icon %}<i class="{{ tabDef.icon }}"></i>{% endif %} {{ ('tab.'~tabDef.name~'.label')|i18next }}</a></li>
             {% endfor %}
         </ul>
     </div>

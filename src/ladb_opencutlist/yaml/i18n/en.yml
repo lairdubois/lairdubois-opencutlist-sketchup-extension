@@ -26,6 +26,7 @@ default:
   good: Good
   bad: Bad
   date_format: m/d/Y g:ia
+  date_format_short: m/d/Y
   unit_0: Inches
   unit_1: Feet
   unit_2: Millimeter
@@ -34,6 +35,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
+  since: depuis
 core:
   menu:
     submenu: OpenCutList
@@ -622,6 +624,22 @@ tab:
       imported_body: "{{ count }} part was successfully imported!"
       imported_body_plural: "{{ count }} parts were successfully imported!"
     outdated_base: To remain synchronized, you must reload the CSV file.
+  sponsor:
+    label: Sponsor
+    title: Sponsor
+    description: |
+      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Soutenez ce projet en contribuant vous aussi à son financement !
+    contribute: Contribuer
+    backers: "{{count}} contributeur financier"
+    backers_plural: "{{count}} contributeurs financiers"
+  settings:
+    label: Preferences
+    title: Preferences
+    reset: Restore to default values
+    reload_dialog_warning: In order to take into account all the changes, you must **close** and **reopen** the OpenCutList window.
+    language: Language
+    size_and_position: Size and Position of the Window
   about:
     label: About
     title: About
@@ -638,13 +656,6 @@ tab:
       The adventure would not be possible without the work of the authors of the following Open Source components:
     credits_thanks: |
       A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-  settings:
-    label: Preferences
-    title: Preferences
-    reset: Restore to default values
-    reload_dialog_warning: In order to take into account all the changes, you must **close** and **reopen** the OpenCutList window.
-    language: Language
-    size_and_position: Size and Position of the Window
 tool:
   highlight:
     transparency: Transparency
