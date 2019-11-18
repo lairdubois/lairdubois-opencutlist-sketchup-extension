@@ -34,73 +34,63 @@
         // Init page
         page = page ? page : 0;
 
-        // Construct GraphQL querry
-        var graph = graphql(GRAPHQL_ENDPOINT);
-        const membersQuery = graph(`
-            query members($slug: String) {
-              collective(slug: $slug) {
-                name
-                slug
-                members(offset: ` + page * GRAPHQL_PAGE_SIZE + `, limit: ` + GRAPHQL_PAGE_SIZE + `, role: BACKER) {
-                  totalCount
-                  nodes {
-                    account {
-                      slug
-                      name
-                      description
-                      imageUrl
-                      website
-                    }
-                    totalDonations {
-                      value
-                      currency
-                    }
-                  }
+        $.ajax({
+            url: GRAPHQL_ENDPOINT,
+            contentType: 'application/json',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                query: "query members($slug: String) { collective(slug: $slug) { name slug members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { totalCount nodes { account { slug name description imageUrl website } totalDonations { value currency } } } }}",
+                variables: {
+                    slug: GRAPHQL_SLUG
                 }
-              }
-            }
-        `);
+            }),
+            success: function (response) {
+                if (response.data) {
 
-        membersQuery({ slug: GRAPHQL_SLUG})
-            .then(function (response) {
+                    var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.data.collective.members.totalCount) ? page + 1 : null;
 
-                var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.collective.members.totalCount) ? page + 1 : null;
-
-                // Render members list
-                var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
-                    members: response.collective.members,
-                    nextPage: nextPage,
-                }));
-                if (page === 0) {
-                    $list.insertBefore(that.$loading);
-                } else {
-                    $('#ladb_sponsor_members').append($list);
-                }
-
-                // Bind button
-                $('.ladb-sponsor-next-page-btn', $list).on('click', function () {
-                    that.loadBackers(nextPage);
-                    $(this).remove();
-                });
-
-                // Bind
-                $('.ladb-sponsor-member-box', $list).on('click', function(e) {
-                    var $closestAnchor = $(e.target.closest('a'));
-                    if ($closestAnchor.length > 0) {
-                        window.open($closestAnchor.attr('href'), "_blank");
-                        return false;
+                    // Render members list
+                    var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
+                        members: response.data.collective.members,
+                        nextPage: nextPage,
+                    }));
+                    if (page === 0) {
+                        $list.insertBefore(that.$loading);
+                    } else {
+                        $('#ladb_sponsor_members').append($list);
                     }
-                    var slug = $(this).data('member-slug');
-                    window.open('https://opencollective.com/' + slug, "_blank");
-                });
+
+                    // Bind button
+                    $('.ladb-sponsor-next-page-btn', $list).on('click', function () {
+                        that.loadBackers(nextPage);
+                        $(this).remove();
+                    });
+
+                    // Bind
+                    $('.ladb-sponsor-member-box', $list).on('click', function(e) {
+                        var $closestAnchor = $(e.target.closest('a'));
+                        if ($closestAnchor.length > 0) {
+                            window.open($closestAnchor.attr('href'), "_blank");
+                            return false;
+                        }
+                        var slug = $(this).data('member-slug');
+                        window.open('https://opencollective.com/' + slug, "_blank");
+                    });
+
+                }
 
                 // Hide loading
                 that.$loading.hide();
 
-            }).catch(function (error) {
-                // response is originally response.errors of query result
-                console.log(error)
-            })
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+
+                // Hide loading
+                that.$loading.hide();
+
+            }
+        });
 
     };
 
