@@ -35,7 +35,6 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
-  since: depuis
 core:
   menu:
     submenu: OpenCutList

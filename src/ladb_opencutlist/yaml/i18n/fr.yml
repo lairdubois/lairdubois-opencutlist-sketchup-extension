@@ -35,7 +35,6 @@ default:
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
-  since: depuis
 core:
   menu:
     submenu: OpenCutList
