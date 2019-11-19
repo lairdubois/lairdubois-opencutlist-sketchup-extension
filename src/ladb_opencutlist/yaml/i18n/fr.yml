@@ -322,21 +322,21 @@ tab:
     cuttingdiagram:
       title: Calepinage
       option_hide_part_list: Liste des pièces
-      option_hide_part_list_0: Affichée pour chaque panneau
+      option_hide_part_list_0: Affichée pour chaque panneau/barre
       option_hide_part_list_1: Masquée
       option_hide_part_list_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge
-      option_trimming_help_1d: Marge à chaque extrémité de la barre considérer comme chute.
+      option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
-      option_max_time: MAX_TIME
-      option_max_time_help: MAX_TIME_HELP.
-      option_tuning_level: TUNING_LEVEL
-      option_tuning_level_help: TUNING_LEVEL_HELP.
-      option_tuning_level_0: TUNING_LEVEL_0
-      option_tuning_level_1: TUNING_LEVEL_1
-      option_tuning_level_2: TUNING_LEVEL_2
+      option_max_time: Temps de calcul max.
+      option_max_time_help: Temps maximal en seconde réservé pour le calcul.
+      option_tuning_level: Niveau d'optimisation
+      option_tuning_level_help: Un niveau d'optimisation plus aggressif peut améliorer le calepinage.
+      option_tuning_level_0: léger
+      option_tuning_level_1: moyen
+      option_tuning_level_2: aggressif
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
@@ -345,7 +345,7 @@ tab:
       option_presort_3: Par superficie décroissante
       option_presort_4: Par périmètre décroissant
       option_stacking: Empiler les pièces identiques
-      option_stacking_help: Direction d'empilement des pièces qui ont une longueur ou une largeur commune.
+      option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
       option_stacking_0: Non
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
@@ -358,7 +358,7 @@ tab:
       option_bbox_optimization_2: Toujours
       option_std_bar: Barre standard
       option_std_bar_help: |
-        Sélectionnez ici lea barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        Sélectionnez ici la taille de la barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_bar_add: Ajouter une taille...
@@ -646,7 +646,7 @@ tab:
     version: Version
     credits: Crédits techniques
     credits_authors: |
-      *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/zeloko) et traduit par [Martin Müller](https://www.lairdubois.fr/mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) et traduit par [Martin Müller](https://www.lairdubois.fr/mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
