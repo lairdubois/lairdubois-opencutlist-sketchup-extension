@@ -55,7 +55,7 @@ core:
   warning:
     old_su: |
       You are running an older version of Sketchup ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
-      To take full advantage of this plugin, we recommend to upgrade to **Sketchup 2017**.
+      To take full advantage of OpenCutList, we recommend to upgrade to at least **Sketchup 2017**.
     feature_locked: "*Not deactivable in this version of Sketchup*"
   event:
     model_change: The active model has been changed.
@@ -75,10 +75,10 @@ tab:
     not_available_width: Width not available
     not_available_thickness: Thickness not available
     not_available_section: Cross section not available
-    highlight_part: Highlight the part in the model
-    highlight_parts: Highlight the parts in the model
+    highlight_part: Highlight part in the model
+    highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
-    edit_part_axes_properties: Edit the axes properties of the part
+    edit_part_axes_properties: Edit properties of the axes of the part
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
@@ -93,7 +93,7 @@ tab:
         to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Edit the properties of the group of parts
+      edit_parts_properties: Edit properties of a group of parts
       folding_part: Unfold / Fold
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
@@ -354,7 +354,7 @@ tab:
       option_std_sheet_add: Add a panel size ...
       option_std_sheet_none: None
       option_scrap_sheet_sizes: Scrap Sheet Goods
-      option_scrap_sheet_sizes_placeholder: length x width ; ...
+      option_scrap_sheet_sizes_placeholder: length x width; ...
       option_scrap_sheet_sizes_help:  |
         List all scrap sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
@@ -462,22 +462,22 @@ tab:
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
       std_widths: Standard Widths
-      std_widths_placeholder: width ; ...
+      std_widths_placeholder: width; ...
       std_widths_help: |
         Standard widths of edge bandings.
         *Widths without units are considered to be in model units.*
       std_thicknesses: Available Thicknesses
-      std_thicknesses_placeholder: thickness ; ...
+      std_thicknesses_placeholder: thickness; ...
       std_thicknesses_help: |
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Available Cross Sections
-      std_sections_placeholder: width x thickness ; ...
+      std_sections_placeholder: width x thickness; ...
       std_sections_help: |
         Expected format: **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (*in actual not nominal sizes*).
         *Sizes without units are considered to be in model units.*
       std_sizes: Available Panel Sizes
-      std_sizes_placeholder: length x width ; ...
+      std_sizes_placeholder: length x width; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
@@ -597,11 +597,11 @@ tab:
     label: Sponsor
     title: Sponsor
     description: |
-      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
-      Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: Contribuer
-    backers: "{{count}} contributeur financier"
-    backers_plural: "{{count}} contributeurs financiers"
+      **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      Support this project by making a financial contribution!
+    contribute: Contribute
+    backers: "{{count}} financial contributor"
+    backers_plural: "{{count}} financial contributors"
   settings:
     label: Preferences
     title: Preferences
@@ -615,7 +615,7 @@ tab:
     version: Version
     credits: Technical Credits
     credits_authors: |
-      *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) and translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
