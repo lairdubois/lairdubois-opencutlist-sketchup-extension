@@ -36,6 +36,7 @@ default:
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
   since: depuis
+  seconds: secondes
 core:
   menu:
     submenu: OpenCutList
