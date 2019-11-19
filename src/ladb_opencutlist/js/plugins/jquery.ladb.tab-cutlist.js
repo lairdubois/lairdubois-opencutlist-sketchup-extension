@@ -116,7 +116,6 @@
         this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
-        this.editedGroup = null;
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
@@ -1290,63 +1289,6 @@
             }
         }
         return null;
-    };
-
-    LadbTabCutlist.prototype.editGroup = function (id) {
-        var that = this;
-
-        var group = this.findGroupById(id);
-        if (group) {
-
-            // Keep the edited group
-            that.editedGroup = group;
-
-            var $modal = that.appendModalInside('ladb_cutlist_modal_group', 'tabs/cutlist/_modal-group.twig', {
-                group: group,
-                materialUsages: that.materialUsages
-            });
-
-            // Fetch UI elements
-            var $selectMaterialName = $('#ladb_cutlist_group_select_material_name', $modal);
-            var $btnUpdate = $('#ladb_cutlist_group_update', $modal);
-
-            // Bind select
-            $selectMaterialName.val(group.material_name);
-            $selectMaterialName.selectpicker(SELECT_PICKER_OPTIONS);
-
-            // Bind buttons
-            $btnUpdate.on('click', function () {
-
-                // Fetch form values
-                that.editedGroup.material_name = $selectMaterialName.val();
-
-                rubyCallCommand('cutlist_group_update', that.editedGroup, function (response) {
-
-                    if (response['errors']) {
-
-                        that.opencutlist.notifyErrors(response['errors']);
-
-                    } else {
-
-                        // Refresh the list
-                        that.generateCutlist();
-
-                    }
-
-                    // Reset edited group
-                    that.editedGroup = null;
-
-                    // Hide modal
-                    $modal.modal('hide');
-
-                });
-
-            });
-
-            // Show modal
-            $modal.modal('show');
-
-        }
     };
 
     LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function () {

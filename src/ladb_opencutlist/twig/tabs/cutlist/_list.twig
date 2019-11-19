@@ -200,9 +200,6 @@
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        {% if group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
-                            <li><a href="#" class="ladb-item-edit-group"><i class="ladb-opencutlist-icon-edit"></i> {{ 'tab.cutlist.menu.edit_group_properties'|i18next }}</a></li>
-                        {% endif %}
                         {% if group.material_display_name is not empty %}
                             <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}</a></li>
                         {% endif %}

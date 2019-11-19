@@ -8,7 +8,8 @@ in 1.x and 0.x versions.
 
   * Added edge 'copy to all' shortcut
   * Added multiple edition of parts
-
+  * Added sponsor tab
+  
 * 1.8.0 (2019-10-01)
 
   * Added edge band material type and management

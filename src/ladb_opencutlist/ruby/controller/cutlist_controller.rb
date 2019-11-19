@@ -84,10 +84,6 @@ module Ladb::OpenCutList
         part_update_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_update") do |group_data|
-        group_update_command(group_data)
-      end
-
       Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
         group_cuttingdiagram_2d_command(settings)
       end
@@ -1709,58 +1705,6 @@ module Ladb::OpenCutList
 
     end
 
-    def group_update_command(group_data)
-
-      model = Sketchup.active_model
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
-
-      # Extract parameters
-      id = group_data['id']
-      material_name = group_data['material_name']
-
-      materials = model.materials
-      material = nil
-
-      # Update component instance material
-      if material_name.nil? or material_name.empty? or (material = materials[material_name])
-
-        def _group_update_command_apply_on_part(part, model, material, material_name)
-          entity_ids = part[:entity_ids]
-          entity_ids.each { |component_id|
-            entity = ModelUtils::find_entity_by_id(model, component_id)
-            if entity
-              if material_name.nil? or material_name.empty?
-                entity.material = nil
-              elsif entity.material != material
-                entity.material = material
-              end
-            end
-          }
-        end
-
-        @cutlist[:groups].each { |group|
-
-          if id && group[:id] != id
-            next
-          end
-
-          group[:parts].each { |part|
-
-            if part[:children].nil?
-              _group_update_command_apply_on_part(part, model, material, material_name)
-            else
-              part[:children].each { |child_part|
-                _group_update_command_apply_on_part(child_part, model, material, material_name)
-              }
-            end
-
-          }
-        }
-
-      end
-
-    end
-    
     def group_cuttingdiagram_2d_command(settings)
       if @cutlist
 
