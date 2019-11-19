@@ -55,7 +55,7 @@ core:
   warning:
     old_su: |
       Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
-      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser **Sketchup 2017**.
+      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **Sketchup 2017**.
     feature_locked: "*Non désactivable dans cette version de Sketchup*"
   event:
     model_change: Le modèle actif a changé.
