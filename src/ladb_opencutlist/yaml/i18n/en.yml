@@ -79,7 +79,7 @@ tab:
     highlight_part: Highlight the part in the model
     highlight_parts: Highlight the parts in the model
     edit_part_properties: Edit part properties
-    edit_part_axes_properties: Edit the axes properties of the part
+    edit_part_axes_properties: Edit the properties of the axes of the part
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
@@ -322,21 +322,21 @@ tab:
     cuttingdiagram:
       title: Cutting Diagram
       option_hide_part_list: Parts List
-      option_hide_part_list_0: Displayed for each panel
+      option_hide_part_list_0: Displayed for each panel/bar
       option_hide_part_list_1: Masked
       option_hide_part_list_help: Display or mask the list of parts for each panel.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
-      option_trimming_help_1d: Marge à chaque extrémité de la barre considérer comme chute.
+      option_trimming_help_1d: The amount of material at each end of the bar to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_max_time: MAX_TIME
-      option_max_time_help: MAX_TIME_HELP.
-      option_tuning_level: TUNING_LEVEL
-      option_tuning_level_help: TUNING_LEVEL_HELP.
-      option_tuning_level_0: TUNING_LEVEL_0
-      option_tuning_level_1: TUNING_LEVEL_1
-      option_tuning_level_2: TUNING_LEVEL_2
+      option_max_time: Max. Computation Time
+      option_max_time_help: Abort computation after x seconds and return best result obtained so far.
+      option_tuning_level: Optimization Level
+      option_tuning_level_help: Indicate the level of optimization.
+      option_tuning_level_0: none
+      option_tuning_level_1: moderate
+      option_tuning_level_2: aggressive
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement.
       option_presort_0: None
@@ -356,19 +356,19 @@ tab:
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
-      option_std_bar: Barre standard
+      option_std_bar: Standard bar
       option_std_bar_help: |
-        Sélectionnez ici lea barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bar_add: Ajouter une taille...
-      option_std_bar_none: Aucune
-      option_scrap_bar_lengths: Restes de barre
-      option_scrap_bar_lengths_placeholder: longueur ; ...
+        Select the standard bar, which will be duplicated to contain all the parts.
+        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
+      option_std_bar_add: Add a length ...
+      option_std_bar_none: None
+      option_scrap_bar_lengths: Scrap Bars
+      option_scrap_bar_lengths_placeholder: length ; ...
       option_scrap_bar_lengths_help:  |
-        Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
-        Format attendu : **L**. Où **L** est la *longueur* du reste.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+        List the scrap bars which should be considered first in the cutting plan.
+        Expected format: **L**, where **L** is the *length* of the scrap.
+        *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
         Select the standard panel which will be duplicated to contain all your parts in the best possible way.
@@ -487,11 +487,11 @@ tab:
       length_increase: Length Oversize
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
-      std_lengths: Longueurs standards
-      std_lengths_placeholder: longueur ; ...
+      std_lengths: Standard Lengths
+      std_lengths_placeholder: length ; ...
       std_lengths_help: |
-        Longueurs standards des barres.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+        Standard lengths of bars.
+        *Sizes without units are considered to be in model units.*
       std_widths: Standard Widths
       std_widths_placeholder: width ; ...
       std_widths_help: |
@@ -628,11 +628,11 @@ tab:
     label: Sponsor
     title: Sponsor
     description: |
-      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
-      Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: Contribuer
-    backers: "{{count}} contributeur financier"
-    backers_plural: "{{count}} contributeurs financiers"
+      **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      Support this project by making a financial contribution!
+    contribute: Contribute
+    backers: "{{count}} financial contributor"
+    backers_plural: "{{count}} financial contributors"
   settings:
     label: Preferences
     title: Preferences
@@ -646,7 +646,7 @@ tab:
     version: Version
     credits: Technical Credits
     credits_authors: |
-      *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/zeloko) and translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) and translated by [Martin Müller](https://www.lairdubois.fr/mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

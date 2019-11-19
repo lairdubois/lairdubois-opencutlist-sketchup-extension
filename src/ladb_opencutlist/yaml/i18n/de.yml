@@ -56,7 +56,7 @@ core:
   warning:
     old_su: |
       Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
-      Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
+      Um OpenCutList besser zu nutzen, empfehlen wir eine Version neuer als **Sketchup 2017** zu installieren.
     feature_locked: "*In dieser Version von Sketchup nicht deaktivierbar*"
   event:
     model_change: Das aktive Modell wurde verändert.
@@ -71,7 +71,7 @@ tab:
     title: Holzliste
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
-      Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
+      Ist die Auswahl leer, verwendet OpenCutList zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
     material_undefined: Material nicht definiert
     not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
@@ -322,21 +322,21 @@ tab:
     cuttingdiagram:
       title: Schnittplan
       option_hide_part_list: Liste der Teile
-      option_hide_part_list_0: Anzeigen für jede Platte
+      option_hide_part_list_0: Anzeigen für jede Platte/Stange
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
-      option_trimming: Kantenabfallbreite
-      option_trimming_help_1d: Marge à chaque extrémité de la barre considérer comme chute.
+      option_trimming: Randabfallbreite
+      option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_max_time: MAX_TIME
-      option_max_time_help: MAX_TIME_HELP.
-      option_tuning_level: TUNING_LEVEL
-      option_tuning_level_help: TUNING_LEVEL_HELP.
-      option_tuning_level_0: TUNING_LEVEL_0
-      option_tuning_level_1: TUNING_LEVEL_1
-      option_tuning_level_2: TUNING_LEVEL_2
+      option_max_time: Zeitbegrenzung
+      option_max_time_help: Anzahl Sekunden welche maximal für die Berechnung reserviert werden.
+      option_tuning_level: Optimierungslevel
+      option_tuning_level_help: Ein aggressiverer Optimierungslevel kann unter Umständen den Zuschnitt verbessern.
+      option_tuning_level_0: mässig
+      option_tuning_level_1: normal
+      option_tuning_level_2: aggressiv
       option_presort: Vorsortierung der Teile
       option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung
@@ -356,19 +356,19 @@ tab:
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
-      option_std_bar: Barre standard
+      option_std_bar: Standard Stange
       option_std_bar_help: |
-        Sélectionnez ici lea barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bar_add: Ajouter une taille...
-      option_std_bar_none: Aucune
-      option_scrap_bar_lengths: Restes de barre
-      option_scrap_bar_lengths_placeholder: longueur ; ...
+        Wählen Sie hier die Standardstangenware welche dupliziert wird um alle Teile zu enthalten.
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+      option_std_bar_add: Eine Länge hinzufügen...
+      option_std_bar_none: Keine
+      option_scrap_bar_lengths: Stangenreste
+      option_scrap_bar_lengths_placeholder: Länge; ...
       option_scrap_bar_lengths_help:  |
-        Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
-        Format attendu : **L**. Où **L** est la *longueur* du reste.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+        Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format : **L**, wo **L** die *Länge* des Restes ist.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
@@ -377,7 +377,7 @@ tab:
       option_std_sheet_add: ein Plattenmass hinzufügen ...
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
-      option_scrap_sheet_sizes_placeholder: Länge x Breite ; ...
+      option_scrap_sheet_sizes_placeholder: Länge x Breite; ...
       option_scrap_sheet_sizes_help:  |
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
@@ -487,11 +487,11 @@ tab:
       length_increase: Längenzumass
       width_increase: Breitenzumass
       thickness_increase: Dickenzumass
-      std_lengths: Longueurs standards
-      std_lengths_placeholder: longueur ; ...
+      std_lengths: Standardlängen
+      std_lengths_placeholder: Länge; ...
       std_lengths_help: |
-        Longueurs standards des barres.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+        Standardlänge der Stangen.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_widths: Standardbreiten
       std_widths_placeholder: Breite ; ...
       std_widths_help: |
@@ -625,14 +625,14 @@ tab:
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
   sponsor:
-    label: Soutenir
-    title: Soutenir
+    label: Sponsern
+    title: Sponsoring
     description: |
-      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
-      Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: Contribuer
-    backers: "{{count}} contributeur financier"
-    backers_plural: "{{count}} contributeurs financiers"
+      **OpenCutList** ist *Open Source* Software, welche durch ihre Benutzer via <a href="https://opencollective.com/" target="_blank">Open Collective</a> unterstützt wird.
+      Unterstützen Sie dieses Projekt, indem Sie Ihren finanziellen Beitrag leisten!
+    contribute: Beitragen
+    backers: "{{count}} finanzieller Sponsor"
+    backers_plural: "{{count}} finanzielle Sponsoren"
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
@@ -646,7 +646,7 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_authors: |
-      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/zeloko) entwickelt und von [Martin Müller](https://www.lairdubois.fr/mobilarte) übersetzt. *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
+      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) entwickelt und von [Martin Müller](https://www.lairdubois.fr/mobilarte) übersetzt. *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
     credits_description: |
       Die Entwicklung dieser Erweiterung fügt sich in den Rahmen der Austauschplattform [L'Air du Bois](https://www.lairdubois.fr).
       In diesem Sinn ist diese Erweiterung auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
