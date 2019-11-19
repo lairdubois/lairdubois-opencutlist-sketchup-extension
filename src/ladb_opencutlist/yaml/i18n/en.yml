@@ -136,7 +136,6 @@ tab:
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       edit_material: Edit material '{{ material }}'...
-      edit_group_properties: Edit properties of this group
       expand_all: Unfold identical parts
       collapse_all: Fold identical parts
     edit_part:

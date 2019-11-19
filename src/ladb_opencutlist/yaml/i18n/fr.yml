@@ -136,7 +136,6 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièce du groupe
       group_cuttingdiagram: Calepinage
       edit_material: Éditer la matière '{{ material }}'...
-      edit_group_properties: Éditer les propriétés du groupe
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:

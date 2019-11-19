@@ -136,7 +136,6 @@ tab:
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'...
-      edit_group_properties: Eigenschaften dieser Gruppe bearbeiten
       expand_all: Identische Teile aufklappen
       collapse_all: Identische Teile zuklappen
     edit_part:
