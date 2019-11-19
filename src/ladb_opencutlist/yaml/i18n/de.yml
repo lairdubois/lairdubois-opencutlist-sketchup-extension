@@ -35,7 +35,6 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
-  since: depuis
   seconds: Sekunden
 core:
   menu:
@@ -335,9 +334,9 @@ tab:
       option_max_time_help: Anzahl Sekunden welche maximal für die Berechnung reserviert werden.
       option_tuning_level: Optimierungslevel
       option_tuning_level_help: Ein aggressiverer Optimierungslevel kann unter Umständen den Zuschnitt verbessern.
-      option_tuning_level_0: mässig
-      option_tuning_level_1: normal
-      option_tuning_level_2: aggressiv
+      option_tuning_level_0: Mässig
+      option_tuning_level_1: Normal
+      option_tuning_level_2: Aggressiv
       option_presort: Vorsortierung der Teile
       option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung

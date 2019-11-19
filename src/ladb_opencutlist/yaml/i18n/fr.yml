@@ -35,7 +35,6 @@ default:
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
-  since: depuis
   seconds: secondes
 core:
   menu:
@@ -335,9 +334,9 @@ tab:
       option_max_time_help: Temps maximal en seconde réservé pour le calcul.
       option_tuning_level: Niveau d'optimisation
       option_tuning_level_help: Un niveau d'optimisation plus aggressif peut améliorer le calepinage.
-      option_tuning_level_0: léger
-      option_tuning_level_1: moyen
-      option_tuning_level_2: aggressif
+      option_tuning_level_0: Léger
+      option_tuning_level_1: Moyen
+      option_tuning_level_2: Aggressif
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
