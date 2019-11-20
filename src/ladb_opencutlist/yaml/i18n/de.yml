@@ -363,7 +363,7 @@ tab:
       option_std_bar_add: Eine Länge hinzufügen...
       option_std_bar_none: Keine
       option_scrap_bar_lengths: Stangenreste
-      option_scrap_bar_lengths_placeholder: Länge; ...
+      option_scrap_bar_lengths_placeholder: Länge ; ...
       option_scrap_bar_lengths_help:  |
         Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
         Erwartetes Format : **L**, wo **L** die *Länge* des Restes ist.
@@ -487,7 +487,7 @@ tab:
       width_increase: Breitenzumaß
       thickness_increase: Dickenzumaß
       std_lengths: Standardlängen
-      std_lengths_placeholder: Länge; ...
+      std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
         Standardlänge der Stangen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
