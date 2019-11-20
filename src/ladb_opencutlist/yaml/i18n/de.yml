@@ -6,7 +6,7 @@ default:
   validate: Bestätigen
   open: Öffnen
   see: Sehen
-  close: Schliessen
+  close: Schließen
   clear: Löschen
   empty_filename: ohne Titel.skp
   refresh: Aktualisieren
@@ -28,7 +28,7 @@ default:
   date_format: Y-m-d G:i
   date_format_short: Y-m-d
   unit_0: Zoll
-  unit_1: Fuss
+  unit_1: Fuß
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
@@ -55,7 +55,7 @@ core:
   warning:
     old_su: |
       Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
-      Um das Plugin besser zu nutzen, empfehlen wir die neueste Version von **Sketchup 2017** zu installieren.
+      Um OpenCutList besser zu nutzen, empfehlen wir mindestens die Version **Sketchup 2017** zu installieren.
     feature_locked: "*In dieser Version von Sketchup nicht deaktivierbar*"
   event:
     model_change: Das aktive Modell wurde verändert.
@@ -70,7 +70,7 @@ tab:
     title: Holzliste
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
-      Ist die Auswahl leer, verwendet das Plugin zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene.
+      Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
     material_undefined: Material nicht definiert
     not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
@@ -93,7 +93,7 @@ tab:
         dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Editieren der Eigenschaften der Gruppe von Teilen
+      edit_parts_properties: Eigenschaften der Gruppe von Teilen editieren
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das Material dieses Teils ist auf einer Instanz definiert
       material_origin_2: Das Material dieses Teils wird von einem übergeordneten Teil geerbt
@@ -168,7 +168,7 @@ tab:
       labels_help: |
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
-        Anschliessend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
+        Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
       labels_multiple_info: Nur gemeinsame Etiketten werden angezeigt
       axes: Achsen
       axes_help: Zuordnen der Dimensionen um diese mit den Achsenfarben übereinstimmen zu lassen.
@@ -188,15 +188,15 @@ tab:
     edit_group:
       title: Eigenschaften der Gruppe '{{ name }}'
       part_count: Anzahl Teile
-      std_dimension: Rohmass
+      std_dimension: Rohmaß
       material: Material
       warning: Die Veränderung des Materials wird auf alle Teile der Gruppe übertragen. Die aktuelle Gruppeneinteilung könnte sich deshalb verändern.
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
-        Ist diese Option aktiv, werden die Masse sortiert, so dass der grösste Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
+        Ist diese Option aktiv, werden die Maße sortiert, so dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
 
-        Ansonsten werden die Masse der lokalen Achsen übernommen, wobei:
+        Ansonsten werden die Maße der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
         - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
@@ -212,15 +212,15 @@ tab:
       part_number_sequence_by_group: Aufzählung der Teile für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       part_folding: Ähnliche Teile zusammenfassen
-      part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Masse** und mit **gleichen Etiketten** zusammengefasst.
+      part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Maße** und mit **gleichen Etiketten** zusammengefasst.
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht eingeblendet.
       hide_labels: Etiketten ausblenden
       hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
-      hide_cutting_dimensions: Rohmasse ausblenden
-      hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmasse** nicht angezeigt.
-      hide_bbox_dimensions: Fertigmasse ausblenden
-      hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmasse** nicht angezeigt.
+      hide_cutting_dimensions: Rohmaße ausblenden
+      hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt.
+      hide_bbox_dimensions: Fertigmaße ausblenden
+      hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmaße** nicht angezeigt.
       hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
       hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
@@ -262,10 +262,10 @@ tab:
       number: Nr.
       name: Bezeichnung
       count: Anzahl
-      cutting: Rohmass
-      bbox: Fertigmass
+      cutting: Rohmaß
+      bbox: Fertigmaß
       final: Effektiv
-      total_cutting: Σ Rohmasse
+      total_cutting: Σ Rohmaße
       total_final: Σ Effektiv
       length: Länge
       length_short: L
@@ -341,7 +341,7 @@ tab:
       option_stacking_2: der Breite nach
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: |
-        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass grössere Reste übrigbleiben.
+        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass größere Reste übrigbleiben.
         Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Platzierung.
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
@@ -351,14 +351,14 @@ tab:
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_add: ein Plattenmass hinzufügen ...
+      option_std_sheet_add: ein Plattenmaß hinzufügen ...
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
-      option_scrap_sheet_sizes_placeholder: Länge x Breite ; ...
+      option_scrap_sheet_sizes_placeholder: Länge x Breite; ...
       option_scrap_sheet_sizes_help:  |
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern
@@ -383,18 +383,18 @@ tab:
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
       error:
-        no_sheet: Standardplattenmasse mangelhaft konfiguriert und keine Plattenreste.
-        no_placement_possible: Keine Platzierung möglich (Seitenrand zu gross, Standardplatte zu klein, Sägeschnitt zu gross, ...).
+        no_sheet: Standardplattenmaße mangelhaft konfiguriert und keine Plattenreste.
+        no_placement_possible: Keine Platzierung möglich (Seitenrand zu groß, Standardplatte zu klein, Sägeschnitt zu groß, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwickler, denn Sie haben hier einen speziellen Fall.
-        unplaced_parts: '**1 zu grosses Teil** konnte nicht platziert werden.'
-        unplaced_parts_plural: '**{{ count }} zu grosse Teile** konnten nicht platziert werden.'
+        unplaced_parts: '**1 zu großes Teil** konnte nicht platziert werden.'
+        unplaced_parts_plural: '**{{ count }} zu große Teile** konnten nicht platziert werden.'
       warning:
         cutting_dimensions: |
-          Dieser Schnittplan verwendet die Rohmasse der Teile.
+          Dieser Schnittplan verwendet die Rohmaße der Teile.
         cutting_dimensions_increase: |
-          *Übermasse wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumass (**{{ length_increase }}**) und ein Breitenzumass (**{{ width_increase }}**)*.
+          *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
-          *Masse reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+          *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -458,35 +458,35 @@ tab:
       type: Typ
       cut_options: Schnittparameter
       thickness: Dicke
-      length_increase: Längenzumass
-      width_increase: Breitenzumass
-      thickness_increase: Dickenzumass
+      length_increase: Längenzumaß
+      width_increase: Breitenzumaß
+      thickness_increase: Dickenzumaß
       std_widths: Standardbreiten
-      std_widths_placeholder: Breite ; ...
+      std_widths_placeholder: Breite; ...
       std_widths_help: |
         Standardbreiten der Kantenbänder.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_thicknesses: Verfügbare Dicken
-      std_thicknesses_placeholder: Dicke ; ...
+      std_thicknesses_placeholder: Dicke; ...
       std_thicknesses_help: |
-        Rohmasse der verfügbaren Dicken.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+        Rohmaße der verfügbaren Dicken.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Verfügbare Querschnitte
-      std_sections_placeholder: Breite x Dicke ; ...
+      std_sections_placeholder: Breite x Dicke; ...
       std_sections_help: |
         Erwartetes Format: **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
-      std_sizes: Verfügbare Plattenmasse
-      std_sizes_placeholder: Länge x Breite ; ...
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      std_sizes: Verfügbare Plattenmaße
+      std_sizes_placeholder: Länge x Breite; ...
       std_sizes_help: |
         Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       grained: Faserrichtung
       grained_help: Faserrichtung der Platte.
       grained_0: Keine Faserrichtung
       grained_1: Faser in Längsrichtung
       edge_decremented: Verringern
-      edge_decremented_help: Zeigt an ob die Masse der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden muss.
+      edge_decremented_help: Zeigt an ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden muss.
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
       cut_options_defaults:
@@ -531,7 +531,7 @@ tab:
         Wählen Sie die notwendigen Optionen zum Lesen von **{{ filename }}**.
 
         <i class="ladb-opencutlist-icon-warning"></i> *Die Einheit des Modells ist : **{{ unit }}**.
-        Diese Einheit wird für die Masse verwendet, wo keine Einheiten stehen*.
+        Diese Einheit wird für die Maße verwendet, wo keine Einheiten stehen*.
       options: Optionen zum Laden
       option_col_sep: Trennzeichen
       option_col_sep_tab: Tabulartor
@@ -594,21 +594,21 @@ tab:
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
   sponsor:
-    label: Soutenir
-    title: Soutenir
+    label: Sponsern
+    title: Sponsoring
     description: |
-      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
-      Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: Contribuer
-    backers: "{{count}} contributeur financier"
-    backers_plural: "{{count}} contributeurs financiers"
+      **OpenCutList** ist *Open Source* Software, welche durch ihre Benutzer via <a href="https://opencollective.com/" target="_blank">Open Collective</a> unterstützt wird.
+      Unterstützen Sie dieses Projekt, indem Sie Ihren finanziellen Beitrag leisten!
+    contribute: Beitragen
+    backers: "{{count}} finanzieller Sponsor"
+    backers_plural: "{{count}} finanzielle Sponsoren"
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
     reset: Auf vorgegebene Werte zurücksetzen
     reload_dialog_warning: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
     language: Sprache
-    size_and_position: Grösse und Position des Fensters
+    size_and_position: Größe und Position des Fensters
   about:
     label: Über
     title: Über
