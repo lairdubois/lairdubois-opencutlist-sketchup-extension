@@ -7,8 +7,9 @@ in 1.x and 0.x versions.
 * 1.8.1
 
   * Added edge 'copy to all' shortcut
-  * Added multiple edition of parts
+  * Added multiple edition of parts in cutlist
   * Added sponsor tab
+  * Added cutting diagram part list display option
   
 * 1.8.0 (2019-10-01)
 
