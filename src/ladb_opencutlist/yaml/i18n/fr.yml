@@ -40,8 +40,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Editer les propriétés de la pièce
-      edit_part_axes_properties: Editer les propriétés d'axes de la pièce
+      edit_part_properties: Éditer les propriétés de la pièce
+      edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -56,7 +56,7 @@ core:
   warning:
     old_su: |
       Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
-      Pour profiter pleinement de ce plugin, il est préconisé d'utiliser **Sketchup 2017**.
+      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **Sketchup 2017**.
     feature_locked: "*Non désactivable dans cette version de Sketchup*"
   event:
     model_change: Le modèle actif a changé.
@@ -461,7 +461,7 @@ tab:
       grain_direction: Direction du fil
       colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
       texture_colorized: Combiner définitivement la teinte dans l'image de la texture
-      edit: Editer les propriétes de '{{ name }}'
+      edit: Éditer les propriétés de '{{ name }}'
       set_current: |
         Sélectionner '{{ name }}'
         *Double-clic pour utiliser*
