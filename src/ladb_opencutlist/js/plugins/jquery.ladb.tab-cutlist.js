@@ -1374,7 +1374,7 @@
         var that = this;
         $('.ladb-cutlist-group', this.$page).each(function () {
             var groupId = $(this).data('group-id');
-            if (exceptedGroupId && groupId != exceptedGroupId) {
+            if (exceptedGroupId && groupId !== exceptedGroupId) {
                 that.hideGroup($(this), true);
             }
         }).promise().done( function (){
