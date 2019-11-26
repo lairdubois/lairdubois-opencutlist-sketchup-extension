@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.8.2
+
+  * Fixed Material name and color form
+
 * 1.8.1 (2019-11-20)
 
   * Added edge 'copy to all' shortcut

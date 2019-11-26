@@ -317,7 +317,8 @@
                 }
             };
             var fnUpdateBtnUpdateStatus = function() {
-                $btnUpdate.prop( "disabled", $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
+                console.log('fnUpdateBtnUpdateStatus', $inputs.inputName.data('ladb-invalid'), $inputs.inputColor.data('ladb-invalid'));
+                $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
 
             // Bind form
@@ -788,6 +789,7 @@
         };
 
         var fnCheckInputNameValue = function() {
+            console.log('fnCheckInputNameValue');
             if ($inputName.val().length > 0) {
                 $inputName.data('ladb-invalid', false);
                 $inputNameWarning.hide();
