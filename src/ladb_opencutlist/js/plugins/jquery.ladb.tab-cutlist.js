@@ -822,7 +822,7 @@
             if (selected) {
                 if (state === undefined || state === false) {
                     this.selectionPartIds.splice(this.selectionPartIds.indexOf(partId), 1);
-                    if (this.selectionPartIds.length == 0) {
+                    if (this.selectionPartIds.length === 0) {
                         this.selectionGroupId = null;
                     }
                     selected = false;

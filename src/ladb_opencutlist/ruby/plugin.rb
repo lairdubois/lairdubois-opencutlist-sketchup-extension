@@ -322,6 +322,9 @@ module Ladb::OpenCutList
         register_command('core_open_external_file') do |params|
           open_external_file_command(params)
         end
+        register_command('core_open_url') do |params|
+          open_url_command(params)
+        end
         register_command('core_open_model_info_page') do |params|
           open_model_info_page_command(params)
         end
@@ -642,6 +645,13 @@ module Ladb::OpenCutList
       path = params['path']
       if path
         UI.openURL("file:///#{path}")
+      end
+    end
+
+    def open_url_command(params)    # Waiting params = { url: URL }
+      url = params['url']
+      if url
+        UI.openURL(url)
       end
     end
 
