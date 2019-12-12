@@ -367,6 +367,7 @@ tab:
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
+        count: Anzahl
         sheet: Platte
         length: Länge
         width: Breite
