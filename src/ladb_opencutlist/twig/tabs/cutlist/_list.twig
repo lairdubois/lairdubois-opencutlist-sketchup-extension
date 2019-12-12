@@ -93,7 +93,7 @@
             <td colspan="{% if generateOptions.hide_final_areas %}6{% else %}7{% endif %}">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
-                    <button class="no-print btn btn-default ladb-btn-group-menu btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+                    <button class="no-print btn btn-default ladb-btn-group-menu btn-sm ladb-btn-hiddable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                     </ul>
