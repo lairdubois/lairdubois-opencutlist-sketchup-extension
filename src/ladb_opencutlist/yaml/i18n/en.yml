@@ -367,6 +367,7 @@ tab:
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
+        count: Qty
         sheet: Panel
         length: Length
         width: Width
