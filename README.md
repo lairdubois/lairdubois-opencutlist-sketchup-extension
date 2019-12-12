@@ -16,7 +16,7 @@ https://extensions.sketchup.com/en/content/lair-du-bois-sketchup-toolbox-0
 
 ### Code Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+This project exists thanks to all the people who contribute.
 <a href="https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
@@ -51,7 +51,3 @@ This code is under the **GNU GPLv3 license**.
 ## Documentation
 
 [Read the documentation](docs/00-index.md).
-
-## Authors
-
-See the list of [contributors](http://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/contributors).
