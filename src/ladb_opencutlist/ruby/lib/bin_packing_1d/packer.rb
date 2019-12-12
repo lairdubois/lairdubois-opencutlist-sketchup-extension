@@ -1,5 +1,5 @@
 module Ladb::OpenCutList::BinPacking1D
-  
+
   N_BYTES = [42].pack('i').size
   N_BITS = N_BYTES * 16
   MAX_INT = 2**(N_BITS - 2) - 1
@@ -9,7 +9,7 @@ module Ladb::OpenCutList::BinPacking1D
   end
 
   class Packer < Packing1D
-    attr_accessor :options, :parts, :leftovers, :bars, 
+    attr_accessor :options, :parts, :leftovers, :bars,
                   :unplaced_parts, :total_nb_parts, :efficiency
 
     def initialize(options)
@@ -38,7 +38,7 @@ module Ladb::OpenCutList::BinPacking1D
       remove_unfit
       # compute basic statistics to estimate the number of bars needed
       estimate_optimal
-      
+
       # split into chunks never larger than MAX_PARTS
       # otherwise computation may take forever or be interrupted by timer
       q = @parts.each_slice(MAX_PARTS)
@@ -115,12 +115,12 @@ module Ladb::OpenCutList::BinPacking1D
 
       err
     end
-    
+
     def remove_unfit
       good_parts = []
       must_fit = @leftovers
       must_fit << @options.std_length
-      
+
       @parts.each do |p|
         fits = false
         must_fit.each do |l|
@@ -143,7 +143,7 @@ module Ladb::OpenCutList::BinPacking1D
       @smallest = @options.std_length
       @nb_over_fiftypercent = 0
       @count = 0
-      
+
       @parts.each do |p|
         @total_nb_parts += 1
         net_length += p[:length]
@@ -226,9 +226,9 @@ module Ladb::OpenCutList::BinPacking1D
             y_list.each do |val|
               i = p.index { |x| x[:length] == val}
               if !i.nil?
+                bar.add(p[i][:id], val)
                 p.delete(i)
                 parts.delete_at(parts.index(val) || parts.length)
-                bar.add(i, val)
               end
             end
             bars << bar
@@ -284,7 +284,7 @@ module Ladb::OpenCutList::BinPacking1D
       llo
     end
 
-    def prep_results      
+    def prep_results
       length = 0
       waste = 0
       @bars.each do |b|
