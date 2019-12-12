@@ -111,6 +111,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-plus:before {
   content: "\e92e";
 }
+.ladb-opencutlist-icon-length:before {
+  content: "\e969";
+}
 .ladb-opencutlist-icon-size:before {
   content: "\e928";
 }
