@@ -690,15 +690,36 @@
     LadbTabCutlist.prototype.highlightPart = function (part_id) {
         var that = this;
 
-        rubyCallCommand('cutlist_highlight_part', part_id, function (response) {
+        var groupAndPart = this.findGroupAndPartById(part_id);
+        if (groupAndPart) {
 
-            if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.opencutlist.minimize();
+            var group = groupAndPart.group;
+            var part = groupAndPart.part;
+
+            var isFolder = part.children && part.children.length > 0;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part_id) && this.selectionPartIds.length > 1;
+            var multiple = isFolder || isSelected;
+
+            var partIds;
+            if (isFolder) {
+                partIds = [ part_id ];
+            } else if (isSelected) {
+                partIds = this.selectionPartIds;
+            } else {
+                partIds = [ part_id ];
             }
 
-        });
+            rubyCallCommand('cutlist_highlight_parts', partIds, function (response) {
+
+                if (response['errors']) {
+                    that.opencutlist.notifyErrors(response['errors']);
+                } else if (that.generateOptions.minimize_on_highlight) {
+                    that.opencutlist.minimize();
+                }
+
+            });
+
+        }
 
     };
 
@@ -748,18 +769,29 @@
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
         var $row = $('#ladb_part_' + id, this.$page);
+        var $highlightPartBtn = $('a.ladb-btn-highlight-part', $row);
         var $editPartBtn = $('a.ladb-btn-edit-part', $row);
         var $selectPartBtn = $('a.ladb-btn-select-part', $row);
 
         if (selected) {
             $selectPartBtn.addClass('ladb-active');
+            $highlightPartBtn
+                .prop('title', i18next.t('tab.cutlist.tooltip.highlight_parts'))
+                .tooltip('fixTitle');
             $editPartBtn
                 .prop('title', i18next.t('tab.cutlist.tooltip.edit_parts_properties'))
                 .tooltip('fixTitle');
+            $('i', $highlightPartBtn).addClass('ladb-opencutlist-icon-magnifier-multiple');
             $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
             $('i', $selectPartBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
         } else {
             $selectPartBtn.removeClass('ladb-active');
+            if ($('i', $highlightPartBtn).hasClass('ladb-opencutlist-icon-magnifier')) {
+                $highlightPartBtn
+                    .prop('title', i18next.t('tab.cutlist.tooltip.highlight_part'))
+                    .tooltip('fixTitle');
+                $('i', $highlightPartBtn).removeClass('ladb-opencutlist-icon-magnifier-multiple');
+            }
             if ($('i', $editPartBtn).hasClass('ladb-opencutlist-icon-edit')) {
                 $editPartBtn
                     .prop('title', i18next.t('tab.cutlist.tooltip.edit_part_properties'))

@@ -92,6 +92,7 @@ tab:
         Ajouter la section *{{ std_dimension }}*
         à la matière '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Éditer les propriétés du groupe de pièces
       folding_part: Déplier / Replier

@@ -92,6 +92,7 @@ tab:
         Querschnitt *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
       highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Eigenschaften der Gruppe von Teilen editieren
       folding_part: Aufklappen / Zuklappen
