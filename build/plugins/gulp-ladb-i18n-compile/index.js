@@ -1,5 +1,4 @@
 var through = require('through2');
-var gutil = require('gulp-util');
 var path = require('path');
 var yaml = require('js-yaml');
 
@@ -14,7 +13,7 @@ var md = markdownIt({
     externalTarget: '_blank'
 });
 
-var PluginError = gutil.PluginError;
+var PluginError = require('plugin-error');
 
 module.exports = function (languageLabels, opt) {
 

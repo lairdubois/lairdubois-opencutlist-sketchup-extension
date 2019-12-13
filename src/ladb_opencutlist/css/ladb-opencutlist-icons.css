@@ -294,6 +294,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-magnifier:before {
   content: "\e924";
 }
+.ladb-opencutlist-icon-magnifier-multiple:before {
+  content: "\e969";
+}
 .ladb-opencutlist-icon-arrow-circle-down:before {
   content: "\e90f";
 }

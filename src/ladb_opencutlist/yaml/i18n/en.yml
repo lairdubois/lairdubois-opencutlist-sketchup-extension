@@ -93,6 +93,7 @@ tab:
         Add cross section *{{ std_dimension }}*
         to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Edit properties of a group of parts
       folding_part: Unfold / Fold
@@ -389,7 +390,7 @@ tab:
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
-        count: Qte.
+        count: Qty
         sheet: Panel
         length: Length
         width: Width

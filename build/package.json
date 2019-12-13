@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {
@@ -8,12 +8,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "gulp": "4.0.1",
+    "gulp": "4.0.2",
     "gulp-concat": "2.6.1",
     "gulp-if": "2.0.2",
     "gulp-less": "4.0.1",
     "gulp-replace": "0.5.4",
-    "gulp-zip": "3.2.0",
+    "gulp-zip": "5.0.1",
     "js-yaml": "3.13.1",
     "markdown-it": "8.4.2",
     "markdown-it-external-links": "0.0.6",
@@ -22,7 +22,8 @@
     "slash": "1.0.0",
     "through2": "2.0.5",
     "twig": "1.12.0",
-    "vinyl-file": "3.0.0"
+    "vinyl-file": "3.0.0",
+    "plugin-error": "1.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

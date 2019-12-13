@@ -73,8 +73,8 @@ module Ladb::OpenCutList
         highlight_parts_command(group_id)
       end
 
-      Plugin.instance.register_command("cutlist_highlight_part") do |part_id|
-        highlight_parts_command(nil, part_id)
+      Plugin.instance.register_command("cutlist_highlight_parts") do |part_ids|
+        highlight_parts_command(nil, part_ids)
       end
 
       Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
@@ -1438,7 +1438,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def highlight_parts_command(group_id = nil, part_id = nil)
+    def highlight_parts_command(group_id = nil, part_ids = nil)
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
@@ -1454,7 +1454,7 @@ module Ladb::OpenCutList
         if group_id.nil? or group[:id] == group_id
           group = group
           group[:parts].each { |part|
-            if part_id.nil? or part[:id] == part_id
+            if part_ids.nil? or part_ids.is_a?(Array) and part_ids.include?(part[:id])
               if part[:children].nil?
                 part[:entity_serialized_paths].each { |entity_serialized_path|
                   instance_info = @instance_infos_cache[entity_serialized_path]
@@ -1472,21 +1472,21 @@ module Ladb::OpenCutList
                   }
                 }
               end
-              if part[:id] == part_id
+              if part_ids.is_a?(Array) and part_ids.include?(part[:id]) and part_ids.length == 1
                 displayed_part = part
                 break
               end
             end
             unless part[:children].nil?
               part[:children].each { |child_part|
-                if part_id.nil? or child_part[:id] == part_id
+                if part_ids.nil? or part_ids.is_a?(Array) and part_ids.include?(child_part[:id])
                   child_part[:entity_serialized_paths].each { |entity_serialized_path|
                     instance_info = @instance_infos_cache[entity_serialized_path]
                     unless instance_info.nil?
                       instance_infos.push(instance_info)
                     end
                   }
-                  if child_part[:id] == part_id
+                  if part_ids.is_a?(Array) and part_ids.include?(child_part[:id]) and part_ids.length == 1
                     displayed_part = part
                     break
                   end
@@ -1512,7 +1512,7 @@ module Ladb::OpenCutList
       end
 
       # Compute text infos
-      if part_id
+      if part_ids and part_ids.is_a?(Array) and part_ids.length == 1
 
         text_line_1 = '[' + displayed_part[:number] + '] ' + displayed_part[:name]
         text_line_2 = displayed_part[:labels].join(' | ')

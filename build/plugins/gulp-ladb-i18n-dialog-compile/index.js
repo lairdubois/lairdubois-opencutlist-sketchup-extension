@@ -1,10 +1,9 @@
 var through = require('through2');
-var gutil = require('gulp-util');
 var path = require('path');
 var twig = require('twig').twig;
 var vinylFile = require('vinyl-file');
 
-var PluginError = gutil.PluginError;
+var PluginError = require('plugin-error');
 
 module.exports = function (templateSource, opt) {
 
