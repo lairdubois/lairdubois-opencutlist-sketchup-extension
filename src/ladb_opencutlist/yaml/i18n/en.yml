@@ -187,12 +187,6 @@ tab:
       over_width: Across the width
       edge_disabled_help: This edge banding is not configurable because no face has been detected that could carry edge banding material in the model.
       multiple_values: Multiple values
-    edit_group:
-      title: Properties of Group '{{ name }}'
-      part_count: Number of Parts
-      std_dimension: Rough Dimension
-      material: Material
-      warning: A modification of the material will be applied to all parts of the group. Current groups may therefore change.
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
@@ -534,6 +528,14 @@ tab:
       title: Import .skm file
     export_to_skm:
       title: Export to .skm file
+    option:
+      material_order_strategy: Tri des matières
+      material_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
+        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
+      property_type: Type
+      property_name: Nom
+      reset: Restore Default Values
     remove:
       message: |
         You are about to suppress the material **{{ material_name }}** from your model.

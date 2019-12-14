@@ -187,12 +187,6 @@ tab:
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       multiple_values: Valeurs multiples
-    edit_group:
-      title: Propriétés du groupe '{{ name }}'
-      part_count: Nombre de pièces
-      std_dimension: Dimension brute
-      material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -534,6 +528,14 @@ tab:
       title: Importer un fichier .skm
     export_to_skm:
       title: Exporter un fichier .skm
+    option:
+      material_order_strategy: Tri des matières
+      material_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
+        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
+      property_type: Type
+      property_name: Nom
+      reset: Restaurer aux valeurs par défaut
     remove:
       message: |
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.

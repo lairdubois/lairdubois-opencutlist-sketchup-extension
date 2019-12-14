@@ -69,9 +69,9 @@
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
-    var OPTION_DEFAULT_SOURCE = 1;      // cutlist
-    var OPTION_DEFAULT_COL_SEP = 0;     // \t
-    var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
+    var EXPORT_OPTION_DEFAULT_SOURCE = 1;      // cutlist
+    var EXPORT_OPTION_DEFAULT_COL_SEP = 0;     // \t
+    var EXPORT_OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH = '2500mm';
@@ -609,9 +609,9 @@
             function () {
 
                 var exportOptions = {
-                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, OPTION_DEFAULT_SOURCE),
-                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
+                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, EXPORT_OPTION_DEFAULT_SOURCE),
+                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, EXPORT_OPTION_DEFAULT_COL_SEP),
+                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING)
                 };
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');

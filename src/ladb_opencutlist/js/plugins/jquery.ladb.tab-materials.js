@@ -9,6 +9,8 @@
     var SETTING_KEY_OPTION_PREFIX = 'materials.option.';
     var SETTING_KEY_OPTION_PREFIX_TYPE = SETTING_KEY_OPTION_PREFIX + 'type_';
 
+    var SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY = SETTING_KEY_OPTION_PREFIX + 'material_order_strategy';
+
     var SETTING_KEY_OPTION_SUFFIX_THICKNESS = '_thickness';
     var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
     var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
@@ -20,6 +22,10 @@
     var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
     var SETTING_KEY_OPTION_SUFFIX_GRAINED = '_grained';
     var SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED = '_edge_decremented';
+
+    // Options defaults
+
+    var OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY = 'name>type';
 
     // Select picker options
 
@@ -54,6 +60,7 @@
         this.$btnNew = $('#ladb_btn_new', this.$header);
         this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
+        this.$itemOptions = $('#ladb_item_options', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
 
@@ -71,7 +78,7 @@
         this.$page.empty();
         this.$btnList.prop('disabled', true);
 
-        rubyCallCommand('materials_list', null, function (response) {
+        rubyCallCommand('materials_list', this.generateOptions, function (response) {
 
             var errors = response.errors;
             var warnings = response.warnings;
@@ -564,6 +571,125 @@
         });
     };
 
+    // Options /////
+
+    LadbTabMaterials.prototype.loadOptions = function (callback) {
+        var that = this;
+
+        this.opencutlist.pullSettings([
+
+                SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY
+
+            ],
+            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
+            function () {
+
+                that.generateOptions = {
+                    material_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY)
+                };
+
+                // Callback
+                if (callback && typeof(callback) === 'function') {
+                    callback();
+                }
+
+            });
+
+    };
+
+    LadbTabMaterials.prototype.editOptions = function () {
+        var that = this;
+
+        var $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig');
+
+        // Fetch UI elements
+        var $sortableMaterialOrderStrategy = $('#ladb_sortable_material_order_strategy', $modal);
+        var $btnReset = $('#ladb_materials_options_reset', $modal);
+        var $btnUpdate = $('#ladb_materials_options_update', $modal);
+
+        // Define useful functions
+        var populateOptionsInputs = function (options) {
+
+            // Sortables
+
+            var properties, property, i;
+
+            // Material order sortables
+
+            properties = options.material_order_strategy.split('>');
+            $sortableMaterialOrderStrategy.empty();
+            for (i = 0; i < properties.length; i++) {
+                property = properties[i];
+                $sortableMaterialOrderStrategy.append(Twig.twig({ref: "tabs/materials/_option-material-order-strategy-property.twig"}).render({
+                    order: property.startsWith('-') ? '-' : '',
+                    property: property.startsWith('-') ? property.substr(1) : property
+                }));
+            }
+            $sortableMaterialOrderStrategy.find('a').on('click', function () {
+                var $item = $(this).parent().parent();
+                var $icon = $('i', $(this));
+                var property = $item.data('property');
+                if (property.startsWith('-')) {
+                    property = property.substr(1);
+                    $icon.addClass('ladb-opencutlist-icon-sort-asc');
+                    $icon.removeClass('ladb-opencutlist-icon-sort-desc');
+                } else {
+                    property = '-' + property;
+                    $icon.removeClass('ladb-opencutlist-icon-sort-asc');
+                    $icon.addClass('ladb-opencutlist-icon-sort-desc');
+                }
+                $item.data('property', property);
+            });
+            $sortableMaterialOrderStrategy.sortable({
+                cursor: 'ns-resize',
+                handle: '.ladb-handle'
+            });
+
+        };
+
+        // Bind buttons
+        $btnReset.on('click', function () {
+            $(this).blur();
+
+            var options = $.extend($.extend({}, that.generateOptions), {
+                material_order_strategy: OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY,
+            });
+            populateOptionsInputs(options);
+        });
+        $btnUpdate.on('click', function () {
+
+            // Fetch options
+
+            var properties = [];
+            $sortableMaterialOrderStrategy.children('li').each(function () {
+                properties.push($(this).data('property'));
+            });
+            that.generateOptions.material_order_strategy = properties.join('>');
+
+            // Store options
+            that.opencutlist.setSettings([
+                { key:SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, value:that.generateOptions.material_order_strategy },
+            ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
+
+            // Hide modal
+            $modal.modal('hide');
+
+            // Refresh the list
+            that.loadList();
+
+        });
+
+        // Populate inputs
+        populateOptionsInputs(that.generateOptions);
+
+        // Show modal
+        $modal.modal('show');
+
+        // Setup popovers
+        this.opencutlist.setupPopovers();
+
+    };
+
     // Internals /////
 
     LadbTabMaterials.prototype.findMaterialById = function (id) {
@@ -944,6 +1070,10 @@
             that.purgeUnused();
             this.blur();
         });
+        this.$itemOptions.on('click', function () {
+            that.editOptions();
+            this.blur();
+        });
 
         // Events
 
@@ -1010,15 +1140,20 @@
 
         this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function () {
 
-            that.bind();
+            // Load Options
+            that.loadOptions(function () {
 
-            if (initializedCallback && typeof(initializedCallback) == 'function') {
-                initializedCallback(that.$element);
-            } else {
-                setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                    that.loadList();
-                }, 1);
-            }
+                that.bind();
+
+                if (initializedCallback && typeof(initializedCallback) == 'function') {
+                    initializedCallback(that.$element);
+                } else {
+                    setTimeout(function () {     // Use setTimer to give time tu UI to refresh
+                        that.loadList();
+                    }, 1);
+                }
+
+            });
 
         });
 
