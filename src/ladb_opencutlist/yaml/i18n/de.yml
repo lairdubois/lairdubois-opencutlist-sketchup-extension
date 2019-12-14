@@ -186,12 +186,6 @@ tab:
       over_width: Der Breite nach
       edge_disabled_help: Dieses Kantenband kann nicht konfiguriert werden, weil keine Fläche auf dieser Seite des Teils gefunden wurde, die ein Kantenband tragen könnte.
       multiple_values: Werte mehrfach
-    edit_group:
-      title: Eigenschaften der Gruppe '{{ name }}'
-      part_count: Anzahl Teile
-      std_dimension: Rohmaß
-      material: Material
-      warning: Die Veränderung des Materials wird auf alle Teile der Gruppe übertragen. Die aktuelle Gruppeneinteilung könnte sich deshalb verändern.
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
@@ -505,6 +499,14 @@ tab:
       title: Aus .skm Datei importieren
     export_to_skm:
       title: In .skm Datei exportieren
+    option:
+      material_order_strategy: Tri des matières
+      material_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
+        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
+      property_type: Type
+      property_name: Nom
+      reset: Einstellungen zurücksetzen
     remove:
       message: |
         Sie sind gerade dabei das Material **{{ material_name }}** aus Ihrem Model zu löschen.

@@ -1,0 +1,32 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_materials_modal_options' %}
+{% set title = 'default.options'|i18next %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation" class="active"><a href="#tab_options_material_order_strategy" role="tab" data-toggle="tab"><i class="ladb-openmaterials-icon-sort-asc"></i> {{ 'tab.materials.option.material_order_strategy'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="form form-horizontal">
+        <div class="tab-content" style="margin-top: 10px;">
+            <div role="tabpanel" class="tab-pane active" id="tab_options_material_order_strategy">
+                <p class="help-block text-center"><small>{{ 'tab.materials.option.material_order_strategy_help'|i18next }}</small></p>
+                <div class="row">
+                    <div  class="col-xs-offset-2 col-xs-8">
+                        <ul id="ladb_sortable_material_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" id="ladb_materials_options_reset">{{ 'tab.materials.option.reset'|i18next }}</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+    <button type="button" class="btn btn-primary" id="ladb_materials_options_update">{{ 'default.validate'|i18next }}</button>
+{% endblock %}

@@ -15,8 +15,8 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("materials_list") do ||
-        list_command
+      Plugin.instance.register_command("materials_list") do |settings|
+        list_command(settings)
       end
       Plugin.instance.register_command("materials_create") do |material_data|
         create_command(material_data)
@@ -55,7 +55,10 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def list_command()
+    def list_command(settings)
+
+      # Check settings
+      material_order_strategy = settings['material_order_strategy']
 
       model = Sketchup.active_model
       materials = model ? model.materials : nil
@@ -148,8 +151,8 @@ module Ladb::OpenCutList
         response[:errors] << 'tab.materials.error.no_model'
       end
 
-      # Sort materials by type ASC, display_name ASC
-      response[:materials].sort_by! { |v| [ MaterialAttributes.type_order(v[:attributes][:type]), v[:display_name] ] }
+      # Sort materials
+      response[:materials].sort! { |material_a, material_b| MaterialAttributes::material_order(material_a, material_b, material_order_strategy) }
 
       response
     end
