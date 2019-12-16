@@ -17,21 +17,34 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <ul>
+                                {% if options.presort is defined %}
                                 <li>
                                     <strong>{{ 'tab.cutlist.cuttingdiagram.option_presort'|i18next }}
                                         :
                                     </strong>
                                     {{ ('tab.cutlist.cuttingdiagram.option_presort_'~options.presort)|i18next }}</li>
+                                {% endif %}
+                                {% if options.stacking is defined %}
                                 <li>
                                     <strong>{{ 'tab.cutlist.cuttingdiagram.option_stacking'|i18next }}
                                         :
                                     </strong>
                                     {{ ('tab.cutlist.cuttingdiagram.option_stacking_'~options.stacking)|i18next }}</li>
+                                {% endif %}
+                                {% if options.bbox_optimization is defined %}
                                 <li>
                                     <strong>{{ 'tab.cutlist.cuttingdiagram.option_bbox_optimization'|i18next }}
                                         :
                                     </strong>
                                     {{ ('tab.cutlist.cuttingdiagram.option_bbox_optimization_'~options.bbox_optimization)|i18next }}</li>
+                                {% endif %}
+                                {% if options.tuning_level is defined %}
+                                <li>
+                                    <strong>{{ 'tab.cutlist.cuttingdiagram.option_tuning_level'|i18next }}
+                                        :
+                                    </strong>
+                                    {{ ('tab.cutlist.cuttingdiagram.option_tuning_level_'~options.tuning_level)|i18next }}</li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="col-xs-6">
@@ -46,6 +59,13 @@
                                         :
                                     </strong>
                                     {{ options.trimming }}</li>
+                                {% if options.max_time is defined %}
+                                <li>
+                                    <strong>{{ 'tab.cutlist.cuttingdiagram.option_max_time'|i18next }}
+                                        :
+                                    </strong>
+                                    {{ options.max_time }} {{ 'default.seconds'|i18next }}</li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
@@ -53,41 +73,35 @@
             </td>
         </tr>
         <tr>
-            <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.sheet'|i18next }}</td>
+            <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.part'|i18next }}</td>
             <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.area'|i18next }}</td>
         </tr>
-        {% for sheet in summary.sheets  %}
-            <tr class="ladb-cutlist-row" {% if not sheet.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;" {% endif %}>
+        {% for part in summary.parts  %}
+            <tr class="ladb-cutlist-row" {% if not part.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;" {% endif %}>
                 <td>
-                    <i class="ladb-opencutlist-icon-sheet-good"></i>
+                    {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':false } %}
+
                     {{ group.material_name }}
                     /
                     <strong>{{ group.std_dimension }}</strong>
                     -
-                    {{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}
-                    {% if sheet.is_used %}
+                    {{ ('tab.cutlist.cuttingdiagram.list.part_type_'~part.type)|i18next }}
+                    {% if part.is_used %}
                         <div class="ladb-minitools ladb-minitools-right no-print">
-                            <a href="#ladb_cuttingdiagram_group_{{ sheet.index }}" class="ladb-btn-scrollto ladb-click-tool">
+                            <a href="#ladb_cuttingdiagram_group_{{ part.index }}" class="ladb-btn-scrollto ladb-click-tool">
                                 <i class="ladb-opencutlist-icon-arrow-circle-down"></i>
                             </a>
                         </div>
                     {% endif %}
                 </td>
-                <td class="text-center">
-                    {{ sheet.count }}
-                </td>
-                <td class="text-right">
-                    {{ sheet.length }}
-                </td>
-                <td class="text-right">
-                    {{ sheet.width }}
-                </td>
-                <td class="text-right">
-                    {{ sheet.area }}
-                </td>
+
+                <td class="text-center">{{ part.count }}</td>
+                <td class="text-right">{{ part.length }}</td>
+                <td class="text-right">{{ part.width }}</td>
+                <td class="text-right">{{ part.area }}</td>
             </tr>
         {% endfor %}
     </tbody>
