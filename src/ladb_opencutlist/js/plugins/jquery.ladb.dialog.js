@@ -274,20 +274,23 @@
     };
 
     LadbDialog.prototype.showSponsorAd = function () {
-        var that = this;
 
         // Render ad in bottombar
         $('#ladb_bottombar').append(Twig.twig({ ref: "tabs/sponsor/_ad.twig" }).render());
 
-        // Auto hide
-        $(window).on('mousedown', function() {
-            that.hideSponsorAd();
-        });
+        // Auto hide on next mouse down
+        $(window).on('mousedown', this.hideSponsorAd);
 
     };
 
     LadbDialog.prototype.hideSponsorAd = function () {
+
+        // Remove ad
         $('#ladb_sponsor_ad').remove();
+
+        // Unbind auto hide
+        $(window).off('mousedown', this.hideSponsorAd);
+
     };
 
     // Internals /////
