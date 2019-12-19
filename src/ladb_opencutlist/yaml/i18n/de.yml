@@ -606,6 +606,7 @@ tab:
     contribute: Beitragen
     backers: "{{count}} finanzieller Sponsor"
     backers_plural: "{{count}} finanzielle Sponsoren"
+    ad: Vous aimez OpenCutList ?
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen

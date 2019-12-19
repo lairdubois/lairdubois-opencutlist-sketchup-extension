@@ -606,6 +606,7 @@ tab:
     contribute: Contribute
     backers: "{{count}} financial contributor"
     backers_plural: "{{count}} financial contributors"
+    ad: You love OpenCutList ?
   settings:
     label: Preferences
     title: Preferences

@@ -7,6 +7,7 @@ in 1.x and 0.x versions.
 * 1.8.3
 
   * Cutlist highlight multiple parts improvements
+  * Sponsor ad
 
 * 1.8.2 (2019-12-12)
 
