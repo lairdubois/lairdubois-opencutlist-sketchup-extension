@@ -4,8 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.8.3
+* 1.8.3 (2019-12-19)
 
+  * Materials order option
   * Cutlist highlight multiple parts improvements
   * Sponsor ad
 
