@@ -1,0 +1,66 @@
+{% set colspan = 7 %}
+{% if not showCuttingDimensions %}
+    {% set colspan = colspan - 2 %}
+{% endif %}
+<table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
+    <thead>
+        <tr>
+            <td colspan="{{ colspan }}">
+                <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left">
+                    <i class="ladb-opencutlist-icon-eye-close"></i>
+                </button>
+                <div class="ladb-heading text-danger">
+                    <i class="ladb-opencutlist-icon-warning"></i>
+                    {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+            {% if showCuttingDimensions %}
+                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+            {% endif %}
+            <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+        </tr>
+        <tr>
+            {% if showCuttingDimensions %}
+                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                {% endfor %}
+            {% endif %}
+            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+            {% endfor %}
+        </tr>
+        {% for part in unplaced_parts  %}
+            <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
+                <td class="text-center">
+                    {{ part.number }}
+                </td>
+                <td>
+                    <div class="ladb-minitools ladb-minitools-right no-print">
+                        <span class="ladb-separator"></span>
+                        <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}">
+                            <i class="ladb-opencutlist-icon-magnifier"></i>
+                        </a>
+                    </div>
+                    {{ part.name|escape }}
+                </td>
+                <td class="text-center">
+                    {{ part.count }}
+                </td>
+                {% if showCuttingDimensions %}
+                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                        {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
+                    {% endfor %}
+                {% endif %}
+                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
