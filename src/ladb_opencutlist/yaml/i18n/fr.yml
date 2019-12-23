@@ -113,6 +113,8 @@ tab:
         unplaced_parts_plural: '**{{ count }} pièces** sont trop grandes pour être placées.'
       list:
         area: Surface tot.
+        bar: 'TBT: Bar'
+        bar_type_0: 'TBT: Standard bar'
         count: Qte.
         cut: Coupe
         efficiency: Efficacité

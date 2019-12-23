@@ -113,7 +113,9 @@ tab:
         unplaced_parts_plural: '**{{ count }} zu große Teile** konnten nicht platziert werden.'
       list:
         area: Fläche
-        count: Qte.
+        bar: Balken
+        bar_type_0: Standard-Balken
+        count: Anzahl
         cut: Schnitt
         efficiency: Effizienz
         leftover: Rest
@@ -122,7 +124,7 @@ tab:
         parts_plural: '{{ count }} Teile'
         settings: Einstellungen
         sheet: Platte
-        sheet_type_0: Standard Platte
+        sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         summary: Übersicht
         total_length_cuts: Schnittlänge
@@ -231,8 +233,8 @@ tab:
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i
           class='ladb-opencutlist-icon-edge-decremented'></i>
         cutting_dimensions_increase_1d: >
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase
-          }}**) configurée sur la matière.*
+          *Das Längenzumaß (**{{ length_increase }}**) wurde auf dem Material
+          '{{ material_name }}' konfiguriert.*
         cutting_dimensions_increase_2d: >
           *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt
           konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein
