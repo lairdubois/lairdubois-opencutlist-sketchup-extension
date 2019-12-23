@@ -1,577 +1,662 @@
 _label: Français
+core:
+  dialog:
+    title: OpenCutList by L'Air du Bois
+  event:
+    material_change: Au moins une matière a été modifiée.
+    model_change: Le modèle actif a changé.
+    options_change: Les options du modèle ont été modifiées.
+    selection_change: La sélection dans le modèle actif a changée.
+  leftbar:
+    more: Plus
+    more_docs: Docs
+    more_extensions: Plugins
+    more_plans: Plans
+    more_reviews: Avis
+  menu:
+    item:
+      edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+      edit_part_properties: Éditer les propriétés de la pièce
+    submenu: OpenCutList
+  model_info_page:
+    units: Unités
+  toolbar:
+    command: OpenCutList
+    name: OpenCutList
+  warning:
+    feature_locked: '*Non désactivable dans cette version de Sketchup*'
+    old_su: >
+      Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce
+      plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
+
+      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au
+      moins la version **Sketchup 2017**.
 default:
-  minimize: Réduire
-  maximize: Agrandir
+  bad: Mauvais
   cancel: Annuler
-  validate: Valider
-  open: Ouvrir
-  see: Voir
-  close: Fermer
+  caution: Attention
   clear: Effacer
+  close: Fermer
+  create: Créer
+  date_format: 'd/m/Y G:i'
+  date_format_short: d/m/Y
   empty_filename: Sans titre.skp
-  refresh: Rafraîchir
-  generate: Générer
-  print: Imprimer
+  error: Zut !
   export: Exporter
+  generate: Générer
+  good: Bon
+  help: Aide
   import: Importer
   load: Charger
+  maximize: Agrandir
+  minimize: Réduire
+  open: Ouvrir
   options: Options
-  caution: Attention
+  part_plural: pièces
+  part_single: pièce
+  print: Imprimer
+  refresh: Rafraîchir
   remove: Supprimer
-  create: Créer
-  help: Aide
-  error: Zut !
-  warning: Attention
+  seconds: secondes
+  see: Voir
+  setup_model_units: Configurer l'unité du modèle
   tip: Astuce
-  good: Bon
-  bad: Mauvais
-  date_format: d/m/Y G:i
-  date_format_short: d/m/Y
   unit_0: Pouces
   unit_1: Pieds
   unit_2: Millimètres
   unit_3: Centimètres
   unit_4: Mètres
-  part_single: pièce
-  part_plural: pièces
-  setup_model_units: Configurer l'unité du modèle
-  seconds: secondes
-core:
-  menu:
-    submenu: OpenCutList
-    item:
-      edit_part_properties: Éditer les propriétés de la pièce
-      edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
-  toolbar:
-    name: OpenCutList
-    command: OpenCutList
-  dialog:
-    title: OpenCutList by L'Air du Bois
-  leftbar:
-    more: Plus
-    more_docs: Docs
-    more_reviews: Avis
-    more_plans: Plans
-    more_extensions: Plugins
-  warning:
-    old_su: |
-      Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
-      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **Sketchup 2017**.
-    feature_locked: "*Non désactivable dans cette version de Sketchup*"
-  event:
-    model_change: Le modèle actif a changé.
-    options_change: Les options du modèle ont été modifiées.
-    material_change: Au moins une matière a été modifiée.
-    selection_change: La sélection dans le modèle actif a changée.
-  model_info_page:
-    units: Unités
+  validate: Valider
+  warning: Attention
 tab:
+  about:
+    credits: Crédits techniques
+    credits_authors: >
+      *OpenCutList* est développé par [Boris
+      Beaulant](https://www.lairdubois.fr/borisbeaulant) et traduit par [Martin
+      Müller](https://www.lairdubois.fr/mobilarte). *Lister les
+      [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_description: >
+      Le développement de cette extension s'inscrit dans le projet de plateforme
+      de partage [L'Air du Bois](https://www.lairdubois.fr).
+
+      Et à ce titre, il est également *Open Source* et disponible sous licence
+      [GNU
+      GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)
+      sur son [dépôt
+      GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_development: Développement
+    credits_runtime: Exécution
+    credits_thanks: >
+      Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour
+      leur soutien à ce projet par leur [Licence spéciale pour les projets Open
+      Source](https://www.jetbrains.com/buy/opensource/).
+    credits_vendors: >
+      Mais l'aventure ne serait pas possible sans le travail des auteurs des
+      briques logiciels *Open Source* suivantes :
+    label: A propos
+    title: A propos
+    version: Version
   cutlist:
-    label: Débit
-    title: Fiche de débit
-    help: |
-      Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
-      Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
-    material_undefined: Sans matière
-    not_available_width: Largeur non disponible
-    not_available_thickness: Épaisseur non disponible
-    not_available_section: Section non disponible
-    highlight_part: Voir la pièce dans le modèle
-    highlight_parts: Voir les pièces dans le modèle
-    edit_part_properties: Éditer les propriétés de la pièce
-    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
-    tooltip:
-      show_hide_block: Afficher / Masquer ce groupe
-      scroll_to_block: Défiler vers le groupe
-      add_std_width_to_material: |
-        Ajouter la largeur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
-      add_std_thickness_to_material: |
-        Ajouter l'épaisseur *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
-      add_std_section_to_material: |
-        Ajouter la section *{{ std_dimension }}*
-        à la matière '{{ material_name }}'
-      highlight_part: $t(tab.cutlist.highlight_part)
-      edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Éditer les propriétés du groupe de pièces
-      folding_part: Déplier / Replier
-      material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
-      material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
-      material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
-      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur ses axes
-      number_saved: Le numéro de cette pièce est enregistré
-      number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
-      number_generated: Le numéro de cette pièce est généré automatiquement
-      resized: Cette pièce est redimensionnée par rapport à sa définition de composant
-      auto_oriented: Cette pièce a été réorientée automatiquement
-      add_label_filter: Filtrer sur '{{ label }}'
-      remove_label_filter: Ne plus filtrer sur '{{ label }}'
-      add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
-      remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
-      not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
-      multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
-      children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
-      children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
-      invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
-      invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
-      is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      has_edges: Cette pièce contient {{ count }} chant plaqué
-      has_edges_plural: Cette pièce contient {{ count }} chants plaqués
-      edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
-      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
-      part_axes: Axes internes de la pièce
-      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
-    menu:
-      show_all_groups: Afficher tous les groupes
-      hide_all_other_groups: Masquer tous les autres groupes
-      numbers_save: Mémoriser les numéros de pièce
-      numbers_reset: Réinitialiser les numéros de pièce
-      highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_numbers_save: Mémoriser les numéros de pièce du groupe
-      group_numbers_reset: Réinitialiser les numéros de pièce du groupe
-      group_cuttingdiagram: Calepinage
-      edit_material: Éditer la matière '{{ material }}'...
-      expand_all: Déplier toutes les pièces identiques
-      collapse_all: Replier toutes les pièces identiques
-    edit_part:
-      title: Propriétés de la pièce '{{ name }}'
-      title_multiple: Propriétés du groupe de pièces
-      multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
-      general: Générales
-      edges: Chants
-      infos: Infos
-      warnings: Avertissements
-      name: Nom
-      material: Matière
-      cumulable: Cumulable
-      cumulable_help: |
-        Si cette option est activée, la **longueur** ou la **largeur** sera considérée dans le tri de la fiche de débit comme étant la **longueur** ou la **largeur** unitaire de débit multipliée par la quantité.
-
-        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas prise en compte lorsque cette pièce est regroupée avec d'autres pièces identiques.*
-      cumulable_0: Non cumulable
-      cumulable_1: Cumulable sur la longueur
-      cumulable_2: Cumulable sur la largeur
-      orientation: Orientation
-      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
-      orientation_locked_on_axis_help: |
-        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
-
-        Et donc,
-        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
-      labels: Etiquettes
-      labels_help: |
-        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
-      labels_multiple_info: Seules les étiquettes communes sont visibles
-      axes: Axes
-      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
-      axes_tip: |
-        Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
-         - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
-         - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
-         - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
-      axes_origin_position_none: Ne pas changer l'origine
-      axes_origin_position_min: Placer l'origine à l'extrémité
-      axes_origin_position_center: Placer l'origine au centre
-      axes_origin_position_min_center: Placer l'origine au centre d'une face
-      over_length: Sur la longueur
-      over_width: Sur la largeur
-      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
-      multiple_values: Valeurs multiples
-    edit_group:
-      title: Propriétés du groupe '{{ name }}'
-      part_count: Nombre de pièces
-      std_dimension: Dimension brute
-      material: Matière
-      warning: La modification de la matière sera répercutée sur toutes les pièces du groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
-    option:
-      auto_orient: Orientation automatique des pièces
-      auto_orient_help: |
-        Si cette option est activée, les trois dimensions des pièces sont triées pour que la plus grande représente la *longueur* et la plus petite l'*épaisseur*.
-
-        Sinon,
-        - la *longueur* est lue sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
-      smart_material: Attribution *intelligente* des matières
-      smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
-      dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
-      dynamic_attributes_name_help: |
-        Si cette option est activée, la désignation des pièces étant des composants dynamiques sera extraite de l'attribut *Name* s'il est défini.
-
-        <i class='ladb-opencutlist-icon-warning'></i> Les instances de pièces avec la même définition de composant seront séparées si l'attribut *Name* n'a pas la même valeur.
-      part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
-      part_number_with_letters_help: Si cette option est activée, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
-      part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
-      part_folding: Regrouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes étiquettes** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
-      hide_entity_names: Masquer les noms d'instance
-      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
-      hide_labels: Masquer les étiquettes
-      hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
-      hide_cutting_dimensions: Masquer les dimensions de débit
-      hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
-      hide_bbox_dimensions: Masquer les dimensions capables
-      hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
-      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
-      hide_final_areas: Masquer les surfaces finies des *Panneaux*
-      hide_final_areas_help: Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées.
-      hide_edges: Masquer les colonnes de chants
-      hide_edges_help: Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées.
-      minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
-      general: Générales
-      part_order_strategy: Tri des pièces
-      part_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
-        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
-      dimension_column_order_strategy: Ordre des colonnes
-      dimension_column_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir l'ordre d'affichage des colonnes de dimension.
-      property_thickness: Épaisseur
-      property_length: Longueur
-      property_width: Largeur
-      property_name: Désignation
-      property_count: Quantité
-      property_edge_pattern: Nombre de chant
-      reset: Restaurer aux valeurs par défaut
-    list:
-      filters: Filtres
-      filters_warning_0: "Ce filtrage masque toutes les pièces !"
-      filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
-      filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
-      edge_material_names_filter: Matières de chant à filtrer
-      labels_filter: Etiquettes à filtrer
-      dimensions_help: Comprendre les dimensions...
-      summary: Récapitulatif
-      material_type: Type
-      material_thickness: Matière / Dimension
-      part_count: Nb. pièces
-      area: Surface
-      area_short: Surf.
-      volume: Volume
-      number: N°
-      name: Désignation
-      count: Qte.
-      cutting: Débit
-      bbox: Capable
-      final: Finie
-      total_cutting: Σ Débit
-      total_final: Σ Finie
-      length: Longueur
-      length_short: Long.
-      width: Largeur
-      width_short: Larg.
-      thickness: Épaisseur
-      thickness_short: Ép.
-      edges: Chants
-    export:
-      title: Exporter au format CSV
-      info: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
-      options: Options d'export
-      option_source: Source
-      option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
-      option_source_instances_list: Liste des instances
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_encoding: Encodage
-      number: N°
-      path: Chemin
-      instance_name: Instance
-      definition_name: Définition
-      name: Désignation
-      total_cutting_length: Longueur - cumul débit
-      total_cutting_area: Surface - cumul débit
-      total_cutting_volume: Volume - cumul débit
-      total_final_area: Surface - cumul fini
-      cutting_length: Longueur - débit
-      cutting_width: Largeur - débit
-      cutting_thickness: Épaisseur - débit
-      bbox_length: Longueur - capable
-      bbox_width: Largeur - capable
-      bbox_thickness: Épaisseur - capable
-      final_area: Surface - finie
-      count: Quantité
-      part_count: Nombre de pièces
-      material_type: Type
-      material_thickness: Matière / Dimension
-      material_name: Matière
-      entity_names: Noms d'instance
-      labels: Etiquettes
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
-      edge_xmin: Chant Largeur 1
-      edge_xmax: Chant Largeur 2
     cuttingdiagram:
-      title: Calepinage
+      error:
+        bad_error: >-
+          Erreur d'algorithme. Veuillez contacter les développeurs, car vous
+          avez là un cas intéressant.
+        no_placement_possible: >-
+          Aucune pièce n'a pu être placée (panneau standard trop petit, marge
+          trop grande, lame de scie trop épaisse, ...).
+        no_sheet: >-
+          Le panneau standard n'est pas correctement configuré et aucun reste
+          n'est défini.
+        unplaced_parts: '**1 pièce** est trop grande pour être placée.'
+        unplaced_parts_plural: '**{{ count }} pièces** sont trop grandes pour être placées.'
+      list:
+        area: Surface tot.
+        count: Qte.
+        cut: Coupe
+        efficiency: Efficacité
+        leftover: Chute
+        length: Longueur
+        parts: '{{ count }} pièce'
+        parts_plural: '{{ count }} pièces'
+        settings: Paramètres
+        sheet: Panneau
+        sheet_type_0: Panneau standard
+        sheet_type_1: Reste de panneau
+        summary: Récapitulatif
+        total_length_cuts: Longueur de coupe
+        trimming: Marge
+        unplaced_parts: Pièces non placées
+        unused: Inutilisée
+        width: Largeur
+      option_bbox_optimization: Optimisation de l'enveloppe
+      option_bbox_optimization_0: Jamais
+      option_bbox_optimization_1: Seulement à la fin
+      option_bbox_optimization_2: Toujours
+      option_bbox_optimization_help: >
+        Optimiser les coupes de part en part du panneau afin de maximiser la
+        taille des chutes.
+
+        Cette procédure peut être appliquée à chaque ajout d'un nouveau panneau
+        sur les panneaux déjà pleins, seulement à la fin du calepinage ou
+        jamais.
       option_hide_part_list: Liste des pièces
       option_hide_part_list_0: Affichée pour chaque panneau/barre
       option_hide_part_list_1: Masquée
       option_hide_part_list_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
-      option_saw_kerf: Épaisseur de lame de scie
-      option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
-      option_trimming: Marge
-      option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
-      option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
       option_max_time: Temps de calcul max.
       option_max_time_help: Temps maximal en seconde réservé pour le calcul.
-      option_tuning_level: Niveau d'optimisation
-      option_tuning_level_help: Un niveau d'optimisation plus aggressif peut améliorer le calepinage.
-      option_tuning_level_0: Léger
-      option_tuning_level_1: Moyen
-      option_tuning_level_2: Aggressif
       option_presort: Ordre de tri des pièces
-      option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
       option_presort_1: Par largeur décroissante
       option_presort_2: Par longueur décroissante
       option_presort_3: Par superficie décroissante
       option_presort_4: Par périmètre décroissant
+      option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
+      option_saw_kerf: Épaisseur de lame de scie
+      option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
+      option_scrap_bar_lengths: Restes de barre
+      option_scrap_bar_lengths_help: >
+        Indiquez ici la liste de vos restes de barre à considérer en priorité
+        pour le calepinage.
+
+        Format attendu : **L**. Où **L** est la *longueur* du reste.
+
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du
+        modèle sera prise en compte.*
+      option_scrap_bar_lengths_placeholder: longueur ; ...
+      option_scrap_sheet_sizes: Restes de panneau
+      option_scrap_sheet_sizes_help: >
+        Indiquez ici la liste de vos restes de panneau à considérer en priorité
+        pour le calepinage.
+
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la
+        *longueur* et la *largeur* du reste.
+
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du
+        modèle sera prise en compte.*
+      option_scrap_sheet_sizes_placeholder: longueur x largeur ; ...
       option_stacking: Empiler les pièces identiques
-      option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
       option_stacking_0: Non
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
-      option_bbox_optimization: Optimisation de l'enveloppe
-      option_bbox_optimization_help: |
-        Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes.
-        Cette procédure peut être appliquée à chaque ajout d'un nouveau panneau sur les panneaux déjà pleins, seulement à la fin du calepinage ou jamais.
-      option_bbox_optimization_0: Jamais
-      option_bbox_optimization_1: Seulement à la fin
-      option_bbox_optimization_2: Toujours
+      option_stacking_help: >-
+        Direction d'empilement des pièces ayant une longueur ou une largeur
+        commune.
       option_std_bar: Barre standard
-      option_std_bar_help: |
-        Sélectionnez ici la taille de la barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_bar_add: Ajouter une taille...
-      option_std_bar_none: Aucune
-      option_scrap_bar_lengths: Restes de barre
-      option_scrap_bar_lengths_placeholder: longueur ; ...
-      option_scrap_bar_lengths_help:  |
-        Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
-        Format attendu : **L**. Où **L** est la *longueur* du reste.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_std_sheet: Panneau standard
-      option_std_sheet_help: |
-        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
-        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
+      option_std_bar_help: >
+        Sélectionnez ici la taille de la barre standard qui sera dupliquée pour
+        contenir au mieux toutes les pièces.
+
+        Cette liste est définie par le champ
+        **$t(tab.materials.edit_material.std_lengths)** de la matière.
+
         Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_std_bar_none: Aucune
+      option_std_sheet: Panneau standard
       option_std_sheet_add: Ajouter une taille...
+      option_std_sheet_help: >
+        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au
+        mieux toutes les pièces.
+
+        Cette liste est définie par le champ
+        **$t(tab.materials.edit_material.std_sizes)** de la matière.
+
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_none: Aucun
-      option_scrap_sheet_sizes: Restes de panneau
-      option_scrap_sheet_sizes_placeholder: longueur x largeur ; ...
-      option_scrap_sheet_sizes_help:  |
-        Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      option_trimming: Marge
+      option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
+      option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
+      option_tuning_level: Niveau d'optimisation
+      option_tuning_level_0: Léger
+      option_tuning_level_1: Moyen
+      option_tuning_level_2: Aggressif
+      option_tuning_level_help: Un niveau d'optimisation plus aggressif peut améliorer le calepinage.
       options_defaults:
         manage_help: Gestion des *Options de calepinage* par défaut
-        save: Enregistrer comme valeurs par défaut
-        save_success: "*Options de calepinage* par défaut enregistrées"
         reset: Restaurer aux valeurs par défaut
-      list:
-        unplaced_parts: Pièces non placées
-        summary: Récapitulatif
-        count: Qte.
-        sheet: Panneau
-        length: Longueur
-        width: Largeur
-        area: Surface tot.
-        trimming: Marge
-        total_length_cuts: Longueur de coupe
-        efficiency: Efficacité
-        leftover: Chute
-        cut: Coupe
-        sheet_type_0: Panneau standard
-        sheet_type_1: Reste de panneau
-        unused: Inutilisée
-        parts: "{{ count }} pièce"
-        parts_plural: "{{ count }} pièces"
-        settings: Paramètres
-      error:
-        no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
-        no_placement_possible: Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
-        bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
-        unplaced_parts: "**1 pièce** est trop grande pour être placée."
-        unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."
+        save: Enregistrer comme valeurs par défaut
+        save_success: '*Options de calepinage* par défaut enregistrées'
+      title: Calepinage
       warning:
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
-        cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
-        cutting_dimensions_increase_2d: |
-          *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
-        cutting_dimensions_edge_decrement: |
-          *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
-    error:
-      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
-      no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
-      no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
-      failed_to_write_export_file: Echec de l'écriture du fichier d'export. **{{ error }}**
-      unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
-    warning:
-      partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
-      no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (**Bois massif** ou **Panneau** ou **Barre**).
-      no_typed_materials_in_selection: Votre sélection n'utilise aucune matière ayant un type défini (**Bois massif** ou **Panneau** ou **Barre**).
-      export_empty: Votre export ne contient aucune pièce.
-    success:
-      exported_to: Export réussi vers {{ export_path }}.
-    tip:
-      no_component: |
-        Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.
-        Si vous utilisez uniquement des groupes, convertissez-les en composant.
-        L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
-      no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Panneau** ou **Barre**) dans l'onglet <i class="ladb-opencutlist-icon-materials"></i> **Matières**.
-    outdated_base: Pour rester synchronisé, vous devez re-générer la fiche de débit.
-  materials:
-    label: Matières
-    title: Matières
-    new: Nouvelle matière
-    type_0: Non défini
-    type_1: Bois massif
-    type_2: Panneau
-    type_3: Barre
-    type_4: Bande de chant
-    tooltip:
-      type_0: Type de matière '$t(tab.materials.type_0)'
-      type_1: Type de matière '$t(tab.materials.type_1)'
-      type_2: Type de matière '$t(tab.materials.type_2)'
-      type_3: Type de matière '$t(tab.materials.type_3)'
-      type_4: Type de matière '$t(tab.materials.type_4)'
-      grained_0: $t(tab.materials.edit_material.grained_0)
-      grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Direction du fil
-      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
-      edit: Éditer les propriétés de '{{ name }}'
-      set_current: |
-        Sélectionner '{{ name }}'
-        *Double-clic pour utiliser*
-    menu:
-      import_from_skm: Importer une matière (.skm)
-      purge_unused: Purger les matières inutilisées
-    new_material:
-      title: Créer une nouvelle matière
-      name: Nom
-      name_warning: Nom invalide
-      color: Couleur
-      color_warning: Couleur invalide
-      type: Type
-    edit_material:
-      title: Propriétés de la matière '{{ name }}'
-      general: Générales
-      texture: Texture
-      name: Nom
-      type: Type
-      cut_options: Options de débit
-      thickness: Epaisseur
-      length_increase: Surcote de longueur
-      width_increase: Surcote de largeur
-      thickness_increase: Surcote d'épaisseur
-      std_lengths: Longueurs standards
-      std_lengths_placeholder: longueur ; ...
-      std_lengths_help: |
-        Longueurs standards des barres.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_widths: Largeurs standards
-      std_widths_placeholder: largeur ; ...
-      std_widths_help: |
-        Largeurs standards des bandes.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_thicknesses: Épaisseurs standards
-      std_thicknesses_placeholder: épaisseur ; ...
-      std_thicknesses_help: |
-        Épaisseurs **brutes** standards.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_sections: Sections standards
-      std_sections_placeholder: largeur x hauteur ; ...
-      std_sections_help: |
-        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      std_sizes: Tailles standards
-      std_sizes_placeholder: longueur x largeur ; ...
-      std_sizes_help: |
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      grained: Fil
-      grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
-      grained_0: Pas de fil
-      grained_1: Le fil suit la longueur
-      edge_decremented: Reduction
-      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
-      edge_decremented_0: Pas de réduction
-      edge_decremented_1: Réduire le débit de l'épaisseur du chant
-      cut_options_defaults:
-        manage_help: Gestion des *Options de débit* par défaut
-        save: Enregistrer comme valeurs par défaut
-        save_success: |
-          **{{ type_name }}**
-          *Options de débit* par défaut enregistrées
-        reset: Restaurer aux valeurs par défaut
-      texture_width: Largeur
-      texture_height: Hauteur
-      export_to_skm: Exporter (.skm)
-    import_from_skm:
-      title: Importer un fichier .skm
-    export_to_skm:
-      title: Exporter un fichier .skm
-    remove:
-      message: |
-        Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
-        Confirmez pour continuer.
-    error:
-      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_materials: Votre modèle ne contient aucune matière.
-      failed_import_skm_file: Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**
-      failed_export_skm_file: Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**
-      failed_removing_material: Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**
-    success:
-      exported_to: Export réussi vers {{ export_path }}.
-    outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
-  importer:
-    label: Importer
-    title: Importer des pièces
-    help: |
-      Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
-      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: Ouvrir un fichier CSV
-    import_to_model: Importer dans le modèle
-    load:
-      title: Chargement d'un fichier CSV
-      info: |
-        Choisissez les options nécessaires à la bonne lecture du fichier **{{ filename }}**.
+        cutting_dimensions_edge_decrement: >
+          *Dimensions réduites de l'épaisseur des chants.* <i
+          class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions_increase_1d: >
+          *Dimensions majorées par la surcotes de longueur (**{{ length_increase
+          }}**) configurée sur la matière.*
+        cutting_dimensions_increase_2d: >
+          *Dimensions majorées par les surcotes configurées sur la matière '{{
+          material_name }}' en longueur (**{{ length_increase }}**) et en
+          largeur (**{{ width_increase }}**)*.
+    edit_group:
+      material: Matière
+      part_count: Nombre de pièces
+      std_dimension: Dimension brute
+      title: 'Propriétés du groupe ''{{ name }}'''
+      warning: >-
+        La modification de la matière sera répercutée sur toutes les pièces du
+        groupe. Ce qui peut entraîner une nouvelle réorganisation des groupes.
+    edit_part:
+      axes: Axes
+      axes_help: >-
+        Réordonnez les dimensions pour les faire correspondre avec les couleurs
+        d'axe désirés dans votre pièce.
+      axes_origin_position_center: Placer l'origine au centre
+      axes_origin_position_min: Placer l'origine à l'extrémité
+      axes_origin_position_min_center: Placer l'origine au centre d'une face
+      axes_origin_position_none: Ne pas changer l'origine
+      axes_tip: >
+        Il est important de noter que si l'option d'*Orientation automatique*
+        n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
+         - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
+         - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
+         - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
+      cumulable: Cumulable
+      cumulable_0: Non cumulable
+      cumulable_1: Cumulable sur la longueur
+      cumulable_2: Cumulable sur la largeur
+      cumulable_help: >
+        Si cette option est activée, la **longueur** ou la **largeur** sera
+        considérée dans le tri de la fiche de débit comme étant la **longueur**
+        ou la **largeur** unitaire de débit multipliée par la quantité.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans le modèle est : **{{ unit }}**.
-        Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: Options de chargement
+
+        <i class='ladb-opencutlist-icon-warning'></i> *Cette option n'est pas
+        prise en compte lorsque cette pièce est regroupée avec d'autres pièces
+        identiques.*
+      edge_disabled_help: >-
+        Ce chant n'est pas configurable parce qu'aucune face pouvant porter une
+        matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      edges: Chants
+      general: Générales
+      infos: Infos
+      labels: Etiquettes
+      labels_help: >
+        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés
+        sur chaque définition de pièce.
+
+        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
+
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de
+        débit par rapport à ces étiquettes.
+      labels_multiple_info: Seules les étiquettes communes sont visibles
+      material: Matière
+      multiple_alert: 'Propriétés communes du groupe de {{ part_count }} pièces.'
+      multiple_values: Valeurs multiples
+      name: Nom
+      orientation: Orientation
+      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
+      orientation_locked_on_axis_help: >
+        Si cette case est cochée, l'option *Orientation automatique des pièces*
+        n'aura pas d'effet sur cette pièce.
+
+
+        Et donc,
+
+        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
+
+        - la *largeur* sur le <span style='color:green'>vert</span>
+
+        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+      over_length: Sur la longueur
+      over_width: Sur la largeur
+      title: 'Propriétés de la pièce ''{{ name }}'''
+      title_multiple: Propriétés du groupe de pièces
+      warnings: Avertissements
+    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+    edit_part_properties: Éditer les propriétés de la pièce
+    error:
+      failed_to_write_export_file: 'Echec de l''écriture du fichier d''export. **{{ error }}**'
+      no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
+      no_component_in_selection: >-
+        Aucune instance de composant visible n'a été détectée dans votre
+        sélection.
+      no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
+    export:
+      bbox_length: Longueur - capable
+      bbox_thickness: Épaisseur - capable
+      bbox_width: Largeur - capable
+      count: Quantité
+      cutting_length: Longueur - débit
+      cutting_thickness: Épaisseur - débit
+      cutting_width: Largeur - débit
+      definition_name: Définition
+      edge_xmax: Chant Largeur 2
+      edge_xmin: Chant Largeur 1
+      edge_ymax: Chant Longueur 1
+      edge_ymin: Chant Longueur 2
+      entity_names: Noms d'instance
+      final_area: Surface - finie
+      info: >
+        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous
+        forme d'une *liste de pièces* dans un fichier au format
+        [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+
+
+        <i class="ladb-opencutlist-icon-warning"></i> *Les pièces contenues dans
+        les groupes masqués de votre fiche de débit ne seront pas exportées*.
+      instance_name: Instance
+      labels: Etiquettes
+      material_name: Matière
+      material_thickness: Matière / Dimension
+      material_type: Type
+      name: Désignation
+      number: N°
       option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
-      option_first_line_headers: Première ligne
-      option_first_line_headers_0: Données
-      option_first_line_headers_1: Titres de colonne
+      option_col_sep_tab: Tabulation
+      option_encoding: Encodage
+      option_source: Source
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Liste des instances
+      option_source_summary: $t(tab.cutlist.list.summary)
+      options: Options d'export
+      part_count: Nombre de pièces
+      path: Chemin
+      title: Exporter au format CSV
+      total_cutting_area: Surface - cumul débit
+      total_cutting_length: Longueur - cumul débit
+      total_cutting_volume: Volume - cumul débit
+      total_final_area: Surface - cumul fini
+    help: >
+      Sélectionnez, sur votre scène, le composant racine de votre fiche de
+      débit. Puis cliquez sur le bouton **Générer**.
+
+      Si aucun composant n'est sélectionné, tous les composants visibles sur la
+      scène seront considérés.
+    highlight_part: Voir la pièce dans le modèle
+    highlight_parts: Voir les pièces dans le modèle
+    label: Débit
+    list:
+      area: Surface
+      area_short: Surf.
+      bbox: Capable
+      count: Qte.
+      cutting: Débit
+      dimensions_help: Comprendre les dimensions...
+      edge_material_names_filter: Matières de chant à filtrer
+      edges: Chants
+      filters: Filtres
+      filters_warning: >-
+        Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total
+        }}.
+      filters_warning_0: Ce filtrage masque toutes les pièces !
+      filters_warning_plural: >-
+        Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{
+        total }}.
+      final: Finie
+      labels_filter: Etiquettes à filtrer
+      length: Longueur
+      length_short: Long.
+      material_thickness: Matière / Dimension
+      material_type: Type
+      name: Désignation
+      number: N°
+      part_count: Nb. pièces
+      summary: Récapitulatif
+      thickness: Épaisseur
+      thickness_short: Ép.
+      total_cutting: Σ Débit
+      total_final: Σ Finie
+      volume: Volume
+      width: Largeur
+      width_short: Larg.
+    material_undefined: Sans matière
+    menu:
+      collapse_all: Replier toutes les pièces identiques
+      edit_material: 'Éditer la matière ''{{ material }}''...'
+      expand_all: Déplier toutes les pièces identiques
+      group_cuttingdiagram: Calepinage
+      group_numbers_reset: Réinitialiser les numéros de pièce du groupe
+      group_numbers_save: Mémoriser les numéros de pièce du groupe
+      hide_all_other_groups: Masquer tous les autres groupes
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      numbers_reset: Réinitialiser les numéros de pièce
+      numbers_save: Mémoriser les numéros de pièce
+      show_all_groups: Afficher tous les groupes
+    not_available_section: Section non disponible
+    not_available_thickness: Épaisseur non disponible
+    not_available_width: Largeur non disponible
+    option:
+      auto_orient: Orientation automatique des pièces
+      auto_orient_help: >
+        Si cette option est activée, les trois dimensions des pièces sont triées
+        pour que la plus grande représente la *longueur* et la plus petite
+        l'*épaisseur*.
+
+
+        Sinon,
+
+        - la *longueur* est lue sur l'axe <span style='color:red'>rouge</span>
+
+        - la *largeur* sur le <span style='color:green'>vert</span>
+
+        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+      dimension_column_order_strategy: Ordre des colonnes
+      dimension_column_order_strategy_help: >
+        Réorganiser les propriétés suivantes pour définir l'ordre d'affichage
+        des colonnes de dimension.
+      dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
+      dynamic_attributes_name_help: >
+        Si cette option est activée, la désignation des pièces étant des
+        composants dynamiques sera extraite de l'attribut *Name* s'il est
+        défini.
+
+
+        <i class='ladb-opencutlist-icon-warning'></i> Les instances de pièces
+        avec la même définition de composant seront séparées si l'attribut
+        *Name* n'a pas la même valeur.
+      general: Générales
+      hide_bbox_dimensions: Masquer les dimensions capables
+      hide_bbox_dimensions_help: >-
+        Si cette option est activée, les dimensions **capables** des pièces ne
+        sont pas affichées.
+      hide_cutting_dimensions: Masquer les dimensions de débit
+      hide_cutting_dimensions_help: >-
+        Si cette option est activée, les dimensions de **débit** des pièces ne
+        sont pas affichées.
+      hide_edges: Masquer les colonnes de chants
+      hide_edges_help: >-
+        Si cette option est activée, les **colonnes de chants** des pièces de
+        type *Panneau* ne sont pas affichées.
+      hide_entity_names: Masquer les noms d'instance
+      hide_entity_names_help: >-
+        Si cette option est activée, les **noms d'instance** des pièces ne sont
+        pas affichées.
+      hide_final_areas: Masquer les surfaces finies des *Panneaux*
+      hide_final_areas_help: >-
+        Si cette option est activée, les **surfaces finies** des pièces de type
+        *Panneau* ne sont pas affichées.
+      hide_labels: Masquer les étiquettes
+      hide_labels_help: >-
+        Si cette option est activée, les **étiquettes** placées sur les pièces
+        ne sont pas affichées.
+      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
+      hide_untyped_material_dimensions_help: >-
+        Si cette option est activée, les dimensions ne seront pas affichées pour
+        les pièces pour lesquelles la matière n'a pas de type défini (**Bois
+        massif**, **Panneau** ou **Barre**).
+      minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: >-
+        Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque
+        la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée.
+      part_folding: Regrouper les pièces identiques
+      part_folding_help: >-
+        Si cette option est activée, les pièces de **même taille capable**, avec
+        les **mêmes étiquettes** et la **même surface finie** *(si l'affichage
+        de cette surface n'est pas masqué)* seront regroupées sur une même
+        ligne.
+      part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
+      part_number_sequence_by_group_help: >-
+        Si cette option est activée, la numérotation des pièces est
+        réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même
+        matière et épaisseur brute).
+      part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
+      part_number_with_letters_help: >-
+        Si cette option est activée, les pièces sont numérotées avec des lettres
+        (A, B, C, ... Z, AA, AB, ...).
+      part_order_strategy: Tri des pièces
+      part_order_strategy_help: >
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri
+        des pièces dans chaque groupe.
+
+        Chaque propriété peut être triée de façon <i
+        class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i
+        class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
+      property_count: Quantité
+      property_edge_pattern: Nombre de chant
+      property_length: Longueur
+      property_name: Désignation
+      property_thickness: Épaisseur
+      property_width: Largeur
+      reset: Restaurer aux valeurs par défaut
+      smart_material: Attribution *intelligente* des matières
+      smart_material_help: >-
+        Si cette option est activée, les pièces n'ayant pas de matière définie
+        peuvent se voir attribuer la matière principale de leurs éléments
+        enfants ou celle héritée de leurs éléments parents.
+    outdated_base: 'Pour rester synchronisé, vous devez re-générer la fiche de débit.'
+    success:
+      exported_to: 'Export réussi vers {{ export_path }}.'
+    tip:
+      no_component: >
+        Les pièces que vous souhaitez voir apparaître dans la *fiche de débit*
+        doivent être des instances de **composant**.
+
+        Si vous utilisez uniquement des groupes, convertissez-les en composant.
+
+        L'utilisation des composants permet de répliquer les pièces identiques
+        sans les dupliquer.
+      no_typed_materials: >-
+        Appliquez une matière sur les pièces que vous souhaitez voir dans votre
+        fiche de débit. Et définissez le type de cette matière (**Bois massif**
+        ou **Panneau** ou **Barre**) dans l'onglet <i
+        class="ladb-opencutlist-icon-materials"></i> **Matières**.
+    title: Fiche de débit
+    tooltip:
+      add_edge_material_name_filter: 'Filtrer sur ''{{ material_name }}'''
+      add_label_filter: 'Filtrer sur ''{{ label }}'''
+      add_std_section_to_material: |
+        Ajouter la section *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Ajouter l'épaisseur *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
+      add_std_width_to_material: |
+        Ajouter la largeur *{{ std_dimension }}*
+        à la matière '{{ material_name }}'
+      auto_oriented: Cette pièce a été réorientée automatiquement
+      children_warnings: 'Attention, il y a {{ count }} alerte dans les pièces regroupées'
+      children_warnings_plural: 'Attention, il y a {{ count }} alertes dans les pièces regroupées'
+      dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
+      edge_decremented: 'Réduit de l''épaisseur des chants ({{ decrement }})'
+      edge_xmax: Chant Largeur 2
+      edge_xmin: Chant Largeur 1
+      edge_ymax: Chant Longueur 1
+      edge_ymin: Chant Longueur 2
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Éditer les propriétés du groupe de pièces
+      folding_part: Déplier / Replier
+      has_edges: 'Cette pièce contient {{ count }} chant plaqué'
+      has_edges_plural: 'Cette pièce contient {{ count }} chants plaqués'
+      highlight_part: $t(tab.cutlist.highlight_part)
+      invalid_final_area: >-
+        Attention, cette surface cumulée n'a pas pu être calculée parce que {{
+        count }} pièce (sur {{ total }}) a une surface finie invalide
+      invalid_final_area_plural: >-
+        Attention, cette surface cumulée n'a pas pu être calculée parce que {{
+        count }} pièces (sur {{ total }}) ont une surface finie invalide
+      is_dynamic_attributes_name: >-
+        La désignation de cette pièce est extraite de l'attribut 'Name' du
+        composant dynamique
+      material_origin_1: >-
+        La matière prise en compte pour cette pièce est définie sur ses
+        instances
+      material_origin_2: >-
+        La matière prise en compte pour cette pièce est actuellement héritée de
+        l'un de ses éléments parents
+      material_origin_3: >-
+        La matière prise en compte pour cette pièce est actuellement extraite de
+        ses éléments enfants
+      multiple_layers: >-
+        Attention, cette pièce est composée de sous parties présentent dans {{
+        count }} calques différents :<br>{{ layers }}
+      not_aligned_on_axes: >-
+        Attention, cette pièce n'est peut-être pas correctement alignée sur ses
+        axes
+      number_generated: Le numéro de cette pièce est généré automatiquement
+      number_hidden: >-
+        Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé
+        car il est déjà attribué
+      number_saved: Le numéro de cette pièce est enregistré
+      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur ses axes
+      part_axes: Axes internes de la pièce
+      remove_edge_material_name_filter: 'Ne plus filtrer sur ''{{ material_name }}'''
+      remove_label_filter: 'Ne plus filtrer sur ''{{ label }}'''
+      resized: Cette pièce est redimensionnée par rapport à sa définition de composant
+      scroll_to_block: Défiler vers le groupe
+      select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
+      show_hide_block: Afficher / Masquer ce groupe
+    warning:
+      export_empty: Votre export ne contient aucune pièce.
+      no_typed_materials_in_model: >-
+        Votre modèle n'utilise aucune matière ayant un type défini (**Bois
+        massif** ou **Panneau** ou **Barre**).
+      no_typed_materials_in_selection: >-
+        Votre sélection n'utilise aucune matière ayant un type défini (**Bois
+        massif** ou **Panneau** ou **Barre**).
+      partial_cutlist: >-
+        Cette fiche de débit est une représentation partielle de votre modèle
+        puisqu'elle n'utilise que les éléments sélectionnés.
+  importer:
+    column:
+      bbox_length: Longueur capable
+      bbox_thickness: Epaisseur capable
+      bbox_width: Largeur capable
+      count: Quantité
+      labels: Etiquettes
+      mandatory: Champs obligatoires
+      material: Matière
+      name: Désignation
+      optional: Champs facultatifs
+      unused: Non utilisé
+    error:
+      bad_extension: 'Le fichier *{{ filename }}* n''a pas l''extension **.CSV** ou **.TSV**.'
+      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
+      failed_to_import: L'importation a échouée.
+      failed_to_load_csv_file: |
+        Impossible de charger le fichier CSV : **{{ error }}**
+        *Vérifiez que vous avez choisi le bon séparateur de données.*
+      file_not_found: 'Fichier introuvable : **{{ filename }}**'
+      invalid_length: Pas de longueur valide
+      invalid_name: Pas de désignation valide
+      invalid_thickness: Pas d'épaisseur valide
+      invalid_width: Pas de largeur valide
+      no_importable_part: >-
+        Aucune pièce ne peut être importée. Attribuez les champs obligatoires
+        sur les colonnes correspondantes.
+      no_model: >-
+        Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans
+        le néant ;)
+    help: >
+      Cette page vous permet d'importer une série de pièces capables (de forme
+      parallélépipédique) dans votre modèle depuis un fichier
+      [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+
+      Vous pourrez ainsi utiliser la puissance de la fiche de débit
+      d'*OpenCutList* en générant vos pièces avec un autre logiciel que
+      *Sketchup*.
+
+      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
     import:
-      title: Importation des pièces dans le modèle
       info_0: |
         Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
         Cette pièce va être placée sur la scène principale, à l'origine.
@@ -579,83 +664,206 @@ tab:
         Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
         Ces pièces vont être empilées sur la scène principale depuis l'origine.
       info_1: Cliquez sur **Importer** pour confirmer l'action.
-      options: |
-        Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
-        Choisissez les options d'importation qui correspondent à votre besoin.
+      option_keep_definitions_settings: Conserver les paramètres sur les définitions
+      option_keep_materials_settings: Conserver les paramètres sur les matières
       option_remove_all_?: Que faire ?
       option_remove_all_false: Ajouter les pièces à l'existant
       option_remove_all_true: Effacer tout !
-      option_keep_definitions_settings: Conserver les paramètres sur les définitions
-      option_keep_materials_settings: Conserver les paramètres sur les matières
-    column:
-      unused: Non utilisé
-      mandatory: Champs obligatoires
-      optional: Champs facultatifs
-      name: Désignation
-      count: Quantité
-      bbox_length: Longueur capable
-      bbox_width: Largeur capable
-      bbox_thickness: Epaisseur capable
-      material: Matière
-      labels: Etiquettes
+      options: >
+        Le modèle contient déjà des *pièces*, des *définitions* ou des
+        *matières*.
+
+        Choisissez les options d'importation qui correspondent à votre besoin.
+      title: Importation des pièces dans le modèle
+    import_to_model: Importer dans le modèle
+    label: Importer
+    load:
+      info: >
+        Choisissez les options nécessaires à la bonne lecture du fichier **{{
+        filename }}**.
+
+
+        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans
+        le modèle est : **{{ unit }}**.
+
+        Cette unité sera utilisée pour les dimensions dont l'unité n'est pas
+        précisée*.
+      option_col_sep: Séparateur
+      option_col_sep_comma: Virgule
+      option_col_sep_semicolon: Point virgule
+      option_col_sep_tab: Tabulation
+      option_first_line_headers: Première ligne
+      option_first_line_headers_0: Données
+      option_first_line_headers_1: Titres de colonne
+      options: Options de chargement
+      title: Chargement d'un fichier CSV
+    open_csv: Ouvrir un fichier CSV
+    outdated_base: 'Pour rester synchronisé, vous devez recharger le fichier CSV.'
+    success:
+      imported_body: '{{ count }} pièce importée avec succes !'
+      imported_body_plural: '{{ count }} pièces importées avec succes !'
+      imported_title: Importation terminée
+    title: Importer des pièces
     tooltip:
       errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
       warnings: Cette pièce sera importée mais elle contient les avertissements suivants
-    error:
-      no_model: Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: "Fichier introuvable : **{{ filename }}**"
-      bad_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
-      failed_to_load_csv_file: |
-        Impossible de charger le fichier CSV : **{{ error }}**
-        *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: Pas de désignation valide
-      invalid_length: Pas de longueur valide
-      invalid_width: Pas de largeur valide
-      invalid_thickness: Pas d'épaisseur valide
-      failed_to_import: L'importation a échouée.
     warning:
       invalid_count: Pas de quantité valide
       invalid_material: Pas de matière valide
+  materials:
+    edit_material:
+      cut_options: Options de débit
+      cut_options_defaults:
+        manage_help: Gestion des *Options de débit* par défaut
+        reset: Restaurer aux valeurs par défaut
+        save: Enregistrer comme valeurs par défaut
+        save_success: |
+          **{{ type_name }}**
+          *Options de débit* par défaut enregistrées
+      edge_decremented: Reduction
+      edge_decremented_0: Pas de réduction
+      edge_decremented_1: Réduire le débit de l'épaisseur du chant
+      edge_decremented_help: >-
+        Permet d'indiquer si les dimensions de débit des pièces doivent être
+        réduite de l'épaisseur des chants.
+      export_to_skm: Exporter (.skm)
+      general: Générales
+      grained: Fil
+      grained_0: Pas de fil
+      grained_1: Le fil suit la longueur
+      grained_help: >-
+        Permet d'indiquer l'orientation du fil de surface par rapport à la
+        longueur du panneau.
+      length_increase: Surcote de longueur
+      name: Nom
+      std_lengths: Longueurs standards
+      std_lengths_help: >
+        Longueurs standards des barres.
+
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en
+        compte.*
+      std_lengths_placeholder: longueur ; ...
+      std_sections: Sections standards
+      std_sections_help: >
+        Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la
+        *largeur* et la *hauteur* de la section.
+
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du
+        modèle sera prise en compte.*
+      std_sections_placeholder: largeur x hauteur ; ...
+      std_sizes: Tailles standards
+      std_sizes_help: >
+        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la
+        *longueur* et la *largeur* du panneau.
+
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du
+        modèle sera prise en compte.*
+      std_sizes_placeholder: longueur x largeur ; ...
+      std_thicknesses: Épaisseurs standards
+      std_thicknesses_help: >
+        Épaisseurs **brutes** standards.
+
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en
+        compte.*
+      std_thicknesses_placeholder: épaisseur ; ...
+      std_widths: Largeurs standards
+      std_widths_help: >
+        Largeurs standards des bandes.
+
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en
+        compte.*
+      std_widths_placeholder: largeur ; ...
+      texture: Texture
+      texture_height: Hauteur
+      texture_width: Largeur
+      thickness: Epaisseur
+      thickness_increase: Surcote d'épaisseur
+      title: 'Propriétés de la matière ''{{ name }}'''
+      type: Type
+      width_increase: Surcote de largeur
+    error:
+      failed_export_skm_file: >-
+        Une erreur s'est produite lors de l'exportation du fichier .skm. **{{
+        error }}**
+      failed_import_skm_file: >-
+        Une erreur s'est produite lors de l'importation du fichier .skm. **{{
+        error }}**
+      failed_removing_material: >-
+        Une erreur s'est produite lors de la suppression de la matière. **{{
+        error }}**
+      no_materials: Votre modèle ne contient aucune matière.
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+    export_to_skm:
+      title: Exporter un fichier .skm
+    import_from_skm:
+      title: Importer un fichier .skm
+    label: Matières
+    menu:
+      import_from_skm: Importer une matière (.skm)
+      purge_unused: Purger les matières inutilisées
+    new: Nouvelle matière
+    new_material:
+      color: Couleur
+      color_warning: Couleur invalide
+      name: Nom
+      name_warning: Nom invalide
+      title: Créer une nouvelle matière
+      type: Type
+    outdated_base: 'Pour rester synchronisé, vous devez rafraîchir la liste de matières.'
+    remove:
+      message: >
+        Vous êtes sur le point de supprimer la matière **{{ material_name }}**
+        de votre modèle.
+
+        Confirmez pour continuer.
     success:
-      imported_title: Importation terminée
-      imported_body: "{{ count }} pièce importée avec succes !"
-      imported_body_plural: "{{ count }} pièces importées avec succes !"
-    outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
-  sponsor:
-    label: Soutenir
-    title: Soutenir
-    description: |
-      **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
-      Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: Contribuer
-    backers: "{{count}} contributeur financier"
-    backers_plural: "{{count}} contributeurs financiers"
+      exported_to: 'Export réussi vers {{ export_path }}.'
+    title: Matières
+    tooltip:
+      colorized: >-
+        Cette teinte sera appliquée à la texture de cette matière lors du rendu
+        dans le modèle
+      edit: 'Éditer les propriétés de ''{{ name }}'''
+      grain_direction: Direction du fil
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      set_current: |
+        Sélectionner '{{ name }}'
+        *Double-clic pour utiliser*
+      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
+      type_0: Type de matière '$t(tab.materials.type_0)'
+      type_1: Type de matière '$t(tab.materials.type_1)'
+      type_2: Type de matière '$t(tab.materials.type_2)'
+      type_3: Type de matière '$t(tab.materials.type_3)'
+      type_4: Type de matière '$t(tab.materials.type_4)'
+    type_0: Non défini
+    type_1: Bois massif
+    type_2: Panneau
+    type_3: Barre
+    type_4: Bande de chant
   settings:
     label: Préférences
-    title: Préférences
-    reset: Restaurer aux valeurs par défaut
-    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
     language: Langue
+    reload_dialog_warning: >-
+      Afin de prendre en compte tous les changements, vous devez **fermer** et
+      **réouvrir** la fenêtre OpenCutList.
+    reset: Restaurer aux valeurs par défaut
     size_and_position: Taille et Position de la fenêtre
-  about:
-    label: A propos
-    title: A propos
-    version: Version
-    credits: Crédits techniques
-    credits_authors: |
-      *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) et traduit par [Martin Müller](https://www.lairdubois.fr/mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_description: |
-      Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
-      Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: Exécution
-    credits_development: Développement
-    credits_vendors: |
-      Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
-    credits_thanks: |
-      Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
+    title: Préférences
+  sponsor:
+    backers: '{{count}} contributeur financier'
+    backers_plural: '{{count}} contributeurs financiers'
+    contribute: Contribuer
+    description: >
+      **OpenCutList** est un logiciel *Open Source* qui est financé par ses
+      utilisateurs via la plateforme <a href="https://opencollective.com/"
+      target="_blank">Open Collective</a>.
+
+      Soutenez ce projet en contribuant vous aussi à son financement !
+    label: Soutenir
+    title: Soutenir
 tool:
   highlight:
     transparency: Transparence
     zoom_extents: Voir tout
+
