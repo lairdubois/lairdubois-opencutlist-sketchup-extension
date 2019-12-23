@@ -125,6 +125,42 @@
       end
     end
 
+    def self.material_order(material_a, material_b, strategy)
+      a_values = []
+      b_values = []
+      if strategy
+        properties = strategy.split('>')
+        properties.each { |property|
+          if property.length < 1
+            next
+          end
+          asc = true
+          if property.start_with?('-')
+            asc = false
+            property.slice!(0)
+          end
+          case property
+          when 'type'
+            a_value = [ self.type_order(material_a[:attributes][:type]) ]
+            b_value = [ self.type_order(material_b[:attributes][:type]) ]
+          when 'name'
+            a_value = [ material_a[:display_name] ]
+            b_value = [ material_b[:display_name] ]
+          else
+            next
+          end
+          if asc
+            a_values.concat(a_value)
+            b_values.concat(b_value)
+          else
+            a_values.concat(b_value)
+            b_values.concat(a_value)
+          end
+        }
+      end
+      a_values <=> b_values
+    end
+
     def self.type_order(type)
       case type
         when TYPE_SOLID_WOOD

@@ -69,9 +69,9 @@
     var OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY = 'length>width>thickness';
     var OPTION_DEFAULT_HIDDEN_GROUP_IDS = [];
 
-    var OPTION_DEFAULT_SOURCE = 1;      // cutlist
-    var OPTION_DEFAULT_COL_SEP = 0;     // \t
-    var OPTION_DEFAULT_ENCODING = 0;    // UTF-8
+    var EXPORT_OPTION_DEFAULT_SOURCE = 1;      // cutlist
+    var EXPORT_OPTION_DEFAULT_COL_SEP = 0;     // \t
+    var EXPORT_OPTION_DEFAULT_ENCODING = 0;    // UTF-8
 
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH = '2500mm';
@@ -609,9 +609,9 @@
             function () {
 
                 var exportOptions = {
-                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, OPTION_DEFAULT_SOURCE),
-                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, OPTION_DEFAULT_ENCODING)
+                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, EXPORT_OPTION_DEFAULT_SOURCE),
+                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, EXPORT_OPTION_DEFAULT_COL_SEP),
+                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING)
                 };
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
@@ -714,15 +714,36 @@
     LadbTabCutlist.prototype.highlightPart = function (part_id) {
         var that = this;
 
-        rubyCallCommand('cutlist_highlight_part', part_id, function (response) {
+        var groupAndPart = this.findGroupAndPartById(part_id);
+        if (groupAndPart) {
 
-            if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.opencutlist.minimize();
+            var group = groupAndPart.group;
+            var part = groupAndPart.part;
+
+            var isFolder = part.children && part.children.length > 0;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part_id) && this.selectionPartIds.length > 1;
+            var multiple = isFolder || isSelected;
+
+            var partIds;
+            if (isFolder) {
+                partIds = [ part_id ];
+            } else if (isSelected) {
+                partIds = this.selectionPartIds;
+            } else {
+                partIds = [ part_id ];
             }
 
-        });
+            rubyCallCommand('cutlist_highlight_parts', partIds, function (response) {
+
+                if (response['errors']) {
+                    that.opencutlist.notifyErrors(response['errors']);
+                } else if (that.generateOptions.minimize_on_highlight) {
+                    that.opencutlist.minimize();
+                }
+
+            });
+
+        }
 
     };
 
@@ -772,18 +793,29 @@
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
         var $row = $('#ladb_part_' + id, this.$page);
+        var $highlightPartBtn = $('a.ladb-btn-highlight-part', $row);
         var $editPartBtn = $('a.ladb-btn-edit-part', $row);
         var $selectPartBtn = $('a.ladb-btn-select-part', $row);
 
         if (selected) {
             $selectPartBtn.addClass('ladb-active');
+            $highlightPartBtn
+                .prop('title', i18next.t('tab.cutlist.tooltip.highlight_parts'))
+                .tooltip('fixTitle');
             $editPartBtn
                 .prop('title', i18next.t('tab.cutlist.tooltip.edit_parts_properties'))
                 .tooltip('fixTitle');
+            $('i', $highlightPartBtn).addClass('ladb-opencutlist-icon-magnifier-multiple');
             $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
             $('i', $selectPartBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
         } else {
             $selectPartBtn.removeClass('ladb-active');
+            if ($('i', $highlightPartBtn).hasClass('ladb-opencutlist-icon-magnifier')) {
+                $highlightPartBtn
+                    .prop('title', i18next.t('tab.cutlist.tooltip.highlight_part'))
+                    .tooltip('fixTitle');
+                $('i', $highlightPartBtn).removeClass('ladb-opencutlist-icon-magnifier-multiple');
+            }
             if ($('i', $editPartBtn).hasClass('ladb-opencutlist-icon-edit')) {
                 $editPartBtn
                     .prop('title', i18next.t('tab.cutlist.tooltip.edit_part_properties'))
@@ -822,7 +854,7 @@
             if (selected) {
                 if (state === undefined || state === false) {
                     this.selectionPartIds.splice(this.selectionPartIds.indexOf(partId), 1);
-                    if (this.selectionPartIds.length == 0) {
+                    if (this.selectionPartIds.length === 0) {
                         this.selectionGroupId = null;
                     }
                     selected = false;

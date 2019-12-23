@@ -71,11 +71,11 @@
                     $('.ladb-sponsor-member-box', $list).on('click', function(e) {
                         var $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
-                            window.open($closestAnchor.attr('href'), "_blank");
+                            rubyCallCommand('core_open_url', { url: $closestAnchor.attr('href') });
                             return false;
                         }
                         var slug = $(this).data('member-slug');
-                        window.open('https://opencollective.com/' + slug, "_blank");
+                        rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + slug });
                     });
 
                 }

@@ -4,7 +4,15 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.8.1
+* 1.8.3
+
+  * Cutlist highlight multiple parts improvements
+
+* 1.8.2 (2019-12-12)
+
+  * Fixed Material name and color form
+
+* 1.8.1 (2019-11-20)
 
   * Added edge 'copy to all' shortcut
   * Added multiple edition of parts in cutlist
