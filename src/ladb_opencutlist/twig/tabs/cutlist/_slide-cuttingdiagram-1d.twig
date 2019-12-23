@@ -3,6 +3,20 @@
 {% set id = 'ladb_cutlist_slide_cuttingdiagram_1d' %}
 {% set out = true %}
 
+{% set sheetDimensionFontSize = 16 %}
+{% set dimensionFontSize = 12 %}
+{% set numberFontSize = 26 %}
+
+{% set dimensionOffset = 3 %}
+{% set sheetDimensionOffset = 10 %}
+
+{% set sheetOutlineWidth = 1 %}
+{% set partOutlineWidth = 2 %}
+{% set cutOutlineWidth = 2 %}
+{% set edgeWidth = 3 %}
+
+{% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
+
 {% block headerInner %}
     {{ parent() }}
     <ul class="ladb-file-tabs nav nav-tabs">
@@ -28,7 +42,23 @@
         {% include 'core/_alert-warnings.twig' %}
         {% include 'core/_alert-tips.twig' %}
 
-        TODO :)
+        {% if unplaced_parts|length > 0 %}
+            {% include 'tabs/cutlist/_cuttingdiagram-unplaced.twig' with { raw_format: 'bar' } %}
+        {% endif %}
 
+        {% include 'tabs/cutlist/_cuttingdiagram-summary.twig' with { raw_format: 'bar' } %}
+
+        {% if options.hide_part_list %}
+            {% set colspan = 1 %}
+        {% else %}
+            {% set colspan = 5 %}
+            {% if not showCuttingDimensions %}
+                {% set colspan = colspan - 2 %}
+            {% endif %}
+        {% endif %}
+        {% set sheets = bars %}
+        {% for sheet in sheets %}
+            {% include 'tabs/cutlist/_cuttingdiagram-part.twig' with { raw_format: 'bar' } %}
+        {% endfor %}
     </div>
 {% endblock %}

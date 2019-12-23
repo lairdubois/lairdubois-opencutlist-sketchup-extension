@@ -21,17 +21,17 @@
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showCuttingDimensions %}
-                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                <td class="text-center" colspan="{{ visibleDimensionColumns|length }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
             {% endif %}
-            <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+            <td class="text-center" colspan="{{ visibleDimensionColumns|length }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
         </tr>
         <tr>
             {% if showCuttingDimensions %}
-                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                {% for property in visibleDimensionColumns %}
                     <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
-            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+            {% for property in visibleDimensionColumns %}
                 <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
             {% endfor %}
         </tr>
@@ -53,11 +53,11 @@
                     {{ part.count }}
                 </td>
                 {% if showCuttingDimensions %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    {% for property in visibleDimensionColumns %}
                         {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
                     {% endfor %}
                 {% endif %}
-                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                {% for property in visibleDimensionColumns %}
                     <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
                 {% endfor %}
             </tr>

@@ -19,7 +19,7 @@ module Ladb::OpenCutList
   require_relative '../utils/transformation_utils'
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
-  
+
   require_relative '../lib/bin_packing_1d/packengine'
   require_relative '../lib/bin_packing_2d/packengine'
 
@@ -1732,7 +1732,7 @@ module Ladb::OpenCutList
           # The dimensions need to be in Sketchup internal units AND float
           options = BinPacking1D::Options.new
           options.std_length = std_bar_length
-          options.saw_kerf = saw_kerf # size of saw_kef
+          options.saw_kerf = saw_kerf # size of saw_kerf
           options.trim_size = trimming # size of trim size (both sides)
           options.max_time = max_time # the amount of time in seconds for computing, before aborting
           options.tuning_level = tuning_level # a level 0, 1, 2
@@ -1740,15 +1740,15 @@ module Ladb::OpenCutList
           # Create the bin packing engine with given bins and boxes
           e = BinPacking1D::PackEngine.new(options)
 
-          # Add bins from scrap sheets
+          # Add bars from scrap bars
           scrap_bar_lengths.split(';').each { |scrap_bar_length|
-            e.add_bin(scrap_bar_length.to_f)
+            e.add_bar(scrap_bar_length.to_f)
           }
 
           # Add bars from parts, give them a unique ID
           group[:parts].each { |part|
-            part[:entity_ids].each { |p|
-              e.add_box(part[:cutting_length].to_l.to_f, p)
+            part[:entity_ids].each { |entity_id|
+              e.add_part(part[:cutting_length].to_l.to_f, entity_id)
             }
           }
 
@@ -1790,11 +1790,17 @@ module Ladb::OpenCutList
                 :hide_part_list => hide_part_list,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
+                :trimming => options.trim_size.to_l.to_s,
+                :max_time => options.max_time,
+                :tuning_level => options.tuning_level,
+                # :stacking => stacking,
+                # :bbox_optimization => bbox_optimization,
+                # :presort => presort,
               },
 
               :unplaced_parts => [],
               :summary => {
-                :bars => [],
+                :parts => [],
               },
               :bars => [],
           }
@@ -1821,50 +1827,134 @@ module Ladb::OpenCutList
               response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group[:material_name], :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
             end
 
+            std_width = DimensionUtils.instance.str_to_ifloat(group[:std_width]).to_l.to_f
+            std_thickness = DimensionUtils.instance.str_to_ifloat(group[:std_thickness]).to_l.to_f
+            fixed_width = std_width > std_thickness ? std_width : std_thickness # cut on the longer side
+            parts = {}
+            group[:parts].each { |part|
+              part[:entity_ids].each { |entity_id|
+                parts[entity_id] = part
+              }
+            }
+
             # Unplaced parts
             unplaced_parts = {}
             result.unplaced_parts.each { |box|
-              part = unplaced_parts[box.data[:number]]
-              unless part
-                part = {
-                    :id => box.data[:id],
-                    :number => box.data[:number],
-                    :name => box.data[:name],
-                    :length => box.data[:length],
-                    :cutting_length => box.data[:cutting_length],
+              unplaced_part = unplaced_parts[parts[box[:id]][:number]]
+              unless unplaced_part
+                unplaced_part = {
+                    :id => parts[box[:id]][:id],
+                    :number => parts[box[:id]][:number],
+                    :name => parts[box[:id]][:name],
+                    :length => parts[box[:id]][:length],
+                    :cutting_length => parts[box[:id]][:cutting_length],
                     :count => 0,
                 }
-                unplaced_parts[box.data[:number]] = part
+                unplaced_parts[parts[box[:id]][:number]] = unplaced_part
               end
-              part[:count] += 1
+              unplaced_part[:count] += 1
             }
-            unplaced_parts.sort_by { |k, v| v[:number] }.each { |key, part|
-              response[:unplaced_parts].push(part)
+            unplaced_parts.sort_by { |k, v| v[:number] }.each { |key, unplaced_part|
+              response[:unplaced_parts].push(unplaced_part)
             }
 
             # Bars
             index = 0
+            summary_bars = {}
             result.bars.each { |bin|
-
               index += 1
               bar = {
                   :index => index,
                   :px_length => to_px(bin.length),
+                  :px_width => to_px(fixed_width),
                   :type => bin.type, # TODO
                   :length => bin.length.to_l.to_s,
-                  :efficiency => bin.efficiency,
-                  :total_length_cuts => bin.total_length_cuts.to_l.to_s,
-                  :parts => bin.parts,
+                  :width => fixed_width.to_l.to_s,
+                  :efficiency => bin.efficiency * 100, # TODO: review value
+                  :total_length_cuts => (fixed_width * bin.cuts.length).to_l.to_s,
+                  :parts => [],
                   :grouped_parts => [],
-                  :leftover => bin.leftover,
-                  :cuts => bin.cuts,
+                  :leftovers => [],
+                  :cuts => [],
+              }
+
+              grouped_parts = {}
+              bin.parts.each_with_index { |p, i|
+                part = {
+                  :id => parts[p[:id]][:id],
+                  :number => parts[p[:id]][:number],
+                  :name => parts[p[:id]][:name],
+                  :px_x => to_px(bin.cuts[i]),
+                  :px_y => to_px(0),
+                  :px_length => to_px(p[:length]),
+                  :px_width => to_px(fixed_width),
+                  :length => p[:length].to_l.to_s,
+                  :rotated => false,
+                }
+                bar[:parts].push(part)
+
+                grouped_part = grouped_parts[p[:id]]
+                unless grouped_part
+                  grouped_part = {
+                    :id => part[:id],
+                    :number => part[:number],
+                    :saved_number => part[:saved_number],
+                    :name => part[:name],
+                    :count => 0,
+                    :length => parts[p[:id]][:length].to_l.to_s, # final length
+                    :cutting_length => parts[p[:id]][:cutting_length].to_l.to_s, # rough length
+                  }
+                  grouped_parts.store(grouped_part[:id], grouped_part)
+                end
+                grouped_part[:count] += 1
+              }
+              bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
+
+              id = "#{bar[:type]},#{bar[:length]}"
+              summary_bar = summary_bars[id]
+              unless summary_bar
+                summary_bar = {
+                  :index => summary_bars.length + 1,
+                  :type => bar[:type],
+                  :count => 0,
+                  :length => bar[:length].to_l.to_s,
+                  :is_used => true,
+                }
+                summary_bars[id] = summary_bar
+              end
+              summary_bar[:count] += 1
+
+              # Leftovers
+              bar[:leftovers].push(
+                {
+                  :px_x => to_px(bin.cuts.last + saw_kerf),
+                  :px_y => to_px(0),
+                  :px_length => to_px(bin.leftover),
+                  :px_width => to_px(fixed_width),
+                  :length => bin.leftover.to_l.to_s,
+                }
+              )
+
+              # Cuts
+              bin.cuts.each { |bin_cut|
+                bar[:cuts].push(
+                  {
+                    :px_x => to_px(bin_cut),
+                    :px_y => 0,
+                    :px_length => to_px(fixed_width),
+                    :x => bin_cut.to_l.to_s,
+                    :y => 0.to_l.to_s,
+                    :length => fixed_width.to_l.to_s,
+                    :is_horizontal => false,
+                  }
+                )
               }
 
               puts("result for bar #{index}")
               puts("type: ", bar[:type])
               puts("length: ", bar[:length])
               puts("efficiency [0,1]: ", bar[:efficiency])
-              puts("leftover/waste: ", bar[:leftover].to_l.to_s)
+              puts("leftover/waste: ", bar[:leftovers])
               puts("parts: ")
               bar[:parts].each do |p|
                 print(p[:length].to_l.to_s, " (", p[:id], ") ")
@@ -1873,68 +1963,14 @@ module Ladb::OpenCutList
 
               puts("nb of cuts:", bin.nb_of_cuts)
               bar[:cuts].each do |c|
-                print(c.to_l.to_s, " ")
+                print("#{c} ")
               end
               puts()
 
               response[:bars].push(bar)
-
-=begin
-              # Parts
-              grouped_parts = {}
-              bin.parts.each { |box|
-                bar[:parts].push(
-                    {
-                        :id => box.data[:id],
-                        :number => box.data[:number],
-                        :name => box.data[:name],
-                        :px_x => to_px(box.x),
-                        :px_length => to_px(box.length),
-                        :length => box.length.to_l.to_s,
-                    }
-                )
-                grouped_part = grouped_parts[box.data[:id]]
-                unless grouped_part
-                  grouped_part = {
-                      :id => box.data[:id],
-                      :number => box.data[:number],
-                      :saved_number => box.data[:saved_number],
-                      :name => box.data[:name],
-                      :count => 0,
-                      :length => box.data[:length],
-                      :cutting_length => box.data[:cutting_length],
-                  }
-                  grouped_parts.store(box.data[:id], grouped_part)
-                end
-                grouped_part[:count] += 1
-              }
-              sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
-
-              # Leftovers
-              bin.leftovers.each { |box|
-                sheet[:leftovers].push(
-                    {
-                        :px_x => to_px(box.x),
-                        :px_length => to_px(box.length),
-                        :length => box.length.to_l.to_s,
-                    }
-                )
-              }
-
-              # Cuts
-              bin.cuts.each { |cut|
-                sheet[:cuts].push(
-                    {
-                        :px_x => to_px(cut.x),
-                        :px_length => to_px(cut.length),
-                        :x => cut.x.to_l.to_s,
-                        :length => cut.length.to_l.to_s,
-                    }
-                )
-              }
-=end
-
             }
+
+            response[:summary][:parts] = summary_bars.values
           end
 
           return response
@@ -2020,7 +2056,7 @@ module Ladb::OpenCutList
 
               :unplaced_parts => [],
               :summary => {
-                :sheets => [],
+                :parts => [],
               },
               :sheets => [],
           }
@@ -2087,7 +2123,7 @@ module Ladb::OpenCutList
 
             # Summary
             result.unused_bins.each { |bin|
-              response[:summary][:sheets].push(
+              response[:summary][:parts].push(
                   {
                       :type => bin.type,
                       :count => 1,
@@ -2122,7 +2158,7 @@ module Ladb::OpenCutList
             summary_sheets.each { |id, sheet|
               sheet[:area] = DimensionUtils.instance.format_to_readable_area(sheet[:area])
             }
-            response[:summary][:sheets] += summary_sheets.values
+            response[:summary][:parts] += summary_sheets.values
 
             # Sheets
             index = 0

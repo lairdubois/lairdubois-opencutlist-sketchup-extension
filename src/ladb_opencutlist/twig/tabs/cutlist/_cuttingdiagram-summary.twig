@@ -45,6 +45,13 @@
                                     </strong>
                                     {{ ('tab.cutlist.cuttingdiagram.option_tuning_level_'~options.tuning_level)|i18next }}</li>
                                 {% endif %}
+                                {% if options.max_time is defined %}
+                                <li>
+                                    <strong>{{ 'tab.cutlist.cuttingdiagram.option_max_time'|i18next }}
+                                        :
+                                    </strong>
+                                    {{ options.max_time }} {{ 'default.seconds'|i18next }}</li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="col-xs-6">
@@ -59,13 +66,6 @@
                                         :
                                     </strong>
                                     {{ options.trimming }}</li>
-                                {% if options.max_time is defined %}
-                                <li>
-                                    <strong>{{ 'tab.cutlist.cuttingdiagram.option_max_time'|i18next }}
-                                        :
-                                    </strong>
-                                    {{ options.max_time }} {{ 'default.seconds'|i18next }}</li>
-                                {% endif %}
                             </ul>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
             </td>
         </tr>
         <tr>
-            <td class="text-center" style="vertical-align: middle !important;">{{ 'tab.cutlist.cuttingdiagram.list.part'|i18next }}</td>
+            <td class="text-center" style="vertical-align: middle !important;">{{ ('tab.cutlist.cuttingdiagram.list.'~raw_format)|i18next }}</td>
             <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
@@ -88,7 +88,7 @@
                     /
                     <strong>{{ group.std_dimension }}</strong>
                     -
-                    {{ ('tab.cutlist.cuttingdiagram.list.part_type_'~part.type)|i18next }}
+                    {{ ('tab.cutlist.cuttingdiagram.list.'~raw_format~'_type_'~part.type)|i18next }}
                     {% if part.is_used %}
                         <div class="ladb-minitools ladb-minitools-right no-print">
                             <a href="#ladb_cuttingdiagram_group_{{ part.index }}" class="ladb-btn-scrollto ladb-click-tool">

@@ -21,6 +21,15 @@
                         {{ sheets|length }}</strong>
                 </div>
                 <div class="ladb-heading">
+                    {% if raw_format == 'bar' %}
+                    <i class="ladb-opencutlist-icon-bar"></i>
+                    {{ group.material_name }}
+                    /
+                    <strong>{{ group.std_dimension }}</strong>
+                    -
+                    <i class="ladb-opencutlist-icon-length"></i>
+                    <em>{{ sheet.length }}</em>
+                    {% else %}
                     <i class="ladb-opencutlist-icon-sheet-good"></i>
                     {{ group.material_name }}
                     /
@@ -30,8 +39,9 @@
                     <em>{{ sheet.length }}
                         x
                         {{ sheet.width }}</em>
+                    {% endif %}
                     -
-                    <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span>
+                    <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.'~raw_format~'_type_'~sheet.type)|i18next }}</span>
                 </div>
             </td>
         </tr>
@@ -41,24 +51,28 @@
             <td colspan="{{ colspan }}">
 
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ sheet.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }} {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" height="{{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" style="max-height: {{ min( 900, sheet.px_width + sheetOutlineWidth * 2 + sheetDimensionOffset + sheetDimensionFontSize) }}px">
-                    <text class="sheet-dimension" x="{{ sheet.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ sheet.length }}</text>
-                    <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ sheet.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ sheet.px_width / 2 }})">{{ sheet.width }}</text>
-                    <g class="sheet" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
-                        <rect class="sheet-outer" x="-1" y="-1" width="{{ sheet.px_length + 2 }}" height="{{ sheet.px_width + 2 }}"></rect>
-                        <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
+                    <text class="{{ raw_format }}-dimension" x="{{ sheet.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ sheet.length }}</text>
+                    <text class="{{ raw_format }}-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ sheet.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ sheet.px_width / 2 }})">{{ sheet.width }}</text>
+                    <g class="{{ raw_format }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
+                        <rect class="{{ raw_format }}-outer" x="-1" y="-1" width="{{ sheet.px_length + 2 }}" height="{{ sheet.px_width + 2 }}"></rect>
+                        <rect class="{{ raw_format }}-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
                     </g>
                     {% for leftover in sheet.leftovers %}
                         {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                         {% set hideDimensions = leftover.px_length < (dimensionFontSize + dimensionOffset) or leftover.px_width < (dimensionFontSize + dimensionOffset) %}
-                        <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
+                        <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-{% if raw_format == 'bar' %}length{% else %}size{% endif %}'></i> {{ leftover.length|escape('html') }}{% if raw_format != 'bar' %}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}{% endif %}">
                             <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
                             {% if not hideCross %}
                                 <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                 <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                             {% endif %}
                             {% if not hideDimensions %}
-                                <text class="leftover-dimension" x="{{ leftover.px_x + leftover.px_length / 2 }}" y="{{ leftover.px_y + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle">{{ leftover.length }}</text>
-                                <text class="leftover-dimension" x="{{ leftover.px_x + dimensionOffset + dimensionFontSize }}" y="{{ leftover.px_y + leftover.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" transform="rotate(-90 {{ leftover.px_x + dimensionOffset + dimensionFontSize }},{{ leftover.px_y + leftover.px_width / 2 }})">{{ leftover.width }}</text>
+                                {% if leftover.length != '' %}
+                                    <text class="leftover-dimension" x="{{ leftover.px_x + leftover.px_length / 2 }}" y="{{ leftover.px_y + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle">{{ leftover.length }}</text>
+                                {% endif %}
+                                {% if leftover.width != '' %}
+                                    <text class="leftover-dimension" x="{{ leftover.px_x + dimensionOffset + dimensionFontSize }}" y="{{ leftover.px_y + leftover.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" transform="rotate(-90 {{ leftover.px_x + dimensionOffset + dimensionFontSize }},{{ leftover.px_y + leftover.px_width / 2 }})">{{ leftover.width }}</text>
+                                {% endif %}
                             {% endif %}
                         </g>
                     {% endfor %}
@@ -108,17 +122,17 @@
                 <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
                 <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                 {% if showCuttingDimensions %}
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                    <td class="text-center" colspan="{{ visibleDimensionColumns|length }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                 {% endif %}
-                <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                <td class="text-center" colspan="{{ visibleDimensionColumns|length }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
             </tr>
             <tr class="ladb-cutlist-heading-row">
                 {% if showCuttingDimensions %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    {% for property in visibleDimensionColumns %}
                         <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                     {% endfor %}
                 {% endif %}
-                {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                {% for property in visibleDimensionColumns %}
                     <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             </tr>
@@ -146,11 +160,11 @@
                     </td>
                     <td class="text-center">{{ part.count }}</td>
                     {% if showCuttingDimensions %}
-                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                        {% for property in visibleDimensionColumns %}
                             {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
                         {% endfor %}
                     {% endif %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                    {% for property in visibleDimensionColumns %}
                         <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
                     {% endfor %}
                 </tr>
