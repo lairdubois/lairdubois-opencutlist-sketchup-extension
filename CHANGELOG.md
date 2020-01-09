@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.8.4 (2020-01-09)
+
+  * Add part "Number" column in cutlist instance export
+  * Remove $debug global variable in rchardet lib
+
 * 1.8.3 (2019-12-19)
 
   * Materials order option

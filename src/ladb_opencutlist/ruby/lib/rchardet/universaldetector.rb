@@ -146,7 +146,7 @@ module Ladb::OpenCutList::CharDet
     def close
       return if @done
       if !@gotData
-        $stderr << "no data received!\n" if $debug
+        # $stderr << "no data received!\n" if $debug
         return
       end
       @done = true
@@ -167,13 +167,13 @@ module Ladb::OpenCutList::CharDet
         end
       end
 
-      if $debug
-        $stderr << "no probers hit minimum threshhold\n" if $debug
-        for prober in @charSetProbers[0].probers
-          next if !prober
-          $stderr << "#{prober.get_charset_name} confidence = #{prober.get_confidence}\n" if $debug
-        end
-      end
+      # if $debug
+      #   $stderr << "no probers hit minimum threshhold\n" if $debug
+      #   for prober in @charSetProbers[0].probers
+      #     next if !prober
+      #     $stderr << "#{prober.get_charset_name} confidence = #{prober.get_confidence}\n" if $debug
+      #   end
+      # end
     end
   end
 end

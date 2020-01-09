@@ -1273,6 +1273,7 @@ module Ladb::OpenCutList
 
                     # Header row
                     header = []
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.number'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.path'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.instance_name'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.definition_name'))
@@ -1330,6 +1331,7 @@ module Ladb::OpenCutList
                             instance_name = path_names.pop
 
                             row = []
+                            row.push(part[:number])
                             row.push(path_names.join('/'))
                             row.push(instance_name)
                             row.push(part[:name])
@@ -1449,7 +1451,7 @@ module Ladb::OpenCutList
         if group_id.nil? or group[:id] == group_id
           group = group
           group[:parts].each { |part|
-            if part_ids.nil? or part_ids.is_a?(Array) and part_ids.include?(part[:id])
+            if part_ids.nil? or (part_ids.is_a?(Array) and part_ids.include?(part[:id]))
               if part[:children].nil?
                 part[:entity_serialized_paths].each { |entity_serialized_path|
                   instance_info = @instance_infos_cache[entity_serialized_path]
@@ -1474,7 +1476,7 @@ module Ladb::OpenCutList
             end
             unless part[:children].nil?
               part[:children].each { |child_part|
-                if part_ids.nil? or part_ids.is_a?(Array) and part_ids.include?(child_part[:id])
+                if part_ids.nil? or (part_ids.is_a?(Array) and part_ids.include?(child_part[:id]))
                   child_part[:entity_serialized_paths].each { |entity_serialized_path|
                     instance_info = @instance_infos_cache[entity_serialized_path]
                     unless instance_info.nil?

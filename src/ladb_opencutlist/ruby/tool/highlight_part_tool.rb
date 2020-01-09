@@ -87,6 +87,10 @@ module Ladb::OpenCutList
       view.invalidate
     end
 
+    def suspend(view)
+      view.invalidate
+    end
+
     def resume(view)
       view.invalidate
     end

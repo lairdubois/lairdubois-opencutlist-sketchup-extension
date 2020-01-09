@@ -95,10 +95,10 @@ module Ladb::OpenCutList::CharDet
         if @totalSeqs > SB_ENOUGH_REL_THRESHOLD
           cf = get_confidence()
           if cf > POSITIVE_SHORTCUT_THRESHOLD
-            $stderr << "#{@model['charsetName']} confidence = #{cf}, we have a winner\n" if $debug
+            # $stderr << "#{@model['charsetName']} confidence = #{cf}, we have a winner\n" if $debug
             @state = EFoundIt
           elsif cf < NEGATIVE_SHORTCUT_THRESHOLD
-            $stderr << "#{@model['charsetName']} confidence = #{cf}, below negative shortcut threshold #{NEGATIVE_SHORTCUT_THRESHOLD}\n" if $debug
+            # $stderr << "#{@model['charsetName']} confidence = #{cf}, below negative shortcut threshold #{NEGATIVE_SHORTCUT_THRESHOLD}\n" if $debug
             @state = ENotMe
           end
         end
