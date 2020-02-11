@@ -110,11 +110,11 @@ To do this, the first thing is to install the [AS On-Demand Ruby Extension](http
 
 ### Launching
 
-After installing AS On-Demand Ruby Extension, go to the **Extension** menu and select **Load Ruby / Extension** Loader and **Load single Ruby file / Extension**.
+After installing AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** Loader and **Load single Ruby file / extension (RB)**.
 
 ![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
 
-And just select `main.rb` from OpenCutList source folder.
+And just browse to `main.rb` ruby file from OpenCutList source folder.
 
 ![AS On-Demand Ruby Extension File](img/capture-asmain.png)
 
@@ -122,6 +122,13 @@ And that's it. You can now play with OpenCutList.
 
 ### Reflect code changes
 
-Sketchup loads ruby file and to not access them after. To reflect the changes to the ruby code, you must reload the files you changed. And if you change static or methods definitions, you need to restart Sketchup and process from scratch.
+#### Ruby changes
 
-To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` command and close and reopen the OpenCutList dialogue in Skechup.
+**Sketchup loads ruby file and to not access them after**. To reflect the changes to the ruby code without reloading Sketchup, you must reload the files you changed (and not `main.rb` if you do not modify it). 
+Caution that if you change static or methods definitions, you need to restart Sketchup and process from scratch.
+
+#### Yaml or Twig changes
+
+To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` command and close and reopen the OpenCutList dialog in Skechup.
+
+Enjoy :)
