@@ -98,3 +98,30 @@ It is important to keep but to change the first key `_label` to the correspondin
 After compiling the project (see 4.), your new language will appear in the **Preferences panel** of *OpenCutList*.
 
 Note: this does **NOT** change the Sketchup language. It may even support a language not supported by Sketchup.
+
+## 6. Run OpenCutList from Dev project folder
+
+### Prerequist
+
+> To avoid conflicts, you must not have a compiled OpenCutList (*.rbz) installed on you Skechup environment. 
+
+In order to develop OpenCutList, you do not need to recompile the *.rbz archive each time you do changes. You can run OpenCutList directly from sources.
+To do this, the first thing is to install the [AS On-Demand Ruby Extension](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mendatory, but it will be simplier to load or reload ruby scripts.
+
+### Launching
+
+After installing AS On-Demand Ruby Extension, go to the **Extension** menu and select **Load Ruby / Extension** Loader and **Load single Ruby file / Extension**.
+
+![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
+
+And just select `main.rb` from OpenCutList source folder.
+
+![AS On-Demand Ruby Extension File](img/capture-asmain.png)
+
+And that's it. You can now play with OpenCutList.
+
+### Reflect code changes
+
+Sketchup loads ruby file and to not access them after. To reflect the changes to the ruby code, you must reload the files you changed. And if you change static or methods definitions, you need to restart Sketchup and process from scratch.
+
+To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` command and close and reopen the OpenCutList dialogue in Skechup.
