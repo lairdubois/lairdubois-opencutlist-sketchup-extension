@@ -129,6 +129,6 @@ Caution that if you change static or methods definitions, you need to restart Sk
 
 #### Yaml or Twig changes
 
-To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` command and close and reopen the OpenCutList dialog in Skechup.
+To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` (see 4.) command and close and reopen the OpenCutList dialog in Skechup.
 
 Enjoy :)
