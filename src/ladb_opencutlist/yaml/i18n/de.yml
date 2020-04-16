@@ -341,7 +341,7 @@ tab:
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
-      option_std_sheet: Standard Platte
+      option_std_sheet: Standard-Platte
       option_std_sheet_help: |
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
@@ -372,7 +372,7 @@ tab:
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
-        sheet_type_0: Standard Platte
+        sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
