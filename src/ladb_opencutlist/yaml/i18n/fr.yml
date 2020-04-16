@@ -54,9 +54,9 @@ core:
     more_extensions: Plugins
   warning:
     old_su: |
-      Vous utilisez une ancienne version de Sketchup ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
-      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **Sketchup 2017**.
-    feature_locked: "*Non désactivable dans cette version de Sketchup*"
+      Vous utilisez une ancienne version de SketchUp ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
+      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **SketchUp 2017**.
+    feature_locked: "*Non désactivable dans cette version de SketchUp*"
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
@@ -525,7 +525,7 @@ tab:
     title: Importer des pièces
     help: |
       Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *Sketchup*.
+      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
       Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
     open_csv: Ouvrir un fichier CSV
     import_to_model: Importer dans le modèle
