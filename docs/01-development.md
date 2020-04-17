@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v10.15.3
+    v12.16.2
     $ npm -v
-    6.8.0
+    6.14.4
     $ npm install npm@latest -g
     $ npm -v
-    6.9.0
+    6.14.4
 ```
 
 On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
@@ -64,6 +64,7 @@ From the project directory, change to the `build/` directory. We have placed a `
     $ cd build
     $ npm install
 ```
+What about warnings? You may get some warnings. `gulp-less depends on `request` (to be fixed) and many modules rely on `fsevents`, which is only intended for OSX file events.
 
 ## 4. Compiling Templates And Distribution Archive
 
@@ -93,42 +94,42 @@ The default behaviour of the **gulp** task (without argument) is to *compile* an
 ## 5. Adding a New Language
 
 Adding a new translation file is simple. Just add a new `.yml` file into the `src/yaml/i18n` directory by duplicating `fr.yml` (or any other file) and changing all the values into the desired language.
-It is important to keep but to change the first key `_label` to the corresponding readable label or the new language.
+The first entry in the file should have the key `_label` corresponding to a label for the new language.
 
 After compiling the project (see 4.), your new language will appear in the **Preferences panel** of *OpenCutList*.
 
-Note: this does **NOT** change the Sketchup language. It may even support a language not supported by Sketchup.
+Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
 
 ## 6. Run OpenCutList from Dev project folder
 
-### Prerequist
+### Prerequisite
 
-> To avoid conflicts, you must not have a compiled OpenCutList (*.rbz) installed on you Skechup environment. 
+> To avoid conflicts, you must not have a compiled OpenCutList (*.rbz) installed in you SkechUp environment.
 
-In order to develop OpenCutList, you do not need to recompile the *.rbz archive each time you do changes. You can run OpenCutList directly from sources.
-To do this, the first thing is to install the [AS On-Demand Ruby Extension](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mendatory, but it will be simplier to load or reload ruby scripts.
+In order to develop OpenCutList, you do not need to recompile the *.rbz archive every time you make changes. You can run OpenCutList directly from sources.
+Install the [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mandatory, but it will make it easire to load or reload ruby scripts. The plugin is also available here [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader).
 
 ### Launching
 
-After installing AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** Loader and **Load single Ruby file / extension (RB)**.
+After installing AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
 
 ![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
 
-And just browse to `main.rb` ruby file from OpenCutList source folder.
+Browse to and select the `main.rb` ruby file from the source folder of OpenCutList.
 
 ![AS On-Demand Ruby Extension File](img/capture-asmain.png)
 
-And that's it. You can now play with OpenCutList.
+That's it. You can now play with OpenCutList.
 
 ### Reflect code changes
 
 #### Ruby changes
 
-**Sketchup loads ruby file and to not access them after**. To reflect the changes to the ruby code without reloading Sketchup, you must reload the files you changed (and not `main.rb` if you do not modify it). 
-Caution that if you change static or methods definitions, you need to restart Sketchup and process from scratch.
+**SketchUp loads ruby files and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files you changed (and not `main.rb` if you did not modify it).
+Caution! if you change static or methods definitions, you must restart SketchUp and process from scratch.
 
 #### Yaml or Twig changes
 
-To reflect I18N (yaml) or UI (twig) changes you just need to run the `gulp compile` (see 4.) command and close and reopen the OpenCutList dialog in Skechup.
+To reflect I18N (yaml) or UI (twig) changes you must run the `gulp compile` (see 4.) command, as well as close and reopen the OpenCutList dialog in SketchUp.
 
 Enjoy :)
