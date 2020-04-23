@@ -28,7 +28,7 @@
 ######################### END LICENSE BLOCK #########################
 
 module Ladb::OpenCutList::CharDet
-  $debug = false
+  # $debug = false
 
   EDetecting = 0
   EFoundIt = 1

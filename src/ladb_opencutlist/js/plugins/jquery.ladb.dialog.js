@@ -55,33 +55,39 @@
             {
                 name: 'materials',
                 bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-materials'
+                icon: 'ladb-opencutlist-icon-materials',
+                sponsorAd: false
             },
             {
                 name: 'cutlist',
                 bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-cutlist'
+                icon: 'ladb-opencutlist-icon-cutlist',
+                sponsorAd: true
             },
             {
                 name: 'importer',
                 bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-import'
+                icon: 'ladb-opencutlist-icon-import',
+                sponsorAd: true
             },
             {
                 name: 'settings',
                 bar: 'bottombar',
-                icon: 'ladb-opencutlist-icon-settings'
+                icon: 'ladb-opencutlist-icon-settings',
+                sponsorAd: true
             },
             {
                 name: 'sponsor',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-sponsor',
-                classes: 'ladb-highlighted-sponsor'
+                classes: 'ladb-highlighted-sponsor',
+                sponsorAd: false
             },
             {
                 name: 'about',
                 bar: 'bottombar',
-                icon: null
+                icon: null,
+                sponsorAd: false
             }
         ]
     };
@@ -234,6 +240,14 @@
                 callback($tab);
             }
 
+        } else {
+
+            // Try to show sponsor ad
+            var tabDef = this.getTabDef(tabName);
+            if (tabDef && tabDef.sponsorAd && callback === undefined) {
+                this.showSponsorAd();
+            }
+
         }
 
         // Close all Noty
@@ -259,7 +273,37 @@
 
     };
 
+    LadbDialog.prototype.showSponsorAd = function () {
+
+        // Render ad in bottombar
+        $('#ladb_bottombar').append(Twig.twig({ ref: "tabs/sponsor/_ad.twig" }).render());
+
+        // Auto hide on next mouse down
+        $(window).on('mousedown', this.hideSponsorAd);
+
+    };
+
+    LadbDialog.prototype.hideSponsorAd = function () {
+
+        // Remove ad
+        $('#ladb_sponsor_ad').remove();
+
+        // Unbind auto hide
+        $(window).off('mousedown', this.hideSponsorAd);
+
+    };
+
     // Internals /////
+
+    LadbDialog.prototype.getTabDef = function (tabName) {
+        for (var i = 0; i < this.options.tabDefs.length; i++) {
+            var tabDef = this.options.tabDefs[i];
+            if (tabDef.name === tabName) {
+                return tabDef;
+            }
+        }
+        return null;
+    };
 
     LadbDialog.prototype.notify = function (text, type, buttons, timeout) {
         if (undefined === type) {

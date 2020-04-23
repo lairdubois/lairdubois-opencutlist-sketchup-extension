@@ -71,8 +71,8 @@
             $(this).blur();
             that.opencutlist.capabilities.language = 'auto';
             that.opencutlist.capabilities.dialogMaximizedWidth = 1100;
-            that.opencutlist.capabilities.dialogMaximizedHeight = 800;
-            that.opencutlist.capabilities.dialogLeft = 100;
+            that.opencutlist.capabilities.dialogMaximizedHeight = 640;
+            that.opencutlist.capabilities.dialogLeft = 60;
             that.opencutlist.capabilities.dialogTop = 100;
             fnUpdate();
             that.showReloadDialogWarning();
