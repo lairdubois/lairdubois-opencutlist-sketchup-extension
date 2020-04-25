@@ -286,6 +286,14 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if part.flipped %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-flipped ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.flipped'|i18next }}
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if part.orientation_locked_on_axis %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-orientation-locked-on-axis ladb-opencutlist-icon-lg ladb-color-info"></i></div>
@@ -389,5 +397,5 @@
         <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
     {% endif %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
+    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

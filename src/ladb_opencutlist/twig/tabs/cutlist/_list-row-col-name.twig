@@ -13,6 +13,7 @@
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
                 {% if part.auto_oriented %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
                 {% if part.resized %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
+                {% if part.flipped %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                 {% if part.orientation_locked_on_axis %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
             {% endif %}
             {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'attr':'data-tab="infos"' } %}

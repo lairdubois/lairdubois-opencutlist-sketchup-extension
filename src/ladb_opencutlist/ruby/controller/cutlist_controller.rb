@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require 'set'
   require_relative 'controller'
   require_relative '../model/scale3d'
+  require_relative '../model/flip3d'
   require_relative '../model/size3d'
   require_relative '../model/face_info'
   require_relative '../model/instance_info'
@@ -240,7 +241,7 @@ module Ladb::OpenCutList
             end
           end
         }
-        return x_face_infos, y_face_infos, z_face_infos, layers
+        [ x_face_infos, y_face_infos, z_face_infos, layers ]
       end
 
       def _face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
@@ -296,14 +297,15 @@ module Ladb::OpenCutList
         area = instance_info.size.area_by_axis(axis)
         area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
 
-        return plane_count, final_area, area_ratio
+        [ plane_count, final_area, area_ratio ]
       end
 
       def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
         min_face_infos = []
         max_face_infos = []
-        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        oriented_normal = instance_info.size.oriented_normal(axis)
+        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(oriented_normal, x_face_infos, y_face_infos, z_face_infos)
         plane_grouped_face_infos.each { |plane, face_infos|
           if instance_info.definition_bounds.min.on_plane?(plane)
             min_face_infos += face_infos
@@ -312,7 +314,7 @@ module Ladb::OpenCutList
           end
         }
 
-        return min_face_infos, max_face_infos
+        [ min_face_infos, max_face_infos ]
       end
 
       def _grab_face_edge_materials(face_infos)
@@ -743,6 +745,7 @@ module Ladb::OpenCutList
           part_def.saved_number = definition_attributes.number
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
           part_def.scale = instance_info.scale
+          part_def.flip = instance_info.flip
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name

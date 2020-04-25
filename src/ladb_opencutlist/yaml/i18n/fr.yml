@@ -104,6 +104,7 @@ tab:
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition de composant
+      flipped: Cette pièce est en miroir par rapport à sa définition de composant
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'

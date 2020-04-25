@@ -932,7 +932,7 @@
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
                     tab: tab === undefined || tab.length === 0 ? 'general' : tab
-                });
+                }, true);
 
                 var isOwnedMaterial = true;
                 for (var i = 0; i < editedPart.material_origins.length; i++) {
@@ -1214,6 +1214,9 @@
 
                 // Show modal
                 $modal.modal('show');
+
+                // Focus
+                $inputName.focus();
 
                 // Init tokenfields (this must done after modal shown for correct token label max width measurement)
                 $inputLabels

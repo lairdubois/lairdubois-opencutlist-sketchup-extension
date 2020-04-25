@@ -49,6 +49,13 @@ module Ladb::OpenCutList
       @scale = TransformationUtils::get_scale3d(transformation)
     end
 
+    def flip
+      if @flip
+        return @flip
+      end
+      @flip = TransformationUtils::get_flip3d(transformation)
+    end
+
     # -----
 
     def size
