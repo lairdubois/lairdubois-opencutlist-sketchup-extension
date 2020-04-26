@@ -11,12 +11,8 @@ module Ladb::OpenCutList
       Scale3d.new(vx.length, vy.length, vz.length)
     end
 
-    def self.get_flip3d(transformation)
-      dot_x = transformation.xaxis % X_AXIS
-      dot_y = transformation.yaxis % Y_AXIS
-      dot_z = transformation.zaxis % Z_AXIS
-      flipped = dot_x * dot_y * dot_z < 0
-      Flip3d.new(flipped && dot_x < 0, flipped && dot_y < 0, flipped && dot_z < 0)
+    def self.flipped?(transformation)
+      transformation.xaxis.cross(transformation.yaxis) != transformation.zaxis
     end
 
     def self.multiply(transformation1, transformation2)

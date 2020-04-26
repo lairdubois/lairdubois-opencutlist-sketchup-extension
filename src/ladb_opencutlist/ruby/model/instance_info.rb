@@ -19,7 +19,7 @@ module Ladb::OpenCutList
         name = entity.get_attribute('dynamic_attributes', 'name', nil)
         return name, true unless name.nil?
       end
-      return entity.definition.name, false
+      [ entity.definition.name, false ]
     end
 
     # -----
@@ -49,11 +49,11 @@ module Ladb::OpenCutList
       @scale = TransformationUtils::get_scale3d(transformation)
     end
 
-    def flip
-      if @flip
-        return @flip
+    def flipped
+      if @flipped
+        return @flipped
       end
-      @flip = TransformationUtils::get_flip3d(transformation)
+      @flipped = TransformationUtils::flipped?(transformation)
     end
 
     # -----

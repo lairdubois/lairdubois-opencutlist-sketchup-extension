@@ -300,7 +300,7 @@ module Ladb::OpenCutList
         [ plane_count, final_area, area_ratio ]
       end
 
-      def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+      def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis, flipped = false)
 
         min_face_infos = []
         max_face_infos = []
@@ -308,9 +308,17 @@ module Ladb::OpenCutList
         plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(oriented_normal, x_face_infos, y_face_infos, z_face_infos)
         plane_grouped_face_infos.each { |plane, face_infos|
           if instance_info.definition_bounds.min.on_plane?(plane)
-            min_face_infos += face_infos
+            if flipped
+              max_face_infos += face_infos
+            else
+              min_face_infos += face_infos
+            end
           elsif instance_info.definition_bounds.max.on_plane?(plane)
-            max_face_infos += face_infos
+            if flipped
+              min_face_infos += face_infos
+            else
+              max_face_infos += face_infos
+            end
           end
         }
 
@@ -745,7 +753,7 @@ module Ladb::OpenCutList
           part_def.saved_number = definition_attributes.number
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
           part_def.scale = instance_info.scale
-          part_def.flip = instance_info.flip
+          part_def.flipped = instance_info.flipped
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
@@ -778,7 +786,7 @@ module Ladb::OpenCutList
               # -- Edges --
 
               # Grab min/max face infos
-              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
+              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, instance_info.flipped)
               ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               # Grab edge materials

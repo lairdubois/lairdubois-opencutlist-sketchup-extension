@@ -103,8 +103,8 @@ tab:
       number_saved: Le numéro de cette pièce est enregistré
       number_hidden: Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: Le numéro de cette pièce est généré automatiquement
-      resized: Cette pièce est redimensionnée par rapport à sa définition de composant
-      flipped: Cette pièce est en miroir par rapport à sa définition de composant
+      resized: Cette pièce est redimensionnée par rapport à sa définition
+      flipped: Cette pièce est en miroir par rapport à sa définition
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
@@ -120,8 +120,8 @@ tab:
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants

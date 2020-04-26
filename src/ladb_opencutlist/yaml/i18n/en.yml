@@ -120,8 +120,8 @@ tab:
       has_edges: This part contains {{ count }} edge banding
       has_edges_plural: This part contains {{ count }} edge bandings
       edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
-      edge_ymax: Edge length 1
-      edge_ymin: Edge length 2
+      edge_ymin: Edge length 1
+      edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to all other edges

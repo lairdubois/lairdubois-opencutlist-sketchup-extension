@@ -120,8 +120,8 @@ tab:
       has_edges: Dieses Teil enthält {{ count }} Kantenband
       has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
       edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
-      edge_ymax: Kantenband Länge 1
-      edge_ymin: Kantenband Länge 2
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: Doppelclick hier um diesen Wert auf die anderen Kanten zu übertragen
