@@ -974,6 +974,11 @@
                         axes.push($(this).data('axis'));
                     });
                     $inputPartAxes.val(axes);
+
+                    // By default check Orientation Lokked On Axis option
+                    $inputOrientationLockedOnAxis.prop('checked', true);
+                    fnDisplayAxisDimensions();
+
                 };
                 var fnDisplayAxisDimensions = function () {
                     if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {

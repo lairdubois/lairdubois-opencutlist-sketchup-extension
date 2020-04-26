@@ -18,6 +18,7 @@ module Ladb::OpenCutList
   require_relative '../utils/model_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
+  require_relative '../utils/axis_utils'
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
@@ -1664,6 +1665,11 @@ module Ladb::OpenCutList
             axes_order.map! { |axis|
               axes_convertor[axis]
             }
+
+            # Force axes to be "trihedron"
+            if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
+              axes_order[1] = axes_order[1].reverse
+            end
 
             # Create transformations
             ti = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2])
