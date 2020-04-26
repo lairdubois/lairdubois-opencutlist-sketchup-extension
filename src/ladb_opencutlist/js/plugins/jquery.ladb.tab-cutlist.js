@@ -956,7 +956,7 @@
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
                     tab: tab === undefined || tab.length === 0 ? 'general' : tab
-                });
+                }, true);
 
                 var isOwnedMaterial = true;
                 for (var i = 0; i < editedPart.material_origins.length; i++) {
@@ -998,6 +998,11 @@
                         axes.push($(this).data('axis'));
                     });
                     $inputPartAxes.val(axes);
+
+                    // By default check Orientation Lokked On Axis option
+                    $inputOrientationLockedOnAxis.prop('checked', true);
+                    fnDisplayAxisDimensions();
+
                 };
                 var fnDisplayAxisDimensions = function () {
                     if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
@@ -1238,6 +1243,9 @@
 
                 // Show modal
                 $modal.modal('show');
+
+                // Focus
+                $inputName.focus();
 
                 // Init tokenfields (this must done after modal shown for correct token label max width measurement)
                 $inputLabels

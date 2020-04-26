@@ -134,7 +134,7 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
 // Modal /////
 
-LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams) {
+LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams, validateWithEnter) {
     var that = this;
 
     // Hide previously opened modal
@@ -165,6 +165,19 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             .remove();
         that.$element.removeClass('modal-open');
     });
+
+    // Bind enter keyup on text input if configured
+    if (validateWithEnter) {
+        $('input[type=text]', that._$modal).on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                var $btnValidate = $('.btn-validate-modal', that._$modal).first();
+                if ($btnValidate && $btnValidate.is(':enabled')) {
+                    $btnValidate.click();
+                }
+            }
+        });
+    }
 
     return this._$modal;
 };

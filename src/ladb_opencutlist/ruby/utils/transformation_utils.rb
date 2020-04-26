@@ -11,6 +11,10 @@ module Ladb::OpenCutList
       Scale3d.new(vx.length, vy.length, vz.length)
     end
 
+    def self.flipped?(transformation)
+      transformation.xaxis.cross(transformation.yaxis) != transformation.zaxis
+    end
+
     def self.multiply(transformation1, transformation2)
       if transformation1.nil?
         if transformation2.nil?

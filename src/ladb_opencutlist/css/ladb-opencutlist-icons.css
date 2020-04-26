@@ -141,6 +141,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-solid-wood:before {
   content: "\e903";
 }
+.ladb-opencutlist-icon-flipped:before {
+  content: "\e96a";
+}
 .ladb-opencutlist-icon-sponsor:before {
   content: "\e967";
 }
@@ -201,9 +204,6 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-review:before {
   content: "\e93e";
 }
-.ladb-opencutlist-icon-multiple-layers:before {
-  content: "\e93c";
-}
 .ladb-opencutlist-icon-plan:before {
   content: "\e93a";
 }
@@ -236,6 +236,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-grained-1:before {
   content: "\e926";
+}
+.ladb-opencutlist-icon-multiple-layers:before {
+  content: "\e93c";
 }
 .ladb-opencutlist-icon-resized:before {
   content: "\e921";

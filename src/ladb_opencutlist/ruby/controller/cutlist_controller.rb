@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require 'set'
   require_relative 'controller'
   require_relative '../model/scale3d'
+  require_relative '../model/flip3d'
   require_relative '../model/size3d'
   require_relative '../model/face_info'
   require_relative '../model/instance_info'
@@ -17,6 +18,7 @@ module Ladb::OpenCutList
   require_relative '../utils/model_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
+  require_relative '../utils/axis_utils'
   require_relative '../utils/dimension_utils'
   require_relative '../tool/highlight_part_tool'
   
@@ -245,7 +247,7 @@ module Ladb::OpenCutList
             end
           end
         }
-        return x_face_infos, y_face_infos, z_face_infos, layers
+        [ x_face_infos, y_face_infos, z_face_infos, layers ]
       end
 
       def _face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)
@@ -301,23 +303,32 @@ module Ladb::OpenCutList
         area = instance_info.size.area_by_axis(axis)
         area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
 
-        return plane_count, final_area, area_ratio
+        [ plane_count, final_area, area_ratio ]
       end
 
-      def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
+      def _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, axis, flipped = false)
 
         min_face_infos = []
         max_face_infos = []
-        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos)
+        oriented_normal = instance_info.size.oriented_normal(axis)
+        plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(oriented_normal, x_face_infos, y_face_infos, z_face_infos)
         plane_grouped_face_infos.each { |plane, face_infos|
           if instance_info.definition_bounds.min.on_plane?(plane)
-            min_face_infos += face_infos
+            if flipped
+              max_face_infos += face_infos
+            else
+              min_face_infos += face_infos
+            end
           elsif instance_info.definition_bounds.max.on_plane?(plane)
-            max_face_infos += face_infos
+            if flipped
+              min_face_infos += face_infos
+            else
+              max_face_infos += face_infos
+            end
           end
         }
 
-        return min_face_infos, max_face_infos
+        [ min_face_infos, max_face_infos ]
       end
 
       def _grab_face_edge_materials(face_infos)
@@ -748,6 +759,7 @@ module Ladb::OpenCutList
           part_def.saved_number = definition_attributes.number
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
           part_def.scale = instance_info.scale
+          part_def.flipped = instance_info.flipped
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
@@ -780,7 +792,7 @@ module Ladb::OpenCutList
               # -- Edges --
 
               # Grab min/max face infos
-              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
+              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, instance_info.flipped)
               ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               # Grab edge materials
@@ -1658,6 +1670,11 @@ module Ladb::OpenCutList
             axes_order.map! { |axis|
               axes_convertor[axis]
             }
+
+            # Force axes to be "trihedron"
+            if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
+              axes_order[1] = axes_order[1].reverse
+            end
 
             # Create transformations
             ti = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2])

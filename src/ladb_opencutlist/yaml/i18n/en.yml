@@ -105,6 +105,7 @@ tab:
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
       resized: This part was resized with respect to its component definition
+      flipped: Cette pièce est en miroir par rapport à sa définition de composant
       auto_oriented: This part has been automatically reoriented
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
@@ -120,8 +121,8 @@ tab:
       has_edges: This part contains {{ count }} edge banding
       has_edges_plural: This part contains {{ count }} edge bandings
       edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
-      edge_ymax: Edge length 1
-      edge_ymin: Edge length 2
+      edge_ymin: Edge length 1
+      edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to all other edges

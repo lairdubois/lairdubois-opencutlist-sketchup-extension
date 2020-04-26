@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.8.5
+
+  * Added flipped part detection
+  * Added 'hit enter' behavior to validate forms in modal
+  * Fixed some New Material modal issues
+
 * 1.8.4 (2020-01-09)
 
   * Add part "Number" column in cutlist instance export

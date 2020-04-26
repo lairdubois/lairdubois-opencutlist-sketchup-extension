@@ -105,6 +105,7 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
+      flipped: Cette pièce est en miroir par rapport à sa définition de composant
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
@@ -120,8 +121,8 @@ tab:
       has_edges: Dieses Teil enthält {{ count }} Kantenband
       has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
       edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
-      edge_ymax: Kantenband Länge 1
-      edge_ymin: Kantenband Länge 2
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: Doppelclick hier um diesen Wert auf die anderen Kanten zu übertragen
