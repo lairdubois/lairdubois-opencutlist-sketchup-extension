@@ -5,7 +5,6 @@ module Ladb::OpenCutList
   require 'set'
   require_relative 'controller'
   require_relative '../model/scale3d'
-  require_relative '../model/flip3d'
   require_relative '../model/size3d'
   require_relative '../model/face_info'
   require_relative '../model/instance_info'
