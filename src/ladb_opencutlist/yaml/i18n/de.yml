@@ -104,7 +104,7 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
-      flipped: Cette pièce est en miroir par rapport à sa définition de composant
+      flipped: Dieses Teil ist gespiegelt im Vergleich zur ursprünglichen Definition als Komponente
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
@@ -607,6 +607,7 @@ tab:
     contribute: Beitragen
     backers: "{{count}} finanzieller Sponsor"
     backers_plural: "{{count}} finanzielle Sponsoren"
+    load_more: "Weitere laden ..."
     ad: Gefällt dir OpenCutList?
   settings:
     label: Benutzereinstellungen
