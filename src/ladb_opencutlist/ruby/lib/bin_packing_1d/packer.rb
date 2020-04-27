@@ -9,7 +9,7 @@ module Ladb::OpenCutList::BinPacking1D
   end
 
   class Packer < Packing1D
-    attr_accessor :options, :parts, :leftovers, :bars, 
+    attr_accessor :options, :parts, :leftovers, :bars,
                   :unplaced_parts, :total_nb_parts, :efficiency
 
     def initialize(options)
@@ -228,7 +228,8 @@ module Ladb::OpenCutList::BinPacking1D
               if !i.nil?
                 p.delete(i)
                 parts.delete_at(parts.index(val) || parts.length)
-                bar.add(i, val)
+                #bar.add(i, val) bugfix
+                bar.add(p[i][:id], val)
               end
             end
             bars << bar
@@ -284,7 +285,7 @@ module Ladb::OpenCutList::BinPacking1D
       llo
     end
 
-    def prep_results      
+    def prep_results
       length = 0
       waste = 0
       @bars.each do |b|
