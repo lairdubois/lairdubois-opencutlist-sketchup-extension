@@ -85,6 +85,10 @@ module Ladb::OpenCutList
         part_update_command(settings)
       end
 
+      Plugin.instance.register_command("cutlist_part_toggle_front") do |part_data|
+        part_toggle_front_command(part_data)
+      end
+
       Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
         group_cuttingdiagram_2d_command(settings)
       end
@@ -1454,8 +1458,20 @@ module Ladb::OpenCutList
       # Retrieve cutlist
       return { :errors => [ 'default.error' ] } unless @cutlist
 
+      def _blop(part)
+        instance_infos = []
+        part[:entity_serialized_paths].each { |entity_serialized_path|
+          instance_info = @instance_infos_cache[entity_serialized_path]
+          unless instance_info.nil?
+            instance_infos.push(instance_info)
+          end
+        }
+        instance_infos
+      end
+
       # Populate entity infos
-      instance_infos = []
+      instance_info_count = 0
+      displayed_parts = []
       displayed_part = nil
       displayed_group = nil
       @cutlist[:groups].each { |group|
@@ -1464,20 +1480,22 @@ module Ladb::OpenCutList
           group[:parts].each { |part|
             if part_ids.nil? or (part_ids.is_a?(Array) and part_ids.include?(part[:id]))
               if part[:children].nil?
-                part[:entity_serialized_paths].each { |entity_serialized_path|
-                  instance_info = @instance_infos_cache[entity_serialized_path]
-                  unless instance_info.nil?
-                    instance_infos.push(instance_info)
-                  end
-                }
+                instance_infos = _blop(part)
+                instance_info_count += instance_infos.length
+                displayed_parts.push({
+                                         :group => group,
+                                         :part => part,
+                                         :instance_infos => instance_infos
+                                     })
               else
                 part[:children].each { |child_part|
-                  child_part[:entity_serialized_paths].each { |entity_serialized_path|
-                    instance_info = @instance_infos_cache[entity_serialized_path]
-                    unless instance_info.nil?
-                      instance_infos.push(instance_info)
-                    end
-                  }
+                  instance_infos = _blop(child_part)
+                  instance_info_count += instance_infos.length
+                  displayed_parts.push({
+                                           :group => group,
+                                           :part => child_part,
+                                           :instance_infos => instance_infos
+                                       })
                 }
               end
               if part_ids.is_a?(Array) and part_ids.include?(part[:id]) and part_ids.length == 1
@@ -1488,12 +1506,13 @@ module Ladb::OpenCutList
             unless part[:children].nil?
               part[:children].each { |child_part|
                 if part_ids.nil? or (part_ids.is_a?(Array) and part_ids.include?(child_part[:id]))
-                  child_part[:entity_serialized_paths].each { |entity_serialized_path|
-                    instance_info = @instance_infos_cache[entity_serialized_path]
-                    unless instance_info.nil?
-                      instance_infos.push(instance_info)
-                    end
-                  }
+                  instance_infos = _blop(child_part)
+                  instance_info_count += instance_infos.length
+                  displayed_parts.push({
+                                           :group => group,
+                                           :part => child_part,
+                                           :instance_infos => instance_infos
+                                       })
                   if part_ids.is_a?(Array) and part_ids.include?(child_part[:id]) and part_ids.length == 1
                     displayed_part = part
                     break
@@ -1512,7 +1531,7 @@ module Ladb::OpenCutList
         end
       }
 
-      if instance_infos.empty?
+      if instance_info_count == 0
 
         # Retrieve cutlist
         return { :errors => [ 'default.error' ] }
@@ -1526,25 +1545,25 @@ module Ladb::OpenCutList
         text_line_2 = displayed_part[:labels].join(' | ')
         text_line_3 = displayed_part[:length].to_s + ' x ' + displayed_part[:width].to_s + ' x ' + displayed_part[:thickness].to_s +
             (displayed_part[:final_area].nil? ? '' : " (#{displayed_part[:final_area]})") +
-            ' | ' + instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single') +
+            ' | ' + instance_info_count.to_s + ' ' + Plugin.instance.get_i18n_string(instance_info_count > 1 ? 'default.part_plural' : 'default.part_single') +
             ' | ' + (displayed_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_part[:material_name])
 
       elsif group_id
 
         text_line_1 = (displayed_group[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : displayed_group[:material_name] + (displayed_group[:std_dimension].empty? ? '' : ' / ' + displayed_group[:std_dimension]))
         text_line_2 = ''
-        text_line_3 = instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single')
+        text_line_3 = instance_info_count.to_s + ' ' + Plugin.instance.get_i18n_string(instance_info_count > 1 ? 'default.part_plural' : 'default.part_single')
 
       else
 
         text_line_1 = ''
         text_line_2 = ''
-        text_line_3 = instance_infos.length.to_s + ' ' + Plugin.instance.get_i18n_string(instance_infos.length > 1 ? 'default.part_plural' : 'default.part_single')
+        text_line_3 = instance_info_count.to_s + ' ' + Plugin.instance.get_i18n_string(instance_info_count > 1 ? 'default.part_plural' : 'default.part_single')
 
       end
 
       # Create and activate highlight part tool
-      highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, text_line_3, instance_infos)
+      highlight_tool = HighlightPartTool.new(text_line_1, text_line_2, text_line_3, displayed_parts)
       model.select_tool(highlight_tool)
 
     end
@@ -1720,6 +1739,69 @@ module Ladb::OpenCutList
         end
 
       }
+
+    end
+
+    def part_toggle_front_command(part_data)
+
+      model = Sketchup.active_model
+      return response unless model
+
+      # Extract parameters
+      definition_id = part_data['definition_id']
+      serialized_path = part_data['serialized_path']
+
+      definitions = model.definitions
+      definition = definitions[definition_id]
+      if definition
+
+        instance_info = @instance_infos_cache[serialized_path]
+        if instance_info
+
+          xaxis = instance_info.size.oriented_normal(X_AXIS)
+          yaxis = instance_info.size.oriented_normal(Y_AXIS)
+          zaxis = instance_info.size.oriented_normal(Z_AXIS)
+
+          # Reverse zaxis
+          zaxis = zaxis.reverse
+
+          # Force axes to be "trihedron"
+          if AxisUtils::flipped?(xaxis, yaxis, zaxis)
+            yaxis = yaxis.reverse
+          end
+
+          # Create transformations
+          ti = Geom::Transformation.axes(ORIGIN, xaxis, yaxis, zaxis)
+          t = ti.inverse
+
+          # Transform definition's entities
+          entities = definition.entities
+          entities.transform_entities(t, entities.to_a)
+
+          # Inverse transform definition's instances
+          definition.instances.each { |instance|
+            instance.transformation *= ti
+          }
+
+          # Compute definition bounds
+          bounds = _compute_faces_bounds(definition)
+
+          # Create transformations
+          ti = Geom::Transformation.axes(bounds.min, X_AXIS, Y_AXIS, Z_AXIS)
+          t = ti.inverse
+
+          # Transform definition's entities
+          entities = definition.entities
+          entities.transform_entities(t, entities.to_a)
+
+          # Inverse transform definition's instances
+          definition.instances.each { |instance|
+            instance.transformation *= ti
+          }
+
+        end
+
+      end
 
     end
 
