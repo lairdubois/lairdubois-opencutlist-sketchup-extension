@@ -5,10 +5,13 @@ module Ladb::OpenCutList
   class HighlightPartTool
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
-    COLOR_FACE_HOVER = Sketchup::Color.new(255, 0, 0, 255).freeze
+    COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
+    COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
     COLOR_DRAWING_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
+
+    #f77f00
 
     PATH_OFFSETS_FRONT_ARROW = [
         [ false ,     0 , 1/3.0 , 0 ],
@@ -70,6 +73,7 @@ module Ladb::OpenCutList
       @initial_model_transparency = false
       @buttons = []
       @hover_part = nil
+      @hover_entity = nil
 
       model = Sketchup.active_model
       if model
@@ -102,7 +106,12 @@ module Ladb::OpenCutList
 
             if group[:material_type] != MaterialAttributes::TYPE_UNKNOW
 
-              order = instance_info.size.dimensions_to_normals.map { |dimension, normal| normal == 'x' ? 1 : normal == 'y' ? 2 : 3 }
+              order = [ 1, 2, 3 ]
+              if part[:auto_oriented]
+                instance_info.size.dimensions_to_normals.each_with_index do |(dimension, normal), index|
+                  normal == 'x' ? order[0] = index + 1 : normal == 'y' ? order[1] = index + 1 : order[2] = index + 1
+                end
+              end
 
               # Compute front faces arrows
               draw_def[:arrow_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_FRONT_ARROW, true, instance_info.transformation, order)
@@ -164,7 +173,15 @@ module Ladb::OpenCutList
       @draw_defs.each do |draw_def|
 
         # Draw faces
-        view.drawing_color = (@hover_part && @hover_part[:definition_id] == draw_def[:part][:definition_id]) ? COLOR_FACE_HOVER : draw_def[:face_color]
+        face_color = draw_def[:face_color]
+        if @hover_part
+          if @hover_part == draw_def[:part]
+            face_color = COLOR_FACE_HOVER
+          elsif @hover_part[:definition_id] == draw_def[:part][:definition_id]
+            face_color = COLOR_FACE_HOVER_SMILAR
+          end
+        end
+        view.drawing_color = face_color
         view.draw(GL_TRIANGLES, draw_def[:face_triangles])
 
         view.line_width = 3
@@ -251,6 +268,7 @@ module Ladb::OpenCutList
                 part[:entity_ids].each { |entity_id|
                   if entity.entityID == entity_id
                     @hover_part = part
+                    @hover_entity = entity
                     view.invalidate
                     return
                   end
@@ -263,6 +281,7 @@ module Ladb::OpenCutList
       }
       if @hover_part
         @hover_part = nil
+        @hover_entity = nil
         view.invalidate
       end
 
