@@ -132,6 +132,24 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
 };
 
+LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animated) {
+    if ($target) {
+        if ($slide === null) {
+            $slide = this.topSlide();   // No slide, use topSlide
+        }
+        if ($slide) {
+            var scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
+            if (animated) {
+                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(function () {
+                    $target.effect("highlight", {}, 1500);
+                });
+            } else {
+                $slide.scrollTop(scrollTop);
+            }
+        }
+    }
+}
+
 // Modal /////
 
 LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams, validateWithEnter) {

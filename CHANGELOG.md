@@ -6,9 +6,11 @@ in 1.x and 0.x versions.
 
 * 1.8.5
 
-  * Added flipped part detection
+  * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal
   * Fixed some New Material modal issues
+  * Improved cutlist scroll to first visible group
+  * Improved highlight tool to display part oritention with front and back face
 
 * 1.8.4 (2020-01-09)
 

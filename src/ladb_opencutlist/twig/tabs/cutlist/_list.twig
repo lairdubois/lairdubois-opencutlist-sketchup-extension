@@ -10,7 +10,7 @@
 
     {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.labels_filter is empty) %}
 
-    <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-filters">
+    <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-filters">
         <thead>
         <tr>
             <td>
@@ -87,7 +87,7 @@
 
     {% set groupSummaryHidden = 'summary' in generateOptions.hidden_group_ids %}
 
-    <table id="ladb_group_summary" data-group-id="summary" class="{% if groupSummaryHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
+    <table id="ladb_group_summary" data-group-id="summary" class="{% if groupSummaryHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
         <thead>
         <tr>
             <td colspan="{% if generateOptions.hide_final_areas %}6{% else %}7{% endif %}">

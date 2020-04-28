@@ -362,9 +362,7 @@
                 if ($target.data('group-id')) {
                     that.showGroup($target);
                 }
-                that.$rootSlide.animate({ scrollTop: $target.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function () {
-                    $target.effect("highlight", {}, 1500);
-                });
+                that.scrollSlideToTarget(null, $target, true);
                 return false;
             });
             $('a.ladb-btn-material-filter', that.$page).on('click', function () {
@@ -454,7 +452,7 @@
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                that.$rootSlide.animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                that.scrollSlideToTarget(null, $group, true)
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                 $(this).blur();
@@ -564,6 +562,9 @@
             // Callback
             if (callback && typeof callback == 'function') {
                 callback();
+            } else {
+                // No callback -> scroll to the first printable group
+                that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
             }
 
         });
@@ -1655,9 +1656,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1665,9 +1664,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1683,9 +1680,7 @@
                                 if ($target.data('group-id')) {
                                     that.showGroup($target);
                                 }
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });

@@ -236,16 +236,16 @@ module Ladb::OpenCutList
       }
       if @hover_part
 
-        Plugin.instance.execute_command('cutlist_part_toggle_front', {
-            'definition_id' => @hover_part[:definition_id],
-            'serialized_path' => @hover_part[:entity_serialized_paths].first    # TODO
-        })
+        # Plugin.instance.execute_command('cutlist_part_toggle_front', {
+        #     'definition_id' => @hover_part[:definition_id],
+        #     'serialized_path' => @hover_part[:entity_serialized_paths].first    # TODO
+        # })
+
+        UI.beep
 
         return
       end
-      view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
-      view.model.select_tool(nil)  # Desactivate the tool on click
-      view.invalidate
+      _quit(view)
     end
 
     def onMouseMove(flags, x, y, view)
@@ -287,7 +287,17 @@ module Ladb::OpenCutList
 
     end
 
+    def onCancel(flag, view)
+      _quit(view)
+    end
+
     private
+
+    def _quit(view)
+      view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
+      view.model.select_tool(nil)  # Desactivate the tool on click
+      view.invalidate
+    end
 
     # -- GL utils --
 
