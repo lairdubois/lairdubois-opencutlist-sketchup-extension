@@ -7,6 +7,7 @@ module Ladb::OpenCutList
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
     COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
+    COLOR_TEXT_BG = Sketchup::Color.new(255, 255, 255, 191).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
     COLOR_DRAWING_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
@@ -21,6 +22,15 @@ module Ladb::OpenCutList
         [ true  , 1/2.0 ,     1 , 0 ],
         [ true  , 1/2.0 , 2/3.0 , 0 ],
         [ true  ,     0 , 2/3.0 , 0 ],
+    ]
+    PATH_OFFSETS_BACK_ARROW = [
+        [ false ,     0 , 1/3.0 , 1 ],
+        [ true  , 1/2.0 , 1/3.0 , 1 ],
+        [ true  , 1/2.0 ,     0 , 1 ],
+        [ true  ,     1 , 1/2.0 , 1 ],
+        [ true  , 1/2.0 ,     1 , 1 ],
+        [ true  , 1/2.0 , 2/3.0 , 1 ],
+        [ true  ,     0 , 2/3.0 , 1 ],
     ]
     PATH_OFFSETS_BACK_CROSS = [
         [ false , 0 , 0 , 1 ],
@@ -117,7 +127,7 @@ module Ladb::OpenCutList
               draw_def[:arrow_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_FRONT_ARROW, true, instance_info.transformation, order)
 
               # Compute back faces cross
-              draw_def[:cross_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_BACK_CROSS, false, instance_info.transformation, order)
+              draw_def[:cross_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_BACK_ARROW, false, instance_info.transformation, order)
 
             end
 
@@ -201,19 +211,52 @@ module Ladb::OpenCutList
 
       if Sketchup.version_number >= 16000000
         unless @hover_part.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, 10, 0), "[#{@hover_part[:number]}] #{@hover_part[:definition_id]}" , @part_text_options)
+          text_line_1 = '[' + @hover_part[:number] + '] ' + @hover_part[:name]
+          text_line_2 = @hover_part[:labels].join(' | ')
+          text_line_3 = @hover_part[:length].to_s + ' x ' + @hover_part[:width].to_s + ' x ' + @hover_part[:thickness].to_s +
+              (@hover_part[:final_area].nil? ? '' : " (#{@hover_part[:final_area]})") +
+              ' | ' + @hover_part[:count].to_s + ' ' + Plugin.instance.get_i18n_string(@hover_part[:count] > 1 ? 'default.part_plural' : 'default.part_single') +
+              ' | ' + (@hover_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @hover_part[:material_name])
+        else
+          text_line_1 = @line_1_text
+          text_line_2 = @line_2_text
+          text_line_3 = @line_3_text
         end
-        unless @line_1_text.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (@line_2_text.empty? ? 0 : 20) - (@line_3_text.empty? ? 0 : 30), 0), @line_1_text, @line_1_text_options)
+        bg_height = 30 + (text_line_2.empty? ? 0 : 20) + (text_line_3.empty? ? 0 : 30)
+        _draw_rect(view, 0, view.vpheight - bg_height, view.vpwidth, bg_height, COLOR_TEXT_BG)
+        unless text_line_1.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (text_line_2.empty? ? 0 : 20) - (text_line_3.empty? ? 0 : 30), 0), text_line_1, @line_1_text_options)
         end
-        unless @line_2_text.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (@line_3_text.empty? ? 0 : 30), 0), @line_2_text, @line_2_text_options)
+        unless text_line_2.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (text_line_3.empty? ? 0 : 30), 0), text_line_2, @line_2_text_options)
         end
-        unless @line_3_text.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @line_3_text, @line_3_text_options)
+        unless text_line_3.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), text_line_3, @line_3_text_options)
         end
         @buttons.each { |button|
           button.draw(view)
+        }
+      end
+    end
+
+    # -- Menu --
+
+    if Sketchup.version.to_i < 15
+      # Compatible with SketchUp 2014 and older:
+      def getMenu(menu)
+        build_menu(menu)
+      end
+    else
+      # Only works with SketchUp 2015 and newer:
+      def getMenu(menu, flags, x, y, view)
+        build_menu(menu)
+      end
+    end
+
+    def build_menu(menu)
+      if @hover_part
+        menu.add_item('Hello') {
+          UI.messagebox('Hello')
         }
       end
     end
@@ -279,12 +322,12 @@ module Ladb::OpenCutList
         end
 
       }
-      if @hover_part
-        @hover_part = nil
-        @hover_entity = nil
-        view.invalidate
-      end
+      _reset(view)
 
+    end
+
+    def onMouseLeave(view)
+      _reset(view)
     end
 
     def onCancel(flag, view)
@@ -292,6 +335,14 @@ module Ladb::OpenCutList
     end
 
     private
+
+    def _reset(view)
+      if @hover_part
+        @hover_part = nil
+        @hover_entity = nil
+        view.invalidate
+      end
+    end
 
     def _quit(view)
       view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
@@ -378,6 +429,17 @@ module Ladb::OpenCutList
       end
       _transform_points(points, transformation)
       points
+    end
+
+    def _draw_rect(view, x, y, width, height, color)
+      @points = [
+          Geom::Point3d.new(        x ,          y , 0),
+          Geom::Point3d.new(x + width ,          y , 0),
+          Geom::Point3d.new(x + width , y + height , 0),
+          Geom::Point3d.new(        x , y + height , 0)
+      ]
+      view.drawing_color = color
+      view.draw2d(GL_QUADS, @points)
     end
 
   end

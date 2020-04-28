@@ -406,7 +406,7 @@ module Ladb::OpenCutList
             end
           end
         end
-        return material, material_origin
+        [ material, material_origin ]
       end
 
       def _get_dominant_child_material(entity, level = 0)
@@ -1010,7 +1010,7 @@ module Ladb::OpenCutList
         response[:groups].push(group)
 
         # Folding
-        if part_folding # and group_def.material_type > MaterialAttributes::TYPE_UNKNOW   # Only parts with typed material can be grouped
+        if part_folding
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each { |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
@@ -1062,7 +1062,7 @@ module Ladb::OpenCutList
 
           if part_def.children.empty?
 
-            # Part is simgle part
+            # Part is single part
             part = part_def.to_struct(part_number)
             unless part_def.number
               part_number = part_number.succ
