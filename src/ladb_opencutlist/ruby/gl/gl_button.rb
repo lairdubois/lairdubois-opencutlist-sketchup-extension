@@ -63,6 +63,8 @@ module Ladb::OpenCutList
     def draw(view)
       update_coords(view)
       view.drawing_color = @is_down ? COLOR_FILL_DOWN : @is_hover ? COLOR_FILL_HOVER : COLOR_FILL
+      view.line_stipple = ''
+      view.line_width = 1
       view.draw2d(GL_QUADS, @points)
       view.drawing_color = COLOR_BORDER
       view.draw2d(GL_LINE_LOOP, @points)

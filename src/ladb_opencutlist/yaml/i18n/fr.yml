@@ -636,6 +636,7 @@ tab:
     contribute: Contribuer
     backers: "{{count}} contributeur financier"
     backers_plural: "{{count}} contributeurs financiers"
+    load_more: "Charger la suite..."
     ad: Vous aimez OpenCutList ?
   settings:
     label: Préférences

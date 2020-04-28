@@ -105,7 +105,7 @@ tab:
       number_hidden: The saved number '{{ number }}' of this part cannot be used because it has already been assigned
       number_generated: The number of this part is automatically generated
       resized: This part was resized with respect to its component definition
-      flipped: Cette pièce est en miroir par rapport à sa définition de composant
+      flipped: This part is mirrored compared to its component definition
       auto_oriented: This part has been automatically reoriented
       add_label_filter: Filtering on '{{ label }}'
       remove_label_filter: Remove filtering on '{{ label }}'
@@ -636,6 +636,7 @@ tab:
     contribute: Contribute
     backers: "{{count}} financial contributor"
     backers_plural: "{{count}} financial contributors"
+    load_more: "Load more ..."
     ad: You love OpenCutList ?
   settings:
     label: Preferences
