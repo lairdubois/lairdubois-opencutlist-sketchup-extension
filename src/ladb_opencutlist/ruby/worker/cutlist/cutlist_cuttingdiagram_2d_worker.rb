@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../lib/bin_packing_2d/packengine'
+
   class CutlistCuttingdiagram2dWorker
 
     def initialize(settings, cutlist)

@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/image_utils'
+
   class MaterialsUpdateWorker
 
     def initialize(material_data)

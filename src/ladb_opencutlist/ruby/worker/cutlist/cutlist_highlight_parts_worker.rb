@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../tool/highlight_part_tool'
+
   class CutlistHighlightPartsWorker
 
     def initialize(cutlist, group_id, part_ids)

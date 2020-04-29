@@ -1,21 +1,8 @@
 module Ladb::OpenCutList
 
-  require 'pathname'
-  require 'csv'
-  require 'set'
   require_relative 'controller'
-  require_relative '../model/geom/scale3d'
-  require_relative '../model/geom/size3d'
   require_relative '../model/attributes/material_attributes'
   require_relative '../model/attributes/definition_attributes'
-  require_relative '../utils/model_utils'
-  require_relative '../utils/path_utils'
-  require_relative '../utils/transformation_utils'
-  require_relative '../utils/axis_utils'
-  require_relative '../utils/dimension_utils'
-  require_relative '../tool/highlight_part_tool'
-
-  require_relative '../lib/bin_packing_2d/packengine'
 
   class CutlistController < Controller
 
