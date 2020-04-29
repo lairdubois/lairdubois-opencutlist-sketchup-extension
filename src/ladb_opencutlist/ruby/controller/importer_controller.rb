@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../lib/rchardet'
-  require_relative '../model/definition_attributes'
+  require_relative '../model/attributes/definition_attributes'
 
   class ImporterController < Controller
 

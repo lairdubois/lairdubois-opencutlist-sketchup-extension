@@ -41,11 +41,11 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(line_1_text, line_2_text, line_3_text, displayed_parts)
+    def initialize(line_1_text, line_2_text, line_3_text, parts)
       @line_1_text = line_1_text
       @line_2_text = line_2_text
       @line_3_text = line_3_text
-      @displayed_parts = displayed_parts
+      @parts = parts
 
       # Define text options
       @part_text_options = {
@@ -93,31 +93,29 @@ module Ladb::OpenCutList
         @draw_defs = []
 
         # Compute draw defs
-        @displayed_parts.each { |displayed_part|
+        @parts.each { |part|
 
-          group = displayed_part[:group]
-          part = displayed_part[:part]
+          group = part.group
 
           draw_def = {
               :part => part,
               :face_triangles => [],
               :face_color => COLOR_FACE,
-              :line_color => part[:auto_oriented] ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING,
+              :line_color => part.auto_oriented ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING,
               :arrow_points => [],
               :cross_points => [],
           }
           @draw_defs << draw_def
 
-          instance_infos = displayed_part[:instance_infos]
-          instance_infos.each { |instance_info|
+          part.def.instance_infos.each { |serialized_path, instance_info|
 
             # Compute instance faces triangles
             draw_def[:face_triangles].concat(_compute_children_faces_tirangles(view, instance_info.entity.definition.entities, instance_info.transformation))
 
-            if group[:material_type] != MaterialAttributes::TYPE_UNKNOW
+            if group.material_type != MaterialAttributes::TYPE_UNKNOW
 
               order = [ 1, 2, 3 ]
-              if part[:auto_oriented]
+              if part.auto_oriented
                 instance_info.size.dimensions_to_normals.each_with_index do |(dimension, normal), index|
                   normal == 'x' ? order[0] = index + 1 : normal == 'y' ? order[1] = index + 1 : order[2] = index + 1
                 end
@@ -187,7 +185,7 @@ module Ladb::OpenCutList
         if @hover_part
           if @hover_part == draw_def[:part]
             face_color = COLOR_FACE_HOVER
-          elsif @hover_part[:definition_id] == draw_def[:part][:definition_id]
+          elsif @hover_part.definition_id == draw_def[:part].definition_id
             face_color = COLOR_FACE_HOVER_SMILAR
           end
         end
@@ -211,12 +209,12 @@ module Ladb::OpenCutList
 
       if Sketchup.version_number >= 16000000
         unless @hover_part.nil?
-          text_line_1 = '[' + @hover_part[:number] + '] ' + @hover_part[:name]
-          text_line_2 = @hover_part[:labels].join(' | ')
-          text_line_3 = @hover_part[:length].to_s + ' x ' + @hover_part[:width].to_s + ' x ' + @hover_part[:thickness].to_s +
-              (@hover_part[:final_area].nil? ? '' : " (#{@hover_part[:final_area]})") +
-              ' | ' + @hover_part[:count].to_s + ' ' + Plugin.instance.get_i18n_string(@hover_part[:count] > 1 ? 'default.part_plural' : 'default.part_single') +
-              ' | ' + (@hover_part[:material_name].empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @hover_part[:material_name])
+          text_line_1 = '[' + @hover_part.number + '] ' + @hover_part.name
+          text_line_2 = @hover_part.labels.join(' | ')
+          text_line_3 = @hover_part.length.to_s + ' x ' + @hover_part.width.to_s + ' x ' + @hover_part.thickness.to_s +
+              (@hover_part.final_area.nil? ? '' : " (#{@hover_part.final_area})") +
+              ' | ' + @hover_part.count.to_s + ' ' + Plugin.instance.get_i18n_string(@hover_part.count > 1 ? 'default.part_plural' : 'default.part_single') +
+              ' | ' + (@hover_part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @hover_part.material_name)
         else
           text_line_1 = @line_1_text
           text_line_2 = @line_2_text
@@ -280,8 +278,8 @@ module Ladb::OpenCutList
       if @hover_part
 
         # Plugin.instance.execute_command('cutlist_part_toggle_front', {
-        #     'definition_id' => @hover_part[:definition_id],
-        #     'serialized_path' => @hover_part[:entity_serialized_paths].first    # TODO
+        #     'definition_id' => @hover_part.definition_id,
+        #     'serialized_path' => @hover_part.entity_serialized_paths.first    # TODO
         # })
 
         UI.beep
@@ -306,9 +304,8 @@ module Ladb::OpenCutList
         if path
           path.reverse.each { |entity|
             if entity.is_a? Sketchup::ComponentInstance
-              @displayed_parts.each do |displayed_part|
-                part = displayed_part[:part]
-                part[:entity_ids].each { |entity_id|
+              @parts.each do |part|
+                part.entity_ids.each { |entity_id|
                   if entity.entityID == entity_id
                     @hover_part = part
                     @hover_entity = entity

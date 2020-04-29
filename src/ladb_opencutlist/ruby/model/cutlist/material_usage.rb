@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../../modules/hashable'
+
   class MaterialUsage
+
+    include Hashable
 
     attr_accessor :name, :display_name, :type, :color, :use_count
 
@@ -14,14 +18,10 @@ module Ladb::OpenCutList
 
     # -----
 
-    def to_struct
-      {
-          :name => @name,
-          :display_name => @display_name,
-          :type => @type,
-          :color => @color.nil? ? nil : "#%02x%02x%02x" % [ @color.red, @color.green, @color.blue ],
-          :use_count => @use_count,
-      }
+    def to_hash
+      hash = super.to_hash
+      hash['color'] = @color.nil? ? nil : "#%02x%02x%02x" % [ @color.red, @color.green, @color.blue ]
+      hash
     end
 
   end

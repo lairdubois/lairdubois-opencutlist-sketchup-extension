@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require 'pathname'
   require 'securerandom'
   require_relative 'controller'
-  require_relative '../model/material_attributes'
+  require_relative '../model/attributes/material_attributes'
   require_relative '../utils/image_utils'
 
   class MaterialsController < Controller

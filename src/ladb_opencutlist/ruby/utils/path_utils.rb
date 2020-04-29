@@ -31,12 +31,6 @@ module Ladb::OpenCutList
       path
     end
 
-    # -- Manipulation --
-
-    def self.get_leaf_entity(serialized_path)
-      ModelUtils::find_entity_by_id(Sketchup.active_model, serialized_path.split(SEPARATOR).last.to_i)
-    end
-
     # -- Geom --
 
     def self.get_transformation(path)

@@ -133,7 +133,7 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 };
 
 LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animated) {
-    if ($target) {
+    if ($target && $target.length) {
         if ($slide === null) {
             $slide = this.topSlide();   // No slide, use topSlide
         }

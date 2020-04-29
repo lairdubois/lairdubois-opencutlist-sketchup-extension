@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
 
     attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
-    attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children, :edge_materials, :edge_group_defs
+    attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs
 
     def initialize(id)
       @id = id
@@ -23,13 +23,13 @@ module Ladb::OpenCutList
       @name = ''
       @is_dynamic_attributes_name = false
       @count = 0
-      @cutting_size = Size3d.new
-      @size = Size3d.new
-      @scale = Scale3d.new
+      @cutting_size = Ladb::OpenCutList::Size3d.new
+      @size = Ladb::OpenCutList::Size3d.new
+      @scale = Ladb::OpenCutList::Scale3d.new
       @flipped = false
       @material_name = ''
       @material_origins = []
-      @cumulable = DefinitionAttributes::CUMULABLE_NONE
+      @cumulable = Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_NONE
       @orientation_locked_on_axis = false
       @labels = ''
       @edge_count = 0
@@ -54,7 +54,9 @@ module Ladb::OpenCutList
       @children = []
 
       # Internal
+      @instance_infos = {}
       @edge_materials = {}
+      @edge_faces = {}
       @edge_group_defs = {}
 
     end
@@ -129,8 +131,23 @@ module Ladb::OpenCutList
 
     # -----
 
+    # InstanceInfos
+
+    def store_instance_info(instance_info)
+      @instance_infos[instance_info.serialized_path] = instance_info
+    end
+
+    def get_instance_info(serialized_path)
+      if @instance_infos.has_key? serialized_path
+        return @instance_infos[serialized_path]
+      end
+      nil
+    end
+
+    # ---
+
     def cumulative_cutting_length
-      if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
+      if @count > 1 && @cumulable == Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_LENGTH
         (@cutting_size.length.to_f * @count).to_l
       else
         @cutting_size.length
@@ -138,7 +155,7 @@ module Ladb::OpenCutList
     end
 
     def cumulative_cutting_width
-      if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH
+      if @count > 1 && @cumulable == Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_WIDTH
         (@cutting_size.width.to_f * @count).to_l
       else
         @cutting_size.width
@@ -223,78 +240,6 @@ module Ladb::OpenCutList
       @edge_std_dimensions.store(PartDef::EDGE_XMIN, "#{edge_xmin_group_def.std_thickness} x #{edge_xmin_group_def.std_dimension}") unless edge_xmin_group_def.nil?
       @edge_std_dimensions.store(PartDef::EDGE_XMAX, "#{edge_xmax_group_def.std_thickness} x #{edge_xmax_group_def.std_dimension}") unless edge_xmax_group_def.nil?
 
-    end
-
-    # -----
-
-    def to_struct(part_number)
-      if @children.empty?
-        {
-            :id => @id,
-            :definition_id => @definition_id,
-            :name => @name,
-            :is_dynamic_attributes_name => @is_dynamic_attributes_name,
-            :resized => !@scale.identity?,
-            :flipped => @flipped,
-            :length => @size.length.to_s,
-            :width => @size.width.to_s,
-            :thickness => @size.thickness.to_s,
-            :count => @count,
-            :cutting_length => [@cutting_size.length - @edge_length_decrement, 0].max.to_l.to_s,
-            :cutting_width => [@cutting_size.width - @edge_width_decrement, 0].max.to_l.to_s,
-            :cutting_thickness => @cutting_size.thickness.to_s,
-            :cumulative_cutting_length => cumulative_cutting_length.to_s,
-            :cumulative_cutting_width => cumulative_cutting_width.to_s,
-            :number => @number ? @number : part_number,
-            :saved_number => @saved_number,
-            :material_name => @material_name,
-            :material_origins => @material_origins,
-            :cumulable => @cumulable,
-            :orientation_locked_on_axis => @orientation_locked_on_axis,
-            :labels => @labels,
-            :entity_ids => @entity_ids,
-            :entity_serialized_paths => @entity_serialized_paths,
-            :entity_names => @entity_names.sort,
-            :contains_blank_entity_names => @contains_blank_entity_names,
-            :auto_oriented => @auto_oriented,
-            :not_aligned_on_axes => @not_aligned_on_axes,
-            :layers => @layers.map(&:name),
-            :multiple_layers => multiple_layers,
-            :edge_count => @edge_count,
-            :edge_pattern => @edge_pattern,
-            :edge_material_names => @edge_material_names,
-            :edge_std_dimensions => @edge_std_dimensions,
-            :edge_entity_ids => @edge_entity_ids,
-            :edge_decrements => { :length => @edge_length_decrement > 0 ? @edge_length_decrement.to_s : nil, :width => @edge_width_decrement > 0 ? @edge_width_decrement.to_s : nil },
-            :final_area => @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
-            :normals_to_dimensions => @size.normals_to_dimensions,
-            :dimensions_to_normals => @size.dimensions_to_normals,
-            :l_ratio => @size.length / [@size.length, @size.width].max,
-            :w_ratio => @size.width / [@size.length, @size.width].max,
-        }
-      else
-        {
-            :id => @id,
-            :length => [@size.length - @edge_length_decrement, 0].max.to_l.to_s,
-            :width => [@size.width - @edge_width_decrement, 0].max.to_l.to_s,
-            :thickness => @size.thickness.to_s,
-            :count => @count,
-            :cutting_length => [@cutting_size.length - @edge_length_decrement, 0].max.to_l.to_s,
-            :cutting_width => [@cutting_size.width - @edge_width_decrement].max.to_l.to_s,
-            :cutting_thickness => @cutting_size.thickness.to_s,
-            :saved_number => @saved_number,
-            :material_name => @material_name,
-            :labels => @labels,
-            :edge_count => @edge_count,
-            :edge_pattern => @edge_pattern,
-            :edge_material_names => @edge_material_names,
-            :edge_std_dimensions => @edge_std_dimensions,
-            :edge_decrements => { :length => @edge_length_decrement > 0 ? @edge_length_decrement.to_s : nil, :width => @edge_width_decrement > 0 ? @edge_width_decrement.to_s : nil },
-            :final_area =>  @final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(@final_area),
-            :children_warning_count => @children_warning_count,
-            :children => []
-        }
-      end
     end
 
   end
