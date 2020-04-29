@@ -8,19 +8,55 @@ module Ladb::OpenCutList
 
     include BoundsHelper
 
-    def initialize(options)
-      @options = options
+    PartData = Struct.new(
+        :definition_id,
+        :name,
+        :is_dynamic_attributes_name,
+        :material_name,
+        :cumulable,
+        :orientation_locked_on_axis,
+        :labels,
+        :axes_order,
+        :axes_origin_position,
+        :edge_material_names,
+        :edge_entity_ids,
+        :entity_ids
+    )
+
+    def initialize(settings, cutlist)
+      @parts_data = []
+
+      parts_data = settings['parts_data']
+      parts_data.each { |part_data|
+        @parts_data << PartData.new(
+            part_data['definition_id'],
+            part_data['name'],
+            part_data['is_dynamic_attributes_name'],
+            part_data['material_name'],
+            DefinitionAttributes.valid_cumulable(part_data['cumulable']),
+            part_data['orientation_locked_on_axis'],
+            DefinitionAttributes.valid_labels(part_data['labels']),
+            part_data['axes_order'],
+            part_data['axes_origin_position'],
+            part_data['edge_material_names'],
+            part_data['edge_entity_ids'],
+            part_data['entity_ids']
+        )
+      }
+
+      @cutlist = cutlist
+
     end
 
     # -----
 
-    def run(cutlist)
+    def run
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       definitions = model.definitions
-      @options.parts_data.each { |part_data|
+      @parts_data.each { |part_data|
 
         definition = definitions[part_data.definition_id]
 

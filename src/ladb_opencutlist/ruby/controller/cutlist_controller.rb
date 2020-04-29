@@ -79,12 +79,8 @@ module Ladb::OpenCutList
     def generate_command(settings)
       require_relative '../worker/cutlist/cutlist_generate_worker'
 
-      # Clear previous cutlist
-      @cutlist = nil
-
       # Setup worker
-      options = CutlistGeneratorOptions.new(settings)
-      worker = CutlistGenerateWorker.new(options)
+      worker = CutlistGenerateWorker.new(settings)
 
       # Run !
       @cutlist = worker.run
@@ -96,41 +92,37 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_export_worker'
 
       # Setup worker
-      options = CutlistExporterOptions.new(settings)
-      worker = CutlistExportWorker.new(options)
+      worker = CutlistExportWorker.new(settings, @cutlist)
 
       # Run !
-      worker.run(@cutlist)
+      worker.run
     end
 
     def numbers_command(settings, reset)
       require_relative '../worker/cutlist/cutlist_numbers_worker'
 
       # Setup worker
-      options = CutlistNumbersOptions.new(settings)
-      worker = CutlistNumbersWorker.new(options)
+      worker = CutlistNumbersWorker.new(settings, @cutlist, reset)
 
       # Run !
-      worker.run(@cutlist, reset)
+      worker.run
     end
 
     def highlight_parts_command(group_id = nil, part_ids = nil)
       require_relative '../worker/cutlist/cutlist_highlight_parts_worker'
 
       # Setup worker
-      options = CutlistHighlightPartsOptions.new(nil)
-      worker = CutlistHighlightPartsWorker.new(options)
+      worker = CutlistHighlightPartsWorker.new(@cutlist, group_id, part_ids)
 
       # Run !
-      worker.run(@cutlist, group_id, part_ids)
+      worker.run
     end
 
     def part_get_thumbnail_command(part_data)
       require_relative '../worker/cutlist/cutlist_get_thumbnail_worker'
 
       # Setup worker
-      options = CutlistGetThumbnailOptions.new(part_data)
-      worker = CutlistGetThumbnailWorker.new(options)
+      worker = CutlistGetThumbnailWorker.new(part_data)
 
       # Run !
       worker.run
@@ -140,22 +132,20 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_part_update_worker'
 
       # Setup worker
-      options = CutlistPartUpdateOptions.new(settings)
-      worker = CutlistPartUpdateWorker.new(options)
+      worker = CutlistPartUpdateWorker.new(settings, @cutlist)
 
       # Run !
-      worker.run(@cutlist)
+      worker.run
     end
 
     def group_cuttingdiagram_2d_command(settings)
       require_relative '../worker/cutlist/cutlist_cuttingdiagram_2d_worker'
 
       # Setup worker
-      options = CutlistCuttingDiagram2dOptions.new(settings)
-      worker = CutlistCuttingdiagram2dWorker.new(options)
+      worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
 
       # Run !
-      worker.run(@cutlist)
+      worker.run
     end
 
   end

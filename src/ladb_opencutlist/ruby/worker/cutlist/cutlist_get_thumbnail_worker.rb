@@ -2,8 +2,8 @@ module Ladb::OpenCutList
 
   class CutlistGetThumbnailWorker
 
-    def initialize(options)
-      @options = options
+    def initialize(part_data)
+      @definition_id = part_data['definition_id']
     end
 
     # -----
@@ -17,7 +17,7 @@ module Ladb::OpenCutList
       return response unless model
 
       definitions = model.definitions
-      definition = definitions[@options.definition_id]
+      definition = definitions[@definition_id]
       if definition
 
         definition.refresh_thumbnail

@@ -2,34 +2,47 @@ module Ladb::OpenCutList
 
   class CutlistCuttingdiagram2dWorker
 
-    def initialize(options)
-      @options = options
+    def initialize(settings, cutlist)
+      @group_id = settings['group_id']
+      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
+      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
+      @scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
+      @grained = settings['grained']
+      @hide_part_list = settings['hide_part_list']
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
+      @presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
+      @stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
+      @bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
+
+      @cutlist = cutlist
+
     end
 
     # -----
 
-    def run(cutlist)
-      return { :errors => [ 'default.error' ] } unless cutlist
+    def run
+      return { :errors => [ 'default.error' ] } unless @cutlist
 
-      group = cutlist.get_group(@options.group_id)
+      group = @cutlist.get_group(@group_id)
       if group
 
         # The dimensions need to be in Sketchup internal units AND float
         options = BinPacking2D::Options.new
-        options.base_bin_length = @options.std_sheet_length
-        options.base_bin_width = @options.std_sheet_width
-        options.rotatable = !@options.grained
-        options.saw_kerf = @options.saw_kerf
-        options.trimming = @options.trimming
-        options.stacking = @options.stacking
-        options.bbox_optimization = @options.bbox_optimization
-        options.presort = @options.presort
+        options.base_bin_length = @std_sheet_length
+        options.base_bin_width = @std_sheet_width
+        options.rotatable = !@grained
+        options.saw_kerf = @saw_kerf
+        options.trimming = @trimming
+        options.stacking = @stacking
+        options.bbox_optimization = @bbox_optimization
+        options.presort = @presort
 
         # Create the bin packing engine with given bins and boxes
         e = BinPacking2D::PackEngine.new(options)
 
         # Add bins from scrap sheets
-        @options.scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+        @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
           size2d = Size2d.new(scrap_sheet_size)
           e.add_bin(size2d.length.to_f, size2d.width.to_f)
         }
@@ -58,14 +71,14 @@ module Ladb::OpenCutList
             :tips => [],
 
             :options => {
-                :grained => @options.grained,
-                :hide_part_list => @options.hide_part_list,
+                :grained => @grained,
+                :hide_part_list => @hide_part_list,
                 :px_saw_kerf => to_px(options.saw_kerf),
                 :saw_kerf => options.saw_kerf.to_l.to_s,
                 :trimming => options.trimming.to_l.to_s,
-                :stacking => @options.stacking,
-                :bbox_optimization => @options.bbox_optimization,
-                :presort => @options.presort,
+                :stacking => @stacking,
+                :bbox_optimization => @bbox_optimization,
+                :presort => @presort,
             },
 
             :unplaced_parts => [],

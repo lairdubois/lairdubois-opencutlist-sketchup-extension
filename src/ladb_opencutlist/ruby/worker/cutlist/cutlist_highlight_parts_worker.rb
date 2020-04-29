@@ -2,34 +2,36 @@ module Ladb::OpenCutList
 
   class CutlistHighlightPartsWorker
 
-    def initialize(options)
-      @options = options
+    def initialize(cutlist, group_id, part_ids)
+      @cutlist = cutlist
+      @grou_id = group_id
+      @part_ids = part_ids
     end
 
     # -----
 
-    def run(cutlist, group_id, part_ids)
+    def run
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      return { :errors => [ 'default.error' ] } unless cutlist
+      return { :errors => [ 'default.error' ] } unless @cutlist
 
       # Retrieve parts
       parts = []
       displayed_part = nil
       displayed_group = nil
-      if group_id
-        group = cutlist.get_group(group_id)
+      if @group_id
+        group = @cutlist.get_group(@group_id)
         if group
           parts = group.get_real_parts
           displayed_group = group
         end
-      elsif part_ids
-        parts = cutlist.get_real_parts(part_ids)
+      elsif @part_ids
+        parts = @cutlist.get_real_parts(@part_ids)
         displayed_part = parts.first if parts.length == 1
       else
-        parts = cutlist.get_real_parts
+        parts = @cutlist.get_real_parts
       end
 
       # Compute entity count

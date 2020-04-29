@@ -9,9 +9,7 @@ module Ladb::OpenCutList
     attr_accessor :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
     attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :groups
 
-    def initialize(options, length_unit, dir, filename, page_label, instance_count)
-      @_options = options
-
+    def initialize(length_unit, dir, filename, page_label, instance_count)
       @errors = []
       @warnings = []
       @tips = []

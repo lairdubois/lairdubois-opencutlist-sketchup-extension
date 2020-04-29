@@ -2,21 +2,25 @@ module Ladb::OpenCutList
 
   class CutlistNumbersWorker
 
-    def initialize(options)
-      @options = options
+    def initialize(settings, cutlist, reset)
+      @group_id = settings['group_id']
+
+      @cutlist = cutlist
+      @reset = @reset
+
     end
 
     # -----
 
-    def run(cutlist, reset)
-      return unless cutlist
+    def run
+      return unless @cutlist
 
       model = Sketchup.active_model
       definitions = model ? model.definitions : []
 
-      cutlist.groups.each { |group|
+      @cutlist.groups.each { |group|
 
-        if @options.group_id && group.id != @options.group_id
+        if @group_id && group.id != @group_id
           next
         end
 
@@ -24,10 +28,10 @@ module Ladb::OpenCutList
 
           if part.is_a?(FolderPart)
             part.children.each { |child_part|
-              _apply_on_part(definitions, child_part, reset)
+              _apply_on_part(definitions, child_part, @reset)
             }
           else
-            _apply_on_part(definitions, part, reset)
+            _apply_on_part(definitions, part, @reset)
           end
 
         }

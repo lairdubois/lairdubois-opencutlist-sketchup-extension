@@ -3,7 +3,6 @@ module Ladb::OpenCutList
   require_relative '../../modules/bounds_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
-  require_relative '../../model/cutlist/options'
   require_relative '../../model/cutlist/cutlist'
   require_relative '../../model/cutlist/face_info'
   require_relative '../../model/cutlist/instance_info'
@@ -22,8 +21,19 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
-    def initialize(options)
-      @options = options
+    def initialize(settings)
+
+      @auto_orient = settings['auto_orient']
+      @smart_material = settings['smart_material']
+      @dynamic_attributes_name = settings['dynamic_attributes_name']
+      @part_number_with_letters = settings['part_number_with_letters']
+      @part_number_sequence_by_group = settings['part_number_sequence_by_group']
+      @part_folding = settings['part_folding']
+      @part_order_strategy = settings['part_order_strategy']
+      @hide_labels = settings['hide_labels']
+      @hide_final_areas = settings['hide_final_areas']
+      @labels_filter = settings['labels_filter']
+      @edge_material_names_filter = settings['edge_material_names_filter']
 
       # Setup caches
       @instance_infos_cache = {}
@@ -59,7 +69,7 @@ module Ladb::OpenCutList
       # Fetch component instances in given entities
       path = model && model.active_path ? model.active_path : []
       entities.each { |entity|
-        _fetch_useful_instance_infos(entity, path, @options.auto_orient)
+        _fetch_useful_instance_infos(entity, path, @auto_orient)
       }
 
       # Retrieve model infos
@@ -68,7 +78,7 @@ module Ladb::OpenCutList
       page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
       # Create cut list
-      cutlist = Cutlist.new(@options, length_unit, dir, filename, page_label, @instance_infos_cache.length)
+      cutlist = Cutlist.new(length_unit, dir, filename, page_label, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0
@@ -109,12 +119,12 @@ module Ladb::OpenCutList
         cutlist.add_used_labels(definition_attributes.labels)
 
         # Labels filter
-        if !@options.labels_filter.empty? and !definition_attributes.has_labels(@options.labels_filter)
+        if !@labels_filter.empty? and !definition_attributes.has_labels(@labels_filter)
           cutlist.ignored_instance_count += 1
           next
         end
 
-        material, material_origin = _get_material(instance_info.path, @options.smart_material)
+        material, material_origin = _get_material(instance_info.path, @smart_material)
         material_id = material ? material.entityID : ''
         material_name = material ? material.name : ''
         material_display_name = material ? material.display_name : ''
@@ -128,7 +138,7 @@ module Ladb::OpenCutList
           end
 
           # Edge materials filter -> exclude all non sheet good parts
-          if !@options.edge_material_names_filter.empty? and material_attributes.type != Ladb::OpenCutList::MaterialAttributes::TYPE_SHEET_GOOD
+          if !@edge_material_names_filter.empty? and material_attributes.type != Ladb::OpenCutList::MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
           end
@@ -213,7 +223,7 @@ module Ladb::OpenCutList
 
         number = nil
         if definition_attributes.number
-          if @options.part_number_with_letters
+          if @part_number_with_letters
             if definition_attributes.number.is_a? String
               number = definition_attributes.number
             end
@@ -224,7 +234,7 @@ module Ladb::OpenCutList
           end
         end
         if number
-          if @options.part_number_sequence_by_group
+          if @part_number_sequence_by_group
             if group_def.include_number? number
               number = nil
             end
@@ -237,7 +247,7 @@ module Ladb::OpenCutList
 
         # Define part
 
-        part_id = PartDef.generate_part_id(group_id, definition, instance_info, @options.dynamic_attributes_name)
+        part_id = PartDef.generate_part_id(group_id, definition, instance_info, @dynamic_attributes_name)
         part_def = group_def.get_part_def(part_id)
         unless part_def
 
@@ -245,7 +255,7 @@ module Ladb::OpenCutList
           part_def.definition_id = definition.name
           part_def.number = number
           part_def.saved_number = definition_attributes.number
-          part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(@options.dynamic_attributes_name)
+          part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(@dynamic_attributes_name)
           part_def.scale = instance_info.scale
           part_def.flipped = instance_info.flipped
           part_def.cutting_size = cutting_size
@@ -296,7 +306,7 @@ module Ladb::OpenCutList
               edge_materials = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq
 
               # Materials filter
-              if !@options.edge_material_names_filter.empty? && !(@options.edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
+              if !@edge_material_names_filter.empty? && !(@edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
                 cutlist.ignored_instance_count += 1
                 next
               end
@@ -466,7 +476,7 @@ module Ladb::OpenCutList
       # Sort material usages and add them to cutlist
       cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [v.display_name.downcase] })
 
-      part_number = cutlist.max_number ? cutlist.max_number.succ : (@options.part_number_with_letters ? 'A' : '1')
+      part_number = cutlist.max_number ? cutlist.max_number.succ : (@part_number_with_letters ? 'A' : '1')
 
       # Sort and browse groups
 
@@ -475,22 +485,22 @@ module Ladb::OpenCutList
         # Exclude empty groupDef
         next if group_def.part_count == 0
 
-        if @options.part_number_sequence_by_group
-          part_number = group_def.max_number ? group_def.max_number.succ : (@options.part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
+        if @part_number_sequence_by_group
+          part_number = group_def.max_number ? group_def.max_number.succ : (@part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
         end
 
         group = Group.new(group_def, cutlist)
         cutlist.add_group(group)
 
         # Folding
-        if @options.part_folding
+        if @part_folding
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
-                (folder_part_def.labels == part_def.labels || @options.hide_labels) &&
-                ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or @options.hide_final_areas) &&      # final_area workaround for rounding error
+                (folder_part_def.labels == part_def.labels || @hide_labels) &&
+                ((folder_part_def.final_area - part_def.final_area).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == Ladb::OpenCutList::MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > Ladb::OpenCutList::MaterialAttributes::TYPE_UNKNOW) # Part with untyped materiel are folded only if they have the same definition
               if folder_part_def.children.empty?
@@ -531,7 +541,7 @@ module Ladb::OpenCutList
         end
 
         # Sort and browse parts
-        part_defs.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, @options.part_order_strategy) }.each do |part_def|
+        part_defs.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, @part_order_strategy) }.each do |part_def|
 
           if part_def.children.empty?
 
@@ -547,7 +557,7 @@ module Ladb::OpenCutList
             part = FolderPart.new(part_def, group)
 
             # Iterate on children
-            part_def.children.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, @options.part_order_strategy) }.each { |child_part_def|
+            part_def.children.sort { |part_def_a, part_def_b| PartDef::part_order(part_def_a, part_def_b, @part_order_strategy) }.each { |child_part_def|
               child_part = ChildPart.new(child_part_def, group, part_number, part)
               unless child_part_def.number
                 part_number = part_number.succ
