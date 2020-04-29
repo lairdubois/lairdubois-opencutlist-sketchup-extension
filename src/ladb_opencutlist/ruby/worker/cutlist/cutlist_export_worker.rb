@@ -40,10 +40,10 @@ module Ladb::OpenCutList
           :export_path => ''
       }
 
-      if cutlist and !cutlist.groups.empty?
+      if @cutlist and !@cutlist.groups.empty?
 
         # Ask for export file path
-        export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), cutlist.dir, File.basename(cutlist.filename, '.skp') + '.csv')
+        export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
         if export_path
 
           begin
@@ -105,7 +105,7 @@ module Ladb::OpenCutList
 
                     csv << header
 
-                    cutlist.groups.each { |group|
+                    @cutlist.groups.each { |group|
                       next if @hidden_group_ids.include? group.id
 
                       row = []
@@ -159,7 +159,7 @@ module Ladb::OpenCutList
                     csv << header
 
                     # Content rows
-                    cutlist.groups.each { |group|
+                    @cutlist.groups.each { |group|
                       next if @hidden_group_ids.include? group.id
                       group.parts.each { |part|
 
@@ -236,7 +236,7 @@ module Ladb::OpenCutList
                     csv << header
 
                     # Content rows
-                    cutlist.groups.each { |group|
+                    @cutlist.groups.each { |group|
                       next if @hidden_group_ids.include? group.id
                       next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
                       group.parts.each { |part|
