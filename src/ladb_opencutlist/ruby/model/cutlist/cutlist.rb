@@ -1,9 +1,13 @@
 module Ladb::OpenCutList
 
-  class CutlistDef
+  require_relative '../../modules/hashable'
+
+  class Cutlist
+
+    include Hashable
 
     attr_accessor :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
-    attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :group_defs
+    attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :groups
 
     def initialize(length_unit, dir, filename, page_label, instance_count)
       @errors = []
@@ -17,55 +21,67 @@ module Ladb::OpenCutList
       @ignored_instance_count = 0
       @max_number = nil
       @used_labels = []
-      @material_usages = {}
-      @group_defs = {}
+      @material_usages = []
+      @groups = []
     end
+
+    # ---
+
+    # Errors
 
     def add_error(error)
       @errors.push(error)
     end
 
+    # Warnings
+
     def add_warning(warning)
       @warnings.push(warning)
     end
+
+    # Tips
 
     def add_tip(tip)
       @tips.push(tip)
     end
 
+    # UsedLabels
+
     def add_used_labels(used_labels)
       @used_labels += used_labels - (@used_labels & used_labels)
     end
 
-    def set_material_usage(key, material_usage)
-      @material_usages[key] = material_usage
+    # MaterialUsages
+
+    def add_material_usages(material_usages)
+      @material_usages += material_usages - (@material_usages & material_usages)
     end
 
-    def get_material_usage(key)
-      if @material_usages.has_key? key
-        return @material_usages[key]
+    # Groups
+
+    def add_group(group)
+      @groups.push(group)
+    end
+
+    def get_group(id)
+      @groups.each do |group|
+        return group if group.id == id
       end
       nil
     end
 
-    def set_group_def(key, group_def)
-      @group_defs[key] = group_def
+    # Parts
+
+    def get_part(id)
+      get_real_parts([ id ]).first
     end
 
-    def get_group_def(key)
-      if @group_defs.has_key? key
-        return @group_defs[key]
+    def get_real_parts(ids = nil)
+      parts = []
+      @groups.each do |group|
+        parts = parts + group.get_real_parts(ids)
       end
-      nil
-    end
-
-    def include_number?(number)
-      @group_defs.each { |key, group_def|
-        if group_def.include_number? number
-          return true
-        end
-      }
-      false
+      parts
     end
 
   end

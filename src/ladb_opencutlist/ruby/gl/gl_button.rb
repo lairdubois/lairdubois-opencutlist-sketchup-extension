@@ -4,9 +4,9 @@ module Ladb::OpenCutList
 
     COLOR_BORDER = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
-    COLOR_FILL = Sketchup::Color.new(255, 255, 255, 128).freeze
-    COLOR_FILL_HOVER = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_FILL_DOWN = Sketchup::Color.new(255, 255, 255, 255).freeze
+    COLOR_FILL = Sketchup::Color.new(255, 255, 255, 255).freeze
+    COLOR_FILL_HOVER = Sketchup::Color.new(190, 190, 190, 255).freeze
+    COLOR_FILL_DOWN = Sketchup::Color.new(128, 128, 128, 255).freeze
 
     FONT_TEXT = 'Verdana'
 

@@ -4,8 +4,6 @@ module Ladb::OpenCutList
 
     attr_reader :face, :transformation
 
-    @size
-
     def initialize(face, transformation)
       @face = face
       @transformation = transformation
