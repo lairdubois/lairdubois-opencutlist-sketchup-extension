@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../model/geom/scale3d'
+
   class TransformationUtils
 
     def self.get_scale3d(transformation)

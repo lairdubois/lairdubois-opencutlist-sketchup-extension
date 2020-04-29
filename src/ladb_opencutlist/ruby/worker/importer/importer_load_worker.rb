@@ -1,5 +1,8 @@
 module Ladb::OpenCutList
 
+  require 'csv'
+  require_relative '../../lib/rchardet'
+
   class ImporterLoadWorker
 
     LOAD_OPTION_COL_SEP_TAB = 0

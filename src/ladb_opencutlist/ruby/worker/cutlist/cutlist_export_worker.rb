@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require 'csv'
+
   class CutlistExportWorker
 
     EXPORT_OPTION_SOURCE_SUMMARY = 0
