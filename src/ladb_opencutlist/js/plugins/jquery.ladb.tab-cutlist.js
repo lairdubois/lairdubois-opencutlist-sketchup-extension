@@ -2077,8 +2077,14 @@
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
         var that = this;
 
-        rubyCallCommand('cutlist_numbers_save', params ? params : {}, function () {
-            that.generateCutlist(callback);
+        rubyCallCommand('cutlist_numbers_save', params ? params : {}, function (response) {
+
+            if (response['errors']) {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else {
+                that.generateCutlist(callback);
+            }
+
         });
 
     };
@@ -2086,8 +2092,14 @@
     LadbTabCutlist.prototype.numbersReset = function (params, callback) {
         var that = this;
 
-        rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function () {
-            that.generateCutlist(callback);
+        rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function (response) {
+
+            if (response['errors']) {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else {
+                that.generateCutlist(callback);
+            }
+
         });
 
     };

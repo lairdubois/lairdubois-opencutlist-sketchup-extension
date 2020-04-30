@@ -61,10 +61,11 @@ module Ladb::OpenCutList
 
     def run
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.importer.error.no_model' ] } unless model
+
       # Clear previously generated parts
       @parts = nil
-
-      model = Sketchup.active_model
 
       response = {
           :warnings => [],
@@ -76,12 +77,6 @@ module Ladb::OpenCutList
           :parts => [],
           :importable_part_count => 0,
       }
-
-      # Check model
-      unless model
-        response[:errors] << 'tab.importer.error.no_model'
-        return response
-      end
 
       # Add model infos to response
       response[:model_is_empty] = model.active_entities.length == 0 && model.definitions.length == 0 && model.materials.length == 0

@@ -11,13 +11,13 @@ module Ladb::OpenCutList
 
     def run
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.materials.error.no_model' ] } unless model
+
       response = {
           :texture_file => '',
           :texture_colorized => false
       }
-
-      model = Sketchup.active_model
-      return response unless model
 
       # Fetch material
       materials = model.materials
