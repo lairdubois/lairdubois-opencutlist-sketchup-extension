@@ -423,7 +423,7 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: Echec de l'écriture du fichier d'export. **{{ error }}**
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
-      obsolete_cutlist: La fiche de débit générée est obsolète.
+      obsolete_cutlist: Impossible, la fiche de débit générée est obsolète. Re-générez là.
     warning:
       partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
       no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (**Bois massif** ou **Panneau** ou **Barre**).

@@ -423,7 +423,7 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: Failed to write the export file. **{{ error }}**
       unknow_part: The selected part does not exist in the parts list.
-      obsolete_cutlist: La fiche de débit générée est obsolète.
+      obsolete_cutlist: Impossible, la fiche de débit générée est obsolète. Re-générez là.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).

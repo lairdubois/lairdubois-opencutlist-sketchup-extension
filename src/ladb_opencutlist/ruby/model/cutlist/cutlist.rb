@@ -1,10 +1,10 @@
 module Ladb::OpenCutList
 
-  require_relative '../../modules/hashable'
+  require_relative '../../helper/hashable_helper'
 
   class Cutlist
 
-    include Hashable
+    include HashableHelper
 
     attr_accessor :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
     attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :groups

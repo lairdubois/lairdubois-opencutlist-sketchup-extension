@@ -77,6 +77,7 @@
         this.materials = [];
         this.$page.empty();
         this.$btnList.prop('disabled', true);
+        this.setObsolete(false);
 
         rubyCallCommand('materials_list', this.generateOptions, function (response) {
 
@@ -197,7 +198,7 @@
             that.ignoreNextMaterialEvents = true;
 
             rubyCallCommand('materials_create', {
-                name: $inputs.inputName.val(),
+                name: $inputs.inputName.val().trim(),
                 color: $inputs.inputColor.val(),
                 attributes: {
                     type: $inputs.selectType.val(),
@@ -391,7 +392,7 @@
             });
             $btnUpdate.on('click', function () {
 
-                that.editedMaterial.display_name = $inputs.inputName.val();
+                that.editedMaterial.display_name = $inputs.inputName.val().trim();
                 that.editedMaterial.color = $inputs.inputColor.val();
                 that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
@@ -705,25 +706,31 @@
         return null;
     };
 
-    LadbTabMaterials.prototype.showObsolete = function (messageI18nKey) {
-        var that = this;
+    LadbTabMaterials.prototype.showObsolete = function (messageI18nKey, forced) {
+        if (!this.isObsolete() || forced) {
 
-        var $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
-            messageI18nKey: messageI18nKey
-        });
+            var that = this;
 
-        // Fetch UI elements
-        var $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
+            // Set tab as obsolete
+            this.setObsolete(true);
 
-        // Bind buttons
-        $btnRefresh.on('click', function () {
-            $modal.modal('hide');
-            that.loadList();
-        });
+            var $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
+                messageI18nKey: messageI18nKey
+            });
 
-        // Show modal
-        $modal.modal('show');
+            // Fetch UI elements
+            var $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
 
+            // Bind buttons
+            $btnRefresh.on('click', function () {
+                $modal.modal('hide');
+                that.loadList();
+            });
+
+            // Show modal
+            $modal.modal('show');
+
+        }
     };
 
     LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($modal, material, setAttributeToDefaults) {
@@ -1091,11 +1098,11 @@
         // Events
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
-            that.showObsolete('core.event.model_change');
+            that.showObsolete('core.event.model_change', true);
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
-                that.showObsolete('core.event.material_change');
+                that.showObsolete('core.event.material_change', true);
             }
         });
         addEventCallback([ 'on_material_set_current' ], function (params) {

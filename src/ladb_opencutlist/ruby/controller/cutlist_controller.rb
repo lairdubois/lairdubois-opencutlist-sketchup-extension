@@ -32,16 +32,8 @@ module Ladb::OpenCutList
         numbers_command(settings, true)
       end
 
-      Plugin.instance.register_command("cutlist_highlight_all_parts") do
-        highlight_parts_command
-      end
-
-      Plugin.instance.register_command("cutlist_highlight_group_parts") do |group_id|
-        highlight_parts_command(group_id)
-      end
-
-      Plugin.instance.register_command("cutlist_highlight_parts") do |part_ids|
-        highlight_parts_command(nil, part_ids)
+      Plugin.instance.register_command("cutlist_highlight_parts") do |settings|
+        highlight_parts_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
@@ -120,11 +112,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def highlight_parts_command(group_id = nil, part_ids = nil)
+    def highlight_parts_command(settings)
       require_relative '../worker/cutlist/cutlist_highlight_parts_worker'
 
       # Setup worker
-      worker = CutlistHighlightPartsWorker.new(@cutlist, group_id, part_ids)
+      worker = CutlistHighlightPartsWorker.new(@cutlist, settings)
 
       # Run !
       worker.run

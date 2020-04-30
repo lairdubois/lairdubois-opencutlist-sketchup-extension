@@ -166,6 +166,8 @@
 
         rubyCallCommand('importer_load', loadOptions, function (response) {
 
+            that.setObsolete(false);
+
             var i;
 
             if (response.path) {
@@ -374,25 +376,31 @@
 
     // Internals /////
 
-    LadbTabImporter.prototype.showObsolete = function (messageI18nKey) {
-        var that = this;
+    LadbTabImporter.prototype.showObsolete = function (messageI18nKey, forced) {
+        if (!this.isObsolete() || forced) {
 
-        var $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
-            messageI18nKey: messageI18nKey
-        });
+            var that = this;
 
-        // Fetch UI elements
-        var $btnLoad = $('#ladb_importer_obsolete_load', $modal);
+            // Set tab as obsolete
+            this.setObsolete(true);
 
-        // Bind buttons
-        $btnLoad.on('click', function () {
-            $modal.modal('hide');
-            that.loadCSV(that.loadOptions);
-        });
+            var $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
+                messageI18nKey: messageI18nKey
+            });
 
-        // Show modal
-        $modal.modal('show');
+            // Fetch UI elements
+            var $btnLoad = $('#ladb_importer_obsolete_load', $modal);
 
+            // Bind buttons
+            $btnLoad.on('click', function () {
+                $modal.modal('hide');
+                that.loadCSV(that.loadOptions);
+            });
+
+            // Show modal
+            $modal.modal('show');
+
+        }
     };
 
     LadbTabImporter.prototype.bind = function () {
@@ -414,7 +422,7 @@
 
         addEventCallback('on_options_provider_changed', function () {
             if (that.loadOptions) {
-                that.showObsolete('core.event.options_change');
+                that.showObsolete('core.event.options_change', true);
             }
         });
 

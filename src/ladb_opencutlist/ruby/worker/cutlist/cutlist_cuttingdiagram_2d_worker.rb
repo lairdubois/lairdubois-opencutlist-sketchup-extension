@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/bin_packing_2d/packengine'
+  require_relative '../../model/geom/size2d'
+  require_relative '../../utils/dimension_utils'
 
   class CutlistCuttingdiagram2dWorker
 
@@ -25,7 +27,6 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
-      return { :errors => [ 'tab.cutlist.error.obsolete_cutlist', 'tab.cutlist.obsolete_base' ] } if @cutlist.obsolete?
 
       group = @cutlist.get_group(@group_id)
       return { :errors => [ 'default.error' ] } unless group

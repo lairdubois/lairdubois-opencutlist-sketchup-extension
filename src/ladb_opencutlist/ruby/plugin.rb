@@ -6,7 +6,8 @@ module Ladb::OpenCutList
   require 'yaml'
   require 'base64'
   require 'uri'
-  require "tempfile"
+  require 'tempfile'
+  require 'set'
   require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
@@ -23,7 +24,6 @@ module Ladb::OpenCutList
     DEBUG = EXTENSION_VERSION.end_with? '-dev'
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
-    BC_DEFAULT_SECTION = BC_ATTRIBUTE_DICTIONARY = 'ladb_toolbox'.freeze
 
     SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults
     SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes
@@ -170,8 +170,7 @@ module Ladb::OpenCutList
     end
 
     def get_attribute(entity, key, default_value = nil)
-      # Try to retrieve entity attribute with Backward Compatibility with previous dictionary name
-      entity.get_attribute(ATTRIBUTE_DICTIONARY, key, entity.get_attribute(BC_ATTRIBUTE_DICTIONARY, key, default_value))
+      entity.get_attribute(ATTRIBUTE_DICTIONARY, key, default_value)
     end
 
     def write_default(key, value)
@@ -179,8 +178,7 @@ module Ladb::OpenCutList
     end
 
     def read_default(key, default_value = nil)
-      # Try to retrieve default with Backward Compatibility with previous dictionary name
-      Sketchup.read_default(DEFAULT_SECTION, key, Sketchup.read_default(BC_DEFAULT_SECTION, key, default_value))
+      Sketchup.read_default(DEFAULT_SECTION, key, default_value)
     end
 
     # -----

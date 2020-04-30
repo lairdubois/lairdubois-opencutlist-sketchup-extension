@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'set'
-  require_relative '../../modules/bounds_helper'
+  require_relative '../../helper/boundingbox_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/geom/size3d'
@@ -17,7 +16,7 @@ module Ladb::OpenCutList
 
   class CutlistGenerateWorker
 
-    include BoundsHelper
+    include BoundingBoxHelper
 
     MATERIAL_ORIGIN_UNKNOW = 0
     MATERIAL_ORIGIN_OWNED = 1
