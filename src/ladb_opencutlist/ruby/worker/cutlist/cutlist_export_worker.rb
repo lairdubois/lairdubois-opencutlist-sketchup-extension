@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require 'csv'
+  require_relative '../../model/attributes/material_attributes'
 
   class CutlistExportWorker
 

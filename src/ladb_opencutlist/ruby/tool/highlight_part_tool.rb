@@ -12,8 +12,6 @@ module Ladb::OpenCutList
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
     COLOR_DRAWING_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
 
-    #f77f00
-
     PATH_OFFSETS_FRONT_ARROW = [
         [ false ,     0 , 1/3.0 , 0 ],
         [ true  , 1/2.0 , 1/3.0 , 0 ],
@@ -31,12 +29,6 @@ module Ladb::OpenCutList
         [ true  , 1/2.0 ,     1 , 1 ],
         [ true  , 1/2.0 , 2/3.0 , 1 ],
         [ true  ,     0 , 2/3.0 , 1 ],
-    ]
-    PATH_OFFSETS_BACK_CROSS = [
-        [ false , 0 , 0 , 1 ],
-        [ true  , 1 , 1 , 1 ],
-        [ false , 1 , 0 , 1 ],
-        [ true  , 0 , 1 , 1 ],
     ]
 
     FONT_TEXT = 'Verdana'
@@ -98,8 +90,8 @@ module Ladb::OpenCutList
               :face_triangles => [],
               :face_color => COLOR_FACE,
               :line_color => part.auto_oriented ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING,
-              :arrow_points => [],
-              :cross_points => [],
+              :front_arrow_points => [],
+              :back_arrow_points => [],
           }
           @draw_defs << draw_def
 
@@ -108,6 +100,7 @@ module Ladb::OpenCutList
             # Compute instance faces triangles
             draw_def[:face_triangles].concat(_compute_children_faces_tirangles(view, instance_info.entity.definition.entities, instance_info.transformation))
 
+            # Compute back and front face arrows
             if group.material_type != MaterialAttributes::TYPE_UNKNOW
 
               order = [ 1, 2, 3 ]
@@ -118,10 +111,10 @@ module Ladb::OpenCutList
               end
 
               # Compute front faces arrows
-              draw_def[:arrow_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_FRONT_ARROW, true, instance_info.transformation, order)
+              draw_def[:front_arrow_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_FRONT_ARROW, true, instance_info.transformation, order)
 
               # Compute back faces cross
-              draw_def[:cross_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_BACK_ARROW, false, instance_info.transformation, order)
+              draw_def[:back_arrow_points] << _path(instance_info.definition_bounds, PATH_OFFSETS_BACK_ARROW, true, instance_info.transformation, order)
 
             end
 
@@ -157,7 +150,7 @@ module Ladb::OpenCutList
         @pick_helper = Sketchup.active_model.active_view.pick_helper
 
       end
-      _generate_text_lines
+      _update_text_lines
     end
 
     def desactivate(view)
@@ -175,6 +168,7 @@ module Ladb::OpenCutList
 
     def draw(view)
 
+      # Draw defs
       @draw_defs.each do |draw_def|
 
         # Draw faces
@@ -189,21 +183,21 @@ module Ladb::OpenCutList
         view.drawing_color = face_color
         view.draw(GL_TRIANGLES, draw_def[:face_triangles])
 
+        # Draw arrows
         view.line_width = 3
         view.drawing_color = draw_def[:line_color]
-
         view.line_stipple = ''
-        draw_def[:arrow_points].each { |points|
+        draw_def[:front_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
-
         view.line_stipple = '_'
-        draw_def[:cross_points].each { |points|
+        draw_def[:back_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
 
       end
 
+      # Draw text lines and buttons (only if Sketchup > 2016)
       if Sketchup.version_number >= 16000000
         bg_height = 30 + (@text_line_2.empty? ? 0 : 20) + (@text_line_3.empty? ? 0 : 30)
         _draw_rect(view, 0, view.vpheight - bg_height, view.vpwidth, bg_height, COLOR_TEXT_BG)
@@ -220,6 +214,7 @@ module Ladb::OpenCutList
           button.draw(view)
         }
       end
+
     end
 
     # -- Menu --
@@ -261,9 +256,7 @@ module Ladb::OpenCutList
         end
       }
       if @hover_part
-
         UI.beep
-
         return
       end
       _quit(view)
@@ -312,7 +305,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _generate_text_lines
+    def _update_text_lines
 
       part = @hover_part ? @hover_part : (@parts.length == 1 ? @parts.first : nil)
       if part

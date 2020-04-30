@@ -6,7 +6,8 @@ module Ladb::OpenCutList
   require 'yaml'
   require 'base64'
   require 'uri'
-  require "tempfile"
+  require 'tempfile'
+  require 'set'
   require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'

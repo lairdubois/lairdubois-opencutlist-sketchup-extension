@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../model/cutlist/part'
+
   class CutlistNumbersWorker
 
     def initialize(settings, cutlist, reset)
