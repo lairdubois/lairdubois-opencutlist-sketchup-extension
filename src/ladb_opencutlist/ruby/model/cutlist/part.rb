@@ -1,10 +1,10 @@
 module Ladb::OpenCutList
 
-  require_relative '../../modules/hashable'
+  require_relative '../../helper/hashable_helper'
 
   class AbstractPart
 
-    include Hashable
+    include HashableHelper
 
     attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :labels, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
 

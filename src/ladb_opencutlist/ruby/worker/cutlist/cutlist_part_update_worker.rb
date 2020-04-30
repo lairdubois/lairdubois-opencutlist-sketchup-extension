@@ -1,13 +1,13 @@
 module Ladb::OpenCutList
 
-  require_relative '../../modules/bounds_helper'
+  require_relative '../../helper/boundingbox_helper'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../utils/model_utils'
   require_relative '../../utils/axis_utils'
 
   class CutlistPartUpdateWorker
 
-    include BoundsHelper
+    include BoundingBoxHelper
 
     PartData = Struct.new(
         :definition_id,

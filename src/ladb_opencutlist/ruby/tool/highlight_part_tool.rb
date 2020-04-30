@@ -281,6 +281,7 @@ module Ladb::OpenCutList
                 part.entity_ids.each { |entity_id|
                   if entity.entityID == entity_id
                     @hover_part = part
+                    _update_text_lines
                     view.invalidate
                     return
                   end

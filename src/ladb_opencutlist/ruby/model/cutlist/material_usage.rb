@@ -1,10 +1,10 @@
 module Ladb::OpenCutList
 
-  require_relative '../../modules/hashable'
+  require_relative '../../helper/hashable_helper'
 
   class MaterialUsage
 
-    include Hashable
+    include HashableHelper
 
     attr_accessor :name, :display_name, :type, :color, :use_count
 
