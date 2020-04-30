@@ -1,9 +1,9 @@
 ﻿module Ladb::OpenCutList
 
   require 'securerandom'
-  require_relative '../model/section'
-  require_relative '../model/size2d'
-  require_relative '../utils/dimension_utils'
+  require_relative '../geom/size2d'
+  require_relative '../geom/section'
+  require_relative '../../utils/dimension_utils'
 
   class MaterialAttributes
 

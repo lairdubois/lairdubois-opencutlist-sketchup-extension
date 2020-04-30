@@ -55,9 +55,9 @@ core:
     more_extensions: Plugins
   warning:
     old_su: |
-      Sie verwenden eine ältere Version von Sketchup ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
-      Um OpenCutList besser zu nutzen, empfehlen wir mindestens die Version **Sketchup 2017** zu installieren.
-    feature_locked: "*In dieser Version von Sketchup nicht deaktivierbar*"
+      Sie verwenden eine ältere Version von SketchUp ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
+      Um OpenCutList besser zu nutzen, empfehlen wir mindestens die Version **SketchUp 2017** zu installieren.
+    feature_locked: "*In dieser Version von SketchUp nicht deaktivierbar*"
   event:
     model_change: Das aktive Modell wurde verändert.
     options_change: Die Optionen des Modells wurden verändert.
@@ -105,6 +105,7 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
+      flipped: Dieses Teil ist gespiegelt im Vergleich zur ursprünglichen Definition als Komponente
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: Nach '{{ label }}' auslesen
       remove_label_filter: Auslese nach '{{ label }}' aufheben
@@ -120,8 +121,8 @@ tab:
       has_edges: Dieses Teil enthält {{ count }} Kantenband
       has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
       edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
-      edge_ymax: Kantenband Länge 1
-      edge_ymin: Kantenband Länge 2
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: Doppelclick hier um diesen Wert auf die anderen Kanten zu übertragen
@@ -394,7 +395,7 @@ tab:
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
-        sheet_type_0: Standard Platte
+        sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
@@ -422,6 +423,7 @@ tab:
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei. **{{ error }}**
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
+      obsolete_cutlist: La fiche de débit générée est obsolète.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**).
@@ -435,7 +437,7 @@ tab:
         Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
       no_typed_materials: Übertragen Sie ein Material auf die Teile, die Sie in der Holzliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-opencutlist-icon-materials"></i> *Materialien*.
-    outdated_base: Sie müssen die Holzliste neu generieren, damit diese synchron zum Modell bleibt.
+    obsolete_base: Sie müssen die Holzliste neu generieren, damit diese synchron zum Modell bleibt.
   materials:
     label: Materialien
     title: Materialien
@@ -548,13 +550,13 @@ tab:
       failed_removing_material: Ein Fehler ist beim Löschen des Materials aufgetreten. **{{ error }}**
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
-    outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
+    obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
   importer:
     label: Importieren
     title: Teile importieren
     help: |
       An dieser Stelle können Sie (rechteckige Volumen) Teile aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in ihr Modell importieren.
-      Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *Sketchup* generieren.
+      Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
       Clicken Sie auf **Öffnen einer CSV Datei** zum Starten.
     open_csv: Öffnen einer CSV Datei
     import_to_model: Ins Modell importieren
@@ -625,7 +627,7 @@ tab:
       imported_title: Importieren abgeschlossen
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
-    outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+    obsolete_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
   sponsor:
     label: Sponsern
     title: Sponsoring
@@ -635,6 +637,8 @@ tab:
     contribute: Beitragen
     backers: "{{count}} finanzieller Sponsor"
     backers_plural: "{{count}} finanzielle Sponsoren"
+    load_more: "Weitere laden ..."
+    ad: Gefällt dir OpenCutList?
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
@@ -648,7 +652,7 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_authors: |
-      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/borisbeaulant) entwickelt und von [Martin Müller](https://www.lairdubois.fr/mobilarte) übersetzt. *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
+      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) entwickelt und von [Martin Müller](https://www.lairdubois.fr/@mobilarte) übersetzt. *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
     credits_description: |
       Die Entwicklung dieser Erweiterung fügt sich in den Rahmen der Austauschplattform [L'Air du Bois](https://www.lairdubois.fr).
       In diesem Sinn ist diese Erweiterung auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
@@ -661,4 +665,4 @@ tab:
 tool:
   highlight:
     transparency: Transparenz
-    zoom_extents: Alles sehen
+    zoom_extents: Zoombereiche

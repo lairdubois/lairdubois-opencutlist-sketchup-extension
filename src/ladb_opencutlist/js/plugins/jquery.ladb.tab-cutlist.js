@@ -380,9 +380,7 @@
                 if ($target.data('group-id')) {
                     that.showGroup($target);
                 }
-                that.$rootSlide.animate({ scrollTop: $target.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise().then(function () {
-                    $target.effect("highlight", {}, 1500);
-                });
+                that.scrollSlideToTarget(null, $target, true);
                 return false;
             });
             $('a.ladb-btn-material-filter', that.$page).on('click', function () {
@@ -472,7 +470,7 @@
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                that.$rootSlide.animate({ scrollTop: $group.offset().top - that.$header.outerHeight(true) - 20 }, 200).promise();
+                that.scrollSlideToTarget(null, $group, true)
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                 $(this).blur();
@@ -588,6 +586,9 @@
             // Callback
             if (callback && typeof callback == 'function') {
                 callback();
+            } else {
+                // No callback -> scroll to the first printable group
+                that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
             }
 
         });
@@ -956,7 +957,7 @@
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
                     tab: tab === undefined || tab.length === 0 ? 'general' : tab
-                });
+                }, true);
 
                 var isOwnedMaterial = true;
                 for (var i = 0; i < editedPart.material_origins.length; i++) {
@@ -998,6 +999,11 @@
                         axes.push($(this).data('axis'));
                     });
                     $inputPartAxes.val(axes);
+
+                    // By default check Orientation Lokked On Axis option
+                    $inputOrientationLockedOnAxis.prop('checked', true);
+                    fnDisplayAxisDimensions();
+
                 };
                 var fnDisplayAxisDimensions = function () {
                     if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
@@ -1238,6 +1244,9 @@
 
                 // Show modal
                 $modal.modal('show');
+
+                // Focus
+                $inputName.focus();
 
                 // Init tokenfields (this must done after modal shown for correct token label max width measurement)
                 $inputLabels
@@ -1958,9 +1967,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1968,9 +1975,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1986,9 +1991,7 @@
                                 if ($target.data('group-id')) {
                                     that.showGroup($target);
                                 }
-                                $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
-                                });
+                                that.scrollSlideToTarget($slide, $target, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -2074,8 +2077,14 @@
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
         var that = this;
 
-        rubyCallCommand('cutlist_numbers_save', params ? params : {}, function () {
-            that.generateCutlist(callback);
+        rubyCallCommand('cutlist_numbers_save', params ? params : {}, function (response) {
+
+            if (response['errors']) {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else {
+                that.generateCutlist(callback);
+            }
+
         });
 
     };
@@ -2083,8 +2092,14 @@
     LadbTabCutlist.prototype.numbersReset = function (params, callback) {
         var that = this;
 
-        rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function () {
-            that.generateCutlist(callback);
+        rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function (response) {
+
+            if (response['errors']) {
+                that.opencutlist.notifyErrors(response['errors']);
+            } else {
+                that.generateCutlist(callback);
+            }
+
         });
 
     };
@@ -2349,15 +2364,15 @@
 
     // Internals /////
 
-    LadbTabCutlist.prototype.showOutdated = function (messageI18nKey) {
+    LadbTabCutlist.prototype.showObsolete = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_cutlist_modal_outdated', 'tabs/cutlist/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
             messageI18nKey: messageI18nKey
         });
 
         // Fetch UI elements
-        var $btnGenerate = $('#ladb_cutlist_outdated_generate', $modal);
+        var $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
 
         // Bind buttons
         $btnGenerate.on('click', function () {
@@ -2431,7 +2446,7 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             if (that.generateAt) {
-                that.showOutdated('core.event.model_change');
+                that.showObsolete('core.event.model_change');
             }
 
             // Hide edit option model (if it exists)
@@ -2443,19 +2458,19 @@
         });
         addEventCallback('on_options_provider_changed', function () {
             if (that.generateAt) {
-                that.showOutdated('core.event.options_change');
+                that.showObsolete('core.event.options_change');
             }
         });
         addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
                 if (that.generateAt) {
-                    that.showOutdated('core.event.material_change');
+                    that.showObsolete('core.event.material_change');
                 }
             }
         });
         addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function () {
             if (that.generateAt) {
-                that.showOutdated('core.event.selection_change');
+                that.showObsolete('core.event.selection_change');
             }
         });
 

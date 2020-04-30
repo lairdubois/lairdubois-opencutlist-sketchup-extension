@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative '../utils/string_utils'
+  require_relative '../../utils/string_utils'
 
   class Section
 
@@ -15,6 +15,8 @@ module Ladb::OpenCutList
       @width = width
       @height = height
     end
+
+    # -----
 
     def to_s
       @width.to_l.to_s + ' x ' + @height.to_l.to_s

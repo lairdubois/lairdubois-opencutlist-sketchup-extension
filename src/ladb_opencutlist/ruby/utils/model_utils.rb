@@ -6,7 +6,7 @@ module Ladb::OpenCutList
       if Sketchup.version_number >= 15000000
         return model.find_entity_by_id(entity_id)
       else
-        model.entities.each { |entity|
+        model.active_entities.each { |entity|
           if entity.entityID == entity_id
             return entity
           elsif entity.is_a? Sketchup::Group

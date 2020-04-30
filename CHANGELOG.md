@@ -4,9 +4,24 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.8.3
+* 1.8.5
 
+  * Added flipped part detection  
+  * Added 'hit enter' behavior to validate forms in modal
+  * Fixed some New Material modal issues
+  * Improved cutlist scroll to first visible group
+  * Improved highlight tool to display part oritention with front and back face
+
+* 1.8.4 (2020-01-09)
+
+  * Add part "Number" column in cutlist instance export
+  * Remove $debug global variable in rchardet lib
+
+* 1.8.3 (2019-12-19)
+
+  * Materials order option
   * Cutlist highlight multiple parts improvements
+  * Sponsor ad
 
 * 1.8.2 (2019-12-12)
 

@@ -50,7 +50,7 @@ module Ladb::OpenCutList::CharDet
       for i in (0...aLen)
         codingState = @codingSM.next_state(aBuf[i, 1])
         if codingState == EError
-          $stderr << "#{get_charset_name} prober hit error at byte #{i}\n" if $debug
+          # $stderr << "#{get_charset_name} prober hit error at byte #{i}\n" if $debug
           @state = ENotMe
           break
         elsif codingState == EItsMe

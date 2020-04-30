@@ -4,9 +4,9 @@ module Ladb::OpenCutList
 
     COLOR_BORDER = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
-    COLOR_FILL = Sketchup::Color.new(255, 255, 255, 128).freeze
-    COLOR_FILL_HOVER = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_FILL_DOWN = Sketchup::Color.new(255, 255, 255, 255).freeze
+    COLOR_FILL = Sketchup::Color.new(255, 255, 255, 255).freeze
+    COLOR_FILL_HOVER = Sketchup::Color.new(190, 190, 190, 255).freeze
+    COLOR_FILL_DOWN = Sketchup::Color.new(128, 128, 128, 255).freeze
 
     FONT_TEXT = 'Verdana'
 
@@ -63,6 +63,8 @@ module Ladb::OpenCutList
     def draw(view)
       update_coords(view)
       view.drawing_color = @is_down ? COLOR_FILL_DOWN : @is_hover ? COLOR_FILL_HOVER : COLOR_FILL
+      view.line_stipple = ''
+      view.line_width = 1
       view.draw2d(GL_QUADS, @points)
       view.drawing_color = COLOR_BORDER
       view.draw2d(GL_LINE_LOOP, @points)

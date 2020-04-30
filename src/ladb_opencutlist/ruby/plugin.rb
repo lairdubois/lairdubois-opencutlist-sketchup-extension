@@ -40,10 +40,10 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
 
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
-    DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 800
+    DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     DIALOG_MINIMIZED_WIDTH = 90
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
-    DIALOG_DEFAULT_LEFT = 100
+    DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
@@ -58,6 +58,7 @@ module Ladb::OpenCutList
       @html_dialog_compatible = nil
 
       @commands = {}
+      @eventCallbacks = {}
       @controllers = []
 
       @started = false
@@ -198,7 +199,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    def add_event_callback(event, &block)
+      if event.is_a? Array
+        events = event
+      else
+        events = [ event ]
+      end
+      events.each do |e|
+        unless @eventCallbacks.has_key? e
+          @eventCallbacks[e] = []
+        end
+        @eventCallbacks[e].push(block)
+      end
+    end
+
     def trigger_event(event, params)
+      if @eventCallbacks.has_key? event
+        blocks = @eventCallbacks[event]
+        blocks.each do |block|
+          block.call(params)
+        end
+      end
       if @dialog
         @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
       end
@@ -340,6 +361,7 @@ module Ladb::OpenCutList
 
         @controllers.each { |controller|
           controller.setup_commands
+          controller.setup_event_callbacks
         }
 
         @started = true

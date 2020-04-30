@@ -168,18 +168,18 @@
 
         var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
             material: material
-        });
+        }, true);
 
         // Fetch UI elements
         var $btnCreate = $('#ladb_materials_create', $modal);
 
-        // Bind form
-        var $inputs = this.bindMaterialPropertiesForm($modal, material, true);
-
         // Define usefull functions
         var fnUpdateBtnCreateStatus = function() {
-            $btnCreate.prop( "disabled", $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
+            $btnCreate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
         };
+
+        // Bind form
+        var $inputs = this.bindMaterialPropertiesForm($modal, material, true);
 
         // Bind inputs
         $inputs.inputName.on('keyup change', fnUpdateBtnCreateStatus);
@@ -257,7 +257,7 @@
             var $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
                 capabilities: that.opencutlist.capabilities,
                 material: material
-            });
+            }, true);
 
             // Fetch UI elements
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
@@ -326,7 +326,6 @@
                 }
             };
             var fnUpdateBtnUpdateStatus = function() {
-                console.log('fnUpdateBtnUpdateStatus', $inputs.inputName.data('ladb-invalid'), $inputs.inputColor.data('ladb-invalid'));
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
 
@@ -445,6 +444,9 @@
 
             // Show modal
             $modal.modal('show');
+
+            // Focus
+            $inputs.inputName.focus();
 
             // Setup tooltips & popovers
             this.opencutlist.setupTooltips();
@@ -703,15 +705,15 @@
         return null;
     };
 
-    LadbTabMaterials.prototype.showOutdated = function (messageI18nKey) {
+    LadbTabMaterials.prototype.showObsolete = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_materials_modal_outdated', 'tabs/materials/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
             messageI18nKey: messageI18nKey
         });
 
         // Fetch UI elements
-        var $btnRefresh = $('#ladb_materials_outdated_refresh', $modal);
+        var $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
 
         // Bind buttons
         $btnRefresh.on('click', function () {
@@ -923,23 +925,30 @@
             $selectEdgeDecremented.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
         };
 
-        var fnCheckInputNameValue = function() {
-            console.log('fnCheckInputNameValue');
+        var fnCheckInputNameValue = function(verbose) {
             if ($inputName.val().length > 0) {
                 $inputName.data('ladb-invalid', false);
-                $inputNameWarning.hide();
+                if (verbose) {
+                    $inputNameWarning.hide();
+                }
             } else {
                 $inputName.data('ladb-invalid', true);
-                $inputNameWarning.show();
+                if (verbose) {
+                    $inputNameWarning.show();
+                }
             }
         };
-        var fnCheckInputColorValue = function() {
-            if ($inputColor.val().match(/^#[0-9a-fA-F]{6}$/)) {
+        var fnCheckInputColorValue = function(verbose) {
+            if ($inputColor.val().match(/^#[0-9a-f]{6}$/i)) {
                 $inputColor.data('ladb-invalid', false);
-                $inputColorWarning.hide();
+                if (verbose) {
+                    $inputColorWarning.hide();
+                }
             } else {
                 $inputColor.data('ladb-invalid', true);
-                $inputColorWarning.show();
+                if (verbose) {
+                    $inputColorWarning.show();
+                }
             }
         };
 
@@ -969,8 +978,12 @@
         });
 
         // Bind inputs
-        $inputName.on('keyup change', fnCheckInputNameValue);
-        $inputColor.on('keyup change', fnCheckInputColorValue);
+        $inputName.on('keyup change', function() { fnCheckInputNameValue(true); });
+        $inputColor.on('keyup change', function() { fnCheckInputColorValue(true); });
+
+        // Initial input checks
+        fnCheckInputNameValue(false);
+        fnCheckInputColorValue(false);
 
         // Bind buttons
         $btnCutOptionsDefaultsSave.on('click', function () {
@@ -1078,11 +1091,11 @@
         // Events
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
-            that.showOutdated('core.event.model_change');
+            that.showObsolete('core.event.model_change');
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
-                that.showOutdated('core.event.material_change');
+                that.showObsolete('core.event.material_change');
             }
         });
         addEventCallback([ 'on_material_set_current' ], function (params) {

@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative '../utils/string_utils'
+  require_relative '../../utils/string_utils'
 
   class Size2d
 

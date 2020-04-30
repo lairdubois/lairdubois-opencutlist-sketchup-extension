@@ -93,11 +93,11 @@ module Ladb::OpenCutList::CharDet
       for prober in @probers
         next unless prober
         unless prober.active
-          $stderr << "#{prober.get_charset_name()} not active\n" if $debug
+          # $stderr << "#{prober.get_charset_name()} not active\n" if $debug
           next
         end
         cf = prober.get_confidence()
-        $stderr << "#{prober.get_charset_name} confidence = #{cf}\n" if $debug
+        # $stderr << "#{prober.get_charset_name} confidence = #{cf}\n" if $debug
         if bestConf < cf
           bestConf = cf
           @bestGuessProber = prober

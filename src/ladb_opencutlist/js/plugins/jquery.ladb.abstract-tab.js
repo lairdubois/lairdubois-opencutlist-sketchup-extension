@@ -132,9 +132,27 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
 };
 
+LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animated) {
+    if ($target && $target.length) {
+        if ($slide === null) {
+            $slide = this.topSlide();   // No slide, use topSlide
+        }
+        if ($slide) {
+            var scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
+            if (animated) {
+                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(function () {
+                    $target.effect("highlight", {}, 1500);
+                });
+            } else {
+                $slide.scrollTop(scrollTop);
+            }
+        }
+    }
+}
+
 // Modal /////
 
-LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams) {
+LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams, validateWithEnter) {
     var that = this;
 
     // Hide previously opened modal
@@ -165,6 +183,19 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             .remove();
         that.$element.removeClass('modal-open');
     });
+
+    // Bind enter keyup on text input if configured
+    if (validateWithEnter) {
+        $('input[type=text]', that._$modal).on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                var $btnValidate = $('.btn-validate-modal', that._$modal).first();
+                if ($btnValidate && $btnValidate.is(':enabled')) {
+                    $btnValidate.click();
+                }
+            }
+        });
+    }
 
     return this._$modal;
 };
