@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   class MaterialsSetCurrentWorker
 
-    def initialize(options)
+    def initialize(settings)
       @name = settings['name']
     end
 

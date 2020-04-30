@@ -11,6 +11,8 @@ function LadbAbstractTab(element, options, opencutlist) {
 
     this.$rootSlide = $('.ladb-slide', this.$element).first();
     this._$slides = [ this.$rootSlide ];
+
+    this._obsolete = false;
 }
 
 // Slide /////
@@ -271,3 +273,18 @@ LadbAbstractTab.prototype.bind = function () {
     this.$element.on('shown.ladb.tab', fnComputeStuckSlideHeadersWidth);
 
 };
+
+// Obsolete /////
+
+LadbAbstractTab.prototype.setObsolete = function (obsolete) {
+    this._obsolete = obsolete
+    if (this._obsolete) {
+        $('.ladb-obsolete', this.$rootSlide).removeClass('hidden');
+    } else {
+        $('.ladb-obsolete', this.$rootSlide).addClass('hidden');
+    }
+}
+
+LadbAbstractTab.prototype.isObsolete = function () {
+    return this._obsolete;
+}

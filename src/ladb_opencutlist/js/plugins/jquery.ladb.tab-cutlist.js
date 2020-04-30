@@ -154,6 +154,7 @@
         rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
             that.generateAt = new Date().getTime() / 1000;
+            that.setObsolete(false);
 
             var errors = response.errors;
             var warnings = response.warnings;
@@ -2053,25 +2054,31 @@
 
     // Internals /////
 
-    LadbTabCutlist.prototype.showObsolete = function (messageI18nKey) {
-        var that = this;
+    LadbTabCutlist.prototype.showObsolete = function (messageI18nKey, forced) {
+        if (!this.isObsolete() || forced) {
 
-        var $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
-            messageI18nKey: messageI18nKey
-        });
+            var that = this;
 
-        // Fetch UI elements
-        var $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
+            // Set tab as obsolete
+            this.setObsolete(true);
 
-        // Bind buttons
-        $btnGenerate.on('click', function () {
-            $modal.modal('hide');
-            that.generateCutlist();
-        });
+            var $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
+                messageI18nKey: messageI18nKey
+            });
 
-        // Show modal
-        $modal.modal('show');
+            // Fetch UI elements
+            var $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
 
+            // Bind buttons
+            $btnGenerate.on('click', function () {
+                $modal.modal('hide');
+                that.generateCutlist();
+            });
+
+            // Show modal
+            $modal.modal('show');
+
+        }
     };
 
     LadbTabCutlist.prototype.bind = function () {
@@ -2135,7 +2142,7 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             if (that.generateAt) {
-                that.showObsolete('core.event.model_change');
+                that.showObsolete('core.event.model_change', true);
             }
 
             // Hide edit option model (if it exists)
@@ -2147,13 +2154,13 @@
         });
         addEventCallback('on_options_provider_changed', function () {
             if (that.generateAt) {
-                that.showObsolete('core.event.options_change');
+                that.showObsolete('core.event.options_change', true);
             }
         });
         addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
                 if (that.generateAt) {
-                    that.showObsolete('core.event.material_change');
+                    that.showObsolete('core.event.material_change', true);
                 }
             }
         });

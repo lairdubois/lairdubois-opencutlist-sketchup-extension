@@ -27,7 +27,6 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
-      return { :errors => [ 'tab.cutlist.error.obsolete_cutlist', 'tab.cutlist.obsolete_base' ] } if @cutlist.obsolete?
 
       group = @cutlist.get_group(@group_id)
       return { :errors => [ 'default.error' ] } unless group
