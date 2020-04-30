@@ -107,6 +107,13 @@ module Ladb::OpenCutList
       @w_ratio = part_def.size.width / [part_def.size.length, part_def.size.width].max
     end
 
+    # -----
+
+    def contains_path(path)
+      return true if @_def.get_instance_info(PathUtils::serialize_path(path))
+      false
+    end
+
   end
 
   class ChildPart < Part

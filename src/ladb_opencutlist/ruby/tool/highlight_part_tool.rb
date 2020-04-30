@@ -41,19 +41,17 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(line_1_text, line_2_text, line_3_text, parts)
-      @line_1_text = line_1_text
-      @line_2_text = line_2_text
-      @line_3_text = line_3_text
+    def initialize(group, parts, part_count, maximize_on_quit)
+      @group = group
       @parts = parts
+      @part_count = part_count
+      @maximize_on_quit = maximize_on_quit
+
+      @text_line_1 = ''
+      @text_line_2 = ''
+      @text_line_3 = ''
 
       # Define text options
-      @part_text_options = {
-          color: COLOR_TEXT,
-          font: FONT_TEXT,
-          size: Plugin.instance.current_os == :MAC ? 20 : 15,
-          align: TextAlignCenter
-      }
       @line_1_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
@@ -79,11 +77,9 @@ module Ladb::OpenCutList
           align: TextAlignCenter
       }
 
-
       @initial_model_transparency = false
       @buttons = []
       @hover_part = nil
-      @hover_entity = nil
 
       model = Sketchup.active_model
       if model
@@ -161,6 +157,7 @@ module Ladb::OpenCutList
         @pick_helper = Sketchup.active_model.active_view.pick_helper
 
       end
+      _generate_text_lines
     end
 
     def desactivate(view)
@@ -208,28 +205,16 @@ module Ladb::OpenCutList
       end
 
       if Sketchup.version_number >= 16000000
-        unless @hover_part.nil?
-          text_line_1 = '[' + @hover_part.number + '] ' + @hover_part.name
-          text_line_2 = @hover_part.labels.join(' | ')
-          text_line_3 = @hover_part.length.to_s + ' x ' + @hover_part.width.to_s + ' x ' + @hover_part.thickness.to_s +
-              (@hover_part.final_area.nil? ? '' : " (#{@hover_part.final_area})") +
-              ' | ' + @hover_part.count.to_s + ' ' + Plugin.instance.get_i18n_string(@hover_part.count > 1 ? 'default.part_plural' : 'default.part_single') +
-              ' | ' + (@hover_part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @hover_part.material_name)
-        else
-          text_line_1 = @line_1_text
-          text_line_2 = @line_2_text
-          text_line_3 = @line_3_text
-        end
-        bg_height = 30 + (text_line_2.empty? ? 0 : 20) + (text_line_3.empty? ? 0 : 30)
+        bg_height = 30 + (@text_line_2.empty? ? 0 : 20) + (@text_line_3.empty? ? 0 : 30)
         _draw_rect(view, 0, view.vpheight - bg_height, view.vpwidth, bg_height, COLOR_TEXT_BG)
-        unless text_line_1.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (text_line_2.empty? ? 0 : 20) - (text_line_3.empty? ? 0 : 30), 0), text_line_1, @line_1_text_options)
+        unless @text_line_1.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (@text_line_2.empty? ? 0 : 20) - (@text_line_3.empty? ? 0 : 30), 0), @text_line_1, @line_1_text_options)
         end
-        unless text_line_2.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (text_line_3.empty? ? 0 : 30), 0), text_line_2, @line_2_text_options)
+        unless @text_line_2.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (@text_line_3.empty? ? 0 : 30), 0), @text_line_2, @line_2_text_options)
         end
-        unless text_line_3.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), text_line_3, @line_3_text_options)
+        unless @text_line_3.nil?
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @text_line_3, @line_3_text_options)
         end
         @buttons.each { |button|
           button.draw(view)
@@ -277,11 +262,6 @@ module Ladb::OpenCutList
       }
       if @hover_part
 
-        # Plugin.instance.execute_command('cutlist_part_toggle_front', {
-        #     'definition_id' => @hover_part.definition_id,
-        #     'serialized_path' => @hover_part.entity_serialized_paths.first    # TODO
-        # })
-
         UI.beep
 
         return
@@ -308,7 +288,6 @@ module Ladb::OpenCutList
                 part.entity_ids.each { |entity_id|
                   if entity.entityID == entity_id
                     @hover_part = part
-                    @hover_entity = entity
                     view.invalidate
                     return
                   end
@@ -333,18 +312,57 @@ module Ladb::OpenCutList
 
     private
 
+    def _generate_text_lines
+
+      part = @hover_part ? @hover_part : (@parts.length == 1 ? @parts.first : nil)
+      if part
+
+        @text_line_1 = "[#{part.number}] #{part.name}"
+        @text_line_2 = part.labels.join(' | ')
+        @text_line_3 = "#{part.length.to_s} x #{part.width.to_s} x #{part.thickness.to_s}" +
+            (part.final_area.nil? ? '' : " (#{part.final_area})") +
+            " | #{part.count.to_s} #{Plugin.instance.get_i18n_string(part.count > 1 ? 'default.part_plural' : 'default.part_single')}" +
+            " | #{(part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"
+
+      elsif @group
+
+        @text_line_1 = (@group.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
+        @text_line_2 = ''
+        @text_line_3 = @part_count.to_s + ' ' + Plugin.instance.get_i18n_string(@part_count > 1 ? 'default.part_plural' : 'default.part_single')
+
+      else
+
+        @text_line_1 = ''
+        @text_line_2 = ''
+        @text_line_3 = @part_count.to_s + ' ' + Plugin.instance.get_i18n_string(@part_count > 1 ? 'default.part_plural' : 'default.part_single')
+
+      end
+
+    end
+
     def _reset(view)
       if @hover_part
         @hover_part = nil
-        @hover_entity = nil
         view.invalidate
       end
     end
 
     def _quit(view)
+
+      # Restore initial transparency mode
       view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
+
+      # Unselect tool
       view.model.select_tool(nil)  # Desactivate the tool on click
+
+      # Invalidate view
       view.invalidate
+
+      # Maximize dialog if needed
+      if @maximize_on_quit
+        Plugin.instance.show_dialog('cutlist')
+      end
+
     end
 
     # -- GL utils --

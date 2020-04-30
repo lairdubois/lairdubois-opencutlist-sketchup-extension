@@ -661,7 +661,7 @@
     LadbTabCutlist.prototype.highlightAllParts = function () {
         var that = this;
 
-        rubyCallCommand('cutlist_highlight_all_parts', null, function (response) {
+        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight }, function (response) {
 
             if (response['errors']) {
                 that.opencutlist.notifyErrors(response['errors']);
@@ -673,10 +673,10 @@
 
     };
 
-    LadbTabCutlist.prototype.highlightGroupParts = function (group_id) {
+    LadbTabCutlist.prototype.highlightGroupParts = function (groupId) {
         var that = this;
 
-        rubyCallCommand('cutlist_highlight_group_parts', group_id, function (response) {
+        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, group_id: groupId }, function (response) {
 
             if (response['errors']) {
                 that.opencutlist.notifyErrors(response['errors']);
@@ -688,29 +688,29 @@
 
     };
 
-    LadbTabCutlist.prototype.highlightPart = function (part_id) {
+    LadbTabCutlist.prototype.highlightPart = function (partId) {
         var that = this;
 
-        var groupAndPart = this.findGroupAndPartById(part_id);
+        var groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
             var group = groupAndPart.group;
             var part = groupAndPart.part;
 
             var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part_id) && this.selectionPartIds.length > 1;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
             var multiple = isFolder || isSelected;
 
             var partIds;
             if (isFolder) {
-                partIds = [ part_id ];
+                partIds = [ partId ];
             } else if (isSelected) {
                 partIds = this.selectionPartIds;
             } else {
-                partIds = [ part_id ];
+                partIds = [ partId ];
             }
 
-            rubyCallCommand('cutlist_highlight_parts', partIds, function (response) {
+            rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, part_ids: partIds }, function (response) {
 
                 if (response['errors']) {
                     that.opencutlist.notifyErrors(response['errors']);
