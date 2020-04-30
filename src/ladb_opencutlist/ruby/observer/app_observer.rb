@@ -9,6 +9,10 @@ module Ladb::OpenCutList
 
     include Singleton
 
+    ON_NEW_MODEL = 'on_new_model'.freeze
+    ON_OPEN_MODEL = 'on_open_model'.freeze
+    ON_ACTIVATE_MODEL = 'on_activate_model'.freeze
+
     def initialize()
       add_model_observers(Sketchup.active_model)
     end
@@ -17,21 +21,21 @@ module Ladb::OpenCutList
 
     def onNewModel(model)
       # puts "onNewModel: #{model}"
-      Plugin.instance.trigger_event('on_new_model', nil)
+      Plugin.instance.trigger_event(ON_NEW_MODEL, nil)
       DimensionUtils.instance.fetch_length_options
       add_model_observers(model)
     end
 
     def onOpenModel(model)
       # puts "onOpenModel: #{model}"
-      Plugin.instance.trigger_event('on_open_model', { :name => model.name })
+      Plugin.instance.trigger_event(ON_OPEN_MODEL, { :name => model.name })
       DimensionUtils.instance.fetch_length_options
       add_model_observers(model)
     end
 
     def onActivateModel(model)
       # puts "onActivateModel: #{model}"
-      Plugin.instance.trigger_event('on_activate_model', { :name => model.name })
+      Plugin.instance.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
       DimensionUtils.instance.fetch_length_options
     end
 

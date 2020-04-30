@@ -10,6 +10,8 @@ module Ladb::OpenCutList
     attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :groups
 
     def initialize(length_unit, dir, filename, page_label, instance_count)
+      @_obsolete = false
+
       @errors = []
       @warnings = []
       @tips = []
@@ -26,6 +28,14 @@ module Ladb::OpenCutList
     end
 
     # ---
+
+    def invalidate
+      @_obsolete = true
+    end
+
+    def obsolete?
+      @_obsolete
+    end
 
     # Errors
 

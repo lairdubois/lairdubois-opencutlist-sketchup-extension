@@ -399,6 +399,7 @@ tab:
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei. **{{ error }}**
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
+      obsolete_cutlist: La fiche de débit générée est obsolète.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**).
@@ -412,7 +413,7 @@ tab:
         Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
       no_typed_materials: Übertragen Sie ein Material auf die Teile, die Sie in der Holzliste sehen möchten und definieren Sie die Eigenschaften dieses Materials im Tab <i class="ladb-opencutlist-icon-materials"></i> *Materialien*.
-    outdated_base: Sie müssen die Holzliste neu generieren, damit diese synchron zum Modell bleibt.
+    obsolete_base: Sie müssen die Holzliste neu generieren, damit diese synchron zum Modell bleibt.
   materials:
     label: Materialien
     title: Materialien
@@ -520,7 +521,7 @@ tab:
       failed_removing_material: Ein Fehler ist beim Löschen des Materials aufgetreten. **{{ error }}**
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
-    outdated_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
+    obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
   importer:
     label: Importieren
     title: Teile importieren
@@ -597,7 +598,7 @@ tab:
       imported_title: Importieren abgeschlossen
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
-    outdated_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+    obsolete_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
   sponsor:
     label: Sponsern
     title: Sponsoring

@@ -2053,15 +2053,15 @@
 
     // Internals /////
 
-    LadbTabCutlist.prototype.showOutdated = function (messageI18nKey) {
+    LadbTabCutlist.prototype.showObsolete = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_cutlist_modal_outdated', 'tabs/cutlist/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
             messageI18nKey: messageI18nKey
         });
 
         // Fetch UI elements
-        var $btnGenerate = $('#ladb_cutlist_outdated_generate', $modal);
+        var $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
 
         // Bind buttons
         $btnGenerate.on('click', function () {
@@ -2135,7 +2135,7 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             if (that.generateAt) {
-                that.showOutdated('core.event.model_change');
+                that.showObsolete('core.event.model_change');
             }
 
             // Hide edit option model (if it exists)
@@ -2147,19 +2147,19 @@
         });
         addEventCallback('on_options_provider_changed', function () {
             if (that.generateAt) {
-                that.showOutdated('core.event.options_change');
+                that.showObsolete('core.event.options_change');
             }
         });
         addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
                 if (that.generateAt) {
-                    that.showOutdated('core.event.material_change');
+                    that.showObsolete('core.event.material_change');
                 }
             }
         });
         addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function () {
             if (that.generateAt) {
-                that.showOutdated('core.event.selection_change');
+                that.showObsolete('core.event.selection_change');
             }
         });
 

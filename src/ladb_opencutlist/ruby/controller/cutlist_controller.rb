@@ -3,6 +3,9 @@ module Ladb::OpenCutList
   require_relative 'controller'
   require_relative '../model/attributes/material_attributes'
   require_relative '../model/attributes/definition_attributes'
+  require_relative '../observer/app_observer'
+  require_relative '../observer/selection_observer'
+  require_relative '../observer/materials_observer'
 
   class CutlistController < Controller
 
@@ -59,6 +62,24 @@ module Ladb::OpenCutList
 
     end
 
+    def setup_event_callbacks
+
+      Plugin.instance.add_event_callback([
+                                             AppObserver::ON_NEW_MODEL,
+                                             AppObserver::ON_OPEN_MODEL,
+                                             AppObserver::ON_ACTIVATE_MODEL,
+                                             SelectionObserver::ON_SELECTION_BULK_CHANGE,
+                                             SelectionObserver::ON_SELECTION_CLEARED,
+                                             MaterialsObserver::ON_MATERIAL_CHANGE,
+                                             MaterialsObserver::ON_MATERIAL_REMOVE,
+                                         ]) do |params|
+
+        # Invalidate Cutlist if exists
+        @cutlist.invalidate if @cutlist
+
+      end
+
+    end
     private
 
     # -- Commands --

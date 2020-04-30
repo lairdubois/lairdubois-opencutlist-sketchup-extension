@@ -399,6 +399,7 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: Echec de l'écriture du fichier d'export. **{{ error }}**
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
+      obsolete_cutlist: La fiche de débit générée est obsolète.
     warning:
       partial_cutlist: Cette fiche de débit est une représentation partielle de votre modèle puisqu'elle n'utilise que les éléments sélectionnés.
       no_typed_materials_in_model: Votre modèle n'utilise aucune matière ayant un type défini (**Bois massif** ou **Panneau** ou **Barre**).
@@ -412,7 +413,7 @@ tab:
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
       no_typed_materials: Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**Bois massif** ou **Panneau** ou **Barre**) dans l'onglet <i class="ladb-opencutlist-icon-materials"></i> **Matières**.
-    outdated_base: Pour rester synchronisé, vous devez re-générer la fiche de débit.
+    obsolete_base: Pour rester synchronisé, vous devez re-générer la fiche de débit.
   materials:
     label: Matières
     title: Matières
@@ -520,7 +521,7 @@ tab:
       failed_removing_material: Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**
     success:
       exported_to: Export réussi vers {{ export_path }}.
-    outdated_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
+    obsolete_base: Pour rester synchronisé, vous devez rafraîchir la liste de matières.
   importer:
     label: Importer
     title: Importer des pièces
@@ -597,7 +598,7 @@ tab:
       imported_title: Importation terminée
       imported_body: "{{ count }} pièce importée avec succes !"
       imported_body_plural: "{{ count }} pièces importées avec succes !"
-    outdated_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
+    obsolete_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   sponsor:
     label: Soutenir
     title: Soutenir

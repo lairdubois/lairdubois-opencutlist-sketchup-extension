@@ -37,6 +37,7 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
+      return { :errors => [ 'tab.cutlist.error.obsolete_cutlist', 'tab.cutlist.obsolete_base' ] } if @cutlist.obsolete?
 
       response = {
           :errors => [],

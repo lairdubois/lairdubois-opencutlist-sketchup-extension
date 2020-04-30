@@ -11,5 +11,8 @@ module Ladb::OpenCutList
     def setup_commands()
     end
 
+    def setup_event_callbacks()
+    end
+
   end
 end
