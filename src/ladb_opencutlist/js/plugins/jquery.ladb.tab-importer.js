@@ -374,15 +374,15 @@
 
     // Internals /////
 
-    LadbTabImporter.prototype.showOutdated = function (messageI18nKey) {
+    LadbTabImporter.prototype.showObsolete = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_importer_modal_outdated', 'tabs/importer/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
             messageI18nKey: messageI18nKey
         });
 
         // Fetch UI elements
-        var $btnLoad = $('#ladb_importer_outdated_load', $modal);
+        var $btnLoad = $('#ladb_importer_obsolete_load', $modal);
 
         // Bind buttons
         $btnLoad.on('click', function () {
@@ -414,7 +414,7 @@
 
         addEventCallback('on_options_provider_changed', function () {
             if (that.loadOptions) {
-                that.showOutdated('core.event.options_change');
+                that.showObsolete('core.event.options_change');
             }
         });
 

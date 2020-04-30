@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'set'
   require_relative '../../modules/bounds_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'

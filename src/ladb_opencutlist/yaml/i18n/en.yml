@@ -423,6 +423,7 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: Failed to write the export file. **{{ error }}**
       unknow_part: The selected part does not exist in the parts list.
+      obsolete_cutlist: La fiche de débit générée est obsolète.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).
@@ -436,7 +437,7 @@ tab:
         If you use only groups, convert them first into components.
         By using components for parts, they can be replicated without being duplicated.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Dimensional**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    outdated_base: To remain synchronized, you must regenerate the parts list.
+    obsolete_base: To remain synchronized, you must regenerate the parts list.
   materials:
     label: Materials
     title: Materials
@@ -549,7 +550,7 @@ tab:
       failed_removing_material: An error happened while suppressing this material. **{{ error }}**
     success:
       exported_to: Export to {{ export_path }} successful.
-    outdated_base: To remain synchronized, you must refresh the material list.
+    obsolete_base: To remain synchronized, you must refresh the material list.
   importer:
     label: Import
     title: Import Parts
@@ -626,7 +627,7 @@ tab:
       imported_title: Import done
       imported_body: "{{ count }} part was successfully imported!"
       imported_body_plural: "{{ count }} parts were successfully imported!"
-    outdated_base: To remain synchronized, you must reload the CSV file.
+    obsolete_base: To remain synchronized, you must reload the CSV file.
   sponsor:
     label: Sponsor
     title: Sponsor

@@ -705,15 +705,15 @@
         return null;
     };
 
-    LadbTabMaterials.prototype.showOutdated = function (messageI18nKey) {
+    LadbTabMaterials.prototype.showObsolete = function (messageI18nKey) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_materials_modal_outdated', 'tabs/materials/_modal-outdated.twig', {
+        var $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
             messageI18nKey: messageI18nKey
         });
 
         // Fetch UI elements
-        var $btnRefresh = $('#ladb_materials_outdated_refresh', $modal);
+        var $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
 
         // Bind buttons
         $btnRefresh.on('click', function () {
@@ -1091,11 +1091,11 @@
         // Events
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
-            that.showOutdated('core.event.model_change');
+            that.showObsolete('core.event.model_change');
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
-                that.showOutdated('core.event.material_change');
+                that.showObsolete('core.event.material_change');
             }
         });
         addEventCallback([ 'on_material_set_current' ], function (params) {
