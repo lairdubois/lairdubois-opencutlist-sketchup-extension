@@ -6,17 +6,19 @@ module Ladb::OpenCutList
       @group_id = settings['group_id']
 
       @cutlist = cutlist
-      @reset = @reset
+      @reset = reset
 
     end
 
     # -----
 
     def run
-      return unless @cutlist
+      return { :errors => [ 'default.error' ] } unless @cutlist
 
       model = Sketchup.active_model
-      definitions = model ? model.definitions : []
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
+      definitions = model.definitions
 
       @cutlist.groups.each { |group|
 

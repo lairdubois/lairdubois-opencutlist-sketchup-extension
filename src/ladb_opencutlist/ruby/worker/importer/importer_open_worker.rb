@@ -7,17 +7,12 @@ module Ladb::OpenCutList
     def run
 
       model = Sketchup.active_model
+      return { :errors => [ 'tab.importer.error.no_model' ] } unless model
 
       response = {
           :errors => [],
           :length_unit => DimensionUtils.instance.length_unit,
       }
-
-      # Check model
-      unless model
-        response[:errors] << 'tab.importer.error.no_model'
-        return response
-      end
 
       # Ask for open file path
       path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")

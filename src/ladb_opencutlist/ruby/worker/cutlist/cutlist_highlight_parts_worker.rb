@@ -13,11 +13,10 @@ module Ladb::OpenCutList
     # -----
 
     def run
+      return { :errors => [ 'default.error' ] } unless @cutlist
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
-
-      return { :errors => [ 'default.error' ] } unless @cutlist
 
       # Retrieve parts
       parts = []

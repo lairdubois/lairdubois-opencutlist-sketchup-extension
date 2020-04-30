@@ -17,17 +17,12 @@ module Ladb::OpenCutList
 
     def run
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.importer.error.no_model' ] } unless model
+
       response = {
           :errors => [],
       }
-
-      model = Sketchup.active_model
-
-      # Check model
-      unless model
-        response[:errors] << 'tab.importer.error.no_model'
-        return response
-      end
 
       definitions = model.definitions
       materials = model.materials
