@@ -2,6 +2,6 @@ module Ladb::OpenCutList
 
     EXTENSION_NAME = 'OpenCutList'.freeze
     EXTENSION_VERSION = '1.8.5-dev'.freeze
-    EXTENSION_BUILD = '202004301905'.freeze
+    EXTENSION_BUILD = '202005011241'.freeze
 
 end
