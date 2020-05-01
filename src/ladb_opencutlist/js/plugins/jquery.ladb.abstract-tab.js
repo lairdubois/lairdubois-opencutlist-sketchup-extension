@@ -28,7 +28,7 @@ LadbAbstractTab.prototype.pushNewSlide = function (id, twigFile, renderParams, c
 
     // Check if top slide has the same id
     var $topSlide = this.topSlide();
-    if ($topSlide.attr('id') == id) {
+    if ($topSlide.attr('id') === id) {
         $topSlide.attr('id', id + '_obsolete');
         $topSlide.data('remove-after-animation', true);
     }
@@ -134,19 +134,25 @@ LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
 };
 
-LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animated) {
+LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animated /* = false */, onAfterHighlight /* = false */) {
     if ($target && $target.length) {
         if ($slide === null) {
             $slide = this.topSlide();   // No slide, use topSlide
         }
         if ($slide) {
             var scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
+            var highlightFn = function () {
+                if (onAfterHighlight) {
+                    var $highlightable = $('.ladb-highlightable', $target);
+                    var $effectTarget = $highlightable.length > 0 ? $highlightable.first() : $target;
+                    $effectTarget.effect('highlight', {}, 1500);
+                }
+            }
             if (animated) {
-                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(function () {
-                    $target.effect("highlight", {}, 1500);
-                });
+                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(highlightFn);
             } else {
                 $slide.scrollTop(scrollTop);
+                highlightFn();
             }
         }
     }

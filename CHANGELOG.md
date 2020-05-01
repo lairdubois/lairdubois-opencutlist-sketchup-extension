@@ -9,8 +9,9 @@ in 1.x and 0.x versions.
   * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal
   * Fixed some New Material modal issues
-  * Improved cutlist scroll to first visible group
-  * Improved highlight tool to display part oritention with front and back face
+  * Improved cutlist scroll to first visible group (only if no alert)
+  * Improved highlight tool to display part oriention with front and back face
+  * Replaced 'selection only' warning by displaying this info in header
 
 * 1.8.4 (2020-01-09)
 

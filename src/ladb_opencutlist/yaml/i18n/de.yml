@@ -8,7 +8,6 @@ default:
   see: Sehen
   close: Schließen
   clear: Löschen
-  empty_filename: ohne Titel.skp
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
@@ -19,6 +18,8 @@ default:
   caution: Vorsicht
   remove: Löschen
   create: Anlegen
+  ignore: Ignorer
+  empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
   warning: Achtung
@@ -71,6 +72,7 @@ tab:
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
+    selection_only: Sélection
     material_undefined: Material nicht definiert
     not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
@@ -516,6 +518,7 @@ tab:
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_materials: Ihr Modell enthält keine Materialien.
+      material_not_found: Matière introuvable.
       failed_import_skm_file: Ein Fehler ist beim Importieren aus .skm Datei aufgetreten. **{{ error }}**
       failed_export_skm_file: Ein Fehler ist beim Exportieren nach .skm aufgetreten. **{{ error }}**
       failed_removing_material: Ein Fehler ist beim Löschen des Materials aufgetreten. **{{ error }}**

@@ -8,7 +8,6 @@ default:
   see: Voir
   close: Fermer
   clear: Effacer
-  empty_filename: Sans titre.skp
   refresh: Rafraîchir
   generate: Générer
   print: Imprimer
@@ -19,6 +18,8 @@ default:
   caution: Attention
   remove: Supprimer
   create: Créer
+  ignore: Ignorer
+  empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
   warning: Attention
@@ -71,6 +72,7 @@ tab:
     help: |
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
+    selection_only: Sélection
     material_undefined: Sans matière
     not_available_width: Largeur non disponible
     not_available_thickness: Épaisseur non disponible
@@ -516,6 +518,7 @@ tab:
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_materials: Votre modèle ne contient aucune matière.
+      material_not_found: Matière introuvable.
       failed_import_skm_file: Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**
       failed_export_skm_file: Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**
       failed_removing_material: Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**

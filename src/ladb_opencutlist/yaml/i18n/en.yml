@@ -8,7 +8,6 @@ default:
   see: See
   close: Close
   clear: Clear
-  empty_filename: Untitled.skp
   refresh: Refresh
   generate: Generate
   print: Print
@@ -19,6 +18,8 @@ default:
   caution: Caution
   remove: Remove
   create: Create
+  ignore: Ignorer
+  empty_filename: Untitled.skp
   help: Help
   error: Darn!
   warning: Warning
@@ -71,6 +72,7 @@ tab:
     help: |
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
+    selection_only: Sélection
     material_undefined: Material undefined
     not_available_width: Width not available
     not_available_thickness: Thickness not available
@@ -516,6 +518,7 @@ tab:
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_materials: Model does not contain any material.
+      material_not_found: Matière introuvable.
       failed_import_skm_file: An error happened while importing from .skm file. **{{ error }}**
       failed_export_skm_file: An error happened while exporting to .skm file. **{{ error }}**
       failed_removing_material: An error happened while suppressing this material. **{{ error }}**

@@ -78,16 +78,16 @@ module Ladb::OpenCutList
           )
 
           case material_attributes.type
-          when MaterialAttributes::TYPE_SOLID_WOOD
-            response[:solid_wood_material_count] += 1
-          when MaterialAttributes::TYPE_SHEET_GOOD
-            response[:sheet_good_material_count] += 1
-          when MaterialAttributes::TYPE_DIMENSIONAL
-            response[:dimensional_material_count] += 1
-          when MaterialAttributes::TYPE_EDGE
-            response[:edge_material_count] += 1
-          else
-            response[:untyped_material_count] += 1
+            when MaterialAttributes::TYPE_SOLID_WOOD
+              response[:solid_wood_material_count] += 1
+            when MaterialAttributes::TYPE_SHEET_GOOD
+              response[:sheet_good_material_count] += 1
+            when MaterialAttributes::TYPE_DIMENSIONAL
+              response[:dimensional_material_count] += 1
+            when MaterialAttributes::TYPE_EDGE
+              response[:edge_material_count] += 1
+            else
+              response[:untyped_material_count] += 1
           end
         }
       end

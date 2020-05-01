@@ -419,14 +419,20 @@
                     if (response['errors']) {
                         that.opencutlist.notifyErrors(response['errors']);
                     } else {
-                        that.loadList();
+
+                        // Reload the list
+                        var material_id = that.editedMaterial.id;
+                        that.loadList(function() {
+                            that.scrollSlideToTarget(null, $('#ladb_material_' + material_id, that.$page), false, true);
+                        });
+
+                        // Reset edited material
+                        that.editedMaterial = null;
+
+                        // Hide modal
+                        $modal.modal('hide');
+
                     }
-
-                    // Reset edited material
-                    that.editedMaterial = null;
-
-                    // Hide modal
-                    $modal.modal('hide');
 
                 });
 
@@ -487,13 +493,16 @@
                 if (response.errors && response.errors.length > 0) {
                     that.opencutlist.notifyErrors(response.errors);
                 } else {
+
+                    // Reload the list
                     that.loadList();
+
+                    // Hide modal
+                    $modal.modal('hide');
+
                 }
 
             });
-
-            // Hide modal
-            $modal.modal('hide');
 
         });
 
@@ -516,7 +525,10 @@
             if (response.errors && response.errors.length > 0) {
                 that.opencutlist.notifyErrors(response.errors);
             } else {
-                that.loadList();
+                that.loadList(function() {
+                    var $material = $('#ladb_material_' + response.material_id, that.$page);
+                    that.scrollSlideToTarget(null, $material, true, true);
+                });
             }
 
         });
@@ -674,7 +686,7 @@
             // Hide modal
             $modal.modal('hide');
 
-            // Refresh the list
+            // Reload the list
             that.loadList();
 
         });
