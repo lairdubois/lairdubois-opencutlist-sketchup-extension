@@ -48,6 +48,24 @@ module Ladb::OpenCutList
 
     end
 
+    def setup_event_callbacks
+
+      Plugin.instance.add_event_callback([
+                                             AppObserver::ON_NEW_MODEL,
+                                             AppObserver::ON_OPEN_MODEL,
+                                             AppObserver::ON_ACTIVATE_MODEL,
+                                             MaterialsObserver::ON_MATERIAL_ADD,
+                                             MaterialsObserver::ON_MATERIAL_CHANGE,
+                                             MaterialsObserver::ON_MATERIAL_REMOVE,
+                                         ]) do |params|
+
+        # Invalidate Cutlist if exists
+        @cutlist.invalidate if @cutlist
+
+      end
+
+    end
+
     private
 
     # -- Commands --

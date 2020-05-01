@@ -177,6 +177,7 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var tips = response.tips;
+            var selectionOnly = response.selection_only;
             var lengthUnit = response.length_unit;
             var filename = response.filename;
             var pageLabel = response.page_label;
@@ -205,6 +206,7 @@
             // Update filename
             that.$fileTabs.empty();
             that.$fileTabs.append(Twig.twig({ ref: "tabs/cutlist/_file-tab.twig" }).render({
+                selectionOnly: selectionOnly,
                 filename: filename,
                 pageLabel: pageLabel,
                 generateAt: that.generateAt,
@@ -381,7 +383,7 @@
                 if ($target.data('group-id')) {
                     that.showGroup($target);
                 }
-                that.scrollSlideToTarget(null, $target, true);
+                that.scrollSlideToTarget(null, $target, true, true);
                 return false;
             });
             $('a.ladb-btn-material-filter', that.$page).on('click', function () {
@@ -471,7 +473,7 @@
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.hideAllGroups(groupId);
-                that.scrollSlideToTarget(null, $group, true)
+                that.scrollSlideToTarget(null, $group, true, false);
             });
             $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                 $(this).blur();
@@ -588,8 +590,10 @@
             if (callback && typeof callback == 'function') {
                 callback();
             } else {
-                // No callback -> scroll to the first printable group
-                that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
+                if (errors.length === 0 && warnings.length === 0 && tips.length === 0) {
+                    // No callback -> scroll to the first printable group
+                    that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
+                }
             }
 
         });
@@ -1231,10 +1235,10 @@
 
                             });
 
-                        }
+                            // Hide modal
+                            $modal.modal('hide');
 
-                        // Hide modal
-                        $modal.modal('hide');
+                        }
 
                     });
 
@@ -1968,7 +1972,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
-                                that.scrollSlideToTarget($slide, $target, true);
+                                that.scrollSlideToTarget($slide, $target, true, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1976,7 +1980,7 @@
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
                                 var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
-                                that.scrollSlideToTarget($slide, $target, true);
+                                that.scrollSlideToTarget($slide, $target, true, true);
                                 $(this).blur();
                                 return false;
                             });
@@ -1992,7 +1996,7 @@
                                 if ($target.data('group-id')) {
                                     that.showGroup($target);
                                 }
-                                that.scrollSlideToTarget($slide, $target, true);
+                                that.scrollSlideToTarget($slide, $target, true, true);
                                 $(this).blur();
                                 return false;
                             });

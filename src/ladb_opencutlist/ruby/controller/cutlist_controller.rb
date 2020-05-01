@@ -76,6 +76,7 @@ module Ladb::OpenCutList
       end
 
     end
+
     private
 
     # -- Commands --
