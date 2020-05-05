@@ -8,7 +8,6 @@ default:
   see: Sehen
   close: Schließen
   clear: Löschen
-  empty_filename: ohne Titel.skp
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
@@ -19,6 +18,8 @@ default:
   caution: Vorsicht
   remove: Löschen
   create: Anlegen
+  ignore: Ignorieren
+  empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
   warning: Achtung
@@ -72,6 +73,7 @@ tab:
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
+    selection_only: Auswahl
     material_undefined: Material nicht definiert
     not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
@@ -423,7 +425,7 @@ tab:
       no_component_in_model: Keine Instanz einer sichtbaren Komponente wurde in der Szene gefunden.
       failed_to_write_export_file: Fehlschlag beim Schreiben der Exportdatei. **{{ error }}**
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
-      obsolete_cutlist: La fiche de débit générée est obsolète.
+      obsolete_cutlist: Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren.
     warning:
       partial_cutlist: Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde.
       no_typed_materials_in_model: Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**).
@@ -531,12 +533,12 @@ tab:
     export_to_skm:
       title: In .skm Datei exportieren
     option:
-      material_order_strategy: Tri des matières
+      material_order_strategy: Sortierfolge des Materials
       material_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
-        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
-      property_type: Type
-      property_name: Nom
+        Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
+        Die Teile können für jede Eigenschaft <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigend* geordnet werden.
+      property_type: Typ
+      property_name: Bezeichnung
       reset: Einstellungen zurücksetzen
     remove:
       message: |
@@ -545,6 +547,7 @@ tab:
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_materials: Ihr Modell enthält keine Materialien.
+      material_not_found: Kein Material gefunden.
       failed_import_skm_file: Ein Fehler ist beim Importieren aus .skm Datei aufgetreten. **{{ error }}**
       failed_export_skm_file: Ein Fehler ist beim Exportieren nach .skm aufgetreten. **{{ error }}**
       failed_removing_material: Ein Fehler ist beim Löschen des Materials aufgetreten. **{{ error }}**
@@ -665,4 +668,4 @@ tab:
 tool:
   highlight:
     transparency: Transparenz
-    zoom_extents: Zoombereiche
+    zoom_extents: Zoom Grenzen

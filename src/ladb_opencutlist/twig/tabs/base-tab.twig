@@ -8,7 +8,7 @@
 </div>
 {% endblock %}
 
-{% block headerHeadingInner %}{{ ('tab.'~tabName~'.title')|i18next }}{% endblock %}
+{% block headerHeadingInner %}<span class="ladb-obsolete no-print hidden"><i class="ladb-opencutlist-icon-obsolete"></i></span>{{ ('tab.'~tabName~'.title')|i18next }}{% endblock %}
 
 {% block headerInner %}
     {{ parent() }}

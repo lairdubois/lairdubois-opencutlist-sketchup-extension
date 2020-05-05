@@ -8,7 +8,6 @@ default:
   see: See
   close: Close
   clear: Clear
-  empty_filename: Untitled.skp
   refresh: Refresh
   generate: Generate
   print: Print
@@ -19,6 +18,8 @@ default:
   caution: Caution
   remove: Remove
   create: Create
+  ignore: Ignore
+  empty_filename: Untitled.skp
   help: Help
   error: Darn!
   warning: Warning
@@ -72,6 +73,7 @@ tab:
     help: |
       Select the root of the parts list in your scene then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
+    selection_only: Selection
     material_undefined: Material undefined
     not_available_width: Width not available
     not_available_thickness: Thickness not available
@@ -423,7 +425,7 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: Failed to write the export file. **{{ error }}**
       unknow_part: The selected part does not exist in the parts list.
-      obsolete_cutlist: La fiche de débit générée est obsolète.
+      obsolete_cutlist: Impossible, the parts list is obsolete. Regenerate it.
     warning:
       partial_cutlist: This parts list is a partial representation of your model, because it is only based on a selection of parts.
       no_typed_materials_in_model: This model does not use any defined material (**Solid Wood** or **Sheet Good** or **Dimensional**).
@@ -531,12 +533,12 @@ tab:
     export_to_skm:
       title: Export to .skm file
     option:
-      material_order_strategy: Tri des matières
+      material_order_strategy: Material Sorting
       material_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
-        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
+        Reorganize the following properties to define the sort order within each group.
+        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Type
-      property_name: Nom
+      property_name: Name
       reset: Restore Default Values
     remove:
       message: |
@@ -545,6 +547,7 @@ tab:
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_materials: Model does not contain any material.
+      material_not_found: No material found.
       failed_import_skm_file: An error happened while importing from .skm file. **{{ error }}**
       failed_export_skm_file: An error happened while exporting to .skm file. **{{ error }}**
       failed_removing_material: An error happened while suppressing this material. **{{ error }}**
@@ -665,4 +668,4 @@ tab:
 tool:
   highlight:
     transparency: Transparency
-    zoom_extents: Zoom extents
+    zoom_extents: Zoom Extents

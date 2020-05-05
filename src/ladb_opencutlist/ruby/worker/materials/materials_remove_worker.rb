@@ -13,27 +13,21 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
-      response = {
-          :errors => []
-      }
-
       # Fetch material
       materials = model.materials
       material = materials[@name]
 
-      if material
+      return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
-        begin
-          materials.remove(material)
-        rescue => e
-          response[:errors] << [ 'tab.materials.error.failed_removing_material', { :error => e.message } ]
-        end
-
-      else
-        response[:errors] << [ 'tab.materials.error.failed_removing_material', { :error => '' }]
+      begin
+        success = materials.remove(material)
+      rescue => e
+        return { :errors => [ 'tab.materials.error.failed_removing_material', { :error => e.message } ] }
       end
 
-      response
+      {
+          :success => success
+      }
     end
 
     # -----

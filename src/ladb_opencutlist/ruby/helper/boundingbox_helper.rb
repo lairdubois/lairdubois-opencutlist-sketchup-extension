@@ -1,10 +1,10 @@
 module Ladb::OpenCutList
 
-  require_relative 'layer0_caching'
+  require_relative 'layer0_caching_helper'
 
-  module BoundsHelper
+  module BoundingBoxHelper
 
-    include Layer0Caching
+    include Layer0CachingHelper
 
     def _compute_faces_bounds(definition_or_group, transformation = nil)
       bounds = Geom::BoundingBox.new

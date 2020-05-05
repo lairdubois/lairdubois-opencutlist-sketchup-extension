@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   class MaterialsSetCurrentWorker
 
-    def initialize(options)
+    def initialize(settings)
       @name = settings['name']
     end
 
@@ -17,18 +17,16 @@ module Ladb::OpenCutList
       materials = model.materials
       material = materials[@name]
 
-      if material
+      return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
-        # Set material as current
-        materials.current = material
+      # Set material as current
+      materials.current = material
 
-        # Send action
-        success = Sketchup.send_action('selectPaintTool:')
-
-      end
+      # Send action
+      success = Sketchup.send_action('selectPaintTool:')
 
       {
-          :success => true,
+          :success => success,
       }
     end
 

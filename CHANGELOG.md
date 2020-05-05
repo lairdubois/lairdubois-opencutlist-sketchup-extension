@@ -7,19 +7,20 @@ in 1.x and 0.x versions.
 * 1.8.5
 
   * Added flipped part detection  
-  * Added 'hit enter' behavior to validate forms in modal
+  * Added 'hit enter' behavior to validate forms in modal dialogs
   * Fixed some New Material modal issues
-  * Improved cutlist scroll to first visible group
-  * Improved highlight tool to display part oritention with front and back face
+  * Improved cutlist scroll to first visible group (only if no alert)
+  * Improved highlight tool to display part oriention with front and back face
+  * Replaced 'selection only' warning by displaying this info in header
 
 * 1.8.4 (2020-01-09)
 
-  * Add part "Number" column in cutlist instance export
+  * Added part "Number" column in cutlist instance export
   * Remove $debug global variable in rchardet lib
 
 * 1.8.3 (2019-12-19)
 
-  * Materials order option
+  * Added Materials order option
   * Cutlist highlight multiple parts improvements
   * Sponsor ad
 
@@ -33,7 +34,7 @@ in 1.x and 0.x versions.
   * Added multiple edition of parts in cutlist
   * Added sponsor tab
   * Added cutting diagram part list display option
-  
+
 * 1.8.0 (2019-10-01)
 
   * Added edge band material type and management
@@ -47,7 +48,7 @@ in 1.x and 0.x versions.
   * Added 'Edit part axes properties' menu item
   * Export cutlist instance names
   * Show only material display names
-  
+
 * 1.7.1 (2019-06-30)
 
   * Added missing translations

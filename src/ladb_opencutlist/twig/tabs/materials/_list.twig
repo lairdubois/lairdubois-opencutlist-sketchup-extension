@@ -7,8 +7,8 @@
 
 <div class="row">
 {% for material in materials %}
-    <div class="col-md-2 col-sm-3 col-xs-6">
-        <div class="ladb-material-box ladb-minitools-holder{% if material.name == currentMaterialName %} ladb-active{% endif %}" data-material-id="{{ material.id }}">
+    <div id="ladb_material_{{ material.id }}" class="col-md-2 col-sm-3 col-xs-6">
+        <div class="ladb-material-box ladb-minitools-holder ladb-highlightable{% if material.name == currentMaterialName %} ladb-active{% endif %}" data-material-id="{{ material.id }}">
             <div class="ladb-content">
                 <div class="ladb-image">
                     <div class="ladb-img-sizer" style="padding-top: 100%;">

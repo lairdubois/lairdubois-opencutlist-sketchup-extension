@@ -7,7 +7,7 @@
 {% block bodyInner %}
     <div class="media">
         <div class="media-left">
-            <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+            <i class="ladb-opencutlist-icon-obsolete" style="font-size: 150%;"></i>
         </div>
         <div class="media-body">
             <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
@@ -18,6 +18,6 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.ignore'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_cutlist_obsolete_generate"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
 {% endblock %}

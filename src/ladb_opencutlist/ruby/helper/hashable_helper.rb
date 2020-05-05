@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  module Hashable
+  module HashableHelper
 
     def to_hash
       hash = {}
@@ -9,7 +9,7 @@ module Ladb::OpenCutList
         next if key.start_with? '_'   # Exclude "private" instance variables
         value = self.instance_variable_get(var)
         if value.is_a? Array
-          value = value.collect{ |v| v.is_a?(Hashable) ? v.to_hash : v }
+          value = value.collect{ |v| v.is_a?(HashableHelper) ? v.to_hash : v }
         end
         hash[key] = value
       end
