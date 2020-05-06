@@ -28,9 +28,10 @@ module Ladb::OpenCutList
 
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking1D::Options.new
-      options.std_length = @std_bar_length
+      options.base_bin_length = @std_bar_length
+      options.debug = false
       options.saw_kerf = @saw_kerf # size of saw_kerf
-      options.trim_size = @trimming # size of trim size (both sides)
+      options.trimsize = @trimming # size of trim size (both sides)
       options.max_time = @max_time # the amount of time in seconds for computing, before aborting
       options.tuning_level = @tuning_level # a level 0, 1, 2
 
@@ -51,25 +52,6 @@ module Ladb::OpenCutList
 
       # Compute the cutting diagram
       result, err = e.run
-
-      puts result
-
-      case err
-      when BinPacking1D::ERROR_NONE
-        puts('optimal solution found')
-      when BinPacking1D::ERROR_SUBOPT
-        puts('suboptimal solution found')
-      when BinPacking1D::ERROR_NO_BIN
-        puts('no bins available')
-      when BinPacking1D::ERROR_NO_PARTS
-        puts('no parts to pack')
-      when BinPacking1D::ERROR_TIME_EXCEEDED
-        puts('time exceeded and no solution found')
-      when BinPacking1D::ERROR_NOT_IMPLEMENTED
-        puts('feature not implemented yet')
-      else
-        puts('funky error, contact developpers', err)
-      end
 
       # Compute the cutting diagram
 
@@ -99,17 +81,32 @@ module Ladb::OpenCutList
           :bars => [],
       }
 
-      if err > BinPacking1D::ERROR_NONE
+      if err > BinPacking1D::ERROR_SUBOPT
 
         # Engine error -> returns error only
 
         case err
         when BinPacking1D::ERROR_NO_BIN
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
+        when BinPacking1D::ERROR_NO_BIN
+          puts('no bins available')
+        when BinPacking1D::ERROR_NO_PARTS
+          puts('no parts to pack')
+        when BinPacking1D::ERROR_TIME_EXCEEDED
+          puts('time exceeded and no solution found')
+        when BinPacking1D::ERROR_NOT_IMPLEMENTED
+          puts('feature not implemented yet')
+        else
+          puts('funky error, contact developpers', err)
         end
-
+        
       else
 
+        # Errors
+        if result.unplaced_boxes.length > 0
+          response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
+        end
+        
         # Warnings
         materials = Sketchup.active_model.materials
         material = materials[group.material_name]
@@ -123,7 +120,7 @@ module Ladb::OpenCutList
 
         # Unplaced parts
         unplaced_parts = {}
-        result.unplaced_parts.each { |box|
+        result.unplaced_boxes.each { |box|
           part = unplaced_parts[box.data.number]
           unless part
             part = {
@@ -142,42 +139,49 @@ module Ladb::OpenCutList
           response[:unplaced_parts].push(part)
         }
 
-        # Bars
+        # Bins: needs renaming
         index = 0
-        result.bars.each { |bin|
+        result.bins.each { |bin|
 
           index += 1
           bar = {
               :index => index,
               :px_length => to_px(bin.length),
-              :type => bin.type, # TODO
+              :type => bin.type, # leftover or new bin
               :length => bin.length.to_l.to_s,
               :efficiency => bin.efficiency,
               :total_length_cuts => bin.total_length_cuts.to_l.to_s,
-              :parts => bin.parts,
+              :parts => bin.boxes,
               :grouped_parts => [],
-              :leftover => bin.leftover,
+              :leftover => bin.current_leftover,
               :cuts => bin.cuts,
           }
 
-          puts("result for bar #{index}")
-          puts("type: ", bar[:type])
-          puts("length: ", bar[:length])
-          puts("efficiency [0,1]: ", bar[:efficiency])
-          puts("leftover/waste: ", bar[:leftover].to_l.to_s)
-          puts("parts: ")
-          bar[:parts].each do |p|
-            print(p[:length].to_l.to_s, " (", p[:id], ") ")
+          # begin: to be deleted after debugging
+          puts("result for bin #{index}")
+          puts("type: #{bar[:type]}")
+          puts("length: #{bar[:length]}")
+          puts("efficiency [0,1]: #{format('%9.2f', bar[:efficiency])}")
+          puts("leftover/waste: #{bar[:leftover].to_l.to_s}")
+          puts("boxes: ")
+          bar[:parts].each do |box|
+            puts("#{box.length.to_l.to_s} data=#{box.data}")
           end
           puts()
 
-          puts("nb of cuts:", bin.nb_of_cuts)
+          puts("nb of cuts: #{bin.cuts.length}")
           bar[:cuts].each do |c|
-            print(c.to_l.to_s, " ")
+            puts("cut @ #{c.to_l.to_s}")
           end
           puts()
+          
+          puts("unplaced parts: #{result.unplaced_boxes.length}")
+          result.unplaced_boxes.each do |box|
+            puts("unplaced length=#{box.length} data=#{box.data}")
+          end
+          # end:
 
-          response[:bars].push(bar)
+          response[:bars].push(bin)
 
         }
       end

@@ -413,7 +413,7 @@ tab:
         cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
         cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
+          *These raw dimensions have been configured on the material'{{ material_name }}': length oversize (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
