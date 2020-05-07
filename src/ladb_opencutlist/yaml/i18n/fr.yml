@@ -397,6 +397,8 @@ tab:
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe
+        bar_type_0: Barre standard
+        bar_type_1: Reste de barre
         sheet_type_0: Panneau standard
         sheet_type_1: Reste de panneau
         unused: Inutilisée

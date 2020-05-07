@@ -397,6 +397,8 @@ tab:
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
+        bar_type_0: Barre standard
+        bar_type_1: Reste de barre
         sheet_type_0: Standard Sized Panel
         sheet_type_1: Offcut
         unused: Unused

@@ -397,6 +397,8 @@ tab:
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
+        bar_type_0: Barre standard
+        bar_type_1: Reste de barre
         sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet

@@ -60,7 +60,7 @@ module Ladb::OpenCutList
 
       # Convert inch float value to pixel
       def to_px(inch_value)
-        inch_value * 7 # 840px = 120" ~ 3m
+        inch_value * 14 # 1680px = 120" ~ 3m
       end
 
       response = {
@@ -88,13 +88,15 @@ module Ladb::OpenCutList
         case err
         when BinPacking1D::ERROR_NO_BIN
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
-        when BinPacking1D::ERROR_NO_BIN
           puts('no bins available')
         when BinPacking1D::ERROR_NO_PARTS
+          response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
           puts('no parts to pack')
         when BinPacking1D::ERROR_TIME_EXCEEDED
+          response[:errors] << 'tab.cutlist.cuttingdiagram.error.time_exceeded'
           puts('time exceeded and no solution found')
         when BinPacking1D::ERROR_NOT_IMPLEMENTED
+          response[:errors] << 'tab.cutlist.cuttingdiagram.error.not_implemented'
           puts('feature not implemented yet')
         else
           puts('funky error, contact developpers', err)
@@ -118,7 +120,7 @@ module Ladb::OpenCutList
           response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
         end
 
-        # Unplaced parts
+        # Unplaced boxes
         unplaced_parts = {}
         result.unplaced_boxes.each { |box|
           part = unplaced_parts[box.data.number]
@@ -139,7 +141,33 @@ module Ladb::OpenCutList
           response[:unplaced_parts].push(part)
         }
 
-        # Bins: needs renaming
+        # Summary
+        summary_bars = {}
+        index = 0
+        result.bins.each { |bin|
+          index += 1
+          id = "#{bin.type},#{bin.length}"
+          bar = summary_bars[id]
+          unless bar
+            bar = {
+                :index => index,
+                :type => bin.type,
+                :count => 0,
+                :length => bin.length.to_l.to_s,
+                :total_length => 0, # Will be converted to string representation after sum
+                :is_used => true,
+            }
+            summary_bars[id] = bar
+          end
+          bar[:count] += 1
+          bar[:total_length] += bin.length
+        }
+        summary_bars.each { |id, bar|
+          bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
+        }
+        response[:summary][:bars] += summary_bars.values
+
+        # bars
         index = 0
         result.bins.each { |bin|
 
@@ -147,30 +175,82 @@ module Ladb::OpenCutList
           bar = {
               :index => index,
               :px_length => to_px(bin.length),
+              :px_width => to_px(group.def.std_width),
               :type => bin.type, # leftover or new bin
               :length => bin.length.to_l.to_s,
+              :width => group.def.std_width.to_s,
               :efficiency => bin.efficiency,
               :total_length_cuts => bin.total_length_cuts.to_l.to_s,
-              :parts => bin.boxes,
+
+              :parts => [],
               :grouped_parts => [],
-              :leftover => bin.current_leftover,
-              :cuts => bin.cuts,
+              :leftover => nil,
+              :cuts => [],
+          }
+          response[:bars].push(bar)
+
+          # Parts
+          grouped_parts = {}
+          bin.boxes.each { |box|
+            bar[:parts].push(
+                {
+                    :id => box.data.id,
+                    :number => box.data.number,
+                    :name => box.data.name,
+                    :px_x => to_px(box.x),
+                    :px_length => to_px(box.length),
+                    :length => box.length.to_l.to_s,
+                }
+            )
+            grouped_part = grouped_parts[box.data.id]
+            unless grouped_part
+              grouped_part = {
+                  :id => box.data.id,
+                  :number => box.data.number,
+                  :saved_number => box.data.saved_number,
+                  :name => box.data.name,
+                  :count => 0,
+                  :length => box.data.length,
+                  :cutting_length => box.data.cutting_length,
+              }
+              grouped_parts.store(box.data.id, grouped_part)
+            end
+            grouped_part[:count] += 1
+          }
+          bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
+
+          # Leftover
+          bar[:leftover] = {
+              :px_x => to_px(bin.current_position),
+              :x => bin.current_position,
+              :px_length => to_px(bin.current_leftover),
+              :length => bin.current_leftover.to_l.to_s,
+          }
+
+          # Cuts
+          bin.cuts.each { |cut|
+            bar[:cuts].push(
+                {
+                    :px_x => to_px(cut),
+                    :x => cut.to_l.to_s,
+                }
+            )
           }
 
           # begin: to be deleted after debugging
           puts("result for bin #{index}")
-          puts("type: #{bar[:type]}")
-          puts("length: #{bar[:length]}")
-          puts("efficiency [0,1]: #{format('%9.2f', bar[:efficiency])}")
-          puts("leftover/waste: #{bar[:leftover].to_l.to_s}")
+          puts("type: #{bin.type}")
+          puts("length: #{bin.length}")
+          puts("efficiency [0,1]: #{format('%9.2f', bin.efficiency)}")
+          puts("leftover/waste: #{bin.leftover.to_l.to_s}")
           puts("boxes: ")
-          bar[:parts].each do |box|
+          bin.boxes.each do |box|
             puts("#{box.length.to_l.to_s} data=#{box.data}")
           end
           puts()
 
           puts("nb of cuts: #{bin.cuts.length}")
-          bar[:cuts].each do |c|
+          bin.cuts.each do |c|
             puts("cut @ #{c.to_l.to_s}")
           end
           puts()
@@ -181,10 +261,12 @@ module Ladb::OpenCutList
           end
           # end:
 
-          response[:bars].push(bin)
-
         }
       end
+
+
+      require 'pp'
+      pp response
 
       response
     end
