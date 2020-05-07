@@ -2,9 +2,9 @@ module Ladb::OpenCutList
 
   module BinPacking1D
   
-    BAR_TYPE_NEW = 0
-    BAR_TYPE_LO = 1
-    BAR_TYPE_UNFIT = 2
+    BIN_TYPE_NEW = 0
+    BIN_TYPE_LO = 1
+    BIN_TYPE_UNFIT = 2
 
     ERROR_NONE = 0
     ERROR_SUBOPT = 1
@@ -17,6 +17,8 @@ module Ladb::OpenCutList
     
     WARNING_SAW_KERF_SMALL = 0
     WARNING_TRIM_SIZE_LARGE = 1
+    
+    MAX_TRIMSIZE_FACTOR = 5
 
     MAX_TIME = 10
 
@@ -28,6 +30,13 @@ module Ladb::OpenCutList
 
     class Packing1D
 
+      attr_accessor :options
+      @options = nil
+      
+      def initialize(options)
+        @options = options
+      end
+      
       def self.valid_max_time(max_time)
         if max_time >= 0 and max_time <= MAX_TIME
           return max_time
@@ -47,6 +56,11 @@ module Ladb::OpenCutList
       def to_ls(nb)
         return nb.to_l.to_s
         #return nb.to_s
+      end
+      
+      def dbg(msg)
+        # assuming @options exists
+        puts msg + "\n" if @options.debug
       end
     end
   end

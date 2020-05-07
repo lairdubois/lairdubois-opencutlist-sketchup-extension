@@ -413,7 +413,7 @@ tab:
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmaße der Teile.
         cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
+          *Übermaß wurden auf dem Material konfiguriert: ein Längenzumaß von (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
           *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
