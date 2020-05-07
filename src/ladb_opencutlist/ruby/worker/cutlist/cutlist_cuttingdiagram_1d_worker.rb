@@ -223,12 +223,11 @@ module Ladb::OpenCutList
           bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
 
           # Leftover
-          leftover = bin.current_leftover - options.trimsize
           bar[:leftover] = {
               :px_x => to_px(bin.current_position),
               :x => bin.current_position,
-              :px_length => to_px(leftover),
-              :length => leftover.to_l.to_s,
+              :px_length => to_px(bin.current_leftover),
+              :length => bin.current_leftover.to_l.to_s,
           }
 
           # Cuts
@@ -242,27 +241,27 @@ module Ladb::OpenCutList
           }
 
           # begin: to be deleted after debugging
-          puts("result for bin #{index}")
-          puts("type: #{bin.type}")
-          puts("length: #{bin.length}")
-          puts("efficiency [0,1]: #{format('%9.2f', bin.efficiency)}")
-          puts("leftover/waste: #{bin.leftover.to_l.to_s}")
-          puts("boxes: ")
-          bin.boxes.each do |box|
-            puts("#{box.length.to_l.to_s}, start=#{box.x.to_l.to_s}, data=#{box.data}")
-          end
-          puts()
-
-          puts("nb of cuts: #{bin.cuts.length}")
-          bin.cuts.each do |c|
-            puts("cut @ #{c.to_l.to_s}")
-          end
-          puts()
-          
-          puts("unplaced parts: #{result.unplaced_boxes.length}")
-          result.unplaced_boxes.each do |box|
-            puts("unplaced length=#{box.length} data=#{box.data}")
-          end
+          # puts("result for bin #{index}")
+          # puts("type: #{bin.type}")
+          # puts("length: #{bin.length}")
+          # puts("efficiency [0,1]: #{format('%9.2f', bin.efficiency)}")
+          # puts("leftover/waste: #{bin.leftover.to_l.to_s}")
+          # puts("boxes: ")
+          # bin.boxes.each do |box|
+          #   puts("#{box.length.to_l.to_s}, start=#{box.x.to_l.to_s}, data=#{box.data}")
+          # end
+          # puts()
+          #
+          # puts("nb of cuts: #{bin.cuts.length}")
+          # bin.cuts.each do |c|
+          #   puts("cut @ #{c.to_l.to_s}")
+          # end
+          # puts()
+          #
+          # puts("unplaced parts: #{result.unplaced_boxes.length}")
+          # result.unplaced_boxes.each do |box|
+          #   puts("unplaced length=#{box.length} data=#{box.data}")
+          # end
           # end:
 
         }
