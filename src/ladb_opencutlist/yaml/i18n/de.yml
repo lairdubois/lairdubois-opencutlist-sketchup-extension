@@ -392,15 +392,15 @@ tab:
         sheet: Platte
         length: Länge
         width: Breite
-        total_length: Σ Longueurs
-        total_area: Σ Surfaces
+        total_length: Σ Längen
+        total_area: Σ Flächen
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
-        bar_type_0: Barre standard
-        bar_type_1: Reste de barre
+        bar_type_0: Standardware
+        bar_type_1: Stangenrest
         sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet
