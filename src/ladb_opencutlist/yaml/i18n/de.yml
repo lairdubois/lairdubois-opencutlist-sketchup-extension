@@ -388,10 +388,12 @@ tab:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
         count: Anzahl
+        bar: Barre
         sheet: Platte
         length: Länge
         width: Breite
-        area: Fläche
+        total_length: Σ Longueurs
+        total_area: Σ Surfaces
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz

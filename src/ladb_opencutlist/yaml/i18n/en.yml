@@ -388,10 +388,12 @@ tab:
         unplaced_parts: Unplaced Parts
         summary: Summary
         count: Qty
+        bar: Barre
         sheet: Panel
         length: Length
         width: Width
-        area: Area
+        total_length: Σ Longueurs
+        total_area: Σ Surfaces
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency

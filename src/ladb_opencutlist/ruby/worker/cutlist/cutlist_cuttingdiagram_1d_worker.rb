@@ -71,7 +71,10 @@ module Ladb::OpenCutList
           :options => {
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => to_px(options.saw_kerf),
-              :saw_kerf => options.saw_kerf.to_l.to_s,
+              :saw_kerf => @saw_kerf.to_l.to_s,
+              :trimming => @trimming.to_l.to_s,
+              :max_time => @max_time,
+              :tuning_level => @tuning_level,
           },
 
           :unplaced_parts => [],
@@ -220,11 +223,12 @@ module Ladb::OpenCutList
           bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
 
           # Leftover
+          leftover = bin.current_leftover - options.trimsize
           bar[:leftover] = {
               :px_x => to_px(bin.current_position),
               :x => bin.current_position,
-              :px_length => to_px(bin.current_leftover),
-              :length => bin.current_leftover.to_l.to_s,
+              :px_length => to_px(leftover),
+              :length => leftover.to_l.to_s,
           }
 
           # Cuts
@@ -263,10 +267,6 @@ module Ladb::OpenCutList
 
         }
       end
-
-
-      require 'pp'
-      pp response
 
       response
     end

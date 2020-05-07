@@ -388,10 +388,12 @@ tab:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
         count: Qte.
+        bar: Barre
         sheet: Panneau
         length: Longueur
         width: Largeur
-        area: Surface tot.
+        total_length: Σ Longueurs
+        total_area: Σ Surfaces
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
