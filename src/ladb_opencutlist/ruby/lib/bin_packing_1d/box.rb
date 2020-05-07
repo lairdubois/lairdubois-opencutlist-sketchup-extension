@@ -1,0 +1,11 @@
+module Ladb::OpenCutList::BinPacking1D
+  class Box < Packing1D
+    attr_accessor :length, :x, :data
+                  
+    def initialize(length, data = nil)
+      @x = 0
+      @length = length 
+      @data = data
+    end
+  end
+end
