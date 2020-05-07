@@ -7,7 +7,7 @@
 {% set dimensionFontSize = 12 %}
 {% set numberFontSize = 26 %}
 
-{% set dimensionOffset = 3 %}
+{% set dimensionOffset = 5 %}
 {% set barDimensionOffset = 10 %}
 
 {% set barOutlineWidth = 1 %}
@@ -201,7 +201,7 @@
                                 <rect class="sheet-inner" x="0" y="0" width="{{ bar.px_length }}" height="{{ bar.px_width }}"></rect>
                             </g>
                             {% set hideCross = bar.leftover.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
-                            {% set hideDimensions = bar.leftover.px_length < (dimensionFontSize + dimensionOffset) or bar.px_width < (dimensionFontSize + dimensionOffset) %}
+                            {% set hideDimensions = bar.leftover.px_length < (dimensionFontSize * 2) %}
                             <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ bar.leftover.length|escape('html') }}">
                                 <rect class="leftover-inner" x="{{ bar.leftover.px_x }}" y="0" width="{{ bar.leftover.px_length }}" height="{{ bar.px_width }}"></rect>
                                 {% if not hideCross %}
@@ -209,19 +209,18 @@
                                     <line class="leftover-cross" x1="{{ bar.leftover.px_x }}" y1="0" x2="{{ bar.leftover.px_x + bar.leftover.px_length }}" y2="{{ bar.px_width }}"></line>
                                 {% endif %}
                                 {% if not hideDimensions %}
-                                    <text class="leftover-dimension" x="{{ bar.leftover.px_x + bar.leftover.px_length / 2 }}" y="{{ dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle">{{ bar.leftover.length }}</text>
+                                    <text class="leftover-dimension" x="{{ bar.leftover.px_x + bar.leftover.px_length / 2 }}" y="{{ bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging">{{ bar.leftover.length }}</text>
                                 {% endif %}
                             </g>
                             {% for part in bar.parts|reverse %}
-                                {% set hideDimensions = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or bar.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) %}
+                                {% set hideDimensions = part.px_length < (dimensionFontSize * 2) %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="0" width="{{ part.px_length }}" height="{{ bar.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% set numberTextLength = part.number|length %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / numberTextLength, (bar.px_width - dimensionOffset * 2))  }}px" text-anchor="middle" dominant-baseline="central">{{ part.number }}</text>
                                     {% if not hideDimensions %}
-                                        {% set centredLength = bar.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
-                                        <text class="part-dimension" x="{{ centredLength ? part.px_x + part.px_length / 2 : part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ centredLength ? partOutlineWidth + dimensionOffset + dimensionFontSize : bar.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}"{% if not centredLength %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
+                                        <text class="part-dimension" x="{{ part.px_x + part.px_length / 2 }}" y="{{ bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}
