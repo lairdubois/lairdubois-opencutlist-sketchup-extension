@@ -1,7 +1,7 @@
 module Ladb::OpenCutList::BinPacking1D
   class Bin < Packing1D
-    attr_accessor :type, :length, :x,  :boxes,
-                  :current_leftover, :current_position, :efficiency,
+    attr_accessor :type, :length, :x,  :boxes, :trimsize, :saw_kerf,
+                  :current_leftover, :efficiency, :current_position,
                   :cuts, :total_length_cuts
                       
     def initialize(length, type, options = nil)

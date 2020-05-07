@@ -245,7 +245,7 @@ module Ladb::OpenCutList
           puts("leftover/waste: #{bin.leftover.to_l.to_s}")
           puts("boxes: ")
           bin.boxes.each do |box|
-            puts("#{box.length.to_l.to_s} data=#{box.data}")
+            puts("#{box.length.to_l.to_s}, start=#{box.x.to_l.to_s}, data=#{box.data}")
           end
           puts()
 
