@@ -6,7 +6,9 @@ module Ladb::OpenCutList::BinPacking1D
   require_relative 'box'
   require_relative 'bin'
 
+  #
   # PackEngine: setup and run bin packing in 1D
+  #
   class PackEngine < Packing1D
   
     attr_accessor :warnings

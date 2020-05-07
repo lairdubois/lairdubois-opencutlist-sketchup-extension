@@ -10,7 +10,7 @@ module Ladb::OpenCutList::BinPacking1D
 
   class Packer < Packing1D
     attr_accessor :boxes, :leftovers, :bins, :unplaced_boxes, 
-                  :total_nb_parts, :overall_efficiency
+                  :total_nb_boxes, :overall_efficiency
 
     def initialize(options)
       super(options)
@@ -31,17 +31,29 @@ module Ladb::OpenCutList::BinPacking1D
     end
     
     def clone_split(boxes, leftovers)
-      # TODO: fix for more than MAX_PARTS
+      # 
+      #
+      # 
       length = boxes.length
       boxes_clone = []
+      #
+      # we don't need a deep clone of boxes, because they
+      # will receive their position once the best packing
+      # has be found in prep_results
+      #
       if length < MAX_PARTS
-        boxes_clone = boxes.clone()
+        boxes_clone = [boxes.clone()]
+      else
+        boxes_clone = boxes.each_slice(MAX_PARTS).to_a
       end
+      #
+      # we absolutely need deep clones of leftovers!
+      #
       leftovers_clone = []
       leftovers.each do |leftover|
         leftovers_clone << Bin.new(leftover.length, BIN_TYPE_LO, @options)
       end
-      [[boxes_clone], leftovers_clone]
+      [boxes_clone, leftovers_clone]
     end
 
     def run
@@ -52,10 +64,6 @@ module Ladb::OpenCutList::BinPacking1D
       remove_unfit()
       estimate_optimal()
       
-      # split into chunks never larger than MAX_PARTS
-      # otherwise computation may take forever or be interrupted by timer
-      #q = @boxes.each_slice(MAX_PARTS)
-
       best_bins = []
       best_leftovers = []
       best_bins_count = MAX_INT            # best number of bins achieved so far
@@ -148,11 +156,6 @@ module Ladb::OpenCutList::BinPacking1D
             end
           elsif err == ERROR_NO_BIN
             dbg("   no more bins available error=#{err}")
-            best_bins = bins
-            #@boxes.each do |box|
-            #  @unplaced_boxes << box
-            #end
-            #@boxes = []
           end
         end
       rescue TimeoutError
@@ -369,28 +372,12 @@ module Ladb::OpenCutList::BinPacking1D
       dbg("-> get_tuning #{level}")
       case level
       when 1
+        [@smallest / 10, 0]
+      when 2
         [@smallest / 10, @smallest / 5, @smallest / 2,
          0, @smallest, @smallest * 2, @smallest * 5, @smallest * 10]
-      when 2
-        [@smallest / 10, 0]
       else
         [0]
-      end
-    end
-
-    def check_leftover
-      # check a posteriori if leftovers can be used
-      # TODO remove because unused
-      dbg("-> check leftover")
-      return if @leftovers.empty?
-
-      return if @options.base_bin_length < EPS
-
-      raw, _net, _leftover = @bars[-1].all_lengths
-      if !@leftovers.empty? && (raw <= @leftovers[0])
-        @bars[-1].length = @leftovers[0]
-        @bars[-1].type = BIN_TYPE_LO
-        dbg("leftover can be used")
       end
     end
 
