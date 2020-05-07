@@ -341,11 +341,17 @@ module Ladb::OpenCutList::BinPacking1D
       dbg("-> preping results")
       length = 0
       waste = 0
-      @bins.each do |b|
-        length += b.length
-        waste += b.current_leftover
+      @bins.each do |bin|
+        length += bin.length
+        waste += bin.current_leftover
+        start = bin.trimsize + bin.saw_kerf
+        bin.boxes.each do |box|
+          box.x = start
+          start = start + box.length + bin.saw_kerf
+        end
       end
       @efficiency = (length - waste)/length.to_f
+      dbg("-> done preping results")
     end
     
     def allsubsetsums(x_list, target, epsilon)
