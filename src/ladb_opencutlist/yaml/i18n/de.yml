@@ -318,10 +318,10 @@ tab:
       edge_xmax: Kantenband Breite 2
     cuttingdiagram:
       title: Schnittplan
-      option_bar_folding: Regrouper les barres identiques
-      option_bar_folding_0: Non
-      option_bar_folding_1: Oui
-      option_bar_folding_help: Permet de regrouper les barres contenant les mêmes pièces et les mêmes coupes.
+      option_bar_folding: Identische Stangen zusammenfassen
+      option_bar_folding_0: Nein
+      option_bar_folding_1: Ja
+      option_bar_folding_help: Fasst alle Stangen mit gleichen Teilen und Schnitten zusammen.
       option_hide_part_list: Liste der Teile
       option_hide_part_list_0: Anzeigen für jede Platte/Stange
       option_hide_part_list_1: Ausblenden
@@ -385,7 +385,7 @@ tab:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
         count: Anzahl
-        bar: Barre
+        bar: Stange
         sheet: Platte
         length: Länge
         width: Breite
