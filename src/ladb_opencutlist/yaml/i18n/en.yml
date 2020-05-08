@@ -392,15 +392,15 @@ tab:
         sheet: Panel
         length: Length
         width: Width
-        total_length: Σ Longueurs
-        total_area: Σ Surfaces
+        total_length: Σ Lengths
+        total_area: Σ Areas
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
-        bar_type_0: Barre standard
-        bar_type_1: Reste de barre
+        bar_type_0: Standard Sized Dimensional
+        bar_type_1: Offcut
         sheet_type_0: Standard Sized Panel
         sheet_type_1: Offcut
         unused: Unused
