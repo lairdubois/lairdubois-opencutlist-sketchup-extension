@@ -1,92 +1,93 @@
 module Ladb::OpenCutList::BinPacking1D
+
+  #
+  # Implements the container of elements Box
+  #
   class Bin < Packing1D
-    attr_accessor :type, :x, :length, :boxes, :trimsize, :saw_kerf,
-                  :efficiency, :current_position, :current_leftover,
-                  :cuts, :total_length_cuts
-                      
+  
+    # raw length of bin.
+    attr_accessor :length 
+    
+    # type of bin from packing1d.
+    attr_reader :type
+    
+    # list of boxes that have been placed into this bin.
+    attr_reader :boxes
+    
+    # list of necessary cuts (starting a 0 of the raw board).
+    attr_reader:cuts
+    
+    # current net length of the leftover.
+    attr_reader :current_leftover
+    
+    # percentage [0,100] of used versus raw length.
+    attr_reader :efficiency
+    
+    # number of cuts necessary, considers trimming cuts if applicable.
+    attr_reader :cut_counts
+    
+    # TBD
+    attr_reader :current_position
+    
+    #
+    # initialize the bin, ensure that it has a length > 0.
+    #
     def initialize(length, type, options = nil)
       super(options)
 
-      @type = type                       # NEW, LEFTOVER, UNFIT
-      @length = length                   # raw length of bar
-      @trimsize = options.trimsize       # trimsize on both ends
-      @saw_kerf = options.saw_kerf       # width of saw kerf
-      @boxes = []                        # placed boxes
-      @cuts = []
-      @current_leftover = @length - @trimsize - @saw_kerf
-      if @trimsize > 0
-        @cuts << @trimsize
-        @current_position = @trimsize
-      else
-        @current_position = @trimsize + @saw_kerf
+      @type = type
+      # making sure it is a float
+      @length = length*1.0
+      if @length <= 0
+        raise(Packing1DError, "Trying to initialize a bin with zero or negative length")
       end
-      @net_length_parts = 0
-      @efficiency = 3.1415
-      @total_length_cuts = 0             # does not really make sense here!
+      
+      if @options.trimsize > 0
+        @current_leftover = @length - 2*@options.trimsize
+        @current_position = @options.trimsize*1.0
+      else
+        @current_leftover = @length
+        @current_position = 0.0
+      end
+      
+      @boxes = []
+      @cuts = []
+
+      @efficiency = 0.0
+      @cut_counts = 0
     end
 
-    def add (box)
-      # add a box to this bin and update position and leftover
+    # 
+    # add a box to this bin and update the current position and leftover.
+    #
+    def add(box)
       dbg("   adding box #{box.length} after #{@current_position}")
-      if @current_position + box.length > @length
-        dbg("BIG BIG PROBLEM")
-        exit
+      if @current_position + box.length > (@length - @options.trimsize) 
+        raise(Packing1DError, "Trying to add a box larger than this bin's capacity, even with trimming")
       end
       @boxes << box
-      # if start is left
-      #   . first cut is on the left sider of this mark (waste side)
-      #   . next cuts are on the right side of this mark (waste side)
+
       @cuts << @current_position + box.length
-      @current_position += box.length + @saw_kerf
-      @current_leftover = @length - @trimsize - @current_position
+      @current_position += box.length + @options.saw_kerf
+      # the leftover is from current position to the end of the 
+      # board, if trimsize is present, this may be negative.
+      # we make it zero!
+      @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max 
+
       dbg("   new #{@current_position}")
-      @net_length_parts += box.length
-      @efficiency = (@length - @current_leftover)/@length.to_f
-    end
-    
-    def print()
-      # debugging only 
-      @boxes.each do |b|
-        dbg("   box length = #{b.length}")
+      @efficiency = (@length - @current_leftover)/@length.to_f*100.0
+      if @efficiency > 100
+        raise(Packing1DError, "This should never happen, length=#{@length}, current leftover=#{@current_leftover}")
       end
     end
     
-    def netlength()
-      # return the net (available) length of this bin
-      # cannot be smaller than 0
+    # 
+    # netlength returns the net (available) length of this bin.
+    # Returned value is never smaller than 0.
+    #
+    def netlength
       return [@length - 2 * @options.trimsize, 0].max
     end
-    
-    def leftover
-      # MUST be removed, access over instance variable
-      @current_leftover
-    end
-    
-    def nb_of_cuts
-      # MUST be removed, access over instance variable
-      return @cuts.length
-    end
 
-    def all_lengths
-      # funky code, REVIEW!
-      if @type == BAR_TYPE_UNFIT
-        @length
-      else
-        net = 0
-        raw = 0
-        raw = @trim_size + @saw_kerf if @trim_size > 0
-        @parts.each do |p|
-          net += p[:length]
-        end
-        raw += (@parts.length) * @saw_kerf + net
-        if raw > @length
-          print('DANGER _ ERROR!\n')
-          raw = @length
-        end
-        leftover = @length - raw - @saw_kerf
-        [raw, net, leftover]
-      end
-    end
-    
   end
 end

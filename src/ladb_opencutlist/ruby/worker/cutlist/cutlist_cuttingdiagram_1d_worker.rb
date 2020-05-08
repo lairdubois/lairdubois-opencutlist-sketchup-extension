@@ -12,8 +12,9 @@ module Ladb::OpenCutList
       @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @max_time = settings['max_time'].to_i
-      @tuning_level = settings['tuning_level'].to_i
+      # temp: just take default values
+      #@max_time = settings['max_time'].to_i
+      #@tuning_level = settings['tuning_level'].to_i
 
       @cutlist = cutlist
 
@@ -28,13 +29,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless group
 
       # The dimensions need to be in Sketchup internal units AND float
-      options = BinPacking1D::Options.new
-      options.base_bin_length = @std_bar_length
-      options.debug = false
-      options.saw_kerf = @saw_kerf # size of saw_kerf
-      options.trimsize = @trimming # size of trim size (both sides)
-      options.max_time = @max_time # the amount of time in seconds for computing, before aborting
-      options.tuning_level = @tuning_level # a level 0, 1, 2
+      options = BinPacking1D::Options.new(@std_bar_length, @saw_kerf, @trimming)
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking1D::PackEngine.new(options)
@@ -53,8 +48,6 @@ module Ladb::OpenCutList
 
       # Compute the cutting diagram
       result, err = e.run
-
-      # Compute the cutting diagram
 
       # Response
       # --------
@@ -96,7 +89,7 @@ module Ladb::OpenCutList
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
         when BinPacking1D::ERROR_TIME_EXCEEDED
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.time_exceeded'
-        when BinPacking1D::ERROR_NOT_IMPLEMENTED
+        when BinPacking1D::ERROR_BAD_ERROR
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.not_implemented'
         else
           puts('funky error, contact developpers', err)
@@ -178,7 +171,7 @@ module Ladb::OpenCutList
               :length => bin.length.to_l.to_s,
               :width => group.def.std_width.to_s,
               :efficiency => bin.efficiency,
-              :total_length_cuts => bin.total_length_cuts.to_l.to_s,
+              :total_length_cuts => bin.cut_counts.to_l.to_s,
 
               :parts => [],
               :grouped_parts => [],
