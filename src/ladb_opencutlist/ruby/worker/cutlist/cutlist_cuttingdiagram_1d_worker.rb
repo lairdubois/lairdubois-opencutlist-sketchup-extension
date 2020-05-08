@@ -92,16 +92,12 @@ module Ladb::OpenCutList
         case err
         when BinPacking1D::ERROR_NO_BIN
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
-          puts('no bins available')
         when BinPacking1D::ERROR_NO_PARTS
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
-          puts('no parts to pack')
         when BinPacking1D::ERROR_TIME_EXCEEDED
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.time_exceeded'
-          puts('time exceeded and no solution found')
         when BinPacking1D::ERROR_NOT_IMPLEMENTED
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.not_implemented'
-          puts('feature not implemented yet')
         else
           puts('funky error, contact developpers', err)
         end
@@ -152,7 +148,7 @@ module Ladb::OpenCutList
           bar = summary_bars[id]
           unless bar
             bar = {
-                :name => "#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}",
+                :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}"),
                 :type => bin.type,
                 :count => 0,
                 :length => bin.length.to_l.to_s,
@@ -174,7 +170,7 @@ module Ladb::OpenCutList
         result.bins.each { |bin|
 
           bar = {
-              :name => "#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}",
+              :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}"),
               :count => 0,
               :px_length => to_px(bin.length),
               :px_width => to_px(group.def.std_width),
@@ -189,7 +185,7 @@ module Ladb::OpenCutList
               :leftover => nil,
               :cuts => [],
           }
-          grouped_bar_key = bar[:name] if @bar_folding
+          grouped_bar_key = bar[:type_id] if @bar_folding
 
           # Parts
           grouped_parts = {}
@@ -256,8 +252,8 @@ module Ladb::OpenCutList
         }
 
         if @bar_folding
-          # Convert grouped bars to array (sort by count DESC)
-          response[:bars] = grouped_bars.values.sort_by { |bar| -bar[:count] }
+          # Convert grouped bars to array (sort by type DESC and count DESC)
+          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:count] ] }
         end
       end
 
