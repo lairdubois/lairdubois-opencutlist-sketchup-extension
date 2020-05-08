@@ -12,9 +12,6 @@ module Ladb::OpenCutList
       @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      # temp: just take default values
-      #@max_time = settings['max_time'].to_i
-      #@tuning_level = settings['tuning_level'].to_i
 
       @cutlist = cutlist
 
@@ -90,7 +87,7 @@ module Ladb::OpenCutList
         when BinPacking1D::ERROR_TIME_EXCEEDED
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.time_exceeded'
         when BinPacking1D::ERROR_BAD_ERROR
-          response[:errors] << 'tab.cutlist.cuttingdiagram.error.not_implemented'
+          response[:errors] << 'tab.cutlist.cuttingdiagram.error.bad_error'
         else
           puts('funky error, contact developpers', err)
         end

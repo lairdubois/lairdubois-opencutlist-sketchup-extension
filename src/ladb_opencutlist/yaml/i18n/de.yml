@@ -331,13 +331,6 @@ tab:
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_max_time: Zeitbegrenzung
-      option_max_time_help: Anzahl Sekunden welche maximal für die Berechnung reserviert werden.
-      option_tuning_level: Optimierungslevel
-      option_tuning_level_help: Ein aggressiverer Optimierungslevel kann unter Umständen den Zuschnitt verbessern.
-      option_tuning_level_0: Mässig
-      option_tuning_level_1: Normal
-      option_tuning_level_2: Aggressiv
       option_presort: Vorsortierung der Teile
       option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung

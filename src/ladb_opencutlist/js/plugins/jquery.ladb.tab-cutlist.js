@@ -35,8 +35,6 @@
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram1d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram1d.option.saw_kerf';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING = 'cutlist.cuttingdiagram1d.option.trimming';
-    var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME = 'cutlist.cuttingdiagram1d.option.max_time';
-    var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL = 'cutlist.cuttingdiagram1d.option.tuning_level';
 
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET = 'cutlist.cuttingdiagram2d.option.std_sheet';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH = 'cutlist.cuttingdiagram2d.option.std_sheet_length';
@@ -81,8 +79,6 @@
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_SCRAP_BAR_LENGTHS = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF = '3mm';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING = '20mm';
-    var CUTTINGDIAGRAM1D_OPTION_DEFAULT_MAX_TIME = 5;
-    var CUTTINGDIAGRAM1D_OPTION_DEFAULT_TUNING_LEVEL = 1;
 
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET = '';
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_LENGTH = '2800mm';
@@ -1443,8 +1439,6 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING,
-                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME,
-                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL,
 
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId,
@@ -1453,8 +1447,6 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL + '_' + groupId
 
             ],
             2 /* SETTINGS_RW_STRATEGY_MODEL */,
@@ -1468,8 +1460,6 @@
                     hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST)),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF)),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING)),
-                    max_time: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME, CUTTINGDIAGRAM1D_OPTION_DEFAULT_MAX_TIME)),
-                    tuning_level: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TUNING_LEVEL))
                 };
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -1484,8 +1474,6 @@
                     var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                     var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                     var $inputTrimming = $('#ladb_input_trimming', $modal);
-                    var $inputMaxTime = $('#ladb_input_max_time', $modal);
-                    var $selectTuningLevel = $('#ladb_select_tuning_level', $modal);
                     var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                     var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
                     var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
@@ -1505,9 +1493,6 @@
                     $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
                     $inputTrimming.val(cuttingdiagram1dOptions.trimming);
-                    $inputMaxTime.val(cuttingdiagram1dOptions.max_time);
-                    $selectTuningLevel.val(cuttingdiagram1dOptions.tuning_level);
-                    $selectTuningLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
                     var fnEditMaterial = function (callback) {
 
@@ -1549,8 +1534,6 @@
                         that.opencutlist.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME, value:max_time },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL, value:tuning_level },
                         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                         that.opencutlist.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
@@ -1564,15 +1547,11 @@
                         var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST);
                         var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF);
                         var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING);
-                        var max_time = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME, CUTTINGDIAGRAM1D_OPTION_DEFAULT_MAX_TIME);
-                        var tuning_level = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TUNING_LEVEL);
 
                         $selectBarFolding.selectpicker('val', bar_folding ? '1' : '0');
                         $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
-                        $inputMaxTime.val(max_time);
-                        $selectTuningLevel.selectpicker('val', tuning_level);
 
                         this.blur();
 
@@ -1591,8 +1570,6 @@
                         cuttingdiagram1dOptions.hide_part_list = $selectHidePartList.val() === '1';
                         cuttingdiagram1dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram1dOptions.trimming = $inputTrimming.val();
-                        cuttingdiagram1dOptions.max_time = $inputMaxTime.val();
-                        cuttingdiagram1dOptions.tuning_level = $selectTuningLevel.val();
 
                         // Store options
                         that.opencutlist.setSettings([
@@ -1603,8 +1580,6 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram1dOptions.hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram1dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram1dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME + '_' + groupId, value:cuttingdiagram1dOptions.max_time },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL + '_' + groupId, value:cuttingdiagram1dOptions.tuning_level }
 
                         ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 

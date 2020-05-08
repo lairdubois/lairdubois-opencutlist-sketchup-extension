@@ -331,13 +331,6 @@ tab:
       option_trimming: Trimming Size
       option_trimming_help_1d: The amount of material at each end of the bar to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_max_time: Max. Computation Time
-      option_max_time_help: Abort computation after x seconds and return best result obtained so far.
-      option_tuning_level: Optimization Level
-      option_tuning_level_help: Indicate the level of optimization.
-      option_tuning_level_0: None
-      option_tuning_level_1: Moderate
-      option_tuning_level_2: Aggressive
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement.
       option_presort_0: None
