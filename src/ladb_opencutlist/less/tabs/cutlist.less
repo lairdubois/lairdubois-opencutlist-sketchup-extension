@@ -65,6 +65,17 @@
       font-size: 16px;
     }
 
+    .ladb-heading-count {
+      line-height: 30px;
+      font-size: 16px;
+      letter-spacing: 3px;
+      margin-right: 10px;
+      padding: 0 7px 0 10px;
+      border-radius: 5px;
+      background: #555;
+      color: #fff;
+    }
+
   }
 
   tbody tr.ladb-cutlist-heading-row {
@@ -271,14 +282,14 @@ body.no-ie, body.ie-gt10 {
     text-rendering: optimizeLegibility;
     width: 100%;
 
-    /* .sheet */
+    /* .sheet,.bar */
 
-    .sheet {
+    .sheet, .bar {
 
-      .sheet-outer {
+      .sheet-outer, .bar-outer {
         fill: #333;
       }
-      .sheet-inner {
+      .sheet-inner, .bar-inner {
         fill: #d3d3d3;
 
         &:hover {
@@ -286,7 +297,7 @@ body.no-ie, body.ie-gt10 {
         }
 
       }
-      .sheet-dimension {
+      .sheet-dimension, .bar-dimension {
         fill: #888;
       }
 
@@ -516,6 +527,14 @@ body.no-ie, body.ie-gt10 {
 
       .ladb-heading {
         line-height: 20px;
+      }
+
+      .ladb-heading-count {
+        line-height: 20px;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        color: #000;
       }
 
     }

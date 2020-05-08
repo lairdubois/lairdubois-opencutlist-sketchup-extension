@@ -318,6 +318,10 @@ tab:
       edge_xmax: Chant Largeur 2
     cuttingdiagram:
       title: Calepinage
+      option_bar_folding: Regrouper les barres identiques
+      option_bar_folding_0: Non
+      option_bar_folding_1: Oui
+      option_bar_folding_help: Permet de regrouper les barres contenant les mêmes pièces et les mêmes coupes.
       option_hide_part_list: Liste des pièces
       option_hide_part_list_0: Affichée pour chaque panneau/barre
       option_hide_part_list_1: Masquée

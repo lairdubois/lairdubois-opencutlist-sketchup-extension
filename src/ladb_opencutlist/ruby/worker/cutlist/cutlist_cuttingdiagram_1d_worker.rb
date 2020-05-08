@@ -8,6 +8,7 @@ module Ladb::OpenCutList
       @group_id = settings['group_id']
       @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
       @scrap_bar_lengths = DimensionUtils.instance.dd_to_ifloats(settings['scrap_bar_lengths'])
+      @bar_folding = settings['bar_folding']
       @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
@@ -146,14 +147,12 @@ module Ladb::OpenCutList
 
         # Summary
         summary_bars = {}
-        index = 0
         result.bins.each { |bin|
-          index += 1
           id = "#{bin.type},#{bin.length}"
           bar = summary_bars[id]
           unless bar
             bar = {
-                :index => index,
+                :name => "#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}",
                 :type => bin.type,
                 :count => 0,
                 :length => bin.length.to_l.to_s,
@@ -171,12 +170,12 @@ module Ladb::OpenCutList
         response[:summary][:bars] += summary_bars.values
 
         # bars
-        index = 0
+        grouped_bars = {}
         result.bins.each { |bin|
 
-          index += 1
           bar = {
-              :index => index,
+              :name => "#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}",
+              :count => 0,
               :px_length => to_px(bin.length),
               :px_width => to_px(group.def.std_width),
               :type => bin.type, # leftover or new bin
@@ -190,7 +189,7 @@ module Ladb::OpenCutList
               :leftover => nil,
               :cuts => [],
           }
-          response[:bars].push(bar)
+          grouped_bar_key = bar[:name] if @bar_folding
 
           # Parts
           grouped_parts = {}
@@ -205,6 +204,7 @@ module Ladb::OpenCutList
                     :length => box.length.to_l.to_s,
                 }
             )
+            grouped_bar_key += "|#{box.data.number}" if @bar_folding
             grouped_part = grouped_parts[box.data.id]
             unless grouped_part
               grouped_part = {
@@ -240,31 +240,25 @@ module Ladb::OpenCutList
             )
           }
 
-          # begin: to be deleted after debugging
-          # puts("result for bin #{index}")
-          # puts("type: #{bin.type}")
-          # puts("length: #{bin.length}")
-          # puts("efficiency [0,1]: #{format('%9.2f', bin.efficiency)}")
-          # puts("leftover/waste: #{bin.leftover.to_l.to_s}")
-          # puts("boxes: ")
-          # bin.boxes.each do |box|
-          #   puts("#{box.length.to_l.to_s}, start=#{box.x.to_l.to_s}, data=#{box.data}")
-          # end
-          # puts()
-          #
-          # puts("nb of cuts: #{bin.cuts.length}")
-          # bin.cuts.each do |c|
-          #   puts("cut @ #{c.to_l.to_s}")
-          # end
-          # puts()
-          #
-          # puts("unplaced parts: #{result.unplaced_boxes.length}")
-          # result.unplaced_boxes.each do |box|
-          #   puts("unplaced length=#{box.length} data=#{box.data}")
-          # end
-          # end:
+          if @bar_folding
+            # Check similarity
+            grouped_bar = grouped_bars[grouped_bar_key]
+            unless grouped_bar
+              grouped_bars[grouped_bar_key] = bar
+              grouped_bar = bar
+            end
+            grouped_bar[:count] += 1
+          else
+            # Add bar directly to the list
+            response[:bars] << bar
+          end
 
         }
+
+        if @bar_folding
+          # Convert grouped bars to array (sort by count DESC)
+          response[:bars] = grouped_bars.values.sort_by { |bar| -bar[:count] }
+        end
       end
 
       response

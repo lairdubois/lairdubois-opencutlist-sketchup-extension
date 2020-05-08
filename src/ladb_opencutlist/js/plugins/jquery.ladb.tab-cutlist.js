@@ -31,6 +31,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR = 'cutlist.cuttingdiagram1d.option.std_bar';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH = 'cutlist.cuttingdiagram1d.option.std_bar_length';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS = 'cutlist.cuttingdiagram1d.option.scrap_bar_lengths';
+    var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING = 'cutlist.cuttingdiagram1d.option.bar_folding';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram1d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram1d.option.saw_kerf';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING = 'cutlist.cuttingdiagram1d.option.trimming';
@@ -75,6 +76,7 @@
 
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH = '2500mm';
+    var CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING = true;
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST = false;
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_SCRAP_BAR_LENGTHS = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF = '3mm';
@@ -1437,6 +1439,7 @@
         this.opencutlist.pullSettings([
 
                 // Defaults
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING,
@@ -1446,6 +1449,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId,
@@ -1460,6 +1464,7 @@
                     std_bar: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR),
                     std_bar_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH),
                     scrap_bar_lengths: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SCRAP_BAR_LENGTHS),
+                    bar_folding: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING)),
                     hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST)),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF)),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING)),
@@ -1475,6 +1480,7 @@
                     var $inputStdBar = $('#ladb_select_std_bar', $modal);
                     var $inputStdBarLength = $('#ladb_input_std_bar_length', $modal);
                     var $inputScrapBarLengths = $('#ladb_input_scrap_bar_lengths', $modal);
+                    var $selectBarFolding = $('#ladb_select_bar_folding', $modal);
                     var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                     var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                     var $inputTrimming = $('#ladb_input_trimming', $modal);
@@ -1493,6 +1499,8 @@
                     }
                     $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
                     $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectBarFolding.val(cuttingdiagram1dOptions.bar_folding ? '1' : '0');
+                    $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectHidePartList.val(cuttingdiagram1dOptions.hide_part_list ? '1' : '0');
                     $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
@@ -1552,12 +1560,14 @@
                     });
                     $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
 
+                        var bar_folding = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING);
                         var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST);
                         var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF);
                         var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING);
                         var max_time = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_MAX_TIME, CUTTINGDIAGRAM1D_OPTION_DEFAULT_MAX_TIME);
                         var tuning_level = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TUNING_LEVEL, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TUNING_LEVEL);
 
+                        $selectBarFolding.selectpicker('val', bar_folding ? '1' : '0');
                         $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
@@ -1577,6 +1587,7 @@
                         cuttingdiagram1dOptions.std_bar = $inputStdBar.val();
                         cuttingdiagram1dOptions.std_bar_length = $inputStdBarLength.val();
                         cuttingdiagram1dOptions.scrap_bar_lengths = $inputScrapBarLengths.val();
+                        cuttingdiagram1dOptions.bar_folding = $selectBarFolding.val() === '1';
                         cuttingdiagram1dOptions.hide_part_list = $selectHidePartList.val() === '1';
                         cuttingdiagram1dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram1dOptions.trimming = $inputTrimming.val();
@@ -1588,6 +1599,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, value:cuttingdiagram1dOptions.std_bar },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.std_bar_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, value:cuttingdiagram1dOptions.scrap_bar_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, value:cuttingdiagram1dOptions.bar_folding },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram1dOptions.hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram1dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram1dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -1644,7 +1656,7 @@
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('bar-index');
-                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
+                                var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
                                     $target.effect("highlight", {}, 1500);
                                 });
@@ -1654,7 +1666,7 @@
                             $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('bar-index');
-                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
+                                var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
                                     $target.effect("highlight", {}, 1500);
                                 });
