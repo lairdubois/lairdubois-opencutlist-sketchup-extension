@@ -15,6 +15,8 @@
 {% set cutOutlineWidth = 2 %}
 {% set edgeWidth = 3 %}
 
+{% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions %}
+
 {% block headerInner %}
     {{ parent() }}
     <ul class="ladb-file-tabs nav nav-tabs">
@@ -41,9 +43,9 @@
         {% include 'core/_alert-tips.twig' %}
 
         {% if unplaced_parts|length > 0 %}
-            {% set colspan = 7 %}
+            {% set colspan = 5 %}
             {% if not showCuttingDimensions %}
-                {% set colspan = colspan - 2 %}
+                {% set colspan = colspan - 1 %}
             {% endif %}
             <table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
                 <thead>
@@ -60,19 +62,15 @@
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                     {% if showCuttingDimensions %}
-                        <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                        <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                     {% endif %}
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                    <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
                 <tr>
                     {% if showCuttingDimensions %}
-                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
-                        {% endfor %}
+                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     {% endif %}
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
-                    {% endfor %}
+                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                 </tr>
                 {% for part in unplaced_parts  %}
                     <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
@@ -90,20 +88,16 @@
                             {{ part.count }}
                         </td>
                         {% if showCuttingDimensions %}
-                            {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                                {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
-                            {% endfor %}
+                            {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' with { property:'length' } %}
                         {% endif %}
-                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
-                        {% endfor %}
+                        <td class="ladb-cutlist-dimension-value">{{ part.length }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         {% endif %}
         {% if summary.bars is not empty  %}
-            <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-summary">
+            <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
                 <thead>
                 <tr>
                     <td colspan="5">
@@ -167,9 +161,9 @@
         {% if options.hide_part_list %}
             {% set colspan = 1 %}
         {% else %}
-            {% set colspan = 7 %}
+            {% set colspan = 5 %}
             {% if not showCuttingDimensions %}
-                {% set colspan = colspan - 2 %}
+                {% set colspan = colspan - 1 %}
             {% endif %}
         {% endif %}
         {% for bar in bars %}
@@ -243,9 +237,9 @@
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                         {% if showCuttingDimensions %}
-                            <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                            <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                         {% endif %}
-                        <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                        <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                     </tr>
                     <tr class="ladb-cutlist-heading-row">
                         {% if showCuttingDimensions %}
