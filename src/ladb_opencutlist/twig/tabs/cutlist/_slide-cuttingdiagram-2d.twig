@@ -192,7 +192,7 @@
                             </div>
                         {% endif %}
                         <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ sheets|length }}</strong></div>
-                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length-width"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>
@@ -210,7 +210,7 @@
                             {% for leftover in sheet.leftovers %}
                                 {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                 {% set hideDimensions = leftover.px_length < (dimensionFontSize + dimensionOffset) or leftover.px_width < (dimensionFontSize + dimensionOffset) %}
-                                <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
+                                <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
                                     <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
                                     {% if not hideCross %}
                                         <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
@@ -224,7 +224,7 @@
                             {% endfor %}
                             {% for part in sheet.parts|reverse %}
                                 {% set hideDimensions = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) %}
-                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
+                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
