@@ -41,6 +41,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH = 'cutlist.cuttingdiagram2d.option.std_sheet_width';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES = 'cutlist.cuttingdiagram2d.option.scrap_sheet_sizes';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED = 'cutlist.cuttingdiagram2d.option.grained';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING = 'cutlist.cuttingdiagram1d.option.sheet_folding';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram2d.option.saw_kerf';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING = 'cutlist.cuttingdiagram2d.option.trimming';
@@ -84,6 +85,7 @@
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_LENGTH = '2800mm';
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_WIDTH = '2070mm';
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_GRAINED = false;
+    var CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING = true;
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST = false;
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_SCRAP_SHEET_SIZES = '';
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF = '3mm';
@@ -1711,6 +1713,7 @@
         this.opencutlist.pullSettings([
 
                 // Defaults
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING,
@@ -1723,6 +1726,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId,
@@ -1740,6 +1744,7 @@
                     std_sheet_width: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_WIDTH),
                     scrap_sheet_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SCRAP_SHEET_SIZES),
                     grained: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_GRAINED),
+                    sheet_folding: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING)),
                     hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST)),
                     saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF)),
                     trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING)),
@@ -1758,6 +1763,7 @@
                     var $inputStdSheetWidth = $('#ladb_input_std_sheet_width', $modal);
                     var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                     var $selectGrained = $('#ladb_select_grained', $modal);
+                    var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
                     var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                     var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                     var $inputTrimming = $('#ladb_input_trimming', $modal);
@@ -1780,6 +1786,8 @@
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectSheetFolding.val(cuttingdiagram2dOptions.sheet_folding ? '1' : '0');
+                    $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectHidePartList.val(cuttingdiagram2dOptions.hide_part_list ? '1' : '0');
                     $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
@@ -1834,6 +1842,7 @@
                     // Bind buttons
                     $btnCuttingdiagramOptionsDefaultsSave.on('click', function () {
 
+                        var sheet_folding = $selectSheetFolding.val();
                         var hide_part_list = $selectHidePartList.val();
                         var saw_kerf = $inputSawKerf.val();
                         var trimming = $inputTrimming.val();
@@ -1843,6 +1852,7 @@
 
                         // Update default cut options for specific type to last used
                         that.opencutlist.setSettings([
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, value:sheet_folding },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -1858,6 +1868,7 @@
                     });
                     $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
 
+                        var sheet_folding = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING);
                         var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST);
                         var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF);
                         var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING);
@@ -1865,6 +1876,7 @@
                         var stacking = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING);
                         var bbox_optimization = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION);
 
+                        $selectHidePartList.selectpicker('val', sheet_folding ? '1' : '0');
                         $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
@@ -1887,6 +1899,7 @@
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
                         cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.val();
                         cuttingdiagram2dOptions.grained = $selectGrained.val() === '1';
+                        cuttingdiagram2dOptions.sheet_folding = $selectSheetFolding.val() === '1';
                         cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
                         cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram2dOptions.trimming = $inputTrimming.val();
@@ -1901,6 +1914,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, value:cuttingdiagram2dOptions.grained },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, value:cuttingdiagram2dOptions.sheet_folding },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram2dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -1958,7 +1972,7 @@
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
-                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) - 1));
+                                var $target = $('.ladb-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) - 1) + ']');
                                 that.scrollSlideToTarget($slide, $target, true, true);
                                 $(this).blur();
                                 return false;
@@ -1966,7 +1980,7 @@
                             $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 var groupId = $group.data('sheet-index');
-                                var $target = $('#ladb_cuttingdiagram_group_' + (parseInt(groupId) + 1));
+                                var $target = $('.ladb-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) + 1) + ']');
                                 that.scrollSlideToTarget($slide, $target, true, true);
                                 $(this).blur();
                                 return false;

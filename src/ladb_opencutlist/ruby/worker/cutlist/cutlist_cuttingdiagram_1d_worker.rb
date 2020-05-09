@@ -134,23 +134,23 @@ module Ladb::OpenCutList
         # Summary
         summary_bars = {}
         result.bins.each { |bin|
-          id = "#{bin.type},#{bin.length}"
-          bar = summary_bars[id]
+          type_id = Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}")
+          bar = summary_bars[type_id]
           unless bar
             bar = {
-                :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}"),
+                :type_id => type_id,
                 :type => bin.type,
                 :count => 0,
                 :length => bin.length.to_l.to_s,
                 :total_length => 0, # Will be converted to string representation after sum
                 :is_used => true,
             }
-            summary_bars[id] = bar
+            summary_bars[type_id] = bar
           end
           bar[:count] += 1
           bar[:total_length] += bin.length
         }
-        summary_bars.each { |id, bar|
+        summary_bars.each { |type_id, bar|
           bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
         }
         response[:summary][:bars] += summary_bars.values
@@ -245,6 +245,7 @@ module Ladb::OpenCutList
           # Convert grouped bars to array (sort by type DESC and count DESC)
           response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:count] ] }
         end
+
       end
 
       response

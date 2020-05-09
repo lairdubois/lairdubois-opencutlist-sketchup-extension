@@ -12,6 +12,7 @@ module Ladb::OpenCutList
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
       @grained = settings['grained']
+      @sheet_folding = settings['sheet_folding']
       @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
@@ -169,11 +170,11 @@ module Ladb::OpenCutList
         index = 0
         result.original_bins.each { |bin|
           index += 1
-          id = "#{bin.type},#{bin.length},#{bin.width}"
-          sheet = summary_sheets[id]
+          type_id = Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}")
+          sheet = summary_sheets[type_id]
           unless sheet
             sheet = {
-                :index => index,
+                :type_id => type_id,
                 :type => bin.type,
                 :count => 0,
                 :length => bin.length.to_l.to_s,
@@ -181,23 +182,23 @@ module Ladb::OpenCutList
                 :area => 0, # Will be converted to string representation after sum
                 :is_used => true,
             }
-            summary_sheets[id] = sheet
+            summary_sheets[type_id] = sheet
           end
           sheet[:count] += 1
           sheet[:area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
         }
-        summary_sheets.each { |id, sheet|
+        summary_sheets.each { |type_id, sheet|
           sheet[:area] = DimensionUtils.instance.format_to_readable_area(sheet[:area])
         }
         response[:summary][:sheets] += summary_sheets.values
 
         # Sheets
-        index = 0
+        grouped_sheets = {}
         result.original_bins.each { |bin|
 
-          index += 1
           sheet = {
-              :index => index,
+              :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}"),
+              :count => 0,
               :px_length => to_px(bin.length),
               :px_width => to_px(bin.width),
               :type => bin.type,
@@ -211,7 +212,7 @@ module Ladb::OpenCutList
               :leftovers => [],
               :cuts => [],
           }
-          response[:sheets].push(sheet)
+          grouped_bar_key = sheet[:type_id] if @sheet_folding
 
           # Parts
           grouped_parts = {}
@@ -232,6 +233,7 @@ module Ladb::OpenCutList
                     :edge_std_dimensions => box.data.edge_std_dimensions,
                 }
             )
+            grouped_bar_key += "|#{box.data.number}" if @sheet_folding
             grouped_part = grouped_parts[box.data.id]
             unless grouped_part
               grouped_part = {
@@ -283,7 +285,25 @@ module Ladb::OpenCutList
             )
           }
 
+          if @sheet_folding
+            # Check similarity
+            grouped_sheet = grouped_sheets[grouped_bar_key]
+            unless grouped_sheet
+              grouped_sheets[grouped_bar_key] = sheet
+              grouped_sheet = sheet
+            end
+            grouped_sheet[:count] += 1
+          else
+            # Add sheet directly to the list
+            response[:sheets] << sheet
+          end
+
         }
+
+        if @sheet_folding
+          # Convert grouped sheets to array (sort by type DESC and count DESC)
+          response[:sheets] = grouped_sheets.values.sort_by { |bar| [ -bar[:type], -bar[:count] ] }
+        end
 
       end
 
