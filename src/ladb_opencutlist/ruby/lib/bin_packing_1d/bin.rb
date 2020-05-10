@@ -1,36 +1,39 @@
 module Ladb::OpenCutList::BinPacking1D
 
   #
-  # Implements the container of elements Box
+  # Implements the container of elements Box.
   #
   class Bin < Packing1D
   
     # raw length of bin.
     attr_accessor :length 
     
-    # type of bin from packing1d.
+    # Type of bin from Packing1d.
     attr_reader :type
     
-    # list of boxes that have been placed into this bin.
+    # List of boxes that have been placed into this bin.
     attr_reader :boxes
     
-    # list of necessary cuts (starting a 0 of the raw board).
+    # List of necessary cuts (starting a 0 of the raw board).
     attr_reader:cuts
     
-    # current net length of the leftover.
+    # Current net length of the leftover.
     attr_reader :current_leftover
     
-    # percentage [0,100] of used versus raw length.
+    # Percentage [0,100] of used versus raw length.
     attr_reader :efficiency
     
-    # number of cuts necessary, considers trimming cuts if applicable.
+    # Net used length (length of boxes + saw kerf).
+    attr_reader :net_used
+    
+    # Number of cuts necessary, considers trimming cuts if applicable.
     attr_reader :cut_counts
     
-    # TBD
+    # Current position after adding boxes (considers trimming and saw kerf).
     attr_reader :current_position
     
     #
-    # initialize the bin, ensure that it has a length > 0.
+    # Initialize a new Bin, ensure that it has a length > 0.
     #
     def initialize(length, type, options = nil)
       super(options)
@@ -42,14 +45,7 @@ module Ladb::OpenCutList::BinPacking1D
         raise(Packing1DError, "Trying to initialize a bin with zero or negative length")
       end
       
-      if @options.trimsize > 0
-        @current_leftover = @length - 2*@options.trimsize
-        @current_position = @options.trimsize*1.0
-      else
-        @current_leftover = @length
-        @current_position = 0.0
-      end
-      
+      @current_position = 0.0      
       @boxes = []
       @cuts = []
 
@@ -58,31 +54,53 @@ module Ladb::OpenCutList::BinPacking1D
     end
 
     # 
-    # add a box to this bin and update the current position and leftover.
+    # Add a box to this bin and update the current position and leftover.
     #
     def add(box)
       dbg("   adding box #{box.length} after #{@current_position}")
-      if @current_position + box.length > (@length - @options.trimsize) 
-        raise(Packing1DError, "Trying to add a box larger than this bin's capacity, even with trimming")
-      end
+      @current_position = box.length + @options.saw_kerf
+      @current_position += @options.trimsize if @boxes.empty?
       @boxes << box
 
-      @cuts << @current_position + box.length
-      @current_position += box.length + @options.saw_kerf
-      # the leftover is from current position to the end of the 
-      # board, if trimsize is present, this may be negative.
-      # we make it zero!
-      @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max 
-
-      dbg("   new #{@current_position}")
-      @efficiency = (@length - @current_leftover)/@length.to_f*100.0
-      if @efficiency > 100
-        raise(Packing1DError, "This should never happen, length=#{@length}, current leftover=#{@current_leftover}")
+      if @current_position > (@length - @options.trimsize + EPS)
+        would_be = @current_position + box.length
+        raise(Packing1DError, "Bin.add: trying to add a box #{box.length} larger than this bin's capacity #{@length} => #{would_be}")
+      end
+      @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max
+    end
+    
+    #
+    # Sorts the boxes in descending order, run at the
+    # end of packing.
+    #
+    def sort_boxes()
+      dbg("   sorting boxes")
+      @boxes.sort!{|a, b| -a.length <=> -b.length}
+      @cuts = []
+      @current_position = @options.trimsize
+      @boxes.each do |box|
+        box.x = @current_position
+        @current_position += box.length
+        @cuts << @current_position
+        @current_position += @options.saw_kerf
+      end
+      #
+      # the last cut may not be necessary. this is the case when
+      # the last part exactly fits into the leftover without cutting
+      #
+      @current_position -= @options.saw_kerf if !@boxes.empty? and @current_position > @length - @options.trimsize
+      @current_leftover = (@length - @options.trimsize) - @current_position
+      
+      @net_used = @length - @current_leftover
+      @efficiency = @net_used/@length.to_f*100.0
+      if @efficiency > 100 + EPS
+        #@efficiency = 100
+        raise(Packing1DError, "Bin.sort_boxes: float precision error, length=#{@length}, current leftover=#{@current_leftover}")
       end
     end
     
     # 
-    # netlength returns the net (available) length of this bin.
+    # Returns the net (available) length of this bin.
     # Returned value is never smaller than 0.
     #
     def netlength

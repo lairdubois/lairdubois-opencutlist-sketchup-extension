@@ -11,21 +11,23 @@ module Ladb::OpenCutList::BinPacking1D
   #
   class PackEngine < Packing1D
   
-    # list of warnings.
+    # List of warnings.
     attr_reader :warnings
       
     #
-    # initialize a new PackEngine with options.
+    # Initialize a new PackEngine with options.
     #
     def initialize(options)
       super(options)
       @leftovers = []
       @boxes = []
       @warnings = []
+      @smallest_bin = MAX_INT*1.0
+      @largest_bin = 0.0
     end
     
     # 
-    # add scrap bins.
+    # Add scrap bins.
     #
     def add_bin(length)
       dbg("   . BIN length #{length}")
@@ -37,7 +39,7 @@ module Ladb::OpenCutList::BinPacking1D
     end
         
     # 
-    # add boxes to be packed into bins.
+    # Add a box to be packed into bins.
     #
     def add_box(length, data = nil)
       dbg("   . BOX length=#{length}, data=#{data}")
@@ -46,20 +48,57 @@ module Ladb::OpenCutList::BinPacking1D
       @boxes << Box.new(length, data)
     end
     
+    #
+    # Find and update the min/max leftover and base bin length.
+    #
+    def update_min_max_bin ()
+      if @options.base_bin_length > EPS
+        @smallest_bin = @options.base_bin_length
+        @largest_bin = @options.base_bin_length
+      end
+      @leftovers.each do |leftover|
+        @largest_bin = leftover.length if leftover.length > @largest_bin
+        @smallest_bin = leftover.length if leftover.length < @smallest_bin
+      end
+    end
+
+    #
+    # Returns true if saw_kerf has a reasonnable length.
+    # May be large, but must be smaller than the largest bin.
+    #
+    def valid_saw_kerf()
+      return (@options.saw_kerf < [@options.base_bin_length, @largest_bin].max)
+    end
+    
+    #
+    # Returns true if trimsize has a reasonnable length.
+    # May be large, but must be smaller than the largest bin.
+    #
+    def valid_trimsize()
+      return (@options.trimsize*2.0 < [@options.base_bin_length, @largest_bin].max)
+    end
+    
     # 
     # checks for consistency, creates a Packer and runs it.
     #
     def run
+
       dbg("-- packengine run")
       
-      return nil, ERROR_NO_PARTS if @boxes.empty?
-      return nil, ERROR_NO_BIN if @options.base_bin_length < EPS && @leftovers.empty?
-      return nil, ERROR_PARAMETERS if @options.saw_kerf < 0
-      return nil, ERROR_PARAMETERS if @options.trimsize < 0
+      update_min_max_bin()
 
-      @warnings << WARNING_SAW_KERF_SMALL if @options.saw_kerf < EPS
-      @warnings << WARNING_TRIM_SIZE_LARGE if @options.trimsize > MAX_TRIMSIZE_FACTOR*@options.saw_kerf
+      # check for boxes and bins
+      return nil, ERROR_NO_BOX if @boxes.empty?
 
+      return nil, ERROR_NO_BIN if @options.base_bin_length < EPS and @leftovers.empty?
+      # check parameters
+      return nil, ERROR_PARAMETERS if !valid_trimsize()
+      @warnings << WARNING_TRIM_SIZE_LARGE if @options.trimsize > SIZE_WARNING_FACTOR*@largest_bin
+      
+      return nil, ERROR_PARAMETERS if !valid_saw_kerf()
+      @warnings << WARNING_SAW_KERF_LARGE if @options.saw_kerf > EPS \
+        and @options.saw_kerf > SIZE_WARNING_FACTOR*@largest_bin
+      
       dbg("-> create packer with nb of leftovers=#{@leftovers.length}") 
       
       begin
