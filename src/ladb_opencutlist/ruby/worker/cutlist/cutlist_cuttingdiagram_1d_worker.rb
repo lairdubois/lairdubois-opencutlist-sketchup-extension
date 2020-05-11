@@ -51,7 +51,7 @@ module Ladb::OpenCutList
 
       # Convert inch float value to pixel
       def to_px(inch_value)
-        inch_value * 14 # 1680px = 120" ~ 3m
+        inch_value * 14 # 1680px = 240" ~ 6m
       end
 
       response = {
@@ -64,8 +64,6 @@ module Ladb::OpenCutList
               :px_saw_kerf => to_px(options.saw_kerf),
               :saw_kerf => @saw_kerf.to_l.to_s,
               :trimming => @trimming.to_l.to_s,
-              :max_time => @max_time,
-              :tuning_level => @tuning_level,
           },
 
           :unplaced_parts => [],
@@ -83,7 +81,7 @@ module Ladb::OpenCutList
         when BinPacking1D::ERROR_NO_BIN
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
         when BinPacking1D::ERROR_PARAMETERS
-          #response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
+          #response[:errors] << 'tab.cutlist.cuttingdiagram.error.parameters'
           puts("Error in parameters trimsize, sawkerf > 0.25*largest bin")
         when BinPacking1D::ERROR_NO_BOX
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
@@ -158,7 +156,7 @@ module Ladb::OpenCutList
         }
         response[:summary][:bars] += summary_bars.values
 
-        # bars
+        # Bars
         grouped_bars = {}
         result.bins.each { |bin|
 
@@ -246,7 +244,7 @@ module Ladb::OpenCutList
 
         if @bar_folding
           # Convert grouped bars to array (sort by type DESC and count DESC)
-          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:count] ] }
+          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:count], -bar[:efficiency] ] }
         end
 
       end

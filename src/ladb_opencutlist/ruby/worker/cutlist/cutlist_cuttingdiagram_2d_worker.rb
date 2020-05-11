@@ -302,7 +302,7 @@ module Ladb::OpenCutList
 
         if @sheet_folding
           # Convert grouped sheets to array (sort by type DESC and count DESC)
-          response[:sheets] = grouped_sheets.values.sort_by { |bar| [ -bar[:type], -bar[:count] ] }
+          response[:sheets] = grouped_sheets.values.sort_by { |sheet| [ -sheet[:type], -sheet[:count], -sheet[:efficiency] ] }
         end
 
       end

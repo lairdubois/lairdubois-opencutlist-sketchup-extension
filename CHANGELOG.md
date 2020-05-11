@@ -4,8 +4,9 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.8.5
+* 1.9.0
 
+  * Added dimensional cutting diagram feature 
   * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal dialogs
   * Fixed some New Material modal issues
