@@ -30,6 +30,9 @@ module Ladb::OpenCutList::BinPacking1D
     attr_reader :cut_counts
     
     # Current position after adding boxes (considers trimming and saw kerf).
+    # This position can theoretically be outside of the bin because it
+    # is the position of the right side of the saw kerf (assuming
+    # waste is on the right side).
     attr_reader :current_position
     
     #
@@ -45,7 +48,8 @@ module Ladb::OpenCutList::BinPacking1D
         raise(Packing1DError, "Trying to initialize a bin with zero or negative length")
       end
       
-      @current_position = 0.0      
+      @current_position = @options.trimsize 
+      @current_leftover = @length - 2*@options.trimsize
       @boxes = []
       @cuts = []
 
@@ -57,15 +61,11 @@ module Ladb::OpenCutList::BinPacking1D
     # Add a box to this bin and update the current position and leftover.
     #
     def add(box)
-      dbg("   adding box #{box.length} after #{@current_position}")
-      @current_position = box.length + @options.saw_kerf
-      @current_position += @options.trimsize if @boxes.empty?
+      dbg("   adding box #{box.length} after #{@current_position} in bin #{length}")
+      @current_position += box.length + @options.saw_kerf
+      #@current_position += @options.trimsize if @boxes.empty?
       @boxes << box
-
-      if @current_position > (@length - @options.trimsize + EPS)
-        would_be = @current_position + box.length
-        raise(Packing1DError, "Bin.add: trying to add a box #{box.length} larger than this bin's capacity #{@length} => #{would_be}")
-      end
+      # current leftover cannot be negative
       @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max
     end
     
@@ -88,8 +88,9 @@ module Ladb::OpenCutList::BinPacking1D
       # the last cut may not be necessary. this is the case when
       # the last part exactly fits into the leftover without cutting
       #
-      @current_position -= @options.saw_kerf if !@boxes.empty? and @current_position > @length - @options.trimsize
-      @current_leftover = (@length - @options.trimsize) - @current_position
+      @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max
+      # current position should not be out of the board for drawing purposes
+      @current_position = [@current_position, @length].min
       
       @net_used = @length - @current_leftover
       @efficiency = @net_used/@length.to_f*100.0

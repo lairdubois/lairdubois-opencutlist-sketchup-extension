@@ -39,6 +39,11 @@ module Ladb::OpenCutList::BinPacking1D
     # Proportion box lengths/total waste
     attr_reader :overall_efficiency
     
+    # Start time of the packing.
+    attr_reader :start_time
+    
+    # Using algorithm
+    attr_reader :algorithm
 
     #
     # Initialize a Packer object with options.
@@ -56,6 +61,7 @@ module Ladb::OpenCutList::BinPacking1D
 
       @unfit_boxes = []             # boxes that are rejected because too large!
       @smallest = 0                 # the smallest box to pack
+      @algorithm = ALG_SUBSET_SUM
     end
     
     #
@@ -123,75 +129,122 @@ module Ladb::OpenCutList::BinPacking1D
       err = ERROR_NONE
 
       # not a super precise way of measuring compute time.
-      start_time = Time.now
+      @start_time = Time.now
       remove_unfit()
       best_bins = []
       #
       # compute this t times with different epsilon's, keep the best
       #
-      begin
-        dbg("-> pack start")
-        #sleep(15) # for tc_3
-        dbg("-- pass using epsilons")
-        # get our copies of leftovers and boxes
-        bclone, lclone = clone_split(@boxes, @leftovers)
-        dbg("   data cloned")
-        #
-        # watchdog for excessive computation time
-        #
-        if @options.max_time && (Time.now - start_time > @options.max_time)
-          raise(TimeoutError, 'Timeout expired ...')
+      if @boxes.length > MAX_PARTS
+        dbg("-> First Fit Decreasing because more than #{MAX_PARTS}")
+        err = first_fit_decreasing()
+      else
+        begin
+          dbg("-> pack start")
+          #sleep(15) # for tc_3
+          dbg("-- pass using epsilons")
+          # get our copies of leftovers and boxes
+          bclone, lclone = clone_split(@boxes, @leftovers)
+          dbg("   data cloned")
+          #
+          # watchdog for excessive computation time
+          #
+          if @options.max_time && (Time.now - @start_time > @options.max_time)
+            raise(TimeoutError, 'Timeout expired ...')
+          end
+
+          dbg("   using leftover #{lclone.length}")
+          bins, err = pack(bclone, lclone)
+
+          dbg("-> after single packing, nb bins #{bins.length}, error #{err}")
+          dbg("   optimal nb of bins would be #{@opt_nb_bins}")
+          if err == ERROR_NONE
+            dbg("   packed everything error=#{err}")
+            # tidy up the best result so far
+            @bins = bins
+            @leftovers = lclone            
+            # remove from boxes all elements that have been
+            # packed into bins.
+            #
+            @bins.each do |bin|
+              bin.boxes.each do |box|
+                #dbg("   should be removed #{box.length}")
+                @boxes.delete(box)
+              end
+            end
+            @unplaced_boxes = @boxes + @unfit_boxes
+            @boxes = []
+          elsif err == ERROR_NO_BIN
+            if !bins.empty?
+              dbg("   found some, but no more bins available error=#{err}")
+              err = ERROR_SUBOPT
+              @bins = bins
+              @leftovers = lclone            
+              @bins.each do |bin|
+                bin.boxes.each do |box|
+                  @boxes.delete(box)
+                end
+              end
+              @unplaced_boxes = @boxes + @unfit_boxes
+              @boxes = []              
+            end
+          end
+        rescue TimeoutError => err
+          puts ("Rescued in Packer: #{err.inspect}")
+          err = first_fit_decreasing()
+        rescue Packing1DError => err
+          puts ("Rescued in Packer: #{err.inspect}")
+          return ERROR_BAD_ERROR
         end
-
-        dbg("   using leftover #{lclone.length}")
-        bins, err = pack(bclone, lclone)
-
-        dbg("-> after single packing, nb bins #{bins.length}, error #{err}")
-        dbg("   optimal nb of bins would be #{@opt_nb_bins}")
-        if err == ERROR_NONE
-          best_bins = bins
-          dbg("     best bins #{bins.length}")
-        elsif err == ERROR_NO_BIN
-          if !bins.empty?
-            best_bins = bins
-            err = ERROR_SUBOPT
-            dbg("   found some, but no more bins available error=#{err}")
+      end
+      
+      dbg("-> total time = #{Time.now - start_time}")
+      prepare_results() if err <= ERROR_SUBOPT
+      err
+    end
+    
+    #
+    # First Fit Decreasing algorithm for large number of boxes
+    # or when hitting Timeout
+    #
+    def first_fit_decreasing()
+      @algorithm = ALG_FFD
+      @bins += @leftovers
+      if @bins.empty?
+        bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
+        @bins << bin
+      end
+      @boxes.each do |box|
+        packed = false
+        # box can be packed into one of the existing bins, first fit wins
+        @bins.each do |bin|
+          if box.length <= bin.current_leftover
+            bin.add(box)
+            packed = true
+            break
           end
         end
-      rescue TimeoutError => err
-        puts ("Rescued in Packer: #{err.inspect}")
-        return ERROR_TIME_EXCEEDED
-      rescue Packing1DError => err
-        puts ("Rescued in Packer: #{err.inspect}")
-        return ERROR_BAD_ERROR
-      end
-      
-      # tidy up the best result so far
-      @bins = best_bins
-      @leftovers = lclone
-      dbg("-> total time = #{Time.now - start_time}")
-      
-      #
-      # remove from boxes all elements that have been
-      # packed into bins.
-      #
-      @bins.each do |bin|
-        bin.boxes.each do |box|
-          #dbg("   should be removed #{box.length}")
-          @boxes.delete(box)
+        # box could not be packed, create new bin if allowed to
+        if not packed
+          if @options.base_bin_length > EPS
+            dbg("creating new bin")
+            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
+            if box.length <= bin.current_leftover
+              bin.add(box)
+            else
+              @unplaced_boxes << box
+            end
+            @bins << bin
+          else
+            @unplaced_boxes << box
+          end
         end
       end
-
-      #
-      # the remaining boxes and those which were not
-      # considered in the first place.
-      #
-      @unplaced_boxes = @boxes + @unfit_boxes
-      @boxes = []
-
-      prepare_results() if err <= ERROR_SUBOPT
-
-      err
+      if @unplaced_boxes.empty?
+        return ERROR_NONE
+      else
+        return ERROR_NO_BIN
+      end
     end
     
     #
@@ -427,6 +480,9 @@ module Ladb::OpenCutList::BinPacking1D
           # new target that can be reached
           te.store(y + x, y_list + [x])
           dbg("  + #{te}")
+          if @options.max_time && (Time.now - @start_time > @options.max_time)
+            raise(TimeoutError, 'Timeout expired ...')
+          end
         end
         # merge te with se, resolve conflicts by
         # keeping the key with the least number of parts
