@@ -100,7 +100,6 @@ module Ladb::OpenCutList::BinPacking1D
         and @options.saw_kerf > SIZE_WARNING_FACTOR*@largest_bin
       
       dbg("-> create packer with nb of leftovers=#{@leftovers.length}") 
-      
       begin
         packer = Packer.new(@options)
         packer.add_leftovers(@leftovers)
@@ -111,6 +110,7 @@ module Ladb::OpenCutList::BinPacking1D
         puts ("Rescued in PackEngine: #{err.inspect}")
         return nil, ERROR_BAD_ERROR
       end
+      @warnings << WARNING_ALGORITHM_FFD if packer.algorithm == ALG_FFD
       packer = nil if err > ERROR_SUBOPT
       return packer, err 
     end

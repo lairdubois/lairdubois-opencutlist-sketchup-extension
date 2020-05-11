@@ -40,6 +40,9 @@ module Ladb::OpenCutList
     # A bin with zero or negative length.
     WARNING_ILLEGAL_SIZED_BIN = 3
     
+    # A suboptimal algorithm was used.
+    WARNING_ALGORITHM_FFD = 4
+    
     # Factor for checking trimsize. 
     MAX_TRIMSIZE_FACTOR = 5
 
@@ -47,7 +50,7 @@ module Ladb::OpenCutList
     DEFAULT_TUNING_LEVEL = 0
     
     # Default allocated computation time in seconds.
-    MAX_TIME = 30
+    MAX_TIME = 5
 
     # Epsilon precision for comparison. 
     # Smaller than this is considered zero.
@@ -57,6 +60,12 @@ module Ladb::OpenCutList
     # groups and optimize each group
     MAX_PARTS = 100
 
+    # Algorithm used is subset sum.
+    ALG_SUBSET_SUM = 1
+    
+    # Algorithm used is FFD.
+    ALG_FFD = 2
+    
     #
     # Exception raised in this module.
     #
