@@ -31,11 +31,13 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def add_bin(length)
       dbg("   . BIN length #{length}")
-      newbin = Bin.new(length, BIN_TYPE_LO, @options)
-      
-      @warnings << WARNING_ILLEGAL_SIZED_BIN if length <= 0
-      # sorting is not necessary, algorithm will pick largest available
-      @leftovers.push(newbin).sort_by!(&:length)
+      if length <= 0
+        @warnings << WARNING_ILLEGAL_SIZED_BIN
+      else
+        newbin = Bin.new(length, BIN_TYPE_LO, @options)
+        # sorting is not necessary, algorithm will pick largest available
+        @leftovers.push(newbin).sort_by!(&:length)
+      end
     end
         
     # 
@@ -43,9 +45,11 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def add_box(length, data = nil)
       dbg("   . BOX length=#{length}, data=#{data}")
-
-      @warnings << WARNING_ILLEGAL_SIZED_BOX if length <= 0
-      @boxes << Box.new(length, data)
+      if length <= 0
+        @warnings << WARNING_ILLEGAL_SIZED_BOX if length <= 0
+      else
+        @boxes << Box.new(length, data)
+      end
     end
     
     #
