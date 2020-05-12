@@ -9,6 +9,7 @@
 
 {% set dimensionOffset = 5 %}
 {% set barDimensionOffset = 10 %}
+{% set barSliceGutter = 15 %}
 
 {% set barOutlineWidth = 1 %}
 {% set partOutlineWidth = 2 %}
@@ -184,41 +185,59 @@
                 <tr>
                     <td colspan="{{ colspan }}">
 
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} -{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} {{ bar.px_length + (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * 2 }} {{ bar.px_width + (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * 2 }}" height="{{ bar.px_width + (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * 2 }}" style="max-height: {{ min( 900, bar.px_width + barOutlineWidth * 2 + barDimensionOffset + barDimensionFontSize) }}px">
-                            <text class="bar-dimension" x="{{ bar.px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}</text>
+                        {% set sliceHeight = bar.px_width + dimensionOffset + dimensionFontSize + barSliceGutter %}
+                        {% set viewportWidth = bar.slices[0].px_length + (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * 2 %}
+                        {% set viewportHeight = barDimensionOffset + barDimensionFontSize + sliceHeight * bar.slices|length %}
+
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} -{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} {{ viewportWidth }} {{ viewportHeight }}" height="{{ viewportHeight }}">
+                            <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}</text>
                             <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ barOutlineWidth + barDimensionOffset }},{{ bar.px_width / 2 }})">{{ bar.width }}</text>
                             <g class="bar" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
-                                <rect class="bar-outer" x="-1" y="-1" width="{{ bar.px_length + 2 }}" height="{{ bar.px_width + 2 }}"></rect>
-                                <rect class="bar-inner" x="0" y="0" width="{{ bar.px_length }}" height="{{ bar.px_width }}"></rect>
+                            {% for slice in bar.slices %}
+                                <rect class="bar-outer" x="{{ loop.first ? -1 : 0 }}" y="{{ sliceHeight * loop.index0 - 1 }}" width="{{ slice.px_length + (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width + 2 }}"></rect>
+                                <rect class="bar-inner" x="0" y="{{ sliceHeight * loop.index0 }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                            {% endfor %}
                             </g>
-                            {% set hideCross = bar.leftover.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
-                            {% set hideDimensions = bar.leftover.px_length < (dimensionFontSize * bar.leftover.length|length) %}
                             <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ bar.leftover.length|escape('html') }}">
-                                <rect class="leftover-inner" x="{{ bar.leftover.px_x }}" y="0" width="{{ bar.leftover.px_length }}" height="{{ bar.px_width }}"></rect>
-                                {% if not hideCross %}
-                                    <line class="leftover-cross" x1="{{ bar.leftover.px_x + bar.leftover.px_length }}" y1="0" x2="{{ bar.leftover.px_x }}" y2="{{ bar.px_width }}"></line>
-                                    <line class="leftover-cross" x1="{{ bar.leftover.px_x }}" y1="0" x2="{{ bar.leftover.px_x + bar.leftover.px_length }}" y2="{{ bar.px_width }}"></line>
-                                {% endif %}
-                                {% if not hideDimensions %}
-                                    <text class="leftover-dimension" x="{{ bar.leftover.px_x + bar.leftover.px_length / 2 }}" y="{{ bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging">{{ bar.leftover.length }}</text>
-                                {% endif %}
+                                {% for slice in bar.leftover.slices %}
+                                    {% set yOffset = slice.index * sliceHeight %}
+                                    {% set hideCross = slice.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
+                                    {% set hideDimensions = slice.px_length < (dimensionFontSize * bar.leftover.length|length) %}
+                                    <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                                    {% if not hideCross %}
+                                        <line class="leftover-cross" x1="{{ slice.px_x + slice.px_length }}" y1="{{ yOffset }}" x2="{{ slice.px_x }}" y2="{{ yOffset + bar.px_width }}"></line>
+                                        <line class="leftover-cross" x1="{{ slice.px_x }}" y1="{{ yOffset }}" x2="{{ slice.px_x + slice.px_length }}" y2="{{ yOffset + bar.px_width }}"></line>
+                                    {% endif %}
+                                    {% if not hideDimensions %}
+                                        <text class="leftover-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging">{{ bar.leftover.length }}</text>
+                                    {% endif %}
+                                {% endfor %}
                             </g>
                             {% for part in bar.parts|reverse %}
-                                {% set hideDimensions = part.px_length < (dimensionFontSize * part.length|length) %}
+                                {% set numberTextLength = part.number|length %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}">
-                                    <rect class="part-outer" x="{{ part.px_x }}" y="0" width="{{ part.px_length }}" height="{{ bar.px_width }}"></rect>
-                                    <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
-                                    {% set numberTextLength = part.number|length %}
-                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / numberTextLength, (bar.px_width - dimensionOffset * 2))  }}px" text-anchor="middle" dominant-baseline="central">{{ part.number }}</text>
-                                    {% if not hideDimensions %}
-                                        <text class="part-dimension" x="{{ part.px_x + part.px_length / 2 }}" y="{{ bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
-                                    {% endif %}
+                                    {% for slice in part.slices %}
+                                        {% set yOffset = slice.index * sliceHeight %}
+                                        {% set hideNumber = slice.px_length < (dimensionFontSize * numberTextLength) %}
+                                        {% set hideDimensions = slice.px_length < (dimensionFontSize * part.length|length) %}
+                                        <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                                        <rect class="part-inner" x="{{ slice.px_x + (loop.first ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
+                                        {% if not hideNumber %}
+                                            <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - dimensionOffset * 2) / numberTextLength, (bar.px_width - dimensionOffset * 2))  }}px" text-anchor="middle" dominant-baseline="central">{{ part.number }}</text>
+                                        {% endif %}
+                                        {% if not hideDimensions %}
+                                            <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
+                                        {% endif %}
+                                    {% endfor %}
                                 </g>
                             {% endfor %}
                             {% for cut in bar.cuts %}
                                 <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br><i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}<br><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}">
-                                    <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ 0 - cutOutlineWidth }}" width="{{ options.px_saw_kerf + cutOutlineWidth * 2 }}" height="{{ bar.px_width + cutOutlineWidth * 2 }}"></rect>
-                                    <rect class="cut-inner" x="{{ cut.px_x }}" y="0" width="{{ options.px_saw_kerf }}" height="{{ bar.px_width }}"></rect>
+                                    {% for slice in cut.slices %}
+                                        {% set yOffset = slice.index * sliceHeight %}
+                                        <rect class="cut-outer" x="{{ slice.px_x - cutOutlineWidth }}" y="{{ yOffset - cutOutlineWidth }}" width="{{ options.px_saw_kerf + cutOutlineWidth * 2 }}" height="{{ bar.px_width + cutOutlineWidth * 2 }}"></rect>
+                                        <rect class="cut-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ options.px_saw_kerf }}" height="{{ bar.px_width }}"></rect>
+                                    {% endfor %}
                                 </g>
                             {% endfor %}
                             {% if group.material_grained %}
@@ -266,8 +285,7 @@
                 {% endif %}
                 <tr>
                     <td colspan="{{ colspan }}">
-                        <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bar.efficiency|number_format(2, ',', ' ') }}%</span>
-                        <span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_length_cuts'|i18next }} : </strong>{{ bar.total_length_cuts }}</span>
+                        <span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bar.efficiency|number_format(2, ',', ' ') }}%</span>
                         {% if not options.trimming|slice(0, 1) == '0' %}<span class="pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}
                         <span class="{% if not options.trimming|slice(0, 1) == '0' %}ladb-horizontal-left-separator {% endif %}pull-left">{{ ('tab.cutlist.cuttingdiagram.list.parts')|i18next({ 'count':bar.parts|length }) }}</span>
                     </td>

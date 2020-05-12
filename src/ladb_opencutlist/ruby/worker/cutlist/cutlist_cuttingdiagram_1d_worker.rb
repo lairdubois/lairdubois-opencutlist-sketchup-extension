@@ -8,10 +8,11 @@ module Ladb::OpenCutList
       @group_id = settings['group_id']
       @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
       @scrap_bar_lengths = DimensionUtils.instance.dd_to_ifloats(settings['scrap_bar_lengths'])
-      @bar_folding = settings['bar_folding']
-      @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
+      @bar_folding = settings['bar_folding']
+      @hide_part_list = settings['hide_part_list']
+      @break_length = DimensionUtils.instance.str_to_ifloat(settings['break_length']).to_l.to_f
 
       @cutlist = cutlist
 
@@ -49,11 +50,6 @@ module Ladb::OpenCutList
       # Response
       # --------
 
-      # Convert inch float value to pixel
-      def to_px(inch_value)
-        inch_value * 14 # 1680px = 240" ~ 6m
-      end
-
       response = {
           :errors => [],
           :warnings => [],
@@ -61,7 +57,7 @@ module Ladb::OpenCutList
 
           :options => {
               :hide_part_list => @hide_part_list,
-              :px_saw_kerf => to_px(options.saw_kerf),
+              :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => @saw_kerf.to_l.to_s,
               :trimming => @trimming.to_l.to_s,
           },
@@ -163,14 +159,14 @@ module Ladb::OpenCutList
           bar = {
               :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}"),
               :count => 0,
-              :px_length => to_px(bin.length),
-              :px_width => to_px(group.def.std_width),
+              :px_length => _to_px(bin.length),
+              :px_width => _to_px(group.def.std_width),
               :type => bin.type, # leftover or new bin
               :length => bin.length.to_l.to_s,
               :width => group.def.std_width.to_s,
               :efficiency => bin.efficiency,
-              :total_length_cuts => bin.cut_counts.to_l.to_s,
 
+              :slices => [],
               :parts => [],
               :grouped_parts => [],
               :leftover => nil,
@@ -178,19 +174,30 @@ module Ladb::OpenCutList
           }
           grouped_bar_key = bar[:type_id] if @bar_folding
 
+          slice_count = (bin.length / @break_length).ceil
+          i = 0
+          while i < slice_count do
+            bar[:slices].push(
+                {
+                    :px_length => _to_px([@break_length, bin.length - i * @break_length ].min)
+                }
+            )
+            i += 1
+          end
+
           # Parts
           grouped_parts = {}
           bin.boxes.each { |box|
-            bar[:parts].push(
-                {
-                    :id => box.data.id,
-                    :number => box.data.number,
-                    :name => box.data.name,
-                    :px_x => to_px(box.x),
-                    :px_length => to_px(box.length),
-                    :length => box.length.to_l.to_s,
-                }
-            )
+
+            part = {
+                :id => box.data.id,
+                :number => box.data.number,
+                :name => box.data.name,
+                :length => box.length.to_l.to_s,
+                :slices => _to_slices(box.x, box.length),
+            }
+            bar[:parts].push(part)
+
             grouped_bar_key += "|#{box.data.number}" if @bar_folding
             grouped_part = grouped_parts[box.data.id]
             unless grouped_part
@@ -211,18 +218,17 @@ module Ladb::OpenCutList
 
           # Leftover
           bar[:leftover] = {
-              :px_x => to_px(bin.current_position),
               :x => bin.current_position,
-              :px_length => to_px(bin.current_leftover),
               :length => bin.current_leftover.to_l.to_s,
+              :slices => _to_slices(bin.current_position, bin.current_leftover),
           }
 
           # Cuts
           bin.cuts.each { |cut|
             bar[:cuts].push(
                 {
-                    :px_x => to_px(cut),
                     :x => cut.to_l.to_s,
+                    :slices => _to_slices(cut, 0)
                 }
             )
           }
@@ -250,6 +256,48 @@ module Ladb::OpenCutList
       end
 
       response
+    end
+
+    # -----
+
+    private
+
+    # Convert inch float value to pixel
+    def _to_px(inch_value)
+      inch_value * 7 # 840px = 120" ~ 3m
+    end
+
+    # Convert inch float value to slice index
+    def _to_slice_index(inch_value)
+      (inch_value / @break_length).floor
+    end
+
+    def _to_slices(x, length)
+
+      start_slice_index = _to_slice_index(x)
+      end_slice_index = _to_slice_index(x + length)
+
+      slices = []
+      slice_index = start_slice_index
+      current_x = x
+      remaining_length = length
+      while slice_index <= end_slice_index do
+        bar_slice_x = @break_length * slice_index
+        part_slice_x = current_x - bar_slice_x
+        part_slice_length = [@break_length - part_slice_x, remaining_length ].min
+        slices.push(
+            {
+                :index => slice_index,
+                :px_x => _to_px(part_slice_x),
+                :px_length => _to_px(part_slice_length),
+            }
+        )
+        slice_index += 1
+        current_x += part_slice_length
+        remaining_length -= part_slice_length
+      end
+
+      slices
     end
 
   end

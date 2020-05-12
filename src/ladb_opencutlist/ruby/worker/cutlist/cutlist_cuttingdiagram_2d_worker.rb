@@ -65,11 +65,6 @@ module Ladb::OpenCutList
       # Response
       # --------
 
-      # Convert inch float value to pixel
-      def to_px(inch_value)
-        inch_value * 7 # 840px = 120" ~ 3m
-      end
-
       response = {
           :errors => [],
           :warnings => [],
@@ -78,7 +73,7 @@ module Ladb::OpenCutList
           :options => {
               :grained => @grained,
               :hide_part_list => @hide_part_list,
-              :px_saw_kerf => to_px(options.saw_kerf),
+              :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,
               :trimming => options.trimming.to_l.to_s,
               :stacking => @stacking,
@@ -199,8 +194,8 @@ module Ladb::OpenCutList
           sheet = {
               :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}"),
               :count => 0,
-              :px_length => to_px(bin.length),
-              :px_width => to_px(bin.width),
+              :px_length => _to_px(bin.length),
+              :px_width => _to_px(bin.width),
               :type => bin.type,
               :length => bin.length.to_l.to_s,
               :width => bin.width.to_l.to_s,
@@ -222,10 +217,10 @@ module Ladb::OpenCutList
                     :id => box.data.id,
                     :number => box.data.number,
                     :name => box.data.name,
-                    :px_x => to_px(box.x),
-                    :px_y => to_px(box.y),
-                    :px_length => to_px(box.length),
-                    :px_width => to_px(box.width),
+                    :px_x => _to_px(box.x),
+                    :px_y => _to_px(box.y),
+                    :px_length => _to_px(box.length),
+                    :px_width => _to_px(box.width),
                     :length => box.length.to_l.to_s,
                     :width => box.width.to_l.to_s,
                     :rotated => box.rotated,
@@ -260,10 +255,10 @@ module Ladb::OpenCutList
           bin.leftovers.each { |box|
             sheet[:leftovers].push(
                 {
-                    :px_x => to_px(box.x),
-                    :px_y => to_px(box.y),
-                    :px_length => to_px(box.length),
-                    :px_width => to_px(box.width),
+                    :px_x => _to_px(box.x),
+                    :px_y => _to_px(box.y),
+                    :px_length => _to_px(box.length),
+                    :px_width => _to_px(box.width),
                     :length => box.length.to_l.to_s,
                     :width => box.width.to_l.to_s,
                 }
@@ -274,9 +269,9 @@ module Ladb::OpenCutList
           bin.cuts.each { |cut|
             sheet[:cuts].push(
                 {
-                    :px_x => to_px(cut.x),
-                    :px_y => to_px(cut.y),
-                    :px_length => to_px(cut.length),
+                    :px_x => _to_px(cut.x),
+                    :px_y => _to_px(cut.y),
+                    :px_length => _to_px(cut.length),
                     :x => cut.x.to_l.to_s,
                     :y => cut.y.to_l.to_s,
                     :length => cut.length.to_l.to_s,
@@ -308,6 +303,15 @@ module Ladb::OpenCutList
       end
 
       response
+    end
+
+    # -----
+
+    private
+
+    # Convert inch float value to pixel
+    def _to_px(inch_value)
+      inch_value * 7 # 840px = 120" ~ 3m
     end
 
   end

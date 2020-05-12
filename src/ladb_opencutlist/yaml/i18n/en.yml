@@ -330,6 +330,8 @@ tab:
       option_hide_part_list_0: Displayed for each panel/board
       option_hide_part_list_1: Masked
       option_hide_part_list_help: Display or mask the list of parts for each panel.
+      option_break_length: Longueur de césure
+      option_break_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size

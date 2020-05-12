@@ -330,6 +330,8 @@ tab:
       option_hide_part_list_0: Anzeigen für jede Platte/Stange
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
+      option_break_length: Longueur de césure
+      option_break_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Randabfallbreite
