@@ -20,7 +20,7 @@ module Ladb::OpenCutList::BinPacking1D
     # a TimeoutError.
     attr_reader :max_time
     
-    # option to print debugging information, very verbose.
+    # Enable debugging information, very verbose.
     attr_accessor :debug
     
     #

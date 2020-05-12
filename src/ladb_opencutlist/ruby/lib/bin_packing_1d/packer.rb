@@ -168,7 +168,6 @@ module Ladb::OpenCutList::BinPacking1D
             #
             @bins.each do |bin|
               bin.boxes.each do |box|
-                #dbg("   should be removed #{box.length}")
                 @boxes.delete(box)
               end
             end

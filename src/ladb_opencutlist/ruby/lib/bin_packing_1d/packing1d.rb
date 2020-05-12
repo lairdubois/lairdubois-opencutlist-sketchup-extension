@@ -25,29 +25,19 @@ module Ladb::OpenCutList
     # No boxes available to pack.
     ERROR_NO_BOX = 6
     
-    # A large saw kerf warning
+    # A large saw kerf warning.
     WARNING_SAW_KERF_LARGE = 0
-    
-    # A large trimsize warning
+    # A large trimsize warning.
     WARNING_TRIM_SIZE_LARGE = 1
-    
-    # If trimsize/saw kerf > SIZE_WARNING_FACTOR*largest leftover.
-    SIZE_WARNING_FACTOR = 0.25
-    
     # A box with zero or negative length.
     WARNING_ILLEGAL_SIZED_BOX = 2
-    
     # A bin with zero or negative length.
     WARNING_ILLEGAL_SIZED_BIN = 3
-    
     # A suboptimal algorithm was used.
     WARNING_ALGORITHM_FFD = 4
     
-    # Factor for checking trimsize. 
-    MAX_TRIMSIZE_FACTOR = 5
-
-    # Default tuning level.
-    DEFAULT_TUNING_LEVEL = 0
+    # If trimsize/saw kerf > SIZE_WARNING_FACTOR*largest leftover.
+    SIZE_WARNING_FACTOR = 0.25
     
     # Default allocated computation time in seconds.
     MAX_TIME = 5
@@ -62,7 +52,6 @@ module Ladb::OpenCutList
 
     # Algorithm used is subset sum.
     ALG_SUBSET_SUM = 1
-    
     # Algorithm used is FFD.
     ALG_FFD = 2
     
@@ -96,7 +85,7 @@ module Ladb::OpenCutList
       end
       
       # Prints a message when debug option is on or
-      # when called with option true
+      # when called with option true.
       def dbg(msg, dbg=false)
         # assuming @options exists
         if dbg
