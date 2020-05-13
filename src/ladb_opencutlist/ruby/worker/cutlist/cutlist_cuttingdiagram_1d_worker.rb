@@ -79,8 +79,7 @@ module Ladb::OpenCutList
         when BinPacking1D::ERROR_NO_BIN
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_bar'
         when BinPacking1D::ERROR_PARAMETERS
-          #response[:errors] << 'tab.cutlist.cuttingdiagram.error.parameters'
-          puts("Error in parameters trimsize, sawkerf > 0.25*largest bin")
+          response[:errors] << 'tab.cutlist.cuttingdiagram.error.parameters'
         when BinPacking1D::ERROR_NO_BOX
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
         when BinPacking1D::ERROR_TIME_EXCEEDED

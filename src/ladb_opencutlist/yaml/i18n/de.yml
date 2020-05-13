@@ -330,7 +330,8 @@ tab:
       option_sheet_folding_1: Ja
       option_sheet_folding_help: Fasst alle Platten mit gleichen Teilen und Schnitten zusammen.
       option_hide_part_list: Liste der Teile
-      option_hide_part_list_0: Anzeigen für jede Platte/Stange
+      option_hide_part_list_1d_0: Anzeigen für jede Stange
+      option_hide_part_list_2d_0: Anzeigen für jede Platte
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
       option_break_length: Länge bis zum Umbruch
@@ -414,6 +415,10 @@ tab:
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
       error:
+        no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
+        parameters: Les paramètres sont incorrects. La marge dépasse 25% de la barre la plus grande.
+        no_parts: Aucune pièce.
+        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Standardplattenmaße mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu groß, Standardplatte zu klein, Sägeschnitt zu groß, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwickler, denn Sie haben hier einen speziellen Fall.

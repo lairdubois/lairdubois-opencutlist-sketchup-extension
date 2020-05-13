@@ -330,7 +330,8 @@ tab:
       option_sheet_folding_1: Yes
       option_sheet_folding_help: Group panels having the same parts and cuts.
       option_hide_part_list: Parts List
-      option_hide_part_list_0: Displayed for each panel/board
+      option_hide_part_list_1d_0: Displayed for each board
+      option_hide_part_list_2d_0: Displayed for each panel
       option_hide_part_list_1: Masked
       option_hide_part_list_help: Display or mask the list of parts for each panel.
       option_break_length: Wraplength
@@ -414,6 +415,10 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
+        no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
+        parameters: Les paramètres sont incorrects. La marge dépasse 25% de la barre la plus grande.
+        no_parts: Aucune pièce.
+        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
         bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
