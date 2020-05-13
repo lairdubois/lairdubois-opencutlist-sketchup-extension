@@ -34,7 +34,7 @@ module Ladb::OpenCutList
 
       # Add bins from scrap sheets
       @scrap_bar_lengths.split(';').each { |scrap_bar_length|
-        e.add_bin(scrap_bar_length.to_f)
+        e.add_bin(scrap_bar_length.to_l.to_f)
       }
 
       # Add boxes from parts

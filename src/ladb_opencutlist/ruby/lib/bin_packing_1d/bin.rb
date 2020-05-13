@@ -15,7 +15,7 @@ module Ladb::OpenCutList::BinPacking1D
     attr_reader :boxes
     
     # List of necessary cuts (starting a 0 of the raw board).
-    attr_reader:cuts
+    attr_reader :cuts
     
     # Current net length of the leftover.
     attr_reader :current_leftover
@@ -43,7 +43,7 @@ module Ladb::OpenCutList::BinPacking1D
 
       @type = type
       # making sure it is a float
-      @length = length*1.0
+      @length = length
       if @length <= 0
         raise(Packing1DError, "Trying to initialize a bin with zero or negative length")
       end

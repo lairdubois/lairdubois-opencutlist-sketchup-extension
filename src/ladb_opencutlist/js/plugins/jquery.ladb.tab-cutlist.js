@@ -1471,7 +1471,7 @@
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', { material_attributes: response, group: group });
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', { material_attributes: response, group: group }, true);
 
                     // Fetch UI elements
                     var $inputStdBar = $('#ladb_select_std_bar', $modal);
@@ -1490,7 +1490,7 @@
                     if (cuttingdiagram1dOptions.std_bar) {
                         $inputStdBar.val(cuttingdiagram1dOptions.std_bar);
                         if ($inputStdBar.val() == null && response.std_lengths.length === 0) {
-                            $inputStdBar.val('0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                            $inputStdBar.val('0');  // Special case if the std_bar is not present anymore in the list and no std size defined. Select "none" by default.
                         }
                     }
                     $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
@@ -1543,10 +1543,9 @@
                     // Bind buttons
                     $btnCuttingdiagramOptionsDefaultsSave.on('click', function () {
 
-                        var bar_folding = $barSheetFolding.val();
+                        var bar_folding = $selectBarFolding.val();
                         var hide_part_list = $selectHidePartList.val();
                         var break_length = $inputBreakLength.val();
-                        var saw_kerf = $inputSawKerf.val();
                         var saw_kerf = $inputSawKerf.val();
                         var trimming = $inputTrimming.val();
 
