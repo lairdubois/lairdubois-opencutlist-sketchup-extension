@@ -19,6 +19,7 @@ default:
   remove: Löschen
   create: Anlegen
   ignore: Ignorieren
+  download: Télécharger
   empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
@@ -54,6 +55,7 @@ core:
     more_reviews: Meinungen
     more_plans: Pläne
     more_extensions: Plugins
+    more_update: Mise à jour
   warning:
     old_su: |
       Sie verwenden eine ältere Version von SketchUp ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
@@ -66,6 +68,12 @@ core:
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
   model_info_page:
     units: Einheiten
+  upgrade:
+    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    available: |
+      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
+      Téléchargez-là pour disposer des dernières nouveautés !
+    up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
 tab:
   cutlist:
     label: Holzliste

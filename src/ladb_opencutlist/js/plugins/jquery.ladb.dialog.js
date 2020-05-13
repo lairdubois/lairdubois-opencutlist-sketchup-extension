@@ -34,8 +34,14 @@
             dialogTop: options.dialog_top
         };
 
+        this.lastReleaseVersion = null;
+        this.lastReleaseBuild = null;
+        this.updateUrl = null;
+
         this.settings = {};
 
+        this.minimizing = false;
+        this.maximizing = false;
         this.maximized = false;
 
         this.activeTabName = null;
@@ -46,6 +52,7 @@
         this.$btnMinimize = null;
         this.$btnMaximize = null;
         this.$btnMore = null;
+        this.$btnUpgrade = null;
         this.$btnCloseCompatibilityAlert = null;
     };
 
@@ -90,6 +97,117 @@
                 sponsorAd: false
             }
         ]
+    };
+
+    // Update /////
+
+    LadbDialog.prototype.checkUpdate = function (random) {
+        var that = this;
+
+        if (this.lastReleaseVersion == null) {
+            $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/manifest' + (this.capabilities.debug ? '-dev' : '') + '.json', function (data) {
+
+                // Retrieve version infos
+                that.lastReleaseVersion = data.version;
+                that.lastReleaseBuild = data.build;
+
+                var fnCompareBuild = function(b1, b2) {
+                    if (b1 === b2) {
+                        return 0;
+                    }
+                    if (parseInt(b1) > parseInt(b2)) {
+                        return 1;
+                    } else {
+                        return -1
+                    }
+                }
+
+                var fnCompareVersion = function(v1, v2, b1, b2) {
+                    if (v1 === v2) {
+                        return fnCompareBuild(b1, b2);
+                    }
+
+                    var v1_components = v1.split(".");
+                    var v2_components = v2.split(".");
+
+                    var len = Math.min(v1_components.length, v2_components.length);
+
+                    // Loop while the components are equal
+                    for (var i = 0; i < len; i++) {
+                        // A bigger than B
+                        if (parseInt(v1_components[i]) > parseInt(v2_components[i])) {
+                            return 1;
+                        }
+
+                        // B bigger than A
+                        if (parseInt(v1_components[i]) < parseInt(v2_components[i])) {
+                            return -1;
+                        }
+                    }
+
+                    // If one's a prefix of the other, the longer one is greater.
+                    if (v1_components.length > v2_components.length) {
+                        return 1;
+                    }
+
+                    if (v1_components.length < v2_components.length) {
+                        return -1;
+                    }
+
+                    // Otherwise they are the same.
+                    return fnCompareBuild(b1, b2);
+                }
+
+                // Compare versions
+                if (fnCompareVersion(that.lastReleaseVersion, that.capabilities.version, that.lastReleaseBuild, that.capabilities.build) > 0) {
+
+                    // New version available -> store update url
+                    that.lastReleaseUrl = data.url;
+
+                    // Trigger updatable event
+                    that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+
+                }
+
+            }).fail(function(e) {
+                that.lastReleaseVersion = '';
+                that.lastReleaseBuild = '';
+                that.lastReleaseUrl = '';
+            });
+        }
+
+    };
+
+    LadbDialog.prototype.upgrade = function () {
+
+        // Render modal
+        this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
+            currentVersion: this.capabilities.version,
+            currentBuild: this.capabilities.build,
+            lastReleaseVersion: this.lastReleaseVersion,
+            lastReleaseBuild: this.lastReleaseBuild,
+            lastReleaseUrl: this.lastReleaseUrl,
+        }));
+
+        // Fetch UI elements
+        var $modal = $('#ladb_core_modal_upgrade');
+        var $btnDownload = $('#ladb_btn_download', $modal);
+
+        // Bind buttons
+        $btnDownload.on('click', function() {
+
+            // Open url
+            rubyCallCommand('core_open_url', { url: $(this).data('href') });
+
+            // Close modal
+            $modal.modal('hide');
+
+            return false;
+        });
+
+        // Show modal
+        $modal.modal('show');
+
     };
 
     // Settings /////
@@ -140,8 +258,10 @@
 
     LadbDialog.prototype.minimize = function () {
         var that = this;
-        if (that.maximized) {
+        if (that.maximized && !that.minimizing) {
+            that.minimizing = true;
             rubyCallCommand('core_dialog_minimize', null, function () {
+                that.minimizing = false;
                 Noty.closeAll();
                 that.$wrapper.hide();
                 that.$btnMinimize.hide();
@@ -155,8 +275,10 @@
 
     LadbDialog.prototype.maximize = function () {
         var that = this;
-        if (!that.maximized) {
+        if (!that.maximized && !that.maximizing) {
+            that.maximizing = true;
             rubyCallCommand('core_dialog_maximize', null, function () {
+                that.maximizing = false;
                 that.$wrapper.show();
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
@@ -376,10 +498,29 @@
                 that.selectTab(tabName);
             });
         });
+        this.$btnUpgrade.on('click', function() {
+            that.upgrade();
+        });
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
+        });
+
+        // Bind fake tabs
+        $('a[data-ladb-tab-name]', this.$element).on('click', function() {
+            var tabName = $(this).data('ladb-tab-name');
+            that.selectTab(tabName);
+        });
+
+        // Bind dialog maximized events
+        this.$element.on('maximized.ladb.dialog', function() {
+            that.checkUpdate();
+        });
+
+        // Bind core updatable events
+        this.$element.on('updatable.ladb.core', function() {
+            $('#ladb_btn_more .badge.badge-notification', that.$element).show();
         });
 
     };
@@ -422,6 +563,7 @@
                 that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
                 that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
                 that.$btnMore = $('#ladb_btn_more', that.$element);
+                that.$btnUpgrade = $('#ladb_btn_upgrade', that.$element);
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                 for (var i = 0; i < that.options.tabDefs.length; i++) {
                     var tabDef = that.options.tabDefs[i];

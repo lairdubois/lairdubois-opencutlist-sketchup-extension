@@ -19,6 +19,7 @@ default:
   remove: Supprimer
   create: Créer
   ignore: Ignorer
+  download: Télécharger
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
@@ -54,6 +55,7 @@ core:
     more_reviews: Avis
     more_plans: Plans
     more_extensions: Plugins
+    more_update: Mise à jour
   warning:
     old_su: |
       Vous utilisez une ancienne version de SketchUp ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
@@ -66,6 +68,12 @@ core:
     selection_change: La sélection dans le modèle actif a changée.
   model_info_page:
     units: Unités
+  upgrade:
+    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    available: |
+      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
+      Téléchargez-là pour disposer des dernières nouveautés !
+    up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
 tab:
   cutlist:
     label: Débit
