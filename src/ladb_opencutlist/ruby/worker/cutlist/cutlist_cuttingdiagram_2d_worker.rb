@@ -150,7 +150,7 @@ module Ladb::OpenCutList
         }
 
         # Summary
-        result.unused_bins.each {|bin|
+        result.unused_bins.each { |bin|
           response[:summary][:sheets].push(
               {
                   :type => bin.type,

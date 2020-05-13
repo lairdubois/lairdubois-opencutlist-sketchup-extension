@@ -130,6 +130,17 @@ module Ladb::OpenCutList
         }
 
         # Summary
+        result.unused_bins.each { |bin|
+          response[:summary][:bars].push(
+              {
+                  :type => bin.type,
+                  :count => 1,
+                  :length => bin.length.to_l.to_s,
+                  :total_length => DimensionUtils.instance.format_to_readable_length(bin.length),
+                  :is_used => false,
+              }
+          )
+        }
         summary_bars = {}
         result.bins.each { |bin|
           type_id = _compute_bin_type_id(bin, group)
