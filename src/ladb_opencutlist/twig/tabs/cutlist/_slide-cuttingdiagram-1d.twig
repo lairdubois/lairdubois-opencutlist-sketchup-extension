@@ -173,9 +173,11 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-{#                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ bars|length }}</strong></div>#}
+                        {% if not options.bar_folding %}
+                            <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ bars|length }}</strong></div>
+                        {% endif %}
                         {% if bar.count > 1 %}
-                            <div class="ladb-heading-count pull-right">x{{ bar.count }}</div>
+                            <div class="ladb-heading-count pull-right">x&nbsp;{{ bar.count }}</div>
                         {% endif %}
                         <div class="ladb-heading"><i class="ladb-opencutlist-icon-bar"></i> {{ group.material_name }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bar.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.bar_type_'~bar.type)|i18next }}</span></div>
                     </td>
@@ -224,7 +226,7 @@
                             </g>
                             {% for part in bar.parts|reverse %}
                                 {% set numberTextLength = part.number|length %}
-                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}">
+                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>[{{ part.number }}]&nbsp;{{ part.name|escape }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}">
                                     {% set displayedDimensions = false %}
                                     {% for slice in part.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}

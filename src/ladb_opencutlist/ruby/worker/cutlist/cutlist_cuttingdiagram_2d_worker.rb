@@ -72,6 +72,7 @@ module Ladb::OpenCutList
 
           :options => {
               :grained => @grained,
+              :sheet_folding => @sheet_folding,
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,
@@ -302,7 +303,7 @@ module Ladb::OpenCutList
 
         if @sheet_folding
           # Convert grouped sheets to array (sort by type DESC and count DESC)
-          response[:sheets] = grouped_sheets.values.sort_by { |sheet| [ -sheet[:type], -sheet[:count], -sheet[:efficiency] ] }
+          response[:sheets] = grouped_sheets.values.sort_by { |sheet| [ -sheet[:type], -sheet[:efficiency], -sheet[:count] ] }
         end
 
       end

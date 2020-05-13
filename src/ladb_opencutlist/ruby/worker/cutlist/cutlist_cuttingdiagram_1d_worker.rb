@@ -258,7 +258,7 @@ module Ladb::OpenCutList
 
         if @bar_folding
           # Convert grouped bars to array (sort by type DESC and count DESC)
-          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:count], -bar[:efficiency] ] }
+          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:efficiency], -bar[:count] ] }
         end
 
       end
