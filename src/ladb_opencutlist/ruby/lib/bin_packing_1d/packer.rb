@@ -36,6 +36,9 @@ module Ladb::OpenCutList::BinPacking1D
     # of a lack of bins/leftovers.
     attr_reader :unplaced_boxes
     
+    # Leftover bins which have nave not been used
+    attr_reader :unused_bins
+    
     # Proportion box lengths/total waste
     attr_reader :overall_efficiency
     
@@ -56,6 +59,7 @@ module Ladb::OpenCutList::BinPacking1D
       @bins = []
       
       @unplaced_boxes = []
+      @unused_bins = []
       @overall_efficiency = 0
       @total_nb_boxes = 0           # total number of boxes to pack
 
@@ -239,8 +243,17 @@ module Ladb::OpenCutList::BinPacking1D
           end
         end
       end
+      nbins = []
+      @bins.each do |bin|
+        if bin.type == BIN_TYPE_LO and bin.boxes.length == 0
+          @unused_bins << bin 
+        else
+          nbins << bin
+        end
+      end
+      @bins = nbins
       if @unplaced_boxes.empty?
-        return ERROR_NONE
+        return ERROR_SUBOPT
       else
         return ERROR_NO_BIN
       end
@@ -358,6 +371,7 @@ module Ladb::OpenCutList::BinPacking1D
 
           if valid_lengths.empty? 
             if not using_std_bin
+              @unused_bins << bin
               next
             else
               return [bins, ERROR_NONE]
@@ -366,7 +380,7 @@ module Ladb::OpenCutList::BinPacking1D
 
           # this is the core algorithm, finding subsetsums
           # of lengths that best match the target size
-          dbg("valid length #{valid_lengths.length} smallest = #{valid_lengths.last}")
+          dbg("   valid length #{valid_lengths.length} smallest = #{valid_lengths.last}")
           
           if @total_nb_boxes > MAX_PARTS
             epsilon = 0.95*valid_lengths.last
@@ -385,6 +399,7 @@ module Ladb::OpenCutList::BinPacking1D
             if using_std_bin
               return [bins, ERROR_NONE]
             end
+            dbg("   using leftover #{bin.length}")
           else
             # 
             # remove objects from bins having the adequate lengths
@@ -441,9 +456,11 @@ module Ladb::OpenCutList::BinPacking1D
         length += bin.length
       end
       @bins = @bins.sort_by {|bin| -bin.efficiency}
-
       @overall_efficiency = net_used/length*100.0 if length != 0
       
+      if @leftovers.length > 0
+        raise(Packing1DError, "must fix non-empty leftovers")
+      end
       dbg("-> done preping results")
     end
     
@@ -463,22 +480,22 @@ module Ladb::OpenCutList::BinPacking1D
       max = 0
       x_list.each do |x|
         te = {}
-        dbg("add #{x} to se = #{se}")
+        dbg("   add #{x} to se = #{se}")
         se.each do |y, y_list|
           length = y_list.reduce(&:+).to_f + x + y_list.length*saw_kerf
           if length > target
             dbg("  #{y} rejected")
             next
           else
-            dbg("  add y = #{y} length=#{length}")
+            dbg("   add y = #{y} length=#{length}")
             if y + x > max
               max = y + x
-              dbg("  new max = #{max}")
+              dbg("   new max = #{max}")
             end
           end
           # new target that can be reached
           te.store(y + x, y_list + [x])
-          dbg("  + #{te}")
+          dbg("   + #{te}")
           if @options.max_time && (Time.now - @start_time > @options.max_time)
             raise(TimeoutError, 'Timeout expired ...')
           end
@@ -486,7 +503,7 @@ module Ladb::OpenCutList::BinPacking1D
         # merge te with se, resolve conflicts by
         # keeping the key with the least number of parts
         se.merge!(te) { |_k, v1, v2| v1.length < v2.length ? v1 : v2 }
-        dbg("  se merged = #{se}")
+        dbg("   se merged = #{se}")
         # the first max to reach the sum within a term of epsilon
         # (depending on the size of the smallest element) will
         # be returned. this avoids being too greedy and doing
@@ -497,7 +514,7 @@ module Ladb::OpenCutList::BinPacking1D
         end
       end
       
-      dbg("-solution-")
+      dbg("   - solution -")
       se = se.sort.reverse.to_h    
       [se.keys.first, se.values.first]
     end
