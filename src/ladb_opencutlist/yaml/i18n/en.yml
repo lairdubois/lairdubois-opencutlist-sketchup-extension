@@ -326,14 +326,14 @@ tab:
       edge_xmax: Edge width 2
     cuttingdiagram:
       title: Cutting Diagram
-      options_material: Matière
+      options_material: Material
       options_config: Configuration
-      options_display: Affichage
+      options_display: Display
       option_bar_folding: Group Identical Boards
       option_bar_folding_0: No
       option_bar_folding_1: Yes
       option_bar_folding_help: Group boards having the same parts and cuts.
-      option_sheet_folding: Regrouper les panneaux identiques
+      option_sheet_folding: Group Identical Panels
       option_sheet_folding_0: No
       option_sheet_folding_1: Yes
       option_sheet_folding_help: Group panels having the same parts and cuts.
@@ -424,9 +424,9 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
-        no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
-        parameters: Les paramètres sont incorrects. La marge dépasse 25% de la barre la plus grande.
-        no_parts: Aucune pièce.
+        no_bar: The standard board was not correctly configured and no scrap is defined.
+        parameters: Parameters are incorrect. The trimming is larger than 25% of the longest board.
+        no_parts: No part.
         time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
