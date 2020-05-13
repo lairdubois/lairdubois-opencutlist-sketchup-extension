@@ -55,7 +55,7 @@ core:
     more_reviews: Meinungen
     more_plans: Pläne
     more_extensions: Plugins
-    more_update: Mise à jour
+    more_update: Aktualisieren
   warning:
     old_su: |
       Sie verwenden eine ältere Version von SketchUp ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
@@ -69,11 +69,11 @@ core:
   model_info_page:
     units: Einheiten
   upgrade:
-    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
     available: |
-      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
-      Téléchargez-là pour disposer des dernières nouveautés !
-    up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
+      Die Version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* von *OpenCutList* ist verfügbar.
+      Laden Sie diese um die neuesten Funktionen zu erhalten!
+    up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
 tab:
   cutlist:
     label: Holzliste

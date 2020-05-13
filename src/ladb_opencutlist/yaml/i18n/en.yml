@@ -55,7 +55,7 @@ core:
     more_reviews: Reviews
     more_plans: Plans
     more_extensions: Extensions
-    more_update: Mise à jour
+    more_update: Update
   warning:
     old_su: |
       You are running an older version of SketchUp ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
@@ -69,11 +69,11 @@ core:
   model_info_page:
     units: Units
   upgrade:
-    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    unavailable: Impossible to find the latest version of *OpenCutList*.
     available: |
-      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
-      Téléchargez-là pour disposer des dernières nouveautés !
-    up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
+      Version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* of *OpenCutList* is available.
+      Download it to get the latest features!
+    up_to_date: You already have the latest version of *OpenCutList*.
 tab:
   cutlist:
     label: Parts List
