@@ -251,6 +251,10 @@ module Ladb::OpenCutList::BinPacking1D
           nbins << bin
         end
       end
+      # make sure these two are empty
+      @boxes = []
+      @leftovers = []
+      # remove bins that have not been used
       @bins = nbins
       if @unplaced_boxes.empty?
         return ERROR_SUBOPT
