@@ -333,7 +333,8 @@ tab:
       option_hide_part_list_1d_0: Anzeigen für jede Stange
       option_hide_part_list_2d_0: Anzeigen für jede Platte
       option_hide_part_list_1: Ausblenden
-      option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
+      option_hide_part_list_1d_help: Anzeigen oder ausblenden der Liste der Teile für jede Stange.
+      option_hide_part_list_2d_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
       option_break_length: Länge bis zum Umbruch
       option_break_length_help: Maximale Länge bei der eine Stange über mehrere Zeilen dargestellt wird.
       option_saw_kerf: Sägeblattdicke

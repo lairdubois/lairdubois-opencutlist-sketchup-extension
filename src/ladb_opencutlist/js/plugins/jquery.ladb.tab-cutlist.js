@@ -1531,14 +1531,30 @@
                     });
                     fnSelectSize();
 
+                    // Bind tabs
+                    $('a[data-toggle=tab]').on('shown.bs.tab', function (e) {
+                        if ($(e.target).attr('href') === '#tab_options_material') {
+                            $('#ladb_panel_cuttingdiagram_options_defaults', $modal).hide();
+                        } else {
+                            $('#ladb_panel_cuttingdiagram_options_defaults', $modal).show();
+                        }
+                    })
+
                     // Bind buttons
                     $btnCuttingdiagramOptionsDefaultsSave.on('click', function () {
 
+                        var bar_folding = $barSheetFolding.val();
+                        var hide_part_list = $selectHidePartList.val();
+                        var break_length = $inputBreakLength.val();
+                        var saw_kerf = $inputSawKerf.val();
                         var saw_kerf = $inputSawKerf.val();
                         var trimming = $inputTrimming.val();
 
                         // Update default cut options for specific type to last used
                         that.opencutlist.setSettings([
+                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, value:bar_folding },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, value:hide_part_list },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BREAK_LENGTH, value:break_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
@@ -1847,6 +1863,15 @@
                         fnSelectSize();
                     });
                     fnSelectSize();
+
+                    // Bind tabs
+                    $('a[data-toggle=tab]').on('shown.bs.tab', function (e) {
+                        if ($(e.target).attr('href') === '#tab_options_material') {
+                            $('#ladb_panel_cuttingdiagram_options_defaults', $modal).hide();
+                        } else {
+                            $('#ladb_panel_cuttingdiagram_options_defaults', $modal).show();
+                        }
+                    })
 
                     // Bind buttons
                     $btnCuttingdiagramOptionsDefaultsSave.on('click', function () {

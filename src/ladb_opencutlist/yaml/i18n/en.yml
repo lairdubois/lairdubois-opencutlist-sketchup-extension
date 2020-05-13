@@ -333,7 +333,8 @@ tab:
       option_hide_part_list_1d_0: Displayed for each board
       option_hide_part_list_2d_0: Displayed for each panel
       option_hide_part_list_1: Masked
-      option_hide_part_list_help: Display or mask the list of parts for each panel.
+      option_hide_part_list_1d_help: Display or mask the list of parts for each board.
+      option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
       option_break_length: Wraplength
       option_break_length_help: Maximal length after which a board will be wrapped over multiple lines.
       option_saw_kerf: Blade Thickness

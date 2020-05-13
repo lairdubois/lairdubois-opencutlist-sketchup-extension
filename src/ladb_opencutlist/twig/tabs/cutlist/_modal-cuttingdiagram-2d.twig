@@ -103,11 +103,6 @@
                         </select>
                     </div>
                 </div>
-                <div class="text-center">
-            <p class="help-block">{{ 'tab.cutlist.cuttingdiagram.options_defaults.manage_help'|i18next }}</p>
-            <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_save">{{ 'tab.cutlist.cuttingdiagram.options_defaults.save'|i18next() }}</button>
-            <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_reset">{{ 'tab.cutlist.cuttingdiagram.options_defaults.reset'|i18next() }}</button>
-        </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="tab_options_display">
                 <div class="form-group">
@@ -121,7 +116,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list_2d_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_select_hide_part_list" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_hide_part_list">
@@ -130,6 +125,12 @@
                         </select>
                     </div>
                 </div>
+            </div>
+            <div id="ladb_panel_cuttingdiagram_options_defaults" class="text-center" style="display: none;">
+                <hr>
+                <p class="help-block">{{ 'tab.cutlist.cuttingdiagram.options_defaults.manage_help'|i18next }}</p>
+                <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_save">{{ 'tab.cutlist.cuttingdiagram.options_defaults.save'|i18next() }}</button>
+                <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_reset">{{ 'tab.cutlist.cuttingdiagram.options_defaults.reset'|i18next() }}</button>
             </div>
         </div>
     </div>
