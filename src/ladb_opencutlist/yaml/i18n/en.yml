@@ -318,6 +318,9 @@ tab:
       edge_xmax: Edge width 2
     cuttingdiagram:
       title: Cutting Diagram
+      options_material: Matière
+      options_config: Configuration
+      options_display: Affichage
       option_bar_folding: Group Identical Boards
       option_bar_folding_0: No
       option_bar_folding_1: Yes

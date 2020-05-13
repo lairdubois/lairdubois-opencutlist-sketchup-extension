@@ -318,6 +318,9 @@ tab:
       edge_xmax: Kantenband Breite 2
     cuttingdiagram:
       title: Schnittplan
+      options_material: Matière
+      options_config: Configuration
+      options_display: Affichage
       option_bar_folding: Identische Stangen zusammenfassen
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja

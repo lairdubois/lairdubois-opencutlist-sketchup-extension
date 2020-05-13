@@ -165,7 +165,7 @@ module Ladb::OpenCutList
         index = 0
         result.original_bins.each { |bin|
           index += 1
-          type_id = Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}")
+          type_id = _compute_bin_type_id(bin, group)
           sheet = summary_sheets[type_id]
           unless sheet
             sheet = {
@@ -191,9 +191,21 @@ module Ladb::OpenCutList
         grouped_sheets = {}
         result.original_bins.each { |bin|
 
+          type_id = _compute_bin_type_id(bin, group)
+
+          # Check similarity
+          if @sheet_folding
+            grouped_sheet_key = "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}"
+            grouped_sheet = grouped_sheets[grouped_sheet_key]
+            if grouped_sheet
+              grouped_sheet[:count] += 1
+              next
+            end
+          end
+
           sheet = {
-              :type_id => Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}"),
-              :count => 0,
+              :type_id => type_id,
+              :count => 1,
               :px_length => _to_px(bin.length),
               :px_width => _to_px(bin.width),
               :type => bin.type,
@@ -207,7 +219,6 @@ module Ladb::OpenCutList
               :leftovers => [],
               :cuts => [],
           }
-          grouped_bar_key = sheet[:type_id] if @sheet_folding
 
           # Parts
           grouped_parts = {}
@@ -228,7 +239,6 @@ module Ladb::OpenCutList
                     :edge_std_dimensions => box.data.edge_std_dimensions,
                 }
             )
-            grouped_bar_key += "|#{box.data.number}" if @sheet_folding
             grouped_part = grouped_parts[box.data.id]
             unless grouped_part
               grouped_part = {
@@ -281,15 +291,10 @@ module Ladb::OpenCutList
           }
 
           if @sheet_folding
-            # Check similarity
-            grouped_sheet = grouped_sheets[grouped_bar_key]
-            unless grouped_sheet
-              grouped_sheets[grouped_bar_key] = sheet
-              grouped_sheet = sheet
-            end
-            grouped_sheet[:count] += 1
+            # Add bar to temp grouped sheets hash
+            grouped_sheets.store(grouped_sheet_key, sheet)
           else
-            # Add sheet directly to the list
+            # Add bar directly to response
             response[:sheets] << sheet
           end
 
@@ -308,6 +313,10 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    def _compute_bin_type_id(bin, group)
+      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}")
+    end
 
     # Convert inch float value to pixel
     def _to_px(inch_value)

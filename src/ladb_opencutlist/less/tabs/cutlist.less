@@ -286,16 +286,17 @@ body.no-ie, body.ie-gt10 {
 
     .sheet, .bar {
 
+      &:hover {
+        .sheet-inner, .bar-inner {
+          fill: @ladb-brand-primary;
+        }
+      }
+
       .sheet-outer, .bar-outer {
         fill: #333;
       }
       .sheet-inner, .bar-inner {
         fill: #d3d3d3;
-
-        &:hover {
-          fill: @ladb-brand-primary;
-        }
-
       }
       .sheet-dimension, .bar-dimension {
         fill: #888;
@@ -344,6 +345,9 @@ body.no-ie, body.ie-gt10 {
       &:hover {
         .leftover-inner {
           fill: #fafafa;
+        }
+        .leftover-cross {
+          stroke: @ladb-brand-primary;
         }
       }
 
