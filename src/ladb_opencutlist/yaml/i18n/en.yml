@@ -19,7 +19,7 @@ default:
   remove: Remove
   create: Create
   ignore: Ignore
-  download: Télécharger
+  download: Download
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -343,7 +343,7 @@ tab:
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
-      option_break_length: Wraplength
+      option_break_length: Wrap Board Length
       option_break_length_help: Maximal length after which a board will be wrapped over multiple lines.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
@@ -376,11 +376,11 @@ tab:
         Edit the material '{{ material_name }}' to update this list.
       option_std_bar_add: Add a length ...
       option_std_bar_none: None
-      option_scrap_bar_lengths: Scrap Boards
+      option_scrap_bar_lengths: Offcut Boards
       option_scrap_bar_lengths_placeholder: length ; ...
       option_scrap_bar_lengths_help:  |
-        List the scrap boards which should be considered first in the cutting plan.
-        Expected format: **L**, where **L** is the *length* of the scrap.
+        List the offcut boards which should be considered first in the cutting plan.
+        Expected format: **L**, where **L** is the *length* of the offcut.
         *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
@@ -389,10 +389,10 @@ tab:
         Edit the material '{{ material_name }}' to update this list.
       option_std_sheet_add: Add a panel size ...
       option_std_sheet_none: None
-      option_scrap_sheet_sizes: Scrap Sheet Goods
+      option_scrap_sheet_sizes: Offcut Sheet Goods
       option_scrap_sheet_sizes_placeholder: length x width ; ...
       option_scrap_sheet_sizes_help:  |
-        List all scrap sheet goods you would like to include in the cutting diagram.
+        List all offcut sheet goods you would like to include in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
       options_defaults:
@@ -424,11 +424,11 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
-        no_bar: The standard board was not correctly configured and no scrap is defined.
+        no_bar: The standard board was not correctly configured and no offcuts were defined.
         parameters: Parameters are incorrect. The trimming is larger than 25% of the longest board.
         no_parts: No part.
-        time_exceeded: Opération abandonnée. Temps de calcul trop long.
-        no_sheet: Standard panel sizes are badly configured and no scraps available.
+        time_exceeded: Operation cancelled. Calculation time too long.
+        no_sheet: Standard panel sizes are wrongly configured and no offcuts are available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
         bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
         unplaced_parts: '**One part** could not be placed, because it is too large to fit.'
