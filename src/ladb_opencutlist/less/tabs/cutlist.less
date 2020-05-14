@@ -65,6 +65,16 @@
       font-size: 16px;
     }
 
+    .ladb-heading-count {
+      line-height: 30px;
+      font-size: 16px;
+      margin-right: 10px;
+      padding: 0 7px 0 7px;
+      border-radius: 5px;
+      background: #555;
+      color: #fff;
+    }
+
   }
 
   tbody tr.ladb-cutlist-heading-row {
@@ -271,22 +281,23 @@ body.no-ie, body.ie-gt10 {
     text-rendering: optimizeLegibility;
     width: 100%;
 
-    /* .sheet */
+    /* .sheet,.bar */
 
-    .sheet {
+    .sheet, .bar {
 
-      .sheet-outer {
-        fill: #333;
-      }
-      .sheet-inner {
-        fill: #d3d3d3;
-
-        &:hover {
+      &:hover {
+        .sheet-inner, .bar-inner {
           fill: @ladb-brand-primary;
         }
-
       }
-      .sheet-dimension {
+
+      .sheet-outer, .bar-outer {
+        fill: #333;
+      }
+      .sheet-inner, .bar-inner {
+        fill: #d3d3d3;
+      }
+      .sheet-dimension, .bar-dimension {
         fill: #888;
       }
 
@@ -333,6 +344,9 @@ body.no-ie, body.ie-gt10 {
       &:hover {
         .leftover-inner {
           fill: #fafafa;
+        }
+        .leftover-cross {
+          stroke: @ladb-brand-primary;
         }
       }
 
@@ -516,6 +530,14 @@ body.no-ie, body.ie-gt10 {
 
       .ladb-heading {
         line-height: 20px;
+      }
+
+      .ladb-heading-count {
+        line-height: 20px;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        color: #000;
       }
 
     }

@@ -20,6 +20,7 @@ module Ladb::OpenCutList
       @length_increase = attributes['length_increase']
       @width_increase = attributes['width_increase']
       @thickness_increase = attributes['thickness_increase']
+      @std_lengths = attributes['std_lengths']
       @std_widths = attributes['std_widths']
       @std_thicknesses = attributes['std_thicknesses']
       @std_sections = attributes['std_sections']
@@ -98,20 +99,21 @@ module Ladb::OpenCutList
 
       end
 
-      # Update attributes
-      material_attributes = MaterialAttributes.new(material)
-      material_attributes.type = @type
-      material_attributes.thickness = @thickness
-      material_attributes.length_increase = @length_increase
-      material_attributes.width_increase = @width_increase
-      material_attributes.thickness_increase = @thickness_increase
-      material_attributes.std_widths = @std_widths
-      material_attributes.std_thicknesses = @std_thicknesses
-      material_attributes.std_sections = @std_sections
-      material_attributes.std_sizes = @std_sizes
-      material_attributes.grained = @grained
-      material_attributes.edge_decremented = @edge_decremented
-      material_attributes.write_to_attributes
+        # Update attributes
+        material_attributes = MaterialAttributes.new(material)
+        material_attributes.type = @type
+        material_attributes.thickness = @thickness
+        material_attributes.length_increase = @length_increase
+        material_attributes.width_increase = @width_increase
+        material_attributes.thickness_increase = @thickness_increase
+        material_attributes.std_lengths = @std_lengths
+        material_attributes.std_widths = @std_widths
+        material_attributes.std_thicknesses = @std_thicknesses
+        material_attributes.std_sections = @std_sections
+        material_attributes.std_sizes = @std_sizes
+        material_attributes.grained = @grained
+        material_attributes.edge_decremented = @edge_decremented
+        material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed
       if trigger_change_event

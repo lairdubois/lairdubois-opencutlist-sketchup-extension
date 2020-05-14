@@ -19,6 +19,7 @@ default:
   remove: Supprimer
   create: Créer
   ignore: Ignorer
+  download: Télécharger
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
@@ -36,6 +37,7 @@ default:
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
+  seconds: secondes
 core:
   menu:
     submenu: OpenCutList
@@ -53,6 +55,7 @@ core:
     more_reviews: Avis
     more_plans: Plans
     more_extensions: Plugins
+    more_update: Mise à jour
   warning:
     old_su: |
       Vous utilisez une ancienne version de SketchUp ({{ sketchupVersion }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
@@ -65,6 +68,12 @@ core:
     selection_change: La sélection dans le modèle actif a changée.
   model_info_page:
     units: Unités
+  upgrade:
+    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    available: |
+      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
+      Téléchargez-là pour disposer des dernières nouveautés !
+    up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
 tab:
   cutlist:
     label: Débit
@@ -317,14 +326,30 @@ tab:
       edge_xmax: Chant Largeur 2
     cuttingdiagram:
       title: Calepinage
+      options_material: Matière
+      options_config: Configuration
+      options_display: Affichage
+      option_bar_folding: Regrouper les barres identiques
+      option_bar_folding_0: Non
+      option_bar_folding_1: Oui
+      option_bar_folding_help: Permet de regrouper les barres contenant les mêmes pièces et les mêmes coupes.
+      option_sheet_folding: Regrouper les panneaux identiques
+      option_sheet_folding_0: Non
+      option_sheet_folding_1: Oui
+      option_sheet_folding_help: Permet de regrouper les panneaux contenant les mêmes pièces et les mêmes coupes.
       option_hide_part_list: Liste des pièces
-      option_hide_part_list_0: Affichée pour chaque panneau
+      option_hide_part_list_1d_0: Affichée pour chaque barre
+      option_hide_part_list_2d_0: Affichée pour chaque panneau
       option_hide_part_list_1: Masquée
-      option_hide_part_list_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
+      option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentent dans chaque barre.
+      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
+      option_break_length: Longueur de césure
+      option_break_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge
-      option_trimming_help: Marge autour du panneau à considérer comme chute.
+      option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
+      option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
       option_presort: Ordre de tri des pièces
       option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
       option_presort_0: Pas de tri préalable
@@ -333,7 +358,7 @@ tab:
       option_presort_3: Par superficie décroissante
       option_presort_4: Par périmètre décroissant
       option_stacking: Empiler les pièces identiques
-      option_stacking_help: Direction d'empilement des pièces qui ont une longueur ou une largeur commune.
+      option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
       option_stacking_0: Non
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
@@ -344,6 +369,19 @@ tab:
       option_bbox_optimization_0: Jamais
       option_bbox_optimization_1: Seulement à la fin
       option_bbox_optimization_2: Toujours
+      option_std_bar: Barre standard
+      option_std_bar_help: |
+        Sélectionnez ici la taille de la barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
+        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_std_bar_add: Ajouter une taille...
+      option_std_bar_none: Aucune
+      option_scrap_bar_lengths: Restes de barre
+      option_scrap_bar_lengths_placeholder: longueur ; ...
+      option_scrap_bar_lengths_help:  |
+        Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
+        Format attendu : **L**. Où **L** est la *longueur* du reste.
+        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       option_std_sheet: Panneau standard
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -366,15 +404,19 @@ tab:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
         count: Qte.
+        bar: Barre
         sheet: Panneau
         length: Longueur
         width: Largeur
-        area: Surface tot.
+        total_length: Σ Longueurs
+        total_area: Σ Surfaces
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe
+        bar_type_0: Barre standard
+        bar_type_1: Reste de barre
         sheet_type_0: Panneau standard
         sheet_type_1: Reste de panneau
         unused: Inutilisée
@@ -382,6 +424,10 @@ tab:
         parts_plural: "{{ count }} pièces"
         settings: Paramètres
       error:
+        no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
+        parameters: Les paramètres sont incorrects. La marge dépasse 25% de la barre la plus grande.
+        no_parts: Aucune pièce.
+        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
         no_placement_possible: Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
         bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
@@ -390,7 +436,9 @@ tab:
       warning:
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
-        cutting_dimensions_increase: |
+        cutting_dimensions_increase_1d: |
+          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
+        cutting_dimensions_increase_2d: |
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
@@ -461,6 +509,11 @@ tab:
       length_increase: Surcote de longueur
       width_increase: Surcote de largeur
       thickness_increase: Surcote d'épaisseur
+      std_lengths: Longueurs standards
+      std_lengths_placeholder: longueur ; ...
+      std_lengths_help: |
+        Longueurs standards des barres.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_widths: Largeurs standards
       std_widths_placeholder: largeur ; ...
       std_widths_help: |

@@ -67,6 +67,7 @@ module Ladb::OpenCutList
                       :length_increase => material_attributes.length_increase,
                       :width_increase => material_attributes.width_increase,
                       :thickness_increase => material_attributes.thickness_increase,
+                      :std_lengths => material_attributes.std_lengths,
                       :std_widths => material_attributes.std_widths,
                       :std_thicknesses => material_attributes.std_thicknesses,
                       :std_sections => material_attributes.std_sections,

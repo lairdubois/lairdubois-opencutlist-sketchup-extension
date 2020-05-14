@@ -15,6 +15,7 @@
     var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
     var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
     var SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE = '_thickness_increase';
+    var SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS = '_std_lengths';
     var SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS = '_std_widths';
     var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
     var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
@@ -205,6 +206,7 @@
                     length_increase: $inputs.inputLengthIncrease.val(),
                     width_increase: $inputs.inputWidthIncrease.val(),
                     thickness_increase: $inputs.inputThicknessIncrease.val(),
+                    std_lengths: $inputs.inputStdLengths.val(),
                     std_widths: $inputs.inputStdWidths.val(),
                     std_thicknesses: $inputs.inputStdThicknesses.val(),
                     std_sections: $inputs.inputStdSections.val(),
@@ -401,6 +403,7 @@
                 that.editedMaterial.attributes.length_increase = $inputs.inputLengthIncrease.val();
                 that.editedMaterial.attributes.width_increase = $inputs.inputWidthIncrease.val();
                 that.editedMaterial.attributes.thickness_increase = $inputs.inputThicknessIncrease.val();
+                that.editedMaterial.attributes.std_lengths = $inputs.inputStdLengths.val();
                 that.editedMaterial.attributes.std_widths = $inputs.inputStdWidths.val();
                 that.editedMaterial.attributes.std_thicknesses = $inputs.inputStdThicknesses.val();
                 that.editedMaterial.attributes.std_sections = $inputs.inputStdSections.val();
@@ -755,6 +758,7 @@
         var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
         var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
         var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
+        var $inputStdLengths = $('#ladb_materials_input_std_lengths', $modal);
         var $inputStdWidths = $('#ladb_materials_input_std_widths', $modal);
         var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
         var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
@@ -780,6 +784,7 @@
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
                     $inputThicknessIncrease.closest('.form-group').show();
+                    $inputStdLengths.closest('.form-group').hide();
                     $inputStdWidths.closest('.form-group').hide();
                     $inputStdThicknesses.closest('.form-group').show();
                     $inputStdSections.closest('.form-group').hide();
@@ -797,6 +802,7 @@
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
                     $inputThicknessIncrease.closest('.form-group').hide();
+                    $inputStdLengths.closest('.form-group').hide();
                     $inputStdWidths.closest('.form-group').hide();
                     $inputStdThicknesses.closest('.form-group').show();
                     $inputStdSections.closest('.form-group').hide();
@@ -814,6 +820,7 @@
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
                     $inputThicknessIncrease.closest('.form-group').hide();
+                    $inputStdLengths.closest('.form-group').show();
                     $inputStdWidths.closest('.form-group').hide();
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').show();
@@ -831,6 +838,7 @@
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
                     $inputThicknessIncrease.closest('.form-group').hide();
+                    $inputStdLengths.closest('.form-group').show();
                     $inputStdWidths.closest('.form-group').show();
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').hide();
@@ -927,6 +935,7 @@
             $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
             $inputWidthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
             $inputThicknessIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
+            setTokens($inputStdLengths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdWidths));
             setTokens($inputStdWidths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
             setTokens($inputStdThicknesses, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
             setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
@@ -1003,6 +1012,7 @@
             var length_increase = $inputLengthIncrease.val();
             var width_increase = $inputWidthIncrease.val();
             var thickness_increase = $inputThicknessIncrease.val();
+            var std_lengths = $inputStdLengths.val();
             var std_widths = $inputStdWidths.val();
             var std_thicknesses = $inputStdThicknesses.val();
             var std_sections = $inputStdSections.val();
@@ -1016,6 +1026,7 @@
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:length_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:width_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:thickness_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, value:std_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, value:std_widths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
@@ -1038,6 +1049,7 @@
         $modal.on('shown.bs.modal', function() {
 
             // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+            $inputStdLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
@@ -1057,6 +1069,7 @@
             inputLengthIncrease: $inputLengthIncrease,
             inputWidthIncrease: $inputWidthIncrease,
             inputThicknessIncrease: $inputThicknessIncrease,
+            inputStdLengths: $inputStdLengths,
             inputStdWidths: $inputStdWidths,
             inputStdThicknesses: $inputStdThicknesses,
             inputStdSections: $inputStdSections,
@@ -1148,6 +1161,7 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE);
+            settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS);

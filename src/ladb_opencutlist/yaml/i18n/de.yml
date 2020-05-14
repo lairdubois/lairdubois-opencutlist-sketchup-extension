@@ -19,6 +19,7 @@ default:
   remove: Löschen
   create: Anlegen
   ignore: Ignorieren
+  download: Télécharger
   empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
@@ -36,6 +37,7 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
+  seconds: Sekunden
 core:
   menu:
     submenu: OpenCutList
@@ -53,6 +55,7 @@ core:
     more_reviews: Meinungen
     more_plans: Pläne
     more_extensions: Plugins
+    more_update: Aktualisieren
   warning:
     old_su: |
       Sie verwenden eine ältere Version von SketchUp ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
@@ -65,6 +68,12 @@ core:
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
   model_info_page:
     units: Einheiten
+  upgrade:
+    unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
+    available: |
+      Die Version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* von *OpenCutList* ist verfügbar.
+      Laden Sie diese um die neuesten Funktionen zu erhalten!
+    up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
 tab:
   cutlist:
     label: Holzliste
@@ -317,14 +326,30 @@ tab:
       edge_xmax: Kantenband Breite 2
     cuttingdiagram:
       title: Schnittplan
+      options_material: Material
+      options_config: Konfiguration
+      options_display: Anzeige
+      option_bar_folding: Identische Stangen zusammenfassen
+      option_bar_folding_0: Nein
+      option_bar_folding_1: Ja
+      option_bar_folding_help: Fasst alle Stangen mit gleichen Teilen und Schnitten zusammen.
+      option_sheet_folding: Identische Platten zusammenfassen
+      option_sheet_folding_0: Nein
+      option_sheet_folding_1: Ja
+      option_sheet_folding_help: Fasst alle Platten mit gleichen Teilen und Schnitten zusammen.
       option_hide_part_list: Liste der Teile
-      option_hide_part_list_0: Anzeigen für jede Platte
+      option_hide_part_list_1d_0: Anzeigen für jede Stange
+      option_hide_part_list_2d_0: Anzeigen für jede Platte
       option_hide_part_list_1: Ausblenden
-      option_hide_part_list_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
+      option_hide_part_list_1d_help: Anzeigen oder ausblenden der Liste der Teile für jede Stange.
+      option_hide_part_list_2d_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
+      option_break_length: Länge bis zum Umbruch
+      option_break_length_help: Maximale Länge bei der eine Stange über mehrere Zeilen dargestellt wird.
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
-      option_trimming: Kantenabfallbreite
-      option_trimming_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
+      option_trimming: Randabfallbreite
+      option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
+      option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_presort: Vorsortierung der Teile
       option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
       option_presort_0: keine Vorsortierung
@@ -344,7 +369,20 @@ tab:
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
-      option_std_sheet: Standard-Platte
+      option_std_bar: Standard Stange
+      option_std_bar_help: |
+        Wählen Sie hier die Standardstangenware welche dupliziert wird um alle Teile zu enthalten.
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+      option_std_bar_add: Eine Länge hinzufügen...
+      option_std_bar_none: Keine
+      option_scrap_bar_lengths: Stangenreste
+      option_scrap_bar_lengths_placeholder: Länge ; ...
+      option_scrap_bar_lengths_help:  |
+        Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format : **L**, wo **L** die *Länge* des Restes ist.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+      option_std_sheet: Standard Platte
       option_std_sheet_help: |
         Wählen Sie hier die Standardplatte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
@@ -366,15 +404,19 @@ tab:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
         count: Anzahl
+        bar: Stange
         sheet: Platte
         length: Länge
         width: Breite
-        area: Fläche
+        total_length: Σ Längen
+        total_area: Σ Flächen
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
         leftover: Rest
         cut: Schnitt
+        bar_type_0: Standardware
+        bar_type_1: Stangenrest
         sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet
@@ -382,6 +424,10 @@ tab:
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
       error:
+        no_bar: Die Standard-Länge wurde nicht richtig angegeben und kein Stangenrest ist definiert.
+        parameters: Die Parameter sind nicht richtig. Die Randabfallbreite ist grösser als 25% der längsten Stange.
+        no_parts: Kein Teil.
+        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Standardplattenmaße mangelhaft konfiguriert und keine Plattenreste.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu groß, Standardplatte zu klein, Sägeschnitt zu groß, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwickler, denn Sie haben hier einen speziellen Fall.
@@ -390,7 +436,9 @@ tab:
       warning:
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmaße der Teile.
-        cutting_dimensions_increase: |
+        cutting_dimensions_increase_1d: |
+          *Übermaß wurden auf dem Material konfiguriert: ein Längenzumaß von (**{{ length_increase }}**).*
+        cutting_dimensions_increase_2d: |
           *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
@@ -461,6 +509,11 @@ tab:
       length_increase: Längenzumaß
       width_increase: Breitenzumaß
       thickness_increase: Dickenzumaß
+      std_lengths: Standardlängen
+      std_lengths_placeholder: Länge ; ...
+      std_lengths_help: |
+        Standardlänge der Stangen.
+        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       std_widths: Standardbreiten
       std_widths_placeholder: Breite ; ...
       std_widths_help: |

@@ -1,0 +1,32 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_core_modal_upgrade' %}
+{% set title = 'core.leftbar.more_update'|i18next() %}
+
+{% if lastReleaseUrl and currentVersion != lastReleaseVersion %}
+    {% set title = (title~' <em>'~currentVersion~' > '~lastReleaseVersion~'</em>')|raw %}
+{% endif %}
+
+{% block bodyInner %}
+    {% if lastReleaseVersion is empty %}
+        <p>{{ 'core.upgrade.unavailable'|i18next }}</p>
+    {% elseif lastReleaseUrl %}
+        <div class="media">
+            <div class="media-left"><i class="ladb-opencutlist-icon-update ladb-opencutlist-icon-lg"></i></div>
+            <div class="media-body">
+                <p>{{ 'core.upgrade.available'|i18next({ 'lastReleaseVersion':lastReleaseVersion, 'lastReleaseBuild':lastReleaseBuild }) }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p>{{ 'core.upgrade.up_to_date'|i18next }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block footerInner %}
+    {% if lastReleaseVersion is empty or lastReleaseUrl %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+        <button id="ladb_btn_download" class="btn btn-primary" data-href="{{ lastReleaseUrl }}" >{{ 'default.download'|i18next }}</button>
+    {% else %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+    {% endif %}
+{% endblock %}

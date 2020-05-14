@@ -36,6 +36,9 @@ i, span.ladb-opencutlist-icon {
 }
 
 
+.ladb-opencutlist-icon-update:before {
+  content: "\e96d";
+}
 .ladb-opencutlist-icon-obsolete:before {
   content: "\e96b";
 }

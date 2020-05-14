@@ -48,6 +48,10 @@ module Ladb::OpenCutList
         part_toggle_front_command(part_data)
       end
 
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d") do |settings|
+        group_cuttingdiagram_1d_command(settings)
+      end
+
       Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
         group_cuttingdiagram_2d_command(settings)
       end
@@ -134,6 +138,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistPartUpdateWorker.new(settings, @cutlist)
+
+      # Run !
+      worker.run
+    end
+
+    def group_cuttingdiagram_1d_command(settings)
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram_1d_worker'
+
+      # Setup worker
+      worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

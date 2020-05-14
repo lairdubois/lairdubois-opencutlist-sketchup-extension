@@ -19,6 +19,7 @@ default:
   remove: Remove
   create: Create
   ignore: Ignore
+  download: Télécharger
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -36,6 +37,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
+  seconds: seconds
 core:
   menu:
     submenu: OpenCutList
@@ -53,6 +55,7 @@ core:
     more_reviews: Reviews
     more_plans: Plans
     more_extensions: Extensions
+    more_update: Update
   warning:
     old_su: |
       You are running an older version of SketchUp ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
@@ -65,6 +68,12 @@ core:
     selection_change: The selection of the active model has been changed.
   model_info_page:
     units: Units
+  upgrade:
+    unavailable: Impossible to find the latest version of *OpenCutList*.
+    available: |
+      Version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* of *OpenCutList* is available.
+      Download it to get the latest features!
+    up_to_date: You already have the latest version of *OpenCutList*.
 tab:
   cutlist:
     label: Parts List
@@ -317,14 +326,30 @@ tab:
       edge_xmax: Edge width 2
     cuttingdiagram:
       title: Cutting Diagram
+      options_material: Material
+      options_config: Configuration
+      options_display: Display
+      option_bar_folding: Group Identical Boards
+      option_bar_folding_0: No
+      option_bar_folding_1: Yes
+      option_bar_folding_help: Group boards having the same parts and cuts.
+      option_sheet_folding: Group Identical Panels
+      option_sheet_folding_0: No
+      option_sheet_folding_1: Yes
+      option_sheet_folding_help: Group panels having the same parts and cuts.
       option_hide_part_list: Parts List
-      option_hide_part_list_0: Displayed for each panel
+      option_hide_part_list_1d_0: Displayed for each board
+      option_hide_part_list_2d_0: Displayed for each panel
       option_hide_part_list_1: Masked
-      option_hide_part_list_help: Display or mask the list of parts for each panel.
+      option_hide_part_list_1d_help: Display or mask the list of parts for each board.
+      option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
+      option_break_length: Wraplength
+      option_break_length_help: Maximal length after which a board will be wrapped over multiple lines.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
-      option_trimming_help: The amount of material around the raw panel to be treated as waste.
+      option_trimming_help_1d: The amount of material at each end of the board to be treated as waste.
+      option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
       option_presort: Preordering of Parts
       option_presort_help: The order in which the parts will be considered for placement.
       option_presort_0: None
@@ -344,6 +369,19 @@ tab:
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
+      option_std_bar: Standard Board
+      option_std_bar_help: |
+        Select the standard board, which will be duplicated to contain all the parts.
+        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
+      option_std_bar_add: Add a length ...
+      option_std_bar_none: None
+      option_scrap_bar_lengths: Scrap Boards
+      option_scrap_bar_lengths_placeholder: length ; ...
+      option_scrap_bar_lengths_help:  |
+        List the scrap boards which should be considered first in the cutting plan.
+        Expected format: **L**, where **L** is the *length* of the scrap.
+        *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
         Select the standard panel which will be duplicated to contain all your parts in the best possible way.
@@ -366,15 +404,19 @@ tab:
         unplaced_parts: Unplaced Parts
         summary: Summary
         count: Qty
+        bar: Board
         sheet: Panel
         length: Length
         width: Width
-        area: Area
+        total_length: Σ Lengths
+        total_area: Σ Areas
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
+        bar_type_0: Standard Sized Dimensional
+        bar_type_1: Offcut
         sheet_type_0: Standard Sized Panel
         sheet_type_1: Offcut
         unused: Unused
@@ -382,6 +424,10 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
+        no_bar: The standard board was not correctly configured and no scrap is defined.
+        parameters: Parameters are incorrect. The trimming is larger than 25% of the longest board.
+        no_parts: No part.
+        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Standard panel sizes are badly configured and no scraps available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
         bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.
@@ -390,7 +436,9 @@ tab:
       warning:
         cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
-        cutting_dimensions_increase: |
+        cutting_dimensions_increase_1d: |
+          *These raw dimensions have been configured on the material'{{ material_name }}': length oversize (**{{ length_increase }}**).*
+        cutting_dimensions_increase_2d: |
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
@@ -461,6 +509,11 @@ tab:
       length_increase: Length Oversize
       width_increase: Width Oversize
       thickness_increase: Thickness Oversize
+      std_lengths: Standard Lengths
+      std_lengths_placeholder: length ; ...
+      std_lengths_help: |
+        Standard lengths of boards.
+        *Sizes without units are considered to be in model units.*
       std_widths: Standard Widths
       std_widths_placeholder: width ; ...
       std_widths_help: |
