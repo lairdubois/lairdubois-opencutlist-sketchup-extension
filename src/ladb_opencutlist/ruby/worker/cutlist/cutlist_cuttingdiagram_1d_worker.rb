@@ -162,7 +162,7 @@ module Ladb::OpenCutList
         summary_bars.each { |type_id, bar|
           bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
         }
-        response[:summary][:bars] += summary_bars.values
+        response[:summary][:bars] += summary_bars.values.sort_by { |bar| -bar[:type] }
 
         # Bars
         grouped_bars = {}

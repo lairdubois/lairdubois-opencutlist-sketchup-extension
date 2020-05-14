@@ -1779,7 +1779,7 @@
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', { material_attributes: response, group: group });
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', { material_attributes: response, group: group }, true);
 
                     // Fetch UI elements
                     var $inputStdSheet = $('#ladb_select_std_sheet', $modal);

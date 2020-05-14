@@ -157,7 +157,7 @@ module Ladb::OpenCutList
                   :count => 1,
                   :length => bin.length.to_l.to_s,
                   :width => bin.width.to_l.to_s,
-                  :area => DimensionUtils.instance.format_to_readable_area(Size2d.new(bin.length.to_l, bin.width.to_l).area),
+                  :total_area => DimensionUtils.instance.format_to_readable_area(Size2d.new(bin.length.to_l, bin.width.to_l).area),
                   :is_used => false,
               }
           )
@@ -175,18 +175,18 @@ module Ladb::OpenCutList
                 :count => 0,
                 :length => bin.length.to_l.to_s,
                 :width => bin.width.to_l.to_s,
-                :area => 0, # Will be converted to string representation after sum
+                :total_area => 0, # Will be converted to string representation after sum
                 :is_used => true,
             }
             summary_sheets[type_id] = sheet
           end
           sheet[:count] += 1
-          sheet[:area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
         }
         summary_sheets.each { |type_id, sheet|
-          sheet[:area] = DimensionUtils.instance.format_to_readable_area(sheet[:area])
+          sheet[:total_area] = DimensionUtils.instance.format_to_readable_area(sheet[:total_area])
         }
-        response[:summary][:sheets] += summary_sheets.values
+        response[:summary][:sheets] += summary_sheets.values.sort_by { |sheet| sheet[:type] }
 
         # Sheets
         grouped_sheets = {}
