@@ -4,6 +4,8 @@
     // CONSTANTS
     // ======================
 
+    var DOWNLOAD_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
+
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
 
     // CLASS DEFINITION
@@ -36,7 +38,7 @@
 
         this.lastReleaseVersion = null;
         this.lastReleaseBuild = null;
-        this.updateUrl = null;
+        this.lastReleaseUrl = null;
 
         this.settings = {};
 
@@ -134,12 +136,9 @@
 
                     // Loop while the components are equal
                     for (var i = 0; i < len; i++) {
-                        // A bigger than B
                         if (parseInt(v1_components[i]) > parseInt(v2_components[i])) {
                             return 1;
                         }
-
-                        // B bigger than A
                         if (parseInt(v1_components[i]) < parseInt(v2_components[i])) {
                             return -1;
                         }
@@ -161,7 +160,7 @@
                 // Compare versions
                 if (fnCompareVersion(that.lastReleaseVersion, that.capabilities.version, that.lastReleaseBuild, that.capabilities.build) > 0) {
 
-                    // New version available -> store update url
+                    // New version available -> store last release url
                     that.lastReleaseUrl = data.url;
 
                     // Trigger updatable event
@@ -179,6 +178,7 @@
     };
 
     LadbDialog.prototype.upgrade = function () {
+        var that = this;
 
         // Render modal
         this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
@@ -197,7 +197,7 @@
         $btnDownload.on('click', function() {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: $(this).data('href') });
+            rubyCallCommand('core_open_url', { url: that.lastReleaseUrl ? that.lastReleaseUrl : DOWNLOAD_URL });
 
             // Close modal
             $modal.modal('hide');

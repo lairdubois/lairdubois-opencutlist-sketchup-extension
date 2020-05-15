@@ -25,7 +25,7 @@
 {% block footerInner %}
     {% if lastReleaseVersion is empty or lastReleaseUrl %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-        <button id="ladb_btn_download" class="btn btn-primary" data-href="{{ lastReleaseUrl }}" >{{ 'default.download'|i18next }}</button>
+        <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
     {% else %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% endif %}

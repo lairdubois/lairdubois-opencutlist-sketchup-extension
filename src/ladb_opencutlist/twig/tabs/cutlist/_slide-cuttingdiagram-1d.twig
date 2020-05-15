@@ -219,7 +219,7 @@
                                         <line class="leftover-cross" x1="{{ slice.px_x }}" y1="{{ yOffset }}" x2="{{ slice.px_x + slice.px_length }}" y2="{{ yOffset + bar.px_width }}"></line>
                                     {% endif %}
                                     {% if not hideDimensions %}
-                                        <text class="leftover-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging">{{ bar.leftover.length }}</text>
+                                        <text class="leftover-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.leftover.length }}</text>
                                         {% set displayedDimensions = true %}
                                     {% endif %}
                                 {% endfor %}
@@ -238,7 +238,7 @@
                                             <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - dimensionOffset * 2) / numberTextLength, (bar.px_width - dimensionOffset * 2))  }}px" text-anchor="middle" dominant-baseline="central">{% if not loop.first %}&hellip;{% endif %}{{ part.number }}{% if not loop.last %}&hellip;{% endif %}</text>
                                         {% endif %}
                                         {% if not hideDimensions %}
-                                            <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="hanging"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
+                                            <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
                                             {% set displayedDimensions = true %}
                                         {% endif %}
                                     {% endfor %}
