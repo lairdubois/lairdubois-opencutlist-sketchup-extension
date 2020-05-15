@@ -513,14 +513,12 @@ module Ladb::OpenCutList::BinPacking1D
         # be returned. this avoids being too greedy and doing
         # too much computation
         if max <= target and max >= target - epsilon
-          se = se.sort.reverse.to_h
-          return [se.keys.first, se.values.first]
+          return se.max_by{|k, v| k}
         end
       end
       
       dbg("   - solution -")
-      se = se.sort.reverse.to_h    
-      [se.keys.first, se.values.first]
+      return se.max_by{|k, v| k}
     end
   end
 end
