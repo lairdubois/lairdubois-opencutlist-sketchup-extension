@@ -234,7 +234,7 @@ module Ladb::OpenCutList
     def build_menu(menu)
       if @hover_part
         menu.add_item('Hello') {
-          UI.messagebox('Hello')
+          UI.messagebox('Please sponsor this project and you will be able to see cool features here !')
         }
       end
     end

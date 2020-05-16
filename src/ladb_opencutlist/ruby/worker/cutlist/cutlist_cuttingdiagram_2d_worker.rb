@@ -12,13 +12,13 @@ module Ladb::OpenCutList
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
       @grained = settings['grained']
-      @sheet_folding = settings['sheet_folding']
-      @hide_part_list = settings['hide_part_list']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
       @stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
       @bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
+      @sheet_folding = settings['sheet_folding']
+      @hide_part_list = settings['hide_part_list']
 
       @cutlist = cutlist
 
@@ -117,7 +117,7 @@ module Ladb::OpenCutList
           response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
         end
         if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-          response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+          response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
         end
         if group.edge_decremented
           response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'

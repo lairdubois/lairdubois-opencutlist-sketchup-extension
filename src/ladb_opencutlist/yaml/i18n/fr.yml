@@ -437,7 +437,7 @@ tab:
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
         cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière.*
+          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.*
         cutting_dimensions_increase_2d: |
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
