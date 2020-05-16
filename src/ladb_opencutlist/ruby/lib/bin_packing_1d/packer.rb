@@ -463,7 +463,8 @@ module Ladb::OpenCutList::BinPacking1D
       @overall_efficiency = net_used/length*100.0 if length != 0
       
       if @leftovers.length > 0
-        raise(Packing1DError, "must fix non-empty leftovers")
+        @unused_bins += @leftovers
+        puts("must fix non-empty leftovers")
       end
       dbg("-> done preping results")
     end
