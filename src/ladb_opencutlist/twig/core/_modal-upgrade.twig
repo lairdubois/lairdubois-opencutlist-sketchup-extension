@@ -3,10 +3,6 @@
 {% set id = 'ladb_core_modal_upgrade' %}
 {% set title = 'core.leftbar.more_update'|i18next() %}
 
-{% if lastReleaseUrl and currentVersion != lastReleaseVersion %}
-    {% set title = (title~' <em>'~currentVersion~' > '~lastReleaseVersion~'</em>')|raw %}
-{% endif %}
-
 {% block bodyInner %}
     {% if lastReleaseVersion is empty %}
         <p>{{ 'core.upgrade.unavailable'|i18next }}</p>
@@ -14,7 +10,12 @@
         <div class="media">
             <div class="media-left"><i class="ladb-opencutlist-icon-update ladb-opencutlist-icon-lg"></i></div>
             <div class="media-body">
-                <p>{{ 'core.upgrade.available'|i18next({ 'lastReleaseVersion':lastReleaseVersion, 'lastReleaseBuild':lastReleaseBuild }) }}</p>
+                <p>{{ 'core.upgrade.available'|i18next }}</p>
+                <div class="row">
+                    <div class="col-xs-5 text-right"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.version }}</span>{% if capabilities.debug %}<br><small>(build: {{ capabilities.build }})</small>{% endif %}</div>
+                    <div class="col-xs-1 text-center"><i class="ladb-opencutlist-icon-arrow-right"></i></div>
+                    <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ lastReleaseVersion }}</span>{% if capabilities.debug %}<br><small>(build: {{ lastReleaseBuild }})</small>{% endif %}</div>
+                </div>
             </div>
         </div>
     {% else %}

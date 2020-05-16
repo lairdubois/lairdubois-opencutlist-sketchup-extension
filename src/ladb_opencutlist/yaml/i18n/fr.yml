@@ -71,7 +71,7 @@ core:
   upgrade:
     unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
     available: |
-      La version **{{ lastReleaseVersion }}** *({{ lastReleaseBuild }})* d'*OpenCutList* est disponible.
+      Une nouvelle version d'*OpenCutList* est disponible.
       Téléchargez-là pour disposer des dernières nouveautés !
     up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
 tab:

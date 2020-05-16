@@ -182,8 +182,7 @@
 
         // Render modal
         this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
-            currentVersion: this.capabilities.version,
-            currentBuild: this.capabilities.build,
+            capabilities: this.capabilities,
             lastReleaseVersion: this.lastReleaseVersion,
             lastReleaseBuild: this.lastReleaseBuild,
             lastReleaseUrl: this.lastReleaseUrl,
