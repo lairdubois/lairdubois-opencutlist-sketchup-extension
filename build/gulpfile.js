@@ -9,6 +9,7 @@ var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
 var replace = require('gulp-replace');
+var touch = require('gulp-touch-custom');
 var glob = require('glob');
 var yaml = require('js-yaml');
 var path = require('path');
@@ -103,13 +104,15 @@ gulp.task('version', function () {
     gulp.src('../dist/manifest' + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase()) + '.json')
         .pipe(replace(/"version": "[0-9.]+(-[a-z]*)?"/g, '"version": "' + version + '"'))
         .pipe(replace(/"build": "[0-9]{12}?"/g, '"build": "' + build + '"'))
-        .pipe(gulp.dest('../dist'));
+        .pipe(gulp.dest('../dist'))
+        .pipe(touch());
 
     // Update version property in plugin.rb
     return gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
         .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-[a-z]*)?'/g, "EXTENSION_VERSION = '" + version + "'"))
         .pipe(replace(/EXTENSION_BUILD = '[0-9]{12}?'/g, "EXTENSION_BUILD = '" + build + "'"))
-        .pipe(gulp.dest('../src/ladb_opencutlist/ruby'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/ruby'))
+        .pipe(touch());
 });
 
 gulp.task('compile', gulp.series('less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));

@@ -74,6 +74,7 @@ core:
       Une nouvelle version d'*OpenCutList* est disponible.
       Téléchargez-là pour disposer des dernières nouveautés !
     up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
+    tip: Pensez à relancer Sketchup après avoir installé la nouvelle version !
 tab:
   cutlist:
     label: Débit

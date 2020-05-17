@@ -156,10 +156,10 @@
                 }
 
                 // Compare versions
-                if (fnCompareVersion(data.version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
+                if (data.version && data.build && fnCompareVersion(data.version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
 
                     // Flag as upgradable
-                    this.upgradable = true;
+                    that.upgradable = true;
 
                     // Trigger updatable event
                     that.$element.trigger(jQuery.Event('updatable.ladb.core'));

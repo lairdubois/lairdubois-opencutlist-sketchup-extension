@@ -74,6 +74,7 @@ core:
       Neue Version von *OpenCutList* ist verfügbar.
       Laden Sie diese um die neuesten Funktionen zu erhalten!
     up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
+    tip: Pensez à relancer Sketchup après avoir installé la nouvelle version !
 tab:
   cutlist:
     label: Holzliste
