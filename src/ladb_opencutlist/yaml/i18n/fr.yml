@@ -343,8 +343,8 @@ tab:
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentent dans chaque barre.
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
-      option_break_length: Longueur de césure
-      option_break_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
+      option_wrap_length: Longueur de césure
+      option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge

@@ -12,7 +12,7 @@ module Ladb::OpenCutList
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @bar_folding = settings['bar_folding']
       @hide_part_list = settings['hide_part_list']
-      @break_length = DimensionUtils.instance.str_to_ifloat(settings['break_length']).to_l.to_f
+      @wrap_length = DimensionUtils.instance.str_to_ifloat(settings['wrap_length']).to_l.to_f
 
       @cutlist = cutlist
 
@@ -61,7 +61,7 @@ module Ladb::OpenCutList
               :trimming => @trimming.to_l.to_s,
               :bar_folding => @bar_folding,
               :hide_part_list => @hide_part_list,
-              :break_length => @break_length,
+              :wrap_length => @wrap_length,
           },
 
           :unplaced_parts => [],
@@ -180,8 +180,8 @@ module Ladb::OpenCutList
             end
           end
 
-          break_length = [ @break_length, bin.length ].min
-          break_length = bin.length if break_length <= @trimming + @saw_kerf
+          wrap_length = [ @wrap_length, bin.length ].min
+          wrap_length = bin.length if wrap_length <= @trimming + @saw_kerf
 
           bar = {
               :type_id => type_id,
@@ -200,12 +200,12 @@ module Ladb::OpenCutList
               :cuts => [],
           }
 
-          slice_count = (bin.length / break_length).ceil
+          slice_count = (bin.length / wrap_length).ceil
           i = 0
           while i < slice_count do
             bar[:slices].push(
                 {
-                    :px_length => _to_px([ break_length, bin.length - i * break_length ].min)
+                    :px_length => _to_px([ wrap_length, bin.length - i * wrap_length ].min)
                 }
             )
             i += 1
@@ -219,7 +219,7 @@ module Ladb::OpenCutList
                 :number => box.data.number,
                 :name => box.data.name,
                 :length => box.length.to_l.to_s,
-                :slices => _to_slices(box.x, box.length, break_length),
+                :slices => _to_slices(box.x, box.length, wrap_length),
             })
             unless @hide_part_list
               grouped_part = grouped_parts[box.data.id]
@@ -244,7 +244,7 @@ module Ladb::OpenCutList
           bar[:leftover] = {
               :x => bin.current_position,
               :length => bin.current_leftover.to_l.to_s,
-              :slices => _to_slices(bin.current_position, bin.current_leftover, break_length),
+              :slices => _to_slices(bin.current_position, bin.current_leftover, wrap_length),
           }
 
           # Cuts
@@ -252,7 +252,7 @@ module Ladb::OpenCutList
             bar[:cuts].push(
                 {
                     :x => cut.to_l.to_s,
-                    :slices => _to_slices(cut, 0, break_length)
+                    :slices => _to_slices(cut, 0, wrap_length)
                 }
             )
           }
@@ -291,23 +291,23 @@ module Ladb::OpenCutList
     end
 
     # Convert inch float value to slice index
-    def _to_slice_index(inch_value, break_length)
-      break_length == 0 ? 0 : (inch_value / break_length).floor
+    def _to_slice_index(inch_value, wrap_length)
+      wrap_length == 0 ? 0 : (inch_value / wrap_length).floor
     end
 
-    def _to_slices(x, length, break_length)
+    def _to_slices(x, length, wrap_length)
 
-      start_slice_index = _to_slice_index(x, break_length)
-      end_slice_index = _to_slice_index(x + length, break_length)
+      start_slice_index = _to_slice_index(x, wrap_length)
+      end_slice_index = _to_slice_index(x + length, wrap_length)
 
       slices = []
       slice_index = start_slice_index
       current_x = x
       remaining_length = length
       while slice_index <= end_slice_index do
-        bar_slice_x = break_length * slice_index
+        bar_slice_x = wrap_length * slice_index
         part_slice_x = current_x - bar_slice_x
-        part_slice_length = [break_length - part_slice_x, remaining_length ].min
+        part_slice_length = [wrap_length - part_slice_x, remaining_length ].min
         slices.push(
             {
                 :index => slice_index,

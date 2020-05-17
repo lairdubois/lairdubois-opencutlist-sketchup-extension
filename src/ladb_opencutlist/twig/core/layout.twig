@@ -20,12 +20,13 @@
     </div>
 </nav>
 <div id="ladb_wrapper" style="display: none;">
+    <div id="ladb_wrapper_slides"></div>
     {% if not capabilities.htmlDialogCompatible and not compatibilityAlertHidden %}
-        <div id="ladb_compatibility_alert" class="no-print alert alert-warning" style="margin-bottom: 0; font-size: 90%;">
+        <div id="ladb_compatibility_alert" class="no-print alert alert-warning">
             <div class="media">
                 <button id="ladb_btn_close_compatibility_alert" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <div class="media-left">
-                    <i class="glyphicon glyphicon-exclamation-sign" style="font-size: 150%;"></i>
+                    <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>

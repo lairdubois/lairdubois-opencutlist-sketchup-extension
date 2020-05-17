@@ -51,6 +51,7 @@
         this.tabBtns = {};
 
         this.$wrapper = null;
+        this.$wrapperSlides = null;
         this.$btnMinimize = null;
         this.$btnMaximize = null;
         this.$btnMore = null;
@@ -320,13 +321,13 @@
                 $freshTab = true;
 
                 // Render and append tab
-                this.$wrapper.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
+                this.$wrapperSlides.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
                     tabName: tabName,
                     capabilities: this.capabilities
                 }));
 
                 // Fetch tab
-                $tab = $('#ladb_tab_' + tabName, this.$wrapper);
+                $tab = $('#ladb_tab_' + tabName, this.$wrapperSlides);
 
                 // Initialize tab (with its jQuery plugin)
                 var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
@@ -559,6 +560,7 @@
 
                 // Fetch usefull elements
                 that.$wrapper = $('#ladb_wrapper', that.$element);
+                that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                 that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
                 that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
                 that.$btnMore = $('#ladb_btn_more', that.$element);

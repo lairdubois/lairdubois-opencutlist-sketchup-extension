@@ -343,8 +343,8 @@ tab:
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
-      option_break_length: Wrap Board Length
-      option_break_length_help: Maximal length after which a board will be wrapped over multiple lines.
+      option_wrap_length: Wrap Board Length
+      option_wrap_length_help: Maximal length after which a board will be wrapped over multiple lines.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
