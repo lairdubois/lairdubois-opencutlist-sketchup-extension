@@ -1,12 +1,12 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_core_modal_upgrade' %}
-{% set title = 'core.leftbar.more_update'|i18next() %}
+{% set title = 'core.leftbar.more_update'|i18next %}
 
 {% block bodyInner %}
-    {% if lastReleaseVersion is empty %}
+    {% if manifest.version is empty %}
         <p>{{ 'core.upgrade.unavailable'|i18next }}</p>
-    {% elseif lastReleaseUrl %}
+    {% elseif upgradable %}
         <div class="media">
             <div class="media-left"><i class="ladb-opencutlist-icon-update ladb-opencutlist-icon-lg"></i></div>
             <div class="media-body">
@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-xs-5 text-right"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.version }}</span>{% if capabilities.debug %}<br><small>( build: {{ capabilities.build }} )</small>{% endif %}</div>
                     <div class="col-xs-1 text-center"><i class="ladb-opencutlist-icon-arrow-right"></i></div>
-                    <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ lastReleaseVersion }}</span>{% if capabilities.debug %}<br><small>( build: {{ lastReleaseBuild }} )</small>{% endif %}</div>
+                    <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ manifest.version }}</span>{% if capabilities.debug %}<br><small>( build: {{ manifest.build }} )</small>{% endif %}</div>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block footerInner %}
-    {% if lastReleaseVersion is empty or lastReleaseUrl %}
+    {% if manifest.version is empty or upgradable %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
         <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
     {% else %}

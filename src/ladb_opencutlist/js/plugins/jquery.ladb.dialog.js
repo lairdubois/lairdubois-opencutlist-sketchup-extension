@@ -36,9 +36,8 @@
             dialogTop: options.dialog_top
         };
 
-        this.lastReleaseVersion = null;
-        this.lastReleaseBuild = null;
-        this.lastReleaseUrl = null;
+        this.manifest = null;
+        this.upgradable = false;
 
         this.settings = {};
 
@@ -102,17 +101,16 @@
         ]
     };
 
-    // Update /////
+    // Manifest /////
 
-    LadbDialog.prototype.checkUpdate = function (random) {
+    LadbDialog.prototype.loadManifest = function () {
         var that = this;
 
-        if (this.lastReleaseVersion == null) {
+        if (this.manifest == null) {
             $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/manifest' + (this.capabilities.debug ? '-dev' : '') + '.json', function (data) {
 
-                // Retrieve version infos
-                that.lastReleaseVersion = data.version;
-                that.lastReleaseBuild = data.build;
+                // Keep manifest data
+                that.manifest = data;
 
                 var fnCompareBuild = function(b1, b2) {
                     if (b1 === b2) {
@@ -124,7 +122,6 @@
                         return -1
                     }
                 }
-
                 var fnCompareVersion = function(v1, v2, b1, b2) {
                     if (v1 === v2) {
                         return fnCompareBuild(b1, b2);
@@ -159,10 +156,10 @@
                 }
 
                 // Compare versions
-                if (fnCompareVersion(that.lastReleaseVersion, that.capabilities.version, that.lastReleaseBuild, that.capabilities.build) > 0) {
+                if (fnCompareVersion(data.version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
 
-                    // New version available -> store last release url
-                    that.lastReleaseUrl = data.url;
+                    // Flag as upgradable
+                    this.upgradable = true;
 
                     // Trigger updatable event
                     that.$element.trigger(jQuery.Event('updatable.ladb.core'));
@@ -170,43 +167,10 @@
                 }
 
             }).fail(function(e) {
-                that.lastReleaseVersion = '';
-                that.lastReleaseBuild = '';
-                that.lastReleaseUrl = '';
+                that.manifest = {}
+                that.upgradable = false;
             });
         }
-
-    };
-
-    LadbDialog.prototype.upgrade = function () {
-        var that = this;
-
-        // Render modal
-        this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
-            capabilities: this.capabilities,
-            lastReleaseVersion: this.lastReleaseVersion,
-            lastReleaseBuild: this.lastReleaseBuild,
-            lastReleaseUrl: this.lastReleaseUrl,
-        }));
-
-        // Fetch UI elements
-        var $modal = $('#ladb_core_modal_upgrade');
-        var $btnDownload = $('#ladb_btn_download', $modal);
-
-        // Bind buttons
-        $btnDownload.on('click', function() {
-
-            // Open url
-            rubyCallCommand('core_open_url', { url: that.lastReleaseUrl ? that.lastReleaseUrl : DOWNLOAD_URL });
-
-            // Close modal
-            $modal.modal('hide');
-
-            return false;
-        });
-
-        // Show modal
-        $modal.modal('show');
 
     };
 
@@ -415,6 +379,37 @@
 
     };
 
+    LadbDialog.prototype.showUpgradeModal = function () {
+        var that = this;
+
+        // Render modal
+        this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
+            capabilities: this.capabilities,
+            manifest: this.manifest,
+            upgradable: this.upgradable,
+        }));
+
+        // Fetch UI elements
+        var $modal = $('#ladb_core_modal_upgrade');
+        var $btnDownload = $('#ladb_btn_download', $modal);
+
+        // Bind buttons
+        $btnDownload.on('click', function() {
+
+            // Open url
+            rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : DOWNLOAD_URL });
+
+            // Close modal
+            $modal.modal('hide');
+
+            return false;
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     // Internals /////
 
     LadbDialog.prototype.getTabDef = function (tabName) {
@@ -499,7 +494,7 @@
             });
         });
         this.$btnUpgrade.on('click', function() {
-            that.upgrade();
+            that.showUpgradeModal();
         });
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
@@ -515,7 +510,7 @@
 
         // Bind dialog maximized events
         this.$element.on('maximized.ladb.dialog', function() {
-            that.checkUpdate();
+            that.loadManifest();
         });
 
         // Bind core updatable events
