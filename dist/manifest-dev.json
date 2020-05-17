@@ -1,5 +1,10 @@
 {
   "version": "1.9.0-dev",
-  "build": "202005161019",
-  "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/ladb_opencutlist-dev.rbz"
+  "build": "202005140559",
+  "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/ladb_opencutlist-dev.rbz",
+  "announcement": {
+    "fr": "Coucou",
+    "en": "Coucou",
+    "de": "Coucou"
+  }
 }
