@@ -24,8 +24,8 @@
         <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
     {% elseif upgradable %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-        <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
     {% else %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% endif %}
+    <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
 {% endblock %}

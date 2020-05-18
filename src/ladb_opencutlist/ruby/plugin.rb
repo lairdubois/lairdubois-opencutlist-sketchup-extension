@@ -9,7 +9,6 @@ module Ladb::OpenCutList
   require 'tempfile'
   require 'set'
   require 'open-uri'
-  require 'net/http'
   require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'controller/materials_controller'
@@ -551,78 +550,6 @@ module Ladb::OpenCutList
       end
     end
 
-    # Gist download from https://gist.github.com/janko/7cd94b8b4dd113c2c193
-
-    Error = Class.new(StandardError)
-
-    DOWNLOAD_ERRORS = [
-        SocketError,          # domain not found
-        OpenURI::HTTPError,   # response status 4xx or 5xx
-        RuntimeError,         # redirection errors (e.g. redirection loop)
-        URI::InvalidURIError, # invalid URL
-        Error,                # our errors
-    ]
-
-    def _download(url, max_size: nil)
-
-      # URLs with spaces will raise an InvalidURIError, so we need to encode it.
-      # However, the user can pass an already encoded URL, so we first need to
-      # decode it.
-      url = URI.encode(URI.decode(url))
-
-      # This will raise an InvalidURIError if the URL is very wrong. It will still
-      # pass for strings like "foo", though.
-      url = URI(url)
-
-      # We need to check if the URL was either http://, https:// or ftp://, because
-      # these are the only ones we can download from. open-uri will add the #open
-      # method only to these ones, so this is a good check.
-      raise Error, "url was invalid" if !url.respond_to?(:open)
-
-      options = {}
-      # It was shown that in a random sample approximately 20% of websites will
-      # simply refuse a request which doesn't have a valid User-Agent.
-      options["User-Agent"] = "OpenCutList/#{EXTENSION_VERSION}"
-      # It's good to shield ourselves from files that are too big. open-uri will
-      # call this block as soon as it gets the "Content-Length" header, which means
-      # that we can bail out before we download the file.
-      options[:content_length_proc] = ->(size) {
-        if max_size && size && size > max_size # sometimes "Content-Length" can be empty
-          raise Error, "file is too big (max is #{max_size})"
-        end
-      }
-      options[:progress_proc] = ->(size) {
-      }
-
-      # Finally we download the file. Here we mustn't use simple #open that open-uri
-      # overrides, because this is vulnerable to shell execution attack (if #open
-      # method detects a starting pipe (e.g. "| ls"), it will execute the following
-      # as a shell command).
-      downloaded_file = url.open(options)
-
-      # open-uri will return a StringIO instead of a Tempfile if the filesize
-      # is less than 10 KB, so we patch this behaviour by converting it into a
-      # Tempfile.
-      if downloaded_file.is_a?(StringIO)
-        # We need to open it in binary mode for Windows users.
-        tempfile = Tempfile.new('ladb_opencutlist_download_', binmode: true)
-        # IO.copy_stream is the most efficient way of data transfer.
-        IO.copy_stream(downloaded_file, tempfile.path)
-        downloaded_file = tempfile
-        # We add the metadata that open-uri puts on the file (e.g. #content_type)
-        OpenURI::Meta.init downloaded_file, stringio
-      end
-
-      downloaded_file # Finally
-
-    rescue *DOWNLOAD_ERRORS => error
-      # open-uri will throw a RuntimeError when it detects a redirection loop, so
-      # we want to reraise the exception if it was some other RuntimeError
-      raise if error.instance_of?(RuntimeError) && error.message !~ /redirection/
-      # We raise our unified Error class
-      raise Error, "download failed (#{url}): #{error.message}"
-    end
-
     # -- Commands ---
 
     def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
@@ -634,20 +561,31 @@ module Ladb::OpenCutList
 
       # Download the RBZ
       begin
-        downloaded_file = _download(url)
+
+        # URLs with spaces will raise an InvalidURIError, so we need to encode it.
+        # However, the user can pass an already encoded URL, so we first need to
+        # decode it.
+        url = URI.encode(URI.decode(url))
+
+        # This will raise an InvalidURIError if the URL is very wrong. It will still
+        # pass for strings like "foo", though.
+        url = URI(url)
+
+        downloads_dir = File.join(temp_dir, 'downloads')
+        unless Dir.exist?(downloads_dir)
+          Dir.mkdir(downloads_dir)
+        end
+        rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
+
+        open(rbz_file, 'wb') do |file|
+          file << open(url).read
+        end
+
       rescue Exception => e
         UI.beep
         UI.messagebox(get_i18n_string('core.upgrade.error.download') + "\n" + e.message)
         return { :cancelled => true }
       end
-
-      # Rename donwloaded_file to be sure it contains .rbz extension
-      downloads_dir = File.join(temp_dir, 'downloads')
-      unless Dir.exist?(downloads_dir)
-        Dir.mkdir(downloads_dir)
-      end
-      rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
-      File.rename(downloaded_file.path, rbz_file)
 
       # Install the RBZ
       begin
