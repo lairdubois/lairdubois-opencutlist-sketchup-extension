@@ -70,7 +70,7 @@ module Ladb::OpenCutList
                                              MaterialsObserver::ON_MATERIAL_REMOVE,
                                          ]) do |params|
 
-        # Invalidate Cutlist if exists
+        # Invalidate Cutlist if if exists
         @cutlist.invalidate if @cutlist
 
       end
@@ -83,6 +83,9 @@ module Ladb::OpenCutList
 
     def generate_command(settings)
       require_relative '../worker/cutlist/cutlist_generate_worker'
+
+      # Invalidate Cutlist if it exists
+      @cutlist.invalidate if @cutlist
 
       # Setup worker
       worker = CutlistGenerateWorker.new(settings)

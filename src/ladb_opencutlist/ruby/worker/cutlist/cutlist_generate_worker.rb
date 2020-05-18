@@ -13,6 +13,7 @@ module Ladb::OpenCutList
   require_relative '../../model/cutlist/partdef'
   require_relative '../../model/cutlist/part'
   require_relative '../../utils/transformation_utils'
+  require_relative '../../tool/highlight_part_tool'
 
   class CutlistGenerateWorker
 
@@ -53,8 +54,9 @@ module Ladb::OpenCutList
 
     def run
 
-      # Retrieve selected entities or all if no selection
       model = Sketchup.active_model
+
+      # Retrieve selected entities or all if no selection
       if model
         if model.selection.empty?
           entities = model.active_entities

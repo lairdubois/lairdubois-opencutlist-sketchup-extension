@@ -42,7 +42,7 @@ module Ladb::OpenCutList
       end
 
       # Create and activate highlight part tool
-      highlight_tool = HighlightPartTool.new(group, parts, part_count, @minimize_on_highlight)
+      highlight_tool = HighlightPartTool.new(@cutlist, group, parts, part_count, @minimize_on_highlight)
       model.select_tool(highlight_tool)
 
     end

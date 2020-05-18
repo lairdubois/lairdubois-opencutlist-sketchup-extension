@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
   require_relative '../gl/gl_button'
+  require_relative '../model/cutlist/cutlist'
 
-  class HighlightPartTool
+  class HighlightPartTool < CutlistObserver
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
@@ -33,11 +34,15 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(group, parts, part_count, maximize_on_quit)
+    def initialize(cutlist, group, parts, part_count, maximize_on_quit)
+      @cutlist = cutlist
       @group = group
       @parts = parts
       @part_count = part_count
       @maximize_on_quit = maximize_on_quit
+
+      # Add tool as observer of the cutlist
+      @cutlist.add_observer(self)
 
       @text_line_1 = ''
       @text_line_2 = ''
@@ -153,9 +158,8 @@ module Ladb::OpenCutList
       _update_text_lines
     end
 
-    def desactivate(view)
-      view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
-      view.invalidate
+    def deactivate(view)
+      onQuit(view)
     end
 
     def suspend(view)
@@ -304,6 +308,24 @@ module Ladb::OpenCutList
       _quit(view)
     end
 
+    def onQuit(view)
+
+      # Restore initial transparency mode
+      view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
+
+      # Invalidate view
+      view.invalidate
+
+      # Add tool as observer of the cutlist
+      @cutlist.remove_observer(self)
+
+    end
+
+    def onInvalidateCutlist(cutlist)
+      model = Sketchup.active_model
+      _quit(model.active_view) if model
+    end
+
     private
 
     def _update_text_lines
@@ -343,19 +365,13 @@ module Ladb::OpenCutList
 
     def _quit(view)
 
-      # Restore initial transparency mode
-      view.model.rendering_options["ModelTransparency"] = @initial_model_transparency
-
-      # Unselect tool
-      view.model.select_tool(nil)  # Desactivate the tool on click
-
-      # Invalidate view
-      view.invalidate
-
       # Maximize dialog if needed
       if @maximize_on_quit
         Plugin.instance.show_dialog('cutlist')
       end
+
+      # Unselect tool
+      view.model.select_tool(nil)  # Desactivate the tool on click
 
     end
 

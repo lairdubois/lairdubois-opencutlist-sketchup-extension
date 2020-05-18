@@ -11,6 +11,7 @@ module Ladb::OpenCutList
 
     def initialize(selection_only, length_unit, dir, filename, page_label, instance_count)
       @_obsolete = false
+      @_observers = []
 
       @errors = []
       @warnings = []
@@ -32,6 +33,7 @@ module Ladb::OpenCutList
 
     def invalidate
       @_obsolete = true
+      _fire_invalidate_event
     end
 
     def obsolete?
@@ -93,6 +95,35 @@ module Ladb::OpenCutList
         parts = parts + group.get_real_parts(ids)
       end
       parts
+    end
+
+    # ---
+
+    def add_observer(observer)
+      if observer.is_a? CutlistObserver
+        @_observers.push(observer)
+      else
+        raise('Invalid CutlistObserver')
+      end
+    end
+
+    def remove_observer(observer)
+      @_observers.delete(observer)
+    end
+
+    private
+
+    def _fire_invalidate_event
+      @_observers.each do |observer|
+        observer.onInvalidateCutlist(self)
+      end
+    end
+
+  end
+
+  class CutlistObserver
+
+    def onInvalidateCutlist(cutlist)
     end
 
   end
