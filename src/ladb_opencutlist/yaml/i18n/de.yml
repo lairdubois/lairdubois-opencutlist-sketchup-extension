@@ -75,6 +75,7 @@ core:
       Neue Version von *OpenCutList* ist verfügbar.
       Laden Sie diese um die neuesten Funktionen zu erhalten!
     up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
+    downloading: Téléchargement en cours...
     confirm_download: |
       Vous êtes sur le point de télécharger de l'archive d'OpenCutList. Le temps de cette opération est généralement très court mais peut dépendre de votre connexion Internet.
 

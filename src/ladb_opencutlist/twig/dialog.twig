@@ -138,6 +138,26 @@
         }
     }
 
+    function removeEventCallback(event, callback) {
+        var events;
+        if ($.isArray(event)) {
+            events = event;
+        } else {
+            events = [ event ];
+        }
+        for (var i = 0; i < events.length; i++) {
+            var callbacks = eventCallbacks[events[i]];
+            if (callbacks) {
+                for (var j = 0; i < callbacks.length; i++) {
+                    if (callbacks[j] === callback) {
+                        callbacks.splice(i, 1);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     function triggerEvent(event, encodedParams) {
         var callbacks = eventCallbacks[event];
         if (callbacks) {

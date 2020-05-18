@@ -4,7 +4,7 @@
     // CONSTANTS
     // ======================
 
-    var DOWNLOAD_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
+    var EW_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
 
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
 
@@ -391,17 +391,48 @@
 
         // Fetch UI elements
         var $modal = $('#ladb_core_modal_upgrade');
+        var $panelInfos = $('#ladb_panel_infos', $modal);
+        var $panelProgress = $('#ladb_panel_progress', $modal);
+        var $footer = $('.modal-footer', $modal);
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('#ladb_btn_download', $modal);
+        var $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
         $btnUpgrade.on('click', function() {
-            rubyCallCommand('core_upgrade', { url: that.manifest && that.manifest.url ? that.manifest.url : DOWNLOAD_URL }, function (response) {
 
-                // Close and remove modal
-                $modal.modal('hide');
-                $modal.remove();
+            $panelInfos.hide();
+            $panelProgress.show();
+            $footer.hide();
 
+            rubyCallCommand('core_upgrade', { url: that.manifest && that.manifest.url ? that.manifest.url : EW_URL }, function (response) {
+                if (response.cancelled) {
+
+                    // Close and remove modal
+                    $modal.modal('hide');
+                    $modal.remove();
+
+                } else {
+
+                    var fnProgress = function (params) {
+                        $progressBar.css('width', (params.current / params.total * 100) + '%');
+                    };
+                    var fnCancelled = function (params) {
+
+                        // Close and remove modal
+                        $modal.modal('hide');
+                        $modal.remove();
+
+                        // Remove event callbacks
+                        removeEventCallback('on_upgrade_progress', fnProgress);
+                        removeEventCallback('on_upgrade_cancelled', fnCancelled);
+
+                    }
+
+                    addEventCallback('on_upgrade_progress', fnProgress);
+                    addEventCallback('on_upgrade_cancelled', fnCancelled);
+
+                }
             });
 
             return false;
@@ -409,7 +440,7 @@
         $btnDownload.on('click', function() {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : DOWNLOAD_URL });
+            rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : EW_URL });
 
             // Close and remove modal
             $modal.modal('hide');

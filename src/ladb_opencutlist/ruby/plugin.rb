@@ -553,11 +553,13 @@ module Ladb::OpenCutList
     # -- Commands ---
 
     def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
-      url = params['url']
+      # Just open URL for older Sketchup versions
+      if Sketchup.version_number < 1700000000
+        open_url_command(params)
+        return { :cancelled => true }
+      end
 
-      # Confirm
-      result = UI.messagebox(get_i18n_string('core.upgrade.confirm_download'), MB_YESNO)
-      return { :cancelled => true } unless result == IDYES
+      url = params['url']
 
       # Download the RBZ
       begin
@@ -571,43 +573,74 @@ module Ladb::OpenCutList
         # pass for strings like "foo", though.
         url = URI(url)
 
-        downloads_dir = File.join(temp_dir, 'downloads')
-        unless Dir.exist?(downloads_dir)
-          Dir.mkdir(downloads_dir)
+        last_progress = 0
+        request = Sketchup::Http::Request.new(url.to_s, Sketchup::Http::GET)
+        request.set_download_progress_callback do |current, total|
+          progress = current * 5 / total
+          if progress > last_progress
+            trigger_event('on_upgrade_progress', {
+                :current => current,
+                :total => total,
+            })
+            last_progress = progress
+          end
         end
-        rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
+        request.start do |request, response|
 
-        open(rbz_file, 'wb') do |file|
-          file << open(url).read
+          UI.start_timer(1, false) {
+
+            # Prepare file
+            downloads_dir = File.join(temp_dir, 'downloads')
+            unless Dir.exist?(downloads_dir)
+              Dir.mkdir(downloads_dir)
+            end
+            rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
+
+            # Write result to file
+            File.open(rbz_file, 'wb') do |f|
+              f.write(response.body)
+            end
+
+            success = false
+
+            # Install the RBZ
+            begin
+              Sketchup.install_from_archive(rbz_file)
+              success = true
+            rescue Interrupt => e
+              trigger_event('on_upgrade_cancelled', {})
+            rescue Exception => e
+              UI.beep
+              UI.messagebox(get_i18n_string('core.upgrade.error.unzip') + "\n" + e.message)
+              trigger_event('on_upgrade_cancelled', {})
+            ensure
+
+              # Remove downloaded archive
+              File.unlink(rbz_file)
+
+            end
+
+            if success
+
+              # Hide OCL dialog
+              hide_dialog
+
+              # Inform user to restart Sketchup
+              UI.messagebox(get_i18n_string('core.upgrade.success'))
+
+            end
+
+          }
+
         end
 
       rescue Exception => e
+        puts e.message
+        puts e.backtrace
         UI.beep
         UI.messagebox(get_i18n_string('core.upgrade.error.download') + "\n" + e.message)
         return { :cancelled => true }
       end
-
-      # Install the RBZ
-      begin
-        Sketchup.install_from_archive(rbz_file)
-      rescue Interrupt => e
-        return { :cancelled => true }
-      rescue Exception => e
-        UI.beep
-        UI.messagebox(get_i18n_string('core.upgrade.error.unzip') + "\n" + e.message)
-        return { :cancelled => true }
-      ensure
-
-        # Remove downloaded archive
-        File.unlink(rbz_file)
-
-      end
-
-      # Hide OCL dialog
-      hide_dialog
-
-      # Inform user to restart Sketchup
-      UI.messagebox(get_i18n_string('core.upgrade.success'))
 
     end
 
