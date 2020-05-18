@@ -72,20 +72,20 @@ core:
   upgrade:
     unavailable: Impossible to find the latest version of *OpenCutList*.
     available: |
-      New version of *OpenCutList* is available.
+      A new version of *OpenCutList* is available.
       Download it to get the latest features!
     up_to_date: |
       You already have the latest version of *OpenCutList*.
 
-      *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à souvenir financièrement le projet !*
-    downloading: Téléchargement en cours...
+      *Consider a sponsorship of this project to help us add even more features!*
+    downloading: Downloading in progress...
     success: |
-      La mise à jour d'OpenCutList est terminée !
+      The update of OpenCutList has finised!
 
-      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+      /!\ RELOAD SKETCHUP for the changes to be activated.
     error:
-      download: Erreur lors du téléchargement de l'archive.
-      unzip: Erreur lors de la décompression de l'archive.
+      download: Error while downloading the archive.
+      unzip: Error while decompressing the archive.
 tab:
   cutlist:
     label: Parts List
