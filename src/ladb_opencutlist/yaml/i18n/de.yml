@@ -73,19 +73,19 @@ core:
     unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
     available: |
       Neue Version von *OpenCutList* ist verfügbar.
-      Laden Sie diese um die neuesten Funktionen zu erhalten!
+      Aktualisieren Sie diese um die neuesten Funktionen zu erhalten!
     up_to_date: |
       Sie haben schon die neueste Version von *OpenCutList*.
 
-      *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à souvenir financièrement le projet !*
-    downloading: Téléchargement en cours...
+      *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
+    downloading: Herunteladen läuft...
     success: |
-      La mise à jour d'OpenCutList est terminée !
+      Die Aktualisierung von OpenCutList ist beendet!
 
-      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+      /!\ STARTEN SIE SKETCHUP neu damit die Änderungen aktiviert werden.
     error:
-      download: Erreur lors du téléchargement de l'archive.
-      unzip: Erreur lors de la décompression de l'archive.
+      download: Fehler beim Herunterladen des Archivs.
+      unzip: Fehler beim Dekomprimieren des Archivs.
 tab:
   cutlist:
     label: Holzliste
