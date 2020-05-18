@@ -74,7 +74,10 @@ core:
     available: |
       Neue Version von *OpenCutList* ist verfügbar.
       Laden Sie diese um die neuesten Funktionen zu erhalten!
-    up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
+    up_to_date: |
+      Sie haben schon die neueste Version von *OpenCutList*.
+
+      *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à souvenir financièrement le projet !*
     downloading: Téléchargement en cours...
     success: |
       La mise à jour d'OpenCutList est terminée !

@@ -33,5 +33,7 @@
         <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
     {% elseif upgradable %}
         <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
+    {% else %}
+        <button id="ladb_btn_sponsor" class="btn btn-sponsor"><i class="ladb-opencutlist-icon-sponsor"></i> {{ 'tab.sponsor.label'|i18next }}</button>
     {% endif %}
 {% endblock %}

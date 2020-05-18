@@ -396,6 +396,7 @@
         var $footer = $('.modal-footer', $modal);
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('#ladb_btn_download', $modal);
+        var $btnSponsor = $('#ladb_btn_sponsor', $modal);
         var $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
@@ -441,6 +442,17 @@
 
             // Open url
             rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : EW_URL });
+
+            // Close and remove modal
+            $modal.modal('hide');
+            $modal.remove();
+
+            return false;
+        });
+        $btnSponsor.on('click', function() {
+
+            // Open sponsor tab
+            that.selectTab('sponsor');
 
             // Close and remove modal
             $modal.modal('hide');
