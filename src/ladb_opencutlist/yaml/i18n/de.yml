@@ -20,6 +20,7 @@ default:
   create: Anlegen
   ignore: Ignorieren
   download: Downloaden
+  upgrade: Mettre à jour
   empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
@@ -74,7 +75,17 @@ core:
       Neue Version von *OpenCutList* ist verfügbar.
       Laden Sie diese um die neuesten Funktionen zu erhalten!
     up_to_date: Sie haben schon die neueste Version von *OpenCutList*.
-    tip: Denken Sie daran Sketchup neu zu starten, nachdem Sie eine neue Version installiert haben!
+    confirm_download: |
+      Vous êtes sur le point de télécharger de l'archive d'OpenCutList. Le temps de cette opération est généralement très court mais peut dépendre de votre connexion Internet.
+
+      Confirmez l'action pour continuer.
+    success: |
+      La mise à jour d'OpenCutList est terminée !
+
+      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+    error:
+      download: Erreur lors du téléchargement de l'archive.
+      unzip: Erreur lors de la décompression de l'archive.
 tab:
   cutlist:
     label: Holzliste

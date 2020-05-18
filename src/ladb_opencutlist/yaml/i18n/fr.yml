@@ -20,6 +20,7 @@ default:
   create: Créer
   ignore: Ignorer
   download: Télécharger
+  upgrade: Mettre à jour
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
@@ -72,9 +73,19 @@ core:
     unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
     available: |
       Une nouvelle version d'*OpenCutList* est disponible.
-      Téléchargez-là pour disposer des dernières nouveautés !
+      Mettez à jour pour disposer des dernières nouveautés !
     up_to_date: Vous disposez de la dernière version d'*OpenCutList*.
-    tip: Pensez à relancer Sketchup après avoir installé la nouvelle version !
+    confirm_download: |
+      Vous êtes sur le point de télécharger de l'archive d'OpenCutList. Le temps de cette opération est généralement très court mais peut dépendre de votre connexion Internet.
+
+      Confirmez l'action pour continuer.
+    success: |
+      La mise à jour d'OpenCutList est terminée !
+
+      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+    error:
+      download: Erreur lors du téléchargement de l'archive.
+      unzip: Erreur lors de la décompression de l'archive.
 tab:
   cutlist:
     label: Débit

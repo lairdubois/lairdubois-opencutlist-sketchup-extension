@@ -13,18 +13,18 @@
             <div class="col-xs-2 text-center"><i class="ladb-opencutlist-icon-arrow-right"></i></div>
             <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ manifest.version }}</span>{% if capabilities.debug %}<br><small>( build: {{ manifest.build }} )</small>{% endif %}</div>
         </div>
-        <div class="alert alert-info" style="margin-top: 10px; margin-bottom: 0;">
-            <i class="ladb-opencutlist-icon-tip ladb-opencutlist-icon-lg"></i> {{ 'core.upgrade.tip'|i18next }}
-        </div>
     {% else %}
         <p>{{ 'core.upgrade.up_to_date'|i18next }}</p>
     {% endif %}
 {% endblock %}
 
 {% block footerInner %}
-    {% if manifest.version is empty or upgradable %}
+    {% if manifest.version is empty %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
         <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
+    {% elseif upgradable %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+        <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
     {% else %}
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% endif %}

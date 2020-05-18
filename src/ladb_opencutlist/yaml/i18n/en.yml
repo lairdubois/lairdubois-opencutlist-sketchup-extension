@@ -20,6 +20,7 @@ default:
   create: Create
   ignore: Ignore
   download: Download
+  upgrade: Mettre à jour
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -74,7 +75,17 @@ core:
       New version of *OpenCutList* is available.
       Download it to get the latest features!
     up_to_date: You already have the latest version of *OpenCutList*.
-    tip: Do not forget to restart Sketchup after installing a new version!
+    confirm_download: |
+      Vous êtes sur le point de télécharger de l'archive d'OpenCutList. Le temps de cette opération est généralement très court mais peut dépendre de votre connexion Internet.
+
+      Confirmez l'action pour continuer.
+    success: |
+      La mise à jour d'OpenCutList est terminée !
+
+      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+    error:
+      download: Erreur lors du téléchargement de l'archive.
+      unzip: Erreur lors de la décompression de l'archive.
 tab:
   cutlist:
     label: Parts List

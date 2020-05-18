@@ -391,16 +391,29 @@
 
         // Fetch UI elements
         var $modal = $('#ladb_core_modal_upgrade');
+        var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('#ladb_btn_download', $modal);
 
         // Bind buttons
+        $btnUpgrade.on('click', function() {
+            rubyCallCommand('core_upgrade', { url: that.manifest && that.manifest.url ? that.manifest.url : DOWNLOAD_URL }, function (response) {
+
+                // Close and remove modal
+                $modal.modal('hide');
+                $modal.remove();
+
+            });
+
+            return false;
+        });
         $btnDownload.on('click', function() {
 
             // Open url
             rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : DOWNLOAD_URL });
 
-            // Close modal
+            // Close and remove modal
             $modal.modal('hide');
+            $modal.remove();
 
             return false;
         });
