@@ -587,7 +587,12 @@ module Ladb::OpenCutList
         end
         request.start do |request, response|
 
+          timer_running = false
           UI.start_timer(1, false) {
+
+            # Timer with modal bug workaround https://ruby.sketchup.com/UI.html#start_timer-class_method
+            return if timer_running
+            timer_running = true
 
             # Prepare file
             downloads_dir = File.join(temp_dir, 'downloads')
