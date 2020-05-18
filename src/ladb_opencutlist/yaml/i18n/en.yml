@@ -74,7 +74,7 @@ core:
       New version of *OpenCutList* is available.
       Download it to get the latest features!
     up_to_date: You already have the latest version of *OpenCutList*.
-    tip: Pensez à relancer Sketchup après avoir installé la nouvelle version !
+    tip: Do not forget to restart Sketchup after installing a new version!
 tab:
   cutlist:
     label: Parts List
