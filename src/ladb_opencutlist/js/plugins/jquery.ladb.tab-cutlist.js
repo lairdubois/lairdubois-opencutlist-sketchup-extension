@@ -1172,7 +1172,7 @@
                 // Bind buttons
                 $btnHighlight.on('click', function () {
                     this.blur();
-                    that.highlightPart(id);
+                    that.highlightPart(part.id);
                     return false;
                 });
                 $btnUpdate.on('click', function () {
