@@ -5,7 +5,7 @@
 
 {% set barDimensionFontSize = 16 %}
 {% set dimensionFontSize = 12 %}
-{% set numberFontSize = 26 %}
+{% set numberFontSize = 16 %}
 
 {% set dimensionOffset = 5 %}
 {% set barDimensionOffset = 10 %}
@@ -192,7 +192,7 @@
                         {% set viewportHeight = barDimensionOffset + barDimensionFontSize + sliceHeight * bar.slices|length %}
 
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} -{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} {{ viewportWidth }} {{ viewportHeight }}" height="{{ viewportHeight }}">
-                            <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}</text>
+                            <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}{% if bar.slices|length > 1 %}&hellip;{% endif %}</text>
                             <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ barOutlineWidth + barDimensionOffset }},{{ bar.px_width / 2 }})">{{ bar.width }}</text>
                             <g class="bar" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
                                 {% for slice in bar.slices %}
@@ -230,12 +230,12 @@
                                     {% set displayedDimensions = false %}
                                     {% for slice in part.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
-                                        {% set hideNumber = slice.px_length < (dimensionFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1))) %}
+                                        {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1))) %}
                                         {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * part.length|length) %}
                                         <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
                                         <rect class="part-inner" x="{{ slice.px_x + (loop.first ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
                                         {% if not hideNumber %}
-                                            <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - dimensionOffset * 2) / numberTextLength, (bar.px_width - dimensionOffset * 2))  }}px" text-anchor="middle" dominant-baseline="central">{% if not loop.first %}&hellip;{% endif %}{{ part.number }}{% if not loop.last %}&hellip;{% endif %}</text>
+                                            <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2)) }}px" text-anchor="middle" dominant-baseline="central">{% if not loop.first %}&hellip;{% endif %}{{ part.number }}{% if not loop.last %}&hellip;{% endif %}</text>
                                         {% endif %}
                                         {% if not hideDimensions %}
                                             <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
