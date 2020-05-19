@@ -905,7 +905,7 @@
             var part = groupAndPart.part;
 
             var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(id) && this.selectionPartIds.length > 1;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part.id) && this.selectionPartIds.length > 1;
             var multiple = isFolder || isSelected;
 
             var editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));

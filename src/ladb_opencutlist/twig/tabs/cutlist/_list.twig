@@ -148,9 +148,6 @@
         </tbody>
     </table>
 {% endif %}
-{% if groups.length > 0 %}
-    <hr class="no-print">
-{% endif %}
 {% for group in groups %}
 
     {% set groupHidden = group.id in generateOptions.hidden_group_ids %}

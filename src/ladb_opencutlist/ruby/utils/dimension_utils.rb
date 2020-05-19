@@ -115,9 +115,9 @@
       match = i.match(/^(\d*)\/(\d*)$/)
       if match
         num, den = match.captures
-        if num == "0"
-          return "0"
-        elsif den == "1"
+        if num == '0'
+          return '0'
+        elsif den == '1'
           return num
         else
           return i
@@ -134,7 +134,7 @@
     # 4. convert garbage into 0
     #
     def str_add_units(i)
-      return "0" + unit_sign if i.nil? || i.empty?
+      return '0' + unit_sign if i.nil? || i.empty?
       i = i.strip
       nu = ""
       sum = 0
@@ -168,7 +168,7 @@
             #sum = 12*three.to_f + six.to_f + from_fractional(eight).to_f
           end
         else
-          nu = "0" + unit_sign # garbage becomes 0
+          nu = '0' + unit_sign # garbage becomes 0
         end
       end
       nu
