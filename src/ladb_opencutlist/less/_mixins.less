@@ -70,3 +70,10 @@
   }
 
 }
+
+/* blink */
+
+.blink(@interval) {
+  animation: blinker @interval step-start infinite;
+}
+@keyframes blinker { 50% { opacity: 0; } }

@@ -13,6 +13,7 @@ in 1.x and 0.x versions.
   * Fixed some New Material modal issues
   * Improved cutlist scroll to first visible group (only if no alert)
   * Improved highlight tool to display part oriention with front and back face
+  * Improved obsolete generated (materials, cutlist) management
   * Replaced 'selection only' warning by displaying this info in header
 
 * 1.8.4 (2020-01-09)
