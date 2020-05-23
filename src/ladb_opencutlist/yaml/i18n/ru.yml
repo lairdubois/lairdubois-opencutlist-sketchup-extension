@@ -691,7 +691,11 @@ tab:
     version: Версия
     credits: Технические характеристики
     credits_authors: |
-      *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и перевёл [Martin Müller](https://www.lairdubois.fr/@mobilarte), и Владимира (русская версия). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translators: |
+      Traductions :
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
+      - Vladimir (*russe*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
