@@ -126,7 +126,16 @@ module Ladb::OpenCutList
           end
         }
       end
-      a_values <=> b_values
+      result = a_values <=> b_values
+      if result == 0
+
+        # In the case of equality, add an extra compare on part flipped ASC
+        a_values << (part_def_a.flipped ? 1 : 0)
+        b_values << (part_def_b.flipped ? 1 : 0)
+        result = a_values <=> b_values
+
+      end
+      result
     end
 
     # -----

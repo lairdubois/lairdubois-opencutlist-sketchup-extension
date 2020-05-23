@@ -1006,12 +1006,6 @@
                         axes.push($(this).data('axis'));
                     });
                     $inputPartAxes.val(axes);
-
-                    // By default check Orientation Locked On Axis option
-                    $inputOrientationLockedOnAxis.prop('checked', true);
-                    $selectPartAxesOriginPosition.selectpicker('val', 'min');
-                    fnDisplayAxisDimensions();
-
                 };
                 var fnDisplayAxisDimensions = function () {
                     if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
@@ -1149,6 +1143,12 @@
                     handle: '.ladb-handle',
                     stop: function (event, ui) {
                         fnComputeAxesOrder();
+
+                        // By default check Orientation Locked On Axis option
+                        $inputOrientationLockedOnAxis.prop('checked', true);
+                        $selectPartAxesOriginPosition.selectpicker('val', 'min');
+                        fnDisplayAxisDimensions();
+
                     }
                 });
 

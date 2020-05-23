@@ -10,7 +10,7 @@
 
 You can download and install the ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en)'s page :
 
-https://extensions.sketchup.com/en/content/lair-du-bois-sketchup-toolbox-0
+https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist
 
 ## Contributors
 
