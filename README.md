@@ -16,11 +16,11 @@ https://extensions.sketchup.com/en/content/lair-du-bois-sketchup-toolbox-0
 
 OpenCutList is available in english, french, german and soon in russian. The interface language of the extension can be selected independently of the language version of Sketchup.
 
+We are looking for volunteering translators to italian and spanish, preferably woodworkers already familiar with the extension.
+
 ## Supported Units
 
 In addition to the selected Sketchup unit, OpenCutList works with dimensions of solid wood, panels and dimensional lumber in fractional inches, even if the selected Sketchup units are metric and vice versa.
-
-We are looking for volunteering translators to italian and spanish, preferably woodworkers already familiar with the extension.
 
 ## Contributors
 

@@ -1,5 +1,9 @@
 # Frequently Asked Questions
 
+## How can I change the language?
+
+Click the **Preferences** tab on the far bottom right of the maximized OpenCutList window, select the language of your choice. The language of OpenCutList is independent of your Sketchup version, thus in an english Sketchup version you may still select French.
+
 ## The dimensions of a component are wrong in the cut list
 
 The dimensions of components are taken from the *bounding box*. Depending on how you draw your component, the bounding box may not be aligned with the component axis. Check out [SketchUp Skill Builder: Group axis and bounding box](https://www.youtube.com/watch?v=2UnzHwAt7mc) to learn about relocating the local axis to align the bounding box with your component.
@@ -8,7 +12,7 @@ If you disable the option *Automatic orientation of parts*, the generated cut li
 
 ## I cannot define material in the plugin
 
-The material needs to be defined within SketchUp, then it will appear in the **Materials** tab, where you may configure additional information. This information will be used to compute raw dimensions (using the oversize) and select the correct thickness if the material is of type **Solid Wood**.
+On the **Material** tab of OpenCutList, add a new material and configure its type. Alternatively or if you already have material on your components, you may define the material within SketchUp, then it will appear in the **Materials** tab, where you will have to configure additional information. This information will be used to compute raw dimensions (using the oversize) and select the correct thickness if the material is of type **Solid Wood**.
 
 ## Why is my material not configured?
 

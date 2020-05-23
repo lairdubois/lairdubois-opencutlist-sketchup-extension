@@ -1,0 +1,707 @@
+_label: Русский
+default:
+  minimize: Свернуть
+  maximize: Развернуть
+  cancel: Отмена
+  validate: Принять
+  open: Открыть
+  see: Просмотр
+  close: Закрыть
+  clear: Очистить
+  refresh: Обновить
+  generate: Генерировать
+  print: Печать
+  export: Экспорт
+  import: Импорт
+  load: Загрузка
+  options: Опции
+  caution: Внимание
+  remove: Удалить
+  create: Создать
+  ignore: Пропустить
+  download: Скачать
+  upgrade: Обновление
+  empty_filename: Untitled.skp
+  help: Помощь
+  error: Штопка!
+  warning: Внимание!
+  tip: Тип
+  good: Хороший
+  bad: Плохой
+  date_format: m/d/Y g:ia
+  date_format_short: m/d/Y
+  unit_0: Дюймы
+  unit_1: Футы
+  unit_2: Миллиметры
+  unit_3: Сантиметры
+  unit_4: Футы
+  part_single: деталь
+  part_plural: детали
+  setup_model_units: Установка единиц измерения
+  seconds: секунды
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      edit_part_properties: Редактирование свойств деталей
+      edit_part_axes_properties: Редактирование свойств осей детали
+  toolbar:
+    name: OpenCutList
+    command: OpenCutList
+  dialog:
+    title: OpenCutList by L'Air du Bois
+  leftbar:
+    more: Ещё
+    more_docs: Docs
+    more_reviews: Обзоры
+    more_plans: Проекты
+    more_extensions: Расширения
+    more_update: Обновления
+  warning:
+    old_su: |
+      Вы используете старую версию Sketchup ({{ sketchupVersion }}). Этот плагин будет работать, но возможны некоторые ошибки.
+      Чтобы в полной мере воспользоваться преимуществами OpenCutList, рекомендуем обновить по крайней мере до **SketchUp 2017**.
+    feature_locked: "*Не отключается в этой версии SketchUp*"
+  event:
+    model_change: Активная модель была изменена.
+    options_change: Опции данной модели измены.
+    material_change: По крайней мере, один материал был изменен.
+    selection_change: Выделение в активной модели было изменено.
+  model_info_page:
+    units: Единицы измерения
+  upgrade:
+    unavailable: Невозможно найти последнюю версию *OpenCutList*.
+    available: |
+      Доступна новая версия *OpenCutList*.
+      Скачайте ее, чтобы получить новейшие функции!
+    up_to_date: |
+      У вас уже есть последняя версия *OpenCutList*.
+
+      *Рассмотрите возможность спонсорства этого проекта, чтобы помочь нам улучшить его функциональность!*
+    downloading: Идет процесс загрузки...
+    success: |
+      Обновление OpenCutList завершено!
+
+      /!\ Перезапустите SKETCHUP для активации изменений.
+    error:
+      download: Ошибка при загрузке архива.
+      unzip: Ошибка при распаковке архива.
+tab:
+  cutlist:
+    label: Список элементов
+    title: Список элементов
+    help: |
+      Выберите корень списка деталей в сцене и нажмите кнопку **Генерировать**.
+      Если выбор не осуществлен, все видимые компоненты сцены будут включены в список деталей.
+    selection_only: Выбор
+    material_undefined: Материал не задан
+    not_available_width: Ширина не задана
+    not_available_thickness: Толщина не задана
+    not_available_section: Поперечное сечение не задано
+    highlight_part: Выделение детали в модели
+    highlight_parts: Выделение деталей в модели
+    edit_part_properties: Редактировать свойства детали
+    edit_part_axes_properties: Редактирование направляющих осей детали
+    tooltip:
+      show_hide_block: Показать / Скрыть эту группу
+      scroll_to_block: Прокрутка в группу
+      add_std_width_to_material: |
+        Добавить ширину *{{ std_dimension }}*
+        материала '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Добавить толщину *{{ std_dimension }}*
+        материала '{{ material_name }}'
+      add_std_section_to_material: |
+        Добавить поперечное сечение *{{ std_dimension }}*
+        материала '{{ material_name }}'
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Редактирование свойств группы деталей
+      folding_part: Развернуть / Свернуть
+      material_origin_1: Материал этой детали определяется на ее экземплярах
+      material_origin_2: Материал этой части унаследован от одного из ее родительских элементов
+      material_origin_3: Материал этой части извлекается из одного из ее дочерних элементов
+      orientation_locked_on_axis: Ориентация этой части привязана к ее системе координат
+      number_saved: Нумерация этой детали сохранена
+      number_hidden: Сохраненный номер '{{ number }}' этой детали не может быть использован, потому что он уже был назначен
+      number_generated: Нумерация этой детали сгенерирована автоматически
+      resized: Эта часть была изменена в соответствии с определением ее компонентов
+      flipped: Эта часть зеркально отображена в сравнении с определением ее компонентов
+      auto_oriented: Эта деталь была автоматически переориентирована
+      add_label_filter: Фильтровать по '{{ label }}'
+      remove_label_filter: Удалить фильтрацию по '{{ label }}'
+      add_edge_material_name_filter: Фильтровать '{{ material_name }}'
+      remove_edge_material_name_filter: Не фильтровать '{{ material_name }}'
+      not_aligned_on_axes: Внимание! Эта деталь может быть неправильно ориентирована относительно ее осей
+      multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
+      children_warnings: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждение"
+      children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждения"
+      invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
+      invalid_final_area_plural: "Внимание, эта суммируемая область не может быть вычислена, поскольку { count }} детали (of {{ total }}) имеют некорректную площадь"
+      is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Имя' динамического компонента
+      has_edges: Эта деталь содержит {{ count }} кромку
+      has_edges_plural: Эти детали содержат {{ count }} кромки
+      edge_decremented: Уменьшена толщина кромки ({{ decrement }})
+      edge_ymin: Длина кромки 1
+      edge_ymax: Длина кромки 2
+      edge_xmin: Ширина кромки 1
+      edge_xmax: Ширина кромки 2
+      dblclick_to_copy_all_edges: Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки
+      part_axes: Внутренние оси детали
+      select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
+    menu:
+      show_all_groups: Показать все группы
+      hide_all_other_groups: Скрыть все остальные группы
+      numbers_save: Сохранение номеров деталей
+      numbers_reset: Обновить нумерацию деталей
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_numbers_save: Сохранить номера деталей этой группы
+      group_numbers_reset: Повторная индексация номеров деталей этой группы
+      group_cuttingdiagram: Диаграмма раскроя
+      edit_material: Редактировать материал '{{ material }}'...
+      expand_all: Развернуть идентичные части
+      collapse_all: Свернуть идентичные части
+    edit_part:
+      title: Свойства детали '{{ name }}'
+      title_multiple: Свойства группы деталей
+      multiple_alert: Общие свойства группы {{ part_count }} деталей.
+      general: Общие
+      edges: Кромки
+      infos: Инфо
+      warnings: Внимание
+      name: Описание
+      material: Материал
+      cumulable: Суммировать
+      cumulable_help: |
+        Если выбрана эта опция, то **длина** или **ширина** будут рассмотрены как **длина изделия** or **ширина изделия** умноженные на количество, при сортировке списка деталей.
+
+        <i class='ladb-opencutlist-icon-warning'></i> *Эта опция не будет рассматриваться, если эта деталь сгруппирована с другими идентичными деталями.*
+      cumulable_0: Не суммировать
+      cumulable_1: Суммировть по длине
+      cumulable_2: Суммировать по ширине
+      orientation: Ориентация
+      orientation_locked_on_axis: Блокировка ориентации по осям
+      orientation_locked_on_axis_help: |
+        Если активирована эта опция, то *Автоматическая ориентация деталей* не окажет влияния на эту деталь,
+
+        следовательно, в локальной системе координат:
+        - *длина* соответствует <span style='color:red'>красной</span> оси
+        - *ширина* соответствует <span style='color:green'>зелёной</span> оси
+        - *толщина* соответствует <span style='color:blue'>синей</span> оси
+      labels: Ярлыки
+      labels_help: |
+        С опцией *Ярлыки* вы можете добавить ключевые слова-индексы, чтобы лучше идентифицировать детали в общем списке раскроя.
+        Вы можете добавить столько ярлыков, сколько сочтете нужным
+        Видимые детали Вашего списка раскроя в последующем могут быть отфильтрованы в соответствии со списком ярлыков.
+      labels_multiple_info: Отображаются только обычные ярлыки
+      axes: Оси
+      axes_help: Задайте размеры так, чтобы они соответствовали цветам осей вашей детали.
+      axes_tip: |
+        Обратите внимание, что если опция *Автоматическая ориентация деталей* не активна или деталь *заблокирована по своим осям*, тогда:
+         - **длина** соответсвует <strong style='color:red'>красной</strong> оси,
+         - **ширина** соответсвует <strong style='color:green'>зелёной</strong> оси и
+         - **толщина** соответсвует <strong style='color:blue'>синей</strong> оси.
+      axes_origin_position_none: Не изменять начало координат
+      axes_origin_position_min: Размещение начала координат по углу
+      axes_origin_position_center: Размещение начала координат в центре
+      axes_origin_position_min_center: Размещение начала координат по центру грани
+      over_length: По всей длине
+      over_width: По всей ширине
+      edge_disabled_help: Эта кромка не настраивается, так как в модели не было обнаружено ни одной поверхности, которая могла бы нести в себе материал кромочной полосы.
+      multiple_values: Множественные значения
+    option:
+      auto_orient: Автоматическая ориентация деталей
+      auto_orient_help: |
+        Если выбрана эта опция , то размеры детали сортируются таким образом, что самый большой представляет *длина*, а самый маленький - *толщина*.
+
+        Если опция неактивна, оси детали будут сориентированы следующим образом
+         - *длина* будет по <span style='color:red'>красной</span> оси
+         - *ширина* будет по <span style='color:green'>зелёной</span> оси
+         - *толщина* будет по <span style='color:blue'>синей</span> оси
+      smart_material: "*Умное* назначение материала"
+      smart_material_help: Если эта опция активна, детали без заданного материала может быть назначен материал производной детали (на основе которой она создавалась).
+      dynamic_attributes_name: Использовать атрибут *Имя* динамических компонентов
+      dynamic_attributes_name_help: |
+        Если выбрана эта опция, то обозначение деталей будет извлекаться из атрибута *Имя*, если оно определено.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Детали с одинаковым описанием будут разделены, если атрибут *Имя* не имеет одинакового значения.
+      part_number_with_letters: Использовать буквы для нумерации деталей
+      part_number_with_letters_help: Если эта опция активна, детали в группе нумеруются с помощью букв (A, B, C, … Z, AA, AB, …).
+      part_number_sequence_by_group: Нумерация каждой группы
+      part_number_sequence_by_group_help: Если эта опция активна, перечисление деталей  в каждой группе одного и того же типа и толщины материала будет заново начинается с 1 (или A).
+      part_folding: Группировать идентичные детали
+      part_folding_help: Если эта опция выбрана, части с **одинаковым размером** и с **одинаковыми ярлыками** будут сгруппированы.
+      hide_entity_names: Скрыть случайные имена
+      hide_entity_names_help: Если эта опция выбрана, **случайные имена** деталей не будут отображаться.
+      hide_labels: Скрыть ярлыки
+      hide_labels_help: Если эта опция активирована, **ярлыки** будут скрыты.
+      hide_cutting_dimensions: Скрыть грубые размеры
+      hide_cutting_dimensions_help: Если эта опция активирована, то  **грубые** размеры деталей будут скрыты.
+      hide_bbox_dimensions: Скрыть итоговые размеры
+      hide_bbox_dimensions_help: Если эта опция активна, то размеры деталей **итоговые** будут скрыты.
+      hide_untyped_material_dimensions: Скрыть размеры деталей без типа материала
+      hide_untyped_material_dimensions_help: Если эта опция активна, то размеры деталей с неопределенным типом материала (не **Массив дерева**, **ЛДСП** или **По размеру**) будут скрыты.
+      hide_final_areas: Скрыть фактическую площадь деталей из *ЛДСП*
+      hide_final_areas_help: Если эта опция активирована, то **фактическая площадь** деталей с типом *ЛДСП* будет скрыта.
+      hide_edges: Скрыть столбец кромок
+      hide_edges_help: Если эта опция активирована, то **столбцы кромок** деталей с типом *ЛДСП* будут скрыты.
+      minimize_on_highlight: Столбцы после *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: Если эта опция активна, окно OpenCutList будет свернуто, когда функция *'$t(tab.cutlist.highlight_part)'* применена.
+      general: Общие
+      part_order_strategy: Сортировка деталей
+      part_order_strategy_help: |
+        Определение порядка сортировки в каждой группе на основе перечисленных параметров.
+        Свойства могут быть упорядочены в <i class="ladb-opencutlist-icon-sort-asc"></i> *возрастающем* or <i class="ladb-opencutlist-icon-sort-desc"></i> *убывающем* порядке.
+      dimension_column_order_strategy: Соотношения размера
+      dimension_column_order_strategy_help: |
+        Упорядочение по размерам для определения приоритетов сортировки столбцов.
+      property_thickness: Толщина
+      property_length: Длина
+      property_width: Ширина
+      property_name: Описание
+      property_count: Количество
+      property_edge_pattern: Количество кромок
+      reset: Восстановить значения по умолчанию
+    list:
+      filters: Фильтры
+      filters_warning_0: "Этот фильтр скрывает все детали!"
+      filters_warning: "Данный фильтр отображает только **{{ count }}** деталь из общего {{ total }}."
+      filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
+      edge_material_names_filter: Фильтр по материалу кромок
+      labels_filter: Фильтр по Ярлыку
+      dimensions_help: Иллюстрация размеров...
+      summary: Расчёт
+      material_type: Тип
+      material_thickness: Материал / Толщина
+      part_count: Количество
+      area: Площадь
+      area_short: Площадь
+      volume: Объем
+      number: No.
+      name: Описание
+      count: К-во
+      cutting: Грубо
+      bbox: Итог
+      final: Фактически
+      total_cutting: Σ Грубо
+      total_final: Σ Фактически
+      length: Длина
+      length_short: Д
+      width: Ширина
+      width_short: Ш
+      thickness: Толщина
+      thickness_short: T
+      edges: Схема кромок
+    export:
+      title: Экспортировать в формате CSV
+      info: |
+        С этой функцией вы можете экспортировать *список деталей* в [CSV](https://wikipedia.org/wiki/Comma-separated_values) файл.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *Детали внутри скрытых групп вашего списка деталей не будут экспортированы*.
+      options: Параметры экспорта
+      option_source: Источник
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Перечень примеров
+      option_col_sep: Разделитель
+      option_col_sep_tab: Табулятор
+      option_col_sep_comma: Запятая
+      option_col_sep_semicolon: Точка с запятой
+      option_encoding: Кодировка
+      number: No.
+      path: Путь
+      instance_name: Экземпляр
+      definition_name: Определение
+      name: Описание
+      total_cutting_length: Длина - грубо
+      total_cutting_area: Площадь - грубо
+      total_cutting_volume: Объем - грубо
+      total_final_area: Площадь - чисто
+      cutting_length: Длина - грубо
+      cutting_width: Ширина - грубо
+      cutting_thickness: Толщина - грубо
+      bbox_length: Длина - чисто
+      bbox_width: Ширина - чисто
+      bbox_thickness: толщина - чисто
+      final_area: Площадь - чисто
+      count: Количество
+      part_count: Количество
+      material_type: Тип
+      material_thickness: Материал / Толщина
+      material_name: Материал
+      entity_names: Имена инстанций
+      labels: Ярлыки
+      edge_ymax: Длина кромки 1
+      edge_ymin: Длина кромки 2
+      edge_xmin: Ширина кромки 1
+      edge_xmax: Ширина кромки 2
+    cuttingdiagram:
+      title: Схема раскроя
+      options_material: Материал
+      options_config: Конфигурация
+      options_display: Просмотр
+      option_bar_folding: Групповая идентификация досок
+      option_bar_folding_0: Нет
+      option_bar_folding_1: Да
+      option_bar_folding_help: Группирование досок, имеющих одинаковые детали и разрезы.
+      option_sheet_folding: Групповая идентификация панелей
+      option_sheet_folding_0: Нет
+      option_sheet_folding_1: Да
+      option_sheet_folding_help: Группирование панелей, имеющих одинаковые детали и разрезы.
+      option_hide_part_list: Список деталей
+      option_hide_part_list_1d_0: Отображать для каждой доски
+      option_hide_part_list_2d_0: Отображать для каждой панели
+      option_hide_part_list_1: Скрыть
+      option_hide_part_list_1d_help: Отобразить или скрыть список деталей для каждой доски.
+      option_hide_part_list_2d_help: Отобразить или скрыть список деталей для каждой панели.
+      option_wrap_length: Длина обёртки доски
+      option_wrap_length_help: Максимальная длина, после которой доска будет обернута в несколько слоёв.
+      option_saw_kerf: Толщина лезвия
+      option_saw_kerf_help: Ширина материала, удаляемого при распиле диском пилы.
+      option_trimming: Зазор торцевания
+      option_trimming_help_1d: Размер обрезки каждого поврежденного края листа для выравнивания(торцевание).
+      option_trimming_help_2d: Размер обрезки по периметру листа для выравнивания краёв (торцевание).
+      option_presort: Распределить на листе
+      option_presort_help: Выбор порядка расположения деталей на листе для оптимального раскроя листа.
+      option_presort_0: Нет
+      option_presort_1: По убыванию ширины
+      option_presort_2: По убыванию длины
+      option_presort_3: По убыванию площади
+      option_presort_4: По убыванию периметра
+      option_stacking: Сложить идентичные детали
+      option_stacking_help: Способ предварительного планирования размещения деталей, имеющих равную ширину или длину.
+      option_stacking_0: Нет
+      option_stacking_1: По длине
+      option_stacking_2: По ширине
+      option_bbox_optimization: Оптимизация контура раскроя
+      option_bbox_optimization_help: |
+        Оптимизация раскроя во избежание небольших остатков.
+        Эта опция может применяться в трех вариантах: всегда при добавлении новой панели, только в конце или никогда.
+      option_bbox_optimization_0: Никогда
+      option_bbox_optimization_1: Только в конце
+      option_bbox_optimization_2: Всегда
+      option_std_bar: Стандартная панель
+      option_std_bar_help: |
+        Выберите стандартную панель, для дублирования содержащихся деталей.
+        Этот список определяется в поле **$t(tab.materials.edit_material.std_lengths)** выбора материала.
+        Отредактируйте материал '{{ material_name }}' и обновите список.
+      option_std_bar_add: Добавить длину ...
+      option_std_bar_none: Нет
+      option_scrap_bar_lengths: Отрезки доски
+      option_scrap_bar_lengths_placeholder: длина ; ...
+      option_scrap_bar_lengths_help:  |
+        Перечислите обрезки доски, которые должны быть рассмотрены в первую очередь в плане раскроя.
+        Формат ввода: **Д**, где **Д** - это *длина* обрезка.
+        *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
+      option_std_sheet: Стандартная панель
+      option_std_sheet_help: |
+        Выберите стандартную панель, для дублирования содержащихся деталей.
+        Этот список определяется в поле **$t(tab.materials.edit_material.std_sizes)** выбора материала.
+        Отредактируйте материал '{{ material_name }}' и обновите список.
+      option_std_sheet_add: Добавить размер панели ...
+      option_std_sheet_none: Нет
+      option_scrap_sheet_sizes: Обрезки ЛДСП
+      option_scrap_sheet_sizes_placeholder: длина x ширина ; ...
+      option_scrap_sheet_sizes_help:  |
+        Перечислите все обрезки ЛДСП, которые вы хотели бы включить в схему раскроя.
+        Формат ввода: **Д**x**Ш**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка.
+        *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
+      options_defaults:
+        manage_help: Управление настройками по умолчанию *Параметры схемы раскроя*
+        save: Сохранить как по умолчанию
+        save_success: По умолчанию *Параметры схемы раскроя* сохранены
+        reset: Восстановить значения по умолчанию
+      list:
+        unplaced_parts: Неразмещенные детали
+        summary: Отчет
+        count: К-во
+        bar: Доска
+        sheet: Панель
+        length: Длина
+        width: Ширина
+        total_length: Σ Длин
+        total_area: Σ Площадей
+        trimming: Торцевание
+        total_length_cuts: Длина реза
+        efficiency: Эффективность
+        leftover: Остаток
+        cut: Рез
+        bar_type_0: Стандартный размер
+        bar_type_1: Обрезок
+        sheet_type_0: Панель стандартных размеров
+        sheet_type_1: Обрезок
+        unused: Неиспользованный
+        parts: "{{ count }} деталь"
+        parts_plural: "{{ count }} детали"
+        settings: Настройки
+      error:
+        no_bar: Стандартная доска была настроена неправильно, и не было определено никаких выходных точек.
+        parameters: Параметры неверны. Обрезка более чем на 25% длиннее самой длинной панели.
+        no_parts: Нет детали.
+        time_exceeded: Операция отменена. Слишком длительное время расчетов.
+        no_sheet: Стандартные размеры панели настроены неправильно, и нет доступных смещений.
+        no_placement_possible: Все детали слишком велики, чтобы подогнать панель (обрезка слишком велика, стандартная панель слишком мала, пила слишком велика,...).
+        bad_error: Сбой расчета, пожалуйста, свяжитесь с разработчиками, у вас интересный случай.
+        unplaced_parts: '** Одну деталь ** не возможно разместить, так как она слишком велика для размещения.'
+        unplaced_parts_plural: Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
+      warning:
+        cutting_dimensions: |
+          Эта схема раскроя отображает детали с их грубыми размерами.
+        cutting_dimensions_increase_1d: |
+          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': length oversize (**{{ length_increase }}**).*
+        cutting_dimensions_increase_2d: |
+          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
+        cutting_dimensions_edge_decrement: |
+          *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    error:
+      no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
+      no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
+      no_component_in_selection: При выборе не было обнаружено ни одного видимого компонента.
+      no_component_in_model: В вашей сцене не было обнаружено ни одного видимого компонента.
+      failed_to_write_export_file: Не удалось записать экспортный файл. **{{ error }}**
+      unknow_part: Выделенная часть не существует в списке деталей.
+      obsolete_cutlist: Невозможно, список запчастей устарел. Возобновить его?
+    warning:
+      partial_cutlist: Данный список деталей является частичным представлением Вашей модели, так как он основан только на выделенных деталях.
+      no_typed_materials_in_model: В данной модели не используется какой-либо определенный материал (**Массив дерева** или **ЛДСП** или **По размеру**).
+      no_typed_materials_in_selection: В выборе не используется какой-то определенный материал (**Массив дерева** или **ЛДСП** или **По размеру**).
+      export_empty: Ваш экспорт не содержит ни одной детали.
+    success:
+      exported_to: Экспорт {{ export_path }} осуществлен.
+    tip:
+      no_component: |
+        Детали, которые могут быть включены в  *список деталей*, должны быть **компонентом**.
+        Если вы используете только группы, сначала преобразуйте их в компоненты.
+        Детали, как компоненты, могут быть скопированы без дублирования.
+      no_typed_materials: Применить материал к деталям, подлежащим включению в список деталей, и определить свойства этого материала (**Массив дерева** или **ЛДСП** или **По размеру**) на вкладке <i class="ladb-opencutlist-icon-materials"></i> **Материалы**.
+    obsolete_base: Чтобы поддерживать синхронизацию, необходимо восстановить список деталей.
+  materials:
+    label: Материалы
+    title: Материалы
+    new: Новый материал
+    type_0: Неопеределён
+    type_1: Массив дерева
+    type_2: ЛДСП
+    type_3: По размеру
+    type_4: Схема кромок
+    tooltip:
+      type_0: Тип материала '$t(tab.materials.type_0)'
+      type_1: Тип материала '$t(tab.materials.type_1)'
+      type_2: Тип материала '$t(tab.materials.type_2)'
+      type_3: Тип материала '$t(tab.materials.type_3)'
+      type_4: Тип материала '$t(tab.materials.type_4)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Направление волокон
+      colorized: Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели
+      texture_colorized: Комбинируйте рисунок фактуры для управления направлением изображения текстуры материала
+      edit: Редактирование свойств материала
+      set_current: |
+        Выделить '{{ name }}'
+        *Двойной щелчок для применения*
+    menu:
+      import_from_skm: Импортировать материал (.skm)
+      purge_unused: Очистить неиспользованные материалы
+    new_material:
+      title: Создать новый материал
+      name: Имя
+      name_warning: Недопустимое имя
+      color: Цвет
+      color_warning: Недопустимый цвет
+      type: Тип
+    edit_material:
+      title: Свойства материала '{{ name }}'
+      general: Общие
+      texture: Текстура
+      name: Имя
+      type: Тип
+      cut_options: Параметры раскроя
+      thickness: Толщина
+      length_increase: Прибавка к длине
+      width_increase: Прибавка к ширине
+      thickness_increase: Прибавка к толщине
+      std_lengths: Стандартная ширина
+      std_lengths_placeholder: Длина ; ...
+      std_lengths_help: |
+        Стандартные длины панелей.
+        *Размеры без единиц считаются в единицах измерения проекта модели.*
+      std_widths: Стандартная ширина
+      std_widths_placeholder: ширина ; ...
+      std_widths_help: |
+        Стандартная ширина кромок.
+        *Размеры без единиц считаются в единицах измерения проекта модели.*
+      std_thicknesses: Доступная толщина
+      std_thicknesses_placeholder: толщина ; ...
+      std_thicknesses_help: |
+        Доступные грубые толщины.
+        *Размеры без единиц считаются в единицах измерения проекта модели.*
+      std_sections: Доступные поперечные сечения
+      std_sections_placeholder: ширина x толщина ; ...
+      std_sections_help: |
+        Формат ввода: **Ш**x**T**, где **Ш** и **T** обозначают *ширину* и *толщину* размеров сечения (*фактические не номинальные размеры*).
+        *Размеры без единиц считаются в единицах измерения проекта модели.*
+      std_sizes: Доступные размеры панели
+      std_sizes_placeholder: длина x ширина ; ...
+      std_sizes_help: |
+        Формат ввода: **Д**x**Ш**, где **Д** и **Ш** обазначают *длину* и *ширину* панели.
+        *Размеры без единиц считаются в единицах измерения проекта модели.*
+      grained: Направление волокон
+      grained_help: Конфигурирует направление изображения фактуры материала (волокон).
+      grained_0: Без фактуры
+      grained_1: Вдоль волокон
+      edge_decremented: Учёт кромки
+      edge_decremented_help: Настройка изменения линейных размеров детали с учетом толщины кромки.
+      edge_decremented_0: Не учитывать
+      edge_decremented_1: Вычесть толщину кромок
+      cut_options_defaults:
+        manage_help: Управление параметрами по умолчанию *Параметры раскроя*
+        save: Сохранить как значения по умолчанию
+        save_success: |
+          **{{ type_name }}**
+          по умолчанию *Параметры раскроя* сохранены
+        reset: Восстановить значения по умолчанию
+      texture_width: Ширина
+      texture_height: Высота
+      export_to_skm: Экспорт (.skm)
+    import_from_skm:
+      title: Импорт .skm фала
+    export_to_skm:
+      title: Экспорт в .skm файл
+    option:
+      material_order_strategy: Сортировка материала
+      material_order_strategy_help: |
+        Упорядочить следующие свойства для определения порядка сортировки внутри каждой группы.
+        Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* or <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
+      property_type: Тип
+      property_name: Имя
+      reset: Восстановить по умолчанию
+    remove:
+      message: |
+        Вы собираетесь скрыть материал **{{ material_name }}** для вашей модели.
+        Подтвердите для продолжения.
+    error:
+      no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
+      no_materials: Модель не содержит материалов.
+      material_not_found: Материал не найден.
+      failed_import_skm_file: Ошибка произошла при импорте из .skm файла. **{{ error }}**
+      failed_export_skm_file: Ошибка произошла при экспорте в .skm файл. **{{ error }}**
+      failed_removing_material: При скрытии этого материала произошла ошибка. **{{ error }}**
+    success:
+      exported_to: Экспорт {{ export_path }} завершен.
+    obsolete_base: Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
+  importer:
+    label: Импорт
+    title: Импорт деталей
+    help: |
+      Этот раздел поможет вам импортировать детали (определяемые прямоугольным выделением) из [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) файла в модели.
+      Затем вы можете использовать возможности *OpenCutList* для деталей, которые были сгенерированы программным обеспечением, отличным от *SketchUp*.
+      Кликните на клавише **Открыть CSV файл** для загрузки.
+    open_csv: Открыть CSV файл
+    import_to_model: Импорт в модель
+    load:
+      title: Загрузить CSV файл
+      info: |
+        Выберите необходимые опции для чтения **{{ filename }}}**.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
+        Данная единица измерения будет использована для интерпретации размеров, приведенных без единиц измерения*.
+      options: Опции загрузки
+      option_col_sep: Разделитель
+      option_col_sep_tab: Табулятор
+      option_col_sep_comma: Запятая
+      option_col_sep_semicolon: Точка с запятой
+      option_first_line_headers: Заголовок строки
+      option_first_line_headers_0: Дата
+      option_first_line_headers_1: Столбец заголовков
+    import:
+      title: Импорт деталей в модель
+      info_0: |
+        Вы собираетесь импортировать **{{ count }} деталь** в модель.
+        Эта часть будет помещена в начало основной сцены.
+      info_0_plural: |
+        Вы собираетесь импортировать **{{ count }} деталей** в модель.
+        Эти части будут загружены в пакет, начиная с начала основной сцены.
+      info_1: Нажмите на **Импорт**, чтобы подтвердить действие.
+      options: |
+        Модель уже содержит *детали*, *определения* или *материалы*.
+        Выберите необходимые опции импорта.
+      option_remove_all_?: Что дальше?
+      option_remove_all_false: Добавить детали к существующим
+      option_remove_all_true: Удалить существующий!
+      option_keep_definitions_settings: Сохранить настройки определения
+      option_keep_materials_settings: Сохранять настройки материалов
+    column:
+      unused: Неиспользуемый
+      mandatory: Обязательные поля
+      optional: Дополнительные поля
+      name: Описание
+      count: Количество
+      bbox_length: Длина
+      bbox_width: Ширина
+      bbox_thickness: Толщина
+      material: Материал
+      labels: Ярлык
+    tooltip:
+      errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
+      warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
+    error:
+      no_model: Ни одна модель не открыта. Импорт частей в пустоту невозможен ;)
+      file_not_found: "Файл не найден : **{{ filename }}**"
+      bad_extension: Файл *{{ filename }}* не имеет расширения **.CSV** или **.TSV**.
+      failed_to_load_csv_file: |
+        Невозможно загрузить CSV файл : **{{ error }}**
+        *Убедитесь, что вы выбрали правильный разделитель полей.*
+      empty_file: Файл кажется пустым или не может быть интерпретирован.
+      no_importable_part: Никакая часть не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
+      invalid_name: Неверное описание
+      invalid_length: Недопустимая длина
+      invalid_width: Недопустимая ширина
+      invalid_thickness: Недопустимая толщина
+      failed_to_import: Процесс импорта не удался.
+    warning:
+      invalid_count: Неверный подсчёт
+      invalid_material: Недопустимый материал
+    success:
+      imported_title: Импорт завершен
+      imported_body: "{{ count }} часть была успешно импортирована!"
+      imported_body_plural: "{{ count }} деталей успешно импортированы!"
+    obsolete_base: Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
+  sponsor:
+    label: Спонсоры
+    title: Спонсоры
+    description: |
+      **OpenCutList** - это *Открытое исходное программное обеспечение*, поддерживаемое его пользователями посредством <a href="https://opencollective.com/" target="_blank">Open Collective</a> платформы.
+      Поддержите этот проект, сделав финансовый взнос!
+    contribute: Поддержи проект
+    backers: "{{count}} финансовый спонсор"
+    backers_plural: "{{count}} финансовые спонсоры"
+    load_more: "Загрузить больше ..."
+    ad: Вам нравится OpenCutList ?
+  settings:
+    label: Параметры
+    title: Параметры
+    reset: Восстановить значения по умолчанию
+    reload_dialog_warning: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново OpenCutList.
+    language: Язык
+    size_and_position: Размер и позиция окна
+  about:
+    label: О программе
+    title: О программе
+    version: Версия
+    credits: Технические характеристики
+    credits_authors: |
+      *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и перевёл [Martin Müller](https://www.lairdubois.fr/@mobilarte), и Владимира (русская версия). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_description: |
+      Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
+      Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Исполнение
+    credits_development: Разработка
+    credits_vendors: |
+      Приключение не было бы возможно без работы авторов следующих компонентов Open Source:
+    credits_thanks: |
+      Отдельная благодарность [JetBrains](https://www.jetbrains.com) за их поддержку для этого проекта [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+tool:
+  highlight:
+    transparency: Прозрачность
+    zoom_extents: Масштабирование
