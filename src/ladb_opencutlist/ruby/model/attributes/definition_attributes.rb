@@ -1,17 +1,19 @@
 module Ladb::OpenCutList
 
+  require 'json'
+
   class DefinitionAttributes
 
     CUMULABLE_NONE = 0
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :number,:cumulable, :orientation_locked_on_axis, :labels
+    attr_accessor :cumulable, :orientation_locked_on_axis, :labels
     attr_reader :definition
 
     def initialize(definition)
       @definition = definition
-      @number = nil
+      @numbers = {}
       @cumulable = CUMULABLE_NONE
       @orientation_locked_on_axis = false
       @labels = ''
@@ -45,6 +47,20 @@ module Ladb::OpenCutList
 
     # -----
 
+    def store_number(part_id, number)
+      if number.nil?
+        @numbers.delete(part_id)
+      else
+        @numbers.store(part_id, number)
+      end
+    end
+
+    def fetch_number(part_id)
+      @numbers.fetch(part_id, nil)
+    end
+
+    # -----
+
     def has_labels(labels)
       (labels - @labels).empty?
     end
@@ -53,7 +69,7 @@ module Ladb::OpenCutList
 
     def read_from_attributes
       if @definition
-        @number = Plugin.instance.get_attribute(@definition, 'number', nil)
+        @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
         @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
         @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
         @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
@@ -62,7 +78,7 @@ module Ladb::OpenCutList
 
     def write_to_attributes
       if @definition
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'number', @number)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', @labels)

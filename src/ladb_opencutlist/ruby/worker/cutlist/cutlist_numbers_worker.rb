@@ -22,7 +22,6 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       definitions = model.definitions
-      touched_definition_ids = []
 
       @cutlist.groups.each { |group|
 
@@ -34,10 +33,10 @@ module Ladb::OpenCutList
 
           if part.is_a?(FolderPart)
             part.children.each { |child_part|
-              _apply_on_part(definitions, touched_definition_ids, child_part, @reset)
+              _apply_on_part(definitions, child_part, @reset)
             }
           else
-            _apply_on_part(definitions, touched_definition_ids, part, @reset)
+            _apply_on_part(definitions, part, @reset)
           end
 
         }
@@ -49,18 +48,14 @@ module Ladb::OpenCutList
 
     private
 
-    def _apply_on_part(definitions, touched_definition_ids, part, reset)
-      return if touched_definition_ids.include?(part.definition_id)
+    def _apply_on_part(definitions, part, reset)
       definition = definitions[part.definition_id]
       if definition
 
         # Update definition attributes
         definition_attributes = DefinitionAttributes.new(definition)
-        definition_attributes.number = reset ? nil : part.number
+        definition_attributes.store_number(part.id, reset ? nil : part.number)
         definition_attributes.write_to_attributes
-
-        # Flag definition as touched
-        touched_definition_ids << part.definition_id
 
       end
     end

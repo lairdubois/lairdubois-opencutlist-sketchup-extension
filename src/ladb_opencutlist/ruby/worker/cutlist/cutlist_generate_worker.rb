@@ -225,40 +225,41 @@ module Ladb::OpenCutList
 
         end
 
-        number = nil
-        if definition_attributes.number
-          if @part_number_with_letters
-            if definition_attributes.number.is_a? String
-              number = definition_attributes.number
-            end
-          else
-            if definition_attributes.number.is_a? Numeric
-              number = definition_attributes.number
-            end
-          end
-        end
-        if number
-          if @part_number_sequence_by_group
-            if group_def.include_number? number
-              number = nil
-            end
-          else
-            if _group_defs_include_number? number
-              number = nil
-            end
-          end
-        end
-
         # Define part
 
         part_id = PartDef.generate_part_id(group_id, definition, instance_info, @dynamic_attributes_name)
         part_def = group_def.get_part_def(part_id)
         unless part_def
 
+          number = nil
+          saved_number = definition_attributes.fetch_number(part_id)
+          if saved_number
+            if @part_number_with_letters
+              if saved_number.is_a? String
+                number = saved_number
+              end
+            else
+              if definition_attributes.number.is_a? Numeric
+                number = saved_number
+              end
+            end
+          end
+          if number
+            if @part_number_sequence_by_group
+              if group_def.include_number? number
+                number = nil
+              end
+            else
+              if _group_defs_include_number? number
+                number = nil
+              end
+            end
+          end
+
           part_def = PartDef.new(part_id)
           part_def.definition_id = definition.name
           part_def.number = number
-          part_def.saved_number = definition_attributes.number
+          part_def.saved_number = saved_number
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(@dynamic_attributes_name)
           part_def.scale = instance_info.scale
           part_def.flipped = instance_info.flipped
@@ -487,7 +488,7 @@ module Ladb::OpenCutList
         next if group_def.part_count == 0
 
         if @part_number_sequence_by_group
-          part_number = group_def.max_number ? group_def.max_number.succ : (@part_number_with_letters ? 'A' : '1')    # Reset code increment on each group
+          part_number = group_def.max_number ? group_def.max_number.succ : (@part_number_with_letters ? 'A' : '1')    # Reset number increment on each group
         end
 
         group = Group.new(group_def, cutlist)
