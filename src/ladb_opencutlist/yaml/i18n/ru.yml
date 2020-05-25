@@ -28,8 +28,8 @@ default:
   tip: Тип
   good: Хороший
   bad: Плохой
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y G:i
+  date_format_short: d/m/Y
   unit_0: Дюймы
   unit_1: Футы
   unit_2: Миллиметры
@@ -52,7 +52,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Ещё
-    more_docs: Docs
+    more_docs: Архив
     more_reviews: Обзоры
     more_plans: Проекты
     more_extensions: Расширения
@@ -693,9 +693,9 @@ tab:
     credits_authors: |
       *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
-      Traductions :
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
-      - Vladimir (*russe*)
+      Переводы:
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *deutsch*)
+      - Владимир Бадюля (*Русский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
