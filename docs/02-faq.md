@@ -2,7 +2,7 @@
 
 ## How can I change the language?
 
-Click the **Preferences** tab on the far bottom right of the maximized OpenCutList window, select the language of your choice. The language of OpenCutList is independent of your Sketchup version, thus in an english Sketchup version you may still select French.
+Click the **Preferences** tab on the far bottom right of the maximized OpenCutList window, select the language of your choice. The language of OpenCutList is independent of your SketchUp version, thus in an english SketchUp version you may still select French.
 
 ## The dimensions of a component are wrong in the cut list
 
