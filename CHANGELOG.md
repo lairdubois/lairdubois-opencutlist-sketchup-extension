@@ -6,8 +6,9 @@ in 1.x and 0.x versions.
 
 * 1.9.0
 
-  * Added self-updater
-  * Added dimensional cutting diagram feature 
+  * Added **russian** language (thanks to Vladimir Badulya to joint the translators team)
+  * Added **self-updater**
+  * Added **dimensional cutting diagram** feature
   * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal dialogs
   * Fixed some New Material modal issues
