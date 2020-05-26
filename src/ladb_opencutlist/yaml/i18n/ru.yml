@@ -449,9 +449,9 @@ tab:
         cutting_dimensions: |
           Эта схема раскроя отображает детали с их грубыми размерами.
         cutting_dimensions_increase_1d: |
-          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': length oversize (**{{ length_increase }}**).*
+          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': Прибавка к длине (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)*.
+          *Эти грубые размеры сконфигурированы для материала'{{ material_name }}': Прибавка к длине (**{{ length_increase }}**) и Прибавка к ширине (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
@@ -694,7 +694,7 @@ tab:
       *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Переводы:
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *deutsch*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*английский*, *немецкий язык*)
       - Владимир Бадюля (*Русский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
