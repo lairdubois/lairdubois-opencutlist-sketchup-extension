@@ -140,7 +140,7 @@ tab:
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: The description of this part is extracted from the attribute 'Name' of the dynamic component
-      size_increased: Dimension majorée de {{ value }}
+      size_increased: Dimension majorée par une surcote de {{ value }}
       has_edges: This part contains {{ count }} edge banding
       has_edges_plural: This part contains {{ count }} edge bandings
       edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
@@ -168,7 +168,6 @@ tab:
       title_multiple: Properties of the group of parts
       multiple_alert: Common properties of the group of {{ part_count }} parts.
       general: General
-      size_increase: Surcotes
       edges: Edge bandings
       name: Description
       material: Material
@@ -180,11 +179,15 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
-      length_increase: Surcote de longueur
+      size_increase: Surcotes
+      size_increase_help: |
+        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
+        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
+      length_increase: Length Oversize
       length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
-      width_increase: Surcote de largeur
+      width_increase: Width Oversize
       width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
-      thickness_increase: Surcote d'épaisseur
+      thickness_increase: Thickness Oversize
       thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes

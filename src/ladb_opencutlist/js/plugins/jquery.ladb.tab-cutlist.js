@@ -940,6 +940,15 @@
                 editedPart.labels = editedPart.labels.filter(function(label) {  // Extract only commun labels
                     return -1 !== editedParts[i].labels.indexOf(label);
                 });
+                if (editedPart.length_increase !== editedParts[i].length_increase) {
+                    editedPart.length_increase = MULTIPLE_VALUE;
+                }
+                if (editedPart.width_increase !== editedParts[i].width_increase) {
+                    editedPart.width_increase = MULTIPLE_VALUE;
+                }
+                if (editedPart.thickness_increase !== editedParts[i].thickness_increase) {
+                    editedPart.thickness_increase = MULTIPLE_VALUE;
+                }
                 if (editedPart.edge_material_names.ymin !== editedParts[i].edge_material_names.ymin) {
                     editedPart.edge_material_names.ymin = MULTIPLE_VALUE;
                 }
@@ -1200,9 +1209,15 @@
                         var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });
                         editedParts[i].labels = untouchLabels.concat($inputLabels.tokenfield('getTokensList').split(';'));
 
-                        editedParts[i].length_increase = $inputLengthIncrease.val();
-                        editedParts[i].width_increase = $inputWidthIncrease.val();
-                        editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                        if ($inputLengthIncrease.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].length_increase = $inputLengthIncrease.val();
+                        }
+                        if ($inputWidthIncrease.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].width_increase = $inputWidthIncrease.val();
+                        }
+                        if ($inputThicknessIncrease.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                        }
 
                         if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();

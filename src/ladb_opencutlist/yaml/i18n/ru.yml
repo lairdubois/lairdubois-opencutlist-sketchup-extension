@@ -140,7 +140,7 @@ tab:
       invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
       invalid_final_area_plural: "Внимание, эта суммируемая область не может быть вычислена, поскольку { count }} детали (of {{ total }}) имеют некорректную площадь"
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Имя' динамического компонента
-      size_increased: Dimension majorée de {{ value }}
+      size_increased: Dimension majorée par une surcote de {{ value }}
       has_edges: Эта деталь содержит {{ count }} кромку
       has_edges_plural: Эти детали содержат {{ count }} кромки
       edge_decremented: Уменьшена толщина кромки ({{ decrement }})
@@ -168,7 +168,6 @@ tab:
       title_multiple: Свойства группы деталей
       multiple_alert: Общие свойства группы {{ part_count }} деталей.
       general: Общие
-      size_increase: Surcotes
       edges: Кромки
       name: Описание
       material: Материал
@@ -180,11 +179,15 @@ tab:
       cumulable_0: Не суммировать
       cumulable_1: Суммировть по длине
       cumulable_2: Суммировать по ширине
-      length_increase: Surcote de longueur
+      size_increase: Surcotes
+      size_increase_help: |
+        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
+        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
+      length_increase: Прибавка к длине
       length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
-      width_increase: Surcote de largeur
+      width_increase: Прибавка к ширине
       width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
-      thickness_increase: Surcote d'épaisseur
+      thickness_increase: Прибавка к толщине
       thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
       orientation: Ориентация
       orientation_locked_on_axis: Блокировка ориентации по осям

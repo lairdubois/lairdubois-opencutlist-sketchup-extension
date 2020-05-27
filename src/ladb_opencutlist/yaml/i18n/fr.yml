@@ -140,7 +140,7 @@ tab:
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      size_increased: Dimension majorée de {{ value }}
+      size_increased: Dimension majorée par une surcote de {{ value }}
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
@@ -168,7 +168,6 @@ tab:
       title_multiple: Propriétés du groupe de pièces
       multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: Générales
-      size_increase: Surcotes
       edges: Chants
       name: Nom
       material: Matière
@@ -180,6 +179,10 @@ tab:
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
+      size_increase: Surcotes
+      size_increase_help: |
+        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
+        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
       width_increase: Surcote de largeur
