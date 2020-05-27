@@ -151,7 +151,7 @@ module Ladb::OpenCutList
 
         # Compute transformation, scale and sizes
 
-        size = instance_info.size
+        size = instance_info.size.clone
         length_increased = false
         width_increased = false
         thickness_increased = false
