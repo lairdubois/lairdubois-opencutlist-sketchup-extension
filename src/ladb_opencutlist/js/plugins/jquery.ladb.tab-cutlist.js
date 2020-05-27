@@ -934,6 +934,25 @@
             }
 
             for (var i = 0; i < editedParts.length; i++) {
+                var ownedMaterialCount = 0;
+                for (var j = 0; j < editedParts[i].material_origins.length; j++) {
+                    if (editedParts[i].material_origins[j] === 1) {    // 1 = MATERIAL_ORIGIN_OWNED
+                        ownedMaterialCount++;
+                    }
+                }
+                var material_name = null;
+                if (ownedMaterialCount === editedParts[i].material_origins.length) {
+                    material_name = editedPart.material_name;
+                } else if (ownedMaterialCount > 0) {
+                    material_name = MULTIPLE_VALUE;
+                }
+                if (i === 0) {
+                    editedPart.material_name = material_name;
+                } else {
+                    if (editedPart.material_name !== material_name) {
+                        editedPart.material_name = MULTIPLE_VALUE;
+                    }
+                }
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
@@ -974,14 +993,6 @@
                     materialUsages: that.materialUsages,
                     tab: tab === undefined || tab.length === 0 ? 'general' : tab
                 }, true);
-
-                var isOwnedMaterial = true;
-                for (var i = 0; i < editedPart.material_origins.length; i++) {
-                    if (editedPart.material_origins[i] !== 1) {    // 1 = MATERIAL_ORIGIN_OWNED
-                        isOwnedMaterial = false;
-                        break;
-                    }
-                }
 
                 // Fetch UI elements
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
@@ -1087,9 +1098,7 @@
                 };
 
                 // Bind select
-                if (isOwnedMaterial) {
-                    $selectMaterialName.val(editedPart.material_name);
-                }
+                $selectMaterialName.val(editedPart.material_name);
                 $selectMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -1201,7 +1210,9 @@
 
                         }
 
-                        editedParts[i].material_name = $selectMaterialName.val();
+                        if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].material_name = $selectMaterialName.val();
+                        }
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
