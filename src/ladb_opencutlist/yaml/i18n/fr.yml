@@ -137,6 +137,7 @@ tab:
       multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
+      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique

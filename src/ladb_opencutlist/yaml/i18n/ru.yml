@@ -137,6 +137,7 @@ tab:
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
       children_warnings: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждение"
       children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждения"
+      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
       invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
       invalid_final_area_plural: "Внимание, эта суммируемая область не может быть вычислена, поскольку { count }} детали (of {{ total }}) имеют некорректную площадь"
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Имя' динамического компонента

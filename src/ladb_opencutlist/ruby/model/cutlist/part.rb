@@ -53,6 +53,10 @@ module Ladb::OpenCutList
     def initialize(part_def, group)
       super(part_def, group)
 
+      @children_warning_count = part_def.children_warning_count
+      @children_length_increased_count = part_def.children_length_increased_count
+      @children_width_increased_count = part_def.children_width_increased_count
+      @children_thickness_increased_count = part_def.children_thickness_increased_count
       @children = []
 
       # ---

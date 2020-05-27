@@ -314,7 +314,7 @@
                         {% endif %}
                         {% if showBoxDimensions %}
                             {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and (not hideThickness or property != 'thickness') %}
-                                <td></td>
+                                {% include 'tabs/cutlist/_list-row-box-dimension.twig' with { 'part':partChild, 'noValue':true } %}
                             {% endfor %}
                         {% endif %}
                         {% if showFinalAreas %}

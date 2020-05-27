@@ -137,6 +137,7 @@ tab:
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
+      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: The description of this part is extracted from the attribute 'Name' of the dynamic component
