@@ -288,7 +288,7 @@
                 {% endif %}
                 {% if showBoxDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and (not hideThickness or property != 'thickness') %}
-                        <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                        {% include 'tabs/cutlist/_list-row-box-dimension.twig' %}
                     {% endfor %}
                 {% endif %}
                 {% if showFinalAreas %}

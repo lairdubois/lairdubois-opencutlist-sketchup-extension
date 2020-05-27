@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     EDGES_Y = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX ]
     EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :labels, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count
     attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs
 
     def initialize(id)
@@ -23,13 +23,16 @@ module Ladb::OpenCutList
       @name = ''
       @is_dynamic_attributes_name = false
       @count = 0
-      @cutting_size = Ladb::OpenCutList::Size3d.new
-      @size = Ladb::OpenCutList::Size3d.new
-      @scale = Ladb::OpenCutList::Scale3d.new
+      @cutting_size = Size3d.new
+      @size = Size3d.new
+      @scale = Scale3d.new
       @flipped = false
       @material_name = ''
       @material_origins = []
-      @cumulable = Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_NONE
+      @cumulable = DefinitionAttributes::CUMULABLE_NONE
+      @length_increase = 0
+      @width_increase = 0
+      @thickness_increase = 0
       @orientation_locked_on_axis = false
       @labels = ''
       @edge_count = 0
@@ -45,6 +48,9 @@ module Ladb::OpenCutList
       @entity_serialized_paths = []       # All Serialized path to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = count)
       @contains_blank_entity_names = false
+      @length_increased = false
+      @width_increased = false
+      @thickness_increased = false
       @auto_oriented = false
       @not_aligned_on_axes = false
       @layers = []
@@ -156,7 +162,7 @@ module Ladb::OpenCutList
     # ---
 
     def cumulative_cutting_length
-      if @count > 1 && @cumulable == Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_LENGTH
+      if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_LENGTH
         (@cutting_size.length.to_f * @count).to_l
       else
         @cutting_size.length
@@ -164,7 +170,7 @@ module Ladb::OpenCutList
     end
 
     def cumulative_cutting_width
-      if @count > 1 && @cumulable == Ladb::OpenCutList::DefinitionAttributes::CUMULABLE_WIDTH
+      if @count > 1 && @cumulable == DefinitionAttributes::CUMULABLE_WIDTH
         (@cutting_size.width.to_f * @count).to_l
       else
         @cutting_size.width

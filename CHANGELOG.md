@@ -11,6 +11,7 @@ in 1.x and 0.x versions.
   * Added **dimensional cutting diagram** feature
   * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal dialogs
+  * Added part oversize parameters
   * Fixed some New Material modal issues
   * Improved cutlist scroll to first visible group (only if no alert)
   * Improved highlight tool to display part oriention with front and back face

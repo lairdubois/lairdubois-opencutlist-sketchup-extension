@@ -9,17 +9,20 @@
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
+        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+            <li role="presentation"{% if tab == 'size_increase' %} class="active"{% endif %}><a href="#tab_edit_part_size_increase" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-size-increase"></i>&nbsp;{{ 'tab.cutlist.edit_part.size_increase'|i18next }}</a></li>
+        {% endif %}
         {% if not multiple %}
             <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
         {% endif %}
-        {% if group.material_type == 2 %} {# TYPE_SHEET_GOOD #}
+        {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
-            <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>&nbsp;{{ 'tab.cutlist.edit_part.infos'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i></a></li>
         {% endif %}
         {% if has_warnings and not multiple %}
-            <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>&nbsp;{{ 'tab.cutlist.edit_part.warnings'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i></a></li>
         {% endif %}
     </ul>
 {% endblock %}
@@ -82,6 +85,39 @@
                 </div>
             </div>
         </div>
+        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+            <div role="tabpanel" class="tab-pane{% if tab == 'size_increase' %} active{% endif %}" id="tab_edit_part_size_increase">
+                <div class="form form-horizontal">
+                    {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+                        <div class="form-group">
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.length_increase'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control" id="ladb_cutlist_part_input_length_increase" value="{{ part.length_increase }}">
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
+                        <div class="form-group">
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.width_increase'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control" id="ladb_cutlist_part_input_width_increase" value="{{ part.width_increase }}">
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                        <div class="form-group">
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.thickness_increase'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control" id="ladb_cutlist_part_input_thickness_increase" value="{{ part.thickness_increase }}">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
         {% if not multiple %}
             <div role="tabpanel" class="tab-pane{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
                 <div class="row">

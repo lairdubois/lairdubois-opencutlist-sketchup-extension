@@ -75,7 +75,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
   private
 
   def assert_equal_fn(fn, input, expected)
-    assert_equal(expected, Ladb::OpenCutList::DimensionUtils.instance.send(fn, input))
+    assert_equal(expected, DimensionUtils.instance.send(fn, input))
   end
 
 end

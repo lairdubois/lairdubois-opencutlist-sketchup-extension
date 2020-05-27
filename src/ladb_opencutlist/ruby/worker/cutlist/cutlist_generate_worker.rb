@@ -152,8 +152,19 @@ module Ladb::OpenCutList
         # Compute transformation, scale and sizes
 
         size = instance_info.size
+        length_increased = false
+        width_increased = false
+        thickness_increased = false
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
+            size.increment_length(definition_attributes.l_length_increase)
+            size.increment_width(definition_attributes.l_width_increase)
+            length_increased = definition_attributes.l_length_increase > 0
+            width_increased = definition_attributes.l_width_increase > 0
+            if material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
+              size.increment_thickness(definition_attributes.l_thickness_increase)
+              thickness_increased = definition_attributes.l_thickness_increase > 0
+            end
             std_thickness_info = _find_std_value(
                 (size.thickness + material_attributes.l_thickness_increase).to_l,
                 material_attributes.l_std_thicknesses,
@@ -172,6 +183,8 @@ module Ladb::OpenCutList
                 )
             }
           when MaterialAttributes::TYPE_DIMENSIONAL
+            size.increment_length(definition_attributes.l_length_increase)
+            length_increased = definition_attributes.l_length_increase > 0
             std_section_info = _find_std_section(
                 size.width,
                 size.thickness,
@@ -267,8 +280,14 @@ module Ladb::OpenCutList
           part_def.size = size
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
+          part_def.length_increase = definition_attributes.length_increase
+          part_def.width_increase = definition_attributes.width_increase
+          part_def.thickness_increase = definition_attributes.thickness_increase
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.labels = definition_attributes.labels
+          part_def.length_increased = length_increased
+          part_def.width_increased = width_increased
+          part_def.thickness_increased = thickness_increased
           part_def.auto_oriented = size.auto_oriented
 
           # Compute axes alignment, final area and edges

@@ -12,7 +12,7 @@ module Ladb::OpenCutList
       @material_id = ''
       @material_name = ''
       @material_display_name = ''
-      @material_type = Ladb::OpenCutList::MaterialAttributes::TYPE_UNKNOW
+      @material_type = MaterialAttributes::TYPE_UNKNOW
       @material_color = nil
       @material_grained = false
       @std_available = true
@@ -36,7 +36,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_group_id(material, material_attributes, std_info)
-      Digest::MD5.hexdigest("#{material.nil? ? 0 : material_attributes.uuid}#{material_attributes.type > Ladb::OpenCutList::MaterialAttributes::TYPE_UNKNOW ? '|' + std_info[:dimension] : ''}")
+      Digest::MD5.hexdigest("#{material.nil? ? 0 : material_attributes.uuid}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? '|' + std_info[:dimension] : ''}")
     end
 
     # -----

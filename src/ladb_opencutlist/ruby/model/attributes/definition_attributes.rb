@@ -8,15 +8,11 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :cumulable, :orientation_locked_on_axis, :labels
+    attr_accessor :cumulable, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     def initialize(definition)
       @definition = definition
-      @numbers = {}
-      @cumulable = CUMULABLE_NONE
-      @orientation_locked_on_axis = false
-      @labels = ''
       read_from_attributes
     end
 
@@ -67,12 +63,29 @@ module Ladb::OpenCutList
 
     # -----
 
+    def l_length_increase
+      DimensionUtils.instance.dd_to_ifloats(length_increase).to_l
+    end
+
+    def l_width_increase
+      DimensionUtils.instance.dd_to_ifloats(width_increase).to_l
+    end
+
+    def l_thickness_increase
+      DimensionUtils.instance.dd_to_ifloats(thickness_increase).to_l
+    end
+
+    # -----
+
     def read_from_attributes
       if @definition
         @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
         @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
         @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
         @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
+        @length_increase = Plugin.instance.get_attribute(@definition, 'length_increase', '0')
+        @width_increase = Plugin.instance.get_attribute(@definition, 'width_increase', '0')
+        @thickness_increase = Plugin.instance.get_attribute(@definition, 'thickness_increase', '0')
       end
     end
 
@@ -82,6 +95,9 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', @labels)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))
       end
     end
 

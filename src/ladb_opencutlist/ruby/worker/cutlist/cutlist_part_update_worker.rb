@@ -15,6 +15,9 @@ module Ladb::OpenCutList
         :is_dynamic_attributes_name,
         :material_name,
         :cumulable,
+        :length_increase,
+        :width_increase,
+        :thickness_increase,
         :orientation_locked_on_axis,
         :labels,
         :axes_order,
@@ -35,6 +38,9 @@ module Ladb::OpenCutList
             part_data['is_dynamic_attributes_name'],
             part_data['material_name'],
             DefinitionAttributes.valid_cumulable(part_data['cumulable']),
+            part_data['length_increase'],
+            part_data['width_increase'],
+            part_data['thickness_increase'],
             part_data['orientation_locked_on_axis'],
             DefinitionAttributes.valid_labels(part_data['labels']),
             part_data['axes_order'],
@@ -72,13 +78,20 @@ module Ladb::OpenCutList
 
           # Update definition's attributes
           definition_attributes = DefinitionAttributes.new(definition)
-          if part_data.cumulable != definition_attributes.cumulable || part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis || part_data.labels != definition_attributes.labels
+          if part_data.cumulable != definition_attributes.cumulable ||
+              part_data.length_increase != definition_attributes.length_increase ||
+              part_data.width_increase != definition_attributes.width_increase ||
+              part_data.thickness_increase != definition_attributes.thickness_increase ||
+              part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
+              part_data.labels != definition_attributes.labels
             definition_attributes.cumulable = part_data.cumulable
+            definition_attributes.length_increase = part_data.length_increase
+            definition_attributes.width_increase = part_data.width_increase
+            definition_attributes.thickness_increase = part_data.thickness_increase
             definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
             definition_attributes.labels = part_data.labels
             definition_attributes.write_to_attributes
           end
-
 
           # Update materials
           _apply_material(part_data.material_name, part_data.entity_ids, model)

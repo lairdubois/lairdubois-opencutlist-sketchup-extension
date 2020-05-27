@@ -32,28 +32,28 @@ module Ladb::OpenCutList
       if @serialized_path
         return @serialized_path
       end
-      @serialized_path = Ladb::OpenCutList::PathUtils.serialize_path(@path)
+      @serialized_path = PathUtils.serialize_path(@path)
     end
 
     def transformation
       if @transformation
         return @transformation
       end
-      @transformation = Ladb::OpenCutList::PathUtils.get_transformation(@path)
+      @transformation = PathUtils.get_transformation(@path)
     end
 
     def scale
       if @scale
         return @scale
       end
-      @scale = Ladb::OpenCutList::TransformationUtils::get_scale3d(transformation)
+      @scale = TransformationUtils::get_scale3d(transformation)
     end
 
     def flipped
       if @flipped
         return @flipped
       end
-      @flipped = Ladb::OpenCutList::TransformationUtils::flipped?(transformation)
+      @flipped = TransformationUtils::flipped?(transformation)
     end
 
     # -----

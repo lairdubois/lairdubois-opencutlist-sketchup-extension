@@ -838,7 +838,7 @@
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
                     $inputThicknessIncrease.closest('.form-group').hide();
-                    $inputStdLengths.closest('.form-group').show();
+                    $inputStdLengths.closest('.form-group').hide();
                     $inputStdWidths.closest('.form-group').show();
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').hide();

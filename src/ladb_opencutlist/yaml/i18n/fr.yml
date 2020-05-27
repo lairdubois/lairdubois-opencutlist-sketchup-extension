@@ -140,6 +140,7 @@ tab:
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
+      size_increased: Dimension majorée de {{ value }}
       has_edges: Cette pièce contient {{ count }} chant plaqué
       has_edges_plural: Cette pièce contient {{ count }} chants plaqués
       edge_decremented: Réduit de l'épaisseur des chants ({{ decrement }})
@@ -167,9 +168,8 @@ tab:
       title_multiple: Propriétés du groupe de pièces
       multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: Générales
+      size_increase: Surcotes
       edges: Chants
-      infos: Infos
-      warnings: Avertissements
       name: Nom
       material: Matière
       cumulable: Cumulable
@@ -180,6 +180,12 @@ tab:
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
+      length_increase: Surcote de longueur
+      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
+      width_increase: Surcote de largeur
+      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
+      thickness_increase: Surcote d'épaisseur
+      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
       orientation: Orientation
       orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
       orientation_locked_on_axis_help: |
@@ -519,8 +525,11 @@ tab:
       cut_options: Options de débit
       thickness: Epaisseur
       length_increase: Surcote de longueur
+      length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
       width_increase: Surcote de largeur
+      width_increase_help: Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
       thickness_increase: Surcote d'épaisseur
+      thickness_increase_help: Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
       std_lengths: Longueurs standards
       std_lengths_placeholder: longueur ; ...
       std_lengths_help: |

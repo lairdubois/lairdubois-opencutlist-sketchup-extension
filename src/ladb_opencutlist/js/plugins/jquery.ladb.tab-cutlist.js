@@ -980,6 +980,9 @@
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
+                var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+                var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+                var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
@@ -1196,6 +1199,10 @@
 
                         var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });
                         editedParts[i].labels = untouchLabels.concat($inputLabels.tokenfield('getTokensList').split(';'));
+
+                        editedParts[i].length_increase = $inputLengthIncrease.val();
+                        editedParts[i].width_increase = $inputWidthIncrease.val();
+                        editedParts[i].thickness_increase = $inputThicknessIncrease.val();
 
                         if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();

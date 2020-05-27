@@ -88,23 +88,7 @@
 
     def initialize(material, force_unique_uuid = false)
       @material = material
-      @uuid = nil
-      @type = TYPE_UNKNOW
-      @thickness = get_default(:thickness)
-      @length_increase = get_default(:length_increase)
-      @width_increase = get_default(:width_increase)
-      @thickness_increase = get_default(:thickness_increase)
-      @std_lengths = get_default(:std_lengths)
-      @std_widths = get_default(:std_widths)
-      @std_thicknesses = get_default(:std_thicknesses)
-      @std_sections = get_default(:std_sections)
-      @std_sizes = get_default(:std_sizes)
-      @grained = get_default(:grained)
-      @edge_decremented = get_default(:edge_decremented)
-
-      # Reload properties from attributes
       read_from_attributes(force_unique_uuid)
-
     end
 
     # -----

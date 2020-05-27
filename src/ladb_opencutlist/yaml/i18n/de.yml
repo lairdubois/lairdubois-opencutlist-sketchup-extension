@@ -140,6 +140,7 @@ tab:
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
       is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
+      size_increased: Dimension majorée de {{ value }}
       has_edges: Dieses Teil enthält {{ count }} Kantenband
       has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
       edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
@@ -167,9 +168,8 @@ tab:
       title_multiple: Eigenschaften der Gruppe von Teilen
       multiple_alert: Gemeinsame Eigenschaften der Gruppe von {{ part_count }} Teilen.
       general: Allgemein
+      size_increase: Surcotes
       edges: Kantenbänder
-      infos: Infos
-      warnings: Warnungen
       name: Bezeichnung
       material: Material
       cumulable: Summierbar
@@ -180,6 +180,12 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
+      length_increase: Surcote de longueur
+      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
+      width_increase: Surcote de largeur
+      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
+      thickness_increase: Surcote d'épaisseur
+      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -519,8 +525,11 @@ tab:
       cut_options: Schnittparameter
       thickness: Dicke
       length_increase: Längenzumaß
+      length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
       width_increase: Breitenzumaß
+      width_increase_help: Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
       thickness_increase: Dickenzumaß
+      thickness_increase_help: Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
       std_lengths: Standardlängen
       std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
