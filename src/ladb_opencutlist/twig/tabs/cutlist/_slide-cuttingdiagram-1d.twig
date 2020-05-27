@@ -292,7 +292,7 @@
                             {% if showCuttingDimensions %}
                                 {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' with { 'property':'length' } %}
                             {% endif %}
-                            <td class="ladb-cutlist-dimension-value">{{ part.length }}</td>
+                            {% include 'tabs/cutlist/_list-row-box-dimension.twig' with { 'property':'length' } %}
                         </tr>
                     {% endfor %}
                 {% endif %}

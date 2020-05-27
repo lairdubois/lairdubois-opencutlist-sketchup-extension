@@ -232,6 +232,8 @@ module Ladb::OpenCutList
                     :count => 0,
                     :length => box.data.length,
                     :cutting_length => box.data.cutting_length,
+                    :length_increase => box.data.length_increase,
+                    :length_increased => box.data.length_increased,
                 }
                 grouped_parts.store(box.data.id, grouped_part)
               end

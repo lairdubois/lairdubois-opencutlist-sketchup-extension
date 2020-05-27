@@ -335,7 +335,7 @@ module Ladb::OpenCutList
 
         @text_line_1 = "[#{part.number}] #{part.name}"
         @text_line_2 = part.labels.join(' | ')
-        @text_line_3 = "#{part.length.to_s} x #{part.width.to_s} x #{part.thickness.to_s}" +
+        @text_line_3 = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
             " | #{part.count.to_s} #{Plugin.instance.get_i18n_string(part.count > 1 ? 'default.part_plural' : 'default.part_single')}" +
             " | #{(part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"

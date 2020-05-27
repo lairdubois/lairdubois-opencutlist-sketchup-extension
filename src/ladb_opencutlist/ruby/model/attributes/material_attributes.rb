@@ -349,6 +349,8 @@
         @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
         @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(:grained))
         @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(:edge_decremented))
+      else
+        @type = TYPE_UNKNOW
       end
     end
 

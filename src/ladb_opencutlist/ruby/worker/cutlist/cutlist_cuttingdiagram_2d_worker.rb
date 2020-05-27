@@ -255,6 +255,10 @@ module Ladb::OpenCutList
                   :edge_count => box.data.edge_count,
                   :edge_pattern => box.data.edge_pattern,
                   :edge_decrements => box.data.edge_decrements,
+                  :length_increase => box.data.length_increase,
+                  :width_increase => box.data.width_increase,
+                  :length_increased => box.data.length_increased,
+                  :width_increased => box.data.width_increased,
               }
               grouped_parts.store(box.data.id, grouped_part)
             end

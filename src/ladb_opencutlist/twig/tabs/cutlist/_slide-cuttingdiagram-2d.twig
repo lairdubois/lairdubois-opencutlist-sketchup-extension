@@ -306,7 +306,7 @@
                                 {% endfor %}
                             {% endif %}
                             {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                                <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                                {% include 'tabs/cutlist/_list-row-box-dimension.twig' %}
                             {% endfor %}
                         </tr>
                     {% endfor %}
