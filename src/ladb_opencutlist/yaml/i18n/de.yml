@@ -20,7 +20,7 @@ default:
   create: Anlegen
   ignore: Ignorieren
   download: Downloaden
-  upgrade: Mettre à jour
+  upgrade: Aktualisieren
   empty_filename: ohne Titel.skp
   help: Hilfe
   error: Verflixt!
@@ -72,17 +72,17 @@ core:
   upgrade:
     unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
     available: |
-      Neue Version von *OpenCutList* ist verfügbar.
-      Aktualisieren Sie diese um die neuesten Funktionen zu erhalten!
+      Eine neue Version von *OpenCutList* ist verfügbar.
+      Aktualisieren Sie um die neuesten Funktionen zu erhalten!
     up_to_date: |
-      Sie haben schon die neueste Version von *OpenCutList*.
+      Sie haben bereits die neueste Version von *OpenCutList*.
 
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Herunteladen läuft...
     success: |
       Die Aktualisierung von OpenCutList ist beendet!
 
-      /!\ STARTEN SIE SKETCHUP neu damit die Änderungen aktiviert werden.
+      /!\ STARTEN SIE SKETCHUP neu, damit die Änderungen aktiviert werden.
     error:
       download: Fehler beim Herunterladen des Archivs.
       unzip: Fehler beim Dekomprimieren des Archivs.
@@ -94,7 +94,7 @@ tab:
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
     selection_only: Auswahl
-    material_undefined: Material nicht definiert
+    material_undefined: Kein Material definiert
     not_available_width: Breite nicht verfügbar
     not_available_thickness: Dicke nicht verfügbar
     not_available_section: Querschnitt nicht verfügbar
@@ -127,21 +127,21 @@ tab:
       number_hidden: Die gespeicherte Nummer '{{ number }}' dieses Teils kann nicht verwendet werden, weil sie schon zugewiesen ist
       number_generated: Die Nummer dieses Teils wird automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
-      flipped: Dieses Teil ist gespiegelt im Vergleich zur ursprünglichen Definition als Komponente
+      flipped: Dieses Teil ist gespiegelt im Vergleich zur ursprünglichen Komponentendefinition
       auto_oriented: Dieses Teil wurde automatisch orientiert
-      add_label_filter: Nach '{{ label }}' auslesen
-      remove_label_filter: Auslese nach '{{ label }}' aufheben
-      add_edge_material_name_filter: Nach '{{ material_name }}' auslesen
-      remove_edge_material_name_filter: Auslese nach '{{ material_name }}' aufheben
+      add_label_filter: Nach '{{ label }}' auswählen
+      remove_label_filter: Auswahl nach '{{ label }}' aufheben
+      add_edge_material_name_filter: Nach '{{ material_name }}' auswählen
+      remove_edge_material_name_filter: Auswahl nach '{{ material_name }}' aufheben
       not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht richtig nach den Hauptachsen ausgerichtet
-      multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen erscheinen:<br>{{ layers }}"
+      multiple_layers: "Achtung, dieses Teil besteht aus Unterteilen, welche in {{ count }} verschiedenen Ebenen vorkommen:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
-      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
+      children_size_increase: "Diese Dimension enthält ein Übermaß von {{ count }} der gruppierten Teile"
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche haben"
       is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
-      size_increased: Dimension majorée par une surcote de {{ value }}
+      size_increased: Dimension mit einem Übermaß von {{ value }}
       has_edges: Dieses Teil enthält {{ count }} Kantenband
       has_edges_plural: Dieses Teil enthält {{ count }} Kantenbänder
       edge_decremented: Um die Kantenbandbreite ({{ decrement }}) verkürzt
@@ -151,7 +151,7 @@ tab:
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: Doppelclick hier um diesen Wert auf die anderen Kanten zu übertragen
       part_axes: Interne Achse des Teils
-      select_unselect_all_parts: Wählen/abwählen aller Teile der Gruppe
+      select_unselect_all_parts: Auswählen/Aufheben aller Teile der Gruppe
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -180,16 +180,16 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      size_increase: Surcotes
+      size_increase: Übermaße
       size_increase_help: |
-        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
-        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
+        Übermaße vergrössern die Dimensionen des umhüllenden Volumen des Teils.
+        (*Beispiel : Übermaß für eine Fußleiste oder einen Anschlag, der bei der Montage noch angepasst wird.*)
       length_increase: Längenzumaß
-      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
+      length_increase_help: Übermaß welches die **effektive Länge** vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
+      width_increase_help: Übermaß welches die **effektive Breite** vergrössert.
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
+      thickness_increase_help: Übermaß welches die **effektive Dicke** vergrössert.
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -206,7 +206,7 @@ tab:
         Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
       labels_multiple_info: Nur gemeinsame Etiketten werden angezeigt
       axes: Achsen
-      axes_help: Zuordnen der Dimensionen um diese mit den Achsenfarben übereinstimmen zu lassen.
+      axes_help: Zuordnen der Dimensionen um diese mit den gewünschten Achsenfarben übereinstimmen zu lassen.
       axes_tip: |
         Als Hinweis gilt, wenn *Automatische Orientierung der Teile* nicht aktiv ist oder das Teil *An das Koordinatensystem gebunden ist*, dann wird:
          - die **Länge** auf der <strong style='color:red'>roten</strong> Achse,
@@ -223,7 +223,7 @@ tab:
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
-        Ist diese Option aktiv, werden die Maße sortiert, so dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
+        Ist diese Option aktiv, werden die Maße so sortiert, dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
 
         Ansonsten werden die Maße der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
@@ -363,8 +363,8 @@ tab:
       option_hide_part_list_1d_0: Anzeigen für jede Stange
       option_hide_part_list_2d_0: Anzeigen für jede Platte
       option_hide_part_list_1: Ausblenden
-      option_hide_part_list_1d_help: Anzeigen oder ausblenden der Liste der Teile für jede Stange.
-      option_hide_part_list_2d_help: Anzeigen oder ausblenden der Liste der Teile für jede Platte.
+      option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange.
+      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: Maximale Länge bei der eine Stange über mehrere Zeilen dargestellt wird.
       option_saw_kerf: Sägeblattdicke
@@ -380,14 +380,14 @@ tab:
       option_presort_3: abnehmende Flächen
       option_presort_4: abnehmende Perimeter
       option_stacking: Identische Teile stapeln
-      option_stacking_help: Richtung in welche Teile gleicher Länge oder Breite zusammengefasst werden.
+      option_stacking_help: Richtung in welche Teile gleicher Länge oder Breite bevorzugt zusammengefasst werden.
       option_stacking_0: kein Stapeln
       option_stacking_1: der Länge nach
       option_stacking_2: der Breite nach
       option_bbox_optimization: Hüllenoptimierung
       option_bbox_optimization_help: |
         Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass größere Reste übrigbleiben.
-        Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Platzierung.
+        Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Schnittplanberechnung.
       option_bbox_optimization_0: Nie
       option_bbox_optimization_1: Nur am Schluss
       option_bbox_optimization_2: Immer
@@ -402,7 +402,7 @@ tab:
       option_scrap_bar_lengths_placeholder: Länge ; ...
       option_scrap_bar_lengths_help:  |
         Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
-        Erwartetes Format : **L**, wo **L** die *Länge* des Restes ist.
+        Erwartetes Format : **L**, wo **L** die *Länge* des Rests ist.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
@@ -447,7 +447,7 @@ tab:
         settings: Einstellungen
       error:
         no_bar: Die Standard-Länge wurde nicht richtig angegeben und kein Stangenrest ist definiert.
-        parameters: Die Parameter sind nicht richtig. Die Randabfallbreite ist grösser als 25% der längsten Stange.
+        parameters: Die Parameter sind nicht richtig. Die Randabfallbreite ist grösser als 25 % der längsten Stange.
         no_parts: Kein Teil.
         time_exceeded: Operation abgebrochen. Berechnungszeit zu lang.
         no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es sind keine Stangenreste verfügbar.
@@ -529,11 +529,11 @@ tab:
       cut_options: Schnittparameter
       thickness: Dicke
       length_increase: Längenzumaß
-      length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
+      length_increase_help: Übermaß welches das **Längenrohmass** vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
+      width_increase_help: Übermass welches das **Breitenrohmass** vergrössert.
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
+      thickness_increase_help: Übermaß welches das **Dickerohmass** vergrössert.
       std_lengths: Standardlängen
       std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
@@ -591,7 +591,7 @@ tab:
       reset: Einstellungen zurücksetzen
     remove:
       message: |
-        Sie sind gerade dabei das Material **{{ material_name }}** aus Ihrem Model zu löschen.
+        Sie sind gerade dabei das Material **{{ material_name }}** aus Ihrem Modell zu löschen.
         Vorgang bestätigen.
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
@@ -607,7 +607,7 @@ tab:
     label: Importieren
     title: Teile importieren
     help: |
-      An dieser Stelle können Sie (rechteckige Volumen) Teile aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in ihr Modell importieren.
+      An dieser Stelle können Sie Teile, als rechteckige Volumen, aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
       Clicken Sie auf **Öffnen einer CSV Datei** zum Starten.
     open_csv: Öffnen einer CSV Datei
@@ -657,15 +657,15 @@ tab:
       labels: Etiketten
     tooltip:
       errors: Dieses Teil wird nicht importiert, weil es folgende Fehler enthält
-      warnings: DieseS Teil wird importiert, aber es enthält folgende Fehler
+      warnings: Dieses Teil wird importiert, aber es enthält folgende Fehler
     error:
-      no_model: Kein Modell ist offen. Man kann Teil nicht ins Nichts importieren;)
+      no_model: Kein Modell ist offen. Man kann keine Teile ins Leere importieren ;)
       file_not_found: "Datei nicht gefunden: **{{ filename }}**"
       bad_extension: Die Datei *{{ filename }}* hat nicht eine **.CSV** oder **.TSV** Endung.
       failed_to_load_csv_file: |
         CSV Datei kann nicht geladen werden : **{{ error }}**
         *Stellen Sie sicher, dass Sie das korrekte Trennzeichen gewählt haben.*
-      empty_file: Die Datei scheint leer zu sein oder konnte nicht richtige gelesen werden.
+      empty_file: Die Datei scheint leer zu sein oder konnte nicht richtig gelesen werden.
       no_importable_part: Kein Teil konnte importiert werden. Achten Sie auf die richtige Zuweisung der Felder zu den obligatorischen Spalten.
       invalid_name: Ungültige Bezeichnung
       invalid_length: Ungültige Länge
@@ -685,12 +685,12 @@ tab:
     title: Sponsoring
     description: |
       **OpenCutList** ist *Open Source* Software, welche durch ihre Benutzer via <a href="https://opencollective.com/" target="_blank">Open Collective</a> unterstützt wird.
-      Unterstützen Sie dieses Projekt, indem Sie Ihren finanziellen Beitrag leisten!
+      Unterstützen Sie dieses Projekt, indem Sie einen finanziellen Beitrag leisten!
     contribute: Beitragen
     backers: "{{count}} finanzieller Sponsor"
     backers_plural: "{{count}} finanzielle Sponsoren"
     load_more: "Weitere laden ..."
-    ad: Gefällt dir OpenCutList?
+    ad: Gefällt Ihnen OpenCutList?
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
@@ -704,20 +704,20 @@ tab:
     version: Version
     credits: Technischer Verdienst
     credits_authors: |
-      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) entwickelt und [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Beiträger](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
+      *OpenCutList* wurde von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) und [Martin Müller](https://www.lairdubois.fr/@mobilarte) entwickelt. *[Beitragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
     credits_translators: |
-      Traductions :
+      Übersetzungen:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
       - Vladimir Badulya (*Russisch*)
     credits_description: |
-      Die Entwicklung dieser Erweiterung fügt sich in den Rahmen der Austauschplattform [L'Air du Bois](https://www.lairdubois.fr).
-      In diesem Sinn ist diese Erweiterung auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
+      Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
+      In diesem Sinn ist sie auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
     credits_runtime: Laufzeit
     credits_development: Entwicklung
     credits_vendors:  |
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
-      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch ihre [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
+      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch eine [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
 tool:
   highlight:
     transparency: Transparenz

@@ -21,9 +21,9 @@ default:
   ignore: Пропустить
   download: Скачать
   upgrade: Обновление
-  empty_filename: Untitled.skp
+  empty_filename: Безымянный.skp
   help: Помощь
-  error: Штопка!
+  error: Исправить!
   warning: Внимание!
   tip: Тип
   good: Хороший
@@ -135,13 +135,13 @@ tab:
       remove_edge_material_name_filter: Не фильтровать '{{ material_name }}'
       not_aligned_on_axes: Внимание! Эта деталь может быть неправильно ориентирована относительно ее осей
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
-      children_warnings: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждение"
-      children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }}есть предупреждения"
-      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
+      children_warnings: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждение"
+      children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждения"
+      children_size_increase: "Этот размер увеличивается на размер {{ count }} комплектующего изделия"
       invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
       invalid_final_area_plural: "Внимание, эта суммируемая область не может быть вычислена, поскольку { count }} детали (of {{ total }}) имеют некорректную площадь"
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Имя' динамического компонента
-      size_increased: Dimension majorée par une surcote de {{ value }}
+      size_increased: Размер увеличен на величину {{ value }}
       has_edges: Эта деталь содержит {{ count }} кромку
       has_edges_plural: Эти детали содержат {{ count }} кромки
       edge_decremented: Уменьшена толщина кромки ({{ decrement }})
@@ -180,16 +180,16 @@ tab:
       cumulable_0: Не суммировать
       cumulable_1: Суммировть по длине
       cumulable_2: Суммировать по ширине
-      size_increase: Surcotes
+      size_increase: Замечания
       size_increase_help: |
-        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
-        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
+        Большие размеры позволяют увеличить допустимые размеры детали.
+        (*Пример: завышенный размер для плинтуса или провода, который должен быть проложен по контуру во время монтажа.*)
       length_increase: Прибавка к длине
-      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
+      length_increase_help: Превышение применяется к фактической длине для определения **допустимой длины**.
       width_increase: Прибавка к ширине
-      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
+      width_increase_help: Прибавка применяется к фактической ширине для определения **допустимой ширины**.
       thickness_increase: Прибавка к толщине
-      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
+      thickness_increase_help: Прибавка применяется к фактической толщине для определения **допустимой толщины**.
       orientation: Ориентация
       orientation_locked_on_axis: Блокировка ориентации по осям
       orientation_locked_on_axis_help: |
@@ -306,7 +306,7 @@ tab:
     export:
       title: Экспортировать в формате CSV
       info: |
-        С этой функцией вы можете экспортировать *список деталей* в [CSV](https://wikipedia.org/wiki/Comma-separated_values) файл.
+        С этой функцией вы можете экспортировать *список деталей* в [CSV](https://ru.wikipedia.org/wiki/CSV) файл.
 
         <i class="ladb-opencutlist-icon-warning"></i> *Детали внутри скрытых групп вашего списка деталей не будут экспортированы*.
       options: Параметры экспорта
@@ -467,13 +467,13 @@ tab:
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
-      no_component_in_selection: При выборе не было обнаружено ни одного видимого компонента.
-      no_component_in_model: В вашей сцене не было обнаружено ни одного видимого компонента.
+      no_component_in_selection: В выделении нет ни одного видимого компонента.
+      no_component_in_model: Не обнаружено ни одного компонента для раскроя.
       failed_to_write_export_file: Не удалось записать экспортный файл. **{{ error }}**
       unknow_part: Выделенная часть не существует в списке деталей.
       obsolete_cutlist: Невозможно, список запчастей устарел. Возобновить его?
     warning:
-      partial_cutlist: Данный список деталей является частичным представлением Вашей модели, так как он основан только на выделенных деталях.
+      partial_cutlist: Данный список деталей содержит лишь часть Вашей модели, так как сгенерирован на основе отдельно выделенных деталей.
       no_typed_materials_in_model: В данной модели не используется какой-либо определенный материал (**Массив дерева** или **ЛДСП** или **По размеру**).
       no_typed_materials_in_selection: В выборе не используется какой-то определенный материал (**Массив дерева** или **ЛДСП** или **По размеру**).
       export_empty: Ваш экспорт не содержит ни одной детали.
@@ -529,11 +529,11 @@ tab:
       cut_options: Параметры раскроя
       thickness: Толщина
       length_increase: Прибавка к длине
-      length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
+      length_increase_help: Прибавка применяется на пригодную длину для определения **длины подачи**.
       width_increase: Прибавка к ширине
-      width_increase_help: Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
+      width_increase_help: Прибавка применяется на пригодную ширину для определения **ширины подачи**.
       thickness_increase: Прибавка к толщине
-      thickness_increase_help: Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
+      thickness_increase_help: Прибавка к толщине применяется для определения **толщины подачи**.
       std_lengths: Стандартная ширина
       std_lengths_placeholder: Длина ; ...
       std_lengths_help: |
@@ -607,7 +607,7 @@ tab:
     label: Импорт
     title: Импорт деталей
     help: |
-      Этот раздел поможет вам импортировать детали (определяемые прямоугольным выделением) из [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) файла в модели.
+      Этот раздел поможет вам импортировать детали (определяемые прямоугольным выделением) из [CSV](https://ru.wikipedia.org/wiki/CSV) файла в модели.
       Затем вы можете использовать возможности *OpenCutList* для деталей, которые были сгенерированы программным обеспечением, отличным от *SketchUp*.
       Кликните на клавише **Открыть CSV файл** для загрузки.
     open_csv: Открыть CSV файл
@@ -617,7 +617,7 @@ tab:
       info: |
         Выберите необходимые опции для чтения **{{ filename }}}**.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
+        <i class="ladb-opencutlist-icon-warning"></i> *Эта единица измерения используется в проекте модели: **{{ unit }}**.
         Данная единица измерения будет использована для интерпретации размеров, приведенных без единиц измерения*.
       options: Опции загрузки
       option_col_sep: Разделитель
@@ -659,14 +659,14 @@ tab:
       errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
       warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
     error:
-      no_model: Ни одна модель не открыта. Импорт частей в пустоту невозможен ;)
+      no_model: Ни одна модель не открыта. Импорт частей из пустоты невозможен ;)
       file_not_found: "Файл не найден : **{{ filename }}**"
       bad_extension: Файл *{{ filename }}* не имеет расширения **.CSV** или **.TSV**.
       failed_to_load_csv_file: |
         Невозможно загрузить CSV файл : **{{ error }}**
         *Убедитесь, что вы выбрали правильный разделитель полей.*
-      empty_file: Файл кажется пустым или не может быть интерпретирован.
-      no_importable_part: Никакая часть не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
+      empty_file: Файл возможно пустой или имеет не читаемый формат.
+      no_importable_part: Ни одна из деталей не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
       invalid_name: Неверное описание
       invalid_length: Недопустимая длина
       invalid_width: Недопустимая ширина

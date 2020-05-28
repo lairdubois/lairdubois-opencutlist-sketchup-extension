@@ -20,7 +20,7 @@ default:
   create: Create
   ignore: Ignore
   download: Download
-  upgrade: Mettre à jour
+  upgrade: Update
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -38,7 +38,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
-  seconds: seconds
+  seconds: Seconds
 core:
   menu:
     submenu: OpenCutList
@@ -66,21 +66,21 @@ core:
     model_change: The active model has been changed.
     options_change: Options in the model have changed.
     material_change: At least one material has been changed.
-    selection_change: The selection of the active model has been changed.
+    selection_change: The selection in the active model has been changed.
   model_info_page:
     units: Units
   upgrade:
     unavailable: Impossible to find the latest version of *OpenCutList*.
     available: |
       A new version of *OpenCutList* is available.
-      Download it to get the latest features!
+      Update to get the latest features!
     up_to_date: |
       You already have the latest version of *OpenCutList*.
 
       *Consider a sponsorship of this project to help us add even more features!*
-    downloading: Downloading in progress...
+    downloading: Download in progress...
     success: |
-      The update of OpenCutList has finised!
+      The update of OpenCutList has finished!
 
       /!\ RELOAD SKETCHUP for the changes to be activated.
     error:
@@ -91,10 +91,10 @@ tab:
     label: Parts List
     title: Parts List
     help: |
-      Select the root of the parts list in your scene then click on the **Generate** button.
+      Select the parts in the current scene you would like to include in the parts list then click on the **Generate** button.
       If the selection is empty, all visible components of the scene will be included in the parts list.
     selection_only: Selection
-    material_undefined: Material undefined
+    material_undefined: No material defined
     not_available_width: Width not available
     not_available_thickness: Thickness not available
     not_available_section: Cross section not available
@@ -137,11 +137,11 @@ tab:
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Cautions, there are {{ count }} alerts in grouped parts"
-      children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
+      children_size_increase: "This dimension is increased by an oversize for {{ count }} grouped parts"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because { count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: The description of this part is extracted from the attribute 'Name' of the dynamic component
-      size_increased: Dimension majorée par une surcote de {{ value }}
+      size_increased: Dimension is increased by oversize of {{ value }}
       has_edges: This part contains {{ count }} edge banding
       has_edges_plural: This part contains {{ count }} edge bandings
       edge_decremented: Reduced by the thickness of edge banding ({{ decrement }})
@@ -182,14 +182,14 @@ tab:
       cumulable_2: Summable over width
       size_increase: Surcotes
       size_increase_help: |
-        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
-        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
+        Oversizes allow you to increase the capable dimensions of the part.
+        (*Example : Oversize for a baseboard or a scribe molding that would be adjusted when installing.*)
       length_increase: Length Oversize
-      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
+      length_increase_help: Oversize is applied to the real length to define the **raw length**.
       width_increase: Width Oversize
-      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
+      width_increase_help: Oversize is applied to the real width to define the **raw width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
+      thickness_increase_help: Oversize is applied to the real thickness to define the **raw thickness**.
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes
       orientation_locked_on_axis_help: |
@@ -352,12 +352,12 @@ tab:
       options_config: Configuration
       options_display: Display
       option_bar_folding: Group Identical Boards
-      option_bar_folding_0: No
-      option_bar_folding_1: Yes
+      option_bar_folding_0: "No"
+      option_bar_folding_1: "Yes"
       option_bar_folding_help: Group boards having the same parts and cuts.
       option_sheet_folding: Group Identical Panels
-      option_sheet_folding_0: No
-      option_sheet_folding_1: Yes
+      option_sheet_folding_0: "No"
+      option_sheet_folding_1: "Yes"
       option_sheet_folding_help: Group panels having the same parts and cuts.
       option_hide_part_list: Parts List
       option_hide_part_list_1d_0: Displayed for each board
@@ -387,7 +387,7 @@ tab:
       option_bbox_optimization: Bounding Box Optimization
       option_bbox_optimization_help: |
         Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
-        This option may be applied every time a new panel is added, only at the end or never.
+        This option may be applied every time a new panel is added, only at the end of the optimization or never.
       option_bbox_optimization_0: Never
       option_bbox_optimization_1: Only Final
       option_bbox_optimization_2: Always
@@ -414,7 +414,7 @@ tab:
       option_scrap_sheet_sizes: Offcut Sheet Goods
       option_scrap_sheet_sizes_placeholder: length x width ; ...
       option_scrap_sheet_sizes_help:  |
-        List all offcut sheet goods you would like to include in the cutting diagram.
+        List all offcut sheet goods you would like to be considered in the cutting diagram.
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
         *Sizes without units are considered to be in model units.*
       options_defaults:
@@ -482,7 +482,7 @@ tab:
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
-        If you use only groups, convert them first into components.
+        If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood** or **Sheet Good** or **Dimensional**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
     obsolete_base: To remain synchronized, you must regenerate the parts list.
@@ -529,11 +529,11 @@ tab:
       cut_options: Cutting Parameters
       thickness: Thickness
       length_increase: Length Oversize
-      length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
+      length_increase_help: Oversize applied to the length to define the **raw length**.
       width_increase: Width Oversize
-      width_increase_help: Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
+      width_increase_help: Oversize applied to the width to define the **raw width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
       std_lengths: Standard Lengths
       std_lengths_placeholder: length ; ...
       std_lengths_help: |
@@ -690,7 +690,7 @@ tab:
     backers: "{{count}} financial contributor"
     backers_plural: "{{count}} financial contributors"
     load_more: "Load more ..."
-    ad: You love OpenCutList ?
+    ad: Do you like OpenCutList?
   settings:
     label: Preferences
     title: Preferences
@@ -706,7 +706,7 @@ tab:
     credits_authors: |
       *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
-      Traductions :
+      Translations:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
       - Vladimir Badulya (*russian*)
     credits_description: |
