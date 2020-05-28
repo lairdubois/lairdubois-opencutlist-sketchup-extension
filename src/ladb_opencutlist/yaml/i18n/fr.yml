@@ -82,7 +82,7 @@ core:
     success: |
       La mise à jour d'OpenCutList est terminée !
 
-      /!\ RELANCER SKETCHUP pour que les changements soient pris en compte.
+      /!\ RELANCEZ SKETCHUP pour que les changements soient pris en compte.
     error:
       download: Erreur lors du téléchargement de l'archive.
       unzip: Erreur lors de la décompression de l'archive.
