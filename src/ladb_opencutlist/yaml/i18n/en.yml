@@ -38,7 +38,6 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
-  seconds: Seconds
 core:
   menu:
     submenu: OpenCutList

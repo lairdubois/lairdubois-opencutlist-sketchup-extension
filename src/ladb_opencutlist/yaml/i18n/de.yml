@@ -38,7 +38,6 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
-  seconds: Sekunden
 core:
   menu:
     submenu: OpenCutList

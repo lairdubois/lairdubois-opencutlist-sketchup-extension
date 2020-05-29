@@ -38,7 +38,6 @@ default:
   part_single: деталь
   part_plural: детали
   setup_model_units: Установка единиц измерения
-  seconds: секунды
 core:
   menu:
     submenu: OpenCutList

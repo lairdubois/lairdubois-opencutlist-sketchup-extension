@@ -1,7 +1,7 @@
 ﻿{% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram_1d' %}
-{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~' '~group.material_name~' / '~group.std_dimension %}
+{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~' '~group.material_name|escape('html')~' / '~group.std_dimension %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -98,7 +98,7 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_btn_edit_material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</button>
+    <button type="button" class="btn btn-default pull-left" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_name }) }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_cuttingdiagram">{{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}</button>
 {% endblock %}
