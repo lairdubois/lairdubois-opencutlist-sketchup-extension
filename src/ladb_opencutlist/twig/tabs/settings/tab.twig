@@ -8,10 +8,14 @@
 
 {% block containerInner %}
     <div>
-        <div id="ladb_reload_dialog_warning" class="alert alert-warning" style="display: none;">
+        <div id="ladb_reload_alert" class="alert alert-warning" style="display: none;">
             <div class="media">
                 <div class="media-left"><i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i></div>
-                <div class="media-body">{{ 'tab.settings.reload_dialog_warning'|i18next }}</div>
+                <div class="media-body">
+                    {% for language in capabilities.available_languages %}
+                        <div class="ladb-reaload-msg ladb-reaload-msg-{{ language }}">{{ ('language_reload_msg.'~language)|i18next }}</div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <div class="form-group">

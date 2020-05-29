@@ -1,4 +1,5 @@
 _label: Français
+_reload_msg: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
 default:
   minimize: Réduire
   maximize: Agrandir
@@ -694,7 +695,6 @@ tab:
     label: Préférences
     title: Préférences
     reset: Restaurer aux valeurs par défaut
-    reload_dialog_warning: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
     language: Langue
     size_and_position: Taille et Position de la fenêtre
   about:

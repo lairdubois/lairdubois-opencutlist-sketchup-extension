@@ -15,7 +15,7 @@ var md = markdownIt({
 
 var PluginError = require('plugin-error');
 
-module.exports = function (languageLabels, opt) {
+module.exports = function (languageLabels, languageReloadMsgs, opt) {
 
     // Delete keys that starts by "_"
     function deleteHiddenKeys(doc) {
@@ -59,6 +59,12 @@ module.exports = function (languageLabels, opt) {
 
             // Append languages labels
             ymlDocument['language'] = languageLabels;
+
+            // Append languages reload msgs (and mardown them)
+            for (var key in languageReloadMsgs) {
+                languageReloadMsgs[key] = md.renderInline(languageReloadMsgs[key]);
+            }
+            ymlDocument['language_reload_msg'] = languageReloadMsgs;
 
             var language = file.stem;
 

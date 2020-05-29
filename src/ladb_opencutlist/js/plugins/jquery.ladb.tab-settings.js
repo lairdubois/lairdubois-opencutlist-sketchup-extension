@@ -14,6 +14,8 @@
     var LadbTabSettings = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
+        this.initialLanguage = this.opencutlist.capabilities.language;
+
         this.$btnReset = $('#ladb_btn_reset', this.$element);
 
         this.$selectLanguage = $('#ladb_select_language', this.$element);
@@ -31,8 +33,12 @@
 
     LadbTabSettings.DEFAULTS = {};
 
-    LadbTabSettings.prototype.showReloadDialogWarning = function () {
-        $('#ladb_reload_dialog_warning', this.$element).show();
+    LadbTabSettings.prototype.showReloadAlert = function () {
+        var $reloadAlert = $('#ladb_reload_alert', this.$element);
+        $reloadAlert.show();
+        $('.ladb-reaload-msg', $reloadAlert).hide();
+        var language = this.opencutlist.capabilities.language === 'auto' ? this.initialLanguage : this.opencutlist.capabilities.language;
+        $('.ladb-reaload-msg-' + language, $reloadAlert).show();
     };
 
     LadbTabSettings.prototype.bind = function () {
@@ -65,7 +71,7 @@
         this.$selectLanguage.on('change', function () {
             that.opencutlist.capabilities.language = that.$selectLanguage.val();
             fnUpdate();
-            that.showReloadDialogWarning();
+            that.showReloadAlert();
         });
         this.$btnReset.on('click', function () {
             $(this).blur();
@@ -75,7 +81,7 @@
             that.opencutlist.capabilities.dialogLeft = 60;
             that.opencutlist.capabilities.dialogTop = 100;
             fnUpdate();
-            that.showReloadDialogWarning();
+            that.showReloadAlert();
             return false;
         });
         this.$btnWidthUp.on('click', function () {
