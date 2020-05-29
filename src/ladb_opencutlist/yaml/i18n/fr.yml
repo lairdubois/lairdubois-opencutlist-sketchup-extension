@@ -206,7 +206,7 @@ tab:
         Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
       labels_multiple_info: Seules les étiquettes communes sont visibles
       axes: Axes
-      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirés dans votre pièce.
+      axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |
         Il est important de noter que si l'option d'*Orientation automatique* n'est pas activée ou si la pièce est *Verrouillée sur ses axes* :
          - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
@@ -447,7 +447,7 @@ tab:
         settings: Paramètres
       error:
         no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
-        parameters: Les paramètres sont incorrects. La marge dépasse 25% de la barre la plus grande.
+        parameters: Les paramètres sont incorrects. La marge dépasse 25 % de la barre la plus grande.
         no_parts: Aucune pièce.
         time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
