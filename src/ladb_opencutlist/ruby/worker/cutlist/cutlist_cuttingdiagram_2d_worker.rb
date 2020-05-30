@@ -85,6 +85,8 @@ module Ladb::OpenCutList
           :unplaced_parts => [],
           :summary => {
               :sheets => [],
+              :total_count => 0,
+              :total_area => 0,
           },
           :sheets => [],
       }
@@ -182,11 +184,14 @@ module Ladb::OpenCutList
           end
           sheet[:count] += 1
           sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          response[:summary][:total_count] += 1
+          response[:summary][:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
         }
         summary_sheets.each { |type_id, sheet|
           sheet[:total_area] = DimensionUtils.instance.format_to_readable_area(sheet[:total_area])
         }
         response[:summary][:sheets] += summary_sheets.values.sort_by { |sheet| sheet[:type] }
+        response[:summary][:total_area] = DimensionUtils.instance.format_to_readable_area(response[:summary][:total_area])
 
         # Sheets
         grouped_sheets = {}

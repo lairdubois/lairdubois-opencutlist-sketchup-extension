@@ -422,6 +422,9 @@ tab:
         save: Save as default values
         save_success: Default *Cutting Diagram Parameters* saved
         reset: Restore to default values
+      tooltip:
+        scroll_to_block_1d: Défiler vers la première barre  # TODO
+        scroll_to_block_2d: Défiler vers le premier panneau  # TODO
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
@@ -432,6 +435,7 @@ tab:
         width: Width
         total_length: Σ Lengths
         total_area: Σ Areas
+        total: Total  # TODO
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency
@@ -449,7 +453,6 @@ tab:
         no_bar: The standard board was not correctly configured and no offcuts were defined.
         parameters: Parameters are incorrect. The trimming is larger than 25% of the longest board.
         no_parts: No part.
-        time_exceeded: Operation cancelled. Calculation time too long.
         no_sheet: Standard panel sizes are wrongly configured and no offcuts are available.
         no_placement_possible: All of your parts are too large to fit a panel (trimming too large, standard panel too small, saw kerf too large, ...).
         bad_error: Algorithmic panic, please contact the developpers, you have an interesting case.

@@ -20,10 +20,8 @@ module Ladb::OpenCutList
     ERROR_PARAMETERS = 3
     # Catch for bad errors with unknown cause.
     ERROR_BAD_ERROR = 4
-    # Time exceeded during computation.
-    ERROR_TIME_EXCEEDED = 5
     # No boxes available to pack.
-    ERROR_NO_BOX = 6
+    ERROR_NO_BOX = 5
     
     # A large saw kerf warning.
     WARNING_SAW_KERF_LARGE = 0

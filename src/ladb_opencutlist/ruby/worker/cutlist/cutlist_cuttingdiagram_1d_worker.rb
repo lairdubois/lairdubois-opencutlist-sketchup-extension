@@ -67,6 +67,8 @@ module Ladb::OpenCutList
           :unplaced_parts => [],
           :summary => {
               :bars => [],
+              :total_count => 0,
+              :total_length => 0,
           },
           :bars => [],
       }
@@ -82,8 +84,6 @@ module Ladb::OpenCutList
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.parameters'
         when BinPacking1D::ERROR_NO_BOX
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_parts'
-        when BinPacking1D::ERROR_TIME_EXCEEDED
-          response[:errors] << 'tab.cutlist.cuttingdiagram.error.time_exceeded'
         when BinPacking1D::ERROR_BAD_ERROR
           response[:errors] << 'tab.cutlist.cuttingdiagram.error.bad_error'
         else
@@ -158,11 +158,14 @@ module Ladb::OpenCutList
           end
           bar[:count] += 1
           bar[:total_length] += bin.length
+          response[:summary][:total_count] += 1
+          response[:summary][:total_length] += bin.length
         }
         summary_bars.each { |type_id, bar|
           bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
         }
         response[:summary][:bars] += summary_bars.values.sort_by { |bar| -bar[:type] }
+        response[:summary][:total_length] = DimensionUtils.instance.format_to_readable_length(response[:summary][:total_length])
 
         # Bars
         grouped_bars = {}

@@ -422,6 +422,9 @@ tab:
         save: Als vorgegebene Werte speichern
         save_success: "*Schnittparameter* als vorgegebene Werte gespeichert"
         reset: Auf vorgegebene Werte zurücksetzen
+      tooltip:
+        scroll_to_block_1d: Défiler vers la première barre  # TODO
+        scroll_to_block_2d: Défiler vers le premier panneau  # TODO
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
@@ -432,6 +435,7 @@ tab:
         width: Breite
         total_length: Σ Längen
         total_area: Σ Flächen
+        total: Total  # TODO
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
@@ -449,7 +453,6 @@ tab:
         no_bar: Die Standard-Länge wurde nicht richtig angegeben und kein Stangenrest ist definiert.
         parameters: Die Parameter sind nicht richtig. Die Randabfallbreite ist grösser als 25 % der längsten Stange.
         no_parts: Kein Teil.
-        time_exceeded: Operation abgebrochen. Berechnungszeit zu lang.
         no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es sind keine Stangenreste verfügbar.
         no_placement_possible: Keine Platzierung möglich (Seitenrand zu groß, Standardplatte zu klein, Sägeschnitt zu groß, ...).
         bad_error: Algorithmischer Fehler, kontaktieren Sie bitte die Entwickler, denn Sie haben hier einen speziellen Fall.

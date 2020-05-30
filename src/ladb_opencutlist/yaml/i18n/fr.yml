@@ -422,6 +422,9 @@ tab:
         save: Enregistrer comme valeurs par défaut
         save_success: "*Options de calepinage* par défaut enregistrées"
         reset: Restaurer aux valeurs par défaut
+      tooltip:
+        scroll_to_block_1d: Défiler vers la première barre
+        scroll_to_block_2d: Défiler vers le premier panneau
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
@@ -432,6 +435,7 @@ tab:
         width: Largeur
         total_length: Σ Longueurs
         total_area: Σ Surfaces
+        total: Total
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité
@@ -449,7 +453,6 @@ tab:
         no_bar: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
         parameters: Les paramètres sont incorrects. La marge dépasse 25 % de la barre la plus grande.
         no_parts: Aucune pièce.
-        time_exceeded: Opération abandonnée. Temps de calcul trop long.
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
         no_placement_possible: Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
         bad_error: Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
