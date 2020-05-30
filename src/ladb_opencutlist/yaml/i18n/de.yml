@@ -182,7 +182,7 @@ tab:
       cumulable_2: Summierbar über die Breitachse
       size_increase: Übermaße
       size_increase_help: |
-        Übermaße vergrössern die Dimensionen des umhüllenden Volumen des Teils.
+        Übermaße vergrössern die Dimensionen eines einzelnen Teils.
         (*Beispiel : Übermaß für eine Fußleiste oder einen Anschlag, der bei der Montage noch angepasst wird.*)
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches die **effektive Länge** vergrössert.
@@ -423,8 +423,8 @@ tab:
         save_success: "*Schnittparameter* als vorgegebene Werte gespeichert"
         reset: Auf vorgegebene Werte zurücksetzen
       tooltip:
-        scroll_to_block_1d: Défiler vers la première barre  # TODO
-        scroll_to_block_2d: Défiler vers le premier panneau  # TODO
+        scroll_to_block_1d: Zur ersten Stange blättern
+        scroll_to_block_2d: Zur erstan Platte blättern
       list:
         unplaced_parts: Nicht platzierte Teile
         summary: Übersicht
@@ -435,7 +435,7 @@ tab:
         width: Breite
         total_length: Σ Längen
         total_area: Σ Flächen
-        total: Total  # TODO
+        total: Total
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz

@@ -6,7 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.9.0
 
-  * Added **russian** language (thanks to Vladimir Badulya to joint the translators team)
+  * Added **russian** language (thanks to Vladimir Badulya for joining the translators team)
   * Added **self-updater**
   * Added **dimensional cutting diagram** feature
   * Added flipped part detection  
@@ -14,7 +14,7 @@ in 1.x and 0.x versions.
   * Added part oversize parameters
   * Fixed some New Material modal issues
   * Improved cutlist scroll to first visible group (only if no alert)
-  * Improved highlight tool to display part oriention with front and back face
+  * Improved highlight tool to display part orientation with front and back face
   * Improved obsolete generated (materials, cutlist) management
   * Improved cutlist part numbers storing. Now, it take care of multiple part with the same definition.
   * Replaced 'selection only' warning by displaying this info in header
@@ -22,7 +22,7 @@ in 1.x and 0.x versions.
 * 1.8.4 (2020-01-09)
 
   * Added part "Number" column in cutlist instance export
-  * Remove $debug global variable in rchardet lib
+  * Removed $debug global variable in rchardet lib
 
 * 1.8.3 (2019-12-19)
 
