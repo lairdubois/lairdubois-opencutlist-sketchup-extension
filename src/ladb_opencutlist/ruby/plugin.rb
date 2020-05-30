@@ -109,6 +109,7 @@ module Ladb::OpenCutList
       if persist
         write_default(SETTINGS_KEY_LANGUAGE, language)
       end
+      @i18n_strings = nil # Reset i18n strings cache
     end
 
     def get_available_languages
