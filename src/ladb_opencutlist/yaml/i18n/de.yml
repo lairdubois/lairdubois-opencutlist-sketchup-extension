@@ -1,6 +1,6 @@
 _label: Deutsch
 _reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
-_description: Holzlistengenerator für Tischler/Schreiner. Open Source und einfach anzuwenden ;)  # TODO + check "Crowd Funded"
+_description: Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, gruppenfinanziert und einfach zu bedienen ;)
 default:
   minimize: Minimieren
   maximize: Maximieren
@@ -80,7 +80,7 @@ core:
 
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Herunteladen läuft...
-    changlog: Was gibt's Neues ?
+    changlog: Was gibt's Neues?
     success: |
       Die Aktualisierung von OpenCutList ist beendet!
 
