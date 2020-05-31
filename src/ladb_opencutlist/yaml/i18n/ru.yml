@@ -1,5 +1,6 @@
 _label: Русский
 _reload_msg: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново OpenCutList.
+_description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source and Easy to Use ;) # TODO
 default:
   minimize: Свернуть
   maximize: Развернуть

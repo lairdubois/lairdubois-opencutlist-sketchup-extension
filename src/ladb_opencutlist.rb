@@ -15,12 +15,17 @@ module Ladb
 
       # Localize description
       case Sketchup.get_locale.split('-')[0].downcase
-      when 'fr'
-        ex.description = 'Générateur de fiche de débit et calepinage de panneaux pour les boiseux. Open Source et facile à utiliser ;)'
+      ## /!\ Auto-generated lines, do not edit ##
+      ## DESCRIPTION_START ##
       when 'de'
         ex.description = 'Holzlistengenerator für Tischler/Schreiner. Open Source und einfach anzuwenden ;)'
+      when 'fr'
+        ex.description = 'Générateur de fiche de débit et calepinage de panneaux pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
+      when 'ru'
+        ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source and Easy to Use ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source and Easy to Use ;)'
+      ## DESCRIPTION_END ##
       end
 
       # Register extension

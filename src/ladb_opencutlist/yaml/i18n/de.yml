@@ -1,5 +1,6 @@
 _label: Deutsch
 _reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
+_description: Holzlistengenerator für Tischler/Schreiner. Open Source und einfach anzuwenden ;)
 default:
   minimize: Minimieren
   maximize: Maximieren

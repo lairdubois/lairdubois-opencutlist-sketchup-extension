@@ -1,5 +1,6 @@
 _label: English
 _reload_msg: In order to take into account all the changes, you must **close** and **reopen** the OpenCutList window.
+_description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source and Easy to Use ;)
 default:
   minimize: Minimize
   maximize: Maximize

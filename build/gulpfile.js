@@ -46,17 +46,42 @@ gulp.task('i18n_compile', function () {
 
     var languageLabels = {};
     var languageReloadMsgs = {};
+    var descriptions = {};
     var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/*.yml');
     ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.safeLoad(contents);
+        var language = path.basename(ymlFile, '.yml');
         if ('_label' in ymlDocument) {
-            languageLabels[path.basename(ymlFile, '.yml')] = ymlDocument['_label'];
+            languageLabels[language] = ymlDocument['_label'];
+        }
+        if ('_description' in ymlDocument) {
+            descriptions[language] = ymlDocument['_description'];
         }
         if ('_reload_msg' in ymlDocument) {
-            languageReloadMsgs[path.basename(ymlFile, '.yml')] = ymlDocument['_reload_msg'];
+            languageReloadMsgs[language] = ymlDocument['_reload_msg'];
         }
     });
+
+    // Update descriptions in ladb_opencutlist.rb
+    gulp.src('../src/ladb_opencutlist.rb')
+        .pipe(replace(/( {6}## DESCRIPTION_START ##)(.*?\n*\t*)( {6}## DESCRIPTION_END ##)/ms, function(match, p1, p2, p3, offset, string) {
+            var defaultLanguage = 'en';
+            var whens = p1;
+            for (var key in descriptions) {
+                if (key === defaultLanguage) {
+                    continue;
+                }
+                whens += "\n      when '" + key + "'";
+                whens += "\n        ex.description = '" + descriptions[key] + "'";
+            }
+            whens += "\n      else";
+            whens += "\n        ex.description = '" + descriptions[defaultLanguage] + "'";
+            whens += "\n" + p3;
+            return whens;
+        }))
+        .pipe(gulp.dest('../src'))
+        .pipe(touch());
 
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
         .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
