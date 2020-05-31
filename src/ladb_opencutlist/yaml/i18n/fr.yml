@@ -1,6 +1,6 @@
 _label: Français
 _reload_msg: Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-_description: Générateur de fiche de débit et calepinage de panneaux pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)
+_description: Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)
 default:
   minimize: Réduire
   maximize: Agrandir
@@ -80,6 +80,7 @@ core:
 
       *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à soutenir financièrement le projet !*
     downloading: Téléchargement en cours...
+    changlog: Quoi de neuf ?
     success: |
       La mise à jour d'OpenCutList est terminée !
 
