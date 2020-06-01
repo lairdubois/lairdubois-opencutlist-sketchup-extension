@@ -142,6 +142,7 @@ module Ladb::OpenCutList
       begin
         i18n_string = path_key.split('.').inject(@i18n_strings) { |hash, key| hash[key] }
       rescue
+        i18n_string = nil
         puts "I18n value not found (key=#{path_key})."
       end
 

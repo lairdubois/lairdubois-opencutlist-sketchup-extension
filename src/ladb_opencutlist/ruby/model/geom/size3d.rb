@@ -25,10 +25,10 @@ module Ladb::OpenCutList
     def self.create_from_bounds(bounds, scale, auto_orient = false)
       if auto_orient
         ordered = [
-            { :value => (bounds.width * scale.x).to_l, :normal => X_AXIS },
-            { :value => (bounds.height * scale.y).to_l, :normal => Y_AXIS },
-            { :value => (bounds.depth * scale.z).to_l, :normal => Z_AXIS }
-        ].sort_by { |item| item[:value] }
+            { :value => (bounds.width * scale.x).to_l, :normal => X_AXIS, :sub_sort_index => 2 },
+            { :value => (bounds.height * scale.y).to_l, :normal => Y_AXIS, :sub_sort_index => 1 },
+            { :value => (bounds.depth * scale.z).to_l, :normal => Z_AXIS, :sub_sort_index => 0 }
+        ].sort_by { |item| [ item[:value], item[:sub_sort_index] ] }   # Added sub_sort_index as sort parameter to sort equals values in default axes order.
         Size3d.new(ordered[2][:value], ordered[1][:value], ordered[0][:value], [ ordered[2][:normal], ordered[1][:normal], ordered[0][:normal] ])
       else
         Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)

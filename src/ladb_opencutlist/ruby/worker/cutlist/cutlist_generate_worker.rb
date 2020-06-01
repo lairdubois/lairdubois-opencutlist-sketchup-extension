@@ -495,7 +495,7 @@ module Ladb::OpenCutList
       # PHASE 2
 
       # Sort material usages and add them to cutlist
-      cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [v.display_name.downcase] })
+      cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [ v.display_name.downcase ] })
 
       part_number = cutlist.max_number ? cutlist.max_number.succ : (@part_number_with_letters ? 'A' : '1')
 
