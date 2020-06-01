@@ -581,6 +581,7 @@ module Ladb::OpenCutList
         request = Sketchup::Http::Request.new(url.to_s, Sketchup::Http::GET)
         request.set_download_progress_callback do |current, total|
           progress = current * 5 / total
+          puts "OCL : downloading current=#{current}, total=#{total}"
           if progress > last_progress
             trigger_event('on_upgrade_progress', {
                 :current => current,
@@ -591,12 +592,18 @@ module Ladb::OpenCutList
         end
         request.start do |request, response|
 
+          puts 'OCL : download complete. Process response...'
+
           timer_running = false
           UI.start_timer(1, false) {
+
+            puts 'OCL : download complete. Step 1'
 
             # Timer with modal bug workaround https://ruby.sketchup.com/UI.html#start_timer-class_method
             return if timer_running
             timer_running = true
+
+            puts 'OCL : download complete. Step 2'
 
             # Prepare file
             downloads_dir = File.join(temp_dir, 'downloads')
@@ -605,10 +612,14 @@ module Ladb::OpenCutList
             end
             rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
 
+            puts 'OCL : download complete. Step 3'
+
             # Write result to file
             File.open(rbz_file, 'wb') do |f|
               f.write(response.body)
             end
+
+            puts 'OCL : download complete. Step 4'
 
             success = false
 
@@ -628,6 +639,8 @@ module Ladb::OpenCutList
               File.unlink(rbz_file)
 
             end
+
+            puts 'OCL : download complete. Step 5'
 
             if success
 
