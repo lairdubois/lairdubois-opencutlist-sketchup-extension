@@ -80,7 +80,7 @@ core:
 
       *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à soutenir financièrement le projet !*
     downloading: Téléchargement en cours...
-    changlog: Quoi de neuf ?
+    changelog: Quoi de neuf ?
     success: |
       La mise à jour d'OpenCutList est terminée !
 

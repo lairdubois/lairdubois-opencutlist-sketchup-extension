@@ -1,6 +1,6 @@
 _label: English
 _reload_msg: In order to take into account all the changes, you must **close** and **reopen** the OpenCutList window.
-_description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, Crowd Funded and Easy to Use ;) # TODO + check "Crowd Funded"
+_description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)
 default:
   minimize: Minimize
   maximize: Maximize
@@ -80,7 +80,7 @@ core:
 
       *Consider a sponsorship of this project to help us add even more features!*
     downloading: Download in progress...
-    changlog: What's new ?
+    changelog: What's new?
     success: |
       The update of OpenCutList has finished!
 
