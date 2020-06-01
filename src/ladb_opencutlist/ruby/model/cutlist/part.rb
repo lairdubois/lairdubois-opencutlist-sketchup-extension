@@ -81,7 +81,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :cumulative_cutting_length, :cumulative_cutting_width, :material_origins, :cumulable, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_dimensions, :dimensions_to_normals, :l_ratio, :w_ratio
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :cumulative_cutting_length, :cumulative_cutting_width, :material_origins, :cumulable, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals, :l_ratio, :w_ratio
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -111,6 +111,7 @@ module Ladb::OpenCutList
       @layers = part_def.layers.map(&:name)
       @multiple_layers = part_def.multiple_layers
       @edge_entity_ids = part_def.edge_entity_ids
+      @normals_to_values = part_def.size.normals_to_values
       @normals_to_dimensions = part_def.size.normals_to_dimensions
       @dimensions_to_normals = part_def.size.dimensions_to_normals
       @l_ratio = part_def.size.length / [part_def.size.length, part_def.size.width].max
