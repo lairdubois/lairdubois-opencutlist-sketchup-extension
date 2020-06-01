@@ -367,7 +367,7 @@ module Ladb::OpenCutList
 
       # Maximize dialog if needed
       if @maximize_on_quit
-        Plugin.instance.show_dialog('cutlist')
+        Plugin.instance.show_dialog('cutlist', false)
       end
 
       # Unselect tool

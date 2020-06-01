@@ -434,7 +434,9 @@ module Ladb::OpenCutList
 
     end
 
-    def show_dialog(tab_name = nil, &ready_block)
+    def show_dialog(tab_name = nil, auto_create = true, &ready_block)
+
+      return if @dialog.nil? && !auto_create
 
       unless @dialog
         create_dialog
@@ -525,7 +527,7 @@ module Ladb::OpenCutList
 
     def execute_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
 
-      show_dialog(nil) do
+      show_dialog(nil, true) do
         # parameters and callback must be formatted as JS code
         if tab_name and command
           @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
