@@ -859,6 +859,7 @@
                 defaultLengthIncrease,
                 defaultWidthIncrease,
                 defaultThicknessIncrease,
+                defaultStdLengths,
                 defaultStdWidths,
                 defaultStdThicknesses,
                 defaultStdSections,
@@ -871,6 +872,7 @@
                     defaultLengthIncrease = '0';
                     defaultWidthIncrease = '0';
                     defaultThicknessIncrease = '0';
+                    defaultStdLengths = '';
                     defaultStdWidths = '';
                     defaultStdThicknesses = '';
                     defaultStdSections = '';
@@ -883,6 +885,7 @@
                     defaultLengthIncrease = '50mm';
                     defaultWidthIncrease = '5mm';
                     defaultThicknessIncrease = '5mm';
+                    defaultStdLengths = '';
                     defaultStdWidths = '';
                     defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
                     defaultStdSections = '';
@@ -895,6 +898,7 @@
                     defaultLengthIncrease = '0';
                     defaultWidthIncrease = '0';
                     defaultThicknessIncrease = '0';
+                    defaultStdLengths = '';
                     defaultStdWidths = '';
                     defaultStdThicknesses = '5mm;8mm;10mm;15mm;18mm;22mm';
                     defaultStdSections = '';
@@ -904,12 +908,13 @@
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     defaultThickness = '0';
-                    defaultLengthIncrease = '50mm';
+                    defaultLengthIncrease = '0';
                     defaultWidthIncrease = '0';
                     defaultThicknessIncrease = '0';
+                    defaultStdLengths = '3000mm';
                     defaultStdWidths = '';
                     defaultStdThicknesses = '';
-                    defaultStdSections = '30mm x 40mm;40mm x 50mm';
+                    defaultStdSections = '40mm x 30mm;50mm x 40mm';
                     defaultStdSizes = '';
                     defaultGrained = false;
                     defaultEdgeDecremented = false;
@@ -919,6 +924,7 @@
                     defaultLengthIncrease = '50mm';
                     defaultWidthIncrease = '0';
                     defaultThicknessIncrease = '0';
+                    defaultStdLengths = '';
                     defaultStdWidths = '23mm;33mm;43mm';
                     defaultStdThicknesses = '';
                     defaultStdSections = '';
@@ -935,7 +941,7 @@
             $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
             $inputWidthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
             $inputThicknessIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
-            setTokens($inputStdLengths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdWidths));
+            setTokens($inputStdLengths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
             setTokens($inputStdWidths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
             setTokens($inputStdThicknesses, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
             setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
@@ -1156,7 +1162,7 @@
 
         // Load settings
         var settingsKeys = [];
-        for (var type = 0; type <= 3; type++) {     // 3 = TYPE_DIMENSIONAL
+        for (var type = 0; type <= 4; type++) {     // 4 = TYPE_EDGE_BAND
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);
