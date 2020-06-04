@@ -18,11 +18,11 @@ module Ladb
       ## /!\ Auto-generated lines, do not edit ##
       ## DESCRIPTION_START ##
       when 'de'
-        ex.description = 'Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, gruppenfinanziert und einfach zu bedienen ;)'
+        ex.description = 'Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)'
       when 'fr'
         ex.description = 'Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'ru'
-        ex.description = 'Простой в использовании плагин расчета карт раскроя для деревообработчиков. Открытый исходный код ;)'
+        ex.description = 'Плагин расчета карт раскроя для деревообработчиков. Открытый исходный код, краундфандинг и простота использования.'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
