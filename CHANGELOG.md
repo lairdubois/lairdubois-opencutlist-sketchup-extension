@@ -8,7 +8,7 @@ in 1.x and 0.x versions.
 
   * Added **russian** language (thanks to Vladimir Badulya for joining the translators team)
   * Added **self-updater**
-  * Added **dimensional cutting diagram** feature
+  * Added **dimensional cutting diagram** feature (thanks to Kai Schröder, CyberBLN, for code review and fixes)
   * Added flipped part detection  
   * Added 'hit enter' behavior to validate forms in modal dialogs
   * Added part oversize parameters
