@@ -2,9 +2,13 @@
 
 **OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of cut lists and cutting diagrams for woodworking projects.
 
-![OpenCutList](docs/img/capture-cutlist.jpg)
+![OpenCutList](docs/img/capture-solid-wood-part-list.png)
 
-![OpenCutList](docs/img/capture-cuttingdiagram.jpg)
+![OpenCutList](docs/img/capture-sheet-goods-cutting-diagrams.png)
+
+![OpenCutList](docs/img/capture-dimensional-lumbers-cutting-diagrams.png)
+
+![OpenCutList](docs/img/capture-edge-banding.png)
 
 ## Download and Install
 
