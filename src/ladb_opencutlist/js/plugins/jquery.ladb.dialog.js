@@ -156,14 +156,18 @@
                 }
 
                 // Compare versions
-                if (data.version && data.build && fnCompareVersion(data.version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
+                if (data.version) {
+                    var len = data.version.indexOf('-');    // Remove possible '-dev'
+                    var version = data.version.substring(0, len === -1 ? data.version.length : len);
+                    if (data.build && fnCompareVersion(version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
 
-                    // Flag as upgradable
-                    that.upgradable = true;
+                        // Flag as upgradable
+                        that.upgradable = true;
 
-                    // Trigger updatable event
-                    that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+                        // Trigger updatable event
+                        that.$element.trigger(jQuery.Event('updatable.ladb.core'));
 
+                    }
                 }
 
             }).fail(function(e) {
