@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.1
+
+  * Fixed impossible final area
+  * Fixed material unique name
+  
 * 1.9.0 (2020-06-04)
 
   * Added **russian** language (thanks to Vladimir Badulya for joining the translators team)

@@ -1880,7 +1880,7 @@
                             fnEditMaterial(function ($editMaterialModal) {
                                 $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
                             });
-                        } else {
+                        } else if (value) {
                             var sizeAndGrained = value.split('|');
                             var size = sizeAndGrained[0].split('x');
                             var stdSheetLength = size[0].trim();
