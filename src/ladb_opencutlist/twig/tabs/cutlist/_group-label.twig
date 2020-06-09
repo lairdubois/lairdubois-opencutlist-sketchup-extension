@@ -10,13 +10,14 @@
     / <strong>{% if group.material_type == 4 %}{# 4 = TYPE_EDGE #}{{ group.std_thickness }} x {% endif %}<span{% if not group.std_available %} class="text-danger"{% endif %}>{{ group.std_dimension }}</span></strong>
     {% if not group.std_available %}
         &nbsp;&nbsp;
-        <span class="label label-danger label-fine"><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.not_available_'~group.std_dimension_stipped_name)|i18next }}
-        {% if not hideAddBtn|default(true) %}
-            <div class="ladb-minitools ladb-minitools-inline no-print">
-                <span class="ladb-separator ladb-separator-white"></span>
-                <a href="#" class="ladb-btn-add-std-dimension-to-material ladb-tool-white" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.add_std_'~group.std_dimension_stipped_name~'_to_material')|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~group.std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-plus"></i></a>
-            </div>
-        {% endif %}
-        </span>
+        <div class="label label-danger label-fine">
+            <span data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.not_available_std_'~group.std_dimension_stipped_name)|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~group.std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.not_available_std_'~group.std_dimension_stipped_name)|i18next }}</span>
+            {% if not hideAddBtn|default(true) %}
+                <div class="ladb-minitools ladb-minitools-inline no-print">
+                    <span class="ladb-separator ladb-separator-white"></span>
+                    <a href="#" class="ladb-btn-add-std-dimension-to-material ladb-tool-white" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.add_std_'~group.std_dimension_stipped_name~'_to_material')|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~group.std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-plus"></i></a>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 {% endif %}

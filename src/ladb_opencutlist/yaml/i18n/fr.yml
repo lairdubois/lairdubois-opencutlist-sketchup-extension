@@ -97,9 +97,9 @@ tab:
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
     selection_only: Sélection
     material_undefined: Sans matière
-    not_available_width: Largeur non disponible
-    not_available_thickness: Épaisseur non disponible
-    not_available_section: Section non disponible
+    not_available_std_width: Largeur non standard
+    not_available_std_thickness: Épaisseur non standard
+    not_available_std_section: Section non standard
     highlight_part: Voir la pièce dans le modèle
     highlight_parts: Voir les pièces dans le modèle
     edit_part_properties: Éditer les propriétés de la pièce
@@ -107,6 +107,9 @@ tab:
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
+      not_available_std_width: La largeur *{{ std_dimension }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'
+      not_available_std_thickness: L'épaisseur *{{ std_dimension }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'
+      not_available_std_section: La section *{{ std_dimension }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'
       add_std_width_to_material: |
         Ajouter la largeur *{{ std_dimension }}*
         à la matière '{{ material_name }}'
