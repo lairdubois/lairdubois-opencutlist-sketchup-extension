@@ -1528,9 +1528,14 @@
                     var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
 
                     if (cuttingdiagram1dOptions.std_bar) {
+                        var defaultValue = $inputStdBar.val();
                         $inputStdBar.val(cuttingdiagram1dOptions.std_bar);
-                        if ($inputStdBar.val() == null && response.std_lengths.length === 0) {
-                            $inputStdBar.val('0');  // Special case if the std_bar is not present anymore in the list and no std size defined. Select "none" by default.
+                        if ($inputStdBar.val() == null) {
+                            if (response.std_lengths.length === 0) {
+                                $inputStdBar.val('0');  // Special case if the std_bar is not present anymore in the list and no std size defined. Select "none" by default.
+                            } else {
+                                $inputStdBar.val(defaultValue);
+                            }
                         }
                     }
                     $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
@@ -1561,7 +1566,7 @@
                             fnEditMaterial(function ($editMaterialModal) {
                                 $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
                             });
-                        } else {
+                        } else if (value) {
                             $inputStdBarLength.val(value);
                         }
                     };
@@ -1841,9 +1846,14 @@
                     var $formGroupGrained = $('#ladb_form_group_grained', $modal);
 
                     if (cuttingdiagram2dOptions.std_sheet) {
+                        var defaultValue = $inputStdSheet.val();
                         $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
-                        if ($inputStdSheet.val() == null && response.std_sizes.length === 0) {
-                            $inputStdSheet.val('0x0|' + response.grained);  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                        if ($inputStdSheet.val() == null) {
+                            if (response.std_sizes.length === 0) {
+                                $inputStdSheet.val('0x0|' + response.grained);  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                            } else {
+                                $inputStdSheet.val(defaultValue);
+                            }
                         }
                     }
                     $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
