@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       # Update properties
       if @display_name != material.name
 
-        material.name = materials.unique_name(@display_name)
+        material.name = Sketchup.version_number >= 1800000000 ? materials.unique_name(@display_name) : @display_name
 
         # In this case the event will be triggered by SU itself
         trigger_change_event = false
