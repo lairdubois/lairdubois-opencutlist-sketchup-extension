@@ -81,6 +81,7 @@
     var commandCallbacks = {};
     var commandCallStack = [];
     var commandRunning = false;
+    var maxCommandCallLength = $('body').hasClass('ie') ? 2000 : Number.MAX_SAFE_INTEGER;
 
     function rubyCallCommand(command, params, callback) {
         var call = {
@@ -111,9 +112,9 @@
             if (call) {
                 commandRunning = true;
                 var call_json = JSON.stringify(call);
-                if (call_json.length > 2000 && $('body').hasClass('ie')) {
-                    {# Devide json string into multiple chunks to avoid IE url parameter max size = 2048 #}
-                    var chunks = call_json.match(/.{1,2000}/g);
+                if (call_json.length > maxCommandCallLength) {
+                    {# Split json string into multiple chunks to avoid IE url parameter max size = 2048 #}
+                    var chunks = call_json.match(new RegExp('.{1,' + maxCommandCallLength + '}', 'g'));
                     for (var i = 0 ; i < chunks.length; i++) {
                         window.location.href = "skp:ladb_opencutlist_command@" + i + "/" + (chunks.length - 1) + "/" + chunks[i];
                     }

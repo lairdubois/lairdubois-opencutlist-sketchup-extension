@@ -426,12 +426,12 @@ module Ladb::OpenCutList
 
       # Setup dialog actions
       call_json = ''
-      @dialog.add_action_callback("ladb_opencutlist_command") do |action_context, chunk|
+      @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, chunk|
         match = /^([0-9]+)\/([0-9]+)\/(.+)$/.match(chunk)
-        chunk_index = match[1]
-        chunk_max_index = match[2]
+        current_chunk_index = match[1]
+        last_chunk_index = match[2]
         call_json += match[3]
-        if chunk_index == chunk_max_index
+        if current_chunk_index == last_chunk_index
           call = JSON.parse(call_json)
           call_json = ''
           response = execute_command(call['command'], call['params'])
