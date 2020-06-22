@@ -80,7 +80,7 @@ core:
 
       *Рассмотрите возможность спонсорства этого проекта, чтобы помочь нам улучшить его функциональность!*
     downloading: Идет процесс загрузки...
-    changelog: Что нового? # TODO
+    changelog: Что нового?
     success: |
       Обновление OpenCutList завершено!
 
@@ -97,9 +97,9 @@ tab:
       Если выбор не осуществлен, то все видимые компоненты сцены будут включены в список деталей.
     selection_only: Выбор
     material_undefined: Материал не задан
-    not_available_std_width: Ширина не задана # TODO
-    not_available_std_thickness: Толщина не задана # TODO
-    not_available_std_section: Поперечное сечение не задано # TODO
+    not_available_std_width: Ширина не задана
+    not_available_std_thickness: Толщина не задана
+    not_available_std_section: Поперечное сечение не задано
     highlight_part: Просмотр детали в модели
     highlight_parts: Просмотр деталей в модели
     edit_part_properties: Редактировать свойства детали
@@ -107,9 +107,9 @@ tab:
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
-      not_available_std_width: La largeur *{{ std_dimension }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_thickness: L'épaisseur *{{ std_dimension }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_section: La section *{{ std_dimension }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'  # TODO
+      not_available_std_width: Ширина *{{ std_dimension }}* не определялась на материале {{ material_name }}'
+      not_available_std_thickness: Толщина *{{ std_dimension }}* не определялась на материале {{ material_name }}'
+      not_available_std_section: Поперечное сечение *{{ std_dimension }}* не определялась на материале {{ material_name }}'
       add_std_width_to_material: |
         Добавить ширину *{{ std_dimension }}*
         материала '{{ material_name }}'
@@ -552,17 +552,17 @@ tab:
       std_widths_help: |
         Стандартная ширина кромок.
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_thicknesses: Доступная толщина  # TODO change "available" by "standard"
+      std_thicknesses: Стандартные толщины
       std_thicknesses_placeholder: толщина ; ...
       std_thicknesses_help: |
         Доступная грубая толщина.
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_sections: Стандартные размеры сечения  # TODO change "available" by "standard"
+      std_sections: Стандартные размеры сечения
       std_sections_placeholder: ширина x толщина ; ...
       std_sections_help: |
         Формат ввода: **Ш**x**T**, где **Ш** и **T** обозначают *ширину* и *толщину* размеров сечения (*фактические не номинальные размеры*).
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_sizes: Доступные размеры панели  # TODO change "available" by "standard"
+      std_sizes: Стандартный размеры панели
       std_sizes_placeholder: длина x ширина ; ...
       std_sizes_help: |
         Формат ввода: **Д**x**Ш**, где **Д** и **Ш** обазначают *длину* и *ширину* панели.
@@ -729,4 +729,3 @@ tool:
   highlight:
     transparency: Прозрачность
     zoom_extents: Приблизить
-    

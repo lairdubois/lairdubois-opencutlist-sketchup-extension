@@ -97,9 +97,9 @@ tab:
       Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
     selection_only: Auswahl
     material_undefined: Kein Material definiert
-    not_available_std_width: Breite nicht verfügbar # TODO
-    not_available_std_thickness: Dicke nicht verfügbar # TODO
-    not_available_std_section: Querschnitt nicht verfügbar # TODO
+    not_available_std_width: Breite nicht verfügbar
+    not_available_std_thickness: Dicke nicht verfügbar
+    not_available_std_section: Querschnitt nicht verfügbar
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften bearbeiten
@@ -107,9 +107,9 @@ tab:
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
-      not_available_std_width: La largeur *{{ std_dimension }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_thickness: L'épaisseur *{{ std_dimension }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_section: La section *{{ std_dimension }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'  # TODO
+      not_available_std_width: Die Breite *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
+      not_available_std_thickness: Die Dicke *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
+      not_available_std_section: Der Querschnitt *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
       add_std_width_to_material: |
         Breite *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
@@ -542,27 +542,27 @@ tab:
       width_increase_help: Übermass welches das **Breitenrohmass** vergrössert.
       thickness_increase: Dickenzumaß
       thickness_increase_help: Übermaß welches das **Dickerohmass** vergrössert.
-      std_lengths: Standardlängen
+      std_lengths: Standard-Längen
       std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
         Standardlänge der Stangen.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
-      std_widths: Standardbreiten
+      std_widths: Standard-Breiten
       std_widths_placeholder: Breite ; ...
       std_widths_help: |
         Standardbreiten der Kantenbänder.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_thicknesses: Verfügbare Dicken  # TODO change "available" by "standard"
+      std_thicknesses: Standard-Dicken
       std_thicknesses_placeholder: Dicke ; ...
       std_thicknesses_help: |
         Rohmaße der verfügbaren Dicken.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_sections: Verfügbare Querschnitte  # TODO change "available" by "standard"
+      std_sections: Standard-Querschnitte
       std_sections_placeholder: Breite x Dicke ; ...
       std_sections_help: |
         Erwartetes Format: **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_sizes: Verfügbare Plattenmaße  # TODO change "available" by "standard"
+      std_sizes: Standard-Plattenmaße
       std_sizes_placeholder: Länge x Breite ; ...
       std_sizes_help: |
         Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.

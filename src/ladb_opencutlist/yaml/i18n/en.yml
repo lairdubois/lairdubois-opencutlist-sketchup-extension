@@ -97,9 +97,9 @@ tab:
       If the selection is empty, all visible components of the scene will be included in the parts list.
     selection_only: Selection
     material_undefined: No material defined
-    not_available_std_width: Width not standard
-    not_available_std_thickness: Thickness not standard
-    not_available_std_section: Cross section not standard
+    not_available_std_width: Width undefined
+    not_available_std_thickness: Thickness undefined
+    not_available_std_section: Cross-section undefined
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
@@ -107,9 +107,9 @@ tab:
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
-      not_available_std_width: La largeur *{{ std_dimension }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_thickness: L'épaisseur *{{ std_dimension }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'  # TODO
-      not_available_std_section: La section *{{ std_dimension }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'  # TODO
+      not_available_std_width: The width *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
+      not_available_std_thickness: The thickness *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
+      not_available_std_section: The cross-section *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
         to material '{{ material_name }}'
@@ -117,7 +117,7 @@ tab:
         Add thickness *{{ std_dimension }}*
         to material '{{ material_name }}'
       add_std_section_to_material: |
-        Add cross section *{{ std_dimension }}*
+        Add cross-section *{{ std_dimension }}*
         to material '{{ material_name }}'
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -552,17 +552,17 @@ tab:
       std_widths_help: |
         Standard widths of edge bandings.
         *Widths without units are considered to be in model units.*
-      std_thicknesses: Available Thicknesses  # TODO change "available" by "standard"
+      std_thicknesses: Standard Thicknesses
       std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
         Available rough thicknesses.
         *Sizes without units are considered to be in model units.*
-      std_sections: Available Cross Sections  # TODO change "available" by "standard"
+      std_sections: Standard Cross Sections
       std_sections_placeholder: width x thickness ; ...
       std_sections_help: |
         Expected format: **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (*in actual not nominal sizes*).
         *Sizes without units are considered to be in model units.*
-      std_sizes: Available Panel Sizes  # TODO change "available" by "standard"
+      std_sizes: Standard Panel Sizes
       std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
