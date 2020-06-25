@@ -355,5 +355,13 @@
       ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit_sign
     end
 
+    # -----
+
+    # Take a float containing a length in inch
+    # and truncate it to "max Sketchup" precision
+    def truncate_length_value(f)
+      (f * 100000000).floor / 100000000.0
+    end
+
   end
 end

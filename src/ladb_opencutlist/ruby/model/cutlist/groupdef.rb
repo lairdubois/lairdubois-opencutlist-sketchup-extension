@@ -36,7 +36,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_group_id(material, material_attributes, std_info)
-      Digest::MD5.hexdigest("#{material.nil? ? 0 : material_attributes.uuid}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? '|' + std_info[:width].to_l.to_f.truncate(8).to_s + 'x' + std_info[:thickness].to_l.to_f.truncate(8).to_s : ''}")
+      Digest::MD5.hexdigest("#{material.nil? ? 0 : material_attributes.uuid}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOW ? '|' + DimensionUtils.instance.truncate_length_value(std_info[:width].to_l.to_f).to_s + 'x' + DimensionUtils.instance.truncate_length_value(std_info[:thickness].to_l.to_f).to_s : ''}")
     end
 
     # -----
