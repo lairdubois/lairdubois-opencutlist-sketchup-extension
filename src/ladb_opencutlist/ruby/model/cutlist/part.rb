@@ -68,8 +68,8 @@ module Ladb::OpenCutList
         # Folder part takes first child number
         if @children.empty?
           @name = child_part.name + ', ...'
-          @number = child_part.number + '+'
-          @saved_number = child_part.saved_number + '+' if child_part.saved_number
+          @number = child_part.number.to_s + '+'
+          @saved_number = child_part.saved_number.to_s + '+' if child_part.saved_number
         end
 
         @children.push(child_part)

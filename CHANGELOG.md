@@ -8,6 +8,8 @@ in 1.x and 0.x versions.
 
   * Fixed impossible final area
   * Fixed material unique name
+  * Fixed IE limitations on url parameter size
+  * Improved cutlist part number storage
   
 * 1.9.0 (2020-06-04)
 

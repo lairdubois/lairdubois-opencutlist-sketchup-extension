@@ -45,8 +45,9 @@ module Ladb::OpenCutList
       @material_attributes_cache = {}
       @definition_attributes_cache = {}
 
-      # Reset materials UUIDS
+      # Reset materials and definitions used UUIDS
       MaterialAttributes::reset_used_uuids
+      DefinitionAttributes::reset_used_uuids
 
     end
 
@@ -240,7 +241,7 @@ module Ladb::OpenCutList
 
         # Define part
 
-        part_id = PartDef.generate_part_id(group_id, definition, instance_info, @dynamic_attributes_name)
+        part_id = PartDef.generate_part_id(group_id, definition, definition_attributes, instance_info, @dynamic_attributes_name)
         part_def = group_def.get_part_def(part_id)
         unless part_def
 
@@ -252,7 +253,7 @@ module Ladb::OpenCutList
                 number = saved_number
               end
             else
-              if definition_attributes.number.is_a? Numeric
+              if saved_number.is_a? Numeric
                 number = saved_number
               end
             end
@@ -497,7 +498,7 @@ module Ladb::OpenCutList
       # Sort material usages and add them to cutlist
       cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [ v.display_name.downcase ] })
 
-      part_number = cutlist.max_number ? cutlist.max_number.succ : (@part_number_with_letters ? 'A' : '1')
+      part_number = cutlist.max_number ? cutlist.max_number.succ : (@part_number_with_letters ? 'A' : 1)
 
       # Sort and browse groups
 
@@ -507,7 +508,7 @@ module Ladb::OpenCutList
         next if group_def.part_count == 0
 
         if @part_number_sequence_by_group
-          part_number = group_def.max_number ? group_def.max_number.succ : (@part_number_with_letters ? 'A' : '1')    # Reset number increment on each group
+          part_number = group_def.max_number ? group_def.max_number.succ : (@part_number_with_letters ? 'A' : 1)    # Reset number increment on each group
         end
 
         group = Group.new(group_def, cutlist)
@@ -671,7 +672,7 @@ module Ladb::OpenCutList
     def _get_definition_attributes(definition)
       key = definition ? definition.name : '$EMPTY$'
       unless @definition_attributes_cache.has_key? key
-        @definition_attributes_cache[key] = DefinitionAttributes.new(definition)
+        @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
       end
       @definition_attributes_cache[key]
     end

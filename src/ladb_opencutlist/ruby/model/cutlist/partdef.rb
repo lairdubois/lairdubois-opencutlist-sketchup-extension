@@ -72,17 +72,17 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.generate_part_id(group_id, definition, instance_info, dynamic_attributes_name = false)
+    def self.generate_part_id(group_id, definition, definition_attributes, instance_info, dynamic_attributes_name = false)
 
       # Uses name for dynamic components to separate instances with the same definition, but different name
-      entity_id = definition.entityID
+      entity_id = definition_attributes.uuid.nil? ? definition.entityID : definition_attributes.uuid
       if dynamic_attributes_name
         name, is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
         entity_id = name if is_dynamic_attributes_name
       end
 
       # Include scale into part_id to separate instances with the same definition, but different scale
-      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{instance_info.size.length.to_s}|#{instance_info.size.width.to_s}|#{instance_info.size.thickness.to_s}|#{instance_info.flipped.to_s}")
+      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{instance_info.size.length.to_f.truncate(8).to_s}|#{instance_info.size.width.to_f.truncate(8).to_s}|#{instance_info.size.thickness.to_f.truncate(8).to_s}|#{instance_info.flipped.to_s}")
 
     end
 

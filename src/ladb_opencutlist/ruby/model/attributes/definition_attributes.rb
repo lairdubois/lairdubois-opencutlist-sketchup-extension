@@ -8,15 +8,21 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :cumulable, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
-    def initialize(definition)
+    @@used_uuids = []
+
+    def initialize(definition, force_unique_uuid = false)
       @definition = definition
-      read_from_attributes
+      read_from_attributes(force_unique_uuid)
     end
 
     # -----
+
+    def self.reset_used_uuids
+      @@used_uuids.clear
+    end
 
     def self.valid_cumulable(cumulable)
       if cumulable
@@ -77,9 +83,28 @@ module Ladb::OpenCutList
 
     # -----
 
-    def read_from_attributes
+    def read_from_attributes(force_unique_uuid = false)
       if @definition
-        @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
+
+        # Special case for UUID that must be truely unique in the session
+        uuid = Plugin.instance.get_attribute(@definition, 'uuid', nil)
+        if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
+
+          # Generate a new UUID
+          uuid = SecureRandom.uuid
+
+          # Store the new uuid to definition attributes
+          @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+
+        end
+        @@used_uuids.push(uuid)
+        @uuid = uuid
+
+        begin
+          @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
+        rescue JSON::ParserError
+          @numbers = {}
+        end
         @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
         @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
         @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
@@ -91,6 +116,7 @@ module Ladb::OpenCutList
 
     def write_to_attributes
       if @definition
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
