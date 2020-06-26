@@ -358,9 +358,11 @@
     # -----
 
     # Take a float containing a length in inch
-    # and truncate it to "max Sketchup" precision
+    # and truncate it to "Sketchup" precision
     def truncate_length_value(f)
-      (f * 1000000).floor / 1000000.0
+      return f if f == 0
+      factor = 10**@length_precision
+      (f * factor).floor / (factor * 1.0)
     end
 
   end
