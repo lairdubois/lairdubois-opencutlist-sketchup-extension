@@ -361,7 +361,7 @@
     # and truncate it to "Sketchup" precision
     def truncate_length_value(f)
       return f if f == 0
-      factor = 10**@length_precision
+      factor = 10**4 # 4 = 0.0000 arbitrary length precision
       (f * factor).floor / (factor * 1.0)
     end
 
