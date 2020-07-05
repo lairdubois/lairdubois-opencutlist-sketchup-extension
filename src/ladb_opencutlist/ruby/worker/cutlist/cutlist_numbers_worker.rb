@@ -29,6 +29,11 @@ module Ladb::OpenCutList
           next
         end
 
+        # Ignore Edge groups
+        if group.material_type == MaterialAttributes::TYPE_EDGE
+          next
+        end
+
         group.parts.each { |part|
 
           if part.is_a?(FolderPart)

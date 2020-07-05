@@ -23,7 +23,7 @@
     "plugin-error": "1.0.1",
     "slash": "3.0.0",
     "through2": "3.0.1",
-    "twig": "^1.15.1",
+    "twig": "1.13.3",
     "vinyl-file": "3.0.0"
   },
   "scripts": {

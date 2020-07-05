@@ -4,12 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.1
+* 1.9.1 (2020-07-05)
 
   * Fixed impossible final area
   * Fixed material unique name
   * Fixed IE limitations on url parameter size
   * Improved cutlist part number storage
+  * Rollback twig to 1.13.3 for IE compatibility
   
 * 1.9.0 (2020-06-04)
 
