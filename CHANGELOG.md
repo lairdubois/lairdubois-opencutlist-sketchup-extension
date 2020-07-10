@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.2
+
+  * Fixed cutting size with edge reduction in cutting diagrams
+
 * 1.9.1 (2020-07-05)
 
   * Fixed impossible final area

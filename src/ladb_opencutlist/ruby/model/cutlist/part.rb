@@ -20,8 +20,8 @@ module Ladb::OpenCutList
       @width = part_def.size.width.to_s
       @thickness = part_def.size.thickness.to_s
       @count = part_def.count
-      @cutting_length = [part_def.cutting_size.length - part_def.edge_length_decrement, 0].max.to_l.to_s
-      @cutting_width = [part_def.cutting_size.width - part_def.edge_width_decrement].max.to_l.to_s
+      @cutting_length = part_def.cutting_length.to_s
+      @cutting_width = part_def.cutting_width.to_s
       @cutting_thickness = part_def.cutting_size.thickness.to_s
       @material_name = part_def.material_name
       @labels = part_def.labels

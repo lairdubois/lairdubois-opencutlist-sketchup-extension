@@ -55,7 +55,7 @@ module Ladb::OpenCutList
       # Add boxes from parts
       group.parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.def.cutting_size.length.to_f, part.def.cutting_size.width.to_f, part)
+          e.add_box(part.def.cutting_length.to_f, part.def.cutting_width.to_f, part)
         end
       }
 
