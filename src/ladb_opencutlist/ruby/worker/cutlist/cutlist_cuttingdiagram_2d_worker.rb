@@ -55,7 +55,7 @@ module Ladb::OpenCutList
       # Add boxes from parts
       group.parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.def.cutting_length.to_f, part.def.cutting_width.to_f, part)
+          e.add_box(DimensionUtils.instance.truncate_length_value(part.def.cutting_length.to_f), DimensionUtils.instance.truncate_length_value(part.def.cutting_width.to_f), part)
         end
       }
 
@@ -238,8 +238,8 @@ module Ladb::OpenCutList
                     :px_y => _to_px(box.y),
                     :px_length => _to_px(box.length),
                     :px_width => _to_px(box.width),
-                    :length => box.length.to_l.to_s,
-                    :width => box.width.to_l.to_s,
+                    :length => box.data.cutting_length,
+                    :width => box.data.cutting_width,
                     :rotated => box.rotated,
                     :edge_material_names => box.data.edge_material_names,
                     :edge_std_dimensions => box.data.edge_std_dimensions,

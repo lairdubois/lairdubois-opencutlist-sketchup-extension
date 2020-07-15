@@ -7,6 +7,7 @@ in 1.x and 0.x versions.
 * 1.9.2
 
   * Fixed cutting size with edge reduction in cutting diagrams
+  * Forced cutting diagrams internal value precision to 0.0000
 
 * 1.9.1 (2020-07-05)
 

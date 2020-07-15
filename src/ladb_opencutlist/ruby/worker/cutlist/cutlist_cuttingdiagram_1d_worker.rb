@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/bin_packing_1d/packengine'
+  require_relative '../../utils/dimension_utils'
 
   class CutlistCuttingdiagram1dWorker
 
@@ -40,7 +41,7 @@ module Ladb::OpenCutList
       # Add boxes from parts
       group.parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.def.cutting_size.length.to_f, part)
+          e.add_box(DimensionUtils.instance.truncate_length_value(part.def.cutting_size.length.to_f), part)
         end
       }
 
@@ -221,7 +222,7 @@ module Ladb::OpenCutList
                 :id => box.data.id,
                 :number => box.data.number,
                 :name => box.data.name,
-                :length => box.length.to_l.to_s,
+                :length => box.data.cutting_length,
                 :slices => _to_slices(box.x, box.length, wrap_length),
             })
             unless @hide_part_list
