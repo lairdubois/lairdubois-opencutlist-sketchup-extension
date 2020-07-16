@@ -17,7 +17,7 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
     6.14.4
     $ npm install npm@latest -g
     $ npm -v
-    6.14.4
+    6.14.6
 ```
 
 On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
@@ -50,7 +50,7 @@ Change to the project directory:
 ```
 
 In the future, if you want to retrieve origin sources updates, just execute the git pull command from your project directory.
-Caution, because if you have changed some files, this can generate conflicts that you will need to resolve.
+Caution, changing files will generate conflicts that you will need to resolve.
 
 ``` bash
      $ git pull origin master
@@ -89,7 +89,7 @@ If you wish to build the archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencut
     $ gulp build --env=dev
 ```
 
-The default behaviour of the **gulp** task (without argument) is to *compile* and then *build*.
+The default behavior of the **gulp** task (without argument) is to *compile* and then *build*.
 
 ## 5. Adding a New Language
 
@@ -100,18 +100,18 @@ After compiling the project (see 4.), your new language will appear in the **Pre
 
 Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
 
-## 6. Run OpenCutList from Dev project folder
+## 6. Run OpenCutList from Dev Project Folder
 
 ### Prerequisite
 
-> To avoid conflicts, you must not have a compiled OpenCutList (*.rbz) installed in you SkechUp environment.
+> To avoid conflicts, you must first uninstall any compiled OpenCutList (*.rbz) installed in you SketchUp environment.
 
 In order to develop OpenCutList, you do not need to recompile the *.rbz archive every time you make changes. You can run OpenCutList directly from sources.
-Install the [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mandatory, but it will make it easire to load or reload ruby scripts. The plugin is also available here [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader).
+Install the [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mandatory, but it will make it easier to load or reload ruby scripts. The plugin is also available here [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader).
 
 ### Launching
 
-After installing AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
+After installing the AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
 
 ![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
 
@@ -121,7 +121,7 @@ Browse to and select the `main.rb` ruby file from the source folder of OpenCutLi
 
 That's it. You can now play with OpenCutList.
 
-### Reflect code changes
+### Reflect Code Changes
 
 #### Ruby changes
 
