@@ -1011,6 +1011,8 @@
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
+                var $rectIncreaseLength = $('svg .increase-length', $modal);
+                var $rectIncreaseWidth = $('svg .increase-width', $modal);
                 var $rectEdgeYmax = $('svg .edge-ymax', $modal);
                 var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeXmin = $('svg .edge-xmin', $modal);
@@ -1070,6 +1072,19 @@
                         $rectEdgeXmax.addClass('ladb-active');
                     }
                 };
+                var fnUpdateIncreasesPreview = function() {
+                    if ($inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                        $rectIncreaseLength.removeClass('ladb-active');
+                    } else {
+                        $rectIncreaseLength.addClass('ladb-active');
+                    }
+                    if ($inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                        $rectIncreaseWidth.removeClass('ladb-active');
+                    } else {
+                        $rectIncreaseWidth.addClass('ladb-active');
+                    }
+                };
+                fnUpdateIncreasesPreview();
 
                 var fnNewCheck = function($select, type) {
                     if ($select.val() === 'new') {
@@ -1097,6 +1112,14 @@
                         fnUpdateEdgesPreview();
                     }
                 };
+
+                // Bind input
+                $inputLengthIncrease.on('change', function() {
+                    fnUpdateIncreasesPreview();
+                });
+                $inputWidthIncrease.on('change', function() {
+                    fnUpdateIncreasesPreview();
+                });
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);
@@ -1144,6 +1167,14 @@
                             fnUpdateEdgesPreview();
                         }
                     });
+
+                // Bind increases
+                $rectIncreaseLength.on('click', function() {
+                    $inputLengthIncrease.focus();
+                });
+                $rectIncreaseWidth.on('click', function() {
+                    $inputWidthIncrease.focus();
+                });
 
                 // Bind edges
                 $rectEdgeYmin.on('click', function() {

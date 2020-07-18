@@ -474,6 +474,30 @@ body.no-ie, body.ie-gt10 {
 
   }
 
+  .axis {
+
+    &.axis-bg {
+      fill: rgba(0, 0, 0, 0.01);
+    }
+
+    &.axis-origin {
+      fill: #aaaaaa;
+    }
+
+    &.axis-x {
+      fill: #FF2A1A;
+    }
+
+    &.axis-y {
+      fill: #00F72C;
+    }
+
+    &.axis-z {
+      fill: #103FFB;
+    }
+
+  }
+
   .edge {
     cursor: pointer;
 
@@ -501,27 +525,18 @@ body.no-ie, body.ie-gt10 {
 
   }
 
-  .axis {
+  .increase {
+    cursor: pointer;
 
-    &.axis-bg {
-      fill: rgba(0, 0, 0, 0.01);
+    &:hover {
+      fill: url(#diagonalHatchOver) !important;
     }
 
-    &.axis-origin {
-      fill: #aaaaaa;
+    &.ladb-active {
+      fill: url(#diagonalHatchActive);
     }
 
-    &.axis-x {
-      fill: #FF2A1A;
-    }
-
-    &.axis-y {
-      fill: #00F72C;
-    }
-
-    &.axis-z {
-      fill: #103FFB;
-    }
+    fill: rgba(0, 0, 0, 0.01);
 
   }
 

@@ -1,0 +1,40 @@
+{% set areaSize = 280 %}
+{% set axisWidth = 2 %}
+{% set axisLength = 20 %}
+{% set axisOffset = 10 %}
+{% set partOutlineWidth = 2 %}
+{% set partLength = (areaSize - 40) * part.l_ratio %}
+{% set partWidth = (areaSize - 40) * part.w_ratio %}
+<svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
+
+    <g class="part">
+        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="part-outer" />
+        <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
+    </g>
+
+    {% block extra %}{% endblock %}
+
+    {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
+        {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
+        {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
+        {% set axesX = part.flipped ? (areaSize + partLength) / 2 - axisOffset - axisWLength : (areaSize - partLength) / 2 + axisOffset %}
+        {% set axesY = (areaSize - partWidth) / 2 + axisOffset %}
+        <svg x="{{ axesX }}" y="{{ axesY }}" class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
+            {% if part.flipped %}<g transform="scale(-1,1) translate(-{{ axisWLength }},0)">{% endif %}
+                <rect x="0" y="0" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
+                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
+                <rect x="0" y="{{ axisWidth }}" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
+                <rect x="{{ axisWidth }}" y="0" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+            {% if part.flipped %}</g>{% endif %}
+        </svg>
+    {% endif %}
+
+    <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
+    <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
+    <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+
+    {% if group.material_grained %}
+        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
+    {% endif %}
+
+</svg>
