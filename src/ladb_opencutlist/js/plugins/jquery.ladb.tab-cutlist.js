@@ -1073,12 +1073,12 @@
                     }
                 };
                 var fnUpdateIncreasesPreview = function() {
-                    if ($inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                         $rectIncreaseLength.removeClass('ladb-active');
                     } else {
                         $rectIncreaseLength.addClass('ladb-active');
                     }
-                    if ($inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                         $rectIncreaseWidth.removeClass('ladb-active');
                     } else {
                         $rectIncreaseWidth.addClass('ladb-active');

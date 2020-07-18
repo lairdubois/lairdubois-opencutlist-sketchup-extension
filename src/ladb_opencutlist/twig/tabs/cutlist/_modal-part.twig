@@ -173,8 +173,10 @@
                                         <line x1="0" y1="0" x2="0" y2="10" style="stroke:#f77f00; stroke-width:4" />
                                     </pattern>
                                 </defs>
-                                <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize + partWidth) / 2 - partOutlineWidth - increaseWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWidth }}" class="increase increase-width"/>
                                 <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-length" />
+                                {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
+                                    <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize + partWidth) / 2 - partOutlineWidth - increaseWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWidth }}" class="increase increase-width"/>
+                                {% endif %}
                             {% endblock %}
                         {% endembed %}
                     </div>
