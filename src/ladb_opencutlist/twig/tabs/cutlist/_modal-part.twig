@@ -160,10 +160,12 @@
                             {% set axisLength = 20 %}
                             {% set axisOffset = 10 %}
                             {% set partOutlineWidth = 2 %}
-                            {% set increaseOutlineWidth = 4 %}
-                            {% set increaseWidth = 20 %}
+                            {% set edgeWidth = 3 %}
                             {% set partLength = (areaSize - 40) * part.l_ratio %}
                             {% set partWidth = (areaSize - 40) * part.w_ratio %}
+                            {% set increaseOutlineWidth = 4 %}
+                            {% set increaseLWidth = min(20, partLength / 3) %}
+                            {% set increaseWWidth = min(20, partWidth / 3) %}
                             {% block extra %}
                                 <defs>
                                     <pattern id="diagonalHatchActive" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
@@ -173,9 +175,15 @@
                                         <line x1="0" y1="0" x2="0" y2="10" style="stroke:#f77f00; stroke-width:4" />
                                     </pattern>
                                 </defs>
-                                <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-length" />
+                                <g class="increase increase-length">
+                                    <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseLWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseLWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-area" />
+                                    <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
+                                </g>
                                 {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-                                    <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize + partWidth) / 2 - partOutlineWidth - increaseWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWidth }}" class="increase increase-width"/>
+                                    <g class="increase increase-width">
+                                        <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize + partWidth) / 2 - partOutlineWidth - increaseWWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                                    </g>
                                 {% endif %}
                             {% endblock %}
                         {% endembed %}

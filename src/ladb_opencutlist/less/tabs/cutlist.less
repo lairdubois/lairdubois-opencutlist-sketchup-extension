@@ -529,11 +529,21 @@ body.no-ie, body.ie-gt10 {
     cursor: pointer;
 
     &:hover {
-      fill: url(#diagonalHatchOver) !important;
+      .increase-area {
+        fill: url(#diagonalHatchOver) !important;
+      }
+      .edge-inner {
+        fill: @ladb-brand-primary !important;
+      }
     }
 
     &.ladb-active {
-      fill: url(#diagonalHatchActive);
+      .increase-area {
+        fill: url(#diagonalHatchActive);
+      }
+      .edge-inner {
+        fill: #5bc0de;
+      }
     }
 
     fill: rgba(0, 0, 0, 0.01);
