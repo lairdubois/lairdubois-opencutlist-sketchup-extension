@@ -8,6 +8,7 @@ in 1.x and 0.x versions.
 
   * Fixed cutting size with edge reduction in cutting diagrams
   * Added part oversize view
+  * Added edit part tab memory
   * Improved russian translations
 
 * 1.9.1 (2020-07-05)

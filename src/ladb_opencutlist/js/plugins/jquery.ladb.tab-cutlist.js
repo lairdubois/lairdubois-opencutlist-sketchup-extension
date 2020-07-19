@@ -139,6 +139,7 @@
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
+        this.lastEditPartTab = undefined;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -982,6 +983,19 @@
                 }
             }
 
+            if (tab === undefined) {
+                tab = this.lastEditPartTab;
+            }
+            if (tab === undefined || tab.length === 0
+                || tab === 'axes' && multiple
+                || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
+                || tab === 'infos'
+                || tab === 'warnings'
+            ) {
+                tab = 'general';
+            }
+            this.lastEditPartTab = tab;
+
             var fnOpenModal = function(thumbnailFile) {
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
@@ -995,6 +1009,7 @@
                 }, true);
 
                 // Fetch UI elements
+                var $tabs = $('a[data-toggle="tab"]', $modal);
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
@@ -1073,12 +1088,12 @@
                     }
                 };
                 var fnUpdateIncreasesPreview = function() {
-                    if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                         $rectIncreaseLength.removeClass('ladb-active');
                     } else {
                         $rectIncreaseLength.addClass('ladb-active');
                     }
-                    if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                         $rectIncreaseWidth.removeClass('ladb-active');
                     } else {
                         $rectIncreaseWidth.addClass('ladb-active');
@@ -1112,6 +1127,11 @@
                         fnUpdateEdgesPreview();
                     }
                 };
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
+                })
 
                 // Bind input
                 $inputLengthIncrease.on('change', function() {
