@@ -7,6 +7,7 @@ in 1.x and 0.x versions.
 * 1.9.2
 
   * Fixed cutting size with edge reduction in cutting diagrams
+  * Added **italian** language (thanks to Pierluigi Colombo for joining the translators team)
   * Added part oversize view
   * Added edit part tab memory
   * Improved russian translations

@@ -605,8 +605,8 @@ tab:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_materials: Il modello non contiene alcun materiale.
       material_not_found: Nessun materiale trovato.
-      failed_import_skm_file: Errore di importazione durante la lettura del file .skm . **{{ error }}**
-      failed_export_skm_file: Errore di esportazione nel file .skm . **{{ error }}**
+      failed_import_skm_file: Errore di importazione durante la lettura del file .skm. **{{ error }}**
+      failed_export_skm_file: Errore di esportazione nel file .skm. **{{ error }}**
       failed_removing_material: Errore durante l'eliminazione del materiale. **{{ error }}**
     success:
       exported_to: Esportazione in {{ export_path }} completata.
@@ -686,7 +686,7 @@ tab:
     success:
       imported_title: Importazione eseguita
       imported_body: "sono state importate {{ count }} parti!"
-      imported_body_plural: "sono state importate{{ count }} parti!"
+      imported_body_plural: "sono state importate {{ count }} parti!"
     obsolete_base: Ricaricare il file CSV per sincronizzare il modello.
   sponsor:
     label: Sponsor
@@ -716,6 +716,7 @@ tab:
       Traduzioni:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
       - Vladimir Badulya (*russian*)
+      - Pierluigi Colombo (*italiano*)
     credits_description: |
       Lo sviluppo di questa estensione è agganciata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
