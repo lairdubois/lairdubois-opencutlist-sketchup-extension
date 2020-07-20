@@ -208,7 +208,7 @@ tab:
       labels_help: |
         Con la funzione *Etichette* si possono aggiungere criteri per personalizzare la definizione delle parti.
         Puoi aggiungere tutti gli elementi chiave che siano congruenti.
-        La distinta (Cutlist) puo essere filtrata mediante la lista degli elementi chiave.
+        La distinta puo essere filtrata mediante la lista degli elementi chiave.
       labels_multiple_info: Solo
       axes: Assi
       axes_help: Modifica le dimensioni in modo da farle coincidere agli assi (colori) della parte.
@@ -311,7 +311,7 @@ tab:
     export:
       title: Esporta in formato CSV
       info: |
-        Usa questo comando per esportare la *distinta materiali* in formato [CSV](https://wikipedia.org/wiki/Comma-separated_values) .
+        Usa questo comando per esportare la *distinta materiali* in formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) .
 
         <i class="ladb-opencutlist-icon-warning"></i> *Le parti contenute in gruppi nascosti non saranno esportate*.
       options: Opzioni di esportazione
@@ -375,7 +375,7 @@ tab:
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
-      option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola .
+      option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_presort: Pre-ordinamento delle parti
       option_presort_help: L'ordine con cui le parti verranno trattate nel posizionamento.
@@ -570,7 +570,7 @@ tab:
       grained: Direzione venatura
       grained_help: Configura la direzione della venatura del materiale.
       grained_0: Nessuna venatura
-      grained_1: Venatura Segue la Lunghezza
+      grained_1: Venatura segue la lunghezza
       edge_decremented: Riduci
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
@@ -615,7 +615,7 @@ tab:
     label: Importa
     title: Importa Parti
     help: |
-      Questa sezione serve per importare **parti** (definite da una selezione rettangolare) da un file [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
+      Questa sezione serve per importare **parti** (definite da una selezione rettangolare) da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
       Successivamente si possono utilizzare le funzionalità di *OpenCutList* per parti che sono state generate da un software diverso da *SketchUp*.
       Seleziona il pulsante **Apri file CSV** per caricarlo.
     open_csv: Apri file CSV
@@ -698,7 +698,7 @@ tab:
     backers: "{{count}} sostenitore finanziario"
     backers_plural: "{{count}} sostenitori finanziari"
     load_more: "Aggiungi ..."
-    ad: Gradisci OpenCutList?
+    ad: Gradisci OpenCutList? # Check ti piace OpenCutList?
   settings:
     label: Preferenze
     title: Preferenze
@@ -707,15 +707,15 @@ tab:
     size_and_position: Dimensione e posizione della finestra
   about:
     label: About
-    title: About
+    title: About # Check
     version: Versione
-    credits: Technical Credits
+    credits: Crediti Technici # Check
     credits_authors: |
       *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Traduzioni:
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
-      - Vladimir Badulya (*russian*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
+      - Vladimir Badulya (*russo*)
       - Pierluigi Colombo (*italiano*)
     credits_description: |
       Lo sviluppo di questa estensione è agganciata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
