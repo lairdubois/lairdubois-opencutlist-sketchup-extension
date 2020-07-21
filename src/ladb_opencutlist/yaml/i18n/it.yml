@@ -55,7 +55,7 @@ core:
     more: Altro
     more_docs: Docs
     more_reviews: Recensioni
-    more_plans: Piani # Check
+    more_plans: Progetti
     more_extensions: Estensioni
     more_update: Aggiorna
   warning:
@@ -159,7 +159,7 @@ tab:
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
     menu:
       show_all_groups: Mostra tutti i gruppi
-      hide_all_other_groups: Nascondi gli altri qruppi
+      hide_all_other_groups: Nascondi gli altri gruppi
       numbers_save: Salva la numerazione delle parti
       numbers_reset: Ricomincia la numerazione delle parti
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -236,7 +236,7 @@ tab:
          - *spessore* è sull'asse <span style='color:blue'>blu</span>
       smart_material: "Assegnazione materiali *Smart*"
       smart_material_help: Se questa opzione è attivata, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli.
-      dynamic_attributes_name: Usa l'attibuto *Nome* dei componenti dinamici
+      dynamic_attributes_name: Usa l'attributo *Nome* dei componenti dinamici
       dynamic_attributes_name_help: |
         Se questa opzione è attivata, la classificazione delle parti sarà estratta dall'attributo *Nome*, se esiste.
 
@@ -255,7 +255,7 @@ tab:
       hide_cutting_dimensions_help: Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
       hide_bbox_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni **finite** delle parti.
-      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza definizione del materiale
+      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza materiale
       hide_untyped_material_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni delle parti senza definizione del materiale (che non siano cioè **Tavole**, **Pannelli** o **Dimensionali**).
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
       hide_final_areas_help: Se questa opzione è attivata, verrà nascosta **l'area** delle parti di tipo *Pannelli*.
@@ -706,12 +706,12 @@ tab:
     language: Lingua
     size_and_position: Dimensione e posizione della finestra
   about:
-    label: About
-    title: About # Check
+    label: Info su
+    title: Info su
     version: Versione
-    credits: Crediti Technici # Check
+    credits: Crediti Technici
     credits_authors: |
-      *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributori](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Traduzioni:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
