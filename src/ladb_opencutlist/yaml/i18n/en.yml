@@ -311,7 +311,7 @@ tab:
     export:
       title: CSV Formatted Export
       info: |
-        With this function you can export the *parts list* into a [CSV](https://wikipedia.org/wiki/Comma-separated_values) file.
+        With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
 
         <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
       options: Export Options
