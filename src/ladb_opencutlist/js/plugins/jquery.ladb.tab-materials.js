@@ -40,7 +40,9 @@
 
     var TOKENFIELD_OPTIONS = {
         delimiter: ';',
-        createTokensOnBlur: true
+        createTokensOnBlur: true,
+        beautify: false,
+        minWidth: 200
     };
 
     // CLASS DEFINITION
@@ -1053,6 +1055,12 @@
 
         // Bind modal event
         $modal.on('shown.bs.modal', function() {
+
+            // Init textinputs
+            $inputThickness.ladbTextinputDimension();
+            $inputLengthIncrease.ladbTextinputDimension();
+            $inputWidthIncrease.ladbTextinputDimension();
+            $inputThicknessIncrease.ladbTextinputDimension();
 
             // Init tokenfields (this must done after modal shown for correct token label max width measurement)
             $inputStdLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);

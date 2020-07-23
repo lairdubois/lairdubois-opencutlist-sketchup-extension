@@ -110,7 +110,8 @@
     var TOKENFIELD_OPTIONS = {
         delimiter: ';',
         createTokensOnBlur: true,
-        beautify: false
+        beautify: false,
+        minWidth: 200
     };
 
     // Various Consts
@@ -1137,9 +1138,11 @@
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
+                $inputLengthIncrease.ladbTextinputDimension();
                 $inputWidthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
+                $inputWidthIncrease.ladbTextinputDimension();
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);
@@ -1592,7 +1595,9 @@
                     $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
                     $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
+                    $inputSawKerf.ladbTextinputDimension();
                     $inputTrimming.val(cuttingdiagram1dOptions.trimming);
+                    $inputTrimming.ladbTextinputDimension();
                     $selectBarFolding.val(cuttingdiagram1dOptions.bar_folding ? '1' : '0');
                     $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectHidePartList.val(cuttingdiagram1dOptions.hide_part_list ? '1' : '0');
@@ -1911,7 +1916,9 @@
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
+                    $inputSawKerf.ladbTextinputDimension();
                     $inputTrimming.val(cuttingdiagram2dOptions.trimming);
+                    $inputTrimming.ladbTextinputDimension();
                     $selectPresort.val(cuttingdiagram2dOptions.presort);
                     $selectPresort.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectStacking.val(cuttingdiagram2dOptions.stacking);
