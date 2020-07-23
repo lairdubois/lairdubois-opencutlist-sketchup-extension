@@ -10,6 +10,7 @@ in 1.x and 0.x versions.
   * Added **italian** language (thanks to Pierluigi Colombo for joining the translators team)
   * Added part oversize view
   * Added edit part tab memory
+  * Added textinput reset button
   * Improved russian translations
 
 * 1.9.1 (2020-07-05)
