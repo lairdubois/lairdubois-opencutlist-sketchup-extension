@@ -6,16 +6,16 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation" class="active"><a href="#tab_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bar"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
-        <li role="presentation"><a href="#tab_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
-        <li role="presentation"><a href="#tab_options_display" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.cuttingdiagram.options_display'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bar"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'display' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_display" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.cuttingdiagram.options_display'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="tab-content" style="margin-top: 10px;">
-            <div role="tabpanel" class="tab-pane active" id="tab_options_material">
+            <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_cuttingdiagram_options_material">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_bar_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_select_std_bar" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_std_bar'|i18next }}</label>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="tab_options_config">
+            <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_cuttingdiagram_options_config">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_input_saw_kerf" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }}</label>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="tab_options_display">
+            <div role="tabpanel" class="tab-pane{% if tab == 'display' %} active{% endif %}" id="tab_cuttingdiagram_options_display">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_bar_folding_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_select_bar_folding" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_bar_folding'|i18next }}</label>

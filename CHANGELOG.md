@@ -10,6 +10,7 @@ in 1.x and 0.x versions.
   * Added **italian** language (thanks to Pierluigi Colombo for joining the translators team)
   * Added part oversize view
   * Added edit part tab memory
+  * Added cutting diagram 1d / 2d options tab memory
   * Added textinput reset button
   * Improved russian translations
 

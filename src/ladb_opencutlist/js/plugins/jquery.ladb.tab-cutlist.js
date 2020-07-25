@@ -140,7 +140,9 @@
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
-        this.lastEditPartTab = undefined;
+        this.lastEditPartTab = null;
+        this.lastCuttingdiagram1dOptionsTab = null;
+        this.lastCuttingdiagram2dOptionsTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -438,7 +440,7 @@
                                 var $group = $('#ladb_group_' + groupId, that.$page);
                                 if ($group.length > 0) {
                                     that.$rootSlide.animate({ scrollTop: $group.offset().top - wTop }, 0).promise().then(function () {
-                                        $group.effect("highlight", {}, 1500);
+                                        $group.effect('highlight', {}, 1500);
                                     });
                                 }
 
@@ -501,13 +503,13 @@
                 $(this).blur();
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
-                that.cuttingdiagram1dGroup(groupId);
+                that.cuttingdiagram1dGroup(groupId, true);
             });
             $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
                 $(this).blur();
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
-                that.cuttingdiagram2dGroup(groupId);
+                that.cuttingdiagram2dGroup(groupId, true);
             });
             $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
                 $(this).blur();
@@ -987,7 +989,7 @@
             if (tab === undefined) {
                 tab = this.lastEditPartTab;
             }
-            if (tab === undefined || tab.length === 0
+            if (tab === null || tab.length === 0
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'infos'
@@ -1006,7 +1008,7 @@
                     multiple: multiple,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
-                    tab: tab === undefined || tab.length === 0 ? 'general' : tab
+                    tab: tab
                 }, true);
 
                 // Fetch UI elements
@@ -1325,7 +1327,7 @@
                                     if ($part.hasClass('hide')) {
                                         that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
                                     }
-                                    $part.effect("highlight", {}, 1500);
+                                    $part.effect('highlight', {}, 1500);
                                     that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
                                 }
 
@@ -1524,8 +1526,14 @@
         });
     };
 
-    LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId) {
+    LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId, forceDefaultTab) {
         var that = this;
+
+        // Reset lastCuttingdiagram1dOptionsTab if new group
+        if (groupId !== this.lastCuttingdiagram1dGroupId) {
+            this.lastCuttingdiagram1dOptionsTab = null;
+        }
+        this.lastCuttingdiagram1dGroupId = groupId;
 
         var group = this.findGroupById(groupId);
 
@@ -1565,7 +1573,11 @@
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', { material_attributes: response, group: group }, true);
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', {
+                        material_attributes: response,
+                        group: group,
+                        tab: forceDefaultTab || that.lastCuttingdiagram1dOptionsTab == null ? 'material' : that.lastCuttingdiagram1dOptionsTab
+                    }, true);
 
                     // Fetch UI elements
                     var $inputStdBar = $('#ladb_select_std_bar', $modal);
@@ -1634,7 +1646,9 @@
 
                     // Bind tabs
                     $('a[data-toggle=tab]').on('shown.bs.tab', function (e) {
-                        if ($(e.target).attr('href') === '#tab_options_material') {
+                        var tabId = $(e.target).attr('href');
+                        that.lastCuttingdiagram1dGroupTab = tabId.substring('#tab_cuttingdiagram_options_'.length);
+                        if (tabId === '#tab_cuttingdiagram_options_material') {
                             $('#ladb_panel_cuttingdiagram_options_defaults', $modal).hide();
                         } else {
                             $('#ladb_panel_cuttingdiagram_options_defaults', $modal).show();
@@ -1759,7 +1773,7 @@
                                 var groupId = $group.data('bar-index');
                                 var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
+                                    $target.effect('highlight', {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;
@@ -1769,7 +1783,7 @@
                                 var groupId = $group.data('bar-index');
                                 var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
+                                    $target.effect('highlight', {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;
@@ -1787,7 +1801,7 @@
                                     that.showGroup($target);
                                 }
                                 $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                    $target.effect("highlight", {}, 1500);
+                                    $target.effect('highlight', {}, 1500);
                                 });
                                 $(this).blur();
                                 return false;
@@ -1828,7 +1842,7 @@
 
     };
 
-    LadbTabCutlist.prototype.cuttingdiagram2dGroup = function (groupId) {
+    LadbTabCutlist.prototype.cuttingdiagram2dGroup = function (groupId, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
@@ -1879,7 +1893,11 @@
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', { material_attributes: response, group: group }, true);
+                    var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', {
+                        material_attributes: response,
+                        group: group,
+                        tab: forceDefaultTab || that.lastCuttingdiagram2dOptionsTab == null ? 'material' : that.lastCuttingdiagram2dOptionsTab
+                    }, true);
 
                     // Fetch UI elements
                     var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
@@ -1972,7 +1990,9 @@
 
                     // Bind tabs
                     $('a[data-toggle=tab]').on('shown.bs.tab', function (e) {
-                        if ($(e.target).attr('href') === '#tab_options_material') {
+                        var tabId = $(e.target).attr('href');
+                        that.lastCuttingdiagram2dOptionsTab = tabId.substring('#tab_cuttingdiagram_options_'.length);
+                        if (tabId === '#tab_cuttingdiagram_options_material') {
                             $('#ladb_panel_cuttingdiagram_options_defaults', $modal).hide();
                         } else {
                             $('#ladb_panel_cuttingdiagram_options_defaults', $modal).show();

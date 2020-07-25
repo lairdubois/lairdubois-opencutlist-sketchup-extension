@@ -35,7 +35,9 @@
 
     LadbTabSettings.prototype.showReloadAlert = function () {
         var $reloadAlert = $('#ladb_reload_alert', this.$element);
-        $reloadAlert.show();
+        $reloadAlert
+            .show()
+            .effect('highlight', {}, 1500);
         $('.ladb-reaload-msg', $reloadAlert).hide();
         var language = this.opencutlist.capabilities.language === 'auto' ? this.initialLanguage : this.opencutlist.capabilities.language;
         $('.ladb-reaload-msg-' + language, $reloadAlert).show();
