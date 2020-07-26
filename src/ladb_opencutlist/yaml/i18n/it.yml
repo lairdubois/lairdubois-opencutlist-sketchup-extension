@@ -30,8 +30,8 @@ default:
   tip: Suggerimento
   good: Corretto
   bad: Sbagliato
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y G:i
+  date_format_short: d/m/Y
   unit_0: Pollici
   unit_1: Piedi
   unit_2: Millimetri
@@ -95,7 +95,7 @@ tab:
     help: |
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
-    selection_only: SoloSelezionati
+    selection_only: Selezionati
     material_undefined: Nessun materiale definito
     not_available_width: Larghezza non disponibile
     not_available_thickness: Spessore non disponibile
