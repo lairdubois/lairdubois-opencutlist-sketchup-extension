@@ -28,8 +28,8 @@ default:
   error: OOps!
   warning: Avviso
   tip: Suggerimento
-  good: Buono
-  bad: Cattivo
+  good: Corretto
+  bad: Sbagliato
   date_format: m/d/Y g:ia
   date_format_short: m/d/Y
   unit_0: Pollici
@@ -45,7 +45,7 @@ core:
     submenu: OpenCutList
     item:
       edit_part_properties: Modifica gli attributi delle parti
-      edit_part_axes_properties: Modifica le proprieta degli assi delle parti
+      edit_part_axes_properties: Modifica le proprietà degli assi delle parti
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -102,8 +102,8 @@ tab:
     not_available_section: Sezione non disponibile
     highlight_part: Evidenzia la parte nel modello
     highlight_parts: Evidenzia le parti nel modello
-    edit_part_properties: Modifica le propieta della parte
-    edit_part_axes_properties: Modifica le proprieta degli assi della parte
+    edit_part_properties: Modifica le proprietà della parte
+    edit_part_axes_properties: Modifica le proprietà degli assi della parte
     tooltip:
       show_hide_block: Mostra / Nascondi questo gruppo
       scroll_to_block: Scorri fino al gruppo
@@ -129,7 +129,7 @@ tab:
       material_origin_3: Il materiale di questa parte è estratta da uno delle sue parti figlie
       orientation_locked_on_axis: L'orientamento di questa parte è bloccato al suo sistema di coordinate
       number_saved: Il numero di questa parte è stato salvato
-      number_hidden: Il numero salvato '{{ number }}' di questa parte non può essere utilizzanto in quanto già assegnato
+      number_hidden: Il numero salvato '{{ number }}' di questa parte non può essere utilizzato in quanto già assegnato
       number_generated: Il numero di questa parte è generato automaticamente
       resized: Questa parte è stata ridimensionata rispetto alla definizione del suo componente
       flipped: Questa parte è specchiata rispetto alla definizione del suo componente
@@ -170,8 +170,8 @@ tab:
       expand_all: Espandi le parti identiche
       collapse_all: Collassa le parti identiche
     edit_part:
-      title: Elenca proprieta della parte '{{ name }}'
-      title_multiple: Elenca proprieta di un gruppo di parti
+      title: Elenca proprietà della parte '{{ name }}'
+      title_multiple: Elenca proprietà di un gruppo di parti
       multiple_alert: Proprietà comuni al gruppo {{ part_count }} di parti.
       general: Generale
       edges: Finitura bordi
@@ -241,7 +241,7 @@ tab:
         Se questa opzione è attivata, la classificazione delle parti sarà estratta dall'attributo *Nome*, se esiste.
 
         <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Nome* 'è differente.
-      part_number_with_letters: Usa lettere per contrassegnare le parti
+      part_number_with_letters: Usa le lettere per contrassegnare le parti
       part_number_with_letters_help: Se questa opzione è attivata, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Fai ripartire la numerazione ad ogni gruppo
       part_number_sequence_by_group_help: Se questa opzione è attivata, la classificazione delle parti viene fatta ripartire (1 o A) per ogni gruppo con lo stesso materiale e spessore.
@@ -255,8 +255,8 @@ tab:
       hide_cutting_dimensions_help: Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
       hide_bbox_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni **finite** delle parti.
-      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza materiale
-      hide_untyped_material_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni delle parti senza definizione del materiale (che non siano cioè **Tavole**, **Pannelli** o **Dimensionali**).
+      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza definizione del materiale
+      hide_untyped_material_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni delle parti senza definizione del materiale (che non siano cioè **Tavole**, **Pannelli** o **Barre**).
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
       hide_final_areas_help: Se questa opzione è attivata, verrà nascosta **l'area** delle parti di tipo *Pannelli*.
       hide_edges: Nascondi la colonna "Bordature"
@@ -443,10 +443,10 @@ tab:
         total: Totale
         trimming: Ritaglio
         total_length_cuts: Lunghezza dei tagli
-        efficiency: Efficenza
+        efficiency: Efficienza
         leftover: Rimanenti
         cut: Taglio
-        bar_type_0: Dimensioni Standard Dimensional
+        bar_type_0: Dimensioni Standard Barre
         bar_type_1: Ritagli
         sheet_type_0: Dimensioni Standard dei Pannelli
         sheet_type_1: Ritagli
@@ -482,8 +482,8 @@ tab:
       obsolete_cutlist: Impossibile, la distinta non è aggiornata. Va rigenerata.
     warning:
       partial_cutlist: Questa distinta è una rappresentazione parziale del tuo modello, perchè mostra solo una selezione di parti.
-      no_typed_materials_in_model: Le parti del modello non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Dimensionale**.
-      no_typed_materials_in_selection: Le parti selezionate non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Dimensionale**
+      no_typed_materials_in_model: Le parti del modello non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Barre**.
+      no_typed_materials_in_selection: Le parti selezionate non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Barre**
       export_empty: Nessuna parte da esportare.
     success:
       exported_to: Esportazione in {{ export_path }} completata.
@@ -492,7 +492,7 @@ tab:
         Le parti da inserire nella *distinta* devono essere di tipo **componenti**.
         Se ci sono solo "gruppi", gli stessi devono essere convertiti in **componenti**.
         Usando **componenti** per le parti, gli stessi possono essere replicati senza inutili duplicazioni.
-      no_typed_materials: Applica il materiale alle parti che devono essere incluse nella distinta e definisci le proprietà del materiale come (**Tavole** o **Pannello** o **Dimensionale**) nella scheda <i class="ladb-opencutlist-icon-materials"></i> **Materiali**.
+      no_typed_materials: Applica il materiale alle parti che devono essere incluse nella distinta e definisci le proprietà del materiale come (**Tavole** o **Pannello** o **Barre**) nella scheda <i class="ladb-opencutlist-icon-materials"></i> **Materiali**.
     obsolete_base: Per rimanere aggiornata, la distinta parti va rigenerata.
   materials:
     label: Materiali
@@ -501,7 +501,7 @@ tab:
     type_0: Imprecisato
     type_1: Tavole
     type_2: Pannello
-    type_3: Dimensionale
+    type_3: Barre
     type_4: Bordatura
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
@@ -560,7 +560,7 @@ tab:
       std_sections: Sezioni disponibili
       std_sections_placeholder: Altezza x spessore ; ...
       std_sections_help: |
-        Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* di un pezzo dimensionale (*dimensioni effettive e non nominali*).
+        Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* della barra (*dimensioni effettive e non nominali*).
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sizes: Dimensioni pannelli disponibili
       std_sizes_placeholder: lunghezza x larghezza ; ...
@@ -698,7 +698,7 @@ tab:
     backers: "{{count}} sostenitore finanziario"
     backers_plural: "{{count}} sostenitori finanziari"
     load_more: "Aggiungi ..."
-    ad: Gradisci OpenCutList? # Check ti piace OpenCutList?
+    ad: Gradisci OpenCutList?
   settings:
     label: Preferenze
     title: Preferenze
