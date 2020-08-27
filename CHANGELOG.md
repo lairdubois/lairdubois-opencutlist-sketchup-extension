@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.2
+* 1.9.2 (2020-08-27)
 
   * Fixed cutting size with edge reduction in cutting diagrams
   * Added **italian** language (thanks to Pierluigi Colombo for joining the translators team)
