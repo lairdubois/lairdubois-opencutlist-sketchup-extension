@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.3 (2020-08-27)
+
+  * Fixed cutting diagrams 1D bug introduced in 1.9.2
+  
 * 1.9.2 (2020-08-27)
 
   * Fixed cutting size with edge reduction in cutting diagrams
