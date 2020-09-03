@@ -247,7 +247,7 @@ module Ladb::OpenCutList
               grouped_part = grouped_parts[box.data.id]
               unless grouped_part
                 grouped_part = {
-                    :_sorter => box.data.is_a?(FolderPart) ? box.data.number.to_i : box.data.number,
+                    :_sorter => (box.data.is_a?(FolderPart) && box.data.number.to_i > 0) ? box.data.number.to_i : box.data.number, # Use a special "_sorter" property because number could contains a "+" suffix
                     :id => box.data.id,
                     :number => box.data.number,
                     :saved_number => box.data.saved_number,
