@@ -229,43 +229,44 @@ module Ladb::OpenCutList
           # Parts
           grouped_parts = {}
           bin.boxes.each { |box|
-            sheet[:parts].push(
-                {
+            sheet[:parts].push({
+                :id => box.data.id,
+                :number => box.data.number,
+                :name => box.data.name,
+                :px_x => _to_px(box.x),
+                :px_y => _to_px(box.y),
+                :px_length => _to_px(box.length),
+                :px_width => _to_px(box.width),
+                :length => box.data.cutting_length,
+                :width => box.data.cutting_width,
+                :rotated => box.rotated,
+                :edge_material_names => box.data.edge_material_names,
+                :edge_std_dimensions => box.data.edge_std_dimensions,
+            })
+            unless @hide_part_list
+              grouped_part = grouped_parts[box.data.id]
+              unless grouped_part
+                grouped_part = {
+                    :_sorter => box.data.is_a?(FolderPart) ? box.data.number.to_i : box.data.number,
                     :id => box.data.id,
                     :number => box.data.number,
+                    :saved_number => box.data.saved_number,
                     :name => box.data.name,
-                    :px_x => _to_px(box.x),
-                    :px_y => _to_px(box.y),
-                    :px_length => _to_px(box.length),
-                    :px_width => _to_px(box.width),
-                    :length => box.data.cutting_length,
-                    :width => box.data.cutting_width,
-                    :rotated => box.rotated,
-                    :edge_material_names => box.data.edge_material_names,
-                    :edge_std_dimensions => box.data.edge_std_dimensions,
+                    :count => 0,
+                    :length => box.data.length,
+                    :width => box.data.width,
+                    :cutting_length => box.data.cutting_length,
+                    :cutting_width => box.data.cutting_width,
+                    :edge_count => box.data.edge_count,
+                    :edge_pattern => box.data.edge_pattern,
+                    :edge_decrements => box.data.edge_decrements,
                 }
-            )
-            grouped_part = grouped_parts[box.data.id]
-            unless grouped_part
-              grouped_part = {
-                  :id => box.data.id,
-                  :number => box.data.number,
-                  :saved_number => box.data.saved_number,
-                  :name => box.data.name,
-                  :count => 0,
-                  :length => box.data.length,
-                  :width => box.data.width,
-                  :cutting_length => box.data.cutting_length,
-                  :cutting_width => box.data.cutting_width,
-                  :edge_count => box.data.edge_count,
-                  :edge_pattern => box.data.edge_pattern,
-                  :edge_decrements => box.data.edge_decrements,
-              }
-              grouped_parts.store(box.data.id, grouped_part)
+                grouped_parts.store(box.data.id, grouped_part)
+              end
+              grouped_part[:count] += 1
             end
-            grouped_part[:count] += 1
           }
-          sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] }
+          sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:_sorter] ] } unless @hide_part_list
 
           # Leftovers
           bin.leftovers.each { |box|

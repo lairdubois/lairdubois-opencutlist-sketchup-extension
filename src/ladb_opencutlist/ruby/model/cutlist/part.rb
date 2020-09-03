@@ -59,22 +59,22 @@ module Ladb::OpenCutList
       @children_thickness_increased_count = part_def.children_thickness_increased_count
       @children = []
 
-      # ---
+    end
 
-      # Children
+    # ---
 
-      def add_child(child_part)
+    # Children
 
-        # Folder part takes first child number
-        if @children.empty?
-          @name = child_part.name + ', ...'
-          @number = child_part.number.to_s + '+'
-          @saved_number = child_part.saved_number.to_s + '+' if child_part.saved_number
-        end
+    def add_child(child_part)
 
-        @children.push(child_part)
+      # Folder part takes first child number
+      if @children.empty?
+        @name = child_part.name + ', ...'
+        @number = child_part.number.to_s + '+'
+        @saved_number = child_part.saved_number.to_s + '+' if child_part.saved_number
       end
 
+      @children.push(child_part)
     end
 
   end

@@ -1647,7 +1647,7 @@
                     // Bind tabs
                     $('a[data-toggle=tab]').on('shown.bs.tab', function (e) {
                         var tabId = $(e.target).attr('href');
-                        that.lastCuttingdiagram1dGroupTab = tabId.substring('#tab_cuttingdiagram_options_'.length);
+                        that.lastCuttingdiagram1dOptionsTab = tabId.substring('#tab_cuttingdiagram_options_'.length);
                         if (tabId === '#tab_cuttingdiagram_options_material') {
                             $('#ladb_panel_cuttingdiagram_options_defaults', $modal).hide();
                         } else {

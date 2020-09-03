@@ -7,6 +7,7 @@ in 1.x and 0.x versions.
 * 1.9.4 (2020-08-27)
 
   * Fixed cutting diagrams 2D rotated part dimensions display bug
+  * Fixed cutting diagrams crash when using non letter part's numbers
   
 * 1.9.3 (2020-08-27)
 

@@ -229,6 +229,7 @@ module Ladb::OpenCutList
               grouped_part = grouped_parts[box.data.id]
               unless grouped_part
                 grouped_part = {
+                    :_sorter => box.data.is_a?(FolderPart) ? box.data.number.to_i : box.data.number,
                     :id => box.data.id,
                     :number => box.data.number,
                     :saved_number => box.data.saved_number,
@@ -242,7 +243,7 @@ module Ladb::OpenCutList
               grouped_part[:count] += 1
             end
           }
-          bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:number] ] } unless @hide_part_list
+          bar[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:_sorter] ] } unless @hide_part_list
 
           # Leftover
           bar[:leftover] = {
