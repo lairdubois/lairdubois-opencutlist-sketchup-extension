@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.4 (*Work in Progress*)
+* 1.9.4 (2020-09-11)
 
   * Fixed cutting diagrams 2D rotated part dimensions display bug
   * Fixed cutting diagrams crash when using non letter part's numbers
