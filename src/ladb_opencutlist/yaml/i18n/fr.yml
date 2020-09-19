@@ -464,6 +464,7 @@ tab:
         unplaced_parts: "**1 pièce** est trop grande pour être placée."
         unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."
       warning:
+        selection_only: Ce calepinage se limite aux **pièces sélectionnées**
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
         cutting_dimensions_increase_1d: |

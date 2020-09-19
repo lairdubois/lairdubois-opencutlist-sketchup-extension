@@ -803,6 +803,19 @@
         return null;
     };
 
+    LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
+        var $group = $('#ladb_group_' + id, this.$page);
+        var $cuttingdiagram1dBtn = $('button.ladb-btn-group-cuttingdiagram1d', $group);
+        var $cuttingdiagram2dBtn = $('button.ladb-btn-group-cuttingdiagram2d', $group);
+        if (this.selectionPartIds.length > 0) {
+            $('i', $cuttingdiagram1dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
+            $('i', $cuttingdiagram2dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
+        } else {
+            $('i', $cuttingdiagram1dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
+            $('i', $cuttingdiagram2dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
+        }
+    };
+
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
         var $row = $('#ladb_part_' + id, this.$page);
         var $highlightPartBtn = $('a.ladb-btn-highlight-part', $row);
@@ -839,6 +852,7 @@
     };
 
     LadbTabCutlist.prototype.renderSelection = function () {
+        this.renderSelectionOnGroup(this.selectionGroupId);
         for (var i = 0; i < this.selectionPartIds.length; i++) {
             this.renderSelectionOnPart(this.selectionPartIds[i], true);
         }
@@ -867,6 +881,7 @@
                 if (state === undefined || state === false) {
                     this.selectionPartIds.splice(this.selectionPartIds.indexOf(partId), 1);
                     if (this.selectionPartIds.length === 0) {
+                        this.renderSelectionOnGroup(groupAndPart.group.id);
                         this.selectionGroupId = null;
                     }
                     selected = false;
@@ -874,12 +889,15 @@
             } else {
                 if (state === undefined || state === true) {
                     this.selectionPartIds.push(partId);
+                    if (this.selectionGroupId !== groupAndPart.group.id) {
+                        this.renderSelectionOnGroup(groupAndPart.group.id);
+                    }
                     this.selectionGroupId = groupAndPart.group.id;
                     selected = true;
                 }
             }
 
-            // Apply selection
+            // Render selection
             this.renderSelectionOnPart(partId, selected);
 
         }
@@ -1536,6 +1554,7 @@
         this.lastCuttingdiagram1dGroupId = groupId;
 
         var group = this.findGroupById(groupId);
+        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         this.opencutlist.pullSettings([
@@ -1576,6 +1595,7 @@
                     var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', {
                         material_attributes: response,
                         group: group,
+                        selection_only: selectionOnly,
                         tab: forceDefaultTab || that.lastCuttingdiagram1dOptionsTab == null ? 'material' : that.lastCuttingdiagram1dOptionsTab
                     }, true);
 
@@ -1723,7 +1743,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                         ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId, part_ids: that.selectionGroupId === groupId ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                 generateOptions: that.generateOptions,
@@ -1846,6 +1866,7 @@
         var that = this;
 
         var group = this.findGroupById(groupId);
+        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         this.opencutlist.pullSettings([
@@ -1896,6 +1917,7 @@
                     var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', {
                         material_attributes: response,
                         group: group,
+                        selection_only: selectionOnly,
                         tab: forceDefaultTab || that.lastCuttingdiagram2dOptionsTab == null ? 'material' : that.lastCuttingdiagram2dOptionsTab
                     }, true);
 
@@ -2083,7 +2105,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
                         ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: that.selectionGroupId === groupId ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                 generateOptions: that.generateOptions,

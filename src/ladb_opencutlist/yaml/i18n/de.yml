@@ -464,6 +464,7 @@ tab:
         unplaced_parts: '**1 zu großes Teil** konnte nicht platziert werden.'
         unplaced_parts_plural: '**{{ count }} zu große Teile** konnten nicht platziert werden.'
       warning:
+        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmaße der Teile.
         cutting_dimensions_increase_1d: |

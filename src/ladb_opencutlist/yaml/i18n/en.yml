@@ -464,6 +464,7 @@ tab:
         unplaced_parts: '**One part** could not be placed, because it is too large to fit.'
         unplaced_parts_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
+        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
         cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
         cutting_dimensions_increase_1d: |

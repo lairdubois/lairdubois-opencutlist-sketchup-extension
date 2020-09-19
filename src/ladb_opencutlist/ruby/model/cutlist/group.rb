@@ -57,6 +57,14 @@ module Ladb::OpenCutList
       @parts.push(part)
     end
 
+    def get_parts(ids = nil)
+      parts = []
+      @parts.each do |part|
+        parts << part unless ids && !ids.include?(part.id)
+      end
+      parts
+    end
+
     def get_real_parts(ids = nil)
       parts = []
       @parts.each do |part|

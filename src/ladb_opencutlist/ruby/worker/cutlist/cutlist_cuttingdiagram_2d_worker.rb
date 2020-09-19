@@ -8,6 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
+      @part_ids = settings['part_ids']
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
@@ -32,6 +33,9 @@ module Ladb::OpenCutList
       group = @cutlist.get_group(@group_id)
       return { :errors => [ 'default.error' ] } unless group
 
+      parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
+      return { :errors => [ 'default.error' ] } if parts.empty?
+
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking2D::Options.new
       options.base_bin_length = @std_sheet_length
@@ -53,7 +57,7 @@ module Ladb::OpenCutList
       }
 
       # Add boxes from parts
-      group.parts.each { |part|
+      parts.each { |part|
         for i in 1..part.count
           e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
         end
@@ -115,6 +119,9 @@ module Ladb::OpenCutList
         materials = Sketchup.active_model.materials
         material = materials[group.material_name]
         material_attributes = MaterialAttributes.new(material)
+        if @part_ids
+          response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.selection_only'
+        end
         if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
           response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
         end

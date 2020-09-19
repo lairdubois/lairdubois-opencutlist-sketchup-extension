@@ -464,6 +464,7 @@ tab:
         unplaced_parts: '** Одну деталь ** не возможно разместить, так как она слишком велика для размещения.'
         unplaced_parts_plural: Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
       warning:
+        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
         cutting_dimensions: |
           Эта карта раскроя отображает детали с их грубыми размерами.
         cutting_dimensions_increase_1d: |

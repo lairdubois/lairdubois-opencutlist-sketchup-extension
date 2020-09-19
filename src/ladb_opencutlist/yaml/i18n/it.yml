@@ -464,6 +464,7 @@ tab:
         unplaced_parts: '**Una parte** non può essere schematizzata, perchè è troppo grande.'
         unplaced_parts_plural: Ci sono **{{ count }} parti** che non possono essere schematizzate perchè troppo grandi.
       warning:
+        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
         cutting_dimensions: |
           Questo schema di taglio mostra le parti con le loro dimensioni grezze.
         cutting_dimensions_increase_1d: |
