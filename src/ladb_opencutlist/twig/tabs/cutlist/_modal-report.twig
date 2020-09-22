@@ -11,7 +11,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading" style="font-size: 120%;">
                     <span style="font-weight: bold;">{{ 'tab.cutlist.report.objective'|i18next }}</span>
-                    <span class="pull-right">$2000</span>
+                    <span id="ladb_objective_progress_label" style="margin-top: 10px; font-size: 80%; color: #888;"></span>
+                    <span id="ladb_objective_value" class="pull-right"></span>
                 </div>
                 <div class="panel-body">
                     {% include 'core/_loading.twig' with { 'noHidden':true } %}

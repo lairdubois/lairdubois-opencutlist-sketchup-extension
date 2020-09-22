@@ -699,12 +699,16 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
         var that = this;
 
+        var objective = 2000;
+
         var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig');
 
         // Fetch UI elements
+        var $objectiveValue = $('#ladb_objective_value', $modal);
         var $loading = $('.ladb-loading', $modal);
         var $progressObjective = $('.progress', $modal);
         var $progressBarObjective = $('.progress-bar', $modal);
+        var $label = $('#ladb_objective_progress_label', $modal);
         var $btnSponsor = $('#ladb_sponsor_btn', $modal);
 
         // Bind buttons
@@ -715,6 +719,9 @@
 
         });
 
+        $objectiveValue.append(new Intl.NumberFormat(this.opencutlist.capabilities.language, { style: 'currency', currency: 'USD' }).format(objective));
+
+        // Load current balance
         $.ajax({
             url: GRAPHQL_ENDPOINT,
             contentType: 'application/json',
@@ -736,14 +743,14 @@
                 if (response.data) {
 
                     var balance = response.data.collective.stats.balance.value;
-                    var objective = 2000;
                     var progress = balance / objective * 100;
 
                     $progressObjective.show();
                     $progressBarObjective
-                        .css('width', progress + '%')
-                        .append('$' + balance)
+                        .css('width', Math.min(100, progress) + '%')
+                        .append(new Intl.NumberFormat(that.opencutlist.capabilities.language, { style: 'currency', currency: 'USD' }).format(balance))
                     ;
+                    $label.append(i18next.t('tab.cutlist.report.objective_funded_progress', { progress: Math.round(progress) }));
 
                     // Hide loading
                     $loading.hide();
