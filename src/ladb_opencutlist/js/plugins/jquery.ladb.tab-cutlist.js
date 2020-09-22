@@ -4,6 +4,9 @@
     // CONSTANTS
     // ======================
 
+    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
+    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
+
     // Options keys
 
     var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
@@ -149,6 +152,7 @@
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
+        this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
@@ -225,6 +229,7 @@
             // Update buttons and items state
             that.$btnPrint.prop('disabled', groups.length === 0);
             that.$btnExport.prop('disabled', groups.length === 0);
+            that.$btnReport.prop('disabled', groups.length === 0);
             that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
             that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
             that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
@@ -691,6 +696,73 @@
 
     };
 
+    LadbTabCutlist.prototype.reportCutlist = function () {
+        var that = this;
+
+        var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig');
+
+        // Fetch UI elements
+        var $loading = $('.ladb-loading', $modal);
+        var $progressObjective = $('.progress', $modal);
+        var $progressBarObjective = $('.progress-bar', $modal);
+        var $btnSponsor = $('#ladb_sponsor_btn', $modal);
+
+        // Bind buttons
+        $btnSponsor.on('click', function () {
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+
+        $.ajax({
+            url: GRAPHQL_ENDPOINT,
+            contentType: 'application/json',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                query: "query collective($slug: String) {\n" +
+                    "  collective(slug: $slug) {\n" +
+                    "    stats { \n" +
+                    "      balance { value }\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}",
+                variables: {
+                    slug: GRAPHQL_SLUG
+                }
+            }),
+            success: function (response) {
+                if (response.data) {
+
+                    var balance = response.data.collective.stats.balance.value;
+                    var objective = 2000;
+                    var progress = balance / objective * 100;
+
+                    $progressObjective.show();
+                    $progressBarObjective
+                        .css('width', progress + '%')
+                        .append('$' + balance)
+                    ;
+
+                    // Hide loading
+                    $loading.hide();
+
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+
+                // Hide loading
+                $loading.hide();
+
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     // Highlight /////
 
     LadbTabCutlist.prototype.highlightAllParts = function () {
@@ -814,6 +886,8 @@
             $('i', $cuttingdiagram1dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
             $('i', $cuttingdiagram2dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
         }
+        $cuttingdiagram1dBtn.effect('highlight', {}, 1500);
+        $cuttingdiagram2dBtn.effect('highlight', {}, 1500);
     };
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
@@ -2596,6 +2670,10 @@
         });
         this.$btnExport.on('click', function () {
             that.exportCutlist();
+            this.blur();
+        });
+        this.$btnReport.on('click', function () {
+            that.reportCutlist();
             this.blur();
         });
         this.$itemHighlightAllParts.on('click', function () {

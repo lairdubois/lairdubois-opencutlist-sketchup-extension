@@ -351,6 +351,21 @@ tab:
       edge_ymin: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
+    report:
+      label: Rapport  # TODO
+      title: Générer un rapport  # TODO
+      objective: Objectif # TODO
+      objective_info_1: | # TODO
+        *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+
+        Cette fonctionnalité a pour but de :
+        - Calculer le **coût** estimé du projet avec détails par matière
+        - Calculer le **poids** estimé des matières nécessaires
+        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+
+        **Le développement de cette fonctionnalité se fera grace à un *financement participatif* et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.**
+      objective_info_2: | # TODO
+        Merci pour votre contribution !
     cuttingdiagram:
       title: Schema di taglio
       options_material: Materiale

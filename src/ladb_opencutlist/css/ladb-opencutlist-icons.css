@@ -30,6 +30,13 @@ i, span.ladb-opencutlist-icon {
   text-align: center;
 }
 
+.ladb-opencutlist-icon-xl:before {
+  font-size: 250%;
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+}
+
 
 .ladb-opencutlist-icon-unknow:before {
   opacity: 0.3;
@@ -350,6 +357,9 @@ i, span.ladb-opencutlist-icon {
 }
 .ladb-opencutlist-icon-solid-wood:before {
   content: "\e968";
+}
+.ladb-opencutlist-icon-report:before {
+  content: "\e972";
 }
 .ladb-opencutlist-icon-arrow-right:before {
   content: "\e969";
