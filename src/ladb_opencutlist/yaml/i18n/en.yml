@@ -352,21 +352,21 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
     report:
-      label: Rapport  # TODO
-      title: Générer un rapport  # TODO
-      objective: Objectif # TODO
-      objective_info_1: | # TODO
-        *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+      label: Report
+      title: Generate a Report
+      objective: Objective
+      objective_info_1: |
+        *Reporting may be available in the next major release.*
 
-        Cette fonctionnalité a pour but de :
-        - Calculer le **coût** estimé du projet avec détails par matière
-        - Calculer le **poids** estimé des matières nécessaires
-        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+        The purpose of this feature is to:
+        - Calculate the **estimated cost** of the project with details per material
+        - Calculate the estimated **weight** of required materials
+        - Synthesize the information of the entire project in a single document accessible by a single action
 
-        Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
-      objective_info_2: | # TODO
-        Merci pour votre contribution !
-      objective_funded_progress: financé à {{ progress }}%  # TODO
+        The development of this new functionality will be done through **participatory financing** and will start when its <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Financial Objective</a> is reached.
+      objective_info_2: |
+        Thank you for your contribution!
+      objective_funded_progress: funded at {{ progress }}%
     cuttingdiagram:
       title: Cutting Diagram
       options_material: Material
@@ -480,7 +480,7 @@ tab:
         unplaced_parts: '**One part** could not be placed, because it is too large to fit.'
         unplaced_parts_plural: There are **{{ count }} parts** which could not be placed because they are too large to fit.
       warning:
-        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
+        selection_only: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
         cutting_dimensions_increase_1d: |
