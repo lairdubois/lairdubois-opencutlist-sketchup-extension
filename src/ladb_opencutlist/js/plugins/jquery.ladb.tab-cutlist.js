@@ -699,16 +699,17 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
         var that = this;
 
-        var objective = 2000;
+        var objectiveGoal = 2000;
+        var objectiveCurrency = 'USD';
 
         var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig');
 
         // Fetch UI elements
-        var $objectiveValue = $('#ladb_objective_value', $modal);
         var $loading = $('.ladb-loading', $modal);
+        var $labelObjectiveGoal = $('#ladb_objective_goal_label', $modal);
         var $progressObjective = $('.progress', $modal);
         var $progressBarObjective = $('.progress-bar', $modal);
-        var $label = $('#ladb_objective_progress_label', $modal);
+        var $labelObjectiveProgress = $('#ladb_objective_progress_label', $modal);
         var $btnSponsor = $('#ladb_sponsor_btn', $modal);
 
         // Bind buttons
@@ -719,7 +720,13 @@
 
         });
 
-        $objectiveValue.append(new Intl.NumberFormat(this.opencutlist.capabilities.language, { style: 'currency', currency: 'USD' }).format(objective));
+        // Append currency formatted objective goal
+        $labelObjectiveGoal.append(objectiveGoal.toLocaleString(this.opencutlist.capabilities.language, {
+            style: 'currency',
+            currency: objectiveCurrency,
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0
+        }));
 
         // Load current balance
         $.ajax({
@@ -743,14 +750,24 @@
                 if (response.data) {
 
                     var balance = response.data.collective.stats.balance.value;
-                    var progress = balance / objective * 100;
+                    var objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
+                    var objectiveReached = objectiveProgress100 >= 100;
 
                     $progressObjective.show();
                     $progressBarObjective
-                        .css('width', Math.min(100, progress) + '%')
-                        .append(new Intl.NumberFormat(that.opencutlist.capabilities.language, { style: 'currency', currency: 'USD' }).format(balance))
+                        .css('width', Math.min(100, objectiveProgress100) + '%')
+                        .append(balance.toLocaleString(that.opencutlist.capabilities.language, {
+                            style: 'currency',
+                            currency: objectiveCurrency,
+                            currencyDisplay: 'symbol',
+                            minimumFractionDigits: 0
+                        }))
                     ;
-                    $label.append(i18next.t('tab.cutlist.report.objective_funded_progress', { progress: Math.round(progress) }));
+                    $labelObjectiveProgress
+                        .addClass('ladb-color-' + (objectiveReached ? 'success' : 'null'))
+                        .append((objectiveReached ? '<i class="ladb-opencutlist-icon-tick"></i> ' : '') + i18next.t('tab.cutlist.report.objective_funded_progress', { progress: objectiveProgress100 }))
+                        .show()
+                    ;
 
                     // Hide loading
                     $loading.hide();

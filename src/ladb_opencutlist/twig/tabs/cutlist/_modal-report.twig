@@ -10,9 +10,8 @@
             <p>{{ 'tab.cutlist.report.objective_info_1'|i18next }}</p>
             <div class="panel panel-default">
                 <div class="panel-heading" style="font-size: 120%;">
-                    <span style="font-weight: bold;">{{ 'tab.cutlist.report.objective'|i18next }}</span>
-                    <span id="ladb_objective_progress_label" style="margin-top: 10px; font-size: 80%; color: #888;"></span>
-                    <span id="ladb_objective_value" class="pull-right"></span>
+                    <span style="font-weight: bold;">{{ 'tab.cutlist.report.objective'|i18next }}</span><span id="ladb_objective_progress_label" style="margin-left: 10px; border-left: 1px solid #ccc; padding-left: 10px; display: none;"></span>
+                    <span id="ladb_objective_goal_label" class="pull-right"></span>
                 </div>
                 <div class="panel-body">
                     {% include 'core/_loading.twig' with { 'noHidden':true } %}
