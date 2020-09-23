@@ -352,21 +352,21 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
     report:
-      label: Rapport  # TODO
-      title: Générer un rapport  # TODO
-      objective: Objectif # TODO
-      objective_info_1: | # TODO
-        *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+      label: Bericht
+      title: Bericht generieren
+      objective: Ziel
+      objective_info_1: |
+        *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
-        Cette fonctionnalité a pour but de :
-        - Calculer le **coût** estimé du projet avec détails par matière
-        - Calculer le **poids** estimé des matières nécessaires
-        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+        Der Zweck dieser Funktion besteht darin:
+        - Berechnung der geschätzten **Kosten** des Projekts mit Details from Material.
+        - Berechnung des geschätzten **Gewichts** des benötigten Materials.
+        - Zusammenfassung aller projektrelevanten Daten in einem einzigen Dokument, ausgelöst durch eine einzige Aktion.
 
-        Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
-      objective_info_2: | # TODO
-        Merci pour votre contribution !
-      objective_funded_progress: financé à {{ progress }}%  # TODO
+        Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">finanzielle Ziel</a> erreicht wurde.
+      objective_info_2: |
+        Vielen Dank für Ihren Beitrag!
+      objective_funded_progress: zu {{ progress }}%  finanziert
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
@@ -480,7 +480,7 @@ tab:
         unplaced_parts: '**1 zu großes Teil** konnte nicht platziert werden.'
         unplaced_parts_plural: '**{{ count }} zu große Teile** konnten nicht platziert werden.'
       warning:
-        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
+        selection_only: Der Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: |
           Dieser Schnittplan verwendet die Rohmaße der Teile.
         cutting_dimensions_increase_1d: |
