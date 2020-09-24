@@ -699,7 +699,7 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
         var that = this;
 
-        var objectiveGoal = 2000;
+        var objectiveGoal = 4808; // Top of Mont-Blanc Altitude
         var objectiveCurrency = 'USD';
 
         var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig');
