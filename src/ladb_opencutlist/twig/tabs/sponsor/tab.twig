@@ -3,7 +3,6 @@
 {% block headerHeadingInner %}<i class="ladb-opencutlist-icon-sponsor"></i> {{ parent() }}{% endblock %}
 
 {% block headerToolsInner %}
-    <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" class="btn btn-sponsor" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> {{ 'tab.sponsor.contribute'|i18next }}...</a>
     <a id="ladb_btn_sponsor" class="btn btn-default" href="https://opencollective.com/how-it-works" target="_blank"><img src="../img/opencollective-icon.svg" height="18"> Open Collective...</a>
 {% endblock %}
 
@@ -19,6 +18,9 @@
         </div>
     </div>
     {% include 'tabs/sponsor/_objective-widget.twig' %}
+    <div class="text-center">
+        <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" class="btn btn-sponsor btn-lg" target="_blank"><i class="ladb-opencutlist-icon-sponsor"></i> {{ 'tab.sponsor.contribute'|i18next }}...</a>
+    </div>
     <div id="ladb_sponsor_backers_widget">
         {% include 'core/_loading.twig' with { 'noHidden':true } %}
     </div>
