@@ -354,19 +354,6 @@ tab:
     report:
       label: Rapport  # TODO
       title: Générer un rapport  # TODO
-      objective: Objectif # TODO
-      objective_info_1: | # TODO
-        *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
-
-        Cette fonctionnalité a pour but de :
-        - Calculer le **coût** estimé du projet avec détails par matière
-        - Calculer le **poids** estimé des matières nécessaires
-        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
-
-        Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
-      objective_info_2: | # TODO
-        Merci pour votre contribution !
-      objective_funded_progress: financé à {{ progress }}%  # TODO
     cuttingdiagram:
       title: Карта раскроя
       options_material: Материал
@@ -716,6 +703,19 @@ tab:
     backers_plural: "{{count}} финансовые спонсоры"
     load_more: "Загрузить больше ..."
     ad: Вам нравится OpenCutList ?
+    objective: Objectif # TODO
+    objective_info_1: | # TODO
+      *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+
+      Cette fonctionnalité a pour but de :
+      - Calculer le **coût** estimé du projet avec détails par matière
+      - Calculer le **poids** estimé des matières nécessaires
+      - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+
+      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
+    objective_info_2: | # TODO
+      Merci pour votre contribution !
+    objective_funded_progress: financé à {{ progress }}%  # TODO
   settings:
     label: Параметры
     title: Параметры

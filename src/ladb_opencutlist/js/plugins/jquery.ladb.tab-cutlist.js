@@ -4,9 +4,6 @@
     // CONSTANTS
     // ======================
 
-    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
-    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-
     // Options keys
 
     var SETTING_KEY_OPTION_AUTO_ORIENT = 'cutlist.option.auto_orient';
@@ -98,24 +95,6 @@
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_PRESORT = 1;             // PRESORT_WIDTH_DECR
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING = 0;            // STACKING_NONE
     var CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION = 0;   // BBOX_OPTIMIZATION_NONE
-
-    // Select picker options
-
-    var SELECT_PICKER_OPTIONS = {
-        size: 10,
-        iconBase: 'ladb-opencutlist-icon',
-        tickIcon: 'ladb-opencutlist-icon-tick',
-        showTick: true
-    };
-
-    // Tokenfield options
-
-    var TOKENFIELD_OPTIONS = {
-        delimiter: ';',
-        createTokensOnBlur: true,
-        beautify: false,
-        minWidth: 200
-    };
 
     // Various Consts
 
@@ -256,7 +235,7 @@
             }));
 
             // Setup tooltips
-            that.opencutlist.setupTooltips();
+            that.dialog.setupTooltips();
 
             // Cleanup and Render selection
             that.cleanupSelection();
@@ -280,7 +259,7 @@
                 }
             }
             if (hiddenGroupIdsLength > that.generateOptions.hidden_group_ids.length) {
-                that.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, that.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+                that.dialog.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, that.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
             }
 
             // Bind inputs
@@ -412,7 +391,7 @@
             $('a.ladb-btn-edit-material', that.$page).on('click', function () {
                 $(this).blur();
                 var materialId = $(this).data('material-id');
-                that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                that.dialog.executeCommandOnTab('materials', 'edit_material', {
                     material_id: materialId
                 });
                 return false;
@@ -433,7 +412,7 @@
                         that.ignoreNextMaterialEvents = false;
 
                         if (response['errors']) {
-                            that.opencutlist.notifyErrors(response['errors']);
+                            that.dialog.notifyErrors(response['errors']);
                         } else {
 
                             var wTop = $group.offset().top - $(window).scrollTop();
@@ -462,7 +441,7 @@
                 var groupId = $group.data('group-id');
                 var group = that.findGroupById(groupId);
                 if (group) {
-                    that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         material_id: group.material_id
                     });
                 }
@@ -615,7 +594,7 @@
         var that = this;
 
         // Retrieve export option options
-        this.opencutlist.pullSettings([
+        this.dialog.pullSettings([
 
                 SETTING_KEY_EXPORT_OPTION_SOURCE,
                 SETTING_KEY_EXPORT_OPTION_COL_SEP,
@@ -626,9 +605,9 @@
             function () {
 
                 var exportOptions = {
-                    source: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, EXPORT_OPTION_DEFAULT_SOURCE),
-                    col_sep: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, EXPORT_OPTION_DEFAULT_COL_SEP),
-                    encoding: that.opencutlist.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING)
+                    source: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, EXPORT_OPTION_DEFAULT_SOURCE),
+                    col_sep: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, EXPORT_OPTION_DEFAULT_COL_SEP),
+                    encoding: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING)
                 };
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
@@ -657,7 +636,7 @@
                     exportOptions.encoding = $selectEncoding.val();
 
                     // Store options
-                    that.opencutlist.setSettings([
+                    that.dialog.setSettings([
                         { key:SETTING_KEY_EXPORT_OPTION_SOURCE, value:exportOptions.source },
                         { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:exportOptions.col_sep },
                         { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding }
@@ -668,10 +647,10 @@
                         var i;
 
                         if (response.errors) {
-                            that.opencutlist.notifyErrors(response.errors);
+                            that.dialog.notifyErrors(response.errors);
                         }
                         if (response.export_path) {
-                            that.opencutlist.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                            that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
                                 Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                     rubyCallCommand('core_open_external_file', {
@@ -697,93 +676,9 @@
     };
 
     LadbTabCutlist.prototype.reportCutlist = function () {
-        var that = this;
 
-        var objectiveGoal = 4808; // Top of Mont-Blanc Altitude
-        var objectiveCurrency = 'USD';
-
-        var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig');
-
-        // Fetch UI elements
-        var $loading = $('.ladb-loading', $modal);
-        var $labelObjectiveGoal = $('#ladb_objective_goal_label', $modal);
-        var $progressObjective = $('.progress', $modal);
-        var $progressBarObjective = $('.progress-bar', $modal);
-        var $labelObjectiveProgress = $('#ladb_objective_progress_label', $modal);
-        var $btnSponsor = $('#ladb_sponsor_btn', $modal);
-
-        // Bind buttons
-        $btnSponsor.on('click', function () {
-
-            // Hide modal
-            $modal.modal('hide');
-
-        });
-
-        // Append currency formatted objective goal
-        $labelObjectiveGoal.append(objectiveGoal.toLocaleString(this.opencutlist.capabilities.language, {
-            style: 'currency',
-            currency: objectiveCurrency,
-            currencyDisplay: 'symbol',
-            minimumFractionDigits: 0
-        }));
-
-        // Load current balance
-        $.ajax({
-            url: GRAPHQL_ENDPOINT,
-            contentType: 'application/json',
-            type: 'POST',
-            dataType: 'json',
-            data: JSON.stringify({
-                query: "query collective($slug: String) {\n" +
-                    "  collective(slug: $slug) {\n" +
-                    "    stats { \n" +
-                    "      balance { value }\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "}",
-                variables: {
-                    slug: GRAPHQL_SLUG
-                }
-            }),
-            success: function (response) {
-                if (response.data) {
-
-                    var balance = response.data.collective.stats.balance.value;
-                    var objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
-                    var objectiveReached = objectiveProgress100 >= 100;
-
-                    $progressObjective.show();
-                    $progressBarObjective
-                        .css('width', Math.min(100, objectiveProgress100) + '%')
-                        .append(balance.toLocaleString(that.opencutlist.capabilities.language, {
-                            style: 'currency',
-                            currency: objectiveCurrency,
-                            currencyDisplay: 'symbol',
-                            minimumFractionDigits: 0
-                        }))
-                    ;
-                    $labelObjectiveProgress
-                        .addClass('ladb-color-' + (objectiveReached ? 'success' : 'null'))
-                        .append((objectiveReached ? '<i class="ladb-opencutlist-icon-tick"></i> ' : '') + i18next.t('tab.cutlist.report.objective_funded_progress', { progress: objectiveProgress100 }))
-                        .show()
-                    ;
-
-                    // Hide loading
-                    $loading.hide();
-
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-
-                // Hide loading
-                $loading.hide();
-
-            }
-        });
-
-        // Show modal
-        $modal.modal('show');
+        // Show Objective modal
+        this.dialog.executeBackgroundCommandOnTab('sponsor', 'show_objective_modal');
 
     };
 
@@ -795,9 +690,9 @@
         rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight }, function (response) {
 
             if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
+                that.dialog.notifyErrors(response['errors']);
             } else if (that.generateOptions.minimize_on_highlight) {
-                that.opencutlist.minimize();
+                that.dialog.minimize();
             }
 
         });
@@ -810,9 +705,9 @@
         rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, group_id: groupId }, function (response) {
 
             if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
+                that.dialog.notifyErrors(response['errors']);
             } else if (that.generateOptions.minimize_on_highlight) {
-                that.opencutlist.minimize();
+                that.dialog.minimize();
             }
 
         });
@@ -844,9 +739,9 @@
             rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, part_ids: partIds }, function (response) {
 
                 if (response['errors']) {
-                    that.opencutlist.notifyErrors(response['errors']);
+                    that.dialog.notifyErrors(response['errors']);
                 } else if (that.generateOptions.minimize_on_highlight) {
-                    that.opencutlist.minimize();
+                    that.dialog.minimize();
                 }
 
             });
@@ -1222,7 +1117,7 @@
 
                 var fnNewCheck = function($select, type) {
                     if ($select.val() === 'new') {
-                        that.opencutlist.executeCommandOnTab('materials', 'new_material', { type: type });
+                        that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
                         $modal.modal('hide');
                         return true;
                     }
@@ -1427,7 +1322,7 @@
 
                         if (response['errors']) {
 
-                            that.opencutlist.notifyErrors(response['errors']);
+                            that.dialog.notifyErrors(response['errors']);
 
                         } else {
 
@@ -1485,8 +1380,8 @@
                     });
 
                 // Setup popovers and tooltips
-                that.opencutlist.setupPopovers();
-                that.opencutlist.setupTooltips();
+                that.dialog.setupPopovers();
+                that.dialog.setupTooltips();
 
             };
 
@@ -1576,7 +1471,7 @@
     };
 
     LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function () {
-        this.opencutlist.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+        this.dialog.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
     };
 
     LadbTabCutlist.prototype.showGroup = function ($group, doNotFlushSettings) {
@@ -1655,7 +1550,7 @@
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
-        this.opencutlist.pullSettings([
+        this.dialog.pullSettings([
 
                 // Defaults
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF,
@@ -1678,14 +1573,14 @@
             function () {
 
                 var cuttingdiagram1dOptions = {
-                    std_bar: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR),
-                    std_bar_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH),
-                    scrap_bar_lengths: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SCRAP_BAR_LENGTHS),
-                    saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF)),
-                    trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING)),
-                    bar_folding: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING)),
-                    hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST)),
-                    wrap_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, CUTTINGDIAGRAM1D_OPTION_DEFAULT_WRAP_LENGTH)),
+                    std_bar: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR),
+                    std_bar_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH),
+                    scrap_bar_lengths: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SCRAP_BAR_LENGTHS),
+                    saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF)),
+                    trimming: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING)),
+                    bar_folding: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING)),
+                    hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST)),
+                    wrap_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, CUTTINGDIAGRAM1D_OPTION_DEFAULT_WRAP_LENGTH)),
                 };
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -1740,7 +1635,7 @@
                         $modal.modal('hide');
 
                         // Edit material and focus std_sizes input field
-                        that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
                             material_id: group.material_id,
                             callback: callback
                         });
@@ -1783,7 +1678,7 @@
                         var wrap_length = $inputBreakLength.val();
 
                         // Update default cut options for specific type to last used
-                        that.opencutlist.setSettings([
+                        that.dialog.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, value:bar_folding },
@@ -1791,18 +1686,18 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, value:wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                        that.opencutlist.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
+                        that.dialog.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
 
                         this.blur();
 
                     });
                     $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
 
-                        var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF);
-                        var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING);
-                        var bar_folding = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING);
-                        var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST);
-                        var wrap_length = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, CUTTINGDIAGRAM1D_OPTION_DEFAULT_WRAP_LENGTH);
+                        var saw_kerf = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, CUTTINGDIAGRAM1D_OPTION_DEFAULT_SAW_KERF);
+                        var trimming = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_TRIMMING);
+                        var bar_folding = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, CUTTINGDIAGRAM1D_OPTION_DEFAULT_BAR_FOLDING);
+                        var hide_part_list = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM1D_OPTION_DEFAULT_HIDE_PART_LIST);
+                        var wrap_length = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, CUTTINGDIAGRAM1D_OPTION_DEFAULT_WRAP_LENGTH);
 
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
@@ -1830,7 +1725,7 @@
                         cuttingdiagram1dOptions.wrap_length = $inputBreakLength.val();
 
                         // Store options
-                        that.opencutlist.setSettings([
+                        that.dialog.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, value:cuttingdiagram1dOptions.std_bar },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.std_bar_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, value:cuttingdiagram1dOptions.scrap_bar_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -1852,7 +1747,7 @@
                                 generatedAt: new Date().getTime() / 1000,
                                 group: group
                             }, response), function () {
-                                that.opencutlist.setupTooltips();
+                                that.dialog.setupTooltips();
                             });
 
                             // Fetch UI elements
@@ -1952,7 +1847,7 @@
                     $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
 
                     // Setup popovers
-                    that.opencutlist.setupPopovers();
+                    that.dialog.setupPopovers();
 
                 });
 
@@ -1967,7 +1862,7 @@
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
-        this.opencutlist.pullSettings([
+        this.dialog.pullSettings([
 
                 // Defaults
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF,
@@ -1996,18 +1891,18 @@
             function () {
 
                 var cuttingdiagram2dOptions = {
-                    std_sheet: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET),
-                    std_sheet_length: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_LENGTH),
-                    std_sheet_width: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_WIDTH),
-                    scrap_sheet_sizes: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SCRAP_SHEET_SIZES),
-                    grained: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_GRAINED),
-                    saw_kerf: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF)),
-                    trimming: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING)),
-                    presort: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, CUTTINGDIAGRAM2D_OPTION_DEFAULT_PRESORT)),
-                    stacking: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING)),
-                    bbox_optimization: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION)),
-                    sheet_folding: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING)),
-                    hide_part_list: that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST)),
+                    std_sheet: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET),
+                    std_sheet_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_LENGTH),
+                    std_sheet_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STD_SHEET_WIDTH),
+                    scrap_sheet_sizes: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SCRAP_SHEET_SIZES),
+                    grained: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, CUTTINGDIAGRAM2D_OPTION_DEFAULT_GRAINED),
+                    saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF)),
+                    trimming: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING)),
+                    presort: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, CUTTINGDIAGRAM2D_OPTION_DEFAULT_PRESORT)),
+                    stacking: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING)),
+                    bbox_optimization: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION)),
+                    sheet_folding: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING)),
+                    hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST)),
                 };
 
                 rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -2074,7 +1969,7 @@
                         $modal.modal('hide');
 
                         // Edit material and focus std_sizes input field
-                        that.opencutlist.executeCommandOnTab('materials', 'edit_material', {
+                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
                             material_id: group.material_id,
                             callback: callback
                         });
@@ -2131,7 +2026,7 @@
                         var hide_part_list = $selectHidePartList.val();
 
                         // Update default cut options for specific type to last used
-                        that.opencutlist.setSettings([
+                        that.dialog.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, value:presort },
@@ -2141,20 +2036,20 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                        that.opencutlist.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
+                        that.dialog.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
 
                         this.blur();
 
                     });
                     $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
 
-                        var saw_kerf = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF);
-                        var trimming = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING);
-                        var presort = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, CUTTINGDIAGRAM2D_OPTION_DEFAULT_PRESORT);
-                        var stacking = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING);
-                        var bbox_optimization = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION);
-                        var sheet_folding = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING);
-                        var hide_part_list = that.opencutlist.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST);
+                        var saw_kerf = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SAW_KERF);
+                        var trimming = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_TRIMMING);
+                        var presort = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, CUTTINGDIAGRAM2D_OPTION_DEFAULT_PRESORT);
+                        var stacking = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_STACKING);
+                        var bbox_optimization = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, CUTTINGDIAGRAM2D_OPTION_DEFAULT_BBOX_OPTIMIZATION);
+                        var sheet_folding = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, CUTTINGDIAGRAM2D_OPTION_DEFAULT_SHEET_FOLDING);
+                        var hide_part_list = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, CUTTINGDIAGRAM2D_OPTION_DEFAULT_HIDE_PART_LIST);
 
                         $inputSawKerf.val(saw_kerf);
                         $inputTrimming.val(trimming);
@@ -2188,7 +2083,7 @@
                         cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
 
                         // Store options
-                        that.opencutlist.setSettings([
+                        that.dialog.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -2214,7 +2109,7 @@
                                 generatedAt: new Date().getTime() / 1000,
                                 group: group
                             }, response), function () {
-                                that.opencutlist.setupTooltips();
+                                that.dialog.setupTooltips();
                             });
 
                             // Fetch UI elements
@@ -2308,7 +2203,7 @@
                     $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
 
                     // Setup popovers
-                    that.opencutlist.setupPopovers();
+                    that.dialog.setupPopovers();
 
                 });
 
@@ -2365,7 +2260,7 @@
         rubyCallCommand('cutlist_numbers_save', params ? params : {}, function (response) {
 
             if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
+                that.dialog.notifyErrors(response['errors']);
             } else {
                 that.generateCutlist(callback);
             }
@@ -2380,7 +2275,7 @@
         rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function (response) {
 
             if (response['errors']) {
-                that.opencutlist.notifyErrors(response['errors']);
+                that.dialog.notifyErrors(response['errors']);
             } else {
                 that.generateCutlist(callback);
             }
@@ -2394,7 +2289,7 @@
     LadbTabCutlist.prototype.loadOptions = function (callback) {
         var that = this;
 
-        this.opencutlist.pullSettings([
+        this.dialog.pullSettings([
 
                 SETTING_KEY_OPTION_AUTO_ORIENT,
                 SETTING_KEY_OPTION_SMART_MATERIAL,
@@ -2419,23 +2314,23 @@
             function () {
 
                 that.generateOptions = {
-                    auto_orient: that.opencutlist.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
-                    smart_material: that.opencutlist.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
-                    dynamic_attributes_name: that.opencutlist.getSetting(SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME),
-                    part_number_with_letters: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
-                    part_number_sequence_by_group: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
-                    part_folding: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
-                    hide_entity_names: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, OPTION_DEFAULT_HIDE_ENTITY_NAMES),
-                    hide_labels: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
-                    hide_cutting_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
-                    hide_bbox_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
-                    hide_untyped_material_dimensions: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
-                    hide_final_areas: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
-                    hide_edges: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDE_EDGES, OPTION_DEFAULT_HIDE_EDGES),
-                    minimize_on_highlight: that.opencutlist.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
-                    part_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
-                    dimension_column_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
-                    hidden_group_ids: that.opencutlist.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
+                    auto_orient: that.dialog.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, OPTION_DEFAULT_AUTO_ORIENT),
+                    smart_material: that.dialog.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, OPTION_DEFAULT_SMART_MATERIAL),
+                    dynamic_attributes_name: that.dialog.getSetting(SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, OPTION_DEFAULT_DYNAMIC_ATTRIBUTES_NAME),
+                    part_number_with_letters: that.dialog.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, OPTION_DEFAULT_PART_NUMBER_WITH_LETTERS),
+                    part_number_sequence_by_group: that.dialog.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
+                    part_folding: that.dialog.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
+                    hide_entity_names: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, OPTION_DEFAULT_HIDE_ENTITY_NAMES),
+                    hide_labels: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
+                    hide_cutting_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
+                    hide_bbox_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
+                    hide_untyped_material_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
+                    hide_final_areas: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
+                    hide_edges: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_EDGES, OPTION_DEFAULT_HIDE_EDGES),
+                    minimize_on_highlight: that.dialog.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
+                    part_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, OPTION_DEFAULT_PART_ORDER_STRATEGY),
+                    dimension_column_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, OPTION_DEFAULT_DIMENSION_COLUMN_ORDER_STRATEGY),
+                    hidden_group_ids: that.dialog.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, OPTION_DEFAULT_HIDDEN_GROUP_IDS)
                 };
 
                 // Callback
@@ -2607,7 +2502,7 @@
             that.generateOptions.dimension_column_order_strategy = properties.join('>');
 
             // Store options
-            that.opencutlist.setSettings([
+            that.dialog.setSettings([
                 { key:SETTING_KEY_OPTION_AUTO_ORIENT, value:that.generateOptions.auto_orient },
                 { key:SETTING_KEY_OPTION_SMART_MATERIAL, value:that.generateOptions.smart_material },
                 { key:SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, value:that.generateOptions.dynamic_attributes_name },
@@ -2643,7 +2538,7 @@
         $modal.modal('show');
 
         // Setup popovers
-        this.opencutlist.setupPopovers();
+        this.dialog.setupPopovers();
 
     };
 
@@ -2674,6 +2569,32 @@
             $modal.modal('show');
 
         }
+    };
+
+    // Init /////
+
+    LadbTabCutlist.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('generate_cutlist', function (parameters) {
+            var callback = parameters ? parameters.callback : null;
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                that.generateCutlist(callback);
+            }, 1);
+        });
+        this.registerCommand('edit_part', function (parameters) {
+            var partId = parameters.part_id;
+            var partSerializedPath = parameters.part_serialized_path;
+            var tab = parameters.tab;
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                that.generateCutlist(function () {
+                    that.editPart(partId, partSerializedPath, tab);
+                });
+            }, 1);
+        });
+
     };
 
     LadbTabCutlist.prototype.bind = function () {
@@ -2771,37 +2692,12 @@
 
     };
 
-    LadbTabCutlist.prototype.init = function (initializedCallback) {
+    LadbTabCutlist.prototype.processInitializedCallback = function (initializedCallback) {
         var that = this;
-
-        // Register commands
-        this.registerCommand('generate_cutlist', function (parameters) {
-            var callback = parameters ? parameters.callback : null;
-            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                that.generateCutlist(callback);
-            }, 1);
-        });
-        this.registerCommand('edit_part', function (parameters) {
-            var partId = parameters.part_id;
-            var partSerializedPath = parameters.part_serialized_path;
-            var tab = parameters.tab;
-            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                that.generateCutlist(function () {
-                    that.editPart(partId, partSerializedPath, tab);
-                });
-            }, 1);
-        });
 
         // Load Options
         this.loadOptions(function () {
-
-            that.bind();
-
-            // Callback
-            if (initializedCallback && typeof(initializedCallback) == 'function') {
-                initializedCallback(that.$element);
-            }
-
+            LadbAbstractTab.prototype.processInitializedCallback.call(that, initializedCallback);
         });
 
     };
@@ -2813,14 +2709,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabCutlist');
+            var data = $this.data('ladb.tab.plugin');
             var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (undefined === options.opencutlist) {
-                    throw 'opencutlist option is mandatory.';
+                if (undefined === options.dialog) {
+                    throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tabCutlist', (data = new LadbTabCutlist(this, options, options.opencutlist)));
+                $this.data('ladb.tab.plugin', (data = new LadbTabCutlist(this, options, options.dialog)));
             }
             if (typeof option == 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

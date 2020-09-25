@@ -19,13 +19,9 @@
 
     // Select picker options
 
-    var SELECT_PICKER_OPTIONS = {
-        size: 10,
-        iconBase: 'ladb-opencutlist-icon',
-        tickIcon: 'ladb-opencutlist-icon-tick',
-        showTick: true,
+    var SELECT_PICKER_OPTIONS = $.extend(SELECT_PICKER_OPTIONS, {
         noneSelectedText: 'Non utilisé'
-    };
+    });
 
     // CLASS DEFINITION
     // ======================
@@ -85,7 +81,7 @@
                 var lengthUnit = response.length_unit;
 
                 // Retrieve load options
-                that.opencutlist.pullSettings([
+                that.dialog.pullSettings([
 
                         SETTING_KEY_LOAD_OPTION_COL_SEP,
                         SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS,
@@ -98,9 +94,9 @@
                         var loadOptions = {
                             path: response.path,
                             filename: response.filename,
-                            col_sep: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                            first_line_headers: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, OPTION_DEFAULT_FIRST_LINE_HEADERS),
-                            column_mapping: that.opencutlist.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
+                            col_sep: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
+                            first_line_headers: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, OPTION_DEFAULT_FIRST_LINE_HEADERS),
+                            column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
                         };
 
                         var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
@@ -128,7 +124,7 @@
                             loadOptions.first_line_headers = $selectFirstLineHeaders.val() === '1';
 
                             // Store options
-                            that.opencutlist.setSettings([
+                            that.dialog.setSettings([
                                 { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
                                 { key:SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, value:loadOptions.first_line_headers }
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
@@ -160,7 +156,7 @@
         var that = this;
 
         // Store options
-        that.opencutlist.setSettings([
+        that.dialog.setSettings([
             { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
@@ -208,7 +204,7 @@
                 }));
 
                 // Setup tooltips
-                that.opencutlist.setupTooltips();
+                that.dialog.setupTooltips();
 
                 // Apply column mapping
                 for (i = 0; i < columns.length; i++) {
@@ -258,7 +254,7 @@
         var that = this;
 
         // Retrieve load option options
-        that.opencutlist.pullSettings([
+        that.dialog.pullSettings([
 
                 SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS,
                 SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS
@@ -269,8 +265,8 @@
 
                 var importOptions = {
                     remove_all: false,      // This option is not stored to force user to know the option status
-                    keep_definitions_settings: that.opencutlist.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS),
-                    keep_materials_settings: that.opencutlist.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS)
+                    keep_definitions_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS),
+                    keep_materials_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS)
                 };
 
                 var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
@@ -309,7 +305,7 @@
                     importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
 
                     // Store options
-                    that.opencutlist.setSettings([
+                    that.dialog.setSettings([
                         { key:SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, value:importOptions.keep_definitions_settings },
                         { key:SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, value:importOptions.keep_materials_settings }
                     ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
@@ -319,7 +315,7 @@
                         var i;
 
                         if (response.errors.length > 0) {
-                            that.opencutlist.notifyErrors(response.errors);
+                            that.dialog.notifyErrors(response.errors);
                         }
                         if (response.imported_part_count) {
 
@@ -338,12 +334,12 @@
                             // Bind buttons
                             $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
                                 this.blur();
-                                that.opencutlist.minimize();
+                                that.dialog.minimize();
                                 rubyCallCommand('core_zoom_extents')
                             });
                             $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
                                 this.blur();
-                                that.opencutlist.executeCommandOnTab('cutlist', 'generate_cutlist');
+                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
                             });
 
                             // Manage buttons
@@ -403,6 +399,8 @@
         }
     };
 
+    // Init /////
+
     LadbTabImporter.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
@@ -428,18 +426,6 @@
 
     };
 
-    LadbTabImporter.prototype.init = function (initializedCallback) {
-        var that = this;
-
-        this.bind();
-
-        // Callback
-        if (initializedCallback && typeof(initializedCallback) == 'function') {
-            initializedCallback(that.$element);
-        }
-
-    };
-
 
     // PLUGIN DEFINITION
     // =======================
@@ -447,14 +433,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabImporter');
+            var data = $this.data('ladb.tab.plugin');
             var options = $.extend({}, LadbTabImporter.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (undefined === options.opencutlist) {
-                    throw 'opencutlist option is mandatory.';
+                if (undefined === options.dialog) {
+                    throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tabImporter', (data = new LadbTabImporter(this, options, options.opencutlist)));
+                $this.data('ladb.tab.plugin', (data = new LadbTabImporter(this, options, options.dialog)));
             }
             if (typeof option == 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

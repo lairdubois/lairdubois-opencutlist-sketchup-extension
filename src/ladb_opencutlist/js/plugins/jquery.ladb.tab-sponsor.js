@@ -1,35 +1,107 @@
 +function ($) {
     'use strict';
 
-    var MESSAGE_PREFIX = 'ladb-opencutlist-';
-
-    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
-    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-    var GRAPHQL_PAGE_SIZE = 16;
-
     // CLASS DEFINITION
     // ======================
 
     var LadbTabSponsor = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
-        this.$loading = $('.ladb-loading', this.$element);
+        this.$widgetObjective = $('.ladb-sponsor-objective-widget', this.$element);
+        this.$widgetBackers = $('#ladb_sponsor_backers_widget', this.$element);
 
     };
     LadbTabSponsor.prototype = new LadbAbstractTab;
 
     LadbTabSponsor.DEFAULTS = {};
 
-    LadbTabSponsor.prototype.bind = function () {
+    LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
+
+        var objectiveGoal = 4808; // Top of Mont-Blanc Altitude
+        var objectiveCurrency = 'USD';
+
+        // Fetch UI elements
+        var $loading = $('.ladb-loading', $widget);
+        var $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
+        var $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
+        var $progressObjective = $('.progress', $widget);
+        var $progressBarObjective = $('.progress-bar', $widget);
+
+        // Append currency formatted objective goal
+        $labelObjectiveGoal.append(objectiveGoal.toLocaleString(this.dialog.capabilities.language, {
+            style: 'currency',
+            currency: objectiveCurrency,
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }));
+
+        // Load current balance
+        $.ajax({
+            url: GRAPHQL_ENDPOINT,
+            contentType: 'application/json',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                query: "query collective($slug: String) {\n" +
+                    "  collective(slug: $slug) {\n" +
+                    "    stats { \n" +
+                    "      balance { value }\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}",
+                variables: {
+                    slug: GRAPHQL_SLUG
+                }
+            }),
+            success: function (response) {
+                if (response.data) {
+
+                    var balance = response.data.collective.stats.balance.value;
+                    var objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
+                    var objectiveReached = objectiveProgress100 >= 100;
+
+                    $progressObjective.show();
+                    $progressBarObjective
+                        .css('width', Math.min(100, objectiveProgress100) + '%')
+                        .append(balance.toLocaleString(that.dialog.capabilities.language, {
+                            style: 'currency',
+                            currency: objectiveCurrency,
+                            currencyDisplay: 'symbol',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        }))
+                    ;
+                    $labelObjectiveProgress
+                        .addClass('ladb-color-' + (objectiveReached ? 'success' : 'null'))
+                        .append((objectiveReached ? '<i class="ladb-opencutlist-icon-tick"></i> ' : '') + i18next.t('tab.sponsor.objective_funded_progress', { progress: objectiveProgress100 }))
+                        .show()
+                    ;
+
+                    // Hide loading
+                    $loading.hide();
+
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+
+                // Hide loading
+                $loading.hide();
+
+            }
+        });
 
     };
 
     LadbTabSponsor.prototype.loadBackers = function (page) {
         var that = this;
 
+        // Fetch UI elements
+        var $loading = $('.ladb-loading', this.$widgetBackers);
+
         // Show loading
-        this.$loading.show();
+        $loading.show();
 
         // Init page
         page = page ? page : 0;
@@ -40,7 +112,7 @@
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                query: "query members($slug: String) { collective(slug: $slug) { name slug members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { totalCount nodes { account { slug name description imageUrl website } totalDonations { value currency } } } }}",
+                query: "query members($slug: String) { collective(slug: $slug) { name slug members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { totalCount nodes { account { slug name description imageUrl website } totalDonations { value currency } publicMessage } } }}",
                 variables: {
                     slug: GRAPHQL_SLUG
                 }
@@ -56,7 +128,7 @@
                         nextPage: nextPage,
                     }));
                     if (page === 0) {
-                        $list.insertBefore(that.$loading);
+                        $list.insertBefore($loading);
                     } else {
                         $('#ladb_sponsor_members').append($list);
                     }
@@ -81,29 +153,63 @@
                 }
 
                 // Hide loading
-                that.$loading.hide();
+                $loading.hide();
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
 
                 // Hide loading
-                that.$loading.hide();
+                $loading.hide();
 
             }
         });
 
     };
 
-    LadbTabSponsor.prototype.init = function (initializedCallback) {
+    LadbTabSponsor.prototype.showObjectiveModal = function () {
         var that = this;
 
-        this.bind();
-        this.loadBackers();
+        var $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig');
 
-        // Callback
-        if (initializedCallback && typeof(initializedCallback) == 'function') {
-            initializedCallback(that.$element);
-        }
+        // Fetch UI elements
+        var $widgetObjective = $('.ladb-sponsor-objective-widget', $modal);
+        var $btnSponsor = $('#ladb_sponsor_btn', $modal);
+
+        // Bind objective widget
+        this.bindObjectiveWidget($widgetObjective);
+
+        // Bind buttons
+        $btnSponsor.on('click', function () {
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+        // HOP
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    // Init ///
+
+    LadbTabSponsor.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('show_objective_modal', function () {
+            that.showObjectiveModal();
+        });
+
+    };
+
+    LadbTabSponsor.prototype.defaultInitializedCallback = function () {
+        LadbAbstractTab.prototype.defaultInitializedCallback.call(this);
+
+        this.bindObjectiveWidget(this.$widgetObjective);
+        this.loadBackers();
 
     };
 
@@ -114,14 +220,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabSponsor');
+            var data = $this.data('ladb.tab.plugin');
             var options = $.extend({}, LadbTabSponsor.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (undefined === options.opencutlist) {
-                    throw 'opencutlist option is mandatory.';
+                if (undefined === options.dialog) {
+                    throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tabSponsor', (data = new LadbTabSponsor(this, options, options.opencutlist)));
+                $this.data('ladb.tab.plugin', (data = new LadbTabSponsor(this, options, options.dialog)));
             }
             if (typeof option == 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

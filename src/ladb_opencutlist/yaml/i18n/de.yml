@@ -354,19 +354,6 @@ tab:
     report:
       label: Bericht
       title: Bericht generieren
-      objective: Ziel
-      objective_info_1: |
-        *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
-
-        Der Zweck dieser Funktion besteht darin:
-        - Berechnung der geschätzten **Kosten** des Projekts mit Details from Material.
-        - Berechnung des geschätzten **Gewichts** des benötigten Materials.
-        - Zusammenfassung aller projektrelevanten Daten in einem einzigen Dokument, ausgelöst durch eine einzige Aktion.
-
-        Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">finanzielle Ziel</a> erreicht wurde.
-      objective_info_2: |
-        Vielen Dank für Ihren Beitrag!
-      objective_funded_progress: zu {{ progress }}%  finanziert
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
@@ -716,6 +703,19 @@ tab:
     backers_plural: "{{count}} finanzielle Sponsoren"
     load_more: "Weitere laden ..."
     ad: Gefällt Ihnen OpenCutList?
+    objective: Ziel
+    objective_info_1: |
+      *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
+
+      Der Zweck dieser Funktion besteht darin:
+      - Berechnung der geschätzten **Kosten** des Projekts mit Details from Material.
+      - Berechnung des geschätzten **Gewichts** des benötigten Materials.
+      - Zusammenfassung aller projektrelevanten Daten in einem einzigen Dokument, ausgelöst durch eine einzige Aktion.
+
+      Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">finanzielle Ziel</a> erreicht wurde.
+    objective_info_2: |
+      Vielen Dank für Ihren Beitrag!
+    objective_funded_progress: zu {{ progress }}%  finanziert
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen

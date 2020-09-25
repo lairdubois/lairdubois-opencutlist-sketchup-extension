@@ -17,10 +17,15 @@
                             {{ member.account.description }}
                         </div>
                     {% endif %}
+                    {% if member.publicMessage %}
+                        <div class="ladb-sponsor-member-public-message">
+                            {{ member.publicMessage }}
+                        </div>
+                    {% endif %}
                     <div class="ladb-sponsor-member-footer">
                         {% if member.totalDonations and member.totalDonations.value %}
                             <span class="ladb-sponsor-member-amount">
-                                ${{ member.totalDonations.value }}
+                                {{ member.totalDonations.value|format_currency({ currency:member.totalDonations.currency }) }}
                             </span>
                         {% endif %}
                     </div>

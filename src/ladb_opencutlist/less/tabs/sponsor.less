@@ -33,6 +33,12 @@
     font-size: 80%;
   }
 
+  .ladb-sponsor-member-public-message {
+    margin-top: 5px;
+    font-size: 80%;
+    font-style: italic;
+  }
+
   .ladb-sponsor-member-footer {
     position: absolute;
     bottom: 0;
@@ -42,12 +48,46 @@
   .ladb-sponsor-member-amount {
     font-weight: bold;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    font-size: 150%;
+    font-size: 120%;
   }
 
   .ladb-sponsor-member-since {
     color: #999;
     font-size: 90%;
+  }
+
+}
+
+.ladb-sponsor-objective-widget {
+
+  > .panel-heading {
+    font-size: 120%;
+
+    > .ladb-sponsor-objective {
+      font-weight: bold;
+    }
+
+    > .ladb-sponsor-objective-progress-label {
+      margin-left: 10px;
+      border-left: 1px solid #ccc;
+      padding-left: 10px;
+      display: none;
+    }
+
+    > .ladb-sponsor-objective-goal-label {
+
+    }
+
+  }
+
+  .progress {
+    margin-bottom: 0;
+    display: none;
+
+    > .progress-bar {
+      background-color: @ladb-brand-sponsor;
+    }
+
   }
 
 }

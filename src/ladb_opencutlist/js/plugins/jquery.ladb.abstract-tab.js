@@ -1,9 +1,11 @@
 'use strict';
 
-function LadbAbstractTab(element, options, opencutlist) {
+function LadbAbstractTab(element, options, dialog) {
     this.options = options;
     this.$element = $(element);
-    this.opencutlist = opencutlist;
+    this.dialog = dialog;
+
+    this.defaultInitializedCallbackCalled = false;
 
     this._commands = {};
 
@@ -14,6 +16,60 @@ function LadbAbstractTab(element, options, opencutlist) {
 
     this._obsolete = false;
 }
+
+// Init /////
+
+LadbAbstractTab.prototype.init = function (initializedCallback) {
+
+    // Register commands
+    this.registerCommands();
+
+    // Bind element
+    this.bind();
+
+    // Callback
+    this.processInitializedCallback(initializedCallback);
+
+};
+
+LadbAbstractTab.prototype.registerCommands = function () {
+    // Override to implements
+};
+
+LadbAbstractTab.prototype.bind = function () {
+    var that = this;
+
+    var fnComputeStuckSlideHeadersWidth = function (event) {
+
+        // Recompute stuck slides header width
+        $('.ladb-slide:visible', that.$element).each(function (index) {
+            that.computeStuckSlideHeaderWidth($(this));
+        });
+
+    };
+
+    // Bind window resize event
+    $(window).on('resize', fnComputeStuckSlideHeadersWidth);
+
+    // Bind dialog maximized and minimized events
+    this.dialog.$element.on('maximized.ladb.dialog', fnComputeStuckSlideHeadersWidth);
+
+    // Bind tab shown events
+    this.$element.on('shown.ladb.tab', fnComputeStuckSlideHeadersWidth);
+
+};
+
+LadbAbstractTab.prototype.processInitializedCallback = function (initializedCallback) {
+    if (initializedCallback && typeof(initializedCallback) == 'function') {
+        initializedCallback(this.$element);
+    } else {
+        this.defaultInitializedCallback();
+    }
+};
+
+LadbAbstractTab.prototype.defaultInitializedCallback = function () {
+    this.defaultInitializedCallbackCalled = true;
+};
 
 // Slide /////
 
@@ -253,31 +309,6 @@ LadbAbstractTab.prototype.tokenfieldValidatorFn_dxd = function (e) {
     if (!valid) {
         $(e.relatedTarget).addClass('invalid')
     }
-};
-
-// Bind /////
-
-LadbAbstractTab.prototype.bind = function () {
-    var that = this;
-
-    var fnComputeStuckSlideHeadersWidth = function (event) {
-
-        // Recompute stuck slides header width
-        $('.ladb-slide:visible', that.$element).each(function (index) {
-            that.computeStuckSlideHeaderWidth($(this));
-        });
-
-    };
-
-    // Bind window resize event
-    $(window).on('resize', fnComputeStuckSlideHeadersWidth);
-
-    // Bind dialog maximized and minimized events
-    this.opencutlist.$element.on('maximized.ladb.dialog', fnComputeStuckSlideHeadersWidth);
-
-    // Bind tab shown events
-    this.$element.on('shown.ladb.tab', fnComputeStuckSlideHeadersWidth);
-
 };
 
 // Obsolete /////

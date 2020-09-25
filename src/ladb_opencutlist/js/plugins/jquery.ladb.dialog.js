@@ -4,8 +4,6 @@
     // CONSTANTS
     // ======================
 
-    var EW_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
-
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
 
     // CLASS DEFINITION
@@ -48,6 +46,8 @@
         this.activeTabName = null;
         this.tabs = {};
         this.tabBtns = {};
+
+        this._$modal = null;
 
         this.$wrapper = null;
         this.$wrapperSlides = null;
@@ -269,6 +269,49 @@
         }
     };
 
+    LadbDialog.prototype.loadTab = function (tabName, callback) {
+
+        var $tab = this.tabs[tabName];
+        if (!$tab) {
+
+            // Render and append tab
+            this.$wrapperSlides.append(Twig.twig({ref: "tabs/" + tabName + "/tab.twig"}).render({
+                tabName: tabName,
+                capabilities: this.capabilities
+            }));
+
+            // Fetch tab
+            $tab = $('#ladb_tab_' + tabName, this.$wrapperSlides);
+
+            // Initialize tab (with its jQuery plugin)
+            var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            $tab[jQueryPluginFn]({
+                dialog: this,
+                initializedCallback: callback
+            });
+
+            // Setup tooltips & popovers
+            this.setupTooltips();
+            this.setupPopovers();
+
+            // Cache tab
+            this.tabs[tabName] = $tab;
+
+            // Hide tab
+            $tab.hide();
+
+        } else {
+
+            // Callback
+            if (callback && typeof(callback) == 'function') {
+                callback($tab);
+            }
+
+        }
+
+        return $tab;
+    };
+
     LadbDialog.prototype.selectTab = function (tabName, callback) {
 
         var $tab = this.tabs[tabName];
@@ -281,37 +324,17 @@
 
                 $freshTab = false;
 
-                // Display tab
-                $tab.show();
-
             } else {
 
                 $freshTab = true;
 
-                // Render and append tab
-                this.$wrapperSlides.append(Twig.twig({ ref: "tabs/" + tabName + "/tab.twig" }).render({
-                    tabName: tabName,
-                    capabilities: this.capabilities
-                }));
-
-                // Fetch tab
-                $tab = $('#ladb_tab_' + tabName, this.$wrapperSlides);
-
-                // Initialize tab (with its jQuery plugin)
-                var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
-                $tab[jQueryPluginFn]({
-                    opencutlist: this,
-                    initializedCallback: callback
-                });
-
-                // Setup tooltips & popovers
-                this.setupTooltips();
-                this.setupPopovers();
-
-                // Cache tab
-                this.tabs[tabName] = $tab;
+                // Load tab
+                $tab = this.loadTab(tabName, callback);
 
             }
+
+            // Display tab
+            $tab.show();
 
             // Flag tab as active
             this.tabBtns[tabName].addClass('ladb-active');
@@ -328,6 +351,13 @@
             // Callback
             if (callback && typeof(callback) == 'function') {
                 callback($tab);
+            } else {
+
+                var jQueryPlugin = $tab.data('ladb.tab.plugin');
+                if (jQueryPlugin && !jQueryPlugin.defaultInitializedCallbackCalled) {
+                    jQueryPlugin.defaultInitializedCallback();
+                }
+
             }
 
         } else {
@@ -355,7 +385,19 @@
 
         // Select tab and execute command
         this.selectTab(tabName, function ($tab) {
-            var jQueryPlugin = $tab.data('ladb.tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+            var jQueryPlugin = $tab.data('ladb.tab.plugin');
+            if (jQueryPlugin) {
+                jQueryPlugin.executeCommand(command, parameters, callback);
+            }
+        });
+
+    };
+
+    LadbDialog.prototype.executeBackgroundCommandOnTab = function (tabName, command, parameters, callback) {
+
+        // Load tab and execute command
+        this.loadTab(tabName, function ($tab) {
+            var jQueryPlugin = $tab.data('ladb.tab.plugin');
             if (jQueryPlugin) {
                 jQueryPlugin.executeCommand(command, parameters, callback);
             }
@@ -383,18 +425,43 @@
 
     };
 
+    // Modal /////
+
+    LadbDialog.prototype.appendModal = function (id, twigFile, renderParams) {
+        var that = this;
+
+        // Hide previously opened modal
+        if (this._$modal) {
+            this._$modal.modal('hide');
+        }
+
+        // Render modal
+        this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
+
+        // Fetch UI elements
+        this._$modal = $('#' + id, this.$element);
+
+        // Bind modal
+        this._$modal.on('hidden.bs.modal', function () {
+            $(this)
+                .data('bs.modal', null)
+                .remove();
+        });
+
+        return this._$modal;
+    };
+
     LadbDialog.prototype.showUpgradeModal = function () {
         var that = this;
 
-        // Render modal
-        this.$element.append(Twig.twig({ref: 'core/_modal-upgrade.twig'}).render({
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_upgrade', 'core/_modal-upgrade.twig', {
             capabilities: this.capabilities,
             manifest: this.manifest,
             upgradable: this.upgradable,
-        }));
+        });
 
         // Fetch UI elements
-        var $modal = $('#ladb_core_modal_upgrade');
         var $panelInfos = $('#ladb_panel_infos', $modal);
         var $panelProgress = $('#ladb_panel_progress', $modal);
         var $footer = $('.modal-footer', $modal);
@@ -592,11 +659,11 @@
                 that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
 
                 // Add i18next twig filter
-                Twig.extendFilter("i18next", function (value, options) {
+                Twig.extendFilter('i18next', function (value, options) {
                     return i18next.t(value, options ? options[0] : {});
                 });
                 // Add ... filter
-                Twig.extendFilter("url_beautify", function (value, options) {
+                Twig.extendFilter('url_beautify', function (value) {
                     var parser = document.createElement('a');
                     parser.href = value;
                     var str = '<span class="ladb-url-host">' + parser.host + '</span>';
@@ -605,9 +672,18 @@
                     }
                     return '<span class="ladb-url">' + str + '</span>';
                 });
+                Twig.extendFilter('format_currency', function (value, options) {
+                    return value.toLocaleString(that.capabilities.language, {
+                        style: 'currency',
+                        currency: options.currency ? options.currency : 'USD',
+                        currencyDisplay: 'symbol',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    });
+                });
 
                 // Render and append layout template
-                that.$element.append(Twig.twig({ref: "core/layout.twig"}).render({
+                that.$element.append(Twig.twig({ref: 'core/layout.twig'}).render({
                     capabilities: that.capabilities,
                     compatibilityAlertHidden: that.compatibilityAlertHidden,
                     tabDefs: that.options.tabDefs

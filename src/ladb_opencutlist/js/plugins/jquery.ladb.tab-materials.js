@@ -27,24 +27,6 @@
 
     var OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY = 'name>type';
 
-    // Select picker options
-
-    var SELECT_PICKER_OPTIONS = {
-        size: 10,
-        iconBase: 'ladb-opencutlist-icon',
-        tickIcon: 'ladb-opencutlist-icon-tick',
-        showTick: true
-    };
-
-    // Tokenfield options
-
-    var TOKENFIELD_OPTIONS = {
-        delimiter: ';',
-        createTokensOnBlur: true,
-        beautify: false,
-        minWidth: 200
-    };
-
     // CLASS DEFINITION
     // ======================
 
@@ -111,7 +93,7 @@
             }));
 
             // Setup tooltips
-            that.opencutlist.setupTooltips();
+            that.dialog.setupTooltips();
 
             // Bind rows
             $('.ladb-material-box', that.$page).each(function (index) {
@@ -137,7 +119,7 @@
                 })
                 .on('dblclick', function () {
                     $(this).blur();
-                    that.opencutlist.minimize();
+                    that.dialog.minimize();
                     return false;
                 });
 
@@ -224,7 +206,7 @@
                 that.ignoreNextMaterialEvents = false;
 
                 if (response.errors && response.errors.length > 0) {
-                    that.opencutlist.notifyErrors(response.errors);
+                    that.dialog.notifyErrors(response.errors);
                 } else {
                     that.loadList();
                 }
@@ -240,8 +222,8 @@
         $modal.modal('show');
 
         // Setup tooltips & popovers
-        this.opencutlist.setupTooltips();
-        this.opencutlist.setupPopovers();
+        this.dialog.setupTooltips();
+        this.dialog.setupPopovers();
 
         // Focus
         $inputs.inputName.focus();
@@ -258,7 +240,7 @@
             this.editedMaterial = material;
 
             var $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
-                capabilities: that.opencutlist.capabilities,
+                capabilities: that.dialog.capabilities,
                 material: material
             }, true);
 
@@ -422,7 +404,7 @@
                     that.ignoreNextMaterialEvents = false;
 
                     if (response['errors']) {
-                        that.opencutlist.notifyErrors(response['errors']);
+                        that.dialog.notifyErrors(response['errors']);
                     } else {
 
                         // Reload the list
@@ -458,8 +440,8 @@
             $inputs.inputName.focus();
 
             // Setup tooltips & popovers
-            this.opencutlist.setupTooltips();
-            this.opencutlist.setupPopovers();
+            this.dialog.setupTooltips();
+            this.dialog.setupPopovers();
 
             // Callback
             if (typeof(callback) === 'function') {
@@ -496,7 +478,7 @@
                 that.ignoreNextMaterialEvents = false;
 
                 if (response.errors && response.errors.length > 0) {
-                    that.opencutlist.notifyErrors(response.errors);
+                    that.dialog.notifyErrors(response.errors);
                 } else {
 
                     // Reload the list
@@ -528,7 +510,7 @@
             that.ignoreNextMaterialEvents = false;
 
             if (response.errors && response.errors.length > 0) {
-                that.opencutlist.notifyErrors(response.errors);
+                that.dialog.notifyErrors(response.errors);
             } else {
                 that.loadList(function() {
                     var $material = $('#ladb_material_' + response.material_id, that.$page);
@@ -550,10 +532,10 @@
             var i;
 
             if (response.errors) {
-                that.opencutlist.notifyErrors(response.errors);
+                that.dialog.notifyErrors(response.errors);
             }
             if (response.export_path) {
-                that.opencutlist.notify(i18next.t('tab.materials.success.exported_to', { export_path: response.export_path }), 'success');
+                that.dialog.notify(i18next.t('tab.materials.success.exported_to', { export_path: response.export_path }), 'success');
             }
 
         });
@@ -580,7 +562,7 @@
             that.ignoreNextMaterialEvents = false;
 
             if (response.errors && response.errors.length > 0) {
-                that.opencutlist.notifyErrors(response.errors);
+                that.dialog.notifyErrors(response.errors);
             } else {
                 that.loadList();
             }
@@ -593,7 +575,7 @@
     LadbTabMaterials.prototype.loadOptions = function (callback) {
         var that = this;
 
-        this.opencutlist.pullSettings([
+        this.dialog.pullSettings([
 
                 SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY
 
@@ -602,7 +584,7 @@
             function () {
 
                 that.generateOptions = {
-                    material_order_strategy: that.opencutlist.getSetting(SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY)
+                    material_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, OPTION_DEFAULT_MATERIAL_ORDER_STRATEGY)
                 };
 
                 // Callback
@@ -684,7 +666,7 @@
             that.generateOptions.material_order_strategy = properties.join('>');
 
             // Store options
-            that.opencutlist.setSettings([
+            that.dialog.setSettings([
                 { key:SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, value:that.generateOptions.material_order_strategy },
             ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
@@ -703,7 +685,7 @@
         $modal.modal('show');
 
         // Setup popovers
-        this.opencutlist.setupPopovers();
+        this.dialog.setupPopovers();
 
     };
 
@@ -939,17 +921,17 @@
                 // Workaround for empty string tokens
                 $input.tokenfield('setTokens', tokens === ''  ? ' ' : tokens);
             };
-            $inputThickness.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
-            $inputLengthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
-            $inputWidthIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
-            $inputThicknessIncrease.val(that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
-            setTokens($inputStdLengths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
-            setTokens($inputStdWidths, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
-            setTokens($inputStdThicknesses, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
-            setTokens($inputStdSections, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
-            setTokens($inputStdSizes, that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
-            $selectGrained.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
-            $selectEdgeDecremented.selectpicker('val', that.opencutlist.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
+            $inputThickness.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
+            $inputLengthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
+            $inputWidthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
+            $inputThicknessIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
+            setTokens($inputStdLengths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
+            setTokens($inputStdWidths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
+            setTokens($inputStdThicknesses, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
+            setTokens($inputStdSections, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
+            setTokens($inputStdSizes, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
+            $selectGrained.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
+            $selectEdgeDecremented.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
         };
 
         var fnCheckInputNameValue = function(verbose) {
@@ -1029,7 +1011,7 @@
             var edgeDecrement = $selectEdgeDecremented.val() === '1';
 
             // Update default cut options for specific type to last used
-            that.opencutlist.setSettings([
+            that.dialog.setSettings([
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, value:thickness, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:length_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:width_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -1043,7 +1025,7 @@
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, value:edgeDecrement }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-            that.opencutlist.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
+            that.dialog.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
 
             this.blur();
         });
@@ -1092,6 +1074,32 @@
             selectEdgeDecremented: $selectEdgeDecremented,
             hueb: hueb
         }
+    };
+
+    // Init ///
+
+    LadbTabMaterials.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('new_material', function (parameters) {
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                var name = parameters.name;
+                var color = parameters.color;
+                var type = parameters.type;
+                that.newMaterial(name, color, type);
+            }, 1);
+        });
+        this.registerCommand('edit_material', function (parameters) {
+            var materialId = parameters.material_id;
+            var callback = parameters.callback;
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                that.loadList(function () {
+                    that.editMaterial(materialId, callback);
+                });
+            }, 1);
+        });
     };
 
     LadbTabMaterials.prototype.bind = function () {
@@ -1146,27 +1154,8 @@
 
     };
 
-    LadbTabMaterials.prototype.init = function (initializedCallback) {
+    LadbTabMaterials.prototype.processInitializedCallback = function (initializedCallback) {
         var that = this;
-
-        // Register commands
-        this.registerCommand('new_material', function (parameters) {
-            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                var name = parameters.name;
-                var color = parameters.color;
-                var type = parameters.type;
-                that.newMaterial(name, color, type);
-            }, 1);
-        });
-        this.registerCommand('edit_material', function (parameters) {
-            var materialId = parameters.material_id;
-            var callback = parameters.callback;
-            setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                that.loadList(function () {
-                    that.editMaterial(materialId, callback);
-                });
-            }, 1);
-        });
 
         // Load settings
         var settingsKeys = [];
@@ -1184,24 +1173,20 @@
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED);
         }
 
-        this.opencutlist.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function () {
+        this.dialog.pullSettings(settingsKeys, 0 /* SETTINGS_RW_STRATEGY_GLOBAL */, function () {
 
             // Load Options
             that.loadOptions(function () {
-
-                that.bind();
-
-                if (initializedCallback && typeof(initializedCallback) == 'function') {
-                    initializedCallback(that.$element);
-                } else {
-                    setTimeout(function () {     // Use setTimer to give time tu UI to refresh
-                        that.loadList();
-                    }, 1);
-                }
-
+                LadbAbstractTab.prototype.processInitializedCallback.call(that, initializedCallback);
             });
 
         });
+    };
+
+    LadbTabMaterials.prototype.defaultInitializedCallback = function () {
+        LadbAbstractTab.prototype.defaultInitializedCallback.call(this);
+
+        this.loadList();
 
     };
 
@@ -1212,14 +1197,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.tabMaterials');
+            var data = $this.data('ladb.tab.plugin');
             var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                if (undefined === options.opencutlist) {
-                    throw 'opencutlist option is mandatory.';
+                if (undefined === options.dialog) {
+                    throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tabMaterials', (data = new LadbTabMaterials(this, options, options.opencutlist)));
+                $this.data('ladb.tab.plugin', (data = new LadbTabMaterials(this, options, options.dialog)));
             }
             if (typeof option == 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

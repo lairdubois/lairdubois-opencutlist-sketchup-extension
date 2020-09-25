@@ -1,0 +1,20 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_sponsor_modal_objective' %}
+{% set title = 'tab.cutlist.report.title'|i18next %}
+
+{% block bodyInner %}
+    <div class="media">
+        <div class="media-left"><i class="ladb-opencutlist-icon-report ladb-opencutlist-icon-xl"></i></div>
+        <div class="media-body">
+            <p>{{ 'tab.sponsor.objective_info_1'|i18next }}</p>
+            {% include 'tabs/sponsor/_objective-widget.twig' %}
+            <p>{{ 'tab.sponsor.objective_info_2'|i18next }}</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+    <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-contribute" target="_blank" class="btn btn-primary btn-sponsor" id="ladb_sponsor_btn"><i class="ladb-opencutlist-icon-sponsor"></i> {{ 'tab.sponsor.contribute'|i18next }}...</a>
+{% endblock %}

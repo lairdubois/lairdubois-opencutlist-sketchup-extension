@@ -354,19 +354,6 @@ tab:
     report:
       label: Rapport
       title: Générer un rapport
-      objective: Objectif
-      objective_info_1: |
-        *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
-
-        Cette fonctionnalité a pour but de :
-        - Calculer le **coût** estimé du projet avec détails par matière
-        - Calculer le **poids** estimé des matières nécessaires
-        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
-
-        Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
-      objective_info_2: |
-        Merci pour votre contribution !
-      objective_funded_progress: financé à {{ progress }}%
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
@@ -716,6 +703,19 @@ tab:
     backers_plural: "{{count}} contributeurs financiers"
     load_more: "Charger la suite..."
     ad: Vous aimez OpenCutList ?
+    objective: Objectif
+    objective_info_1: |
+      *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+
+      Cette fonctionnalité a pour but de :
+      - Calculer le **coût** estimé du projet avec détails par matière
+      - Calculer le **poids** estimé des matières nécessaires
+      - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+
+      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
+    objective_info_2: |
+      Merci pour votre contribution !
+    objective_funded_progress: financé à {{ progress }}%
   settings:
     label: Préférences
     title: Préférences
