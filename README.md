@@ -26,6 +26,22 @@ We are looking for volunteering translators to spanish, preferably woodworkers a
 
 In addition to the selected SketchUp unit, OpenCutList works with dimensions of solid wood, panels and dimensional lumber in fractional inches, even if the selected SketchUp units are metric and vice versa.
 
+## Tutorials
+
+There are a number of great videos on YouTube about using **OCL** for woodworking projects.
+
+- [Johannes Boernsen, OpenCutList: Automatische Schnittpläne und Materiallisten mit Sketchup erstellen](https://www.youtube.com/watch?v=55jhInrVzJU)
+- [FollowAndrew, Generate Cut-list Woodworking 3D SketchUp](https://www.youtube.com/watch?v=yrex6zLv66I)
+- [Heiko Reich, VLOG \#30 - Stücklisten und Zuschnittpläne in SketchUp erstellen](https://www.youtube.com/watch?v=dLoiFJI9LGQ)
+- [Firebird Interiors, Cutlists made easy! (Sketchup For Fitted Furniture Makers Part 6)](https://www.youtube.com/watch?v=wswN3mEtsCI)
+- [Jarek Ostaszewksi, SU11. SketchUp: automatyczna lista elementów i formatek do pocięcia (BOM)](https://www.youtube.com/watch?v=VpPKP2xRbB4)
+- [Guillermo Digital Artist, Plugin para despiece en SketchUp OpenCutList gratis en español](https://www.youtube.com/watch?v=CLakxzqhbSo)
+- [Ab Ovo Estudio, ¡Como hacer una lista de piezas y de corte de un mueble en Sketchup!](https://www.youtube.com/watch?v=bTy0m1buLCo)
+- [Lar7 Estudio, OPTIMIZADOR DE CORTES CON CANTOS PARA MELAMINA EN SKETCHUP PLUGIN](https://www.youtube.com/watch?v=0TB7NLR-uJk)
+- [Marceneria Provençal, Projetos e planos de corte com OpenCutList no SketchUp](https://www.youtube.com/watch?v=4eUKo0Shp4g)
+- [Chipovan, Проба создания стола в SketchUp 2019 и OpenCutList](https://www.youtube.com/watch?v=_wPXOvkwYfs)
+- [AECO Space, Master your SketchUp | SketchUp Woodwork Plugin](https://www.youtube.com/watch?v=dt3CcXmRqy0)
+
 ## Contributors
 
 ### Code Contributors
