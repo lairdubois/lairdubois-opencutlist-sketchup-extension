@@ -121,6 +121,9 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-extension:before {
   content: "\e919";
 }
+.ladb-opencutlist-icon-tutorial:before {
+  content: "\e973";
+}
 .ladb-opencutlist-icon-submenu:before {
   content: "\e91a";
 }
@@ -388,4 +391,3 @@ i, span.ladb-opencutlist-icon {
 .ladb-opencutlist-icon-chevron-left:before {
   content: "\e971";
 }
-

@@ -30,6 +30,7 @@ In addition to the selected SketchUp unit, OpenCutList works with dimensions of 
 
 There are a number of great videos on YouTube about using **OCL** for woodworking projects.
 
+- [Boris Beaulant, Conférence de présentation OpenCutList au salon Habitat et Bois - Epinal 2019](https://www.youtube.com/watch?v=gW0FrYRItoc)
 - [Johannes Boernsen, OpenCutList: Automatische Schnittpläne und Materiallisten mit Sketchup erstellen](https://www.youtube.com/watch?v=55jhInrVzJU)
 - [FollowAndrew, Generate Cut-list Woodworking 3D SketchUp](https://www.youtube.com/watch?v=yrex6zLv66I)
 - [Heiko Reich, VLOG \#30 - Stücklisten und Zuschnittpläne in SketchUp erstellen](https://www.youtube.com/watch?v=dLoiFJI9LGQ)

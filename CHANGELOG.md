@@ -8,6 +8,7 @@ in 1.x and 0.x versions.
 
   * Added cutting diagram (1d and 2d) capability to compute only for selected (in part list) parts
   * Added public message of members in sponsor list
+  * Added link to tutorials list on GitHub in "More" tab
   
 * 1.9.4 (2020-09-11)
 

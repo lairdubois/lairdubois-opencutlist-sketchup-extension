@@ -53,6 +53,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: More
+    more_tutorials: Tutoriels # TODO
     more_docs: Docs
     more_reviews: Reviews
     more_plans: Plans
