@@ -678,7 +678,7 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
 
         // Show Objective modal
-        this.dialog.executeBackgroundCommandOnTab('sponsor', 'show_objective_modal');
+        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', null, null, true);
 
     };
 

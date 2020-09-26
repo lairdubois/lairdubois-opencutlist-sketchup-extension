@@ -50,12 +50,12 @@
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                query: "query collective($slug: String) {\n" +
-                    "  collective(slug: $slug) {\n" +
-                    "    stats { \n" +
-                    "      balance { value }\n" +
-                    "    }\n" +
-                    "  }\n" +
+                query: "query collective($slug: String) { " +
+                        "collective(slug: $slug) { " +
+                            "stats { " +
+                                "balance { value }" +
+                            "}" +
+                        "}" +
                     "}",
                 variables: {
                     slug: GRAPHQL_SLUG
@@ -118,7 +118,29 @@
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                query: "query members($slug: String) { collective(slug: $slug) { name slug members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { totalCount nodes { account { slug name description imageUrl website } totalDonations { value currency } publicMessage } } }}",
+                query: "query members($slug: String) { " +
+                        "collective(slug: $slug) { " +
+                            "name " +
+                            "slug " +
+                            "members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { " +
+                                "totalCount " +
+                                "nodes { " +
+                                    "account { " +
+                                        "slug " +
+                                        "name " +
+                                        "description " +
+                                        "imageUrl " +
+                                        "website " +
+                                    "} " +
+                                    "totalDonations { " +
+                                        "value " +
+                                        "currency " +
+                                    "} " +
+                                    "publicMessage" +
+                                "}" +
+                            "}" +
+                        "}" +
+                    "}",
                 variables: {
                     slug: GRAPHQL_SLUG
                 }

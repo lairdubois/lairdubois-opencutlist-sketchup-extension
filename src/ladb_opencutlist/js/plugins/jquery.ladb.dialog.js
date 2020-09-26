@@ -381,27 +381,20 @@
         return $tab;
     };
 
-    LadbDialog.prototype.executeCommandOnTab = function (tabName, command, parameters, callback) {
+    LadbDialog.prototype.executeCommandOnTab = function (tabName, command, parameters, callback, keepTabInBackground) {
 
-        // Select tab and execute command
-        this.selectTab(tabName, function ($tab) {
+        var fnExecute = function ($tab) {
             var jQueryPlugin = $tab.data('ladb.tab.plugin');
             if (jQueryPlugin) {
                 jQueryPlugin.executeCommand(command, parameters, callback);
             }
-        });
+        }
 
-    };
-
-    LadbDialog.prototype.executeBackgroundCommandOnTab = function (tabName, command, parameters, callback) {
-
-        // Load tab and execute command
-        this.loadTab(tabName, function ($tab) {
-            var jQueryPlugin = $tab.data('ladb.tab.plugin');
-            if (jQueryPlugin) {
-                jQueryPlugin.executeCommand(command, parameters, callback);
-            }
-        });
+        if (keepTabInBackground) {
+            this.loadTab(tabName, fnExecute);
+        } else {
+            this.selectTab(tabName, fnExecute);
+        }
 
     };
 
