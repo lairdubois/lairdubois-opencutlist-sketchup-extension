@@ -53,7 +53,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Mehr
-    more_tutorials: Tutoriels # TODO
+    more_tutorials: Tutorials
     more_docs: Dokus
     more_reviews: Meinungen
     more_plans: Pläne
@@ -705,14 +705,14 @@ tab:
     ad: Gefällt Ihnen OpenCutList?
     objective: Ziel
     objective_title: Bericht generieren
-    objective_solgan: Gravissons ensemble le Mont-Blanc ! # TODO
+    objective_solgan: Lassen Sie uns gemeinsam den Mont Blanc besteigen!
     objective_details: |
       *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
-      Der Zweck dieser Funktion besteht darin:
-      - Berechnung der geschätzten **Kosten** des Projekts mit Details from Material.
-      - Berechnung des geschätzten **Gewichts** des benötigten Materials.
-      - Zusammenfassung aller projektrelevanten Daten in einem einzigen Dokument, ausgelöst durch eine einzige Aktion.
+      Der Zweck dieses Features wird sein:
+      - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
+      - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
+      - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
 
       Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
