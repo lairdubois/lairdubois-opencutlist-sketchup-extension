@@ -354,7 +354,6 @@ tab:
       edge_xmax: Bordo Larghezza 2
     report:
       label: Rapport  # TODO
-      title: Générer un rapport  # TODO
     cuttingdiagram:
       title: Schema di taglio
       options_material: Materiale
@@ -705,7 +704,8 @@ tab:
     load_more: "Aggiungi ..."
     ad: Gradisci OpenCutList?
     objective: Objectif # TODO
-    objective_info_1: | # TODO
+    objective_title: Générer un rapport  # TODO
+    objective_details: | # TODO
       *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
 
       Cette fonctionnalité a pour but de :
@@ -714,7 +714,7 @@ tab:
       - Synthétiser les informations de tout le projet en un même document accessible par une seule action
 
       Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
-    objective_info_2: | # TODO
+    objective_thanks: | # TODO
       Merci pour votre contribution !
     objective_funded_progress: financé à {{ progress }}%  # TODO
   settings:

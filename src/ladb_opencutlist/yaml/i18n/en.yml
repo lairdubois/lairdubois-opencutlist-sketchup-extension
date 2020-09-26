@@ -354,7 +354,6 @@ tab:
       edge_xmax: Edge width 2
     report:
       label: Report
-      title: Generate a Report
     cuttingdiagram:
       title: Cutting Diagram
       options_material: Material
@@ -705,7 +704,8 @@ tab:
     load_more: "Load more ..."
     ad: Do you like OpenCutList?
     objective: Objective
-    objective_info_1: |
+    objective_title: Generate a Report
+    objective_details: |
       *Reporting may be available in the next major release.*
 
       The purpose of this feature is to:
@@ -714,7 +714,7 @@ tab:
       - Synthesize the information of the entire project in a single document accessible by a single action
 
       The development of this new functionality will be done through **participatory financing** and will start when its <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Financial Objective</a> is reached.
-    objective_info_2: |
+    objective_thanks: |
       Thank you for your contribution!
     objective_funded_progress: funded at {{ progress }}%
   settings:

@@ -23,6 +23,7 @@
 
         // Fetch UI elements
         var $loading = $('.ladb-loading', $widget);
+        var $btnInfo = $('.ladb-sponsor-objective-info-btn', $widget);
         var $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
         var $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
         var $progressObjective = $('.progress', $widget);
@@ -36,6 +37,11 @@
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }));
+
+        // Bind button
+        $btnInfo.on('click', function() {
+            that.showObjectiveModal();
+        });
 
         // Load current balance
         $.ajax({
