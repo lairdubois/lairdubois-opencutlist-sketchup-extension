@@ -17,12 +17,6 @@
     var OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS = true;
     var OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS = true;
 
-    // Select picker options
-
-    var SELECT_PICKER_OPTIONS = $.extend(SELECT_PICKER_OPTIONS, {
-        noneSelectedText: 'Non utilisé'
-    });
-
     // CLASS DEFINITION
     // ======================
 
@@ -224,7 +218,9 @@
                             }
                             that.loadCSV(loadOptions)
                         })
-                        .selectpicker(SELECT_PICKER_OPTIONS);
+                        .selectpicker($.extend(SELECT_PICKER_OPTIONS, {
+                            noneSelectedText: i18next.t('tab.import.column.unused')
+                        }));
                 }
 
                 // Bind buttons

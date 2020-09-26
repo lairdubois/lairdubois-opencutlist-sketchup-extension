@@ -705,6 +705,7 @@ tab:
     ad: Вам нравится OpenCutList ?
     objective: Objectif # TODO
     objective_title: Générer un rapport  # TODO
+    objective_solgan: Gravissons ensemble le Mont-Blanc ! # TODO
     objective_details: | # TODO
       *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
 
@@ -713,7 +714,7 @@ tab:
       - Calculer le **poids** estimé des matières nécessaires
       - Synthétiser les informations de tout le projet en un même document accessible par une seule action
 
-      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">Objectif Financier</a> sera atteint.
+      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: | # TODO
       Merci pour votre contribution !
     objective_funded_progress: financé à {{ progress }}%  # TODO

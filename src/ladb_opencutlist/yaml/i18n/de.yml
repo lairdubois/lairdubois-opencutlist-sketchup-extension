@@ -705,6 +705,7 @@ tab:
     ad: Gefällt Ihnen OpenCutList?
     objective: Ziel
     objective_title: Bericht generieren
+    objective_solgan: Gravissons ensemble le Mont-Blanc ! # TODO
     objective_details: |
       *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
@@ -713,7 +714,7 @@ tab:
       - Berechnung des geschätzten **Gewichts** des benötigten Materials.
       - Zusammenfassung aller projektrelevanten Daten in einem einzigen Dokument, ausgelöst durch eine einzige Aktion.
 
-      Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension#section-goals" target="_blank">finanzielle Ziel</a> erreicht wurde.
+      Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!
     objective_funded_progress: zu {{ progress }}%  finanziert
