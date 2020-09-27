@@ -79,8 +79,8 @@ module Ladb::OpenCutList
           :unplaced_parts => [],
           :summary => {
               :bars => [],
-              :total_count => 0,
-              :total_length => 0,
+              :total_used_count => 0,
+              :total_used_length => 0,
           },
           :bars => [],
       }
@@ -151,14 +151,14 @@ module Ladb::OpenCutList
         }
         result.bins.each { |bin|
           _append_bin_to_summary_bars(bin, group, true, summary_bars)
-          response[:summary][:total_count] += 1
-          response[:summary][:total_length] += bin.length
+          response[:summary][:total_used_count] += 1
+          response[:summary][:total_used_length] += bin.length
         }
         summary_bars.each { |type_id, bar|
           bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
         }
         response[:summary][:bars] += summary_bars.values.sort_by { |bar| -bar[:type] }
-        response[:summary][:total_length] = DimensionUtils.instance.format_to_readable_length(response[:summary][:total_length])
+        response[:summary][:total_used_length] = DimensionUtils.instance.format_to_readable_length(response[:summary][:total_used_length])
 
         # Bars
         grouped_bars = {}
@@ -265,11 +265,13 @@ module Ladb::OpenCutList
         }
 
         if @bar_folding
-          # Convert grouped bars to array (sort by type DESC and count DESC)
-          response[:bars] = grouped_bars.values.sort_by { |bar| [ -bar[:type], -bar[:efficiency], -bar[:count] ] }
+          response[:bars] = grouped_bars.values
         end
 
       end
+
+      # Sort bars
+      response[:bars].sort_by! { |bar| [ -bar[:type], -bar[:efficiency], -bar[:count]] }
 
       response
     end

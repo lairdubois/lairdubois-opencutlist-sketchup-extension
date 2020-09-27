@@ -154,9 +154,9 @@
                 {% if summary.bars|length > 1 %}
                     <tr class="ladb-cutlist-row ladb-cutlist-row-total">
                         <td class="text-right">{{ 'tab.cutlist.cuttingdiagram.list.total_used'|i18next }}</td>
-                        <td class="text-center">{{ summary.total_count }}</td>
+                        <td class="text-center">{{ summary.total_used_count }}</td>
                         <td></td>
-                        <td class="ladb-cutlist-dimension-value">{{ summary.total_length }}</td>
+                        <td class="ladb-cutlist-dimension-value">{{ summary.total_used_length }}</td>
                     </tr>
                 {% endif %}
                 </tbody>

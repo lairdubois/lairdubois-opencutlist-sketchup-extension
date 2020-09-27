@@ -96,8 +96,8 @@ module Ladb::OpenCutList
           :unplaced_parts => [],
           :summary => {
               :sheets => [],
-              :total_count => 0,
-              :total_area => 0,
+              :total_used_count => 0,
+              :total_used_area => 0,
           },
           :sheets => [],
       }
@@ -172,14 +172,14 @@ module Ladb::OpenCutList
         }
         result.original_bins.each { |bin|
           _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
-          response[:summary][:total_count] += 1
-          response[:summary][:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          response[:summary][:total_used_count] += 1
+          response[:summary][:total_used_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
         }
         summary_sheets.each { |type_id, sheet|
           sheet[:total_area] = DimensionUtils.instance.format_to_readable_area(sheet[:total_area])
         }
-        response[:summary][:sheets] += summary_sheets.values.sort_by { |sheet| sheet[:type] }
-        response[:summary][:total_area] = DimensionUtils.instance.format_to_readable_area(response[:summary][:total_area])
+        response[:summary][:sheets] += summary_sheets.values.sort_by { |sheet| -sheet[:type] }
+        response[:summary][:total_used_area] = DimensionUtils.instance.format_to_readable_area(response[:summary][:total_used_area])
 
         # Sheets
         grouped_sheets = {}
@@ -296,11 +296,13 @@ module Ladb::OpenCutList
         }
 
         if @sheet_folding
-          # Convert grouped sheets to array (sort by type DESC and count DESC)
-          response[:sheets] = grouped_sheets.values.sort_by { |sheet| [ -sheet[:type], -sheet[:efficiency], -sheet[:count] ] }
+          response[:sheets] = grouped_sheets.values
         end
 
       end
+
+      # Sort sheets
+      response[:sheets].sort_by! { |sheet| [ -sheet[:type], -sheet[:efficiency], -sheet[:count]] }
 
       response
     end
