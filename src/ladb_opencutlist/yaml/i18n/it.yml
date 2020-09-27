@@ -717,7 +717,7 @@ tab:
       Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
     objective_thanks: |
       Grazie per il vostro contributo !
-    objective_funded_progress: Finanziamento al {{ progress }}%
+    objective_funded_progress: finanziato al {{ progress }}%
   settings:
     label: Preferenze
     title: Preferenze
