@@ -705,7 +705,7 @@ tab:
     ad: Do you like OpenCutList?
     objective: Objective
     objective_title: Generate a Report
-    objective_solgan: Let's climb Mont Blanc together!
+    objective_slogan: Let's climb Mont Blanc together!
     objective_details: |
       *Reporting may be available in the next major release.*
 
