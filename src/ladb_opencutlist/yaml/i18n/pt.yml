@@ -63,7 +63,7 @@ core:
     old_su: |
       You are running an older version of SketchUp ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
       To take full advantage of OpenCutList, we recommend to upgrade to at least **SketchUp 2017**.
-    feature_locked: "* Não desativável nesta versão do SketchUp *"
+    feature_locked: "*Não desativável nesta versão do SketchUp*"
   event:
     model_change: O modelo ativo foi alterado.
     options_change: As opções do modelo mudaram.
@@ -72,7 +72,7 @@ core:
   model_info_page:
     units: Unidades
   upgrade:
-    unavailable: Impossível encontrar a versão mais recente do * OpenCutList *.
+    unavailable: Impossível encontrar a versão mais recente do *OpenCutList*.
     available: |
       Uma nova versão da *OpenCutList* está disponível.
       Atualização para obter as últimas características!
@@ -94,7 +94,7 @@ tab:
     label: Lista de Peças
     title: Lista de Peças
     help: |
-      Selecione as peças na cena atual que você gostaria de incluir na lista de peças e clique no botão **Gerar***.
+      Selecione as peças na cena atual que você gostaria de incluir na lista de peças e clique no botão **Gerar**.
       Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na lista de peças.
     selection_only: Seleção
     material_undefined: Nenhum material definido
@@ -108,9 +108,9 @@ tab:
     tooltip:
       show_hide_block: Mostrar / ocultar este grupo
       scroll_to_block: Role para o grupo
-      not_available_std_width: A largura *{{std_dimension}}* não foi definida no material '{{material_name}}'
-      not_available_std_thickness: A espessura *{{std_dimension}}* não foi definida no material '{{material_name}}'
-      not_available_std_section: A seção cruzada *{{std_dimension}}* não foi definida no material '{{material_name}}'
+      not_available_std_width: A largura *{{ std_dimension }}* não foi definida no material '{{ material_name }}'
+      not_available_std_thickness: A espessura *{{ std_dimension }}* não foi definida no material '{{ material_name }}'
+      not_available_std_section: A seção cruzada *{{ std_dimension }}* não foi definida no material '{{ material_name }}'
       add_std_width_to_material: |
         Acrescentar largura *{{ std_dimension }}*
         ao material '{{ material_name }}'
@@ -120,9 +120,9 @@ tab:
       add_std_section_to_material: |
         Acrescentar seção *{{ std_dimension }}*
         ao material '{{ material_name }}'
-      highlight_part: $ t (tab.cutlist.highlight_part)
-      highlight_parts: $ t (tab.cutlist.highlight_parts)
-      edit_part_properties: $ t (tab.cutlist.edit_part_properties)
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Editar propriedades de um grupo de peças
       folding_part: Desdobrar / dobrar
       material_origin_1: O material desta peça é definido em suas instâncias
@@ -135,22 +135,22 @@ tab:
       resized: Esta parte foi redimensionada em relação à sua definição de componente
       flipped: Esta parte é espelhada em comparação com sua definição de componente
       auto_oriented: Esta parte foi reorientada automaticamente
-      add_label_filter: Filtrando em '{{label}}'
-      remove_label_filter: Remova a filtragem em '{{label}}'
-      add_edge_material_name_filter: Filtrar em '{{material_name}}'
-      remove_edge_material_name_filter: Não filtre em '{{material_name}}'
+      add_label_filter: Filtrando em '{{ label }}'
+      remove_label_filter: Remova a filtragem em '{{ label }}'
+      add_edge_material_name_filter: Filtrar em '{{ material_name }}'
+      remove_edge_material_name_filter: Não filtre em '{{ material_name }}'
       not_aligned_on_axes: Cuidado, esta parte pode não estar orientada corretamente em relação aos seus eixos
-      multiple_layers: "Cuidado, esta parte é composta de sub-partes presentes em {{contagem}} camadas diferentes: <br> {{camadas}}"
-      children_warnings: "Cuidado, há {{contagem}} alerta em partes agrupadas"
-      children_warnings_plural: "Atenção, existem {{count}} alertas em partes agrupadas"
-      children_size_increase: "Esta dimensão é aumentada por um tamanho maior para {{contagem}} partes agrupadas"
-      invalid_final_area: "Cuidado, esta área somatória não pôde ser calculada porque {{count}} parte (de {{total}}) tem uma área inválida"
-      invalid_final_area_plural: "Cuidado, esta área somatória não pôde ser calculada porque {count}} partes (de {{total}}) têm uma área inválida"
+      multiple_layers: "Cuidado, esta parte é composta de sub-partes presentes em {{ contagem }} camadas diferentes:<br>{{ camadas }}"
+      children_warnings: "Cuidado, há {{ contagem }} alerta em partes agrupadas"
+      children_warnings_plural: "Atenção, existem {{ count }} alertas em partes agrupadas"
+      children_size_increase: "Esta dimensão é aumentada por um tamanho maior para {{ contagem }} partes agrupadas"
+      invalid_final_area: "Cuidado, esta área somatória não pôde ser calculada porque {{ count }} parte (de {{ total }}) tem uma área inválida"
+      invalid_final_area_plural: "Cuidado, esta área somatória não pôde ser calculada porque {{ count }} partes (de {{ total }}) têm uma área inválida"
       is_dynamic_attributes_name: A descrição desta parte é extraída do atributo 'Nome' do componente dinâmico
-      size_increased: A dimensão foi aumentada pelo tamanho excessivo de {{value}}
-      has_edges: Esta parte contém {{count}} bandas de borda
-      has_edges_plural: Esta parte contém {{count}} bandas de borda
-      edge_decremented: Reduzido pela espessura das bandas da borda ({{decremento}})
+      size_increased: A dimensão foi aumentada pelo tamanho excessivo de {{ value }}
+      has_edges: Esta parte contém {{ count }} bandas de borda
+      has_edges_plural: Esta parte contém {{ count }} bandas de borda
+      edge_decremented: Reduzido pela espessura das bandas da borda ({{ decremento }})
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
@@ -163,17 +163,17 @@ tab:
       hide_all_other_groups: Esconder todos os outros grupos
       numbers_save: Salve os números das peças
       numbers_reset: Reinicialize os números da peça
-      highlight_parts: $ t (tab.cutlist.highlight_parts)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       group_numbers_save: Salve os números de peça deste grupo
       group_numbers_reset: Reinicialize os números de peça deste grupo
       group_cuttingdiagram: Diagrama de Corte
-      edit_material: Editar material '{{material}}' ...
+      edit_material: Editar material '{{ material }}' ...
       expand_all: Desdobrar peças idênticas
       collapse_all: Dobre peças idênticas
     edit_part:
-      title: Propriedades da parte '{{name}}'
+      title: Propriedades da parte '{{ name }}'
       title_multiple: Propriedades do grupo de peças
-      multiple_alert: Propriedades comuns do grupo de {{part_count}} partes.
+      multiple_alert: Propriedades comuns do grupo de {{ part_count }} partes.
       general: Geral
       edges: Bandagens de borda
       name: Descrição
@@ -262,8 +262,8 @@ tab:
       hide_final_areas_help: Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa boa* serão ocultadas.
       hide_edges: Esconda a coluna de bandas de borda
       hide_edges_help: Se esta opção for selecionada, as **colunas de bandas de arestas** de peças do tipo *Chapa boa* serão ocultadas.
-      minimize_on_highlight: Mimimize após *'$ t (tab.cutlist.highlight_part) ...'*
-      minimize_on_highlight_help: Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$ t (tab.cutlist.highlight_part)'* for aplicada.
+      minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
+      minimize_on_highlight_help: Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
       general: Geral
       part_order_strategy: Classificação de peças
       part_order_strategy_help: |
@@ -282,8 +282,8 @@ tab:
     list:
       filters: Filtros
       filters_warning_0: "Este filtro mascara todas as partes!"
-      filters_warning: "Este filtro exibe apenas ** {{count}} ** parte de um total de {{total}}."
-      filters_warning_plural: "Este filtro exibe apenas ** {{count}} ** partes de um total de {{total}}."
+      filters_warning: "Este filtro exibe apenas **{{ count }}** parte de um total de {{ total }}."
+      filters_warning_plural: "Este filtro exibe apenas **{{ count }}** partes de um total de {{ total }}."
       edge_material_names_filter: Material de bandagem de borda para filtrar
       labels_filter: Rótulos para filtrar
       dimensions_help: Ilustração das dimensões ...
@@ -302,7 +302,7 @@ tab:
       final: Real
       total_cutting: Σ Áspero
       total_final: Σ Real
-      length: comprimento
+      length: Comprimento
       length_short: L
       width: Largura
       width_short: W
@@ -317,8 +317,8 @@ tab:
         <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
       options: Opções de exportação
       option_source: Fonte
-      option_source_summary: $t (tab.cutlist.list.summary)
-      option_source_cutlist: $t (tab.cutlist.title)
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
       option_source_instances_list: Lista de instâncias
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -407,10 +407,10 @@ tab:
       option_std_bar_add: Adicione um comprimento ...
       option_std_bar_none: Nenhum
       option_scrap_bar_lengths: Tábuas cortadas
-      option_scrap_bar_lengths_placeholder: comprimento ; ...
+      option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
         List the offcut boards which should be considered first in the cutting plan.
-        Expected format: **L**, onde **L** é o * comprimento * do corte.
+        Expected format: **L**x**Q**, onde **L** é o * comprimento * do corte e **Q** a quantidade.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
       option_std_sheet: Painel Padrão
@@ -421,14 +421,14 @@ tab:
       option_std_sheet_add: Adicionar um tamanho de painel ...
       option_std_sheet_none: Nenhum
       option_scrap_sheet_sizes: Produtos em folha de corte
-      option_scrap_sheet_sizes_placeholder: comprimento x largura; ...
+      option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
         List all offcut sheet goods you would like to be considered in the cutting diagram.
-        Expected format: **L** x **W**, onde **L** e **W** representam o * comprimento * e a * largura * do painel.
+        Expected format: **L**x**W**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
       options_defaults:
-        manage_help: Administração dos * parâmetros do diagrama de corte * padrão
+        manage_help: Administração dos *parâmetros do diagrama de corte* padrão
         save: Salvar como valores padrão
         save_success: Padrão *Parâmetros do diagrama de corte* salvos
         reset: Restaurar para os valores padrão
@@ -456,8 +456,8 @@ tab:
         sheet_type_0: Painel de tamanho padrão
         sheet_type_1: Corte
         unused: Não utilizado
-        parts: "{{count}} parte"
-        parts_plural: "{{count}} peças"
+        parts: "{{ count }} parte"
+        parts_plural: "{{ count }} peças"
         settings: Configurações
       error:
         no_bar: A placa padrão não foi configurada corretamente e nenhum recorte foi definido.
@@ -467,15 +467,15 @@ tab:
         no_placement_possible: Todas as suas partes são muito grandes para caber em um painel (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...).
         bad_error: Pânico algorítmico, entre em contato com os desenvolvedores, você tem um caso interessante.
         unplaced_parts: '**Uma parte** não pôde ser colocada, porque é muito grande para caber.'
-        unplaced_parts_plural: Existem** {{count}} peças** que não puderam ser colocadas porque são muito grandes para caber.
+        unplaced_parts_plural: Existem **{{ count }} peças** que não puderam ser colocadas porque são muito grandes para caber.
       warning:
         selection_only: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: |
           This cutting diagramm displays the parts with their raw dimensions.
         cutting_dimensions_increase_1d: |
-          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento grande demais (** {{length_increase}} **). *
+          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento grande demais (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento oversize (** {{length_increase}} **) e largura oversize (** {{width_increase}} **) *.
+          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento oversize (**{{ length_increase }}**) e largura oversize (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
@@ -483,7 +483,7 @@ tab:
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
       no_component_in_selection: Nenhuma instância de um componente visível foi detectada em sua seleção.
       no_component_in_model: Nenhuma instância de um componente visível foi detectada em sua cena.
-      failed_to_write_export_file: Falha ao gravar o arquivo de exportação. ** {{error}} **
+      failed_to_write_export_file: Falha ao gravar o arquivo de exportação. **{{ error }}**
       unknow_part: A peça selecionada não existe na lista de peças.
       obsolete_cutlist: Impossível, a lista de peças está obsoleta. Regenere-o.
     warning:
@@ -492,7 +492,7 @@ tab:
       no_typed_materials_in_selection: A seleção não usa nenhum material definido (**Solid Wood** ou **Sheet Good** ou **Dimensional**).
       export_empty: Sua exportação não contém nenhuma parte.
     success:
-      exported_to: Exportação para {{export_path}} com sucesso.
+      exported_to: Exportação para {{ export_path }} com sucesso.
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
@@ -510,13 +510,13 @@ tab:
     type_3: Dimensional
     type_4: Edge Banding
     tooltip:
-      type_0: Tipo de material '$ t (tab.materials.type_0)'
-      type_1: Tipo de material '$ t (tab.materials.type_1)'
-      type_2: Tipo de material '$ t (tab.materials.type_2)'
-      type_3: Tipo de material '$ t (tab.materials.type_3)'
-      type_4: Tipo de material '$ t (tab.materials.type_4)'
-      grained_0: $ t (tab.materials.edit_material.grained_0)
-      grained_1: $ t (tab.materials.edit_material.grained_1)
+      type_0: Tipo de material '$t(tab.materials.type_0)'
+      type_1: Tipo de material '$t(tab.materials.type_1)'
+      type_2: Tipo de material '$t(tab.materials.type_2)'
+      type_3: Tipo de material '$t(tab.materials.type_3)'
+      type_4: Tipo de material '$t(tab.materials.type_4)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção de grãos
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
       texture_colorized: Combine definitivamente este tom na imagem da textura
@@ -535,7 +535,7 @@ tab:
       color_warning: Cor inválida
       type: Tipo
     edit_material:
-      title: Propriedades do material '{{name}}'
+      title: Propriedades do material '{{ name }}'
       general: Geral
       texture: Textura
       name: Nome
@@ -543,11 +543,11 @@ tab:
       cut_options: Parâmetros de corte
       thickness: Espessura
       length_increase: Tamanho grande
-      length_increase_help: Oversize aplicado ao comprimento para definir o ** comprimento bruto **.
+      length_increase_help: Oversize aplicado ao comprimento para definir o **comprimento bruto**.
       width_increase: Largura Oversize
-      width_increase_help: Oversize aplicado à largura para definir a ** largura bruta **.
+      width_increase_help: Oversize aplicado à largura para definir a **largura bruta**.
       thickness_increase: Espessura Oversize
-      thickness_increase_help: Oversize aplicado à espessura para definir a ** espessura bruta **.
+      thickness_increase_help: Oversize aplicado à espessura para definir a **espessura bruta**.
       std_lengths: Comprimento Padrão
       std_lengths_placeholder: comprimento ; ...
       std_lengths_help: |
@@ -566,12 +566,12 @@ tab:
       std_sections: Seções Cruzadas Padrão
       std_sections_placeholder: largura x espessura; ...
       std_sections_help: |
-        Expected format: **W** x **T**, onde **W** e **T** representam a *largura* e a *espessura* da peça dimensional (* em tamanhos reais não nominais *).
+        Expected format: **W**x**T**, onde **W** e **T** representam a *largura* e a *espessura* da peça dimensional (*em tamanhos reais não nominais*).
         *Sizes without units are considered to be in model units.*
       std_sizes: Tamanhos de painel padrão
       std_sizes_placeholder: comprimento x largura; ...
       std_sizes_help: |
-        Expected format: **L** x **W**, onde **L** e **W** representam o *comprimento* e a *largura* do painel.
+        Expected format: **L**x**W**, onde **L** e **W** representam o *comprimento* e a *largura* do painel.
         *Sizes without units are considered to be in model units.*
       grained: Direção de grãos
       grained_help: Configura a direção do grão do material.
@@ -611,11 +611,11 @@ tab:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_materials: O modelo não contém nenhum material.
       material_not_found: Nenhum material encontrado.
-      failed_import_skm_file: Ocorreu um erro ao importar do arquivo .skm. **{{error}}**
-      failed_export_skm_file: Ocorreu um erro ao exportar para o arquivo .skm. ** {{error}}**
-      failed_removing_material: Ocorreu um erro ao suprimir este material. **{{error}}**
+      failed_import_skm_file: Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**
+      failed_export_skm_file: Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**
+      failed_removing_material: Ocorreu um erro ao suprimir este material. **{{ error }}**
     success:
-      exported_to: Exportação para {{export_path}} com sucesso.
+      exported_to: Exportação para {{ export_path }} com sucesso.
     obsolete_base: Para permanecer sincronizado, você deve atualizar a lista de materiais.
   importer:
     label: Importar
@@ -631,7 +631,7 @@ tab:
       info: |
         Choose the necessary options to read **{{ filename }}**.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{unit}}**.
+        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
         This unit will be used to interpret dimensions given without units*.
       options: Opções de carregamento
       option_col_sep: Separador
@@ -649,7 +649,7 @@ tab:
       info_0_plural: |
         You are about to import **{{ count }} parts** into the model.
         These parts will be stacked starting at the origin of the main scene.
-      info_1: Clique em ** Importar ** para confirmar a ação.
+      info_1: Clique em **Importar** para confirmar a ação.
       options: |
         The model already contains *parts*, *definitions* or *materials*.
         Select the import options you need.
@@ -664,7 +664,7 @@ tab:
       optional: Campos opcionais
       name: Descrição
       count: Quantidade
-      bbox_length: comprimento
+      bbox_length: Comprimento
       bbox_width: Largura
       bbox_thickness: Espessura
       material: Material
@@ -675,9 +675,9 @@ tab:
     error:
       no_model: Nenhum modelo está aberto. Não é possível importar peças para o vazio;)
       file_not_found: "Arquivo não encontrado : **{{ filename }}**"
-      bad_extension: O arquivo *{{filename}}* não possui a extensão **.CSV** ou **.TSV**.
+      bad_extension: O arquivo *{{ filename }}* não possui a extensão **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
-        Unable to load the CSV file : **{{error}}**
+        Unable to load the CSV file : **{{ error }}**
         *Verify that you have selected the correct field separator.*
       empty_file: O arquivo parece vazio ou não pode ser interpretado.
       no_importable_part: Nenhuma parte pode ser importada. Atribua os campos obrigatórios às colunas correspondentes.
@@ -691,8 +691,8 @@ tab:
       invalid_material: Material inválido
     success:
       imported_title: Importação concluída
-      imported_body: "{{count}} parte foi importada com sucesso!"
-      imported_body_plural: "{{count}} peças foram importadas com sucesso!"
+      imported_body: "{{ count }} parte foi importada com sucesso!"
+      imported_body_plural: "{{ count }} peças foram importadas com sucesso!"
     obsolete_base: Para permanecer sincronizado, você deve recarregar o arquivo CSV.
   sponsor:
     label: Patrocinador
@@ -701,8 +701,8 @@ tab:
       **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
       Support this project by making a financial contribution!
     contribute: Contribuir
-    backers: "{{count}} contribuidor financeiro"
-    backers_plural: "{{count}} contribuidores financeiros"
+    backers: "{{ count }} contribuidor financeiro"
+    backers_plural: "{{ count }} contribuidores financeiros"
     load_more: "Carregue mais ..."
     ad: Você gosta de OpenCutList?
     objective: Objective
@@ -738,6 +738,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
       - Vladimir Badulya (*russian*)
       - Pierluigi Colombo (*italian*)
+      - Nayton Sanches (*português*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

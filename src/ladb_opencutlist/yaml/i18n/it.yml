@@ -475,7 +475,7 @@ tab:
         cutting_dimensions_increase_1d: |
           *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**)*.
+          *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Le dimensioni sono state ridotte dello spessore della bordatura.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
@@ -738,6 +738,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
       - Vladimir Badulya (*russo*)
       - Pierluigi Colombo (*italiano*)
+      - Nayton Sanches (*portoghese*)
     credits_description: |
       Lo sviluppo di questa estensione è agganciata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -475,7 +475,7 @@ tab:
         cutting_dimensions_increase_1d: |
           *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.*
         cutting_dimensions_increase_2d: |
-          *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)*.
+          *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
@@ -736,8 +736,9 @@ tab:
     credits_translators: |
       Traductions :
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
-      - Vladimir Badulya  (*russe*)
-      - Pierluigi Colombo  (*italien*)
+      - Vladimir Badulya (*russe*)
+      - Pierluigi Colombo (*italien*)
+      - Nayton Sanches (*portugais*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
