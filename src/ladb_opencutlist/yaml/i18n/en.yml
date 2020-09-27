@@ -407,10 +407,11 @@ tab:
       option_std_bar_add: Add a length ...
       option_std_bar_none: None
       option_scrap_bar_lengths: Offcut Boards
-      option_scrap_bar_lengths_placeholder: length ; ...
-      option_scrap_bar_lengths_help:  |
+      option_scrap_bar_lengths_placeholder: length x quantity ; ...
+      option_scrap_bar_lengths_help: | # TODO Check quantity
         List the offcut boards which should be considered first in the cutting plan.
-        Expected format: **L**, where **L** is the *length* of the offcut.
+        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
+        Quantity is facultative.
         *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
@@ -420,10 +421,11 @@ tab:
       option_std_sheet_add: Add a panel size ...
       option_std_sheet_none: None
       option_scrap_sheet_sizes: Offcut Sheet Goods
-      option_scrap_sheet_sizes_placeholder: length x width ; ...
-      option_scrap_sheet_sizes_help:  |
+      option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
+      option_scrap_sheet_sizes_help: | # TODO Check quantity
         List all offcut sheet goods you would like to be considered in the cutting diagram.
-        Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
+        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
+        Quantity is facultative.
         *Sizes without units are considered to be in model units.*
       options_defaults:
         manage_help: Administration of the default *Cutting Diagram Parameters*
@@ -443,7 +445,7 @@ tab:
         width: Width
         total_length: Σ Lengths
         total_area: Σ Areas
-        total: Total
+        total_used: Total used  # TODO
         trimming: Trimming
         total_length_cuts: Length of Cuts
         efficiency: Efficiency

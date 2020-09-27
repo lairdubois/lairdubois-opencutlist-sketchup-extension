@@ -70,15 +70,15 @@ module Ladb::OpenCutList
     # -----
 
     def l_length_increase
-      DimensionUtils.instance.dd_to_ifloats(length_increase).to_l
+      DimensionUtils.instance.d_to_ifloats(length_increase).to_l
     end
 
     def l_width_increase
-      DimensionUtils.instance.dd_to_ifloats(width_increase).to_l
+      DimensionUtils.instance.d_to_ifloats(width_increase).to_l
     end
 
     def l_thickness_increase
-      DimensionUtils.instance.dd_to_ifloats(thickness_increase).to_l
+      DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
     end
 
     # -----

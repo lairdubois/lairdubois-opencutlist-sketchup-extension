@@ -90,7 +90,7 @@ module Ladb::OpenCutList
 
         unless @texture_width.nil? or @texture_height.nil?
 
-          material.texture.size = [ DimensionUtils.instance.dd_to_ifloats(@texture_width).to_l, DimensionUtils.instance.dd_to_ifloats(@texture_height).to_l ]
+          material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
 
           # In this case the event will be triggered by SU itself
           trigger_change_event = false

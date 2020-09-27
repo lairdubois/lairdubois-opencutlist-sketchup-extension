@@ -235,7 +235,7 @@
     # into single d's and applies the function f to each element
     # returns the concatenated string in the same format
     #
-    def dd_transform(i, f)
+    def d_transform(i, f)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -245,12 +245,12 @@
       r.join(LIST_SEPARATOR)
     end
 
-    def dd_add_units(i)
-      dd_transform(i, :str_add_units)
+    def d_add_units(i)
+      d_transform(i, :str_add_units)
     end
 
-    def dd_to_ifloats(i)
-      dd_transform(i, :str_to_ifloat)
+    def d_to_ifloats(i)
+      d_transform(i, :str_to_ifloat)
     end
 
     # Splits a string in the form dxd;dxd;...
@@ -285,6 +285,75 @@
     #
     def dxd_to_ifloats(i)
       dxd_transform(i, :str_to_ifloat)
+    end
+
+    # Splits a string in the form dxq;dxq;...
+    # into single d's and applies the function f to each element. q stay unchanged.
+    # returns the concatenated string in the same format
+    #
+    def dxq_transform(i, f)
+      return '' if i.nil?
+      a = i.split(LIST_SEPARATOR)
+      r = []
+      a.each do |e|
+        ed = e.split(DXD_SEPARATOR)
+        ed[0] = '0' if ed[0].nil? || ed[0].empty?
+        ed[1] = '0' if ed[1].nil? || ed[1].empty?
+        r << (send(f, ed[0]) + (ed[1] == '0' ? '' : ' ' + DXD_SEPARATOR + ed[1].strip))
+      end
+      r.join(LIST_SEPARATOR)
+    end
+
+    # Take a string containing dimensions in the form dxq;dxq;dxq;...
+    # and make sure they all have units and are not empty
+    # without units, model units are assumed and added
+    #
+    def dxq_add_units(i)
+      dxq_transform(i, :str_add_units)
+    end
+
+    # Take a string containing dimensions in the form dxq;dxq;dxq;...
+    # and convert them into a decimal inch number (Sketchup internal
+    # format)
+    # the number is returned as a string NOT a length or float
+    #
+    def dxq_to_ifloats(i)
+      dxq_transform(i, :str_to_ifloat)
+    end
+
+    # Splits a string in the form dxdxq;dxdxq;...
+    # into single d's and applies the function f to each element. q stay unchanged.
+    # returns the concatenated string in the same format
+    #
+    def dxdxq_transform(i, f)
+      return '' if i.nil?
+      a = i.split(LIST_SEPARATOR)
+      r = []
+      a.each do |e|
+        ed = e.split(DXD_SEPARATOR)
+        ed[0] = '0' if ed[0].nil? || ed[0].empty?
+        ed[1] = '0' if ed[1].nil? || ed[1].empty?
+        ed[2] = '0' if ed[2].nil? || ed[2].empty?
+        r << (send(f, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(f, ed[1]) + (ed[2] == '0' ? '' :  ' ' + DXD_SEPARATOR + ed[2].strip))
+      end
+      r.join(LIST_SEPARATOR)
+    end
+
+    # Take a string containing dimensions in the form dxdxq;dxdxq;dxdxq;...
+    # and make sure they all have units and are not empty
+    # without units, model units are assumed and added
+    #
+    def dxdxq_add_units(i)
+      dxdxq_transform(i, :str_add_units)
+    end
+
+    # Take a string containing dimensions in the form dxdxq;dxdxq;dxdxq;...
+    # and convert them into a decimal inch number (Sketchup internal
+    # format)
+    # the number is returned as a string NOT a length or float
+    #
+    def dxdxq_to_ifloats(i)
+      dxdxq_transform(i, :str_to_ifloat)
     end
 
     # -----

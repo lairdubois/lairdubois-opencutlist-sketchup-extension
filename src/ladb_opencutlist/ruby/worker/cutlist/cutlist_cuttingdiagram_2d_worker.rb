@@ -11,7 +11,7 @@ module Ladb::OpenCutList
       @part_ids = settings['part_ids']
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxd_to_ifloats(settings['scrap_sheet_sizes'])
+      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
       @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
@@ -52,8 +52,15 @@ module Ladb::OpenCutList
 
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
-        size2d = Size2d.new(scrap_sheet_size)
-        e.add_bin(size2d.length.to_f, size2d.width.to_f)
+        dxdxq = scrap_sheet_size.split('x')
+        length = dxdxq[0].strip.to_l.to_f
+        width = dxdxq[1].strip.to_l.to_f
+        quantity = (dxdxq[2].nil? || dxdxq[2].strip.to_i == 0) ? 1 : dxdxq[2].strip.to_i
+        i = 0
+        while i < quantity  do
+          e.add_bin(length, width)
+          i +=1
+        end
       }
 
       # Add boxes from parts
@@ -159,38 +166,12 @@ module Ladb::OpenCutList
         }
 
         # Summary
-        result.unused_bins.each { |bin|
-          response[:summary][:sheets].push(
-              {
-                  :type => bin.type,
-                  :count => 1,
-                  :length => bin.length.to_l.to_s,
-                  :width => bin.width.to_l.to_s,
-                  :total_area => DimensionUtils.instance.format_to_readable_area(Size2d.new(bin.length.to_l, bin.width.to_l).area),
-                  :is_used => false,
-              }
-          )
-        }
         summary_sheets = {}
-        index = 0
+        result.unused_bins.each { |bin|
+          _append_bin_to_summary_sheets(bin, group, false, summary_sheets)
+        }
         result.original_bins.each { |bin|
-          index += 1
-          type_id = _compute_bin_type_id(bin, group)
-          sheet = summary_sheets[type_id]
-          unless sheet
-            sheet = {
-                :type_id => type_id,
-                :type => bin.type,
-                :count => 0,
-                :length => bin.length.to_l.to_s,
-                :width => bin.width.to_l.to_s,
-                :total_area => 0, # Will be converted to string representation after sum
-                :is_used => true,
-            }
-            summary_sheets[type_id] = sheet
-          end
-          sheet[:count] += 1
-          sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
           response[:summary][:total_count] += 1
           response[:summary][:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
         }
@@ -204,7 +185,7 @@ module Ladb::OpenCutList
         grouped_sheets = {}
         result.original_bins.each { |bin|
 
-          type_id = _compute_bin_type_id(bin, group)
+          type_id = _compute_bin_type_id(bin, group, true)
 
           # Check similarity
           if @sheet_folding
@@ -328,8 +309,27 @@ module Ladb::OpenCutList
 
     private
 
-    def _compute_bin_type_id(bin, group)
-      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}")
+    def _compute_bin_type_id(bin, group, used)
+      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}_#{used ? 1 : 0}")
+    end
+
+    def _append_bin_to_summary_sheets(bin, group, used, summary_sheets)
+      type_id = _compute_bin_type_id(bin, group, used)
+      sheet = summary_sheets[type_id]
+      unless sheet
+        sheet = {
+            :type_id => type_id,
+            :type => bin.type,
+            :count => 0,
+            :length => bin.length.to_l.to_s,
+            :width => bin.width.to_l.to_s,
+            :total_area => 0, # Will be converted to string representation after sum
+            :is_used => used,
+        }
+        summary_sheets[type_id] = sheet
+      end
+      sheet[:count] += 1
+      sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
     end
 
     # Convert inch float value to pixel

@@ -1617,7 +1617,11 @@
                             }
                         }
                     }
-                    $inputScrapBarLengths.val(cuttingdiagram1dOptions.scrap_bar_lengths);
+                    $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS)
+                        .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxq)
+                        .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxq)
+                    ;
+                    $inputScrapBarLengths.tokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
                     $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
                     $inputSawKerf.ladbTextinputDimension();
@@ -1728,7 +1732,7 @@
                         that.dialog.setSettings([
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, value:cuttingdiagram1dOptions.std_bar },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.std_bar_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, value:cuttingdiagram1dOptions.scrap_bar_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, value:cuttingdiagram1dOptions.scrap_bar_lengths, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXQ */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram1dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram1dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, value:cuttingdiagram1dOptions.bar_folding },
@@ -1843,9 +1847,6 @@
                     // Show modal
                     $modal.modal('show');
 
-                    // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                    $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
-
                     // Setup popovers
                     that.dialog.setupPopovers();
 
@@ -1945,7 +1946,11 @@
                             }
                         }
                     }
-                    $inputScrapSheetSizes.val(cuttingdiagram2dOptions.scrap_sheet_sizes);
+                    $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS)
+                        .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxdxq)
+                        .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxdxq)
+                    ;
+                    $inputScrapSheetSizes.tokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
@@ -2087,7 +2092,7 @@
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
+                            { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:4 /* SETTINGS_PREPROCESSOR_DXDXQ */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, value:cuttingdiagram2dOptions.grained },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                             { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram2dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -2198,9 +2203,6 @@
 
                     // Show modal
                     $modal.modal('show');
-
-                    // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                    $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
 
                     // Setup popovers
                     that.dialog.setupPopovers();

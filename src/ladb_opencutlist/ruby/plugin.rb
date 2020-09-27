@@ -32,7 +32,9 @@ module Ladb::OpenCutList
     SETTINGS_RW_STRATEGY_MODEL_GLOBAL = 3         # Read/Write settings from/to active model attributes and (if undefined from)/to global Sketchup defaults
 
     SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
-    SETTINGS_PREPROCESSOR_DXD = 2                 # 2D dimension
+    SETTINGS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
+    SETTINGS_PREPROCESSOR_DXD = 3                 # 2D dimension
+    SETTINGS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
 
     SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
@@ -712,7 +714,9 @@ module Ladb::OpenCutList
         unless value.nil?
           case preprocessor
             when SETTINGS_PREPROCESSOR_D
-              value = DimensionUtils.instance.dd_add_units(value)
+              value = DimensionUtils.instance.d_add_units(value)
+            when SETTINGS_PREPROCESSOR_DXQ
+              value = DimensionUtils.instance.dxq_add_units(value)
             when SETTINGS_PREPROCESSOR_DXD
               value = DimensionUtils.instance.dxd_add_units(value)
           end
@@ -819,8 +823,8 @@ module Ladb::OpenCutList
       is_width_master = params['is_width_master']
 
       # Convert input values to Length
-      w = DimensionUtils.instance.dd_to_ifloats(width).to_l
-      h = DimensionUtils.instance.dd_to_ifloats(height).to_l
+      w = DimensionUtils.instance.d_to_ifloats(width).to_l
+      h = DimensionUtils.instance.d_to_ifloats(height).to_l
 
       if is_width_master
         h = (w / ratio).to_l

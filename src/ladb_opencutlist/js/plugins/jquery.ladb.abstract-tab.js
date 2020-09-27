@@ -295,19 +295,50 @@ LadbAbstractTab.prototype.executeCommand = function (command, parameters, callba
 
 // Helper /////
 
-LadbAbstractTab.prototype.tokenfieldValidatorFn_d = function (e) {
-    var re = /^([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))$/;
+LadbAbstractTab.prototype.tokenfieldValidatorFn = function (e, re) {
     var valid = re.test(e.attrs.value);
     if (!valid) {
         $(e.relatedTarget).addClass('invalid')
     }
 };
 
+LadbAbstractTab.prototype.tokenfieldValidatorFn_d = function (e) {
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '$'));
+};
+
+LadbAbstractTab.prototype.tokenfieldValidatorFn_dxq = function (e) {
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + REGEX_QUANTITY + '$'));
+};
+
 LadbAbstractTab.prototype.tokenfieldValidatorFn_dxd = function (e) {
-    var re = /^([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))\s*x\s*([\d.,]+\s*(mm|cm|m|'|"|)|[\d.,]*\s*[\d]+\/[\d]+\s*('|"|))$/;
-    var valid = re.test(e.attrs.value);
-    if (!valid) {
-        $(e.relatedTarget).addClass('invalid')
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + '$'));
+};
+
+LadbAbstractTab.prototype.tokenfieldValidatorFn_dxdxq = function (e) {
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + REGEX_QUANTITY + '$'));
+};
+
+LadbAbstractTab.prototype.tokenfieldFormatFn_dxq = function (e) {
+    var re = new RegExp('^' + REGEX_DIMENSION + REGEX_QUANTITY + '$');
+    var m;
+    if ((m = re.exec(e.attrs.value)) !== null) {
+        e.attrs.label = m[1] + (m[2] ? ' (x' + m[2] + ')': '');
+    }
+};
+
+LadbAbstractTab.prototype.tokenfieldFormatFn_dxd = function (e) {
+    var re = new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + '$');
+    var m;
+    if ((m = re.exec(e.attrs.value)) !== null) {
+        e.attrs.label = m[1] + ' x ' + m[2];
+    }
+};
+
+LadbAbstractTab.prototype.tokenfieldFormatFn_dxdxq = function (e) {
+    var re = new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + REGEX_QUANTITY + '$');
+    var m;
+    if ((m = re.exec(e.attrs.value)) !== null) {
+        e.attrs.label = m[1] + ' x ' + m[2] + (m[3] ? ' (x' + m[3] + ')': '');
     }
 };
 

@@ -18,6 +18,10 @@ var TOKENFIELD_OPTIONS = {
     delimiter: ';',
     createTokensOnBlur: true,
     beautify: false,
-    minWidth: 200
+    minWidth: 250
 };
+
+var REGEX_DECIMAL = '[\\d]*(?:(?:\\.|,)[\\d]+)?';
+var REGEX_DIMENSION = '(' + REGEX_DECIMAL + '\\s*(?:mm|cm|m|\'|"|)|(?:' + REGEX_DECIMAL + ')*\\s*[\\d]+\/[\\d]+\\s*(?:\'|"|))';
+var REGEX_QUANTITY = '(?:\\s*x\\s*([\\d]+)|)';
 

@@ -407,10 +407,11 @@ tab:
       option_std_bar_add: Добавить длину ...
       option_std_bar_none: Нет
       option_scrap_bar_lengths: Обрезки доски
-      option_scrap_bar_lengths_placeholder: длина ; ...
-      option_scrap_bar_lengths_help:  |
+      option_scrap_bar_lengths_placeholder: длина x kоличество ; ...
+      option_scrap_bar_lengths_help: | # TODO Check quantity
         Перечислите обрезки доски, которые должны быть рассмотрены в первую очередь в плане раскроя.
-        Формат ввода: **Д**, где **Д** - это *длина* обрезка.
+        Формат ввода: **Д**x**K**, где **Д** - это *длина* обрезка и q количество.
+        Количество не является обязательным.
         *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
       option_std_sheet: Стандартная панель
       option_std_sheet_help: |
@@ -420,10 +421,11 @@ tab:
       option_std_sheet_add: Добавить размер панели ...
       option_std_sheet_none: Нет
       option_scrap_sheet_sizes: Листовые обрезки
-      option_scrap_sheet_sizes_placeholder: длина x ширина ; ...
-      option_scrap_sheet_sizes_help:  |
+      option_scrap_sheet_sizes_placeholder: длина x ширина x kоличество ; ...
+      option_scrap_sheet_sizes_help: | # TODO Check quantity
         Перечислите все обрезки листового материала, которые вы хотели бы включить в карту раскроя.
-        Формат ввода: **Д**x**Ш**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка.
+        Формат ввода: **Д**x**Ш**x**K**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка и q количество.
+        Количество не является обязательным.
         *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
       options_defaults:
         manage_help: Управление настройками по умолчанию *Параметры карты раскроя*
@@ -443,7 +445,7 @@ tab:
         width: Ширина
         total_length: Σ Длин
         total_area: Σ Площадей
-        total: Всего
+        total_used: Всего использовано  # TODO
         trimming: Обрезка
         total_length_cuts: Длина пропила
         efficiency: Эффективность

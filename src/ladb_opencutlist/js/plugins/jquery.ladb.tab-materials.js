@@ -1019,8 +1019,8 @@
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, value:std_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, value:std_widths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXD */ },
+                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
+                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, value:edgeDecrement }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
@@ -1048,8 +1048,14 @@
             $inputStdLengths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
-            $inputStdSections.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
-            $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd);
+            $inputStdSections.tokenfield(TOKENFIELD_OPTIONS)
+                .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxd)
+                .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd)
+            ;
+            $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS)
+                .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxd)
+                .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd)
+            ;
 
             if (setAttributeToDefaults) {
                 fnSetFieldValuesToDefaults(material.attributes.type);

@@ -9,7 +9,7 @@ module Ladb::OpenCutList
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
       @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
-      @scrap_bar_lengths = DimensionUtils.instance.dd_to_ifloats(settings['scrap_bar_lengths'])
+      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings['scrap_bar_lengths'])
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @bar_folding = settings['bar_folding']
@@ -37,9 +37,16 @@ module Ladb::OpenCutList
       # Create the bin packing engine with given bins and boxes
       e = BinPacking1D::PackEngine.new(options)
 
-      # Add bins from scrap sheets
+      # Add bins from scrap lengths
       @scrap_bar_lengths.split(';').each { |scrap_bar_length|
-        e.add_bin(scrap_bar_length.to_l.to_f)
+        dxq = scrap_bar_length.split('x')
+        length = dxq[0].strip.to_l.to_f
+        quantity = (dxq[1].nil? || dxq[1].strip.to_i == 0) ? 1 : dxq[1].strip.to_i
+        i = 0
+        while i < quantity  do
+          e.add_bin(length)
+          i +=1
+        end
       }
 
       # Add boxes from parts
@@ -138,34 +145,12 @@ module Ladb::OpenCutList
         }
 
         # Summary
-        result.unused_bins.each { |bin|
-          response[:summary][:bars].push(
-              {
-                  :type => bin.type,
-                  :count => 1,
-                  :length => bin.length.to_l.to_s,
-                  :total_length => DimensionUtils.instance.format_to_readable_length(bin.length),
-                  :is_used => false,
-              }
-          )
-        }
         summary_bars = {}
+        result.unused_bins.each { |bin|
+          _append_bin_to_summary_bars(bin, group, false, summary_bars)
+        }
         result.bins.each { |bin|
-          type_id = _compute_bin_type_id(bin, group)
-          bar = summary_bars[type_id]
-          unless bar
-            bar = {
-                :type_id => type_id,
-                :type => bin.type,
-                :count => 0,
-                :length => bin.length.to_l.to_s,
-                :total_length => 0, # Will be converted to string representation after sum
-                :is_used => true,
-            }
-            summary_bars[type_id] = bar
-          end
-          bar[:count] += 1
-          bar[:total_length] += bin.length
+          _append_bin_to_summary_bars(bin, group, true, summary_bars)
           response[:summary][:total_count] += 1
           response[:summary][:total_length] += bin.length
         }
@@ -179,7 +164,7 @@ module Ladb::OpenCutList
         grouped_bars = {}
         result.bins.each { |bin|
 
-          type_id = _compute_bin_type_id(bin, group)
+          type_id = _compute_bin_type_id(bin, group, true)
 
           # Check similarity
           if @bar_folding
@@ -293,8 +278,26 @@ module Ladb::OpenCutList
 
     private
 
-    def _compute_bin_type_id(bin, group)
-      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}")
+    def _compute_bin_type_id(bin, group, used)
+      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}_#{used ? 1 : 0}")
+    end
+
+    def _append_bin_to_summary_bars(bin, group, used, summary_bars)
+      type_id = _compute_bin_type_id(bin, group, used)
+      bar = summary_bars[type_id]
+      unless bar
+        bar = {
+            :type_id => type_id,
+            :type => bin.type,
+            :count => 0,
+            :length => bin.length.to_l.to_s,
+            :total_length => 0, # Will be converted to string representation after sum
+            :is_used => used,
+        }
+        summary_bars[type_id] = bar
+      end
+      bar[:count] += 1
+      bar[:total_length] += bin.length
     end
 
     # Convert inch float value to pixel

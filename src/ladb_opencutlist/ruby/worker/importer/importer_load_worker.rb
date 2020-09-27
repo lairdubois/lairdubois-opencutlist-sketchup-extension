@@ -163,7 +163,7 @@ module Ladb::OpenCutList
                     end
                   when DATA_TYPE_LENGTH
                     begin
-                      length_value = DimensionUtils.instance.dd_to_ifloats(value).to_l
+                      length_value = DimensionUtils.instance.d_to_ifloats(value).to_l
                       valid = !value.empty? && length_value > 0
                       value = length_value if valid
                     rescue => e

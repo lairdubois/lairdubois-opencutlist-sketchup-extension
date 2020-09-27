@@ -407,11 +407,12 @@ tab:
       option_std_bar_add: Ajouter une taille...
       option_std_bar_none: Aucune
       option_scrap_bar_lengths: Restes de barre
-      option_scrap_bar_lengths_placeholder: longueur ; ...
-      option_scrap_bar_lengths_help:  |
+      option_scrap_bar_lengths_placeholder: longueur x quantité ; ...
+      option_scrap_bar_lengths_help: |
         Indiquez ici la liste de vos restes de barre à considérer en priorité pour le calepinage.
-        Format attendu : **L**. Où **L** est la *longueur* du reste.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+        Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
+        La quantité est facultative.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       option_std_sheet: Panneau standard
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -420,10 +421,11 @@ tab:
       option_std_sheet_add: Ajouter une taille...
       option_std_sheet_none: Aucun
       option_scrap_sheet_sizes: Restes de panneau
-      option_scrap_sheet_sizes_placeholder: longueur x largeur ; ...
-      option_scrap_sheet_sizes_help:  |
+      option_scrap_sheet_sizes_placeholder: longueur x largeur x quantité ; ...
+      option_scrap_sheet_sizes_help: |
         Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
-        Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste.
+        Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
+        La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       options_defaults:
         manage_help: Gestion des *Options de calepinage* par défaut
@@ -443,7 +445,7 @@ tab:
         width: Largeur
         total_length: Σ Longueurs
         total_area: Σ Surfaces
-        total: Total
+        total_used: Total utilisé
         trimming: Marge
         total_length_cuts: Longueur de coupe
         efficiency: Efficacité

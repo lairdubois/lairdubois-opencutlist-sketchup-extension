@@ -407,10 +407,11 @@ tab:
       option_std_bar_add: Aggiungi una lunghezza ...
       option_std_bar_none: Nessuna
       option_scrap_bar_lengths: Avanzi di tavole
-      option_scrap_bar_lengths_placeholder: lunghezza ; ...
-      option_scrap_bar_lengths_help:  |
+      option_scrap_bar_lengths_placeholder: lunghezza x quantità ; ...
+      option_scrap_bar_lengths_help: | # TODO Check quantity
         Elenca gli avanzi di tavole che saranno considerate per prime nello schema di taglio.
-        Formato: **L**, dove **L** è la *lunghezza* del ritaglio.
+        Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
+        La quantità è facoltativa.
         *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
       option_std_sheet: Pannelli Standard
       option_std_sheet_help: |
@@ -420,10 +421,11 @@ tab:
       option_std_sheet_add: Aggiungi una misura di pannello ...
       option_std_sheet_none: Nessuna
       option_scrap_sheet_sizes: Ritagli di pannelli
-      option_scrap_sheet_sizes_placeholder: lunghezza x larghezza ; ...
-      option_scrap_sheet_sizes_help:  |
+      option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...
+      option_scrap_sheet_sizes_help: | # TODO Check quantity
         Elenco dei ritagli di pannelli da usare nello schema di taglio.
-        Formato: **L**x**W**, in cui **L** and **W** rappresentano la *lunghezza* e la  *larghezza* del pannello.
+        Formato: **L**x**W**x**Q**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello e **Q** la quantità.
+        La quantità è facoltativa.
         *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
       options_defaults:
         manage_help: Gestione dei valori predefiniti dello *Schema di Taglio*
@@ -443,7 +445,7 @@ tab:
         width: Larghezza
         total_length: Σ Lunghezze
         total_area: Σ Aree
-        total: Totale
+        total_used: Totale utilizzato # TODO
         trimming: Ritaglio
         total_length_cuts: Lunghezza dei tagli
         efficiency: Efficienza
@@ -703,7 +705,7 @@ tab:
     backers_plural: "{{count}} sostenitori finanziari"
     load_more: "Aggiungi ..."
     ad: Gradisci OpenCutList?
-    objective: Obbiettivo del progetto
+    objective: Obiettivo
     objective_title: La generazione di un resoconto
     objective_solgan: Scaliamo il Monte Bianco insieme!
     objective_details: |
