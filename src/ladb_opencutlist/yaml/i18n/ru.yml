@@ -707,7 +707,7 @@ tab:
     ad: Вам нравится OpenCutList ?
     objective: Objectif # TODO
     objective_title: Générer un rapport  # TODO
-    objective_solgan: Gravissons ensemble le Mont-Blanc ! # TODO
+    objective_slogan: Gravissons ensemble le Mont-Blanc ! # TODO
     objective_details: | # TODO
       *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
 
