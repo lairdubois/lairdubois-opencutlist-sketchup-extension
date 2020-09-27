@@ -53,7 +53,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Altro
-    more_tutorials: Tutoriels # TODO
+    more_tutorials: Lezioni
     more_docs: Docs
     more_reviews: Recensioni
     more_plans: Progetti
@@ -353,7 +353,7 @@ tab:
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
     report:
-      label: Rapport  # TODO
+      label: Resoconto
     cuttingdiagram:
       title: Schema di taglio
       options_material: Materiale
@@ -410,7 +410,7 @@ tab:
       option_scrap_bar_lengths_placeholder: lunghezza ; ...
       option_scrap_bar_lengths_help:  |
         Elenca gli avanzi di tavole che saranno considerate per prime nello schema di taglio.
-        Formato: **L**, dove **L** è la *lunghezza* dello sfrido.
+        Formato: **L**, dove **L** è la *lunghezza* del ritaglio.
         *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
       option_std_sheet: Pannelli Standard
       option_std_sheet_help: |
@@ -467,7 +467,7 @@ tab:
         unplaced_parts: '**Una parte** non può essere schematizzata, perchè è troppo grande.'
         unplaced_parts_plural: Ci sono **{{ count }} parti** che non possono essere schematizzate perchè troppo grandi.
       warning:
-        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
+        selection_only: Lo schema di taglio mostra solo le **parti selezionate**
         cutting_dimensions: |
           Questo schema di taglio mostra le parti con le loro dimensioni grezze.
         cutting_dimensions_increase_1d: |
@@ -703,21 +703,21 @@ tab:
     backers_plural: "{{count}} sostenitori finanziari"
     load_more: "Aggiungi ..."
     ad: Gradisci OpenCutList?
-    objective: Objectif # TODO
-    objective_title: Générer un rapport  # TODO
-    objective_solgan: Gravissons ensemble le Mont-Blanc ! # TODO
-    objective_details: | # TODO
-      *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+    objective: Obbiettivo del progetto
+    objective_title: La generazione di un resoconto
+    objective_solgan: Scaliamo il Monte Bianco insieme!
+    objective_details: |
+      *La funzionalità "Resoconto" potrebbe essere disponibile nella prossima revisione principale.*
 
-      Cette fonctionnalité a pour but de :
-      - Calculer le **coût** estimé du projet avec détails par matière
-      - Calculer le **poids** estimé des matières nécessaires
-      - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+      Lo scopo di questa funzione è di :
+      - Stimare il **costo** del progetto con i dettagli dei singoli materiali
+      - Calcolare il **peso** dei materiali richiesti
+      - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando
 
-      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
-    objective_thanks: | # TODO
-      Merci pour votre contribution !
-    objective_funded_progress: financé à {{ progress }}%  # TODO
+      Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
+    objective_thanks: |
+      Grazie per il vostro contributo !
+    objective_funded_progress: Finanziamento al {{ progress }}%
   settings:
     label: Preferenze
     title: Preferenze
@@ -728,7 +728,7 @@ tab:
     label: Info su
     title: Info su
     version: Versione
-    credits: Crediti Technici
+    credits: Crediti Tecnici
     credits_authors: |
       *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributori](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
