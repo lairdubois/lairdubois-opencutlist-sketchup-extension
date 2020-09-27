@@ -408,10 +408,10 @@ tab:
       option_std_bar_none: Keine
       option_scrap_bar_lengths: Stangenreste
       option_scrap_bar_lengths_placeholder: Länge x Anzahl ; ...
-      option_scrap_bar_lengths_help: | # TODO Check quantity
+      option_scrap_bar_lengths_help: |
         Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
         Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
-        Menge ist optional.
+        Die Mengenangabe ist optional.
         *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
       option_std_sheet: Standard Platte
       option_std_sheet_help: |
@@ -422,10 +422,10 @@ tab:
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
-      option_scrap_sheet_sizes_help: | # TODO Check quantity
+      option_scrap_sheet_sizes_help: |
         Führen Sie hier die Liste der Plattenreste, welche Sie verwenden möchten.
         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
-        Menge ist optional.
+        Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*

@@ -408,7 +408,7 @@ tab:
       option_std_bar_none: Nessuna
       option_scrap_bar_lengths: Avanzi di tavole
       option_scrap_bar_lengths_placeholder: lunghezza x quantità ; ...
-      option_scrap_bar_lengths_help: | # TODO Check quantity
+      option_scrap_bar_lengths_help: |
         Elenca gli avanzi di tavole che saranno considerate per prime nello schema di taglio.
         Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
         La quantità è facoltativa.
@@ -422,7 +422,7 @@ tab:
       option_std_sheet_none: Nessuna
       option_scrap_sheet_sizes: Ritagli di pannelli
       option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...
-      option_scrap_sheet_sizes_help: | # TODO Check quantity
+      option_scrap_sheet_sizes_help: |
         Elenco dei ritagli di pannelli da usare nello schema di taglio.
         Formato: **L**x**W**x**Q**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello e **Q** la quantità.
         La quantità è facoltativa.
@@ -445,7 +445,7 @@ tab:
         width: Larghezza
         total_length: Σ Lunghezze
         total_area: Σ Aree
-        total_used: Totale utilizzato # TODO
+        total_used: Totale utilizzato
         trimming: Ritaglio
         total_length_cuts: Lunghezza dei tagli
         efficiency: Efficienza
