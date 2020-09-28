@@ -415,7 +415,7 @@ tab:
         *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
-        Select the standard panel which will be duplicated to contain all your parts in the best possible way.
+        Select the standard panel which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_sheet_add: Add a panel size ...
@@ -629,7 +629,7 @@ tab:
     load:
       title: Loading CSV File
       info: |
-        Choose the necessary options to read **{{ filename }}**.
+        Select the necessary options to read **{{ filename }}**.
 
         <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
         This unit will be used to interpret dimensions given without units*.
@@ -677,7 +677,7 @@ tab:
       file_not_found: "File not found : **{{ filename }}**"
       bad_extension: The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**.
       failed_to_load_csv_file: |
-        Unable to load the CSV file : **{{ error }}**
+        Unable to load the CSV file: **{{ error }}**
         *Verify that you have selected the correct field separator.*
       empty_file: The file seems empty or could not be interpreted.
       no_importable_part: No part can be imported. Assign the mandatory fields to the corresponding columns.
@@ -738,7 +738,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
       - Vladimir Badulya (*russian*)
       - Pierluigi Colombo (*italian*)
-      - Nayton Sanches (*portuguese*)
+      - Nayton Sanches Barbosa (*portuguese*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

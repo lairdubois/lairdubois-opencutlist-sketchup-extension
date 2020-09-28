@@ -53,7 +53,7 @@ core:
     title: OpenCutList de L'Air du Bois
   leftbar:
     more: Mais
-    more_tutorials: Tutorials # TODO
+    more_tutorials: Tutoriais
     more_docs: Docs
     more_reviews: Avaliações
     more_plans: Planos
@@ -61,8 +61,8 @@ core:
     more_update: Atualizar
   warning:
     old_su: |
-      You are running an older version of SketchUp ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
-      To take full advantage of OpenCutList, we recommend to upgrade to at least **SketchUp 2017**.
+      Está a correr uma versão mais antiga do SketchUp ({{{sketchupVersion }}). Este plugin vai funcionar, mas pode exibir certos bugs.
+      Para tirar o máximo proveito do OpenCutList, recomendamos a actualização para, pelo menos, **SketchUp 2017***.
     feature_locked: "*Não desativável nesta versão do SketchUp*"
   event:
     model_change: O modelo ativo foi alterado.
@@ -180,44 +180,44 @@ tab:
       material: Material
       cumulable: Sumável
       cumulable_help: |
-        If this option is selected, the **length** or the **width** will be considered **unit length** or **unit width** multiplied by the count when sorting the parts list.
+         Se esta opção for seleccionada, o **comprimento** ou o **largura** será considerado **comprimento da unidade** ou **largura da unidade** multiplicado pela contagem ao ordenar a lista de peças.
 
-        <i class='ladb-opencutlist-icon-warning'></i> *This option will not be considered when this part is grouped with other identical parts.*
+         <i class='ladb-opencutlist-icon-warning'></i> *Esta opção não será considerada quando esta parte for agrupada com outras partes idênticas.*
       cumulable_0: Não somam
       cumulable_1: Somável ao longo do comprimento
       cumulable_2: Somável em largura
       size_increase: Tamanho grande
       size_increase_help: |
-        Oversizes allow you to increase the dimensions of a single part.
-        (*Example : Tamanho grande para uma placa de base ou uma moldura que precisa ser ajustada durante a instalação. *)
-      length_increase: Tamanho grande
-      length_increase_help: Oversize é aplicado ao comprimento real para definir o ** comprimento bruto **.
-      width_increase: Largura desproporcional
-      width_increase_help: Oversize é aplicado à largura real para definir a ** largura bruta **.
-      thickness_increase: Espessura desproporcional
-      thickness_increase_help: Oversize é aplicado à espessura real para definir a ** espessura bruta **.
+        Os sobredimensionamentos permitem-lhe aumentar as dimensões de uma única peça.
+        (*Examplo : Tamanho grande para uma placa de base ou uma moldura que precisa ser ajustada durante a instalação. *)
+      length_increase: Sobredimensionamento do comprimento
+      length_increase_help: O sobredimensionamento é aplicado ao comprimento real para definir o **comprimento bruto**.
+      width_increase: Sobredimensionamento do largura
+      width_increase_help: O sobredimensionamento é aplicado à largura real para definir a **largura bruta**.
+      thickness_increase: Sobredimensionamento da espessura
+      thickness_increase_help: O sobredimensionamento é aplicado à espessura real para definir a **espessura bruta**.
       orientation: Orientação
       orientation_locked_on_axis: Travar orientação nos eixos
       orientation_locked_on_axis_help: |
-        If this option is selected, the option *Automatic orientation of parts* will have no effect on this part,
+        Se esta opção for seleccionada, a opção *Orientação automática das peças* não terá qualquer efeito sobre esta peça,
 
-        hence, in the local coordinate system:
-        - *length* is on the <span style='color:red'>red</span> axis
-        - *width* is on the <span style='color:green'>green</span> axis
-        - *thickness* is on the <span style='color:blue'>blue</span> axis
+        portanto, no sistema de coordenadas local:
+        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
+        - *largura* está no eixo <span style='color:green'>verde</span>
+        - *espessura* está no eixo <span style='color:blue'>azul</span>
       labels: Etiquetas
       labels_help: |
-        With *Labels* you can add keywords to customize the part definitions.
-        You can add as many labels as you see fit.
-        The visible parts of your custlist can then be filtered according to the label list.
+        Com *Etiquetas* é possível adicionar palavras-chave para personalizar as definições da peça.
+        Pode adicionar tantas etiquetas quantas achar conveniente.
+        As partes visíveis da sua lista de almofadas podem então ser filtradas de acordo com a lista de etiquetas.
       labels_multiple_info: Apenas rótulos comuns são mostrados
       axes: Machados
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
-        Note that if the option *Automatic orientation of parts* is not active or the part is *locked on its axes* then:
-         - the **length** is read on the <strong style='color:red'>red</strong> axes,
-         - the **width** is read on the <strong style='color:green'>green</strong> axes and
-         - the **thickness** is read on the <strong style='color:blue'>blue</strong> axes.
+        Note-se que se a opção *A orientação automática das peças* não estiver activa ou a peça estiver *bloqueada nos seus eixos* então:
+        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
+        - *largura* está no eixo <span style='color:green'>verde</span>
+        - *espessura* está no eixo <span style='color:blue'>azul</span>
       axes_origin_position_none: Não mude a origem
       axes_origin_position_min: Coloque a origem em um canto
       axes_origin_position_center: Coloque a origem no centro
@@ -229,19 +229,19 @@ tab:
     option:
       auto_orient: Orientação automática de peças
       auto_orient_help: |
-        If this option is selected, the 3 dimensions of a part are sorted such that the largest represents the *length* and the smallest represents the *thickness*.
+        Se esta opção for seleccionada, as 3 dimensões de uma peça são classificadas de forma a que a maior represente o *comprimento* e a mais pequena represente a *espessura*.
 
-        If this option is left unselected, the local axes of the part define the dimensions as follows
-         - *length* is on the <span style='color:red'>red</span> axis
-         - *width* is on the <span style='color:green'>green</span> axis
-         - *thickness* is on the <span style='color:blue'>blue</span> axis
+        Se esta opção não for seleccionada, os eixos locais da peça definem as dimensões da seguinte forma:
+        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
+        - *largura* está no eixo <span style='color:green'>verde</span>
+        - *espessura* está no eixo <span style='color:blue'>azul</span>
       smart_material: "Atribuição *inteligente* de material"
       smart_material_help: Se esta opção for selecionada, as peças sem material definido podem ser atribuídas ao material atribuído a um de seus pais ou filho.
       dynamic_attributes_name: Use o atributo *Nome* dos componentes dinâmicos
       dynamic_attributes_name_help: |
-        If this option is selected, the designation of parts will be extracted from the attribute *Name*, if defined.
+        Se esta opção for seleccionada, a designação das peças será extraída do atributo *Nome*, se definido.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Instances of parts with the same definition will be separated if the attribute *Name* does not have the same value.
+        <i class='ladb-opencutlist-icon-warning'></i> Instâncias de partes com a mesma definição serão separadas se o atributo *Nome* não tiver o mesmo valor
       part_number_with_letters: Use letras para enumerar as partes
       part_number_with_letters_help: Se esta opção for selecionada, as peças são enumeradas usando letras (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinicialize a enumeração de partes para cada grupo
@@ -267,11 +267,11 @@ tab:
       general: Geral
       part_order_strategy: Classificação de peças
       part_order_strategy_help: |
-        Reorganize the following properties to define the sort order within each group.
-        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
+        Reorganizar as seguintes propriedades para definir a ordem de classificação dentro de cada grupo.
+        As propriedades podem ser ordenados en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       dimension_column_order_strategy: Ordenação de Dimensões
       dimension_column_order_strategy_help: |
-        Reorganize the following dimension properties to define the sorting order of the columns.
+        Reorganizar las siguientes propiedades dimensionales para definir el orden de clasificación de las columnas.
       property_thickness: Espessura
       property_length: Comprimento
       property_width: Largura
@@ -312,9 +312,9 @@ tab:
     export:
       title: Exportação formatada em CSV
       info: |
-        With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        Com esta função você pode exportar a lista *partes* para um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values) file.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
+        <i class="ladb-opencutlist-icon-warning"></i> *As peças dentro de grupos ocultos de sua lista de peças não serão exportadas*.
       options: Opções de exportação
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -330,13 +330,13 @@ tab:
       instance_name: Instância
       definition_name: Definição
       name: Descrição
-      total_cutting_length: Comprimento - cru
+      total_cutting_length: Comprimento - bruto
       total_cutting_area: Área - bruta
       total_cutting_volume: Volume - bruto
       total_final_area: Área - final
-      cutting_length: Comprimento - cru
-      cutting_width: Largura - bruto
-      cutting_thickness: Espessura - cru
+      cutting_length: Comprimento - bruto
+      cutting_width: Largura - bruta
+      cutting_thickness: Espessura - bruta
       bbox_length: Comprimento - final
       bbox_width: Largura - final
       bbox_thickness: Espessura - final
@@ -394,39 +394,39 @@ tab:
       option_stacking_2: Largura
       option_bbox_optimization: Otimização de caixa delimitadora
       option_bbox_optimization_help: |
-        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
-        This option may be applied every time a new panel is added, only at the end of the optimization or never.
+        Otimização para remover painéis desnecessários através de cortes, a fim de evitar pequenos restos.
+        Esta opção pode ser aplicada toda vez que um novo painel é adicionado, somente no final da otimização ou nunca.
       option_bbox_optimization_0: Nunca
       option_bbox_optimization_1: Apenas final
       option_bbox_optimization_2: Sempre
       option_std_bar: Quadro Padrão
       option_std_bar_help: |
-        Select the standard board, which will be duplicated to contain all the parts.
-        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+        Selecione a placa padrão, que será duplicada para conter todas as peças.
+        Esta lista é definida no campo **$t(tab.materials.edit_material.std_lengths)** do material.
+        Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_bar_add: Adicione um comprimento ...
       option_std_bar_none: Nenhum
       option_scrap_bar_lengths: Tábuas cortadas
       option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
-        List the offcut boards which should be considered first in the cutting plan.
-        Expected format: **L**x**Q**, onde **L** é o * comprimento * do corte e **Q** a quantidade.
-        Quantity is optional.
-        *Sizes without units are considered to be in model units.*
+        Liste as tábuas cortadas que devem ser consideradas em primeiro lugar no plano de corte.
+        Formato esperado: **L**x**Q**, onde **L** é o * comprimento * do corte e **Q** a quantidade.
+        A quantidade é opcional.
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       option_std_sheet: Painel Padrão
       option_std_sheet_help: |
-        Select the standard panel which will be duplicated to contain all your parts in the best possible way.
-        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+        Selecione o painel padrão que será duplicado para conter todas as peças.
+        Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
+        Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_sheet_add: Adicionar um tamanho de painel ...
       option_std_sheet_none: Nenhum
       option_scrap_sheet_sizes: Produtos em folha de corte
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
-        List all offcut sheet goods you would like to be considered in the cutting diagram.
-        Expected format: **L**x**W**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
-        Quantity is optional.
-        *Sizes without units are considered to be in model units.*
+        Liste todas as mercadorias não cortadas que você gostaria de ser considerado no diagrama de corte.
+        Formato esperado: **L**x**W**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
+        A quantidade é opcional.
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       options_defaults:
         manage_help: Administração dos *parâmetros do diagrama de corte* padrão
         save: Salvar como valores padrão
@@ -469,15 +469,15 @@ tab:
         unplaced_parts: '**Uma parte** não pôde ser colocada, porque é muito grande para caber.'
         unplaced_parts_plural: Existem **{{ count }} peças** que não puderam ser colocadas porque são muito grandes para caber.
       warning:
-        selection_only: This cutting diagram is limited to **selected parts**.
+        selection_only: Este diagrama de corte é limitado a **peças selecionadas**.
         cutting_dimensions: |
-          This cutting diagramm displays the parts with their raw dimensions.
+          Este diagrama de corte exibe as peças com suas dimensões em bruto.
         cutting_dimensions_increase_1d: |
-          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento grande demais (**{{ length_increase }}**).*
+          *Estas dimensões em bruto foram configuradas no material '{{ material_name }}': comprimento oversize (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *These raw dimensions have been configured on the material '{{ material_name }}': comprimento oversize (**{{ length_increase }}**) e largura oversize (**{{ width_increase }}**).*
+          *Estas dimensões em bruto foram configuradas no material '{{ material_name }}': comprimento oversize (**{{ length_increase }}**) e largura oversize (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
-          *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+          *Dimensões reduzidas pela espessura da faixa de borda.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -488,16 +488,16 @@ tab:
       obsolete_cutlist: Impossível, a lista de peças está obsoleta. Regenere-o.
     warning:
       partial_cutlist: Esta lista de peças é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de peças.
-      no_typed_materials_in_model: Este modelo não usa nenhum material definido (**madeira maciça** ou **folha boa** ou **dimensional**).
-      no_typed_materials_in_selection: A seleção não usa nenhum material definido (**Solid Wood** ou **Sheet Good** ou **Dimensional**).
+      no_typed_materials_in_model: Este modelo não usa nenhum material definido (**Madeira maciça** ou **Painel** ou **Dimensional**).
+      no_typed_materials_in_selection: A seleção não usa nenhum material definido (**Madeira maciça** ou **Painel** ou **Dimensional**).
       export_empty: Sua exportação não contém nenhuma parte.
     success:
       exported_to: Exportação para {{ export_path }} com sucesso.
     tip:
       no_component: |
-        The parts to be included in the *parts list* must be instances of a **component**.
-        If you use only groups, convert them into components.
-        By using components for parts, they can be replicated without being duplicated.
+        As peças a serem incluídas na *lista de peças* devem ser instâncias de um **componente**.
+        Se você usar apenas grupos, converta-os em componentes.
+        Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
       no_typed_materials: Aplique um material às peças a serem incluídas na lista de peças e defina as propriedades deste material (**Madeira sólida** ou **Chapa boa** ou **Dimensional**) na aba <i class = "ladb -opencutlist-icon-materials "> </i> **Materiais**.
     obsolete_base: Para permanecer sincronizado, você deve gerar novamente a lista de peças.
   materials:
@@ -505,8 +505,8 @@ tab:
     title: Materiais
     new: Novo material
     type_0: Indefinido
-    type_1: Madeira sólida
-    type_2: Folha Boa
+    type_1: Madeira maciça
+    type_2: Painel
     type_3: Dimensional
     type_4: Edge Banding
     tooltip:
@@ -522,8 +522,8 @@ tab:
       texture_colorized: Combine definitivamente este tom na imagem da textura
       edit: Edite as propriedades do material
       set_current: |
-        Select '{{ name }}'
-        *Double-click to use*
+        Selecione '{{ name }}'
+        *Duplo clique para utilizar*
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Eliminar materiais não utilizados
@@ -542,37 +542,37 @@ tab:
       type: Tipo
       cut_options: Parâmetros de corte
       thickness: Espessura
-      length_increase: Tamanho grande
-      length_increase_help: Oversize aplicado ao comprimento para definir o **comprimento bruto**.
-      width_increase: Largura Oversize
-      width_increase_help: Oversize aplicado à largura para definir a **largura bruta**.
-      thickness_increase: Espessura Oversize
-      thickness_increase_help: Oversize aplicado à espessura para definir a **espessura bruta**.
+      length_increase: Sobredimensionamento de comprimento
+      length_increase_help: Sobredimensionamento aplicado ao comprimento para definir o **comprimento bruto**.
+      width_increase: Sobredimensionamento de largura
+      width_increase_help: Sobredimensionamento aplicado à largura para definir a **largura bruta**.
+      thickness_increase: Sobredimensionamento de espessura
+      thickness_increase_help: Sobredimensionamento aplicado à espessura para definir a **espessura bruta**.
       std_lengths: Comprimento Padrão
       std_lengths_placeholder: comprimento ; ...
       std_lengths_help: |
-        Standard lengths of boards.
-        *Sizes without units are considered to be in model units.*
+        Comprimentos padrão de madeira.
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       std_widths: Larguras Padrão
       std_widths_placeholder: largura ; ...
       std_widths_help: |
         Standard widths of edge bandings.
-        *Widths without units are considered to be in model units.*
+        *As larguras sem unidades são consideradas em unidades modelo.*
       std_thicknesses: Espessuras Padrão
       std_thicknesses_placeholder: espessura ; ...
       std_thicknesses_help: |
-        Available rough thicknesses.
-        *Sizes without units are considered to be in model units.*
+        Espessuras brutas disponíveis.
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       std_sections: Seções Cruzadas Padrão
       std_sections_placeholder: largura x espessura; ...
       std_sections_help: |
-        Expected format: **W**x**T**, onde **W** e **T** representam a *largura* e a *espessura* da peça dimensional (*em tamanhos reais não nominais*).
-        *Sizes without units are considered to be in model units.*
+        Formato esperado: **W**x**T**, onde **W** e **T** representam a *largura* e a *espessura* da peça dimensional (*em tamanhos reais não nominais*).
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       std_sizes: Tamanhos de painel padrão
       std_sizes_placeholder: comprimento x largura; ...
       std_sizes_help: |
-        Expected format: **L**x**W**, onde **L** e **W** representam o *comprimento* e a *largura* do painel.
-        *Sizes without units are considered to be in model units.*
+        Formato esperado: **L**x**W**, onde **L** e **W** representam o *comprimento* e a *largura* do painel.
+        *Os tamanhos sem unidades são considerados em unidades modelo.*
       grained: Direção de grãos
       grained_help: Configura a direção do grão do material.
       grained_0: Sem grãos
@@ -586,7 +586,7 @@ tab:
         save: Salvar como valores padrão
         save_success: |
           **{{ type_name }}**
-          default *Cutting Parameters* saved
+          padrão *Parâmetros de corte* salvos
         reset: Restaurar para os valores padrão
       texture_width: Largura
       texture_height: Altura
@@ -598,15 +598,15 @@ tab:
     option:
       material_order_strategy: Classificação de materiais
       material_order_strategy_help: |
-        Reorganize the following properties to define the sort order within each group.
+        Reorganizar as seguintes propriedades para definir a ordem de classificação dentro de cada grupo.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Tipo
       property_name: Nome
       reset: Restaurar valores padrão
     remove:
       message: |
-        You are about to suppress the material **{{ material_name }}** from your model.
-        Confirm to continue.
+        Você está prestes a suprimir o material **{{{material_name}}** de seu modelo.
+        Confirme para continuar.
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_materials: O modelo não contém nenhum material.
@@ -621,18 +621,18 @@ tab:
     label: Importar
     title: Importar peças
     help: |
-      This section will help you import parts (defined by a rectangular bounding box) from a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file into a model.
-      You may then use the possibilities of *OpenCutList* for parts that have been generated by a software other than *SketchUp*.
-      Click on the button **Open CSV file** to load.
+      Esta seção ajudará você a importar peças (definidas por uma caixa de delimitação retangular) de um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values) para um modelo.
+      Você pode então usar as possibilidades de *OpenCutList* para peças que foram geradas por um software diferente de *SketchUp*.
+      Clique no botão **Abrir arquivo CSV** para carregar.
     open_csv: Abrir arquivo CSV
     import_to_model: Importar para o modelo
     load:
       title: Carregando arquivo CSV
       info: |
-        Choose the necessary options to read **{{ filename }}**.
+        Selecione as opções necessárias para ler **{{ filename }}**.
 
-        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is : **{{ unit }}**.
-        This unit will be used to interpret dimensions given without units*.
+        <i class="ladb-opencutlist-icon-warning"></i> *A unidade configurada no modelo é : **{{ unit }}**.
+        Esta unidade será usada para interpretar dimensões dadas sem unidades*.
       options: Opções de carregamento
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -644,15 +644,15 @@ tab:
     import:
       title: Importar peças para o modelo
       info_0: |
-        You are about to import **{{ count }} part** into the model.
-        This part will be placed at the origin of the the main scene.
+        ocê está prestes a importar **{{ count }} peça** para o modelo.
+        Esta peça será colocada na origem da cena principal.
       info_0_plural: |
-        You are about to import **{{ count }} parts** into the model.
-        These parts will be stacked starting at the origin of the main scene.
+        You are about to import **{{ count }} peças** para o model.
+        Estas peças serão empilhadas a partir da origem da cena principal.
       info_1: Clique em **Importar** para confirmar a ação.
       options: |
-        The model already contains *parts*, *definitions* or *materials*.
-        Select the import options you need.
+        O modelo já contém *peças*, *definições* ou *materiais*.
+        Selecione as opções de importação que você precisa.
       option_remove_all_?: Qual o proximo?
       option_remove_all_false: Adicionar peças ao existente
       option_remove_all_true: Remover existente!
@@ -677,8 +677,8 @@ tab:
       file_not_found: "Arquivo não encontrado : **{{ filename }}**"
       bad_extension: O arquivo *{{ filename }}* não possui a extensão **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
-        Unable to load the CSV file : **{{ error }}**
-        *Verify that you have selected the correct field separator.*
+        Incapaz de carregar o arquivo CSV: **{{ error }}**
+        *Verifique se você selecionou o separador de campo correto.*
       empty_file: O arquivo parece vazio ou não pode ser interpretado.
       no_importable_part: Nenhuma parte pode ser importada. Atribua os campos obrigatórios às colunas correspondentes.
       invalid_name: Descrição inválida
@@ -698,28 +698,28 @@ tab:
     label: Patrocinador
     title: Patrocinador
     description: |
-      **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
-      Support this project by making a financial contribution!
+      **OpenCutList** é *Open Source* software suportado por seus usuários através da <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      Apoie este projeto fazendo uma contribuição financeira!
     contribute: Contribuir
     backers: "{{ count }} contribuidor financeiro"
     backers_plural: "{{ count }} contribuidores financeiros"
     load_more: "Carregue mais ..."
     ad: Você gosta de OpenCutList?
-    objective: Objective
-    objective_title: Generate a Report
-    objective_solgan: Let's climb Mont Blanc together!
+    objective: Objetivo
+    objective_title: Gerar um relatório
+    objective_solgan: Vamos escalar juntos o Mont Blanc!
     objective_details: |
-      *Reporting may be available in the next major release.*
+      *Relatórios podem estar disponíveis no próximo grande lançamento.*
 
-      The purpose of this feature will be to:
-      - Calculate the **estimated cost** of the project with details per material
-      - Calculate the estimated **weight** of required materials
-      - Synthesize the information of the entire project in a single document accessible by a single action
+      O objetivo deste recurso será o de:
+      - Calcular o **custo estimado** do projeto com detalhes por material
+      - Calcular o **peso estimado*** dos materiais necessários
+      - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação
 
-      The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
+      O desenvolvimento desta nova funcionalidade será feito através de **financiamento participativo** e começará quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
-      Thank you for your contribution!
-    objective_funded_progress: funded at {{ progress }}%
+      Obrigado por sua contribuição!
+    objective_funded_progress: financiado a {{ progress }}%
   settings:
     label: Preferências
     title: Preferências
@@ -732,22 +732,22 @@ tab:
     version: Versão
     credits: Créditos Técnicos
     credits_authors: |
-      *OpenCutList* was developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* foi desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar todos [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
-      Translations:
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
-      - Vladimir Badulya (*russian*)
-      - Pierluigi Colombo (*italian*)
-      - Nayton Sanches (*português*)
+      Traduções:
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglês*, *alemão*)
+      - Vladimir Badulya (*russiano*)
+      - Pierluigi Colombo (*italiano*)
+      - Nayton Sanches Barbosa (*português*)
     credits_description: |
-      The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
-      This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: Tempo de execução
+      O desenvolvimento desta extensão está ligado ao projeto de partilha de placas [L'Air du Bois](https://www.lairdubois.fr).
+       Esta extensão também é *Open Source* e está disponível sob [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licença em [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Ambiente de execução
     credits_development: Desenvolvimento
     credits_vendors: |
-      The adventure would not be possible without the work of the authors of the following Open Source components:
+      A aventura não seria possível sem o trabalho dos autores dos seguintes componentes Open Source:
     credits_thanks: |
-      A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      Um agradecimento especial vai para [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
 tool:
   highlight:
     transparency: Transparência
