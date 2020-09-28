@@ -52,14 +52,14 @@ module Ladb::OpenCutList
 
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
-        dxdxq = scrap_sheet_size.split('x')
-        length = dxdxq[0].strip.to_l.to_f
-        width = dxdxq[1].strip.to_l.to_f
-        quantity = (dxdxq[2].nil? || dxdxq[2].strip.to_i == 0) ? 1 : dxdxq[2].strip.to_i
+        ddq = scrap_sheet_size.split('x')
+        length = ddq[0].strip.to_l.to_f
+        width = ddq[1].strip.to_l.to_f
+        quantity = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         i = 0
         while i < quantity  do
           e.add_bin(length, width)
-          i +=1
+          i += 1
         end
       }
 

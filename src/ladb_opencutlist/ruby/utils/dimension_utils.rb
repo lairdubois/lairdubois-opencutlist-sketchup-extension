@@ -298,7 +298,7 @@
       a.each do |e|
         ed = e.split(DXD_SEPARATOR)
         ed[0] = '0' if ed[0].nil? || ed[0].empty?
-        ed[1] = '0' if ed[1].nil? || ed[1].empty?
+        ed[1] = '0' if ed[1].nil? || ed[1].empty? || ed[1].strip.to_i < 1
         r << (send(f, ed[0]) + (ed[1] == '0' ? '' : ' ' + DXD_SEPARATOR + ed[1].strip))
       end
       r.join(LIST_SEPARATOR)
@@ -333,7 +333,7 @@
         ed = e.split(DXD_SEPARATOR)
         ed[0] = '0' if ed[0].nil? || ed[0].empty?
         ed[1] = '0' if ed[1].nil? || ed[1].empty?
-        ed[2] = '0' if ed[2].nil? || ed[2].empty?
+        ed[2] = '0' if ed[2].nil? || ed[2].empty? || ed[2].strip.to_i < 1
         r << (send(f, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(f, ed[1]) + (ed[2] == '0' ? '' :  ' ' + DXD_SEPARATOR + ed[2].strip))
       end
       r.join(LIST_SEPARATOR)

@@ -39,13 +39,13 @@ module Ladb::OpenCutList
 
       # Add bins from scrap lengths
       @scrap_bar_lengths.split(';').each { |scrap_bar_length|
-        dxq = scrap_bar_length.split('x')
-        length = dxq[0].strip.to_l.to_f
-        quantity = (dxq[1].nil? || dxq[1].strip.to_i == 0) ? 1 : dxq[1].strip.to_i
+        dq = scrap_bar_length.split('x')
+        length = dq[0].strip.to_l.to_f
+        quantity = [ 1, (dq[1].nil? || dq[1].strip.to_i == 0) ? 1 : dq[1].strip.to_i ].max
         i = 0
         while i < quantity  do
           e.add_bin(length)
-          i +=1
+          i += 1
         end
       }
 

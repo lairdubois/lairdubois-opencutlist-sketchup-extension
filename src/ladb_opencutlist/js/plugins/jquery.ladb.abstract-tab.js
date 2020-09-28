@@ -298,7 +298,7 @@ LadbAbstractTab.prototype.executeCommand = function (command, parameters, callba
 LadbAbstractTab.prototype.tokenfieldValidatorFn = function (e, re) {
     var valid = re.test(e.attrs.value);
     if (!valid) {
-        $(e.relatedTarget).addClass('invalid')
+        $(e.relatedTarget).addClass('invalid');
     }
 };
 

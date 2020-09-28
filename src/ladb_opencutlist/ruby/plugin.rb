@@ -708,7 +708,7 @@ module Ladb::OpenCutList
 
         key = setting['key']
         value = setting['value']
-        preprocessor = setting['preprocessor']    # Preprocessor used to reformat value SETTINGS_PREPROCESSOR_D or SETTINGS_PREPROCESSOR_DXD
+        preprocessor = setting['preprocessor']    # Preprocessor used to reformat value SETTINGS_PREPROCESSOR_D, SETTINGS_PREPROCESSOR_DXQ, SETTINGS_PREPROCESSOR_DXD or SETTINGS_PREPROCESSOR_DXDXQ
 
         # Value Preprocessor
         unless value.nil?
@@ -719,6 +719,8 @@ module Ladb::OpenCutList
               value = DimensionUtils.instance.dxq_add_units(value)
             when SETTINGS_PREPROCESSOR_DXD
               value = DimensionUtils.instance.dxd_add_units(value)
+            when SETTINGS_PREPROCESSOR_DXDXQ
+              value = DimensionUtils.instance.dxdxq_add_units(value)
           end
         end
 
