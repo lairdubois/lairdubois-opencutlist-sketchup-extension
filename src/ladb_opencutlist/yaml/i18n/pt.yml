@@ -61,7 +61,7 @@ core:
     more_update: Atualizar
   warning:
     old_su: |
-      Está a correr uma versão mais antiga do SketchUp ({{{sketchupVersion }}). Este plugin vai funcionar, mas pode exibir certos bugs.
+      Está a correr uma versão mais antiga do SketchUp ({{ sketchupVersion }}). Este plugin vai funcionar, mas pode exibir certos bugs.
       Para tirar o máximo proveito do OpenCutList, recomendamos a actualização para, pelo menos, **SketchUp 2017**.
     feature_locked: "*Não desativável nesta versão do SketchUp*"
   event:
@@ -303,11 +303,11 @@ tab:
       total_cutting: Σ Áspero
       total_final: Σ Real
       length: Comprimento
-      length_short: L
+      length_short: C
       width: Largura
-      width_short: W
+      width_short: L
       thickness: Espessura
-      thickness_short: T
+      thickness_short: E
       edges: Bandagens de borda
     export:
       title: Exportação formatada em CSV
@@ -410,7 +410,7 @@ tab:
       option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
         Liste as tábuas cortadas que devem ser consideradas em primeiro lugar no plano de corte.
-        Formato esperado: **L**x**Q**, onde **L** é o * comprimento * do corte e **Q** a quantidade.
+        Formato esperado: **C**x**Q**, onde **C** é o *comprimento* do corte e **Q** a quantidade.
         A quantidade é opcional.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       option_std_sheet: Painel Padrão
@@ -424,7 +424,7 @@ tab:
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
         Liste todas as mercadorias não cortadas que você gostaria de ser considerado no diagrama de corte.
-        Formato esperado: **L**x**W**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
+        Formato esperado: **C**x**L**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
         A quantidade é opcional.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       options_defaults:
@@ -466,7 +466,7 @@ tab:
         no_sheet: Os tamanhos de painel padrão estão configurados incorretamente e não há cortes disponíveis.
         no_placement_possible: Todas as suas partes são muito grandes para caber em um painel (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...).
         bad_error: Pânico algorítmico, entre em contato com os desenvolvedores, você tem um caso interessante.
-        unplaced_parts: '**Uma parte** não pôde ser colocada, porque é muito grande para caber.'
+        unplaced_parts: "**Uma parte** não pôde ser colocada, porque é muito grande para caber."
         unplaced_parts_plural: Existem **{{ count }} partes** que não puderam ser colocadas porque são muito grandes para caber.
       warning:
         selection_only: Este diagrama de corte é limitado a **partes selecionadas**.
@@ -564,14 +564,14 @@ tab:
         Espessuras brutas disponíveis.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       std_sections: Seções Cruzadas Padrão
-      std_sections_placeholder: largura x espessura; ...
+      std_sections_placeholder: largura x espessura ; ...
       std_sections_help: |
-        Formato esperado: **W**x**T**, onde **W** e **T** representam a *largura* e a *espessura* da parte dimensional (*em tamanhos reais não nominais*).
+        Formato esperado: **L**x**E**, onde **L** e **E** representam a *largura* e a *espessura* da parte dimensional (*em tamanhos reais não nominais*).
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       std_sizes: Tamanhos de painel padrão
-      std_sizes_placeholder: comprimento x largura; ...
+      std_sizes_placeholder: comprimento x largura ; ...
       std_sizes_help: |
-        Formato esperado: **L**x**W**, onde **L** e **W** representam o *comprimento* e a *largura* do painel.
+        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* do painel.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       grained: Direção de grãos
       grained_help: Configura a direção do grão do material.
