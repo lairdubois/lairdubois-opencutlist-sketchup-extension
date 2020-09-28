@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :labels, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :labels, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
 
     def initialize(part_def, group)
       @_def = part_def
@@ -24,6 +24,9 @@ module Ladb::OpenCutList
       @cutting_width = part_def.cutting_width.to_s
       @cutting_thickness = part_def.cutting_size.thickness.to_s
       @material_name = part_def.material_name
+      @cumulable = part_def.cumulable
+      @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
+      @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
       @labels = part_def.labels
       @edge_count = part_def.edge_count
       @edge_pattern = part_def.edge_pattern
@@ -53,6 +56,9 @@ module Ladb::OpenCutList
     def initialize(part_def, group)
       super(part_def, group)
 
+      # @cumulative_cutting_length = nil  # Overrided
+      # @cumulative_cutting_width = nil   # Overrided
+
       @children_warning_count = part_def.children_warning_count
       @children_length_increased_count = part_def.children_length_increased_count
       @children_width_increased_count = part_def.children_width_increased_count
@@ -81,7 +87,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :cumulative_cutting_length, :cumulative_cutting_width, :material_origins, :cumulable, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals, :l_ratio, :w_ratio
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals, :l_ratio, :w_ratio
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -91,10 +97,7 @@ module Ladb::OpenCutList
       @is_dynamic_attributes_name = part_def.is_dynamic_attributes_name
       @resized = !part_def.scale.identity?
       @flipped = part_def.flipped
-      @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
-      @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
       @material_origins = part_def.material_origins
-      @cumulable = part_def.cumulable
       @length_increase = part_def.length_increase
       @width_increase = part_def.width_increase
       @thickness_increase = part_def.thickness_increase

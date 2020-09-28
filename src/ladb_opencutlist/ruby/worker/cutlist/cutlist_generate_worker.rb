@@ -517,14 +517,15 @@ module Ladb::OpenCutList
         # Folding
         if @part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area ] }.each do |part_def|
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
                 (folder_part_def.labels == part_def.labels || @hide_labels) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > MaterialAttributes::TYPE_UNKNOW) # Part with untyped materiel are folded only if they have the same definition
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > MaterialAttributes::TYPE_UNKNOW) && # Part with untyped materiel are folded only if they have the same definition
+                folder_part_def.cumulable == part_def.cumulable
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
@@ -534,6 +535,7 @@ module Ladb::OpenCutList
                 folder_part_def.cutting_size = first_child_part_def.cutting_size
                 folder_part_def.size = first_child_part_def.size
                 folder_part_def.material_name = first_child_part_def.material_name
+                folder_part_def.cumulable = first_child_part_def.cumulable
                 folder_part_def.labels = first_child_part_def.labels
                 folder_part_def.final_area = first_child_part_def.final_area
                 folder_part_def.edge_count = first_child_part_def.edge_count

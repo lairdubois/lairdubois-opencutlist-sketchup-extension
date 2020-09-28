@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.9.5
 
+  * Fixed cumulative length or width on folded parts
   * Added **portuguese** language (thanks to Nayton Sanches for joining the translators team)
   * Added sponsor objective display
   * Added cutting diagram (1d and 2d) capability to compute only for selected (in part list) parts
