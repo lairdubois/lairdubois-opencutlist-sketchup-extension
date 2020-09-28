@@ -108,9 +108,9 @@ tab:
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
-      not_available_std_width: Die Breite *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
-      not_available_std_thickness: Die Dicke *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
-      not_available_std_section: Der Querschnitt *{{ std_dimension }}* wurde auf dem Material '{{ material_name }}' nicht definiert
+      not_available_std_width: Die Breite *{{ std_dimension }}* ist auf dem Material '{{ material_name }}' nicht definiert
+      not_available_std_thickness: Die Dicke *{{ std_dimension }}* ist auf dem Material '{{ material_name }}' nicht definiert
+      not_available_std_section: Der Querschnitt *{{ std_dimension }}* ist auf dem Material '{{ material_name }}' nicht definiert
       add_std_width_to_material: |
         Breite *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
