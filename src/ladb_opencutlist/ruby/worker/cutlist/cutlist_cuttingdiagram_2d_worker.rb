@@ -312,7 +312,7 @@ module Ladb::OpenCutList
     private
 
     def _compute_bin_type_id(bin, group, used)
-      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}_#{used ? 1 : 0}")
+      Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}_#{used ? 1 : 0}")
     end
 
     def _append_bin_to_summary_sheets(bin, group, used, summary_sheets)

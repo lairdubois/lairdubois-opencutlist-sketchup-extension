@@ -8,7 +8,7 @@
   font-style: normal;
 }
 
-i, span.ladb-opencutlist-icon {
+i, span.ladb-opencutlist-icon:before {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'ladb_opencutlist' !important;
   speak: none;

@@ -1618,7 +1618,7 @@
                         }
                     }
                     $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS)
-                        .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxq)
+                        .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxq)
                         .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxq)
                     ;
                     $inputScrapBarLengths.tokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
@@ -1721,7 +1721,7 @@
 
                         cuttingdiagram1dOptions.std_bar = $inputStdBar.val();
                         cuttingdiagram1dOptions.std_bar_length = $inputStdBarLength.val();
-                        cuttingdiagram1dOptions.scrap_bar_lengths = $inputScrapBarLengths.val();
+                        cuttingdiagram1dOptions.scrap_bar_lengths = that.tokenfieldGetValidTokensList_dxq($inputScrapBarLengths);
                         cuttingdiagram1dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram1dOptions.trimming = $inputTrimming.val();
                         cuttingdiagram1dOptions.bar_folding = $selectBarFolding.val() === '1';
@@ -1947,7 +1947,7 @@
                         }
                     }
                     $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS)
-                        .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxdxq)
+                        .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxdxq)
                         .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxdxq)
                     ;
                     $inputScrapSheetSizes.tokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
@@ -2077,7 +2077,7 @@
                         cuttingdiagram2dOptions.std_sheet = $inputStdSheet.val();
                         cuttingdiagram2dOptions.std_sheet_length = $inputStdSheetLength.val();
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
-                        cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.val();
+                        cuttingdiagram2dOptions.scrap_sheet_sizes = that.tokenfieldGetValidTokensList_dxdxq($inputScrapSheetSizes);
                         cuttingdiagram2dOptions.grained = $selectGrained.val() === '1';
                         cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram2dOptions.trimming = $inputTrimming.val();

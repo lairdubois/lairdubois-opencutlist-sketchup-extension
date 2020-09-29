@@ -190,11 +190,11 @@
                     length_increase: $inputs.inputLengthIncrease.val(),
                     width_increase: $inputs.inputWidthIncrease.val(),
                     thickness_increase: $inputs.inputThicknessIncrease.val(),
-                    std_lengths: $inputs.inputStdLengths.val(),
-                    std_widths: $inputs.inputStdWidths.val(),
-                    std_thicknesses: $inputs.inputStdThicknesses.val(),
-                    std_sections: $inputs.inputStdSections.val(),
-                    std_sizes: $inputs.inputStdSizes.val(),
+                    std_lengths: that.tokenfieldGetValidTokensList_d($inputs.inputStdLengths),
+                    std_widths: that.tokenfieldGetValidTokensList_d($inputs.inputStdWidths),
+                    std_thicknesses: that.tokenfieldGetValidTokensList_d($inputs.inputStdThicknesses),
+                    std_sections: that.tokenfieldGetValidTokensList_dxd($inputs.inputStdSections),
+                    std_sizes: that.tokenfieldGetValidTokensList_dxd($inputs.inputStdSizes),
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1'
                 }
@@ -387,11 +387,11 @@
                 that.editedMaterial.attributes.length_increase = $inputs.inputLengthIncrease.val();
                 that.editedMaterial.attributes.width_increase = $inputs.inputWidthIncrease.val();
                 that.editedMaterial.attributes.thickness_increase = $inputs.inputThicknessIncrease.val();
-                that.editedMaterial.attributes.std_lengths = $inputs.inputStdLengths.val();
-                that.editedMaterial.attributes.std_widths = $inputs.inputStdWidths.val();
-                that.editedMaterial.attributes.std_thicknesses = $inputs.inputStdThicknesses.val();
-                that.editedMaterial.attributes.std_sections = $inputs.inputStdSections.val();
-                that.editedMaterial.attributes.std_sizes = $inputs.inputStdSizes.val();
+                that.editedMaterial.attributes.std_lengths = that.tokenfieldGetValidTokensList_d($inputs.inputStdLengths);
+                that.editedMaterial.attributes.std_widths = that.tokenfieldGetValidTokensList_d($inputs.inputStdWidths);
+                that.editedMaterial.attributes.std_thicknesses = that.tokenfieldGetValidTokensList_d($inputs.inputStdThicknesses);
+                that.editedMaterial.attributes.std_sections = that.tokenfieldGetValidTokensList_dxd($inputs.inputStdSections);
+                that.editedMaterial.attributes.std_sizes = that.tokenfieldGetValidTokensList_dxd($inputs.inputStdSizes);
                 that.editedMaterial.attributes.grained = $inputs.selectGrained.val() === '1';
                 that.editedMaterial.attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
 
@@ -1002,11 +1002,11 @@
             var length_increase = $inputLengthIncrease.val();
             var width_increase = $inputWidthIncrease.val();
             var thickness_increase = $inputThicknessIncrease.val();
-            var std_lengths = $inputStdLengths.val();
-            var std_widths = $inputStdWidths.val();
-            var std_thicknesses = $inputStdThicknesses.val();
-            var std_sections = $inputStdSections.val();
-            var std_sizes = $inputStdSizes.val();
+            var std_lengths = that.tokenfieldGetValidTokensList_d($inputStdLengths);
+            var std_widths = that.tokenfieldGetValidTokensList_d($inputStdWidths);
+            var std_thicknesses = that.tokenfieldGetValidTokensList_d($inputStdThicknesses);
+            var std_sections = that.tokenfieldGetValidTokensList_dxd($inputStdSections);
+            var std_sizes = that.tokenfieldGetValidTokensList_dxd($inputStdSizes);
             var grained = $selectGrained.val() === '1';
             var edgeDecrement = $selectEdgeDecremented.val() === '1';
 
@@ -1049,11 +1049,11 @@
             $inputStdWidths.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdThicknesses.tokenfield(TOKENFIELD_OPTIONS).on('tokenfield:createdtoken', that.tokenfieldValidatorFn_d);
             $inputStdSections.tokenfield(TOKENFIELD_OPTIONS)
-                .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxd)
+                .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxd)
                 .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd)
             ;
             $inputStdSizes.tokenfield(TOKENFIELD_OPTIONS)
-                .on('tokenfield:createtoken', that.tokenfieldFormatFn_dxd)
+                .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxd)
                 .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxd)
             ;
 

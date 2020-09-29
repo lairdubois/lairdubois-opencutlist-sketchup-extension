@@ -21,7 +21,11 @@ var TOKENFIELD_OPTIONS = {
     minWidth: 250
 };
 
-var REGEX_DECIMAL = '\\d*(?:[\\.,]\\d+)?';
-var REGEX_DIMENSION = '(' + REGEX_DECIMAL + '\\s*(?:mm|cm|m|\'|"|)|(?:' + REGEX_DECIMAL + ')*\\s*\\d+\/\\d+\\s*(?:\'|"|))';
-var REGEX_QUANTITY = '(?:\\s*x\\s*(\\d+)|)';
-
+var REGEX_PATTERN_MULTIPLICATOR = '[xX*]';
+var REGEX_PATTERN_DECIMAL = '\\d*(?:[\\.,]\\d+)?';
+var REGEX_PATTERN_LENGTH = '(' + REGEX_PATTERN_DECIMAL + '\\s*(?:mm|cm|m|\'|"|)|(?:' + REGEX_PATTERN_DECIMAL + ')*\\s*\\d+\/\\d+\\s*(?:\'|"|))';
+var REGEX_PATTERN_QUANTITY = '(?:\\s*' + REGEX_PATTERN_MULTIPLICATOR + '\\s*(\\d+)|)';
+var REGEX_PATTERN_D = '^' + REGEX_PATTERN_LENGTH + '$';
+var REGEX_PATTERN_DXQ = '^' + REGEX_PATTERN_LENGTH + REGEX_PATTERN_QUANTITY + '$';
+var REGEX_PATTERN_DXD = '^' + REGEX_PATTERN_LENGTH + '\\s*' + REGEX_PATTERN_MULTIPLICATOR + '\\s*' + REGEX_PATTERN_LENGTH + '$';
+var REGEX_PATTERN_DXDXQ = '^' + REGEX_PATTERN_LENGTH + '\\s*' + REGEX_PATTERN_MULTIPLICATOR + '\\s*' + REGEX_PATTERN_LENGTH + REGEX_PATTERN_QUANTITY + '$';

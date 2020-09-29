@@ -295,50 +295,92 @@ LadbAbstractTab.prototype.executeCommand = function (command, parameters, callba
 
 // Helper /////
 
+LadbAbstractTab.prototype.tokenfieldGetValidTokensList = function($input, re) {
+    var validTokens = [];
+    var tokens = $input.tokenfield('getTokens');
+    for (var i = 0; i < tokens.length; i++) {
+        if (re.test(tokens[i].value)) {
+            validTokens.push(tokens[i].value);
+        }
+    }
+    return validTokens.join(';');
+}
+
+LadbAbstractTab.prototype.tokenfieldGetValidTokensList_d = function($input) {
+    var re = new RegExp(REGEX_PATTERN_D);
+    return LadbAbstractTab.prototype.tokenfieldGetValidTokensList($input, re);
+}
+
+LadbAbstractTab.prototype.tokenfieldGetValidTokensList_dxq = function($input) {
+    var re = new RegExp(REGEX_PATTERN_DXQ);
+    return LadbAbstractTab.prototype.tokenfieldGetValidTokensList($input, re);
+}
+
+LadbAbstractTab.prototype.tokenfieldGetValidTokensList_dxd = function($input) {
+    var re = new RegExp(REGEX_PATTERN_DXD);
+    return LadbAbstractTab.prototype.tokenfieldGetValidTokensList($input, re);
+}
+
+LadbAbstractTab.prototype.tokenfieldGetValidTokensList_dxdxq = function($input) {
+    var re = new RegExp(REGEX_PATTERN_DXDXQ);
+    return LadbAbstractTab.prototype.tokenfieldGetValidTokensList($input, re);
+}
+
 LadbAbstractTab.prototype.tokenfieldValidatorFn = function (e, re) {
     var valid = re.test(e.attrs.value);
     if (!valid) {
-        $(e.relatedTarget).addClass('invalid');
+        $(e.relatedTarget)
+            .addClass('invalid')
+            .prepend('<i class="ladb-opencutlist-icon-warning"></i>')
+        ;
     }
+    return valid;
 };
 
 LadbAbstractTab.prototype.tokenfieldValidatorFn_d = function (e) {
-    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '$'));
+    var re = new RegExp(REGEX_PATTERN_D);
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, re);
 };
 
 LadbAbstractTab.prototype.tokenfieldValidatorFn_dxq = function (e) {
-    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + REGEX_QUANTITY + '$'));
+    var re = new RegExp(REGEX_PATTERN_DXQ);
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, re);
 };
 
 LadbAbstractTab.prototype.tokenfieldValidatorFn_dxd = function (e) {
-    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + '$'));
+    var re = new RegExp(REGEX_PATTERN_DXD);
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, re);
 };
 
 LadbAbstractTab.prototype.tokenfieldValidatorFn_dxdxq = function (e) {
-    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + REGEX_QUANTITY + '$'));
+    var re = new RegExp(REGEX_PATTERN_DXDXQ);
+    LadbAbstractTab.prototype.tokenfieldValidatorFn(e, re);
 };
 
-LadbAbstractTab.prototype.tokenfieldFormatFn_dxq = function (e) {
-    var re = new RegExp('^' + REGEX_DIMENSION + REGEX_QUANTITY + '$');
+LadbAbstractTab.prototype.tokenfieldSanitizerFn_dxq = function (e) {
+    var re = new RegExp(REGEX_PATTERN_DXQ);
     var m;
     if ((m = re.exec(e.attrs.value)) !== null) {
-        e.attrs.label = m[1] + (m[2] ? ' (x' + m[2] + ')': '');
+        e.attrs.value = m[1].trim() + (m[2] ? ' x ' + m[2].trim() : '');
+        e.attrs.label = m[1].trim() + (m[2] ? ' (x' + m[2].trim() + ')' : '');
     }
 };
 
-LadbAbstractTab.prototype.tokenfieldFormatFn_dxd = function (e) {
-    var re = new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + '$');
+LadbAbstractTab.prototype.tokenfieldSanitizerFn_dxd = function (e) {
+    var re = new RegExp(REGEX_PATTERN_DXD);
     var m;
     if ((m = re.exec(e.attrs.value)) !== null) {
-        e.attrs.label = m[1] + ' x ' + m[2];
+        e.attrs.value = m[1].trim() + ' x ' + m[2].trim();
+        e.attrs.label = m[1].trim() + ' x ' + m[2].trim();
     }
 };
 
-LadbAbstractTab.prototype.tokenfieldFormatFn_dxdxq = function (e) {
-    var re = new RegExp('^' + REGEX_DIMENSION + '\\s*x\\s*' + REGEX_DIMENSION + REGEX_QUANTITY + '$');
+LadbAbstractTab.prototype.tokenfieldSanitizerFn_dxdxq = function (e) {
+    var re = new RegExp(REGEX_PATTERN_DXDXQ);
     var m;
     if ((m = re.exec(e.attrs.value)) !== null) {
-        e.attrs.label = m[1] + ' x ' + m[2] + (m[3] ? ' (x' + m[3] + ')': '');
+        e.attrs.value = m[1].trim() + ' x ' + m[2].trim() + (m[3] ? ' x ' + m[3].trim() : '');
+        e.attrs.label = m[1].trim() + ' x ' + m[2].trim() + (m[3] ? ' (x' + m[3].trim() + ')' : '');
     }
 };
 
