@@ -1617,11 +1617,8 @@
                             }
                         }
                     }
-                    $inputScrapBarLengths.tokenfield(TOKENFIELD_OPTIONS)
-                        .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxq)
-                        .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxq)
-                    ;
-                    $inputScrapBarLengths.tokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
+                    $inputScrapBarLengths.ladbTextinputTokenfield({ format: 'dxq' });
+                    $inputScrapBarLengths.ladbTextinputTokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
                     $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
                     $inputSawKerf.ladbTextinputDimension();
@@ -1721,7 +1718,7 @@
 
                         cuttingdiagram1dOptions.std_bar = $inputStdBar.val();
                         cuttingdiagram1dOptions.std_bar_length = $inputStdBarLength.val();
-                        cuttingdiagram1dOptions.scrap_bar_lengths = that.tokenfieldGetValidTokensList_dxq($inputScrapBarLengths);
+                        cuttingdiagram1dOptions.scrap_bar_lengths = $inputScrapBarLengths.ladbTextinputTokenfield('getValidTokensList');
                         cuttingdiagram1dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram1dOptions.trimming = $inputTrimming.val();
                         cuttingdiagram1dOptions.bar_folding = $selectBarFolding.val() === '1';
@@ -1946,11 +1943,8 @@
                             }
                         }
                     }
-                    $inputScrapSheetSizes.tokenfield(TOKENFIELD_OPTIONS)
-                        .on('tokenfield:createtoken', that.tokenfieldSanitizerFn_dxdxq)
-                        .on('tokenfield:createdtoken', that.tokenfieldValidatorFn_dxdxq)
-                    ;
-                    $inputScrapSheetSizes.tokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
+                    $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
+                    $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
                     $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                     $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
                     $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
@@ -2077,7 +2071,7 @@
                         cuttingdiagram2dOptions.std_sheet = $inputStdSheet.val();
                         cuttingdiagram2dOptions.std_sheet_length = $inputStdSheetLength.val();
                         cuttingdiagram2dOptions.std_sheet_width = $inputStdSheetWidth.val();
-                        cuttingdiagram2dOptions.scrap_sheet_sizes = that.tokenfieldGetValidTokensList_dxdxq($inputScrapSheetSizes);
+                        cuttingdiagram2dOptions.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                         cuttingdiagram2dOptions.grained = $selectGrained.val() === '1';
                         cuttingdiagram2dOptions.saw_kerf = $inputSawKerf.val();
                         cuttingdiagram2dOptions.trimming = $inputTrimming.val();
