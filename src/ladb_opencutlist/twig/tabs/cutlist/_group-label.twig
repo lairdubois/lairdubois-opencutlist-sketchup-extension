@@ -10,7 +10,7 @@
     / <strong>{% if group.material_type == 4 %}{# 4 = TYPE_EDGE #}{{ group.std_thickness }} x {% endif %}<span{% if not group.std_available %} class="text-warning"{% endif %}>{{ group.std_dimension }}</span></strong>
     {% if not group.std_available %}
         &nbsp;&nbsp;
-        <div class="label label-warning label-fine">
+        <div class="label label-danger label-fine">
             <span data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.not_available_std_'~group.std_dimension_stipped_name)|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~group.std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-warning"></i> {{ ('tab.cutlist.not_available_std_'~group.std_dimension_stipped_name)|i18next }}</span>
             {% if not hideAddBtn|default(true) %}
                 <div class="ladb-minitools ladb-minitools-inline no-print">

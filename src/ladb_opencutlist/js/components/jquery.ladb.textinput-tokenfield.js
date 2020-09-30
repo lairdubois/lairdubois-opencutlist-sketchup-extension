@@ -8,8 +8,8 @@
     var FORMAT_DXDXQ = 'dxdxq';
 
     var REGEXP_PATTERN_MULTIPLICATOR = '[xX*]';
-    var REGEXP_PATTERN_DECIMAL = '\\d*(?:[\\.,]\\d+)?';
-    var REGEXP_PATTERN_LENGTH = '(' + REGEXP_PATTERN_DECIMAL + '\\s*(?:mm|cm|m|\'|"|)|(?:' + REGEXP_PATTERN_DECIMAL + ')*\\s*\\d+\/\\d+\\s*(?:\'|"|))';
+    var REGEXP_PATTERN_DECIMAL = '\\d+(?:[\\.,]\\d+)?';
+    var REGEXP_PATTERN_LENGTH = '(' + REGEXP_PATTERN_DECIMAL + '(?:\\s*(?:mm|cm|m|\'|"))?|(?:' + REGEXP_PATTERN_DECIMAL + ')*\\s*\\d+\/\\d+(?:\\s*(?:\'|"))?)';
     var REGEXP_PATTERN_QUANTITY = '(?:\\s*' + REGEXP_PATTERN_MULTIPLICATOR + '\\s*(\\d+)|)';
 
     // CLASS DEFINITION
