@@ -30,13 +30,7 @@
         var $progressBarObjective = $('.progress-bar', $widget);
 
         // Append currency formatted objective goal
-        $labelObjectiveGoal.append(objectiveGoal.toLocaleString(this.dialog.capabilities.language, {
-            style: 'currency',
-            currency: objectiveCurrency,
-            currencyDisplay: 'symbol',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }));
+        $labelObjectiveGoal.append(that.dialog.amountToLocaleString(objectiveGoal, objectiveCurrency));
 
         // Bind button
         $btnInfo.on('click', function() {
@@ -70,14 +64,8 @@
 
                     $progressObjective.show();
                     $progressBarObjective
-                        .css('width', Math.min(100, objectiveProgress100) + '%')
-                        .append(balance.toLocaleString(that.dialog.capabilities.language, {
-                            style: 'currency',
-                            currency: objectiveCurrency,
-                            currencyDisplay: 'symbol',
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        }))
+                        .append(that.dialog.amountToLocaleString(balance, objectiveCurrency))
+                        .animate({ width: Math.min(100, objectiveProgress100) + '%' }, 300, 'linear')
                     ;
                     $labelObjectiveProgress
                         .addClass('ladb-color-' + (objectiveReached ? 'success' : 'null'))

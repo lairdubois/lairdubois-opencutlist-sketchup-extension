@@ -257,6 +257,16 @@
         }
     };
 
+    LadbDialog.prototype.getTabDef = function (tabName) {
+        for (var i = 0; i < this.options.tabDefs.length; i++) {
+            var tabDef = this.options.tabDefs[i];
+            if (tabDef.name === tabName) {
+                return tabDef;
+            }
+        }
+        return null;
+    };
+
     LadbDialog.prototype.unselectActiveTab = function () {
         if (this.activeTabName) {
 
@@ -530,18 +540,6 @@
 
     };
 
-    // Internals /////
-
-    LadbDialog.prototype.getTabDef = function (tabName) {
-        for (var i = 0; i < this.options.tabDefs.length; i++) {
-            var tabDef = this.options.tabDefs[i];
-            if (tabDef.name === tabName) {
-                return tabDef;
-            }
-        }
-        return null;
-    };
-
     LadbDialog.prototype.notify = function (text, type, buttons, timeout) {
         if (undefined === type) {
             type = 'alert';
@@ -593,6 +591,18 @@
             html: true
         });
     };
+
+    LadbDialog.prototype.amountToLocaleString = function (amount, currency) {
+        return amount.toLocaleString(this.capabilities.language, {
+            style: 'currency',
+            currency: currency,
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
+
+    // Internals /////
 
     LadbDialog.prototype.bind = function () {
         var that = this;
