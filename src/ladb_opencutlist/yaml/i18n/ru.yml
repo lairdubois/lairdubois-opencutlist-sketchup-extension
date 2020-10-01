@@ -53,7 +53,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Ещё
-    more_tutorials: Tutoriels # TODO
+    more_tutorials: Инструкции
     more_docs: Архив
     more_reviews: Обзоры
     more_plans: Проекты
@@ -353,7 +353,7 @@ tab:
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
     report:
-      label: Rapport  # TODO
+      label: Отчет
     cuttingdiagram:
       title: Карта раскроя
       options_material: Материал
@@ -407,10 +407,10 @@ tab:
       option_std_bar_add: Добавить длину ...
       option_std_bar_none: Нет
       option_scrap_bar_lengths: Обрезки доски
-      option_scrap_bar_lengths_placeholder: длина x kоличество ; ...
-      option_scrap_bar_lengths_help: | # TODO Check quantity
+      option_scrap_bar_lengths_placeholder: длина x количество ; ...
+      option_scrap_bar_lengths_help: |
         Перечислите обрезки доски, которые должны быть рассмотрены в первую очередь в плане раскроя.
-        Формат ввода: **Д**x**K**, где **Д** - это *длина* обрезка и q количество.
+        Формат ввода: **Д**x**K**, где **Д** - это *длина* обрезка, а **К** количество.
         Количество не является обязательным.
         *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
       option_std_sheet: Стандартная панель
@@ -421,10 +421,10 @@ tab:
       option_std_sheet_add: Добавить размер панели ...
       option_std_sheet_none: Нет
       option_scrap_sheet_sizes: Листовые обрезки
-      option_scrap_sheet_sizes_placeholder: длина x ширина x kоличество ; ...
-      option_scrap_sheet_sizes_help: | # TODO Check quantity
+      option_scrap_sheet_sizes_placeholder: длина x ширина x количество ; ...
+      option_scrap_sheet_sizes_help: |
         Перечислите все обрезки листового материала, которые вы хотели бы включить в карту раскроя.
-        Формат ввода: **Д**x**Ш**x**K**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка и q количество.
+        Формат ввода: **Д**x**Ш**x**K**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка и К количество.
         Количество не является обязательным.
         *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
       options_defaults:
@@ -445,7 +445,7 @@ tab:
         width: Ширина
         total_length: Σ Длин
         total_area: Σ Площадей
-        total_used: Всего использовано  # TODO
+        total_used: Всего использовано
         trimming: Обрезка
         total_length_cuts: Длина пропила
         efficiency: Эффективность
@@ -469,7 +469,7 @@ tab:
         unplaced_parts: '** Одну деталь ** не возможно разместить, так как она слишком велика для размещения.'
         unplaced_parts_plural: Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
       warning:
-        selection_only: Ce calepinage se limite aux **pièces sélectionnées** # TODO
+        selection_only: Данный отчет ограничен **выбранными деталями**
         cutting_dimensions: |
           Эта карта раскроя отображает детали с их грубыми размерами.
         cutting_dimensions_increase_1d: |
@@ -705,21 +705,21 @@ tab:
     backers_plural: "{{count}} финансовые спонсоры"
     load_more: "Загрузить больше ..."
     ad: Вам нравится OpenCutList ?
-    objective: Objectif # TODO
-    objective_title: Générer un rapport  # TODO
-    objective_slogan: Gravissons ensemble le Mont-Blanc ! # TODO
-    objective_details: | # TODO
-      *La création de rapports pourrait être disponible dans la prochaine mise à jour majeure.*
+    objective: Задача
+    objective_title: Создать отчет
+    objective_slogan: Давайте вместе покорим высоту Монблан - 4808!
+    objective_details: |
+      *Создание отчета может быть доступно в следующем основном обновлении.*
 
-      Cette fonctionnalité a pour but de :
-      - Calculer le **coût** estimé du projet avec détails par matière
-      - Calculer le **poids** estimé des matières nécessaires
-      - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+      Эта функция позволит :
+      - Рассчитать **стоимость** проекта с детализацией по материалу.
+      - Рассчитать  **массу** заданного материала.
+      - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
 
-      Le développement de cette nouvelle fonctionnalité se fera grace au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
-    objective_thanks: | # TODO
-      Merci pour votre contribution !
-    objective_funded_progress: financé à {{ progress }}%  # TODO
+      Разработка новой функции возможна только за счет **частных пожертвований** и сможет начаться, когда будет собрана **целевая сумма** проекта.
+    objective_thanks: |
+      Благодарю вас за ваш посильный вклад !
+    objective_funded_progress: накоплено {{ progress }}%
   settings:
     label: Параметры
     title: Параметры
