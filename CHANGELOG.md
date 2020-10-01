@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.5
+* 1.9.5 (2020-10-01)
 
   * Fixed cumulative length or width on folded parts
   * Added **portuguese** language (thanks to Nayton Sanches for joining the translators team)
@@ -13,6 +13,7 @@ in 1.x and 0.x versions.
   * Added possibility to add a quantity in cutting diagram 1d and 2d "offcut" field
   * Added public message of backers in sponsor list
   * Added link to tutorials list on GitHub in "More" tab
+  * Improved dimension token field input
   
 * 1.9.4 (2020-09-11)
 
