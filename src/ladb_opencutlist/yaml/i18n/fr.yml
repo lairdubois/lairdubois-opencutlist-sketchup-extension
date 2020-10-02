@@ -509,12 +509,14 @@ tab:
     type_2: Panneau
     type_3: Barre
     type_4: Bande de chant
+    type_5: Accessoire
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
       type_2: Type de matière '$t(tab.materials.type_2)'
       type_3: Type de matière '$t(tab.materials.type_3)'
       type_4: Type de matière '$t(tab.materials.type_4)'
+      type_5: Type de matière '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil

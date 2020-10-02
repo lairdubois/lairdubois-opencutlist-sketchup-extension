@@ -509,12 +509,14 @@ tab:
     type_2: Platte
     type_3: Stangenware
     type_4: Kantenband
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
       type_2: Materialtyp '$t(tab.materials.type_2)'
       type_3: Materialtyp '$t(tab.materials.type_3)'
       type_4: Materialtyp '$t(tab.materials.type_4)'
+      type_5: Materialtyp '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung

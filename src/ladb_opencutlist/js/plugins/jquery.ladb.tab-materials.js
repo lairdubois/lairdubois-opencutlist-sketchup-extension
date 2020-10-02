@@ -753,6 +753,7 @@
         var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
         var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
         var $spanCutOptionsDefaultsType4 = $('#ladb_materials_span_cut_options_defaults_type_4', $modal);
+        var $spanCutOptionsDefaultsType5 = $('#ladb_materials_span_cut_options_defaults_type_5', $modal);
         var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
         var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
 
@@ -779,6 +780,7 @@
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.hide();
+                    $spanCutOptionsDefaultsType5.show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('.form-group').hide();
@@ -797,6 +799,7 @@
                     $spanCutOptionsDefaultsType2.show();
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.hide();
+                    $spanCutOptionsDefaultsType5.hide();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('.form-group').hide();
@@ -815,6 +818,7 @@
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.show();
                     $spanCutOptionsDefaultsType4.hide();
+                    $spanCutOptionsDefaultsType5.hide();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('.form-group').show();
@@ -833,6 +837,26 @@
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.show();
+                    $spanCutOptionsDefaultsType5.hide();
+                    break;
+                case 5:   // TYPE_ACCESSORY
+                    $inputThickness.closest('.form-group').hide();
+                    $inputLengthIncrease.closest('section').hide();
+                    $inputLengthIncrease.closest('.form-group').hide();
+                    $inputWidthIncrease.closest('.form-group').hide();
+                    $inputThicknessIncrease.closest('.form-group').hide();
+                    $inputStdLengths.closest('.form-group').hide();
+                    $inputStdWidths.closest('.form-group').hide();
+                    $inputStdThicknesses.closest('.form-group').hide();
+                    $inputStdSections.closest('.form-group').hide();
+                    $inputStdSizes.closest('.form-group').hide();
+                    $selectGrained.closest('.form-group').hide();
+                    $selectEdgeDecremented.closest('.form-group').hide();
+                    $spanCutOptionsDefaultsType1.hide();
+                    $spanCutOptionsDefaultsType2.hide();
+                    $spanCutOptionsDefaultsType3.hide();
+                    $spanCutOptionsDefaultsType4.hide();
+                    $spanCutOptionsDefaultsType5.show();
                     break;
             }
         };
@@ -915,6 +939,19 @@
                     defaultStdSizes = '';
                     defaultGrained = false;
                     defaultEdgeDecremented = true;
+                    break;
+                case 5:   // TYPE_ACCESSORY
+                    defaultThickness = '';
+                    defaultLengthIncrease = '0';
+                    defaultWidthIncrease = '0';
+                    defaultThicknessIncrease = '0';
+                    defaultStdLengths = '';
+                    defaultStdWidths = '';
+                    defaultStdThicknesses = '';
+                    defaultStdSections = '';
+                    defaultStdSizes = '';
+                    defaultGrained = false;
+                    defaultEdgeDecremented = false;
                     break;
             }
             var setTokens = function ($input, tokens) {

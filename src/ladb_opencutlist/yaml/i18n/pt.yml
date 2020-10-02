@@ -509,12 +509,14 @@ tab:
     type_2: Painel
     type_3: Dimensional
     type_4: Edge Banding
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
       type_2: Tipo de material '$t(tab.materials.type_2)'
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
+      type_5: Tipo de material '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção de grãos

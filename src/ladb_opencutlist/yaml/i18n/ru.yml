@@ -509,12 +509,14 @@ tab:
     type_2: Листовой
     type_3: Погонаж
     type_4: Кромочный
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Тип материала '$t(tab.materials.type_0)'
       type_1: Тип материала '$t(tab.materials.type_1)'
       type_2: Тип материала '$t(tab.materials.type_2)'
       type_3: Тип материала '$t(tab.materials.type_3)'
       type_4: Тип материала '$t(tab.materials.type_4)'
+      type_5: Тип материала '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон

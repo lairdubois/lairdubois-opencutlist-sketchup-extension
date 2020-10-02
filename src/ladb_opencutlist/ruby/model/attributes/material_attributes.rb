@@ -12,6 +12,7 @@
     TYPE_SHEET_GOOD = 2
     TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
+    TYPE_ACCESSORY = 5
 
     DEFAULTS = {
         TYPE_UNKNOW => {
@@ -68,7 +69,7 @@
         },
         TYPE_EDGE => {
             :thickness => '2mm',
-            :length_increase => '0',
+            :length_increase => '50mm',
             :width_increase => '0',
             :thickness_increase => '0',
             :std_lengths => '',
@@ -78,6 +79,19 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => true,
+        },
+        TYPE_ACCESSORY => {
+            :thickness => '0',
+            :length_increase => '0',
+            :width_increase => '0',
+            :thickness_increase => '0',
+            :std_lengths => '',
+            :std_widths => '',
+            :std_thicknesses => '',
+            :std_sections => '',
+            :std_sizes => '',
+            :grained => false,
+            :edge_decremented => false,
         },
     }
 
@@ -100,7 +114,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOW or i_type > TYPE_DIMENSIONAL
+        if i_type < TYPE_UNKNOW or i_type > TYPE_ACCESSORY
           TYPE_UNKNOW
         end
         i_type
@@ -155,6 +169,8 @@
           3
         when TYPE_EDGE
           4
+        when TYPE_ACCESSORY
+          5
         else
           99
       end
