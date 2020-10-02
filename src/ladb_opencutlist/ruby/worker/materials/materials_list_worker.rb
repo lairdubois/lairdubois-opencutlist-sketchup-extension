@@ -28,6 +28,7 @@ module Ladb::OpenCutList
           :sheet_good_material_count => 0,
           :dimensional_material_count => 0,
           :edge_material_count => 0,
+          :accessory_material_count => 0,
           :untyped_material_count => 0,
           :materials => [],
           :current_material_name => materials && materials.current ? materials.current.name : nil
@@ -87,6 +88,8 @@ module Ladb::OpenCutList
               response[:dimensional_material_count] += 1
             when MaterialAttributes::TYPE_EDGE
               response[:edge_material_count] += 1
+            when MaterialAttributes::TYPE_ACCESSORY
+              response[:accessory_material_count] += 1
             else
               response[:untyped_material_count] += 1
           end

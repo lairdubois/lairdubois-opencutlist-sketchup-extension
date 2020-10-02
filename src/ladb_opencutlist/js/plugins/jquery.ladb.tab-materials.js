@@ -1196,7 +1196,7 @@
 
         // Load settings
         var settingsKeys = [];
-        for (var type = 0; type <= 4; type++) {     // 4 = TYPE_EDGE_BAND
+        for (var type = 0; type <= 5; type++) {     // 5 = TYPE_ACCESSORY
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);

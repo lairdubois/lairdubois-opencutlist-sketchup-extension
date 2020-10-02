@@ -476,6 +476,7 @@ module Ladb::OpenCutList
         sheet_good_material_count = 0
         bar_material_count = 0
         edge_material_count = 0
+        accessory_material_count = 0
         @material_usages_cache.each { |key, material_usage|
           if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
             solid_wood_material_count += material_usage.use_count
@@ -485,9 +486,11 @@ module Ladb::OpenCutList
             bar_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_EDGE
             edge_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_ACCESSORY
+            accessory_material_count += material_usage.use_count
           end
         }
-        if cutlist.instance_count - cutlist.ignored_instance_count > 0 and solid_wood_material_count == 0 and sheet_good_material_count == 0 and bar_material_count == 0
+        if cutlist.instance_count - cutlist.ignored_instance_count > 0 and solid_wood_material_count == 0 and sheet_good_material_count == 0 and bar_material_count == 0 and accessory_material_count == 0
           cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{selection_only ? "selection" : "model"}")
           cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
         end
