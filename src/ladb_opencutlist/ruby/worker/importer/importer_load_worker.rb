@@ -98,12 +98,13 @@ module Ladb::OpenCutList
           # Try to detect file encoding with rchardet lib
           cd = CharDet.detect(File.read(@path))
           encoding = cd['encoding']
-
-          rows = CSV.read(@path, {
+          options = {
               :encoding => encoding + ':utf-8',
               :headers => @first_line_headers,
               :col_sep => @col_sep
-          })
+          }
+
+          rows = CSV.read(@path, **options)
 
           # Extract headers
           headers = @first_line_headers ? rows.headers : nil

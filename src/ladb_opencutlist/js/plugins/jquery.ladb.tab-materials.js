@@ -299,7 +299,7 @@
             };
             var fnComputeSizeAspectRatio = function (isWidthMaster) {
                 if ($btnTextureSizeLock.data('locked')) {
-                    rubyCallCommand('core_compute_size_aspect_ratio_command', {
+                    rubyCallCommand('core_compute_size_aspect_ratio', {
                         width: $inputTextureWidth.val(),
                         height: $inputTextureHeight.val(),
                         ratio: material.texture_ratio,

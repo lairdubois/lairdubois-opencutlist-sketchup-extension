@@ -77,7 +77,8 @@ module Ladb::OpenCutList
           end
 
           File.open(export_path, "wb+:#{encoding}") do |f|
-            csv_file = CSV.generate({ :col_sep => col_sep, :force_quotes => force_quotes }) do |csv|
+            options = { :col_sep => col_sep, :force_quotes => force_quotes }
+            csv_file = CSV.generate(**options) do |csv|
 
               def _sanitize_value_string(value)
                 value.gsub(/^~ /, '') unless value.nil?

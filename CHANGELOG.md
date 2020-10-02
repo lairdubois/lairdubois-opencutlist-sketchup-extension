@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.6 (WIP)
+
+  * Fixed Ruby 2.7.0 deprecated calls
+  * Fixed Layer0 visibility detection
+  
 * 1.9.5 (2020-10-01)
 
   * Fixed cumulative length or width on folded parts

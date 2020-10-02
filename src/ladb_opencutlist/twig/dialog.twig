@@ -101,7 +101,7 @@
     function rubyCommandCallback(id, encodedResponse) {
         var callback = commandCallbacks[id];
         if (callback && typeof callback == 'function') {
-            var response = encodedResponse ? JSON.parse(decodeURIComponent(Base64.decode(encodedResponse))) : {};
+            var response = encodedResponse ? JSON.parse(Base64.decode(encodedResponse)) : {};
             callback(response);
             commandCallbacks[id] = null;
         }
@@ -174,7 +174,7 @@
     function triggerEvent(event, encodedParams) {
         var callbacks = eventCallbacks[event];
         if (callbacks) {
-            var params = encodedParams ? JSON.parse(decodeURIComponent(Base64.decode(encodedParams))) : {};
+            var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
             for (var i = 0; i < callbacks.length; i++) {
                 callbacks[i](params);
             }

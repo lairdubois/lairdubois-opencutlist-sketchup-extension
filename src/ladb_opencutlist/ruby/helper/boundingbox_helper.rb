@@ -10,7 +10,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       definition_or_group.entities.each { |entity|
         next if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
-        if entity.visible? and (entity.layer.visible? or entity.layer.equal?(@layer0))
+        if entity.visible? and (entity.layer.visible? or entity.layer.equal?(self.cached_layer0))
           if entity.is_a? Sketchup::Face
             face_bounds = entity.bounds
             if transformation

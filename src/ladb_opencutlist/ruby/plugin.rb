@@ -224,7 +224,7 @@ module Ladb::OpenCutList
         end
       end
       if @dialog
-        @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(params))) : ''}');")
+        @dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(params)) : ''}');")
       end
     end
 
@@ -361,7 +361,7 @@ module Ladb::OpenCutList
         register_command('core_send_action') do |params|
           send_action_command(params)
         end
-        register_command('core_compute_size_aspect_ratio_command') do |params|
+        register_command('core_compute_size_aspect_ratio') do |params|
           compute_size_aspect_ratio_command(params)
         end
 
@@ -437,7 +437,7 @@ module Ladb::OpenCutList
           call = JSON.parse(call_json)
           call_json = ''
           response = execute_command(call['command'], call['params'])
-          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(URI.escape(JSON.generate(response))) : ''}');"
+          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
           @dialog.execute_script(script) if @dialog
         end
       end
