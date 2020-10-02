@@ -527,7 +527,7 @@ module Ladb::OpenCutList
                 (folder_part_def.labels == part_def.labels || @hide_labels) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > MaterialAttributes::TYPE_UNKNOW) && # Part with untyped materiel are folded only if they have the same definition
+                ((folder_part_def.definition_id == part_def.definition_id && (group_def.material_type == MaterialAttributes::TYPE_UNKNOW || group_def.material_type == MaterialAttributes::TYPE_ACCESSORY)) || group_def.material_type != MaterialAttributes::TYPE_UNKNOW && group_def.material_type != MaterialAttributes::TYPE_ACCESSORY) && # Part with TYPE_UNKNOW or TYPE_ACCESSORY materiel are folded only if they have the same definition
                 folder_part_def.cumulable == part_def.cumulable
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
