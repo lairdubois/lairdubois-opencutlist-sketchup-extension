@@ -703,8 +703,8 @@ tab:
       **OpenCutList** è un software *Open Source* supportato dagli utenti mediante la piattaforma <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Contribuisci a supportare il progetto mediante una donazione in denaro!
     contribute: Contribuisci
-    backers: "{{count}} sostenitore finanziario"
-    backers_plural: "{{count}} sostenitori finanziari"
+    backers: "{{ count }} sostenitore finanziario"
+    backers_plural: "{{ count }} sostenitori finanziari"
     load_more: "Aggiungi ..."
     ad: Gradisci OpenCutList?
     objective: Obiettivo
