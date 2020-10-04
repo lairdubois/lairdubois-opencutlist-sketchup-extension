@@ -701,8 +701,8 @@ tab:
       **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
       Support this project by making a financial contribution!
     contribute: Contribute
-    backers: "{{count}} financial contributor"
-    backers_plural: "{{count}} financial contributors"
+    backers: "{{ count }} financial contributor"
+    backers_plural: "{{ count }} financial contributors"
     load_more: "Load more ..."
     ad: Do you like OpenCutList?
     objective: Objective

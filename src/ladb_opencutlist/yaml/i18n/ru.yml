@@ -701,8 +701,8 @@ tab:
       **OpenCutList** - это *Открытое исходное программное обеспечение*, поддерживаемое его пользователями посредством <a href="https://opencollective.com/" target="_blank">Open Collective</a> платформы.
       Поддержите этот проект, сделав финансовый взнос!
     contribute: Поддержи проект
-    backers: "{{count}} финансовый спонсор"
-    backers_plural: "{{count}} финансовые спонсоры"
+    backers: "{{ count }} финансовый спонсор"
+    backers_plural: "{{ count }} финансовые спонсоры"
     load_more: "Загрузить больше ..."
     ad: Вам нравится OpenCutList ?
     objective: Задача
