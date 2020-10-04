@@ -332,7 +332,7 @@ tab:
       name: Описание
       total_cutting_length: Длина - пильная
       total_cutting_area: Площадь - пильная
-      total_cutting_volume: Объем - пильныйй
+      total_cutting_volume: Объем - пильный
       total_final_area: Площадь - чисто
       cutting_length: Длина - пильная
       cutting_width: Ширина - пильная
