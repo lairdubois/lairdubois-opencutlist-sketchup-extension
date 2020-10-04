@@ -447,7 +447,7 @@ tab:
         total_area: Σ Areas
         total_used: Total used
         trimming: Trimming
-        total_length_cuts: Length of Cuts
+        total_length_cuts: Length of cuts
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
