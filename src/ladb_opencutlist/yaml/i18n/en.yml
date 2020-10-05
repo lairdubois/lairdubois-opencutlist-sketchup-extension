@@ -256,8 +256,6 @@ tab:
       hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
-      hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
-      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_final_areas: Hide actual area of parts of type *Sheet Good*
       hide_final_areas_help: If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden.
       hide_edges: Hide the column of edge bandings

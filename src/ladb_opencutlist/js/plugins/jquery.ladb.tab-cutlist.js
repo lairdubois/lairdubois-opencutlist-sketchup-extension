@@ -16,7 +16,6 @@
     var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_labels';
     var SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS = 'cutlist.option.hide_cutting_dimensions';
     var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
-    var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
     var SETTING_KEY_OPTION_HIDE_FINAL_AREAS = 'cutlist.option.hide_final_areas';
     var SETTING_KEY_OPTION_HIDE_EDGES = 'cutlist.option.hide_edges';
     var SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT = 'cutlist.option.minimize_on_highlight';
@@ -2297,7 +2296,6 @@
                 SETTING_KEY_OPTION_HIDE_LABELS,
                 SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
                 SETTING_KEY_OPTION_HIDE_EDGES,
                 SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
@@ -2320,7 +2318,6 @@
                     hide_labels: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
                     hide_cutting_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
                     hide_bbox_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
-                    hide_untyped_material_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
                     hide_final_areas: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, OPTION_DEFAULT_HIDE_FINAL_AREAS),
                     hide_edges: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_EDGES, OPTION_DEFAULT_HIDE_EDGES),
                     minimize_on_highlight: that.dialog.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT),
@@ -2354,7 +2351,6 @@
         var $inputHideLabels = $('#ladb_input_hide_labels', $modal);
         var $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
-        var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
@@ -2378,9 +2374,6 @@
             $inputHideLabels.prop('checked', generateOptions.hide_labels);
             $inputHideCuttingDimensions.prop('checked', generateOptions.hide_cutting_dimensions);
             $inputHideBBoxDimensions.prop('checked', generateOptions.hide_bbox_dimensions);
-            $inputHideUntypedMaterialDimensions
-                .prop('checked', generateOptions.hide_untyped_material_dimensions)
-                .prop('disabled', generateOptions.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', generateOptions.hide_final_areas);
             $inputHideEdges.prop('checked', generateOptions.hide_edges);
             $inputMinimizeOnHighlight.prop('checked', generateOptions.minimize_on_highlight);
@@ -2437,11 +2430,6 @@
 
         };
 
-        // Bind inputs
-        $inputHideBBoxDimensions.on('change', function () {
-            $inputHideUntypedMaterialDimensions.prop('disabled', $(this).is(':checked'));
-        });
-
         // Bind buttons
         $btnReset.on('click', function () {
             $(this).blur();
@@ -2457,7 +2445,6 @@
                 hide_labels: OPTION_DEFAULT_HIDE_LABELS,
                 hide_cutting_dimensions: OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS,
                 hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
-                hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
                 hide_final_areas: OPTION_DEFAULT_HIDE_FINAL_AREAS,
                 hide_edges: OPTION_DEFAULT_HIDE_EDGES,
                 minimize_on_highlight: OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT,
@@ -2480,7 +2467,6 @@
             that.generateOptions.hide_labels = $inputHideLabels.is(':checked');
             that.generateOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
             that.generateOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
-            that.generateOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
             that.generateOptions.hide_final_areas = $inputHideFinalAreas.is(':checked');
             that.generateOptions.hide_edges = $inputHideEdges.is(':checked');
             that.generateOptions.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
@@ -2509,7 +2495,6 @@
                 { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.generateOptions.hide_labels },
                 { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.generateOptions.hide_cutting_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.generateOptions.hide_bbox_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.generateOptions.hide_untyped_material_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.generateOptions.hide_final_areas },
                 { key:SETTING_KEY_OPTION_HIDE_EDGES, value:that.generateOptions.hide_edges },
                 { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.generateOptions.minimize_on_highlight },

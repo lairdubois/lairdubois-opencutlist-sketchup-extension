@@ -256,8 +256,6 @@ tab:
       hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das partes serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
       hide_bbox_dimensions_help: Se esta opção for selecionada, as dimensões **acabadas** das partes serão ocultadas.
-      hide_untyped_material_dimensions: Oculte as dimensões para partes com tipo de material indefinido
-      hide_untyped_material_dimensions_help: Se esta opção for selecionada, as dimensões das partes com um tipo de material indefinido (não ** Madeira maciça **, ** Chapa boa ** ou ** Dimensional **) serão ocultadas.
       hide_final_areas: Oculte a área real das partes do tipo *Chapa boa*
       hide_final_areas_help: Se esta opção for selecionada, as **áreas reais** das partes do tipo *Chapa boa* serão ocultadas.
       hide_edges: Esconda a coluna de bandas de borda

@@ -256,8 +256,6 @@ tab:
       hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
       hide_bbox_dimensions: Masquer les dimensions capables
       hide_bbox_dimensions_help: Si cette option est activée, les dimensions **capables** des pièces ne sont pas affichées.
-      hide_untyped_material_dimensions: Masquer les dimensions pour les pièces sans type
-      hide_untyped_material_dimensions_help: Si cette option est activée, les dimensions ne seront pas affichées pour les pièces pour lesquelles la matière n'a pas de type défini (**Bois massif**, **Panneau** ou **Barre**).
       hide_final_areas: Masquer les surfaces finies des *Panneaux*
       hide_final_areas_help: Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées.
       hide_edges: Masquer les colonnes de chants

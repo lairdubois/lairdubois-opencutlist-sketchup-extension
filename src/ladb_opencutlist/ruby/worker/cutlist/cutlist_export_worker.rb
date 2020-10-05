@@ -25,7 +25,6 @@ module Ladb::OpenCutList
       @hide_labels = settings['hide_labels']
       @hide_cutting_dimensions = settings['hide_cutting_dimensions']
       @hide_bbox_dimensions = settings['hide_bbox_dimensions']
-      @hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
       @hide_final_areas = settings['hide_final_areas']
       @hide_edges = settings['hide_edges']
       @hidden_group_ids = settings['hidden_group_ids']
@@ -167,7 +166,7 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW && @hide_untyped_material_dimensions
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_EDGE || MaterialAttributes::TYPE_ACCESSORY
 
                       row = []
                       row.push(part.number)
@@ -245,7 +244,7 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW && @hide_untyped_material_dimensions
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_EDGE || MaterialAttributes::TYPE_ACCESSORY
 
                       parts = part.is_a?(FolderPart) ? part.children : [ part ]
                       parts.each { |part|

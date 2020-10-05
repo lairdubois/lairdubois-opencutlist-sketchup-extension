@@ -256,8 +256,6 @@ tab:
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt.
       hide_bbox_dimensions: Fertigmaße ausblenden
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmaße** nicht angezeigt.
-      hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
       hide_edges: Spalten der Kantenbänder ausblenden

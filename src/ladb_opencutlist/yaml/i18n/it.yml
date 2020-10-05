@@ -256,8 +256,6 @@ tab:
       hide_cutting_dimensions_help: Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
       hide_bbox_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni **finite** delle parti.
-      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza definizione del materiale
-      hide_untyped_material_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni delle parti senza definizione del materiale (che non siano cioè **Tavole**, **Pannelli** o **Barre**).
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
       hide_final_areas_help: Se questa opzione è attivata, verrà nascosta **l'area** delle parti di tipo *Pannelli*.
       hide_edges: Nascondi la colonna "Bordature"
