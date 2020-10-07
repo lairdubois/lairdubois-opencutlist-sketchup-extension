@@ -373,7 +373,7 @@
     end
 
     def get_default(key)
-      DEFAULTS[@type][key]
+      DEFAULTS[@type][key] unless DEFAULTS[@type].nil?
     end
 
   end
