@@ -170,20 +170,20 @@ module Ladb::OpenCutList
 
     # -----
 
-    def set_attribute(entity, key, value)
-      entity.set_attribute(ATTRIBUTE_DICTIONARY, key, value)
+    def set_attribute(entity, key, value, dictionary = ATTRIBUTE_DICTIONARY)
+      entity.set_attribute(dictionary, key, value)
     end
 
-    def get_attribute(entity, key, default_value = nil)
-      entity.get_attribute(ATTRIBUTE_DICTIONARY, key, default_value)
+    def get_attribute(entity, key, default_value = nil, dictionary = ATTRIBUTE_DICTIONARY)
+      entity.get_attribute(dictionary, key, default_value)
     end
 
-    def write_default(key, value)
-      Sketchup.write_default(DEFAULT_SECTION, key, value)
+    def write_default(key, value, section = DEFAULT_SECTION)
+      Sketchup.write_default(section, key, value)
     end
 
-    def read_default(key, default_value = nil)
-      Sketchup.read_default(DEFAULT_SECTION, key, default_value)
+    def read_default(key, default_value = nil, section = DEFAULT_SECTION)
+      Sketchup.read_default(section, key, default_value)
     end
 
     # -----
