@@ -780,7 +780,7 @@
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.hide();
-                    $spanCutOptionsDefaultsType5.show();
+                    $spanCutOptionsDefaultsType5.hide();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('.form-group').hide();
