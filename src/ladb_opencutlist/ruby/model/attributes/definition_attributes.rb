@@ -101,17 +101,17 @@ module Ladb::OpenCutList
         @uuid = uuid
 
         begin
-          @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
+          @numbers = JSON.parse(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', '{}'))
         rescue JSON::ParserError
           @numbers = {}
         end
-        @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
-        @unit_price = Plugin.instance.get_attribute(@definition, 'Price', '', Plugin::SU_ATTRIBUTE_DICTIONARY)
-        @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
-        @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
-        @length_increase = Plugin.instance.get_attribute(@definition, 'length_increase', '0')
-        @width_increase = Plugin.instance.get_attribute(@definition, 'width_increase', '0')
-        @thickness_increase = Plugin.instance.get_attribute(@definition, 'thickness_increase', '0')
+        @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
+        @unit_price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
+        @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
+        @labels = DefinitionAttributes.valid_labels(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))
+        @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
+        @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
+        @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
       end
     end
 
