@@ -8,27 +8,27 @@ in 1.x and 0.x versions.
 
   * Fixed Ruby 2.7.0 deprecated calls
   * Fixed Layer0 visibility detection
-  
+
 * 1.9.5 (2020-10-01)
 
   * Fixed cumulative length or width on folded parts
-  * Added **portuguese** language (thanks to Nayton Sanches for joining the translators team)
+  * Added **portuguese** language (thanks to Nayton Sanches Barbosa for joining the translators team)
   * Added sponsor objective display
   * Added cutting diagram (1d and 2d) capability to compute only for selected (in part list) parts
   * Added possibility to add a quantity in cutting diagram 1d and 2d "offcut" field
   * Added public message of backers in sponsor list
   * Added link to tutorials list on GitHub in "More" tab
   * Improved dimension token field input
-  
+
 * 1.9.4 (2020-09-11)
 
   * Fixed cutting diagrams 2D rotated part dimensions display bug
-  * Fixed cutting diagrams crash when using non letter part's numbers
-  
+  * Fixed cutting diagrams crash when using non letter part numbers
+
 * 1.9.3 (2020-08-27)
 
   * Fixed cutting diagrams 1D bug introduced in 1.9.2
-  
+
 * 1.9.2 (2020-08-27)
 
   * Fixed cutting size with edge reduction in cutting diagrams
@@ -37,7 +37,7 @@ in 1.x and 0.x versions.
   * Added edit part tab memory
   * Added cutting diagram 1d / 2d options tab memory
   * Added textinput reset button
-  * Improved russian translations
+  * Improved russian translation
 
 * 1.9.1 (2020-07-05)
 
@@ -46,7 +46,7 @@ in 1.x and 0.x versions.
   * Fixed IE limitations on url parameter size
   * Improved cutlist part number storage
   * Rollback twig to 1.13.3 for IE compatibility
-  
+
 * 1.9.0 (2020-06-04)
 
   * Added **russian** language (thanks to Vladimir Badulya for joining the translators team)
