@@ -186,6 +186,7 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
+      unit_price: Prix unitaire # TODO
       size_increase: Oversizes
       size_increase_help: |
         Oversizes allow you to increase the dimensions of a single part.

@@ -1027,6 +1027,7 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+                var $inputUnitPrice = $('#ladb_cutlist_part_input_unit_price', $modal);
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
@@ -1287,6 +1288,9 @@
                         }
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
+                        }
+                        if ($inputUnitPrice.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].unit_price = $inputUnitPrice.val();
                         }
 
                         var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });

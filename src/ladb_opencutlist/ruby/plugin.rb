@@ -25,6 +25,7 @@ module Ladb::OpenCutList
     DEBUG = EXTENSION_VERSION.end_with? '-dev'
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
+    SU_ATTRIBUTE_DICTIONARY = 'SU_DefinitionSet'.freeze
 
     SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults
     SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes

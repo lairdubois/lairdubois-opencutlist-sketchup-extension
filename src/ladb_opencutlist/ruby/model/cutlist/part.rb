@@ -25,6 +25,7 @@ module Ladb::OpenCutList
       @cutting_thickness = part_def.cutting_size.thickness.to_s
       @material_name = part_def.material_name
       @cumulable = part_def.cumulable
+      @unit_price = part_def.unit_price
       @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
       @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
       @labels = part_def.labels

@@ -281,6 +281,7 @@ module Ladb::OpenCutList
           part_def.size = size
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
+          part_def.unit_price = definition_attributes.unit_price
           part_def.length_increase = definition_attributes.length_increase
           part_def.width_increase = definition_attributes.width_increase
           part_def.thickness_increase = definition_attributes.thickness_increase

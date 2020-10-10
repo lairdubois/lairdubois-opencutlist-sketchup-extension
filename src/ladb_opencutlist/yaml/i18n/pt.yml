@@ -186,6 +186,7 @@ tab:
       cumulable_0: Não somam
       cumulable_1: Somável ao longo do comprimento
       cumulable_2: Somável em largura
+      unit_price: Prix unitaire # TODO
       size_increase: Tamanho grande
       size_increase_help: |
         Os sobredimensionamentos permitem-lhe aumentar as dimensões de uma única parte.

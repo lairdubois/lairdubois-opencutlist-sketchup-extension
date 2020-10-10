@@ -186,6 +186,7 @@ tab:
       cumulable_0: Не суммировать
       cumulable_1: Суммировть по длине
       cumulable_2: Суммировать по ширине
+      unit_price: Prix unitaire # TODO
       size_increase: Припуски
       size_increase_help: |
        Припуски это добавочные размеры ‘под подгонку’ которые увеличивают расчетные размеры детали.
