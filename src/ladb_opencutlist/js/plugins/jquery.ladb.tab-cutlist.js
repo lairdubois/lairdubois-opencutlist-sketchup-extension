@@ -1148,6 +1148,7 @@
                 })
 
                 // Bind input
+                $inputUnitPrice.ladbTextinputCurrency();
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
