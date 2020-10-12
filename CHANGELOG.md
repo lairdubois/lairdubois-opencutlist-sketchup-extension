@@ -8,6 +8,7 @@ in 1.x and 0.x versions.
 
   * Fixed Ruby 2.7.0 deprecated calls
   * Fixed Layer0 visibility detection
+  * Fixed Dimension regex for *X' X X/X'* input format
 
 * 1.9.5 (2020-10-01)
 
