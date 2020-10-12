@@ -538,6 +538,9 @@
         // Show modal
         $modal.modal('show');
 
+        // Hide bounce effect
+        $('#ladb_btn_more .badge.badge-notification', that.$element).removeClass('ladb-bounce-x ladb-bounce-y');
+
     };
 
     LadbDialog.prototype.notify = function (text, type, buttons, timeout) {
