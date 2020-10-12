@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.10.0 (WIP)
+
+  * Added Accessory material type
+  * Added part unit price field for accessories
+
 * 1.9.6 (WIP)
 
   * Fixed Ruby 2.7.0 deprecated calls
