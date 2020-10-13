@@ -1,7 +1,7 @@
 +function ($) {
     'use strict';
 
-    var FORMAT_NONE = 'default';
+    var FORMAT_DEFAULT = 'default';
     var FORMAT_D = 'd';
     var FORMAT_DXQ = 'dxq';
     var FORMAT_DXD = 'dxd';
@@ -20,7 +20,7 @@
     };
 
     LadbTextinputTokenfield.DEFAULTS = $.extend(TOKENFIELD_OPTIONS, {
-        format: FORMAT_NONE
+        format: FORMAT_DEFAULT
     });
 
     LadbTextinputTokenfield.prototype.getTokenRegExp = function() {
