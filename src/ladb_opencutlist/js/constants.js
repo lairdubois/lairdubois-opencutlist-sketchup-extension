@@ -3,10 +3,6 @@
 
 var EW_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
 
-var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
-var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-var GRAPHQL_PAGE_SIZE = 16;
-
 var SELECT_PICKER_OPTIONS = {
     size: 10,
     iconBase: 'ladb-opencutlist-icon',
