@@ -5,18 +5,18 @@
     // ======================
 
     var LadbTextinputCurrency = function (element, options) {
-        this.options = options;
-        this.$element = $(element);
+        LadbAbstractSimpleTextinput.call(this, element, options, '');
     };
+    LadbTextinputCurrency.prototype = new LadbAbstractSimpleTextinput;
 
     LadbTextinputCurrency.DEFAULTS = {
         currency: '€'
     };
 
     LadbTextinputCurrency.prototype.init = function () {
-        var that = this;
+        LadbAbstractSimpleTextinput.prototype.init.call(this);
 
-        this.$element.wrap('<div class="input-group">').before('<span class="input-group-addon">' + this.options.currency + '</span>');
+        this.$element.before('<span class="input-group-addon">' + this.options.currency + '</span>');
 
     };
 

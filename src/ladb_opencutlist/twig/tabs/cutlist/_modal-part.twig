@@ -79,7 +79,7 @@
                     <div class="form-group">
                         <label for="ladb_cutlist_part_input_unit_price" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.unit_price'|i18next }}</label>
                         <div class="col-xs-7">
-                            <input type="text" class="form-control" id="ladb_cutlist_part_input_unit_price" value="{{ part.unit_price|escape }}">
+                            <input type="text" class="form-control" id="ladb_cutlist_part_input_unit_price" {% if part.unit_price == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.unit_price }}"{% endif %}>
                         </div>
                     </div>
                 {% endif %}

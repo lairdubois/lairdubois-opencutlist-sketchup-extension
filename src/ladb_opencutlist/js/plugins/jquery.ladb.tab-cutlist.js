@@ -970,6 +970,9 @@
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
+                if (editedPart.unit_price !== editedParts[i].unit_price) {
+                    editedPart.unit_price = MULTIPLE_VALUE;
+                }
                 editedPart.labels = editedPart.labels.filter(function(label) {  // Extract only commun labels
                     return -1 !== editedParts[i].labels.indexOf(label);
                 });
