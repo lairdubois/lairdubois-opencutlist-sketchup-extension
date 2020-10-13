@@ -5,25 +5,11 @@
     // ======================
 
     var LadbTextinputDimension = function (element, options) {
-        this.options = options;
-        this.$element = $(element);
+        LadbAbstractSimpleTextinput.call(this, element, options, '0');
     };
+    LadbTextinputDimension.prototype = new LadbAbstractSimpleTextinput;
 
     LadbTextinputDimension.DEFAULTS = {};
-
-    LadbTextinputDimension.prototype.init = function () {
-        var that = this;
-
-        var $resetButton = $('<div><i class="ladb-opencutlist-icon-clear"></i></div>');
-        $resetButton.on('click', function() {
-            that.$element
-                .val('0')
-                .trigger('change')
-            ;
-        });
-        this.$element.wrap('<div class="ladb-textinput-dimension" />').after($resetButton);
-
-    };
 
 
     // PLUGIN DEFINITION
