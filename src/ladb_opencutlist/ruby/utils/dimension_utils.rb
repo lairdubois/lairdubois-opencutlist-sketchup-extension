@@ -427,11 +427,9 @@
     # -----
 
     # Take a float containing a length in inch
-    # and truncate it to "Sketchup" precision
-    def truncate_length_value(f)
-      return f if f == 0
-      factor = 10**4 # 4 = 0.0000 arbitrary length precision
-      (f * factor).floor / (factor * 1.0)
+    # and round it to "Sketchup" max precision
+    def round_length_value(f)
+      f.round(6)
     end
 
   end

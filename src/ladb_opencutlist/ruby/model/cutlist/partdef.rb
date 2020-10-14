@@ -83,7 +83,7 @@ module Ladb::OpenCutList
       end
 
       # Include scale into part_id to separate instances with the same definition, but different scale
-      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.truncate_length_value(instance_info.size.length.to_f).to_s}|#{DimensionUtils.instance.truncate_length_value(instance_info.size.width.to_f).to_s}|#{DimensionUtils.instance.truncate_length_value(instance_info.size.thickness.to_f).to_s}|#{instance_info.flipped.to_s}")
+      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.round_length_value(instance_info.size.length.to_f).to_s}|#{DimensionUtils.instance.round_length_value(instance_info.size.width.to_f).to_s}|#{DimensionUtils.instance.round_length_value(instance_info.size.thickness.to_f).to_s}|#{instance_info.flipped.to_s}")
 
     end
 
