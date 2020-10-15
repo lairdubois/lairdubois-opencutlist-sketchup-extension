@@ -9,6 +9,7 @@ in 1.x and 0.x versions.
   * Fixed Ruby 2.7.0 deprecated calls
   * Fixed Layer0 visibility detection
   * Fixed Dimension regex for *X' X X/X'* input format
+  * Improved ComponentDefinition and Material uuids management (uses #persistent_id if SU > 20.1)
 
 * 1.9.5 (2020-10-01)
 

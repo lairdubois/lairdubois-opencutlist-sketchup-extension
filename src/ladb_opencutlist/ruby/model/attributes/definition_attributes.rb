@@ -87,30 +87,39 @@ module Ladb::OpenCutList
       if @definition
 
         # Special case for UUID that must be truely unique in the session
-        uuid = Plugin.instance.get_attribute(@definition, 'uuid', nil)
+        uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
         if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
 
-          # Generate a new UUID
-          uuid = SecureRandom.uuid
+          if Sketchup.version_number >= 2010000000
 
-          # Store the new uuid to definition attributes
-          @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+            # Running on > SU20.1.0 Use ComponentDefinition#persistent_id
+            uuid = @definition.persistent_id
+
+          else
+
+            # Generate a new UUID
+            uuid = SecureRandom.uuid
+
+            # Store the new uuid to definition attributes
+            @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+
+          end
 
         end
         @@used_uuids.push(uuid)
         @uuid = uuid
 
         begin
-          @numbers = JSON.parse(Plugin.instance.get_attribute(@definition, 'numbers', '{}'))
+          @numbers = JSON.parse(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', '{}'))
         rescue JSON::ParserError
           @numbers = {}
         end
-        @cumulable = Plugin.instance.get_attribute(@definition, 'cumulable', CUMULABLE_NONE)
-        @orientation_locked_on_axis = Plugin.instance.get_attribute(@definition, 'orientation_locked_on_axis', false)
-        @labels = DefinitionAttributes.valid_labels(Plugin.instance.get_attribute(@definition, 'labels', []))
-        @length_increase = Plugin.instance.get_attribute(@definition, 'length_increase', '0')
-        @width_increase = Plugin.instance.get_attribute(@definition, 'width_increase', '0')
-        @thickness_increase = Plugin.instance.get_attribute(@definition, 'thickness_increase', '0')
+        @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
+        @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
+        @labels = DefinitionAttributes.valid_labels(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))
+        @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
+        @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
+        @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
       end
     end
 

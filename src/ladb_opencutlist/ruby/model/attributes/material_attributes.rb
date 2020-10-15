@@ -97,6 +97,14 @@
       @@used_uuids.clear
     end
 
+    def self.write_persistent_id_to_uuid(material)
+      unless Sketchup.version_number < 2010000000 ||
+          material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid') ||
+          material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type').nil?
+        material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', material.persistent_id)
+      end
+    end
+
     def self.valid_type(type)
       if type
         i_type = type.to_i
@@ -324,14 +332,23 @@
       if @material
 
         # Special case for UUID that must be truely unique in the session
-        uuid = Plugin.instance.get_attribute(@material, 'uuid', nil)
+        uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
         if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
 
-          # Generate a new UUID
-          uuid = SecureRandom.uuid
+          if Sketchup.version_number >= 2010000000
 
-          # Store the new uuid to material attributes
-          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+            # Running on > SU20.1.0 Use Material#persistent_id
+            uuid = @material.persistent_id
+
+          else
+
+            # Generate a new UUID
+            uuid = SecureRandom.uuid
+
+            # Store the new uuid to material attributes
+            @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
+
+          end
 
         end
         @@used_uuids.push(uuid)
