@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.6 (WIP)
+* 1.9.6 (2020-10-15)
 
   * Fixed Ruby 2.7.0 deprecated calls
   * Fixed Layer0 visibility detection
