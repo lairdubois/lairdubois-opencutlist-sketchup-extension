@@ -84,6 +84,7 @@
     attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented
     attr_reader :material
 
+    @@cached_uuids = {}
     @@used_uuids = []
 
     def initialize(material, force_unique_uuid = false)
@@ -93,15 +94,27 @@
 
     # -----
 
+    def self.store_cached_uuid(material, uuid)
+      @@cached_uuids.store("#{material.model.guid}|#{material.entityID}", uuid)
+    end
+
+    def self.fetch_cached_uuid(material)
+      @@cached_uuids.fetch("#{material.model.guid}|#{material.entityID}", nil)
+    end
+
+    def self.delete_cached_uuid(material)
+      @@cached_uuids.delete("#{material.model.guid}|#{material.entityID}")
+    end
+
     def self.reset_used_uuids
       @@used_uuids.clear
     end
 
-    def self.write_persistent_id_to_uuid(material)
-      unless Sketchup.version_number < 2010000000 ||
-          material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid') ||
-          material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type').nil?
-        material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', material.persistent_id)
+    def self.persist_cached_uuid_of(material)
+      cached_uuid = fetch_cached_uuid(material)
+      if cached_uuid
+        material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', cached_uuid)
+        MaterialAttributes.delete_cached_uuid(material)
       end
     end
 
@@ -133,8 +146,8 @@
           end
           case property
           when 'type'
-            a_value = [ self.type_order(material_a[:attributes][:type]) ]
-            b_value = [ self.type_order(material_b[:attributes][:type]) ]
+            a_value = [ type_order(material_a[:attributes][:type]) ]
+            b_value = [ type_order(material_b[:attributes][:type]) ]
           when 'name'
             a_value = [ material_a[:display_name] ]
             b_value = [ material_b[:display_name] ]
@@ -169,6 +182,28 @@
     end
 
     # -----
+
+    def uuid
+      if @uuid.nil?
+
+        if Sketchup.version_number >= 2010000000
+
+          # Running on > SU20.1.0 Use Material#persistent_id
+          @uuid = @material.persistent_id
+
+        else
+
+          # Generate a new UUID
+          @uuid = SecureRandom.uuid
+
+        end
+
+        # Cache new UUID
+        MaterialAttributes.store_cached_uuid(@material, @uuid)
+
+      end
+      @uuid
+    end
 
     def thickness
       case @type
@@ -331,28 +366,21 @@
     def read_from_attributes(force_unique_uuid = false)
       if @material
 
-        # Special case for UUID that must be truely unique in the session
-        uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
-        if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
+        # Try to retrieve uuid from cached UUIDs
+        @uuid = MaterialAttributes.fetch_cached_uuid(@material)
 
-          if Sketchup.version_number >= 2010000000
-
-            # Running on > SU20.1.0 Use Material#persistent_id
-            uuid = @material.persistent_id
-
-          else
-
-            # Generate a new UUID
-            uuid = SecureRandom.uuid
-
-            # Store the new uuid to material attributes
-            @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
-
-          end
-
+        if @uuid.nil?
+          # Try to retrieve uuid from material's attributes
+          @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @material
         end
-        @@used_uuids.push(uuid)
-        @uuid = uuid
+
+        unless @uuid.nil?
+          if force_unique_uuid && @@used_uuids.include?(@uuid)
+            @uuid = nil
+          else
+            @@used_uuids.push(@uuid)
+          end
+        end
 
         @type = Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW)
         @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(:thickness))
@@ -373,7 +401,12 @@
 
     def write_to_attributes
       if @material
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+
+        unless @uuid.nil?
+          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+          MaterialAttributes.delete_cached_uuid(@material)
+        end
+
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', DimensionUtils.instance.str_add_units(@thickness))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))

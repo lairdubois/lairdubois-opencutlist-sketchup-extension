@@ -11,14 +11,27 @@ module Ladb::OpenCutList
     attr_accessor :uuid, :cumulable, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
+    @@cached_uuids = {}
     @@used_uuids = []
 
-    def initialize(definition, force_unique_uuid = false)
+    def initialize(definition, force_unique_uuid =false)
       @definition = definition
       read_from_attributes(force_unique_uuid)
     end
 
     # -----
+
+    def self.store_cached_uuid(definition, uuid)
+      @@cached_uuids.store("#{definition.model.guid}|#{definition.entityID}", uuid)
+    end
+
+    def self.fetch_cached_uuid(definition)
+      @@cached_uuids.fetch("#{definition.model.guid}|#{definition.entityID}", nil)
+    end
+
+    def self.delete_cached_uuid(definition)
+      @@cached_uuids.delete("#{definition.model.guid}|#{definition.entityID}")
+    end
 
     def self.reset_used_uuids
       @@used_uuids.clear
@@ -69,6 +82,28 @@ module Ladb::OpenCutList
 
     # -----
 
+    def uuid
+      if @uuid.nil?
+
+        if Sketchup.version_number >= 2010000000
+
+          # Running on > SU20.1.0 Use Material#persistent_id
+          @uuid = @definition.persistent_id
+
+        else
+
+          # Generate a new UUID
+          @uuid = SecureRandom.uuid
+
+        end
+
+        # Cache generated UUID
+        DefinitionAttributes.store_cached_uuid(@definition, @uuid)
+
+      end
+      @uuid
+    end
+
     def l_length_increase
       DimensionUtils.instance.d_to_ifloats(length_increase).to_l
     end
@@ -86,28 +121,21 @@ module Ladb::OpenCutList
     def read_from_attributes(force_unique_uuid = false)
       if @definition
 
-        # Special case for UUID that must be truely unique in the session
-        uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
-        if uuid.nil? or (force_unique_uuid and @@used_uuids.include?(uuid))
+        # Try to retrieve uuid from cached UUIDs
+        @uuid = DefinitionAttributes.fetch_cached_uuid(@definition)
 
-          if Sketchup.version_number >= 2010000000
-
-            # Running on > SU20.1.0 Use ComponentDefinition#persistent_id
-            uuid = @definition.persistent_id
-
-          else
-
-            # Generate a new UUID
-            uuid = SecureRandom.uuid
-
-            # Store the new uuid to definition attributes
-            @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', uuid)
-
-          end
-
+        if @uuid.nil?
+          # Try to retrieve uuid from definition's attributes
+          @uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @definition
         end
-        @@used_uuids.push(uuid)
-        @uuid = uuid
+
+        unless @uuid.nil?
+          if force_unique_uuid && @@used_uuids.include?(@uuid)
+            @uuid = nil
+          else
+            @@used_uuids.push(@uuid)
+          end
+        end
 
         begin
           @numbers = JSON.parse(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', '{}'))
@@ -125,7 +153,12 @@ module Ladb::OpenCutList
 
     def write_to_attributes
       if @definition
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+
+        unless @uuid.nil?
+          @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+          DefinitionAttributes.delete_cached_uuid(@definition)
+        end
+
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
