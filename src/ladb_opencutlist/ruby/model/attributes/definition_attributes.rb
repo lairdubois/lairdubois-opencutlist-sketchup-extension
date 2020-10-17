@@ -117,7 +117,7 @@ module Ladb::OpenCutList
 
         if @uuid.nil?
           # Try to retrieve uuid from definition's attributes
-          @uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @definition
+          @uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
         end
 
         unless @uuid.nil?
