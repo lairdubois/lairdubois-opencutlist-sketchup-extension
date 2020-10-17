@@ -20,8 +20,6 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        definition.refresh_thumbnail
-
         temp_dir = Plugin.instance.temp_dir
         component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
         unless Dir.exist?(component_thumbnails_dir)

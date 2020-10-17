@@ -85,17 +85,8 @@ module Ladb::OpenCutList
     def uuid
       if @uuid.nil?
 
-        if Sketchup.version_number >= 2010000000
-
-          # Running on > SU20.1.0 Use Material#persistent_id
-          @uuid = @definition.persistent_id
-
-        else
-
-          # Generate a new UUID
-          @uuid = SecureRandom.uuid
-
-        end
+        # Generate a new UUID
+        @uuid = SecureRandom.uuid
 
         # Cache generated UUID
         DefinitionAttributes.store_cached_uuid(@definition, @uuid)
