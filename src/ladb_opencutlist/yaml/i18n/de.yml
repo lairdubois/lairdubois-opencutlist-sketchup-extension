@@ -187,6 +187,7 @@ tab:
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
       unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.

@@ -973,6 +973,9 @@
                 if (editedPart.unit_price !== editedParts[i].unit_price) {
                     editedPart.unit_price = MULTIPLE_VALUE;
                 }
+                if (editedPart.unit_mass !== editedParts[i].unit_mass) {
+                    editedPart.unit_mass = MULTIPLE_VALUE;
+                }
                 editedPart.labels = editedPart.labels.filter(function(label) {  // Extract only commun labels
                     return -1 !== editedParts[i].labels.indexOf(label);
                 });
@@ -1031,6 +1034,7 @@
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputUnitPrice = $('#ladb_cutlist_part_input_unit_price', $modal);
+                var $inputUnitMass = $('#ladb_cutlist_part_input_unit_mass', $modal);
                 var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
@@ -1152,6 +1156,7 @@
 
                 // Bind input
                 $inputUnitPrice.ladbTextinputCurrency();
+                $inputUnitMass.ladbTextinputMass();
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
@@ -1295,6 +1300,9 @@
                         }
                         if ($inputUnitPrice.val() !== MULTIPLE_VALUE) {
                             editedParts[i].unit_price = $inputUnitPrice.val();
+                        }
+                        if ($inputUnitMass.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].unit_mass = $inputUnitMass.val();
                         }
 
                         var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });

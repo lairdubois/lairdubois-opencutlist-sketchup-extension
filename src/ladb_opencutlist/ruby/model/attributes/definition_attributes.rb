@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :unit_price, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :unit_price, :unit_mass, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -135,6 +135,7 @@ module Ladb::OpenCutList
         end
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
         @unit_price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
+        @unit_mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', '')
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @labels = DefinitionAttributes.valid_labels(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
@@ -154,6 +155,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @unit_price)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', @unit_mass)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', @labels)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))

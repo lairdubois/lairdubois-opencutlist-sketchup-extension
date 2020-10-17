@@ -187,6 +187,7 @@ tab:
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
       unit_price: Prix unitaire
+      unit_mass: Masse unitaire
       size_increase: Surcotes
       size_increase_help: |
         Les surcotes vous permettent de majorer les dimensions capables de la pièce.

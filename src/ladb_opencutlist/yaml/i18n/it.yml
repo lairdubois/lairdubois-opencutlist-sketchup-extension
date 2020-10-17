@@ -187,6 +187,7 @@ tab:
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
       unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.

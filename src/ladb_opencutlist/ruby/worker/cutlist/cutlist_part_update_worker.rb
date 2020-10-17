@@ -16,6 +16,7 @@ module Ladb::OpenCutList
         :material_name,
         :cumulable,
         :unit_price,
+        :unit_mass,
         :length_increase,
         :width_increase,
         :thickness_increase,
@@ -40,6 +41,7 @@ module Ladb::OpenCutList
             part_data['material_name'],
             DefinitionAttributes.valid_cumulable(part_data['cumulable']),
             part_data['unit_price'],
+            part_data['unit_mass'],
             part_data['length_increase'],
             part_data['width_increase'],
             part_data['thickness_increase'],
@@ -82,6 +84,7 @@ module Ladb::OpenCutList
           definition_attributes = DefinitionAttributes.new(definition)
           if part_data.cumulable != definition_attributes.cumulable ||
               part_data.unit_price != definition_attributes.unit_price ||
+              part_data.unit_mass != definition_attributes.unit_mass ||
               part_data.length_increase != definition_attributes.length_increase ||
               part_data.width_increase != definition_attributes.width_increase ||
               part_data.thickness_increase != definition_attributes.thickness_increase ||
@@ -89,6 +92,7 @@ module Ladb::OpenCutList
               part_data.labels != definition_attributes.labels
             definition_attributes.cumulable = part_data.cumulable
             definition_attributes.unit_price = part_data.unit_price
+            definition_attributes.unit_mass = part_data.unit_mass
             definition_attributes.length_increase = part_data.length_increase
             definition_attributes.width_increase = part_data.width_increase
             definition_attributes.thickness_increase = part_data.thickness_increase
