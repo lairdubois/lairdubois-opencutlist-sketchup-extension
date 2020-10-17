@@ -7,6 +7,8 @@
 {% set dimensionFontSize = 12 %}
 {% set numberFontSize = 26 %}
 
+{% set textFontWidthFactor = 0.6 %}
+
 {% set dimensionOffset = 3 %}
 {% set sheetDimensionOffset = 10 %}
 
@@ -223,22 +225,24 @@
                                 <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
                             </g>
                             {% for leftover in sheet.leftovers %}
-                                {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
-                                {% set hideDimensions = leftover.px_length < (dimensionFontSize + dimensionOffset) or leftover.px_width < (dimensionFontSize + dimensionOffset) %}
                                 <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
                                     <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
+                                    {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                     {% if not hideCross %}
                                         <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                         <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                     {% endif %}
-                                    {% if not hideDimensions %}
+                                    {% set hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length < leftover.length|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% if not hideLength %}
                                         <text class="leftover-dimension" x="{{ leftover.px_x + leftover.px_length / 2 }}" y="{{ leftover.px_y + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle">{{ leftover.length }}</text>
+                                    {% endif %}
+                                    {% set hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width < leftover.width|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% if not hideWidth %}
                                         <text class="leftover-dimension" x="{{ leftover.px_x + dimensionOffset + dimensionFontSize }}" y="{{ leftover.px_y + leftover.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" transform="rotate(-90 {{ leftover.px_x + dimensionOffset + dimensionFontSize }},{{ leftover.px_y + leftover.px_width / 2 }})">{{ leftover.width }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}
                             {% for part in sheet.parts|reverse %}
-                                {% set hideDimensions = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>[{{ part.number }}]&nbsp;{{ part.name|escape('html') }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
@@ -256,11 +260,13 @@
                                     {% endif %}
                                     {% set numberTextLength = part.number|length %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / (part.rotated ? 1 : numberTextLength), (part.px_width - dimensionOffset * 2) / (part.rotated ? numberTextLength : 1))  }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
-                                    {% if not hideDimensions %}
-                                        {% set centredLength = part.px_width > (dimensionOffset + dimensionFontSize + numberFontSize) %}
-                                        {% set centredWidth = part.px_length > (dimensionOffset + dimensionFontSize + numberFontSize) %}
-                                        <text class="part-dimension" x="{{ centredLength ? part.px_x + part.px_length / 2 : part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" y="{{ centredLength ? part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredLength %}middle{% else %}start{% endif %}"{% if not centredLength %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.rotated ? part.width : part.length }}</text>
-                                        <text class="part-dimension" x="{{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }}" y="{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }}" font-size="{{ dimensionFontSize }}px" text-anchor="{% if centredWidth %}middle{% else %}end{% endif %}"{% if not centredWidth %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ centredWidth ? part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize : part.px_x + part.px_length / 2 }},{{ centredWidth ? part.px_y + part.px_width / 2 : part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize + dimensionOffset }})">{{ part.rotated ? part.length : part.width }}</text>
+                                    {% set hideLength = part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_length < part.length|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% if not hideLength %}
+                                        <text class="part-dimension" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.rotated ? part.width : part.length }}</text>
+                                    {% endif %}
+                                    {% set hideWidth = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < part.width|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% if not hideWidth %}
+                                        <text class="part-dimension" x="{{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }},{{ part.px_y + part.px_width / 2 }})">{{ part.rotated ? part.length : part.width }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}
