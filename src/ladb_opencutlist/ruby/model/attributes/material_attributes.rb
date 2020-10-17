@@ -362,7 +362,7 @@
 
         if @uuid.nil?
           # Try to retrieve uuid from material's attributes
-          @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @material
+          @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
         end
 
         unless @uuid.nil?
