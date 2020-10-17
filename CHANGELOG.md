@@ -9,11 +9,12 @@ in 1.x and 0.x versions.
   * Added Accessory material type
   * Added part unit price field for accessories
 
-* 1.9.6 (WIP)
+* 1.9.6 (2020-10-17)
 
   * Fixed Ruby 2.7.0 deprecated calls
   * Fixed Layer0 visibility detection
   * Fixed Dimension regex for *X' X X/X'* input format
+  * Improved ComponentDefinition and Material uuids management
 
 * 1.9.5 (2020-10-01)
 

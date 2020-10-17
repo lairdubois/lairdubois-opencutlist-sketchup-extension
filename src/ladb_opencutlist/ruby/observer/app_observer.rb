@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require 'singleton'
+  require_relative 'model_observer'
   require_relative 'options_provider_observer'
   require_relative 'materials_observer'
   require_relative 'selection_observer'
@@ -43,9 +44,7 @@ module Ladb::OpenCutList
 
     def add_model_observers(model)
       if model
-        # if model.definitions
-        #   model.definitions.add_observer(@definitions_observer)
-        # end
+        model.add_observer(ModelObserver.instance)
         if model.options['UnitsOptions']
           model.options['UnitsOptions'].add_observer(OptionsProviderObserver.instance)
         end
@@ -60,9 +59,7 @@ module Ladb::OpenCutList
 
     def remove_model_observers(model)
       if model
-        # if model.definitions
-        #   model.definitions.remove_observer(@definitions_observer)
-        # end
+        model.remove_observer(ModelObserver.instance)
         if model.options['UnitsOptions']
           model.options['UnitsOptions'].remove_observer(OptionsProviderObserver.instance)
         end
