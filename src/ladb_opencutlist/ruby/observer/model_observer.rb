@@ -9,14 +9,10 @@ module Ladb::OpenCutList
     def onPreSaveModel(model)
       # puts "onPreSaveModel: #{model}"
 
-      if Sketchup.version_number > 2010000000
-
-        # Persists material persistent_ids to uuids
-        model.materials.each { |material|
-          MaterialAttributes.write_persistent_id_to_uuid(material)
-        }
-
-      end
+      # Persists material's cached uuids
+      model.materials.each { |material|
+        MaterialAttributes.persist_cached_uuid_of(material)
+      }
 
     end
 
