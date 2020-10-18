@@ -358,6 +358,9 @@ module Ladb::OpenCutList
         register_command('core_zoom_extents') do |params|
           zoom_extents_command
         end
+        register_command('core_play_sound') do |params|
+          play_sound_command(params)
+        end
         register_command('core_send_action') do |params|
           send_action_command(params)
         end
@@ -805,6 +808,10 @@ module Ladb::OpenCutList
       if Sketchup.active_model
         Sketchup.active_model.active_view.zoom_extents
       end
+    end
+
+    def play_sound_command(params)    # Waiting params = { filename: WAV_FILE_TO_PLAY }
+      UI.play_sound("#{__dir__}/../#{params['filename']}")
     end
 
     def send_action_command(params)
