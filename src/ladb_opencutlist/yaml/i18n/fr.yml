@@ -623,6 +623,7 @@ tab:
     title: Tutoriels
     help: |
       Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
+    submit_a_video: Proposer une vidéo
     error:
       fail_to_load_list: Impossible de charger la liste des vidéos.
   importer:
