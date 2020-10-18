@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.7 (WIP)
+
+  * Added embeded tutorial videos
+
 * 1.9.6 (2020-10-17)
 
   * Fixed Ruby 2.7.0 deprecated calls

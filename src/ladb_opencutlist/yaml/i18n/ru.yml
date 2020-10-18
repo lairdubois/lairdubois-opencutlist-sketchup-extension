@@ -30,6 +30,7 @@ default:
   tip: Тип
   good: Хороший
   bad: Плохой
+  by: par # TODO
   date_format: d/m/Y G:i
   date_format_short: d/m/Y
   unit_0: Дюймы
@@ -617,6 +618,11 @@ tab:
     success:
       exported_to: Экспорт {{ export_path }} завершен.
     obsolete_base: Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
+  tutorials:
+    label: Tutoriels  # TODO
+    title: Tutoriels  # TODO
+    help: | # TODO
+      Voici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
   importer:
     label: Импорт
     title: Импорт деталей

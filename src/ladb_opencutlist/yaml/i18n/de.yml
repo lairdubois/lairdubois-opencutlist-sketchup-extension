@@ -30,6 +30,7 @@ default:
   tip: Hinweis
   good: Gut
   bad: Schlecht
+  by: par # TODO
   date_format: Y-m-d G:i
   date_format_short: Y-m-d
   unit_0: Zoll
@@ -617,6 +618,11 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
+  tutorials:
+    label: Tutoriels  # TODO
+    title: Tutoriels  # TODO
+    help: | # TODO
+      Voici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
   importer:
     label: Importieren
     title: Teile importieren
