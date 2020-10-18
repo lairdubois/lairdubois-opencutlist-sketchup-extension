@@ -75,6 +75,7 @@ module Ladb::OpenCutList
                       :std_sizes => material_attributes.std_sizes,
                       :grained => material_attributes.grained,
                       :edge_decremented => material_attributes.edge_decremented,
+                      :volumic_mass => material_attributes.volumic_mass,
                   }
               }
           )

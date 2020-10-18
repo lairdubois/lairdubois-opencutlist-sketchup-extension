@@ -543,6 +543,7 @@ tab:
       name: Name
       type: Type
       cut_options: Cutting Parameters
+      attributes: Attributs  # TODO
       thickness: Thickness
       length_increase: Length Oversize
       length_increase_help: Oversize applied to the length to define the **raw length**.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Indicates whether the dimensions of parts must be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save: Save as default values

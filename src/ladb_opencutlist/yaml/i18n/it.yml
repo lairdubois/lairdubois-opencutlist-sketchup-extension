@@ -543,6 +543,7 @@ tab:
       name: Nome
       type: Tipo
       cut_options: Impostazioni del taglio
+      attributes: Attributs  # TODO
       thickness: Spessore
       length_increase: Incremento lunghezza
       length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Gestione delle *impostazioni di taglio* predefinite
         save: Salva come impostazione predefinita

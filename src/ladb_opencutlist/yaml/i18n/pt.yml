@@ -543,6 +543,7 @@ tab:
       name: Nome
       type: Tipo
       cut_options: Parâmetros de corte
+      attributes: Attributs  # TODO
       thickness: Espessura
       length_increase: Sobredimensionamento de comprimento
       length_increase_help: Sobredimensionamento aplicado ao comprimento para definir o **comprimento bruto**.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Indica se as dimensões das partes devem ser reduzidas pela espessura da faixa da borda.
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir por Espessura de Faixa de Borda
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administração dos *parâmetros de corte* padrão
         save: Salvar como valores padrão

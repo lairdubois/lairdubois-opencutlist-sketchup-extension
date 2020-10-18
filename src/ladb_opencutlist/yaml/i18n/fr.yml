@@ -543,6 +543,7 @@ tab:
       name: Nom
       type: Type
       cut_options: Options de débit
+      attributes: Attributs
       thickness: Epaisseur
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
+      volumic_mass: Masse volumique
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
         save: Enregistrer comme valeurs par défaut

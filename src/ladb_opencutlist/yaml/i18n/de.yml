@@ -543,6 +543,7 @@ tab:
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
+      attributes: Attributs  # TODO
       thickness: Dicke
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches das **Längenrohmass** vergrössert.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Zeigt an ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden muss.
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save: Als vorgegebene Werte speichern

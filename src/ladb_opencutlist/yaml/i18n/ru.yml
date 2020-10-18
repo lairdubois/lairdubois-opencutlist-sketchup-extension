@@ -543,6 +543,7 @@ tab:
       name: Имя
       type: Тип
       cut_options: Параметры раскроя
+      attributes: Attributs  # TODO
       thickness: Толщина
       length_increase: Припуск к длине
       length_increase_help: Припуск под подгонку применяется к фактической длине для расчета **пильной длины**.
@@ -583,6 +584,7 @@ tab:
       edge_decremented_help: Настройка изменения линейных размеров детали с учетом толщины кромки.
       edge_decremented_0: Не учитывать
       edge_decremented_1: Вычесть толщину кромок
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Управление параметрами по умолчанию *Параметры раскроя*
         save: Сохранить как значения по умолчанию

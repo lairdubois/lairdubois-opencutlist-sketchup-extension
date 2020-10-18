@@ -27,6 +27,7 @@ module Ladb::OpenCutList
       @std_sizes = attributes['std_sizes']
       @grained = attributes['grained']
       @edge_decremented = attributes['edge_decremented']
+      @volumic_mass = attributes['volumic_mass']
     end
 
     # -----
@@ -113,6 +114,7 @@ module Ladb::OpenCutList
         material_attributes.std_sizes = @std_sizes
         material_attributes.grained = @grained
         material_attributes.edge_decremented = @edge_decremented
+        material_attributes.volumic_mass = @volumic_mass
         material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed

@@ -27,6 +27,7 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => false,
+            :volumic_mass => '',
         },
         TYPE_SOLID_WOOD => {
             :thickness => '0',
@@ -40,6 +41,7 @@
             :std_sizes => '',
             :grained => true,
             :edge_decremented => false,
+            :volumic_mass => '',
         },
         TYPE_SHEET_GOOD => {
             :thickness => '0',
@@ -53,6 +55,7 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => false,
+            :volumic_mass => '',
         },
         TYPE_DIMENSIONAL => {
             :thickness => '0',
@@ -66,6 +69,7 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => false,
+            :volumic_mass => '',
         },
         TYPE_EDGE => {
             :thickness => '2mm',
@@ -79,6 +83,7 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => true,
+            :volumic_mass => '',
         },
         TYPE_ACCESSORY => {
             :thickness => '0',
@@ -92,10 +97,11 @@
             :std_sizes => '',
             :grained => false,
             :edge_decremented => false,
+            :volumic_mass => '',
         },
     }
 
-    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented
+    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass
     attr_reader :material
 
     @@cached_uuids = {}
@@ -401,6 +407,7 @@
         @std_sizes = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', get_default(:std_sizes))
         @grained = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', get_default(:grained))
         @edge_decremented = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', get_default(:edge_decremented))
+        @volumic_mass = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', get_default(:volumic_mass))
       else
         @type = TYPE_UNKNOW
       end
@@ -426,6 +433,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.instance.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
       end
     end
 
