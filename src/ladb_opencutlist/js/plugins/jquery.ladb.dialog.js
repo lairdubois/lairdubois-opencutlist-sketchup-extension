@@ -83,7 +83,7 @@
                 name: 'tutorials',
                 bar: 'leftbar-bottom',
                 icon: 'ladb-opencutlist-icon-tutorial',
-                sponsorAd: true
+                sponsorAd: false
             },
             {
                 name: 'settings',

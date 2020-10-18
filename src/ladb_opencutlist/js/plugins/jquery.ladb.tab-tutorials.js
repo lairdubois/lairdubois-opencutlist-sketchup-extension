@@ -17,6 +17,8 @@
         var that = this;
 
         $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/tutorials.json', function (data) {
+
+            that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/tutorials/_list.twig" }).render({
                 tutorials: data.tutorials
             }));

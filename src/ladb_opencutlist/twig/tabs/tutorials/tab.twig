@@ -9,5 +9,7 @@
             </div>
         </div>
     </div>
-    <div class="ladb-page"></div>
+    <div class="ladb-page">
+        {% include 'core/_loading.twig' with { 'noHidden':true } %}
+    </div>
 {% endblock %}
