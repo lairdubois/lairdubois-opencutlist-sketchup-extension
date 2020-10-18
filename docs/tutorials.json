@@ -3,15 +3,13 @@
     {
       "title": "Conférence de présentation OpenCutList au salon Habitat et Bois - Epinal 2019",
       "author": "Boris Beaulant",
-      "thumbnail_url": "http://i3.ytimg.com/vi/gW0FrYRItoc/hqdefault.jpg",
-      "video_url": "https://www.youtube.com/watch?v=gW0FrYRItoc",
+      "video_id": "gW0FrYRItoc",
       "locale": "fr"
     },
     {
       "title": "VLOG #30 - Stücklisten und Zuschnittpläne in SketchUp erstellen",
       "author": "Heiko Reich",
-      "thumbnail_url": "http://i3.ytimg.com/vi/dLoiFJI9LGQ/hqdefault.jpg",
-      "video_url": "https://www.youtube.com/watch?v=dLoiFJI9LGQ",
+      "video_id": "dLoiFJI9LGQ",
       "locale": "de"
     }
   ]
