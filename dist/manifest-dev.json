@@ -1,5 +1,5 @@
 {
-  "version": "1.9.6",
-  "build": "202010171008",
-  "url": "https://raw.githubusercontent.com/lairdubois/lairdubois-opencutlist-sketchup-extension/master/dist/ladb_opencutlist.rbz"
+  "version": "1.9.7-dev",
+  "build": "202010181851",
+  "url": "https://raw.githubusercontent.com/lairdubois/lairdubois-opencutlist-sketchup-extension/master/dist/ladb_opencutlist-dev.rbz"
 }
