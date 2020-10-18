@@ -5,16 +5,21 @@
 
 {% block headerInner %}
     <div class="media">
-        <div class="media-left"><div style="display: inline-block; background: #333; color: #fff; border-radius: 5px; padding: 3px 5px;">{{ tutorial.locale|upper }}</div></div>
-        <div class="media-body">{{ parent() }}</div>
+        <div class="media-left">
+            {% include 'tabs/tutorials/_country.twig' %}
+        </div>
+        <div class="media-body">
+            {{ parent() }}
+            {% include 'tabs/tutorials/_author.twig' %}
+        </div>
     </div>
 {% endblock %}
 
 {% block bodyInner %}
     <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ tutorial.video_id }}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    {% include 'tabs/tutorials/_author.twig' %}
 {% endblock %}
 
 {% block footerInner %}
+    <a href="https://www.youtube.com/channel/{{ tutorial.channel_id }}" target="_blank" class="btn btn-default pull-left"><i class="ladb-opencutlist-icon-tutorials" style="color:red;"></i> {{ tutorial.author }} ...</a>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
 {% endblock %}

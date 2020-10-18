@@ -12,16 +12,11 @@
   > .ladb-content {
 
     > .ladb-image {
-      position: relative;
+      overflow: hidden;
 
-      .ladb-flag {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: white;
-        font-size: 15px;
-        border-radius: 0 0 5px 0;
-        padding: 2px 5px;
+      img {
+        margin-top: -10%;
+        margin-bottom: -10%;
       }
 
     }
@@ -31,10 +26,12 @@
 
       .ladb-tutorial-title {
         font-weight: bold;
+        min-height: 60px;
       }
 
       .ladb-tutorial-author {
         font-size: 80%;
+        display: inline-block;
       }
 
     }
@@ -47,6 +44,19 @@
 
   > span {
     color: #bbb;
+  }
+
+}
+
+.ladb-tutorial-country {
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 5px;
+
+  &.ladb-tutorial-country-local-language {
+    background: #003eff;
   }
 
 }

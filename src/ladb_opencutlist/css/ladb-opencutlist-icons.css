@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-play:before {
+  content: "\e975";
+}
 .ladb-opencutlist-icon-clear:before {
   content: "\e900";
 }
@@ -121,7 +124,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-extension:before {
   content: "\e919";
 }
-.ladb-opencutlist-icon-tutorial:before {
+.ladb-opencutlist-icon-tutorials:before {
   content: "\e973";
 }
 .ladb-opencutlist-icon-submenu:before {

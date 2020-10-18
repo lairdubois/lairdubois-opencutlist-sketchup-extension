@@ -82,7 +82,7 @@
             {
                 name: 'tutorials',
                 bar: 'leftbar-bottom',
-                icon: 'ladb-opencutlist-icon-tutorial',
+                icon: 'ladb-opencutlist-icon-tutorials',
                 sponsorAd: false
             },
             {
@@ -171,7 +171,9 @@
                         that.upgradable = true;
 
                         // Trigger updatable event
-                        that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+                        setTimeout(function () {
+                            that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+                        }, 1000);
 
                     }
                 }
@@ -544,9 +546,6 @@
         // Show modal
         $modal.modal('show');
 
-        // Hide bounce effect
-        $('#ladb_btn_more .badge.badge-notification', that.$element).removeClass('ladb-bounce-x ladb-bounce-y');
-
     };
 
     LadbDialog.prototype.notify = function (text, type, buttons, timeout) {
@@ -640,6 +639,9 @@
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
+        $('#ladb_btn_more .ladb-subbar-toggle, #ladb_btn_more a', this.$element).mouseover(function () {
+            $('.badge.badge-notification', this).removeClass('ladb-bounce-x ladb-bounce-y');
+        });
 
         // Bind fake tabs
         $('a[data-ladb-tab-name]', this.$element).on('click', function() {
@@ -655,6 +657,9 @@
         // Bind core updatable events
         this.$element.on('updatable.ladb.core', function() {
             $('#ladb_btn_more .badge.badge-notification', that.$element).show();
+            rubyCallCommand('core_play_sound', {
+                filename: 'wav/notification.wav'
+            });
         });
 
     };

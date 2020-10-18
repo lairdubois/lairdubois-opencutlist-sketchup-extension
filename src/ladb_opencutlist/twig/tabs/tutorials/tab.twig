@@ -1,10 +1,14 @@
 {% extends 'tabs/base-tab.twig' %}
 
+{% block headerToolsInner %}
+    <a id="ladb_btn_sponsor" class="btn btn-default" href="mailto:opencutlist@lairdubois.fr" target="_blank"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.tutorials.submit_a_video'|i18next }}</a>
+{% endblock %}
+
 {% block containerInner %}
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="media">
-                <div class="media-left"><i class="ladb-opencutlist-icon-tutorial" style="font-size: 150%;"></i></div>
+                <div class="media-left"><i class="ladb-opencutlist-icon-tutorials" style="font-size: 150%;"></i></div>
                 <div class="media-body">{{ 'tab.tutorials.help'|i18next }}</div>
             </div>
         </div>

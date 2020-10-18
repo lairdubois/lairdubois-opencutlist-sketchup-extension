@@ -8,6 +8,9 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.$page = $('.ladb-page', this.$element);
+
+        this.tutorials = null;
+
     };
     LadbTabTutorials.prototype = new LadbAbstractTab;
 
@@ -16,19 +19,45 @@
     LadbTabTutorials.prototype.loadTutorials = function () {
         var that = this;
 
-        $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/tutorials.json', function (data) {
+        $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/json/tutorials.json', function (data) {
+
+            that.tutorials = data.tutorials;
+
+            // Sort tutorials according to native index and corresponding language
+            for (var index = 0; index < that.tutorials.length; index++) {
+                var tutorial = that.tutorials[index];
+                tutorial.native_index = index;
+                tutorial.language_score = tutorial.language === that.dialog.capabilities.language ? 1 : 0;
+            }
+            var sortBy = [{
+                prop: 'language_score',
+                dir: -1
+            }, {
+                prop: 'native_index',
+                dir: 1
+            }];
+            that.tutorials.sort(function (a, b) {
+                var i = 0, result = 0;
+                while (i < sortBy.length && result === 0) {
+                    result = sortBy[i].dir * (a[sortBy[i].prop] < b[sortBy[i].prop] ? -1 : (a[sortBy[i].prop] > b[sortBy[i].prop] ? 1 : 0));
+                    i++;
+                }
+                return result;
+            });
 
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/tutorials/_list.twig" }).render({
-                tutorials: data.tutorials
+                capabilities: that.dialog.capabilities,
+                tutorials: that.tutorials
             }));
 
             // Bind
             $('.ladb-tutorial-box', that.$page).on('click', function () {
                 var tutorialId = $(this).data('tutorial-id');
-                var tutorial = data.tutorials[tutorialId];
+                var tutorial = that.tutorials[tutorialId];
 
-                var $modal = that.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+                var $modal = that.dialog.appendModal('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+                    capabilities: that.dialog.capabilities,
                     tutorial: tutorial
                 });
 
@@ -37,6 +66,11 @@
 
             });
 
+        }).fail(function() {
+            that.$page.empty();
+            that.$page.append(Twig.twig({ ref: "core/_alert-errors.twig" }).render({
+                errors: [ 'tab.tutorials.error.fail_to_load_list' ]
+            }));
         });
 
     }
