@@ -30,6 +30,7 @@ default:
   tip: Tip
   good: Good
   bad: Bad
+  by: par # TODO
   date_format: m/d/Y g:ia
   date_format_short: m/d/Y
   unit_0: Inches
@@ -621,6 +622,11 @@ tab:
     success:
       exported_to: Export to {{ export_path }} successful.
     obsolete_base: To remain synchronized, you must refresh the material list.
+  tutorials:
+    label: Tutoriels  # TODO
+    title: Tutoriels  # TODO
+    help: | # TODO
+      Voici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
   importer:
     label: Import
     title: Import Parts

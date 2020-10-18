@@ -51,9 +51,9 @@
 
         this.$wrapper = null;
         this.$wrapperSlides = null;
+        this.$leftbarBottom = null;
         this.$btnMinimize = null;
         this.$btnMaximize = null;
-        this.$btnMore = null;
         this.$btnUpgrade = null;
         this.$btnCloseCompatibilityAlert = null;
     };
@@ -78,6 +78,12 @@
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-import',
                 sponsorAd: true
+            },
+            {
+                name: 'tutorials',
+                bar: 'leftbar-bottom',
+                icon: 'ladb-opencutlist-icon-tutorial',
+                sponsorAd: false
             },
             {
                 name: 'settings',
@@ -228,13 +234,13 @@
         var that = this;
         if (that.maximized && !that.minimizing) {
             that.minimizing = true;
+            that.$leftbarBottom.hide();
             rubyCallCommand('core_dialog_minimize', null, function () {
                 that.minimizing = false;
                 Noty.closeAll();
                 that.$wrapper.hide();
                 that.$btnMinimize.hide();
                 that.$btnMaximize.show();
-                that.$btnMore.hide();
                 that.maximized = false;
                 that.$element.trigger(jQuery.Event('minimized.ladb.dialog'));
             });
@@ -250,7 +256,7 @@
                 that.$wrapper.show();
                 that.$btnMinimize.show();
                 that.$btnMaximize.hide();
-                that.$btnMore.show();
+                that.$leftbarBottom.show();
                 that.maximized = true;
                 that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
             });
@@ -700,7 +706,7 @@
                 that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                 that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
                 that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
-                that.$btnMore = $('#ladb_btn_more', that.$element);
+                that.$leftbarBottom = $('.ladb-leftbar-bottom', that.$element);
                 that.$btnUpgrade = $('#ladb_btn_upgrade', that.$element);
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                 for (var i = 0; i < that.options.tabDefs.length; i++) {

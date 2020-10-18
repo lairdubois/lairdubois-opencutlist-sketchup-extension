@@ -1,0 +1,39 @@
+{
+  "tutorials": [
+    {
+      "title": "Conférence de présentation OpenCutList au salon Habitat et Bois - Epinal 2019",
+      "author": "Boris Beaulant",
+      "channel_id": "UCYyhREQZuEIEH3mMuQZhofw",
+      "video_id": "gW0FrYRItoc",
+      "locale": "fr"
+    },
+    {
+      "title": "VLOG #30 - Stücklisten und Zuschnittpläne in SketchUp erstellen",
+      "author": "Heiko Reich",
+      "channel_id": "UCdDBCrj9qjy9BI18HWajEZg",
+      "video_id": "dLoiFJI9LGQ",
+      "locale": "de"
+    },
+    {
+      "title": "OpenCutList: Automatische Schnittpläne und Materiallisten mit Sketchup erstellen",
+      "author": "Johannes Boernsen",
+      "channel_id": "UCZprK8lYFfavr2Farr_mCLw",
+      "video_id": "55jhInrVzJU",
+      "locale": "de"
+    },
+    {
+      "title": "Generate Cut-list Woodworking 3D SketchUp",
+      "author": "FollowAndrew",
+      "channel_id": "UCETveVX7TPauIupxYz6sFtA",
+      "video_id": "yrex6zLv66I",
+      "locale": "us"
+    },
+    {
+      "title": "Cutlists made easy! (Sketchup For Fitted Furniture Makers Part 6)",
+      "author": "Alastair Johnson - Freebird",
+      "channel_id": "UCETveVX7TPauIupxYz6sFtA",
+      "video_id": "wswN3mEtsCI",
+      "locale": "gb"
+    }
+  ]
+}
