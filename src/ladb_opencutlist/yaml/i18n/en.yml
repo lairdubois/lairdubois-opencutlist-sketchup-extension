@@ -30,7 +30,7 @@ default:
   tip: Tip
   good: Good
   bad: Bad
-  by: par # TODO
+  by: by
   date_format: m/d/Y g:ia
   date_format_short: m/d/Y
   unit_0: Inches
@@ -54,7 +54,6 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: More
-    more_tutorials: Tutorials
     more_docs: Docs
     more_reviews: Reviews
     more_plans: Plans
@@ -623,10 +622,10 @@ tab:
       exported_to: Export to {{ export_path }} successful.
     obsolete_base: To remain synchronized, you must refresh the material list.
   tutorials:
-    label: Tutoriels  # TODO
-    title: Tutoriels  # TODO
+    label: Tutorials
+    title: Tutorials
     help: | # TODO
-      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
+      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
     submit_a_video: Proposer une vidéo  # TODO
     error:
       fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO

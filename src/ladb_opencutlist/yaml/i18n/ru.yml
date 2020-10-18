@@ -30,7 +30,7 @@ default:
   tip: Тип
   good: Хороший
   bad: Плохой
-  by: par # TODO
+  by: фон # TODO
   date_format: d/m/Y G:i
   date_format_short: d/m/Y
   unit_0: Дюймы
@@ -54,7 +54,6 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Ещё
-    more_tutorials: Инструкции
     more_docs: Архив
     more_reviews: Обзоры
     more_plans: Проекты
@@ -623,13 +622,13 @@ tab:
       exported_to: Экспорт {{ export_path }} завершен.
     obsolete_base: Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
   tutorials:
-    label: Tutoriels  # TODO
-    title: Tutoriels  # TODO
+    label: Инструкции  # TODO
+    title: Инструкции  # TODO
     help: | # TODO
-      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
-    submit_a_video: Proposer une vidéo  # TODO
+      Вот неисчерпывающий список видео, созданных сообществом вокруг использования *OpenCutList*.
+    submit_a_video: Отправить видео  # TODO
     error:
-      fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO
+      fail_to_load_list: Список видеозаписей не может быть загружен.   # TODO
   importer:
     label: Импорт
     title: Импорт деталей

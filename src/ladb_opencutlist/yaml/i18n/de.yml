@@ -30,7 +30,7 @@ default:
   tip: Hinweis
   good: Gut
   bad: Schlecht
-  by: par # TODO
+  by: von
   date_format: Y-m-d G:i
   date_format_short: Y-m-d
   unit_0: Zoll
@@ -54,7 +54,6 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Mehr
-    more_tutorials: Tutorials
     more_docs: Dokus
     more_reviews: Meinungen
     more_plans: Pläne
@@ -375,7 +374,7 @@ tab:
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange.
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
       option_wrap_length: Länge bis zum Umbruch
-      option_wrap_length_help: Maximale Länge bei der eine Stange über mehrere Zeilen dargestellt wird.
+      option_wrap_length_help: Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt.
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Randabfallbreite
@@ -623,13 +622,13 @@ tab:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
   tutorials:
-    label: Tutoriels  # TODO
-    title: Tutoriels  # TODO
-    help: | # TODO
-      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
-    submit_a_video: Proposer une vidéo  # TODO
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
+    submit_a_video: Video einreichen
     error:
-      fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO
+      fail_to_load_list: Videoliste kann nicht geladen werden.
   importer:
     label: Importieren
     title: Teile importieren
