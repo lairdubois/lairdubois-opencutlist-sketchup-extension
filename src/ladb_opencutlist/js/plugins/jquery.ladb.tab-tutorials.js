@@ -8,6 +8,9 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.$page = $('.ladb-page', this.$element);
+
+        this.tutorials = null;
+
     };
     LadbTabTutorials.prototype = new LadbAbstractTab;
 
@@ -16,19 +19,23 @@
     LadbTabTutorials.prototype.loadTutorials = function () {
         var that = this;
 
-        $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/tutorials.json', function (data) {
+        $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/json/tutorials.json', function (data) {
+
+            that.tutorials = data.tutorials;
 
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/tutorials/_list.twig" }).render({
-                tutorials: data.tutorials
+                capabilities: that.dialog.capabilities,
+                tutorials: that.tutorials
             }));
 
             // Bind
             $('.ladb-tutorial-box', that.$page).on('click', function () {
                 var tutorialId = $(this).data('tutorial-id');
-                var tutorial = data.tutorials[tutorialId];
+                var tutorial = that.tutorials[tutorialId];
 
                 var $modal = that.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+                    capabilities: that.dialog.capabilities,
                     tutorial: tutorial
                 });
 
@@ -37,6 +44,11 @@
 
             });
 
+        }).fail(function() {
+            that.$page.empty();
+            that.$page.append(Twig.twig({ ref: "core/_alert-errors.twig" }).render({
+                errors: [ 'tab.tutorials.error.fail_to_load_list' ]
+            }));
         });
 
     }

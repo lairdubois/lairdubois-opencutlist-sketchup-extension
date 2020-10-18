@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-play:before {
+  content: "\e975";
+}
 .ladb-opencutlist-icon-clear:before {
   content: "\e900";
 }
@@ -121,7 +124,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-extension:before {
   content: "\e919";
 }
-.ladb-opencutlist-icon-tutorial:before {
+.ladb-opencutlist-icon-tutorials:before {
   content: "\e973";
 }
 .ladb-opencutlist-icon-submenu:before {
@@ -244,6 +247,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-bar:before {
   content: "\e941";
 }
+.ladb-opencutlist-icon-accessory:before {
+  content: "\e974";
+}
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e942";
 }
@@ -313,9 +319,6 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-edge-0000:before {
   content: "\e958";
 }
-.ladb-opencutlist-icon-edge:before {
-  content: "\e959";
-}
 .ladb-opencutlist-icon-dynamic-component:before {
   content: "\e95a";
 }
@@ -358,11 +361,17 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-tip:before {
   content: "\e967";
 }
+.ladb-opencutlist-icon-report:before {
+  content: "\e972";
+}
+.ladb-opencutlist-icon-edge:before {
+  content: "\e959";
+}
 .ladb-opencutlist-icon-solid-wood:before {
   content: "\e968";
 }
-.ladb-opencutlist-icon-report:before {
-  content: "\e972";
+.ladb-opencutlist-icon-sheet-good:before {
+  content: "\e96f";
 }
 .ladb-opencutlist-icon-arrow-right:before {
   content: "\e969";
@@ -381,9 +390,6 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-unknow:before {
   content: "\e96e";
-}
-.ladb-opencutlist-icon-sheet-good:before {
-  content: "\e96f";
 }
 .ladb-opencutlist-icon-chevron-right:before {
   content: "\e970";

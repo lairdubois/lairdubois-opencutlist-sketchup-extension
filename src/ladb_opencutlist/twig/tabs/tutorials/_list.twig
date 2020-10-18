@@ -1,17 +1,22 @@
 <div class="row">
     {% for tutorial in tutorials %}
         <div id="ladb_tutorial_{{ loop.index0 }}" class="col-md-4 col-sm-6 col-xs-12">
-            <div class="ladb-tutorial-box" data-tutorial-id="{{ loop.index0 }}">
+            <div class="ladb-tutorial-box ladb-minitools-holder" data-tutorial-id="{{ loop.index0 }}">
                 <div class="ladb-content">
                     <div class="ladb-image">
                         <img src="https://img.youtube.com/vi/{{ tutorial.video_id }}/hqdefault.jpg" width="100%">
-                        <div class="ladb-flag">{{ tutorial.locale|upper }}</div>
                     </div>
                     <div class="ladb-footer">
                         <div class="media">
+                            <div class="media-left">
+                                {% include 'tabs/tutorials/_country.twig' %}
+                            </div>
                             <div class="media-body">
                                 <div class="ladb-tutorial-title" style="font-weight: bold">{{ tutorial.title }}</div>
                                 {% include 'tabs/tutorials/_author.twig' %}
+                                <div class="ladb-minitools ladb-minitools-right">
+                                    <a href="#" class="ladb-btn-edit-material ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.edit'|i18next({ 'name':material.name }) }}"><i class="ladb-opencutlist-icon-play"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>

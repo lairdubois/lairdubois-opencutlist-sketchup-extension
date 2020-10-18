@@ -622,7 +622,9 @@ tab:
     label: Tutoriels  # TODO
     title: Tutoriels  # TODO
     help: | # TODO
-      Voici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
+      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO
   importer:
     label: Importieren
     title: Teile importieren
