@@ -56,7 +56,7 @@
                 var tutorialId = $(this).data('tutorial-id');
                 var tutorial = that.tutorials[tutorialId];
 
-                var $modal = that.dialog.appendModal('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+                var $modal = that.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
                     capabilities: that.dialog.capabilities,
                     tutorial: tutorial
                 });
