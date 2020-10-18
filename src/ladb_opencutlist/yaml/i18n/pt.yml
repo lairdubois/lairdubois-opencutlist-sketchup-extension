@@ -442,9 +442,9 @@ tab:
         count: Qtd
         bar: Borda
         sheet: Painel
-        length: comprimento
+        length: Comprimento
         width: Largura
-        total_length: Σ comprimentos
+        total_length: Σ Comprimentos
         total_area: Σ Áreas
         total: Total
         trimming: Corte
@@ -619,13 +619,13 @@ tab:
       exported_to: Exportação para {{ export_path }} com sucesso.
     obsolete_base: Para permanecer sincronizado, você deve atualizar a lista de materiais.
   tutorials:
-    label: Tutoriels  # TODO
-    title: Tutoriels  # TODO
-    help: | # TODO
-      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autours de l'utilisation d'*OpenCutList*.
-    submit_a_video: Proposer une vidéo  # TODO
+    label: Tutoriais
+    title: Tutoriais
+    help: |
+      Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
+    submit_a_video: Enviar um vídeo
     error:
-      fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO
+      fail_to_load_list: Incapaz de carregar a lista de vídeos.
   importer:
     label: Importar
     title: Importar partes
