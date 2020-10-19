@@ -59,6 +59,8 @@ module Ladb::OpenCutList
       @current_os = nil
       @i18n_strings = nil
       @html_dialog_compatible = nil
+      @manifest = nil
+      @upgradable = nil
 
       @commands = {}
       @eventCallbacks = {}
@@ -325,6 +327,9 @@ module Ladb::OpenCutList
 
         # -- Commands --
 
+        register_command('core_updates_checked') do |params|
+          updates_checked_command(params)
+        end
         register_command('core_upgrade') do |params|
           upgrade_command(params)
         end
@@ -569,6 +574,11 @@ module Ladb::OpenCutList
 
     # -- Commands ---
 
+    def updates_checked_command(params)    # Waiting params = { manifest: MANIFEST, upgradable: BOOL }
+      @manifest = params['manifest']
+      @upgradable = params['upgradable']
+    end
+
     def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
       # Just open URL for older Sketchup versions
       if Sketchup.version_number < 1700000000
@@ -767,6 +777,8 @@ module Ladb::OpenCutList
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
           :html_dialog_compatible => html_dialog_compatible,
+          :manifest => @manifest,
+          :upgradable => @upgradable,
           :dialog_maximized_width => @dialog_maximized_width,
           :dialog_maximized_height => @dialog_maximized_height,
           :dialog_left => @dialog_left,
