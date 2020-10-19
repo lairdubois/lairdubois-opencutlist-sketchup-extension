@@ -68,6 +68,9 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
+      # Start model modification operation
+      model.start_operation('OpenCutList - Part Update', true, false, true)
+
       definitions = model.definitions
       @parts_data.each { |part_data|
 
@@ -177,6 +180,10 @@ module Ladb::OpenCutList
         end
 
       }
+
+      # Commit model modification operation
+      model.commit_operation
+
     end
 
     # -----

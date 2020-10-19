@@ -21,6 +21,9 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
+      # Start model modification operation
+      model.start_operation('OpenCutList - Numbers', true, false, true)
+
       definitions = model.definitions
 
       @cutlist.groups.each { |group|
@@ -46,6 +49,9 @@ module Ladb::OpenCutList
 
         }
       }
+
+      # Commit model modification operation
+      model.commit_operation
 
     end
 
