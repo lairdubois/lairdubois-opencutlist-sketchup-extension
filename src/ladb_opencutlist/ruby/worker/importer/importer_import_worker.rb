@@ -28,8 +28,8 @@ module Ladb::OpenCutList
       materials = model.materials
       active_entities = model.active_entities
 
-      # Start an operation
-      model.start_operation('Importing Parts', true)
+      # Start model modification operation
+      model.start_operation('OpenCutList - Importing Parts', true)
 
       # Remove all instances, definitions and materials if needed
       if @remove_all

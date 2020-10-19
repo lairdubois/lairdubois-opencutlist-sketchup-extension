@@ -707,6 +707,13 @@ module Ladb::OpenCutList
     def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1] }, ... ], strategy: [0|1|2|3] }
       settings = params['settings']
       strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
+
+      is_strategy_global = strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
+      is_strategy_model = Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL)
+
+      # Start model modification operation
+      Sketchup.active_model.start_operation('write_settings', true, false, true) if is_strategy_model
+
       settings.each { |setting|
 
         key = setting['key']
@@ -731,14 +738,18 @@ module Ladb::OpenCutList
           value = value.gsub(/["]/, '\"')        # escape double quote in string
         end
 
-        if strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
+        if is_strategy_global
           write_default(key, value)
         end
-        if Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL)
+        if is_strategy_model
           set_attribute(Sketchup.active_model, key, value)
         end
 
       }
+
+      # Commit model modification operation
+      Sketchup.active_model.commit_operation if is_strategy_model
+
     end
 
     def dialog_loaded_command

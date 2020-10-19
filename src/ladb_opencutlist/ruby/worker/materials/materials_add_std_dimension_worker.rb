@@ -14,6 +14,9 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
+      # Start model modification operation
+      model.start_operation('OpenCutList - Material Add Std Dimension', true, false, true)
+
       # Fetch material
       materials = model.materials
       material = materials[@material_name]
@@ -37,6 +40,9 @@ module Ladb::OpenCutList
         MaterialsObserver.instance.onMaterialChange(materials, material)
 
       end
+
+      # Commit model modification operation
+      model.commit_operation
 
       { :success => true }
     end

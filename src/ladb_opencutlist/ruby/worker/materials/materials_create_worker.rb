@@ -27,6 +27,9 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
+      # Start model modification operation
+      model.start_operation('OpenCutList - Material Create', true, false, true)
+
       materials = model.materials
       material = materials.add(@name)
       material.color = @color
@@ -46,6 +49,9 @@ module Ladb::OpenCutList
       material_attributes.grained = @grained
       material_attributes.edge_decremented = @edge_decremented
       material_attributes.write_to_attributes
+
+      # Commit model modification operation
+      model.commit_operation
 
       {
           :id => material.entityID,

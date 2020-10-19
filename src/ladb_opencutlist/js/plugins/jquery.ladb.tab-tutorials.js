@@ -27,10 +27,10 @@
             for (var index = 0; index < that.tutorials.length; index++) {
                 var tutorial = that.tutorials[index];
                 tutorial.native_index = index;
-                tutorial.language_score = tutorial.language === that.dialog.capabilities.language ? 1 : 0;
+                tutorial.prefered = tutorial.language === that.dialog.capabilities.language ? 1 : 0;
             }
             var sortBy = [{
-                prop: 'language_score',
+                prop: 'prefered',
                 dir: -1
             }, {
                 prop: 'native_index',
@@ -47,8 +47,7 @@
 
             that.$page.empty();
             that.$page.append(Twig.twig({ ref: "tabs/tutorials/_list.twig" }).render({
-                capabilities: that.dialog.capabilities,
-                tutorials: that.tutorials
+                tutorials: that.tutorials,
             }));
 
             // Bind
@@ -57,7 +56,6 @@
                 var tutorial = that.tutorials[tutorialId];
 
                 var $modal = that.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
-                    capabilities: that.dialog.capabilities,
                     tutorial: tutorial
                 });
 

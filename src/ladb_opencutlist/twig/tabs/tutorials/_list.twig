@@ -1,15 +1,16 @@
 <div class="row">
     {% for tutorial in tutorials %}
         <div id="ladb_tutorial_{{ loop.index0 }}" class="col-md-4 col-sm-6 col-xs-12">
-            <div class="ladb-tutorial-box ladb-minitools-holder" data-tutorial-id="{{ loop.index0 }}">
+            <div class="ladb-tutorial-box ladb-minitools-holder{% if tutorial.prefered %} ladb-active{% endif%}" data-tutorial-id="{{ loop.index0 }}">
                 <div class="ladb-content">
                     <div class="ladb-image">
                         <img src="https://img.youtube.com/vi/{{ tutorial.video_id }}/hqdefault.jpg" width="100%">
+                        {% include 'tabs/tutorials/_country.twig' %}
                     </div>
                     <div class="ladb-footer">
                         <div class="media">
                             <div class="media-left">
-                                {% include 'tabs/tutorials/_country.twig' %}
+                                {% include 'tabs/tutorials/_language.twig' %}
                             </div>
                             <div class="media-body">
                                 <div class="ladb-tutorial-title">{{ tutorial.title }} {{ tutorial.weight }}</div>

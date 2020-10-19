@@ -620,11 +620,11 @@ tab:
   tutorials:
     label: Tutorials
     title: Tutorials
-    help: | # TODO
-      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
-    submit_a_video: Proposer une vidéo  # TODO
+    help: |
+      Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
+    submit_a_video: Submit a video
     error:
-      fail_to_load_list: Impossible de charger la liste des vidéos.   # TODO
+      fail_to_load_list: Unable to load video list.
   importer:
     label: Import
     title: Import Parts

@@ -36,6 +36,9 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
+      # Start model modification operation
+      model.start_operation('OpenCutList - Material Update', true, false, true)
+
       # Fetch material
       materials = model.materials
       material = materials[@name]
@@ -99,26 +102,29 @@ module Ladb::OpenCutList
 
       end
 
-        # Update attributes
-        material_attributes = MaterialAttributes.new(material)
-        material_attributes.type = @type
-        material_attributes.thickness = @thickness
-        material_attributes.length_increase = @length_increase
-        material_attributes.width_increase = @width_increase
-        material_attributes.thickness_increase = @thickness_increase
-        material_attributes.std_lengths = @std_lengths
-        material_attributes.std_widths = @std_widths
-        material_attributes.std_thicknesses = @std_thicknesses
-        material_attributes.std_sections = @std_sections
-        material_attributes.std_sizes = @std_sizes
-        material_attributes.grained = @grained
-        material_attributes.edge_decremented = @edge_decremented
-        material_attributes.write_to_attributes
+      # Update attributes
+      material_attributes = MaterialAttributes.new(material)
+      material_attributes.type = @type
+      material_attributes.thickness = @thickness
+      material_attributes.length_increase = @length_increase
+      material_attributes.width_increase = @width_increase
+      material_attributes.thickness_increase = @thickness_increase
+      material_attributes.std_lengths = @std_lengths
+      material_attributes.std_widths = @std_widths
+      material_attributes.std_thicknesses = @std_thicknesses
+      material_attributes.std_sections = @std_sections
+      material_attributes.std_sizes = @std_sizes
+      material_attributes.grained = @grained
+      material_attributes.edge_decremented = @edge_decremented
+      material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed
       if trigger_change_event
         MaterialsObserver.instance.onMaterialChange(materials, material)
       end
+
+      # Commit model modification operation
+      model.commit_operation
 
     end
 

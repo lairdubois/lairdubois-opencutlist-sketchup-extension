@@ -9,14 +9,27 @@
   width: 100%;
   margin-bottom: @ladb-gutter;
 
+  &.ladb-active {
+    border-color: #003eff;
+    border-width: 1px;
+  }
+
   > .ladb-content {
 
     > .ladb-image {
       overflow: hidden;
+      position: relative;
 
       img {
         margin-top: -10%;
         margin-bottom: -10%;
+      }
+
+      .ladb-tutorial-country {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        margin: 0;
       }
 
     }
@@ -49,13 +62,20 @@
 }
 
 .ladb-tutorial-country {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.ladb-tutorial-language {
   display: inline-block;
   background: #333;
   color: #fff;
   border-radius: 5px;
   padding: 3px 5px;
 
-  &.ladb-tutorial-country-local-language {
+  &.ladb-tutorial-language-highlighted {
     background: #003eff;
   }
 
