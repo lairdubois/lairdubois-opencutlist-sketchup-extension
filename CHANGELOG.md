@@ -12,7 +12,7 @@ in 1.x and 0.x versions.
 * 1.9.7 (WIP)
 
   * Added embeded tutorial's videos
-  * Improved "undo" management to be able to match Extension Warehouse rules
+  * Improved "undo" management for a better User Experience :P
 
 * 1.9.6 (2020-10-17)
 

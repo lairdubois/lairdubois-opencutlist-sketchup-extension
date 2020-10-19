@@ -26,16 +26,15 @@
             userAgent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,
-            available_languages: options.available_languages,
+            availableLanguages: options.available_languages,
             htmlDialogCompatible: options.html_dialog_compatible,
+            manifest: options.manifest,
+            upgradable: options.upgradable,
             dialogMaximizedWidth: options.dialog_maximized_width,
             dialogMaximizedHeight: options.dialog_maximized_height,
             dialogLeft: options.dialog_left,
-            dialogTop: options.dialog_top
+            dialogTop: options.dialog_top,
         };
-
-        this.manifest = null;
-        this.upgradable = false;
 
         this.settings = {};
 
@@ -112,75 +111,39 @@
     LadbDialog.prototype.loadManifest = function () {
         var that = this;
 
-        if (this.manifest == null) {
+        if (this.capabilities.manifest == null && this.capabilities.upgradable == null) {
             $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/manifest' + (this.capabilities.debug ? '-dev' : '') + '.json', function (data) {
 
                 // Keep manifest data
-                that.manifest = data;
-
-                var fnCompareBuild = function(b1, b2) {
-                    if (b1 === b2) {
-                        return 0;
-                    }
-                    if (parseInt(b1) > parseInt(b2)) {
-                        return 1;
-                    } else {
-                        return -1
-                    }
-                }
-                var fnCompareVersion = function(v1, v2, b1, b2) {
-                    if (v1 === v2) {
-                        return fnCompareBuild(b1, b2);
-                    }
-
-                    var v1_components = v1.split(".");
-                    var v2_components = v2.split(".");
-
-                    var len = Math.min(v1_components.length, v2_components.length);
-
-                    // Loop while the components are equal
-                    for (var i = 0; i < len; i++) {
-                        if (parseInt(v1_components[i]) > parseInt(v2_components[i])) {
-                            return 1;
-                        }
-                        if (parseInt(v1_components[i]) < parseInt(v2_components[i])) {
-                            return -1;
-                        }
-                    }
-
-                    // If one's a prefix of the other, the longer one is greater.
-                    if (v1_components.length > v2_components.length) {
-                        return 1;
-                    }
-
-                    if (v1_components.length < v2_components.length) {
-                        return -1;
-                    }
-
-                    // Otherwise they are the same.
-                    return fnCompareBuild(b1, b2);
-                }
+                that.capabilities.manifest = data;
 
                 // Compare versions
-                if (data.version) {
-                    var len = data.version.indexOf('-');    // Remove possible '-dev'
-                    var version = data.version.substring(0, len === -1 ? data.version.length : len);
-                    if (data.build && fnCompareVersion(version, that.capabilities.version, data.build, that.capabilities.build) > 0) {
+                if (data.build && data.build > that.capabilities.build) {
 
-                        // Flag as upgradable
-                        that.upgradable = true;
+                    // Flag as upgradable
+                    that.capabilities.upgradable = true;
 
-                        // Trigger updatable event
-                        setTimeout(function () {
-                            that.$element.trigger(jQuery.Event('updatable.ladb.core'));
-                        }, 1000);
+                    // Trigger updatable event
+                    setTimeout(function () {
+                        that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+                    }, 1000);
 
-                    }
+                } else {
+
+                    // Flag as not upgradable
+                    that.capabilities.upgradable = false;
+
                 }
 
+                // Inform ruby that updates was checked
+                rubyCallCommand('core_updates_checked', {
+                    manifest: that.capabilities.manifest,
+                    upgradable: that.capabilities.upgradable
+                });
+
             }).fail(function(e) {
-                that.manifest = {}
-                that.upgradable = false;
+                that.capabilities.manifest = {}
+                that.capabilities.upgradable = false;
             });
         }
 
@@ -468,8 +431,6 @@
         // Append modal
         var $modal = this.appendModal('ladb_core_modal_upgrade', 'core/_modal-upgrade.twig', {
             capabilities: this.capabilities,
-            manifest: this.manifest,
-            upgradable: this.upgradable,
         });
 
         // Fetch UI elements
@@ -488,7 +449,7 @@
             $panelProgress.show();
             $footer.hide();
 
-            rubyCallCommand('core_upgrade', { url: that.manifest && that.manifest.url ? that.manifest.url : EW_URL }, function (response) {
+            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url : EW_URL }, function (response) {
                 if (response.cancelled) {
 
                     // Close and remove modal
@@ -523,7 +484,7 @@
         $btnDownload.on('click', function() {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: that.manifest && that.manifest.url ? that.manifest.url : EW_URL });
+            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url : EW_URL });
 
             // Close and remove modal
             $modal.modal('hide');
@@ -639,8 +600,8 @@
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
-        $('#ladb_btn_more .ladb-subbar-toggle, #ladb_btn_more a', this.$element).mouseover(function () {
-            $('.badge.badge-notification', this).removeClass('ladb-bounce-x ladb-bounce-y');
+        $('#ladb_btn_more .ladb-subbar-toggle', this.$element).mouseover(function () {
+            $('.badge.badge-notification', this).removeClass('ladb-bounce-y');
         });
 
         // Bind fake tabs
@@ -656,7 +617,10 @@
 
         // Bind core updatable events
         this.$element.on('updatable.ladb.core', function() {
-            $('#ladb_btn_more .badge.badge-notification', that.$element).show();
+            $('#ladb_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
+                .addClass('ladb-bounce-y')
+            $('#ladb_btn_more .badge.badge-notification', that.$element)
+                .show();
             rubyCallCommand('core_play_sound', {
                 filename: 'wav/notification.wav'
             });

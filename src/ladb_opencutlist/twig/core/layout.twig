@@ -10,7 +10,7 @@
         {% endfor %}
         <div id="ladb_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-6">
             <div class="ladb-subbar-toggle">
-                <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><span class="badge badge-notification ladb-bounce-y" style="display: none;">1</span><div>{{ 'core.leftbar.more'|i18next }}</div></div>
+                <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><span class="badge badge-notification"{% if not capabilities.upgradable %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more'|i18next }}</div></div>
                 <span class="ladb-toggle-arrow"></span>
             </div>
             <div class="ladb-subbar-panel">
@@ -18,7 +18,7 @@
                 <a href="https://www.lairdubois.fr/logiciels/2-opencutlist.html#_reviews" target="_blank"><i class="ladb-opencutlist-icon-review"></i><div>{{ 'core.leftbar.more_reviews'|i18next }}</div></a>
                 <a href="https://www.lairdubois.fr/plans/?q=@kind:%22sketchup%22%20@sort-recent" target="_blank"><i class="ladb-opencutlist-icon-plan"></i><div>{{ 'core.leftbar.more_plans'|i18next }}</div></a>
                 <a href="https://www.lairdubois.fr/logiciels/?q=@addon:%22sketchup%22" target="_blank"><i class="ladb-opencutlist-icon-extension"></i><div>{{ 'core.leftbar.more_extensions'|i18next }}</div></a>
-                <a href="#" id="ladb_btn_upgrade"><i class="ladb-opencutlist-icon-update"></i><span class="badge badge-notification ladb-bounce-y" style="display: none;">1</span><div>{{ 'core.leftbar.more_update'|i18next }}</div></a>
+                <a href="#" id="ladb_btn_upgrade"><i class="ladb-opencutlist-icon-update"></i><span class="badge badge-notification"{% if not capabilities.upgradable %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more_update'|i18next }}</div></a>
                 <a href="#" class="ladb-highlighted-sponsor" data-ladb-tab-name="sponsor"><i class="ladb-opencutlist-icon-sponsor"></i><div>{{ 'tab.sponsor.label'|i18next }}</div></a>
             </div>
         </div>

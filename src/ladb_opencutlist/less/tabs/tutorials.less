@@ -2,6 +2,8 @@
 // Tutorials
 //
 
+@color-prefered: #003eff;
+
 .ladb-tutorial-box {
   .list-box();
   .list-box-hover();
@@ -10,8 +12,7 @@
   margin-bottom: @ladb-gutter;
 
   &.ladb-active {
-    border-color: #003eff;
-    border-width: 1px;
+    border-color: @color-prefered;
   }
 
   > .ladb-content {
@@ -62,8 +63,8 @@
 }
 
 .ladb-tutorial-country {
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   border: 2px solid #fff;
   border-radius: 50%;
 }
@@ -75,8 +76,8 @@
   border-radius: 5px;
   padding: 3px 5px;
 
-  &.ladb-tutorial-language-highlighted {
-    background: #003eff;
+  &.ladb-tutorial-language-prefered {
+    background: @color-prefered;
   }
 
 }
