@@ -7,7 +7,7 @@
     {% endif %}
 </span>
 {% if group.material_type > 0 %}
-    / <strong>{% if group.material_type == 4 %}{# 4 = TYPE_EDGE #}{{ group.std_thickness }} x {% endif %}<span{% if not group.std_available %} class="text-warning"{% endif %}>{{ group.std_dimension }}</span></strong>
+    / <strong>{% if group.material_type == 4 %}{# 4 = TYPE_EDGE #}{{ group.std_thickness }} x {% endif %}<span{% if not group.std_available %} class="text-danger"{% endif %}>{{ group.std_dimension }}</span></strong>
     {% if not group.std_available %}
         &nbsp;&nbsp;
         <div class="label label-danger label-fine">

@@ -53,17 +53,21 @@
             }));
 
             // Bind
-            $('.ladb-tutorial-box', that.$page).on('click', function () {
-                var tutorialId = $(this).data('tutorial-id');
-                var tutorial = that.tutorials[tutorialId];
-
-                var $modal = that.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
-                    tutorial: tutorial
+            $('.ladb-tutorial-box', that.$page).each(function (index) {
+                var $box = $(this);
+                $box.on('click', function (e) {
+                    if (e.target.tagName !== 'A') {
+                        $(this).blur();
+                        $('.ladb-click-tool', $(this)).click();
+                        return false;
+                    }
                 });
-
-                // Show modal
-                $modal.modal('show');
-
+            });
+            $('.ladb-btn-play', that.$page).on('click', function () {
+                $(this).blur();
+                var tutorialId = $(this).closest('.ladb-tutorial-box').data('tutorial-id');
+                that.playTutorials(tutorialId);
+                return false;
             });
 
         }).fail(function() {
@@ -74,6 +78,18 @@
         });
 
     }
+
+    LadbTabTutorials.prototype.playTutorials = function (id) {
+        var tutorial = this.tutorials[id];
+
+        var $modal = this.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+            tutorial: tutorial
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
 
     LadbTabTutorials.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
