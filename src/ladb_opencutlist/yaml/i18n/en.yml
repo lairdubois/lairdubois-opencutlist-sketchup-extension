@@ -622,7 +622,12 @@ tab:
     title: Tutorials
     help: |
       Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
-    submit_a_video: Submit a video
+    submit: Submit a video
+    submit_info: |  # TODO
+      Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
+      Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
+
+      *La vidéo doit être publique et hébergée sur YouTube*.
     error:
       fail_to_load_list: Unable to load video list.
   importer:

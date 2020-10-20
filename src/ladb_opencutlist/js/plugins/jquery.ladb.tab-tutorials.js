@@ -7,6 +7,8 @@
     var LadbTabTutorials = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
+        this.$btnSubmit = $('#ladb_btn_submit', this.$element);
+
         this.$page = $('.ladb-page', this.$element);
 
         this.tutorials = null;
@@ -72,6 +74,23 @@
         });
 
     }
+
+    LadbTabTutorials.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
+        var that = this;
+
+        // Bind buttons
+        this.$btnSubmit.on('click', function () {
+
+            var $modal = that.appendModalInside('ladb_tutorials_modal_submit', 'tabs/tutorials/_modal-submit.twig');
+
+            // Show modal
+            $modal.modal('show');
+
+        });
+
+    };
 
     LadbTabTutorials.prototype.defaultInitializedCallback = function () {
         LadbAbstractTab.prototype.defaultInitializedCallback.call(this);
