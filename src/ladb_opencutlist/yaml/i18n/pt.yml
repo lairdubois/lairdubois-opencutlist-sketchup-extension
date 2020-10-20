@@ -30,7 +30,7 @@ default:
   tip: Dica
   good: Bom
   bad: Ruim
-  by: par # TODO
+  by: por
   date_format: m/d/Y g:ia
   date_format_short: m/d/Y
   unit_0: Polegadas
@@ -627,11 +627,11 @@ tab:
     help: |
       Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
     submit: Enviar um vídeo
-    submit_info: |  # TODO
-      Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
-      Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
+    submit_info: |
+      Você fez um vídeo apresentando o uso de **OpenCutList** e gostaria de vê-lo aparecer aqui?
+      Nos informe escrevendo para **opencutlist@lairdubois.fr**!
 
-      *La vidéo doit être publique et hébergée sur YouTube*.
+      *O vídeo deve ser público e hospedado no YouTube*.
     error:
       fail_to_load_list: Incapaz de carregar a lista de vídeos.
   importer:

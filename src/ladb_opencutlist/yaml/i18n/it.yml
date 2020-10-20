@@ -627,11 +627,11 @@ tab:
     help: |
       Trovate qui una lista non esaustiva di video realizzati dalla comunità intorno all'uso di *OpenCutList*.
     submit: Invia un video
-    submit_info: |  # TODO
-      Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
-      Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
+    submit_info: |
+      Hai realizzato un video che presenta l'utilizzo di **OpenCutList** e vorresti vederlo apparire qui?
+      Fatecelo sapere scrivendoci a **opencutlist@lairdubois.fr**!
 
-      *La vidéo doit être publique et hébergée sur YouTube*.
+      *Il video deve essere pubblico e ospitato su YouTube*.
     error:
       fail_to_load_list: Impossibile caricare la lista dei video.
   importer:
