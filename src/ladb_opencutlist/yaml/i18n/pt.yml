@@ -626,7 +626,12 @@ tab:
     title: Tutoriais
     help: |
       Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
-    submit_a_video: Enviar um vídeo
+    submit: Enviar um vídeo
+    submit_info: |  # TODO
+      Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
+      Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
+
+      *La vidéo doit être publique et hébergée sur YouTube*.
     error:
       fail_to_load_list: Incapaz de carregar a lista de vídeos.
   importer:
