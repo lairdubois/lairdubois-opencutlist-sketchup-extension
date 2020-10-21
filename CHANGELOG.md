@@ -4,10 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.7 (WIP)
+* 1.9.7 (2020-10-21)
 
   * Added embeded tutorial's videos
   * Improved "undo" management for a better User Experience :P
+  * Minor Fixes and Improvements
 
 * 1.9.6 (2020-10-17)
 

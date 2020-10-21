@@ -121,8 +121,8 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOW or i_type > TYPE_DIMENSIONAL
-          TYPE_UNKNOW
+        if i_type < TYPE_UNKNOW or i_type > TYPE_EDGE
+          return TYPE_UNKNOW
         end
         i_type
       else
@@ -373,7 +373,7 @@
           end
         end
 
-        @type = Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW)
+        @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW))
         @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(:thickness))
         @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
         @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))

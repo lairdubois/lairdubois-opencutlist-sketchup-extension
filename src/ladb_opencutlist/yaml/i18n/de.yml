@@ -181,8 +181,6 @@ tab:
       cumulable: Summierbar
       cumulable_help: |
         Ist diese Option aktiv, wird die **Länge** oder die **Breite** beim Sortieren der Holzliste als **Einheitslänge** oder **Einheitsbreite** mal Anzahl gerechnet.
-
-        <i class='ladb-opencutlist-icon-warning'></i> *Diese Option wird nicht berücksichtigt, wenn dieses Teil mit anderen identischen Teilen gruppiert wird.*
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
