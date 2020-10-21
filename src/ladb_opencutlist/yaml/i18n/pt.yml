@@ -181,8 +181,6 @@ tab:
       cumulable: Sumável
       cumulable_help: |
          Se esta opção for seleccionada, o **comprimento** ou o **largura** será considerado **comprimento da unidade** ou **largura da unidade** multiplicado pela contagem ao ordenar a lista de partes.
-
-         <i class='ladb-opencutlist-icon-warning'></i> *Esta opção não será considerada quando esta parte for agrupada com outras partes idênticas.*
       cumulable_0: Não somam
       cumulable_1: Somável ao longo do comprimento
       cumulable_2: Somável em largura

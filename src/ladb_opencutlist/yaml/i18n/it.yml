@@ -181,8 +181,6 @@ tab:
       cumulable: Sommabile
       cumulable_help: |
         Con questa opzione selezionata, la **lunghezza** o la **larghezza** saranno ricavate da **lunghezza parte** o **larghezza parte** multiplicato il numero delle parti durante l'ordinamento della distinta parti.
-
-        <i class='ladb-opencutlist-icon-warning'></i> *Questa opzione viene trascurata quando questa parte fa parte di un gruppo che comprende altre parti identiche.*
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza

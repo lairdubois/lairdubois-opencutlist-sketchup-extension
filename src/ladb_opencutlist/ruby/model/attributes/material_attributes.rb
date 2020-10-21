@@ -142,7 +142,7 @@
       if type
         i_type = type.to_i
         if i_type < TYPE_UNKNOW or i_type > TYPE_ACCESSORY
-          TYPE_UNKNOW
+          return TYPE_UNKNOW
         end
         i_type
       else
@@ -395,19 +395,18 @@
           end
         end
 
-        @type = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', TYPE_UNKNOW)
-        @thickness = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', get_default(:thickness))
-        @length_increase = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', get_default(:length_increase))
-        @width_increase = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', get_default(:width_increase))
-        @thickness_increase = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', get_default(:thickness_increase))
-        @std_lengths = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_lengths', get_default(:std_lengths))
-        @std_widths = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_widths', get_default(:std_widths))
-        @std_thicknesses = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', get_default(:std_thicknesses))
-        @std_sections = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', get_default(:std_sections))
-        @std_sizes = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', get_default(:std_sizes))
-        @grained = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', get_default(:grained))
-        @edge_decremented = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', get_default(:edge_decremented))
-        @volumic_mass = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', get_default(:volumic_mass))
+        @type = Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW)
+        @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(:thickness))
+        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
+        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))
+        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', get_default(:thickness_increase))
+        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', get_default(:std_lengths))
+        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', get_default(:std_widths))
+        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', get_default(:std_thicknesses))
+        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', get_default(:std_sections))
+        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
+        @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(:grained))
+        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(:edge_decremented))
       else
         @type = TYPE_UNKNOW
       end
