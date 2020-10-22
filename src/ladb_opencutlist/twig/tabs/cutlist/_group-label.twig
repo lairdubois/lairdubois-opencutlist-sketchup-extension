@@ -6,7 +6,7 @@
         {{ group.material_display_name|escape }}
     {% endif %}
 </span>
-{% if group.material_type > 0 and group.material_type != 5 %} %}
+{% if group.material_type > 0 and group.material_type != 5 %}
     / <strong>{% if group.material_type == 4 %}{# 4 = TYPE_EDGE #}{{ group.std_thickness }} x {% endif %}<span{% if not group.std_available %} class="text-danger"{% endif %}>{{ group.std_dimension }}</span></strong>
     {% if not group.std_available %}
         &nbsp;&nbsp;
