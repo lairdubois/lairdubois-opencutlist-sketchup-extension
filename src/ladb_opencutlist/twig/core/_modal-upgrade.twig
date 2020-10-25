@@ -27,13 +27,14 @@
         <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 0;"></div>
         </div>
+        <p class="text-center help-block"><small>{{ 'core.upgrade.download_rescue'|i18next }} <a href="#" class="ladb-btn-download">{{ 'core.upgrade.manual_download'|i18next }}</a>.</small></p>
     </div>
 {% endblock %}
 
 {% block footerInner %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% if capabilities.manifest.version is empty %}
-        <button id="ladb_btn_download" class="btn btn-primary">{{ 'default.download'|i18next }}</button>
+        <button id="ladb_btn_download" class="btn btn-primary ladb-btn-download">{{ 'default.download'|i18next }}</button>
     {% elseif capabilities.upgradable %}
         <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
     {% else %}

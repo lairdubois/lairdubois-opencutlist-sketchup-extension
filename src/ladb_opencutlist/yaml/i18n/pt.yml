@@ -82,6 +82,8 @@ core:
       *Patrocine este projeto para nos ajudar a acrescentar ainda mais funcionalidades!*
     downloading: Download em progresso...
     changelog: O que há de novo?
+    download_rescue: Un problème lors du téléchargement ? # TODO
+    manual_download: Téléchargement manuel # TODO
     success: |
       A atualização da OpenCutList foi concluída!
 
