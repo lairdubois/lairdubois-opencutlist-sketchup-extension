@@ -82,12 +82,12 @@ core:
       *E' possibile sponsorizzare *OpenCutList* per contribuire allo sviluppo di nuove funzionalità!*
     downloading: Download in corso...
     changelog: Lista delle nuove funzionalita
-    download_rescue: Un problème lors du téléchargement ? # TODO
-    manual_download: Téléchargement manuel # TODO
+    download_rescue: Problemi a scaricare?
+    manual_download: Scaricamento manuale
     success: |
       L'aggiornamento di OpenCutList è terminato!
 
-      /!\ Riavvia SKETCHUP per utilizzare la nuova versione.
+      Riavvia SketchUp per utilizzare la nuova versione.
     error:
       download: Si è verificato un errore durante il download.
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.
