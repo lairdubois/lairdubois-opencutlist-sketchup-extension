@@ -4,6 +4,9 @@
     // CONSTANTS
     // ======================
 
+    var MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
+    var MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
+
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
 
     // CLASS DEFINITION
