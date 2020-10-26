@@ -82,6 +82,8 @@ core:
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Herunterladen läuft...
     changlog: Was gibt's Neues?
+    download_rescue: Un problème lors du téléchargement ? # TODO
+    manual_download: Téléchargement manuel # TODO
     success: |
       Die Aktualisierung von OpenCutList ist beendet!
 

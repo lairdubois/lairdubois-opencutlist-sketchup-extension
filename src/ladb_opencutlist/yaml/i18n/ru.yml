@@ -82,6 +82,8 @@ core:
       *Рассмотрите возможность спонсорства этого проекта, чтобы помочь нам улучшить его функциональность!*
     downloading: Идет процесс загрузки...
     changelog: Что нового?
+    download_rescue: Un problème lors du téléchargement ? # TODO
+    manual_download: Téléchargement manuel # TODO
     success: |
       Обновление OpenCutList завершено!
 

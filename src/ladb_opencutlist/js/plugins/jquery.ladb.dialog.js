@@ -112,7 +112,7 @@
         var that = this;
 
         if (this.capabilities.manifest == null && this.capabilities.upgradable == null) {
-            $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/dist/manifest' + (this.capabilities.debug ? '-dev' : '') + '.json', function (data) {
+            $.getJSON((this.capabilities.debug ? MANIFEST_DEV_URL : MANIFEST_URL) + '?v=' + this.capabilities.version, function (data) {
 
                 // Keep manifest data
                 that.capabilities.manifest = data;
@@ -438,7 +438,7 @@
         var $panelProgress = $('#ladb_panel_progress', $modal);
         var $footer = $('.modal-footer', $modal);
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
-        var $btnDownload = $('#ladb_btn_download', $modal);
+        var $btnDownload = $('.ladb-btn-download', $modal);
         var $btnSponsor = $('#ladb_btn_sponsor', $modal);
         var $progressBar = $('div[role=progressbar]', $modal);
 
@@ -449,7 +449,7 @@
             $panelProgress.show();
             $footer.hide();
 
-            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url : EW_URL }, function (response) {
+            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url + '?v=' + that.capabilities.version : EW_URL }, function (response) {
                 if (response.cancelled) {
 
                     // Close and remove modal
@@ -484,7 +484,7 @@
         $btnDownload.on('click', function() {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url : EW_URL });
+            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url + '?v=' + that.capabilities.version : EW_URL });
 
             // Close and remove modal
             $modal.modal('hide');
