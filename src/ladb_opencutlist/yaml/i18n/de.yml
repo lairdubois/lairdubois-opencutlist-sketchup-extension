@@ -80,14 +80,14 @@ core:
       Sie haben bereits die aktuellste Version von *OpenCutList*.
 
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
-    downloading: Herunterladen läuft...
+    downloading: Ladevorgang läuft...
     changlog: Was gibt's Neues?
-    download_rescue: Un problème lors du téléchargement ? # TODO
-    manual_download: Téléchargement manuel # TODO
+    download_rescue: Problem beim Herunterladen?
+    manual_download: manuelles Herunterladen
     success: |
-      Die Aktualisierung von OpenCutList ist beendet!
+      Die Aktualisierung von OpenCutList ist abgeschlossen!
 
-      /!\ STARTEN SIE SKETCHUP neu, damit die Änderungen aktiviert werden.
+      Starten Sie SketchUp neu, um die Änderungen zu aktivieren.
     error:
       download: Fehler beim Herunterladen des Archivs.
       unzip: Fehler beim Dekomprimieren des Archivs.
@@ -170,8 +170,8 @@ tab:
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
       edit_material: Bearbeiten des Materials '{{ material }}'...
-      expand_all: Identische Teile aufklappen
-      collapse_all: Identische Teile zuklappen
+      expand_all: Ähnliche Teile aufklappen
+      collapse_all: Ähnliche Teile zuklappen
     edit_part:
       title: Eigenschaften des Teils '{{ name }}'
       title_multiple: Eigenschaften der Gruppe von Teilen
@@ -359,11 +359,11 @@ tab:
       options_material: Material
       options_config: Konfiguration
       options_display: Anzeige
-      option_bar_folding: Identische Stangen zusammenfassen
+      option_bar_folding: Ähnliche Stangen zusammenfassen
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja
       option_bar_folding_help: Fasst alle Stangen mit gleichen Teilen und Schnitten zusammen.
-      option_sheet_folding: Identische Platten zusammenfassen
+      option_sheet_folding: Ähnliche Platten zusammenfassen
       option_sheet_folding_0: Nein
       option_sheet_folding_1: Ja
       option_sheet_folding_help: Fasst alle Platten mit gleichen Teilen und Schnitten zusammen.

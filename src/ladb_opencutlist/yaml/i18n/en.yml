@@ -82,12 +82,12 @@ core:
       *Consider a sponsorship of this project to help us add even more features!*
     downloading: Download in progress...
     changelog: What's new?
-    download_rescue: Un problème lors du téléchargement ? # TODO
-    manual_download: Téléchargement manuel # TODO
+    download_rescue: Problem with the download?
+    manual_download: Manual downloading
     success: |
       The update of OpenCutList has finished!
 
-      /!\ RELOAD SKETCHUP for the changes to be activated.
+      Reload SketchUp to activate the changes.
     error:
       download: Error while downloading the archive.
       unzip: Error while decompressing the archive.
@@ -170,8 +170,8 @@ tab:
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       edit_material: Edit material '{{ material }}'...
-      expand_all: Unfold identical parts
-      collapse_all: Fold identical parts
+      expand_all: Unfold similar parts
+      collapse_all: Fold similar parts
     edit_part:
       title: Properties of Part '{{ name }}'
       title_multiple: Properties of the group of parts
@@ -246,7 +246,7 @@ tab:
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
-      part_folding: Group identical parts
+      part_folding: Group similar parts
       part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.
       hide_entity_names: Hide instance names
       hide_entity_names_help: If this option is selected, **instance names** of parts will not be displayed.
@@ -359,11 +359,11 @@ tab:
       options_material: Material
       options_config: Configuration
       options_display: Display
-      option_bar_folding: Group Identical Boards
+      option_bar_folding: Group Similar Boards
       option_bar_folding_0: "No"
       option_bar_folding_1: "Yes"
       option_bar_folding_help: Group boards having the same parts and cuts.
-      option_sheet_folding: Group Identical Panels
+      option_sheet_folding: Group Similar Panels
       option_sheet_folding_0: "No"
       option_sheet_folding_1: "Yes"
       option_sheet_folding_help: Group panels having the same parts and cuts.
