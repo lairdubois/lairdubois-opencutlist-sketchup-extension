@@ -60,7 +60,8 @@ module Ladb::OpenCutList
       @i18n_strings = nil
       @html_dialog_compatible = nil
       @manifest = nil
-      @upgradable = nil
+      @update_available = nil
+      @update_muted = false
 
       @commands = {}
       @eventCallbacks = {}
@@ -327,8 +328,8 @@ module Ladb::OpenCutList
 
         # -- Commands --
 
-        register_command('core_updates_checked') do |params|
-          updates_checked_command(params)
+        register_command('core_set_update_status') do |params|
+          set_update_status_command(params)
         end
         register_command('core_upgrade') do |params|
           upgrade_command(params)
@@ -574,9 +575,10 @@ module Ladb::OpenCutList
 
     # -- Commands ---
 
-    def updates_checked_command(params)    # Waiting params = { manifest: MANIFEST, upgradable: BOOL }
+    def set_update_status_command(params)    # Waiting params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
       @manifest = params['manifest']
-      @upgradable = params['upgradable']
+      @update_available = params['update_available']
+      @update_muted = params['update_muted']
     end
 
     def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
@@ -778,7 +780,8 @@ module Ladb::OpenCutList
           :available_languages => Plugin.instance.get_available_languages,
           :html_dialog_compatible => html_dialog_compatible,
           :manifest => @manifest,
-          :upgradable => @upgradable,
+          :update_available => @update_available,
+          :update_muted => @update_muted,
           :dialog_maximized_width => @dialog_maximized_width,
           :dialog_maximized_height => @dialog_maximized_height,
           :dialog_left => @dialog_left,

@@ -82,6 +82,7 @@ core:
       *Patrocine este projeto para nos ajudar a acrescentar ainda mais funcionalidades!*
     downloading: Download em progresso...
     changelog: O que há de novo?
+    ignore_update: Ignorer cette mise à jour  # TODO
     download_rescue: Problemas para baixar?
     manual_download: Descarregamento manual
     success: |

@@ -82,6 +82,7 @@ core:
       *Рассмотрите возможность спонсорства этого проекта, чтобы помочь нам улучшить его функциональность!*
     downloading: Идет процесс загрузки...
     changelog: Что нового?
+    ignore_update: Ignorer cette mise à jour  # TODO
     download_rescue: проблемы со скачиванием?
     manual_download: загрузка вручную
     success: |

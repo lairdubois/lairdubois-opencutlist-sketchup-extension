@@ -82,6 +82,7 @@ core:
       *Consider a sponsorship of this project to help us add even more features!*
     downloading: Download in progress...
     changelog: What's new?
+    ignore_update: Ignorer cette mise à jour  # TODO
     download_rescue: Problem with the download?
     manual_download: Manual downloading
     success: |

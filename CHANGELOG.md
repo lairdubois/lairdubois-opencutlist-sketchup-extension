@@ -6,7 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.9.8 (WIP)
 
-  * Improved upgrade workflow
+  * Improved "self-updater" workflow
 
 * 1.9.7 (2020-10-21)
 

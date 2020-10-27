@@ -1,16 +1,16 @@
 <nav id="ladb_leftbar" class="ladb-leftbar no-print">
-    <a id="ladb_btn_minimize" href="#" style="display: none;"><i class="ladb-opencutlist-icon-chevron-left"></i><div>{{ 'default.minimize'|i18next }}</div></a>
-    <a id="ladb_btn_maximize" href="#"><i class="ladb-opencutlist-icon-chevron-right"></i><div>{{ 'default.maximize'|i18next }}</div></a>
+    <a id="ladb_leftbar_btn_minimize" href="#" style="display: none;"><i class="ladb-opencutlist-icon-chevron-left"></i><div>{{ 'default.minimize'|i18next }}</div></a>
+    <a id="ladb_leftbar_btn_maximize" href="#"><i class="ladb-opencutlist-icon-chevron-right"></i><div>{{ 'default.maximize'|i18next }}</div></a>
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
-        <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
+        <a id="ladb_leftbar_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
     <div class="ladb-leftbar-bottom" style="display: none;">
         {% for tabDef in tabDefs if tabDef.bar == 'leftbar-bottom' %}
             <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
         {% endfor %}
-        <div id="ladb_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-6">
+        <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-6">
             <div class="ladb-subbar-toggle">
-                <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><span class="badge badge-notification"{% if not capabilities.upgradable %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more'|i18next }}</div></div>
+                <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><span class="badge badge-notification"{% if not capabilities.update_available or capabilities.update_muted %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more'|i18next }}</div></div>
                 <span class="ladb-toggle-arrow"></span>
             </div>
             <div class="ladb-subbar-panel">
@@ -18,7 +18,7 @@
                 <a href="https://www.lairdubois.fr/logiciels/2-opencutlist.html#_reviews" target="_blank"><i class="ladb-opencutlist-icon-review"></i><div>{{ 'core.leftbar.more_reviews'|i18next }}</div></a>
                 <a href="https://www.lairdubois.fr/plans/?q=@kind:%22sketchup%22%20@sort-recent" target="_blank"><i class="ladb-opencutlist-icon-plan"></i><div>{{ 'core.leftbar.more_plans'|i18next }}</div></a>
                 <a href="https://www.lairdubois.fr/logiciels/?q=@addon:%22sketchup%22" target="_blank"><i class="ladb-opencutlist-icon-extension"></i><div>{{ 'core.leftbar.more_extensions'|i18next }}</div></a>
-                <a href="#" id="ladb_btn_upgrade"><i class="ladb-opencutlist-icon-update"></i><span class="badge badge-notification"{% if not capabilities.upgradable %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more_update'|i18next }}</div></a>
+                <a href="#" id="ladb_leftbar_btn_upgrade"><i class="ladb-opencutlist-icon-update"></i><span class="badge badge-notification{% if capabilities.update_muted %} badge-notification-muted{% endif %}"{% if not capabilities.update_available %} style="display: none;"{% endif %}>1</span><div>{{ 'core.leftbar.more_update'|i18next }}</div></a>
                 <a href="#" class="ladb-highlighted-sponsor" data-ladb-tab-name="sponsor"><i class="ladb-opencutlist-icon-sponsor"></i><div>{{ 'tab.sponsor.label'|i18next }}</div></a>
             </div>
         </div>
