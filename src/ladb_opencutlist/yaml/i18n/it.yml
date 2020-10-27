@@ -87,7 +87,7 @@ core:
     success: |
       L'aggiornamento di OpenCutList è terminato!
 
-      Riavvia SketchUp per utilizzare la nuova versione.
+      RIAVVIA SKETCHUP per utilizzare la nuova versione.
     error:
       download: Si è verificato un errore durante il download.
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.

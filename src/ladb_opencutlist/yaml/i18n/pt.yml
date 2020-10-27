@@ -87,7 +87,7 @@ core:
     success: |
       A atualização da OpenCutList foi concluída!
 
-      Recarregar SketchUp para as mudanças a serem ativadas.
+      RECARREGAR SKETCHUP para as mudanças a serem ativadas.
     error:
       download: Erro ao baixar o arquivo.
       unzip: Erro ao descompactar o arquivo.

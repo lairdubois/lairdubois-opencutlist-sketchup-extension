@@ -87,7 +87,7 @@ core:
     success: |
       The update of OpenCutList has finished!
 
-      Reload SketchUp to activate the changes.
+      RELOAD SKETCHUP to activate the changes.
     error:
       download: Error while downloading the archive.
       unzip: Error while decompressing the archive.
