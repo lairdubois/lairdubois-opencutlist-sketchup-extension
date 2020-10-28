@@ -136,11 +136,17 @@ gulp.task('version', function () {
         .pipe(gulp.dest('../dist'))
         .pipe(touch());
 
-    // Update version property in plugin.rb
-    return gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
+    // Update version property in constants.rb
+    gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
         .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-[a-z]*)?'/g, "EXTENSION_VERSION = '" + version + "'"))
         .pipe(replace(/EXTENSION_BUILD = '[0-9]{12}?'/g, "EXTENSION_BUILD = '" + build + "'"))
         .pipe(gulp.dest('../src/ladb_opencutlist/ruby'))
+        .pipe(touch());
+
+    // Update version property in constants.rb
+    return gulp.src('../src/ladb_opencutlist/js/constants.js')
+        .pipe(replace(/var EXTENSION_BUILD = '[0-9]{12}?';/g, "var EXTENSION_BUILD = '" + build + "';"))
+        .pipe(gulp.dest('../src/ladb_opencutlist/js'))
         .pipe(touch());
 });
 

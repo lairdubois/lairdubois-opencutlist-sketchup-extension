@@ -85,6 +85,7 @@ core:
     ignore_update: Skip this update
     download_rescue: Problem with the download?
     manual_download: Manual downloading
+    zzz: Je suis actuellement au repos suite à la mise à jour. Pour me réveillez, vous devez relancer SketchUp. # TODO
     success: |
       The update of OpenCutList has finished!
 

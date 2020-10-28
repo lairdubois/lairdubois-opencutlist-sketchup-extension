@@ -4,7 +4,7 @@
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
         <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
-    <div class="ladb-leftbar-bottom" style="display: none;">
+    <div id="ladb_leftbar_bottom" class="ladb-leftbar-bottom" style="display: none;">
         {% for tabDef in tabDefs if tabDef.bar == 'leftbar-bottom' %}
             <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
         {% endfor %}

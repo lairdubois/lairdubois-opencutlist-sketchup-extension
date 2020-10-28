@@ -43,6 +43,8 @@
 
         this.settings = {};
 
+        this.zzz = false;
+
         this.minimizing = false;
         this.maximizing = false;
         this.maximized = false;
@@ -263,6 +265,10 @@
 
     LadbDialog.prototype.loadTab = function (tabName, callback) {
 
+        if (this.zzz) {
+            return;
+        }
+
         var $tab = this.tabs[tabName];
         if (!$tab) {
 
@@ -305,6 +311,10 @@
     };
 
     LadbDialog.prototype.selectTab = function (tabName, callback) {
+
+        if (this.zzz) {
+            return;
+        }
 
         var $tab = this.tabs[tabName];
         var $freshTab = false;
@@ -413,7 +423,6 @@
     // Modal /////
 
     LadbDialog.prototype.appendModal = function (id, twigFile, renderParams) {
-        var that = this;
 
         // Hide previously opened modal
         if (this._$modal) {
@@ -708,30 +717,51 @@
                     });
                 });
 
-                // Render and append layout template
-                that.$element.append(Twig.twig({ref: 'core/layout.twig'}).render({
-                    capabilities: that.capabilities,
-                    compatibilityAlertHidden: that.compatibilityAlertHidden,
-                    tabDefs: that.options.tabDefs
-                }));
+                // Check if JS build number corresponds to Ruby build number
+                if (EXTENSION_BUILD !== that.capabilities.build) {
 
-                // Fetch usefull elements
-                that.$wrapper = $('#ladb_wrapper', that.$element);
-                that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
-                that.$leftbarBtnMinimize = $('#ladb_leftbar_btn_minimize', that.$element);
-                that.$leftbarBtnMaximize = $('#ladb_leftbar_btn_maximize', that.$element);
-                that.$leftbarBottom = $('.ladb-leftbar-bottom', that.$element);
-                that.$leftbarBtnUpgrade = $('#ladb_leftbar_btn_upgrade', that.$element);
-                that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
-                for (var i = 0; i < that.options.tabDefs.length; i++) {
-                    var tabDef = that.options.tabDefs[i];
-                    that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
-                }
+                    // Flag as sleeping
+                    that.zzz = true;
 
-                that.bind();
+                    // Render and append layout-locked template
+                    that.$element.append(Twig.twig({ref: 'core/layout-zzz.twig'}).render());
 
-                if (that.options.dialog_startup_tab_name) {
-                    that.selectTab(that.options.dialog_startup_tab_name);
+                    // Fetch usefull elements
+                    var $btnZzz = $('.ladb-zzz a', that.$element);
+
+                    // Bind button
+                    $btnZzz.on('click', function() {
+                        alert(i18next.t('core.upgrade.zzz'));
+                    });
+
+                } else {
+
+                    // Render and append layout template
+                    that.$element.append(Twig.twig({ref: 'core/layout.twig'}).render({
+                        capabilities: that.capabilities,
+                        compatibilityAlertHidden: that.compatibilityAlertHidden,
+                        tabDefs: that.options.tabDefs
+                    }));
+
+                    // Fetch usefull elements
+                    that.$wrapper = $('#ladb_wrapper', that.$element);
+                    that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
+                    that.$leftbarBtnMinimize = $('#ladb_leftbar_btn_minimize', that.$element);
+                    that.$leftbarBtnMaximize = $('#ladb_leftbar_btn_maximize', that.$element);
+                    that.$leftbarBottom = $('#ladb_leftbar_bottom', that.$element);
+                    that.$leftbarBtnUpgrade = $('#ladb_leftbar_btn_upgrade', that.$element);
+                    that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
+                    for (var i = 0; i < that.options.tabDefs.length; i++) {
+                        var tabDef = that.options.tabDefs[i];
+                        that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+                    }
+
+                    that.bind();
+
+                    if (that.options.dialog_startup_tab_name) {
+                        that.selectTab(that.options.dialog_startup_tab_name);
+                    }
+
                 }
 
             });
