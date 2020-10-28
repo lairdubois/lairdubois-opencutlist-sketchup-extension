@@ -1,6 +1,12 @@
 +function ($) {
     'use strict';
 
+    // CONSTANTS
+    // ======================
+
+    var TUTORIALS_URL = 'https://www.lairdubois.fr/opencutlist/tutorials'
+    var TUTORIALS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/tutorials-dev'
+
     // CLASS DEFINITION
     // ======================
 
@@ -21,7 +27,7 @@
     LadbTabTutorials.prototype.loadTutorials = function () {
         var that = this;
 
-        $.getJSON('https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/raw/master/docs/json/tutorials.json', function (data) {
+        $.getJSON((this.dialog.capabilities.debug ? TUTORIALS_DEV_URL : TUTORIALS_URL) + '?v=' + this.dialog.capabilities.version, function (data) {
 
             that.tutorials = data.tutorials;
 

@@ -82,12 +82,13 @@ core:
       *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à soutenir financièrement le projet !*
     downloading: Téléchargement en cours...
     changelog: Quoi de neuf ?
+    ignore_update: Ignorer cette mise à jour
     download_rescue: Un problème lors du téléchargement ?
     manual_download: Téléchargement manuel
     success: |
       La mise à jour d'OpenCutList est terminée !
 
-      /!\ RELANCEZ SKETCHUP pour que les changements soient pris en compte.
+      RELANCEZ SKETCHUP pour que les changements soient pris en compte.
     error:
       download: Erreur lors du téléchargement de l'archive.
       unzip: Erreur lors de la décompression de l'archive.

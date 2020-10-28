@@ -9,6 +9,10 @@ in 1.x and 0.x versions.
   * Added Accessory material type
   * Added part unit price field for accessories
   
+* 1.9.8 (2020-10-28)
+
+  * Improved "self-updater" workflow
+
 * 1.9.7 (2020-10-21)
 
   * Added embeded tutorial's videos

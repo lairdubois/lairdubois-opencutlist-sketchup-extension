@@ -4,7 +4,11 @@
     // CONSTANTS
     // ======================
 
-    var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'compatibility_alert_hidden';
+    var MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
+    var MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
+
+    var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
+    var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
 
     // CLASS DEFINITION
     // ======================
@@ -29,7 +33,8 @@
             availableLanguages: options.available_languages,
             htmlDialogCompatible: options.html_dialog_compatible,
             manifest: options.manifest,
-            upgradable: options.upgradable,
+            update_available: options.update_available,
+            update_muted: options.update_muted,
             dialogMaximizedWidth: options.dialog_maximized_width,
             dialogMaximizedHeight: options.dialog_maximized_height,
             dialogLeft: options.dialog_left,
@@ -51,9 +56,9 @@
         this.$wrapper = null;
         this.$wrapperSlides = null;
         this.$leftbarBottom = null;
-        this.$btnMinimize = null;
-        this.$btnMaximize = null;
-        this.$btnUpgrade = null;
+        this.$leftbarBtnMinimize = null;
+        this.$leftbarBtnMaximize = null;
+        this.$leftbarBtnUpgrade = null;
         this.$btnCloseCompatibilityAlert = null;
     };
 
@@ -111,7 +116,7 @@
     LadbDialog.prototype.loadManifest = function () {
         var that = this;
 
-        if (this.capabilities.manifest == null && this.capabilities.upgradable == null) {
+        if (this.capabilities.manifest == null && this.capabilities.update_available == null) {
             $.getJSON((this.capabilities.debug ? MANIFEST_DEV_URL : MANIFEST_URL) + '?v=' + this.capabilities.version, function (data) {
 
                 // Keep manifest data
@@ -120,8 +125,11 @@
                 // Compare versions
                 if (data.build && data.build > that.capabilities.build) {
 
-                    // Flag as upgradable
-                    that.capabilities.upgradable = true;
+                    // Flag as update_available
+                    that.capabilities.update_available = true;
+
+                    // Check ignored build
+                    that.capabilities.update_muted = that.mutedUpdateBuild ? that.mutedUpdateBuild === data.build : false;
 
                     // Trigger updatable event
                     setTimeout(function () {
@@ -130,20 +138,23 @@
 
                 } else {
 
-                    // Flag as not upgradable
-                    that.capabilities.upgradable = false;
+                    // Flag as not update_available
+                    that.capabilities.update_available = false;
+                    that.capabilities.update_muted = false;
 
                 }
 
-                // Inform ruby that updates was checked
-                rubyCallCommand('core_updates_checked', {
+                // Send update status to ruby
+                rubyCallCommand('core_set_update_status', {
                     manifest: that.capabilities.manifest,
-                    upgradable: that.capabilities.upgradable
+                    update_available: that.capabilities.update_available,
+                    update_muted: that.capabilities.update_muted
                 });
 
             }).fail(function(e) {
                 that.capabilities.manifest = {}
-                that.capabilities.upgradable = false;
+                that.capabilities.update_available = false;
+                that.capabilities.update_muted = false;
             });
         }
 
@@ -204,8 +215,8 @@
                 that.minimizing = false;
                 Noty.closeAll();
                 that.$wrapper.hide();
-                that.$btnMinimize.hide();
-                that.$btnMaximize.show();
+                that.$leftbarBtnMinimize.hide();
+                that.$leftbarBtnMaximize.show();
                 that.maximized = false;
                 that.$element.trigger(jQuery.Event('minimized.ladb.dialog'));
             });
@@ -219,8 +230,8 @@
             rubyCallCommand('core_dialog_maximize', null, function () {
                 that.maximizing = false;
                 that.$wrapper.show();
-                that.$btnMinimize.show();
-                that.$btnMaximize.hide();
+                that.$leftbarBtnMinimize.show();
+                that.$leftbarBtnMaximize.hide();
                 that.$leftbarBottom.show();
                 that.maximized = true;
                 that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
@@ -437,12 +448,38 @@
         var $panelInfos = $('#ladb_panel_infos', $modal);
         var $panelProgress = $('#ladb_panel_progress', $modal);
         var $footer = $('.modal-footer', $modal);
+        var $btnIgnoreUpdate = $('#ladb_btn_ignore_update', $modal);
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('.ladb-btn-download', $modal);
         var $btnSponsor = $('#ladb_btn_sponsor', $modal);
         var $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
+        $btnIgnoreUpdate.on('click', function() {
+
+            that.mutedUpdateBuild = that.capabilities.manifest.build;
+            that.setSetting(SETTING_KEY_MUTED_UPDATE_BUILD, that.mutedUpdateBuild);
+
+            that.capabilities.update_muted = true;
+
+            // Send update status to ruby
+            rubyCallCommand('core_set_update_status', {
+                manifest: that.capabilities.manifest,
+                update_available: that.capabilities.update_available,
+                update_muted: that.capabilities.update_muted
+            });
+
+            // Hide notification badge
+            $('#ladb_leftbar_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
+                .hide()
+            $('.badge.badge-notification', that.$leftbarBtnUpgrade)
+                .addClass('badge-notification-muted')
+
+            // Close and remove modal
+            $modal.modal('hide');
+            $modal.remove();
+
+        });
         $btnUpgrade.on('click', function() {
 
             $panelInfos.hide();
@@ -577,10 +614,10 @@
         var that = this;
 
         // Bind buttons
-        this.$btnMinimize.on('click', function () {
+        this.$leftbarBtnMinimize.on('click', function () {
             that.minimize();
         });
-        this.$btnMaximize.on('click', function () {
+        this.$leftbarBtnMaximize.on('click', function () {
             that.maximize();
             if (!that.activeTabName) {
                 that.selectTab(that.options.defaultTabName);
@@ -592,7 +629,7 @@
                 that.selectTab(tabName);
             });
         });
-        this.$btnUpgrade.on('click', function() {
+        this.$leftbarBtnUpgrade.on('click', function() {
             that.showUpgradeModal();
         });
         this.$btnCloseCompatibilityAlert.on('click', function () {
@@ -600,7 +637,7 @@
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
-        $('#ladb_btn_more .ladb-subbar-toggle', this.$element).mouseover(function () {
+        $('#ladb_leftbar_btn_more .ladb-subbar-toggle', this.$element).mouseover(function () {
             $('.badge.badge-notification', this).removeClass('ladb-bounce-y');
         });
 
@@ -617,13 +654,19 @@
 
         // Bind core updatable events
         this.$element.on('updatable.ladb.core', function() {
-            $('#ladb_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
-                .addClass('ladb-bounce-y')
-            $('#ladb_btn_more .badge.badge-notification', that.$element)
-                .show();
-            rubyCallCommand('core_play_sound', {
-                filename: 'wav/notification.wav'
-            });
+            if (!that.capabilities.update_muted) {
+                $('#ladb_leftbar_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
+                    .addClass('ladb-bounce-y')
+                $('#ladb_leftbar_btn_more .badge.badge-notification', that.$element)
+                    .show();
+                rubyCallCommand('core_play_sound', {
+                    filename: 'wav/notification.wav'
+                });
+            } else {
+                $('.badge.badge-notification', that.$leftbarBtnUpgrade)
+                    .addClass('badge-notification-muted')
+                    .show();
+            }
         });
 
     };
@@ -632,12 +675,14 @@
         var that = this;
 
         this.pullSettings([
-                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN
+                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN,
+                SETTING_KEY_MUTED_UPDATE_BUILD
             ],
             0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
             function () {
 
                 that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
+                that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
 
                 // Add i18next twig filter
                 Twig.extendFilter('i18next', function (value, options) {
@@ -673,10 +718,10 @@
                 // Fetch usefull elements
                 that.$wrapper = $('#ladb_wrapper', that.$element);
                 that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
-                that.$btnMinimize = $('#ladb_btn_minimize', that.$element);
-                that.$btnMaximize = $('#ladb_btn_maximize', that.$element);
+                that.$leftbarBtnMinimize = $('#ladb_leftbar_btn_minimize', that.$element);
+                that.$leftbarBtnMaximize = $('#ladb_leftbar_btn_maximize', that.$element);
                 that.$leftbarBottom = $('.ladb-leftbar-bottom', that.$element);
-                that.$btnUpgrade = $('#ladb_btn_upgrade', that.$element);
+                that.$leftbarBtnUpgrade = $('#ladb_leftbar_btn_upgrade', that.$element);
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                 for (var i = 0; i < that.options.tabDefs.length; i++) {
                     var tabDef = that.options.tabDefs[i];
