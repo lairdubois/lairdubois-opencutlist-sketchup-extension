@@ -82,7 +82,7 @@ core:
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Ladevorgang läuft...
     changlog: Was gibt's Neues?
-    ignore_update: Überspringen Sie dieses Update  # TODO
+    ignore_update: Diese Aktualisierung ignorieren
     download_rescue: Problem beim Herunterladen?
     manual_download: manuelles Herunterladen
     success: |
