@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.8 (WIP)
+* 1.9.8 (2020-10-28)
 
   * Improved "self-updater" workflow
 
