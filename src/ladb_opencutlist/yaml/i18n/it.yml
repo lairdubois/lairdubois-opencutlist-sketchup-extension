@@ -82,7 +82,7 @@ core:
       *E' possibile sponsorizzare *OpenCutList* per contribuire allo sviluppo di nuove funzionalità!*
     downloading: Download in corso...
     changelog: Lista delle nuove funzionalita
-    ignore_update: Ignorer cette mise à jour  # TODO
+    ignore_update: Salta questo aggiornamento  # TODO
     download_rescue: Problemi a scaricare?
     manual_download: Scaricamento manuale
     success: |

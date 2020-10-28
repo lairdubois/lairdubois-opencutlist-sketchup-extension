@@ -2,7 +2,7 @@
     <a id="ladb_leftbar_btn_minimize" href="#" style="display: none;"><i class="ladb-opencutlist-icon-chevron-left"></i><div>{{ 'default.minimize'|i18next }}</div></a>
     <a id="ladb_leftbar_btn_maximize" href="#"><i class="ladb-opencutlist-icon-chevron-right"></i><div>{{ 'default.maximize'|i18next }}</div></a>
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
-        <a id="ladb_leftbar_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
+        <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
     <div class="ladb-leftbar-bottom" style="display: none;">
         {% for tabDef in tabDefs if tabDef.bar == 'leftbar-bottom' %}

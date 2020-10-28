@@ -725,7 +725,7 @@
                 that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                 for (var i = 0; i < that.options.tabDefs.length; i++) {
                     var tabDef = that.options.tabDefs[i];
-                    that.tabBtns[tabDef.name] = $('#ladb_leftbar_tab_btn_' + tabDef.name, that.$element);
+                    that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
                 }
 
                 that.bind();
