@@ -85,7 +85,7 @@ core:
     ignore_update: Diese Aktualisierung ignorieren
     download_rescue: Problem beim Herunterladen?
     manual_download: manuelles Herunterladen
-    zzz: Ich ruhe mich nach der Aktualisierung aus. Um mich zu aufzuwecken, müssen Sie SketchUp neu starten.
+    zzz: Ich ruhe mich nach der Aktualisierung aus. Um mich aufzuwecken, müssen Sie SketchUp neu starten.
     success: |
       Die Aktualisierung von OpenCutList ist abgeschlossen!
 
