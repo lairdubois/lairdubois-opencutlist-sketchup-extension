@@ -124,6 +124,14 @@ tab:
       add_std_section_to_material: |
         Querschnitt *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
+      rounded_std_thickness: |  # TODO
+        L'épaisseur *{{ std_dimension }}* n'est pas l'épaisseur réelle mesurée.
+        Elle est arrondie par la précision du modèle.
+        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
+      rounded_std_section: |  # TODO
+        La section *{{ std_dimension }}* n'est pas la section réelle mesurée.
+        Elle est arrondie par la précision du modèle.
+        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)

@@ -174,7 +174,7 @@ module Ladb::OpenCutList
             std_info = {
                 :available => std_thickness_info[:available],
                 :dimension_stipped_name => 'thickness',
-                :dimension => std_thickness_info[:value].to_s,
+                :dimension => std_thickness_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
                 :width => 0,
                 :thickness => std_thickness_info[:value],
                 :cutting_size => Size3d.new(
@@ -194,7 +194,7 @@ module Ladb::OpenCutList
             std_info = {
                 :available => std_section_info[:available],
                 :dimension_stipped_name => 'section',
-                :dimension => std_section_info[:value].to_s,
+                :dimension => std_section_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
                 :width => std_section_info[:value].width,
                 :thickness => std_section_info[:value].height,
                 :cutting_size => Size3d.new(
@@ -1002,7 +1002,7 @@ module Ladb::OpenCutList
       std_info = {
           :available => std_width_info[:available],
           :dimension_stipped_name => 'width',
-          :dimension => std_width_info[:value].to_s,
+          :dimension => std_width_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
           :width => std_width_info[:value],
           :thickness => material_attributes.l_thickness,
       }

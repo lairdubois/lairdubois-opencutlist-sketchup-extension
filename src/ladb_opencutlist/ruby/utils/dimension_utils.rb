@@ -2,6 +2,8 @@
 
   require 'singleton'
 
+  MAX_PRECISION = 6
+
   # Format - just here for convenience
   DECIMAL       = Length::Decimal
   ARCHITECTURAL = Length::Architectural
@@ -429,7 +431,12 @@
     # Take a float containing a length in inch
     # and round it to "Sketchup" max precision
     def round_length_value(f)
-      f.round(6)
+      f.round(MAX_PRECISION)
+    end
+
+    # Check if given length value is rounded by model precision
+    def rounded_by_model_precision?(f)
+      f.to_l.to_s.to_l.to_f != f.to_l.to_f.round(MAX_PRECISION)
     end
 
   end
