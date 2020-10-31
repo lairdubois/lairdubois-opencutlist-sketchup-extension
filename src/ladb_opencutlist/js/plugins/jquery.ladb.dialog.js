@@ -4,6 +4,8 @@
     // CONSTANTS
     // ======================
 
+    var EW_URL = 'https://www.lairdubois.fr/opencutlist';
+
     var MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
     var MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
 
@@ -119,7 +121,7 @@
         var that = this;
 
         if (this.capabilities.manifest == null && this.capabilities.update_available == null) {
-            $.getJSON((this.capabilities.debug ? MANIFEST_DEV_URL : MANIFEST_URL) + '?v=' + this.capabilities.version, function (data) {
+            $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.debug ? MANIFEST_DEV_URL : MANIFEST_URL), function (data) {
 
                 // Keep manifest data
                 that.capabilities.manifest = data;
@@ -495,7 +497,7 @@
             $panelProgress.show();
             $footer.hide();
 
-            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url + '?v=' + that.capabilities.version : EW_URL }, function (response) {
+            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL }, function (response) {
                 if (response.cancelled) {
 
                     // Close and remove modal
@@ -530,7 +532,7 @@
         $btnDownload.on('click', function() {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.capabilities.manifest.url + '?v=' + that.capabilities.version : EW_URL });
+            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL });
 
             // Close and remove modal
             $modal.modal('hide');
@@ -607,6 +609,8 @@
         });
     };
 
+    // Utils /////
+
     LadbDialog.prototype.amountToLocaleString = function (amount, currency) {
         return amount.toLocaleString(this.capabilities.language, {
             style: 'currency',
@@ -615,6 +619,10 @@
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         });
+    }
+
+    LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url) {
+        return url + '?v=' + this.capabilities.version + '&l=' + this.capabilities.language
     }
 
     // Internals /////

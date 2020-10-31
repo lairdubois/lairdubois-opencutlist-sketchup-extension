@@ -1,9 +1,9 @@
 // CONSTANTS
 // ======================
 
-var EXTENSION_BUILD = '202010282025';
+var EXTENSION_BUILD = '202010311041';   // /!\ Auto-generated line, do not edit //
 
-var EW_URL = 'https://www.lairdubois.fr/opencutlist';
+// UI /////
 
 var SELECT_PICKER_OPTIONS = {
     size: 10,
