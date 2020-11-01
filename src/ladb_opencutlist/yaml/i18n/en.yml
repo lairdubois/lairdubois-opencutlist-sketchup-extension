@@ -104,7 +104,7 @@ tab:
     material_undefined: No material defined
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
-    not_available_std_section: Cross-section undefined
+    not_available_std_section: Cross section undefined
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
@@ -114,7 +114,7 @@ tab:
       scroll_to_block: Scroll to group
       not_available_std_width: The width *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       not_available_std_thickness: The thickness *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
-      not_available_std_section: The cross-section *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
+      not_available_std_section: The cross section *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
         to material '{{ material_name }}'
@@ -122,24 +122,24 @@ tab:
         Add thickness *{{ std_dimension }}*
         to material '{{ material_name }}'
       add_std_section_to_material: |
-        Add cross-section *{{ std_dimension }}*
+        Add cross section *{{ std_dimension }}*
         to material '{{ material_name }}'
-      rounded_std_width: |  # TODO
-        La largeur *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Largeur réelle : *{{ std_dimension_real }}*
+      rounded_std_width: |
+        The width *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real width: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_thickness: |  # TODO
-        L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Epaisseur réelle : *{{ std_dimension_real }}*
+      rounded_std_thickness: |
+        The thickness *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real thickness: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_section: |  # TODO
-        La section *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Section réelle : *{{ std_dimension_real }}*
+      rounded_std_section: |
+        The cross section *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real cross section: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.  # TODO
+      rounded_std_footer: Adjust the precision in the *Model Info* or check the dimensions of the parts in this group.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
