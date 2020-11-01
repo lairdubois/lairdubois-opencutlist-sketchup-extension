@@ -128,17 +128,18 @@ tab:
         La largeur *{{ std_dimension }}* est arrondie par la précision du modèle.
         Largeur réelle : *{{ std_dimension_real }}*
         ---
-        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
+        $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
         L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
         Epaisseur réelle : *{{ std_dimension_real }}*
         ---
-        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
+        $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
         La section *{{ std_dimension }}* est arrondie par la précision du modèle.
         Section réelle : *{{ std_dimension_real }}*
         ---
-        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
