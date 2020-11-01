@@ -2,8 +2,6 @@
 
   require 'singleton'
 
-  MAX_PRECISION = 6
-
   # Format - just here for convenience
   DECIMAL       = Length::Decimal
   ARCHITECTURAL = Length::Architectural
@@ -36,6 +34,8 @@
 
     attr_accessor :decimal_separator, :length_unit
 
+    MAX_PRECISION = 6
+
     # Separators
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
@@ -44,6 +44,26 @@
     @length_unit
     @length_format
     @length_precision
+
+    # -----
+
+    # Take a Length, convert to float in inches rounded to "Sketchup" max precision
+    def self.to_max_precision_f(l)
+      l.to_f.round(MAX_PRECISION)
+    end
+
+    # Take a Length, convert to string representation in model unit rounded to "Sketchup" max precision
+    def self.to_max_precision_s(l)
+      Sketchup.format_length(l, MAX_PRECISION).gsub(/~ /, '') # Remove ~ if it exists
+    end
+
+    # Check if given length value is rounded by model precision
+    def self.rounded_by_model_precision?(f)
+      f.to_l.to_s.to_l.to_f.round(MAX_PRECISION) != f.to_l.to_f.round(MAX_PRECISION)
+    end
+
+
+    # -----
 
     def initialize
       begin
@@ -424,19 +444,6 @@
       value = f * multiplier
       rounded_value = value.round(precision)
       ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit_sign
-    end
-
-    # -----
-
-    # Take a float containing a length in inch
-    # and round it to "Sketchup" max precision
-    def round_length_value(f)
-      f.round(MAX_PRECISION)
-    end
-
-    # Check if given length value is rounded by model precision
-    def rounded_by_model_precision?(f)
-      f.to_l.to_s.to_l.to_f != f.to_l.to_f.round(MAX_PRECISION)
     end
 
   end

@@ -125,12 +125,14 @@ tab:
         Add cross-section *{{ std_dimension }}*
         to material '{{ material_name }}'
       rounded_std_thickness: |  # TODO
-        L'épaisseur *{{ std_dimension }}* n'est pas l'épaisseur réelle mesurée.
-        Elle est arrondie par la précision du modèle.
+        L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
+        Epaisseur réelle : *{{ std_dimension_real }}*
+        ---
         Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       rounded_std_section: |  # TODO
-        La section *{{ std_dimension }}* n'est pas la section réelle mesurée.
-        Elle est arrondie par la précision du modèle.
+        La section *{{ std_dimension }}* est arrondie par la précision du modèle.
+        Section réelle : *{{ std_dimension_real }}*
+        ---
         Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)

@@ -112,9 +112,9 @@ tab:
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
-      not_available_std_width: La largeur *{{ std_dimension }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'
-      not_available_std_thickness: L'épaisseur *{{ std_dimension }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'
-      not_available_std_section: La section *{{ std_dimension }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'
+      not_available_std_width: La largeur *{{ std_dimension_real }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'
+      not_available_std_thickness: L'épaisseur *{{ std_dimension_real }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'
+      not_available_std_section: La section *{{ std_dimension_real }}* n'est pas définie dans les sections standards de la matière '{{ material_name }}'
       add_std_width_to_material: |
         Ajouter la largeur *{{ std_dimension }}*
         à la matière '{{ material_name }}'
@@ -124,13 +124,20 @@ tab:
       add_std_section_to_material: |
         Ajouter la section *{{ std_dimension }}*
         à la matière '{{ material_name }}'
+      rounded_std_width: |
+        La largeur *{{ std_dimension }}* est arrondie par la précision du modèle.
+        Largeur réelle : *{{ std_dimension_real }}*
+        ---
+        Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       rounded_std_thickness: |
-        L'épaisseur *{{ std_dimension }}* n'est pas exactement l'épaisseur réelle mesurée.
-        Elle est arrondie par la précision du modèle.
+        L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
+        Epaisseur réelle : *{{ std_dimension_real }}*
+        ---
         Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       rounded_std_section: |
-        La section *{{ std_dimension }}* n'est pas exactement la section réelle mesurée.
-        Elle est arrondie par la précision du modèle.
+        La section *{{ std_dimension }}* est arrondie par la précision du modèle.
+        Section réelle : *{{ std_dimension_real }}*
+        ---
         Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)

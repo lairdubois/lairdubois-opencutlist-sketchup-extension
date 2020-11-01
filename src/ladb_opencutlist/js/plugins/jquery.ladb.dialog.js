@@ -622,7 +622,7 @@
     }
 
     LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url) {
-        return url + '?v=' + this.capabilities.version + '&l=' + this.capabilities.language
+        return url + '?v=' + this.capabilities.version + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
     }
 
     // Internals /////

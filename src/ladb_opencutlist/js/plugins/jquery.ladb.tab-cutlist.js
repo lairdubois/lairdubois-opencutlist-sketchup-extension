@@ -406,7 +406,10 @@
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: group.std_dimension }, function (response) {
+                    // Use real std dimension if dimension is rounded
+                    var std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
+
+                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: std_dimension }, function (response) {
 
                         // Flag to stop ignoring next material change event
                         that.ignoreNextMaterialEvents = false;

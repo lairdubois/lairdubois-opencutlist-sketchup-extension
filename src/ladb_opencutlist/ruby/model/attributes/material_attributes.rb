@@ -266,7 +266,7 @@
       @std_lengths.split(';').each { |std_length|
         a << DimensionUtils.instance.d_to_ifloats(std_length).to_l
       }
-      a.sort!
+      a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
     end
 
@@ -288,7 +288,7 @@
       @std_widths.split(';').each { |std_width|
         a << DimensionUtils.instance.d_to_ifloats(std_width).to_l
       }
-      a.sort!
+      a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
     end
 
@@ -310,7 +310,7 @@
       @std_thicknesses.split(';').each { |std_thickness|
         a << DimensionUtils.instance.d_to_ifloats(std_thickness).to_l
       }
-      a.sort!
+      a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
     end
 
