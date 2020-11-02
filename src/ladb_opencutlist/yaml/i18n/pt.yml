@@ -23,7 +23,7 @@ default:
   ignore: Ignorar
   download: Baixar
   upgrade: Atualizar
-  empty_filename: Untitled.skp
+  empty_filename: Sem nome.skp
   help: Ajuda
   error: Danificado!
   warning: Aviso
@@ -124,22 +124,22 @@ tab:
       add_std_section_to_material: |
         Acrescentar seção *{{ std_dimension }}*
         ao material '{{ material_name }}'
-      rounded_std_width: |  # TODO
-        La largeur *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Largeur réelle : *{{ std_dimension_real }}*
+      rounded_std_width: |
+        A largura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        Largura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_thickness: |  # TODO
-        L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Epaisseur réelle : *{{ std_dimension_real }}*
+      rounded_std_thickness: |
+        A espessura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        Espessura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_section: |  # TODO
-        La section *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Section réelle : *{{ std_dimension_real }}*
+      rounded_std_section: |
+        A seção cruzada *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        Seção cruzada real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.  # TODO
+      rounded_std_footer: Definir a precisão na *Informações do modelo* ou verificar as dimensões das peças deste grupo.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
