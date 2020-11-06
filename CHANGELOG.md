@@ -6,6 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.9.9 (WIP)
 
+  * Added news tab
   * Improved thickness and section precision display
 
 * 1.9.8 (2020-10-28)

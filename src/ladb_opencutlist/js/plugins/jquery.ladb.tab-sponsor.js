@@ -1,6 +1,9 @@
 +function ($) {
     'use strict';
 
+    // CONSTANTS
+    // ======================
+
     var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
     var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
     var GRAPHQL_PAGE_SIZE = 16;

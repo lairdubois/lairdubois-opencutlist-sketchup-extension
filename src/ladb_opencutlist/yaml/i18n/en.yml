@@ -41,6 +41,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
+  load_more: "Load more ..."
 core:
   menu:
     submenu: OpenCutList
@@ -635,19 +636,6 @@ tab:
     success:
       exported_to: Export to {{ export_path }} successful.
     obsolete_base: To remain synchronized, you must refresh the material list.
-  tutorials:
-    label: Tutorials
-    title: Tutorials
-    help: |
-      Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
-    submit: Submit a video
-    submit_info: |
-      You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
-      Let us know by writing to us at **opencutlist@lairdubois.fr**!
-
-      *The video must be public and hosted on YouTube*.
-    error:
-      fail_to_load_list: Unable to load video list.
   importer:
     label: Import
     title: Import Parts
@@ -725,6 +713,26 @@ tab:
       imported_body: "{{ count }} part was successfully imported!"
       imported_body_plural: "{{ count }} parts were successfully imported!"
     obsolete_base: To remain synchronized, you must reload the CSV file.
+  tutorials:
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
+    submit: Submit a video
+    submit_info: |
+      You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
+      Let us know by writing to us at **opencutlist@lairdubois.fr**!
+
+      *The video must be public and hosted on YouTube*.
+    error:
+      fail_to_load_list: Unable to load video list.
+  news:
+    label: Actualités # TODO
+    title: Actualités # TODO
+    help: | # TODO
+      Retrouvez ici les actualités d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
   sponsor:
     label: Sponsor
     title: Sponsor
@@ -734,7 +742,6 @@ tab:
     contribute: Contribute
     backers: "{{ count }} financial contributor"
     backers_plural: "{{ count }} financial contributors"
-    load_more: "Load more ..."
     ad: Do you like OpenCutList?
     objective: Objective
     objective_title: Generate a Report

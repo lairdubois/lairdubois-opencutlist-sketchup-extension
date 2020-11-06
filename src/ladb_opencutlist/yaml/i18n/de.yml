@@ -41,6 +41,7 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
+  load_more: "Weitere laden ..."
 core:
   menu:
     submenu: OpenCutList
@@ -635,19 +636,6 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
-  tutorials:
-    label: Tutorials
-    title: Tutorials
-    help: |
-      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
-    submit: Video einreichen
-    submit_info: |
-      Sie haben ein Video über die Verwendung von **OpenCutList** gemacht und möchten, dass es hier erscheint?
-      Lassen Sie es uns wissen, indem Sie uns **opencutlist@lairdubois.fr** schreiben!
-
-      *Das Video muss öffentlich sein und auf YouTube gehostet werden*.
-    error:
-      fail_to_load_list: Videoliste kann nicht geladen werden.
   importer:
     label: Importieren
     title: Teile importieren
@@ -725,6 +713,26 @@ tab:
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     obsolete_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+  tutorials:
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
+    submit: Video einreichen
+    submit_info: |
+      Sie haben ein Video über die Verwendung von **OpenCutList** gemacht und möchten, dass es hier erscheint?
+      Lassen Sie es uns wissen, indem Sie uns **opencutlist@lairdubois.fr** schreiben!
+
+      *Das Video muss öffentlich sein und auf YouTube gehostet werden*.
+    error:
+      fail_to_load_list: Videoliste kann nicht geladen werden.
+  news:
+    label: Actualités # TODO
+    title: Actualités # TODO
+    help: | # TODO
+      Retrouvez ici les actualités d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
   sponsor:
     label: Sponsern
     title: Sponsoring
@@ -734,7 +742,6 @@ tab:
     contribute: Beitragen
     backers: "{{ count }} finanzieller Sponsor"
     backers_plural: "{{ count }} finanzielle Sponsoren"
-    load_more: "Weitere laden ..."
     ad: Gefällt Ihnen OpenCutList?
     objective: Ziel
     objective_title: Bericht generieren

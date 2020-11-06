@@ -41,6 +41,7 @@ default:
   part_single: деталь
   part_plural: детали
   setup_model_units: Установка единиц измерения
+  load_more: "Загрузить больше ..."
 core:
   menu:
     submenu: OpenCutList
@@ -635,19 +636,6 @@ tab:
     success:
       exported_to: Экспорт {{ export_path }} завершен.
     obsolete_base: Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
-  tutorials:
-    label: Инструкции
-    title: Инструкции
-    help: |
-      Вот неисчерпывающий список видео, созданных сообществом вокруг использования *OpenCutList*.
-    submit: Отправить видео
-    submit_info: |
-      Вы сделали видео, представляющее использование **OpenCutList**, и вы хотели бы, чтобы он появился здесь?
-      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
-
-      *Видео должно быть публичным и размещено на YouTube*.
-    error:
-      fail_to_load_list: Список видеозаписей не может быть загружен.
   importer:
     label: Импорт
     title: Импорт деталей
@@ -725,6 +713,26 @@ tab:
       imported_body: "{{ count }} часть была успешно импортирована!"
       imported_body_plural: "{{ count }} деталей успешно импортированы!"
     obsolete_base: Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
+  tutorials:
+    label: Инструкции
+    title: Инструкции
+    help: |
+      Вот неисчерпывающий список видео, созданных сообществом вокруг использования *OpenCutList*.
+    submit: Отправить видео
+    submit_info: |
+      Вы сделали видео, представляющее использование **OpenCutList**, и вы хотели бы, чтобы он появился здесь?
+      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
+
+      *Видео должно быть публичным и размещено на YouTube*.
+    error:
+      fail_to_load_list: Список видеозаписей не может быть загружен.
+  news:
+    label: Actualités # TODO
+    title: Actualités # TODO
+    help: | # TODO
+      Retrouvez ici les actualités d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
   sponsor:
     label: Спонсоры
     title: Спонсоры
@@ -734,7 +742,6 @@ tab:
     contribute: Поддержи проект
     backers: "{{ count }} финансовый спонсор"
     backers_plural: "{{ count }} финансовые спонсоры"
-    load_more: "Загрузить больше ..."
     ad: Вам нравится OpenCutList ?
     objective: Задача
     objective_title: Создать отчет

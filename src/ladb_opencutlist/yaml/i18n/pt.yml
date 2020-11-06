@@ -41,6 +41,7 @@ default:
   part_single: parte
   part_plural: partes
   setup_model_units: Configure as unidades do modelo
+  load_more: "Carregue mais ..."
 core:
   menu:
     submenu: OpenCutList
@@ -635,19 +636,6 @@ tab:
     success:
       exported_to: Exportação para {{ export_path }} com sucesso.
     obsolete_base: Para permanecer sincronizado, você deve atualizar a lista de materiais.
-  tutorials:
-    label: Tutoriais
-    title: Tutoriais
-    help: |
-      Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
-    submit: Enviar um vídeo
-    submit_info: |
-      Você fez um vídeo apresentando o uso de **OpenCutList** e gostaria de vê-lo aparecer aqui?
-      Nos informe escrevendo para **opencutlist@lairdubois.fr**!
-
-      *O vídeo deve ser público e hospedado no YouTube*.
-    error:
-      fail_to_load_list: Incapaz de carregar a lista de vídeos.
   importer:
     label: Importar
     title: Importar partes
@@ -725,6 +713,26 @@ tab:
       imported_body: "{{ count }} parte foi importada com sucesso!"
       imported_body_plural: "{{ count }} partes foram importadas com sucesso!"
     obsolete_base: Para permanecer sincronizado, você deve recarregar o arquivo CSV.
+  tutorials:
+    label: Tutoriais
+    title: Tutoriais
+    help: |
+      Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
+    submit: Enviar um vídeo
+    submit_info: |
+      Você fez um vídeo apresentando o uso de **OpenCutList** e gostaria de vê-lo aparecer aqui?
+      Nos informe escrevendo para **opencutlist@lairdubois.fr**!
+
+      *O vídeo deve ser público e hospedado no YouTube*.
+    error:
+      fail_to_load_list: Incapaz de carregar a lista de vídeos.
+  news:
+    label: Actualités # TODO
+    title: Actualités # TODO
+    help: | # TODO
+      Retrouvez ici les actualités d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
   sponsor:
     label: Patrocinador
     title: Patrocinador
@@ -734,7 +742,6 @@ tab:
     contribute: Contribuir
     backers: "{{ count }} contribuidor financeiro"
     backers_plural: "{{ count }} contribuidores financeiros"
-    load_more: "Carregue mais ..."
     ad: Você gosta de OpenCutList?
     objective: Objetivo
     objective_title: Gerar um relatório

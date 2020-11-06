@@ -94,6 +94,12 @@
                 sponsorAd: false
             },
             {
+                name: 'news',
+                bar: 'leftbar-bottom',
+                icon: 'ladb-opencutlist-icon-news',
+                sponsorAd: false
+            },
+            {
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings',
