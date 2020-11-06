@@ -1,4 +1,4 @@
-{% for update in updates.nodes %}
+{% for update in updates.nodes if not update.isPrivate %}
     <div class="col-md-8 col-md-push-2 col-xs-12">
         <div class="ladb-news-update-box" data-update-slug="{{ update.slug }}">
             <div class="ladb-news-update-header">

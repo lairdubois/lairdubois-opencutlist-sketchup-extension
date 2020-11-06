@@ -18,3 +18,9 @@ var TOKENFIELD_OPTIONS = {
     beautify: false,
     minWidth: 250
 };
+
+// GraphQL /////
+
+var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
+var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
+

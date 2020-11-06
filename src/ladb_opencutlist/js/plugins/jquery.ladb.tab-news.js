@@ -4,9 +4,7 @@
     // CONSTANTS
     // ======================
 
-    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
-    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-    var GRAPHQL_PAGE_SIZE = 5;
+    var UPDATES_PAGE_SIZE = 5;
 
     // CLASS DEFINITION
     // ======================
@@ -14,11 +12,7 @@
     var LadbTabNews = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
-        this.$btnSubmit = $('#ladb_btn_submit', this.$element);
-
         this.$page = $('.ladb-page', this.$element);
-
-        this.news = null;
 
     };
     LadbTabNews.prototype = new LadbAbstractTab;
@@ -29,7 +23,7 @@
         var that = this;
 
         // Fetch UI elements
-        var $loading = $('.ladb-loading', this.$element);
+        var $loading = $('.ladb-loading', this.$page);
 
         // Show loading
         $loading.show();
@@ -45,12 +39,13 @@
             data: JSON.stringify({
                 query: "query updates($slug: String) { " +
                         "collective(slug: $slug) { " +
-                            "updates(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", onlyPublishedUpdates: true) { " +
+                            "updates(offset: " + page * UPDATES_PAGE_SIZE + ", limit: " + UPDATES_PAGE_SIZE + ", onlyPublishedUpdates: true) { " +
                                 "totalCount " +
                                 "nodes { " +
                                     "slug " +
                                     "title " +
                                     "publishedAt " +
+                                    "isPrivate " +
                                     "html " +
                                     "fromAccount { " +
                                         "slug " +
@@ -68,7 +63,7 @@
             success: function (response) {
                 if (response.data) {
 
-                    var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.data.collective.updates.totalCount) ? page + 1 : null;
+                    var nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.updates.totalCount) ? page + 1 : null;
 
                     // Render updates list
                     var $list = $(Twig.twig({ref: 'tabs/news/_updates-' + (page === 0 ? '0' : 'n') + '.twig'}).render({

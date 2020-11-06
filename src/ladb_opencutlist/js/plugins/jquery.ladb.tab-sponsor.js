@@ -4,9 +4,7 @@
     // CONSTANTS
     // ======================
 
-    var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
-    var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-    var GRAPHQL_PAGE_SIZE = 16;
+    var BACKERS_PAGE_SIZE = 16;
 
     // CLASS DEFINITION
     // ======================
@@ -117,7 +115,7 @@
                         "collective(slug: $slug) { " +
                             "name " +
                             "slug " +
-                            "members(offset: " + page * GRAPHQL_PAGE_SIZE + ", limit: " + GRAPHQL_PAGE_SIZE + ", role: BACKER) { " +
+                            "members(offset: " + page * BACKERS_PAGE_SIZE + ", limit: " + BACKERS_PAGE_SIZE + ", role: BACKER) { " +
                                 "totalCount " +
                                 "nodes { " +
                                     "account { " +
@@ -143,7 +141,7 @@
             success: function (response) {
                 if (response.data) {
 
-                    var nextPage = ((page + 1) * GRAPHQL_PAGE_SIZE < response.data.collective.members.totalCount) ? page + 1 : null;
+                    var nextPage = ((page + 1) * BACKERS_PAGE_SIZE < response.data.collective.members.totalCount) ? page + 1 : null;
 
                     // Render members list
                     var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({

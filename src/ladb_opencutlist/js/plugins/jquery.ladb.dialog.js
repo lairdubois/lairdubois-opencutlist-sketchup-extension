@@ -95,7 +95,7 @@
             },
             {
                 name: 'news',
-                bar: 'leftbar-bottom',
+                bar: null,
                 icon: 'ladb-opencutlist-icon-news',
                 sponsorAd: false
             },
