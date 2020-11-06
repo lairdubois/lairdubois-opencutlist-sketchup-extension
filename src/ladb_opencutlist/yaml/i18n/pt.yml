@@ -727,12 +727,12 @@ tab:
     error:
       fail_to_load_list: Incapaz de carregar a lista de vídeos.
   news:
-    label: Actualités # TODO
-    title: Actualités # TODO
-    help: | # TODO
-      Retrouvez ici les actualités d'*OpenCutList*.
+    label: Notícias # TODO
+    title: Notícias
+    help: |
+      Encontre aqui as notícias sobre *OpenCutList*.
     error:
-      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
+      fail_to_load_list: Incapaz de carregar a lista de notícias.
   sponsor:
     label: Patrocinador
     title: Patrocinador
