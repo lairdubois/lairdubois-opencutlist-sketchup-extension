@@ -727,12 +727,12 @@ tab:
     error:
       fail_to_load_list: Список видеозаписей не может быть загружен.
   news:
-    label: Actualités # TODO
-    title: Actualités # TODO
-    help: | # TODO
-      Retrouvez ici les actualités d'*OpenCutList*.
+    label: Новости # TODO
+    title: Новости
+    help: |
+      Найдите здесь новости из *OpenCutList*.
     error:
-      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
+      fail_to_load_list: список новостей нельзя скачать.
   sponsor:
     label: Спонсоры
     title: Спонсоры

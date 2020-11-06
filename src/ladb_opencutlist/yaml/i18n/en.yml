@@ -725,14 +725,14 @@ tab:
 
       *The video must be public and hosted on YouTube*.
     error:
-      fail_to_load_list: Unable to load video list.
+      fail_to_load_list: Unable to download video list.
   news:
-    label: Actualités # TODO
-    title: Actualités # TODO
-    help: | # TODO
-      Retrouvez ici les actualités d'*OpenCutList*.
+    label: News
+    title: News
+    help: |
+      Find here the news from *OpenCutList*.
     error:
-      fail_to_load_list: Impossible de charger la liste des actualités. # TODO
+      fail_to_load_list: Unable to download the news list.
   sponsor:
     label: Sponsor
     title: Sponsor
