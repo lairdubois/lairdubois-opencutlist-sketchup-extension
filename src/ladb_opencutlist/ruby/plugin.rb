@@ -63,6 +63,7 @@ module Ladb::OpenCutList
       @manifest = nil
       @update_available = nil
       @update_muted = false
+      @last_news_timestamp = nil
 
       @commands = {}
       @event_callbacks = {}
@@ -332,6 +333,9 @@ module Ladb::OpenCutList
         register_command('core_set_update_status') do |params|
           set_update_status_command(params)
         end
+        register_command('core_set_news_status') do |params|
+          set_news_status_command(params)
+        end
         register_command('core_upgrade') do |params|
           upgrade_command(params)
         end
@@ -582,6 +586,10 @@ module Ladb::OpenCutList
       @update_muted = params['update_muted']
     end
 
+    def set_news_status_command(params)    # Waiting params = { last_news_timestamp: TIMESTAMP }
+      @last_news_timestamp = params['last_news_timestamp']
+    end
+
     def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
       # Just open URL for older Sketchup versions
       if Sketchup.version_number < 1700000000
@@ -783,6 +791,7 @@ module Ladb::OpenCutList
           :manifest => @manifest,
           :update_available => @update_available,
           :update_muted => @update_muted,
+          :last_news_timestamp => @last_news_timestamp,
           :dialog_maximized_width => @dialog_maximized_width,
           :dialog_maximized_height => @dialog_maximized_height,
           :dialog_left => @dialog_left,

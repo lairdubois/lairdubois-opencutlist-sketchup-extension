@@ -63,6 +63,12 @@
             success: function (response) {
                 if (response.data) {
 
+                    // First page, keep last listed news timestamp
+                    if (page === 0) {
+                        var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+                        that.dialog.setLastListedNewsTimestamp(lastNewsTimestamp);
+                    }
+
                     var nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.updates.totalCount) ? page + 1 : null;
 
                     // Render updates list

@@ -11,6 +11,7 @@
 
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
+    var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
     // CLASS DEFINITION
     // ======================
@@ -37,6 +38,7 @@
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,
+            last_news_timestamp: options.last_news_timestamp,
             dialogMaximizedWidth: options.dialog_maximized_width,
             dialogMaximizedHeight: options.dialog_maximized_height,
             dialogLeft: options.dialog_left,
@@ -52,18 +54,16 @@
         this.maximized = false;
 
         this.activeTabName = null;
-        this.tabs = {};
-        this.tabBtns = {};
+        this.$tabs = {};
+        this.$tabBtns = {};
 
         this._$modal = null;
 
         this.$wrapper = null;
         this.$wrapperSlides = null;
-        this.$leftbarBottom = null;
-        this.$leftbarBtnMinimize = null;
-        this.$leftbarBtnMaximize = null;
-        this.$leftbarBtnUpgrade = null;
+        this.$leftbar = null;
         this.$btnCloseCompatibilityAlert = null;
+
     };
 
     LadbDialog.DEFAULTS = {
@@ -143,7 +143,14 @@
 
                     // Trigger updatable event
                     setTimeout(function () {
-                        that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+
+                        // Fresh update, notify it
+                        if (!that.capabilities.update_muted) {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade' ]);
+                        } else {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade', { muted: true } ]);
+                        }
+
                     }, 1000);
 
                 } else {
@@ -169,6 +176,71 @@
         }
 
     };
+
+    // News /////
+
+    LadbDialog.prototype.checkNews = function () {
+        var that = this;
+
+        if (this.capabilities.last_news_timestamp == null) {
+            $.ajax({
+                url: GRAPHQL_ENDPOINT,
+                contentType: 'application/json',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    query: "query lastUpdateId($slug: String) { " +
+                            "collective(slug: $slug) { " +
+                                "updates(limit: 1, onlyPublishedUpdates: true) { " +
+                                    "nodes { " +
+                                        "publishedAt " +
+                                    "}" +
+                                "}" +
+                            "}" +
+                        "}",
+                    variables: {
+                        slug: GRAPHQL_SLUG
+                    }
+                }),
+                success: function (response) {
+                    if (response.data && response.data.collective.updates.nodes.length > 0) {
+
+                        var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+
+                        if (that.lastListedNewsTimestamp == null) {
+
+                            // First run lastListedNewsTimestamp is set to lastNewsTimestamp. In this case current last news do not generate notification.
+                            that.setLastListedNewsTimestamp(lastNewsTimestamp);
+
+                        } else if (lastNewsTimestamp > that.lastListedNewsTimestamp) {
+
+                            // Fresh news are available, notify it :)
+                            that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_news'])
+
+                        }
+
+                        // Save timestamp
+                        that.capabilities.last_news_timestamp = lastNewsTimestamp;
+
+                        // Send news status to ruby
+                        rubyCallCommand('core_set_news_status', {
+                            last_news_timestamp: that.capabilities.last_news_timestamp
+                        });
+
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    that.capabilities.last_news_timestamp = null;
+                }
+            });
+        }
+
+    };
+
+    LadbDialog.prototype.setLastListedNewsTimestamp = function (lastListedNewsTimestamp) {
+        this.lastListedNewsTimestamp = lastListedNewsTimestamp;
+        this.setSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, this.lastListedNewsTimestamp);
+    }
 
     // Settings /////
 
@@ -220,13 +292,11 @@
         var that = this;
         if (that.maximized && !that.minimizing) {
             that.minimizing = true;
-            that.$leftbarBottom.hide();
+            that.$element.trigger(jQuery.Event('minimizing.ladb.dialog'));
             rubyCallCommand('core_dialog_minimize', null, function () {
                 that.minimizing = false;
                 Noty.closeAll();
                 that.$wrapper.hide();
-                that.$leftbarBtnMinimize.hide();
-                that.$leftbarBtnMaximize.show();
                 that.maximized = false;
                 that.$element.trigger(jQuery.Event('minimized.ladb.dialog'));
             });
@@ -237,12 +307,10 @@
         var that = this;
         if (!that.maximized && !that.maximizing) {
             that.maximizing = true;
+            that.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
             rubyCallCommand('core_dialog_maximize', null, function () {
                 that.maximizing = false;
                 that.$wrapper.show();
-                that.$leftbarBtnMinimize.show();
-                that.$leftbarBtnMaximize.hide();
-                that.$leftbarBottom.show();
                 that.maximized = true;
                 that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
             });
@@ -263,10 +331,10 @@
         if (this.activeTabName) {
 
             // Flag as inactive
-            this.tabBtns[this.activeTabName].removeClass('ladb-active');
+            this.$tabBtns[this.activeTabName].removeClass('ladb-active');
 
             // Hide active tab
-            this.tabs[this.activeTabName].hide();
+            this.$tabs[this.activeTabName].hide();
 
         }
     };
@@ -277,7 +345,7 @@
             return;
         }
 
-        var $tab = this.tabs[tabName];
+        var $tab = this.$tabs[tabName];
         if (!$tab) {
 
             // Render and append tab
@@ -301,7 +369,7 @@
             this.setupPopovers();
 
             // Cache tab
-            this.tabs[tabName] = $tab;
+            this.$tabs[tabName] = $tab;
 
             // Hide tab
             $tab.hide();
@@ -324,7 +392,7 @@
             return;
         }
 
-        var $tab = this.tabs[tabName];
+        var $tab = this.$tabs[tabName];
         var $freshTab = false;
         if (tabName !== this.activeTabName) {
             if (this.activeTabName) {
@@ -347,7 +415,7 @@
             $tab.show();
 
             // Flag tab as active
-            this.tabBtns[tabName].addClass('ladb-active');
+            this.$tabBtns[tabName].addClass('ladb-active');
             this.activeTabName = tabName;
 
         }
@@ -487,10 +555,7 @@
             });
 
             // Hide notification badge
-            $('#ladb_leftbar_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
-                .hide()
-            $('.badge.badge-notification', that.$leftbarBtnUpgrade)
-                .addClass('badge-notification-muted')
+            that.$leftbar.ladbLeftbar('muteNotification', [ '#ladb_leftbar_btn_upgrade' ]);
 
             // Close and remove modal
             $modal.modal('hide');
@@ -637,31 +702,16 @@
         var that = this;
 
         // Bind buttons
-        this.$leftbarBtnMinimize.on('click', function () {
-            that.minimize();
-        });
-        this.$leftbarBtnMaximize.on('click', function () {
-            that.maximize();
-            if (!that.activeTabName) {
-                that.selectTab(that.options.defaultTabName);
-            }
-        });
-        $.each(this.tabBtns, function (tabName, $tabBtn) {
+        $.each(this.$tabBtns, function (tabName, $tabBtn) {
             $tabBtn.on('click', function () {
                 that.maximize();
                 that.selectTab(tabName);
             });
         });
-        this.$leftbarBtnUpgrade.on('click', function() {
-            that.showUpgradeModal();
-        });
         this.$btnCloseCompatibilityAlert.on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
-        });
-        $('#ladb_leftbar_btn_more .ladb-subbar-toggle', this.$element).mouseover(function () {
-            $('.badge.badge-notification', this).removeClass('ladb-bounce-y');
         });
 
         // Bind fake tabs
@@ -673,23 +723,7 @@
         // Bind dialog maximized events
         this.$element.on('maximized.ladb.dialog', function() {
             that.loadManifest();
-        });
-
-        // Bind core updatable events
-        this.$element.on('updatable.ladb.core', function() {
-            if (!that.capabilities.update_muted) {
-                $('#ladb_leftbar_btn_more .ladb-subbar-toggle .badge.badge-notification', that.$element)
-                    .addClass('ladb-bounce-y')
-                $('#ladb_leftbar_btn_more .badge.badge-notification', that.$element)
-                    .show();
-                rubyCallCommand('core_play_sound', {
-                    filename: 'wav/notification.wav'
-                });
-            } else {
-                $('.badge.badge-notification', that.$leftbarBtnUpgrade)
-                    .addClass('badge-notification-muted')
-                    .show();
-            }
+            that.checkNews();
         });
 
     };
@@ -699,13 +733,15 @@
 
         this.pullSettings([
                 SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN,
-                SETTING_KEY_MUTED_UPDATE_BUILD
+                SETTING_KEY_MUTED_UPDATE_BUILD,
+                SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP
             ],
             0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
             function () {
 
                 that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
                 that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
+                that.lastListedNewsTimestamp = that.getSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, null);
 
                 // Add i18next twig filter
                 Twig.extendFilter('i18next', function (value, options) {
@@ -760,14 +796,23 @@
                     // Fetch usefull elements
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
-                    that.$leftbarBtnMinimize = $('#ladb_leftbar_btn_minimize', that.$element);
-                    that.$leftbarBtnMaximize = $('#ladb_leftbar_btn_maximize', that.$element);
-                    that.$leftbarBottom = $('#ladb_leftbar_bottom', that.$element);
-                    that.$leftbarBtnUpgrade = $('#ladb_leftbar_btn_upgrade', that.$element);
+                    that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
                     that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                     for (var i = 0; i < that.options.tabDefs.length; i++) {
                         var tabDef = that.options.tabDefs[i];
-                        that.tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+                        that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
+                    }
+
+                    // Push desired notifications
+                    if (that.capabilities.update_available) {
+                        if (that.capabilities.update_muted) {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { muted: true } ]);
+                        } else {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { silent: true } ]);
+                        }
+                    }
+                    if (that.capabilities.last_news_timestamp > that.lastListedNewsTimestamp) {
+                        that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news', { silent: true } ]);
                     }
 
                     that.bind();

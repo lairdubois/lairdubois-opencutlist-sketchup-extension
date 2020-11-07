@@ -443,7 +443,7 @@
     def format_value(f, multiplier, precision, unit_sign)
       value = f * multiplier
       rounded_value = value.round(precision)
-      ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + unit_sign
+      ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + unit_sign
     end
 
   end
