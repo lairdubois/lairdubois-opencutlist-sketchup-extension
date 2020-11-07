@@ -15,7 +15,8 @@
             {% if not hideAddBtn|default(true) %}
                 <div class="ladb-minitools ladb-minitools-inline no-print">
                     <span class="ladb-separator ladb-separator-white"></span>
-                    <a href="#" class="ladb-btn-add-std-dimension-to-material ladb-tool-white" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.add_std_'~group.std_dimension_stipped_name~'_to_material')|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~group.std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-plus"></i></a>
+                    {% set std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension %}
+                    <a href="#" class="ladb-btn-add-std-dimension-to-material ladb-tool-white" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.tooltip.add_std_'~group.std_dimension_stipped_name~'_to_material')|i18next({ 'std_dimension':('<span class="ladb-nowrap">'~std_dimension~'</span>'), 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-plus"></i></a>
                 </div>
             {% endif %}
         </div>
