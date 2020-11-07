@@ -681,7 +681,7 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
 
         // Show Objective modal
-        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', null, null, true);
+        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
 
     };
 
@@ -2117,6 +2117,7 @@
                             // Fetch UI elements
                             var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                             var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnLabels = $('#ladb_btn_labels', $slide);
                             var $btnClose = $('#ladb_btn_close', $slide);
 
                             // Bind buttons
@@ -2125,6 +2126,10 @@
                             });
                             $btnPrint.on('click', function () {
                                 window.print();
+                            });
+                            $btnLabels.on('click', function () {
+                                // Show Objective modal
+                                that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();

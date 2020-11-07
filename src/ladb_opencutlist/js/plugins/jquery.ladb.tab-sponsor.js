@@ -187,10 +187,12 @@
 
     };
 
-    LadbTabSponsor.prototype.showObjectiveModal = function () {
+    LadbTabSponsor.prototype.showObjectiveModal = function (objectiveStrippedName) {
         var that = this;
 
-        var $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig');
+        var $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig', {
+            objectiveStrippedName: objectiveStrippedName ? objectiveStrippedName : 'default'
+        });
 
         // Fetch UI elements
         var $widgetObjective = $('.ladb-sponsor-objective-widget', $modal);
@@ -220,8 +222,8 @@
 
         var that = this;
 
-        this.registerCommand('show_objective_modal', function () {
-            that.showObjectiveModal();
+        this.registerCommand('show_objective_modal', function (parameters) {
+            that.showObjectiveModal(parameters.objectiveStrippedName);
         });
 
     };

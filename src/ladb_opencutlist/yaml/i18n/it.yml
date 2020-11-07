@@ -497,6 +497,8 @@ tab:
           *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Le dimensioni sono state ridotte dello spessore della bordatura.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -744,16 +746,28 @@ tab:
     backers_plural: "{{ count }} sostenitori finanziari"
     ad: Gradisci OpenCutList?
     objective: Obiettivo
-    objective_title: La generazione di un resoconto
     objective_slogan: Scaliamo il Monte Bianco insieme!
-    objective_details: |
-      *La funzionalità "Resoconto" potrebbe essere disponibile nella prossima revisione principale.*
+    objective_title:
+      default: Ziel
+      report: La generazione di un resoconto
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *La funzionalità "Resoconto" potrebbe essere disponibile nella prossima revisione principale.*
 
-      Lo scopo di questa funzione è di :
-      - Stimare il **costo** del progetto con i dettagli dei singoli materiali
-      - Calcolare il **peso** dei materiali richiesti
-      - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando
+        Lo scopo di questa funzione è di :
+          - Stimare il **costo** del progetto con i dettagli dei singoli materiali
+          - Calcolare il **peso** dei materiali richiesti
+          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
     objective_thanks: |
       Grazie per il vostro contributo !

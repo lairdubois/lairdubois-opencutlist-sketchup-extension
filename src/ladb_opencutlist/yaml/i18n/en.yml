@@ -497,6 +497,8 @@ tab:
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -744,16 +746,28 @@ tab:
     backers_plural: "{{ count }} financial contributors"
     ad: Do you like OpenCutList?
     objective: Objective
-    objective_title: Generate a Report
     objective_slogan: Let's climb Mont Blanc together!
-    objective_details: |
-      *Reporting may be available in the next major release.*
+    objective_title:
+      default: Ziel
+      report: Generate a Report
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Reporting may be available in the next major release.*
 
-      The purpose of this feature will be to:
-      - Calculate the **estimated cost** of the project with details per material
-      - Calculate the estimated **weight** of required materials
-      - Synthesize the information of the entire project in a single document accessible by a single action
+        The purpose of this feature will be to:
+          - Calculate the **estimated cost** of the project with details per material
+          - Calculate the estimated **weight** of required materials
+          - Synthesize the information of the entire project in a single document accessible by a single action
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
     objective_thanks: |
       Thank you for your contribution!

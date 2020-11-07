@@ -497,6 +497,8 @@ tab:
           *Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -744,16 +746,28 @@ tab:
     backers_plural: "{{ count }} финансовые спонсоры"
     ad: Вам нравится OpenCutList ?
     objective: Задача
-    objective_title: Создать отчет
     objective_slogan: Давайте вместе покорим высоту Монблан - 4808!
-    objective_details: |
-      *Создание отчета может быть доступно в следующем основном обновлении.*
+    objective_title:
+      default: Ziel
+      report: Создать отчет
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Создание отчета может быть доступно в следующем основном обновлении.*
 
-      Эта функция позволит :
-      - Рассчитать **стоимость** проекта с детализацией по материалу.
-      - Рассчитать  **массу** заданного материала.
-      - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
+        Эта функция позволит :
+          - Рассчитать **стоимость** проекта с детализацией по материалу.
+          - Рассчитать  **массу** заданного материала.
+          - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       Разработка новой функции возможна только за счет **частных пожертвований** и сможет начаться, когда будет собрана **целевая сумма** проекта.
     objective_thanks: |
       Благодарю вас за ваш посильный вклад !

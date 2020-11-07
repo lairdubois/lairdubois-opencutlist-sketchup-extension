@@ -497,6 +497,8 @@ tab:
           *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -744,16 +746,28 @@ tab:
     backers_plural: "{{ count }} finanzielle Sponsoren"
     ad: Gefällt Ihnen OpenCutList?
     objective: Ziel
-    objective_title: Bericht generieren
     objective_slogan: Lassen Sie uns gemeinsam den Mont Blanc besteigen!
-    objective_details: |
-      *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
+    objective_title:
+      default: Ziel
+      report: Bericht generieren
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
-      Der Zweck dieses Features wird sein:
-      - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
-      - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
-      - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
+        Der Zweck dieses Features wird sein:
+          - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
+          - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
+          - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!
