@@ -182,7 +182,6 @@
     LadbDialog.prototype.checkNews = function () {
         var that = this;
 
-        // Check if the delay is enougth to check news
         if (this.capabilities.last_news_timestamp == null) {
             $.ajax({
                 url: GRAPHQL_ENDPOINT,
@@ -204,15 +203,13 @@
                     }
                 }),
                 success: function (response) {
-                    console.log(response);
-
                     if (response.data && response.data.collective.updates.nodes.length > 0) {
 
                         var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
 
                         if (that.lastListedNewsTimestamp == null) {
 
-                            // First run lastListedNewsTimestamp is set to lastNewsTimestamp
+                            // First run lastListedNewsTimestamp is set to lastNewsTimestamp. In this case current last news do not generate notification.
                             that.setLastListedNewsTimestamp(lastNewsTimestamp);
 
                         } else if (lastNewsTimestamp > that.lastListedNewsTimestamp) {
