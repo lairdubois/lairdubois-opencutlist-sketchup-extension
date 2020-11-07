@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../utils/string_utils'
+  require_relative '../../utils/dimension_utils'
 
   class Section
 
@@ -17,6 +18,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def to_max_precision_s
+      DimensionUtils.to_max_precision_s(@width) + ' x ' + DimensionUtils.to_max_precision_s(@height)
+    end
 
     def to_s
       @width.to_l.to_s + ' x ' + @height.to_l.to_s

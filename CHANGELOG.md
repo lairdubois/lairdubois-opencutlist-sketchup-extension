@@ -9,6 +9,11 @@ in 1.x and 0.x versions.
   * Added Accessory material type
   * Added part unit price field for accessories
   
+* 1.9.9 (WIP)
+
+  * Added news tab
+  * Improved thickness and section precision display
+
 * 1.9.8 (2020-10-28)
 
   * Improved "self-updater" workflow

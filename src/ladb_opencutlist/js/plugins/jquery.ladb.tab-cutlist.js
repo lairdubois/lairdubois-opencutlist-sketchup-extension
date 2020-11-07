@@ -405,7 +405,10 @@
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: group.std_dimension }, function (response) {
+                    // Use real std dimension if dimension is rounded
+                    var std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
+
+                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: std_dimension }, function (response) {
 
                         // Flag to stop ignoring next material change event
                         that.ignoreNextMaterialEvents = false;
@@ -677,7 +680,7 @@
     LadbTabCutlist.prototype.reportCutlist = function () {
 
         // Show Objective modal
-        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', null, null, true);
+        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
 
     };
 
@@ -2129,6 +2132,7 @@
                             // Fetch UI elements
                             var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                             var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnLabels = $('#ladb_btn_labels', $slide);
                             var $btnClose = $('#ladb_btn_close', $slide);
 
                             // Bind buttons
@@ -2137,6 +2141,10 @@
                             });
                             $btnPrint.on('click', function () {
                                 window.print();
+                            });
+                            $btnLabels.on('click', function () {
+                                // Show Objective modal
+                                that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();

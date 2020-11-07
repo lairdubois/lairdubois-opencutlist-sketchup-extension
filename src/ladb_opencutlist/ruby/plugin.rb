@@ -65,7 +65,7 @@ module Ladb::OpenCutList
       @update_muted = false
 
       @commands = {}
-      @eventCallbacks = {}
+      @event_callbacks = {}
       @controllers = []
 
       @started = false
@@ -213,16 +213,16 @@ module Ladb::OpenCutList
         events = [ event ]
       end
       events.each do |e|
-        unless @eventCallbacks.has_key? e
-          @eventCallbacks[e] = []
+        unless @event_callbacks.has_key? e
+          @event_callbacks[e] = []
         end
-        @eventCallbacks[e].push(block)
+        @event_callbacks[e].push(block)
       end
     end
 
     def trigger_event(event, params)
-      if @eventCallbacks.has_key? event
-        blocks = @eventCallbacks[event]
+      if @event_callbacks.has_key? event
+        blocks = @event_callbacks[event]
         blocks.each do |block|
           block.call(params)
         end

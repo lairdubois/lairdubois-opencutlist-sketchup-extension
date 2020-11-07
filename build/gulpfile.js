@@ -121,6 +121,8 @@ gulp.task('rbz_create', function () {
 
 gulp.task('version', function () {
 
+    // --no-manifest        # default = --manifest=true
+
     // Retrive version from package.json
     var pkg = JSON.parse(fs.readFileSync('./package.json'));
     var version = pkg.version + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase());
@@ -129,18 +131,32 @@ gulp.task('version', function () {
     var nowISO = (new Date()).toISOString();
     var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
 
-    // Update version property in manifest.json
-    gulp.src('../dist/manifest' + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase()) + '.json')
-        .pipe(replace(/"version": "[0-9.]+(-[a-z]*)?"/g, '"version": "' + version + '"'))
-        .pipe(replace(/"build": "[0-9]{12}?"/g, '"build": "' + build + '"'))
-        .pipe(gulp.dest('../dist'))
+    if (options.manifest || options.manifest === undefined) {
+        // Update version property in manifest.json
+        gulp.src('../dist/manifest' + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase()) + '.json')
+            .pipe(replace(/"version": "[0-9.]+(-[a-z]*)?"/g, '"version": "' + version + '"'))
+            .pipe(replace(/"build": "[0-9]{12}?"/g, '"build": "' + build + '"'))
+            .pipe(gulp.dest('../dist'))
+            .pipe(touch());
+    }
+
+    // Update version property in ladb_opencutlist.rb
+    gulp.src('../src/ladb_opencutlist.rb')
+        .pipe(replace(/ex.version     = "[0-9.]+(-[a-z]*)?"/g, 'ex.version     = "' + version + '"'))
+        .pipe(gulp.dest('../src'))
         .pipe(touch());
 
-    // Update version property in plugin.rb
-    return gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
+    // Update version property in constants.rb
+    gulp.src('../src/ladb_opencutlist/ruby/constants.rb')
         .pipe(replace(/EXTENSION_VERSION = '[0-9.]+(-[a-z]*)?'/g, "EXTENSION_VERSION = '" + version + "'"))
         .pipe(replace(/EXTENSION_BUILD = '[0-9]{12}?'/g, "EXTENSION_BUILD = '" + build + "'"))
         .pipe(gulp.dest('../src/ladb_opencutlist/ruby'))
+        .pipe(touch());
+
+    // Update version property in constants.rb
+    return gulp.src('../src/ladb_opencutlist/js/constants.js')
+        .pipe(replace(/var EXTENSION_BUILD = '[0-9]{12}?';/g, "var EXTENSION_BUILD = '" + build + "';"))
+        .pipe(gulp.dest('../src/ladb_opencutlist/js'))
         .pipe(touch());
 });
 

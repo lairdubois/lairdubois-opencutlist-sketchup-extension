@@ -41,6 +41,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
+  load_more: "Load more ..."
 core:
   menu:
     submenu: OpenCutList
@@ -82,9 +83,10 @@ core:
       *Consider a sponsorship of this project to help us add even more features!*
     downloading: Download in progress...
     changelog: What's new?
-    ignore_update: Skip this update  # TODO
+    ignore_update: Skip this update
     download_rescue: Problem with the download?
     manual_download: Manual downloading
+    zzz: I'm currently resting following the update. To wake me up, you must restart SketchUp.
     success: |
       The update of OpenCutList has finished!
 
@@ -103,7 +105,7 @@ tab:
     material_undefined: No material defined
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
-    not_available_std_section: Cross-section undefined
+    not_available_std_section: Cross section undefined
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
@@ -113,7 +115,7 @@ tab:
       scroll_to_block: Scroll to group
       not_available_std_width: The width *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       not_available_std_thickness: The thickness *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
-      not_available_std_section: The cross-section *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
+      not_available_std_section: The cross section *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
         to material '{{ material_name }}'
@@ -121,8 +123,24 @@ tab:
         Add thickness *{{ std_dimension }}*
         to material '{{ material_name }}'
       add_std_section_to_material: |
-        Add cross-section *{{ std_dimension }}*
+        Add cross section *{{ std_dimension }}*
         to material '{{ material_name }}'
+      rounded_std_width: |
+        The width *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real width: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        The thickness *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real thickness: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        The cross section *{{ std_dimension }}* is rounded by the precision of the model units.
+        Real cross section: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Adjust the precision in the *Model Info* or check the dimensions of the parts in this group.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -479,6 +497,8 @@ tab:
           *These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -622,19 +642,6 @@ tab:
     success:
       exported_to: Export to {{ export_path }} successful.
     obsolete_base: To remain synchronized, you must refresh the material list.
-  tutorials:
-    label: Tutorials
-    title: Tutorials
-    help: |
-      Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
-    submit: Submit a video
-    submit_info: |
-      You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
-      Let us know by writing to us at **opencutlist@lairdubois.fr**!
-
-      *The video must be public and hosted on YouTube*.
-    error:
-      fail_to_load_list: Unable to load video list.
   importer:
     label: Import
     title: Import Parts
@@ -712,6 +719,26 @@ tab:
       imported_body: "{{ count }} part was successfully imported!"
       imported_body_plural: "{{ count }} parts were successfully imported!"
     obsolete_base: To remain synchronized, you must reload the CSV file.
+  tutorials:
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
+    submit: Submit a video
+    submit_info: |
+      You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
+      Let us know by writing to us at **opencutlist@lairdubois.fr**!
+
+      *The video must be public and hosted on YouTube*.
+    error:
+      fail_to_load_list: Unable to download video list.
+  news:
+    label: News
+    title: News
+    help: |
+      Find here the news from *OpenCutList*.
+    error:
+      fail_to_load_list: Unable to download the news list.
   sponsor:
     label: Sponsor
     title: Sponsor
@@ -721,19 +748,30 @@ tab:
     contribute: Contribute
     backers: "{{ count }} financial contributor"
     backers_plural: "{{ count }} financial contributors"
-    load_more: "Load more ..."
     ad: Do you like OpenCutList?
     objective: Objective
-    objective_title: Generate a Report
     objective_slogan: Let's climb Mont Blanc together!
-    objective_details: |
-      *Reporting may be available in the next major release.*
+    objective_title:
+      default: Ziel
+      report: Generate a Report
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Reporting may be available in the next major release.*
 
-      The purpose of this feature will be to:
-      - Calculate the **estimated cost** of the project with details per material
-      - Calculate the estimated **weight** of required materials
-      - Synthesize the information of the entire project in a single document accessible by a single action
+        The purpose of this feature will be to:
+          - Calculate the **estimated cost** of the project with details per material
+          - Calculate the estimated **weight** of required materials
+          - Synthesize the information of the entire project in a single document accessible by a single action
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
     objective_thanks: |
       Thank you for your contribution!

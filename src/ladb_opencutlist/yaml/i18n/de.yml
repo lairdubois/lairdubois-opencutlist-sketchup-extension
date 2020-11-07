@@ -23,7 +23,7 @@ default:
   ignore: Ignorieren
   download: Downloaden
   upgrade: Aktualisieren
-  empty_filename: ohne Titel.skp
+  empty_filename: Unbenannt.skp
   help: Hilfe
   error: Verflixt!
   warning: Achtung
@@ -41,6 +41,7 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
+  load_more: "Weitere laden ..."
 core:
   menu:
     submenu: OpenCutList
@@ -82,9 +83,10 @@ core:
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Ladevorgang läuft...
     changlog: Was gibt's Neues?
-    ignore_update: Überspringen Sie dieses Update  # TODO
+    ignore_update: Diese Aktualisierung ignorieren
     download_rescue: Problem beim Herunterladen?
     manual_download: manuelles Herunterladen
+    zzz: Ich ruhe mich nach der Aktualisierung aus. Um mich aufzuwecken, müssen Sie SketchUp neu starten.
     success: |
       Die Aktualisierung von OpenCutList ist abgeschlossen!
 
@@ -123,6 +125,22 @@ tab:
       add_std_section_to_material: |
         Querschnitt *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
+      rounded_std_width: |
+        Die Breite *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächliche Breite: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Die Dicke *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächliche Dicke: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Der Querschnitt *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächlicher Querschnitt: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Stellen Sie die Genauigkeit in den *Modellinformationen* ein oder überprüfen Sie die Abmessungen der Teile in dieser Gruppe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -479,6 +497,8 @@ tab:
           *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: Kein Modell ist offen. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -622,19 +642,6 @@ tab:
     success:
       exported_to: Erfolgreicher Export nach {{ export_path }}.
     obsolete_base: Sie müssen die Materialliste aktualisieren, damit diese synchron zum Modell bleibt.
-  tutorials:
-    label: Tutorials
-    title: Tutorials
-    help: |
-      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
-    submit: Video einreichen
-    submit_info: |
-      Sie haben ein Video über die Verwendung von **OpenCutList** gemacht und möchten, dass es hier erscheint?
-      Lassen Sie es uns wissen, indem Sie uns **opencutlist@lairdubois.fr** schreiben!
-
-      *Das Video muss öffentlich sein und auf YouTube gehostet werden*.
-    error:
-      fail_to_load_list: Videoliste kann nicht geladen werden.
   importer:
     label: Importieren
     title: Teile importieren
@@ -712,6 +719,26 @@ tab:
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     obsolete_base: Um synchron zu bleiben, müssen Sie die CSV Datei neu laden.
+  tutorials:
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
+    submit: Video einreichen
+    submit_info: |
+      Sie haben ein Video über die Verwendung von **OpenCutList** gemacht und möchten, dass es hier erscheint?
+      Lassen Sie es uns wissen, indem Sie uns **opencutlist@lairdubois.fr** schreiben!
+
+      *Das Video muss öffentlich sein und auf YouTube gehostet werden*.
+    error:
+      fail_to_load_list: Videoliste kann nicht geladen werden.
+  news:
+    label: Aktuelles
+    title: Aktuelles
+    help: |
+      Hier finden Sie die Neuigkeiten über *OpenCutList*.
+    error:
+      fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
   sponsor:
     label: Sponsern
     title: Sponsoring
@@ -721,19 +748,30 @@ tab:
     contribute: Beitragen
     backers: "{{ count }} finanzieller Sponsor"
     backers_plural: "{{ count }} finanzielle Sponsoren"
-    load_more: "Weitere laden ..."
     ad: Gefällt Ihnen OpenCutList?
     objective: Ziel
-    objective_title: Bericht generieren
     objective_slogan: Lassen Sie uns gemeinsam den Mont Blanc besteigen!
-    objective_details: |
-      *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
+    objective_title:
+      default: Ziel
+      report: Bericht generieren
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
-      Der Zweck dieses Features wird sein:
-      - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
-      - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
-      - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
+        Der Zweck dieses Features wird sein:
+          - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
+          - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
+          - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!

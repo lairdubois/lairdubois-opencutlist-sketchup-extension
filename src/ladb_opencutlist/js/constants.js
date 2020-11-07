@@ -1,7 +1,9 @@
 // CONSTANTS
 // ======================
 
-var EW_URL = 'https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist';
+var EXTENSION_BUILD = '202011020915';   // /!\ Auto-generated line, do not edit //
+
+// UI /////
 
 var SELECT_PICKER_OPTIONS = {
     size: 10,
@@ -16,3 +18,9 @@ var TOKENFIELD_OPTIONS = {
     beautify: false,
     minWidth: 250
 };
+
+// GraphQL /////
+
+var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
+var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
+

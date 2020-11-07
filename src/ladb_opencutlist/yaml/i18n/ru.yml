@@ -23,7 +23,7 @@ default:
   ignore: Пропустить
   download: Скачать
   upgrade: Обновление
-  empty_filename: Безымянный.skp
+  empty_filename: без названия.skp
   help: Помощь
   error: Исправить!
   warning: Внимание!
@@ -41,6 +41,7 @@ default:
   part_single: деталь
   part_plural: детали
   setup_model_units: Установка единиц измерения
+  load_more: "Загрузить больше ..."
 core:
   menu:
     submenu: OpenCutList
@@ -82,9 +83,10 @@ core:
       *Рассмотрите возможность спонсорства этого проекта, чтобы помочь нам улучшить его функциональность!*
     downloading: Идет процесс загрузки...
     changelog: Что нового?
-    ignore_update: Игнорировать это обновление  # TODO
+    ignore_update: Игнорировать это обновление
     download_rescue: проблемы со скачиванием?
     manual_download: загрузка вручную
+    zzz: В настоящее время я отдыхаю после обновления. Чтобы разбудить меня, вы должны перезапустить SketchUp.
     success: |
       Обновление OpenCutList завершено!
 
@@ -123,6 +125,22 @@ tab:
       add_std_section_to_material: |
         Добавить поперечное сечение *{{ std_dimension }}*
         материала '{{ material_name }}'
+      rounded_std_width: |
+        Ширина *{{ std_dimension }}* округляется точностью единицы модели.
+        фактическая ширина: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Толщина *{{ std_dimension }}* округляется точностью единицы модели.
+        фактическая Толщина: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Поперечное сечение *{{ std_dimension }}* округляется точностью единицы модели.
+        фактическое Поперечное сечение: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Задайте точность в *Данные модели* или проверьте размеры деталей, входящих в эту группу.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -479,6 +497,8 @@ tab:
           *Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: Etiquettes # TODO
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -622,19 +642,6 @@ tab:
     success:
       exported_to: Экспорт {{ export_path }} завершен.
     obsolete_base: Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
-  tutorials:
-    label: Инструкции
-    title: Инструкции
-    help: |
-      Вот неисчерпывающий список видео, созданных сообществом вокруг использования *OpenCutList*.
-    submit: Отправить видео
-    submit_info: |
-      Вы сделали видео, представляющее использование **OpenCutList**, и вы хотели бы, чтобы он появился здесь?
-      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
-
-      *Видео должно быть публичным и размещено на YouTube*.
-    error:
-      fail_to_load_list: Список видеозаписей не может быть загружен.
   importer:
     label: Импорт
     title: Импорт деталей
@@ -712,6 +719,26 @@ tab:
       imported_body: "{{ count }} часть была успешно импортирована!"
       imported_body_plural: "{{ count }} деталей успешно импортированы!"
     obsolete_base: Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
+  tutorials:
+    label: Инструкции
+    title: Инструкции
+    help: |
+      Вот неисчерпывающий список видео, созданных сообществом вокруг использования *OpenCutList*.
+    submit: Отправить видео
+    submit_info: |
+      Вы сделали видео, представляющее использование **OpenCutList**, и вы хотели бы, чтобы он появился здесь?
+      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
+
+      *Видео должно быть публичным и размещено на YouTube*.
+    error:
+      fail_to_load_list: Список видеозаписей не может быть загружен.
+  news:
+    label: Новости # TODO
+    title: Новости
+    help: |
+      Найдите здесь новости из *OpenCutList*.
+    error:
+      fail_to_load_list: список новостей нельзя скачать.
   sponsor:
     label: Спонсоры
     title: Спонсоры
@@ -721,19 +748,30 @@ tab:
     contribute: Поддержи проект
     backers: "{{ count }} финансовый спонсор"
     backers_plural: "{{ count }} финансовые спонсоры"
-    load_more: "Загрузить больше ..."
     ad: Вам нравится OpenCutList ?
     objective: Задача
-    objective_title: Создать отчет
     objective_slogan: Давайте вместе покорим высоту Монблан - 4808!
-    objective_details: |
-      *Создание отчета может быть доступно в следующем основном обновлении.*
+    objective_title:
+      default: Ziel
+      report: Создать отчет
+      labels: Imprimer des étiquettes # TODO
+    objective_details:
+      default: |  # TODO
+        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      report: |
+        *Создание отчета может быть доступно в следующем основном обновлении.*
 
-      Эта функция позволит :
-      - Рассчитать **стоимость** проекта с детализацией по материалу.
-      - Рассчитать  **массу** заданного материала.
-      - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
+        Эта функция позволит :
+          - Рассчитать **стоимость** проекта с детализацией по материалу.
+          - Рассчитать  **массу** заданного материала.
+          - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
+      labels: | # TODO
+        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
+        Cette fonctionnalité a pour but de :
+        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
+        - Simplifier le travail en équipe
+    objective_crowdfunding: |
       Разработка новой функции возможна только за счет **частных пожертвований** и сможет начаться, когда будет собрана **целевая сумма** проекта.
     objective_thanks: |
       Благодарю вас за ваш посильный вклад !

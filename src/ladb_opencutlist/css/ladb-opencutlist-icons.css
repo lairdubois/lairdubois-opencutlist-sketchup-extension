@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-labels:before {
+  content: "\e979";
+}
 .ladb-opencutlist-icon-send:before {
   content: "\e976";
 }
@@ -129,6 +132,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-tutorials:before {
   content: "\e973";
+}
+.ladb-opencutlist-icon-news:before {
+  content: "\e978";
 }
 .ladb-opencutlist-icon-submenu:before {
   content: "\e91a";
@@ -255,6 +261,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e942";
+}
+.ladb-opencutlist-icon-zzz:before {
+  content: "\e977";
 }
 .ladb-opencutlist-icon-update:before {
   content: "\e943";

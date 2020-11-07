@@ -1,0 +1,24 @@
+{% for update in updates.nodes if not update.isPrivate %}
+    <div class="col-md-8 col-md-push-2 col-xs-12">
+        <div class="ladb-news-update-box" data-update-slug="{{ update.slug }}">
+            <div class="ladb-news-update-header">
+                <div class="media">
+                    <div class="media-left"><img src="{{ update.fromAccount.imageUrl }}" alt="{{ update.fromAccount.name }}" class="ladb-news-update-author-avatar"></div>
+                    <div class="media-body">
+                        <div class="ladb-news-update-title">{{ update.title }}</div>
+                        <div class="ladb-news-update-subheader">
+                            <div class="ladb-news-update-author">{{ 'default.by'|i18next }} <a href="https://opencollective.com/{{ update.fromAccount.slug }}" target="_blank">{{ update.fromAccount.name }}</a></div>
+                            <div class="ladb-news-update-age">{{ update.publishedAt|date(('default.date_format'|i18next())) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ladb-news-update-body">{{ update.html }}</div>
+        </div>
+    </div>
+{% endfor %}
+{% if nextPage %}
+    <div class="col-xs-12 text-center">
+        <button class="btn btn-default ladb-news-next-page-btn"> {{ 'default.load_more'|i18next }}</button>
+    </div>
+{% endif %}
