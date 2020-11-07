@@ -146,9 +146,9 @@
 
                         // Fresh update, notify it
                         if (!that.capabilities.update_muted) {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade' ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade' ]);
                         } else {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade', { muted: true } ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { muted: true } ]);
                         }
 
                     }, 1000);
