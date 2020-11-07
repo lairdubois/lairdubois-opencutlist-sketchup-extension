@@ -6,12 +6,13 @@ var markdownIt = require('markdown-it');
 var externalLinks = require('markdown-it-external-links');
 var md = markdownIt({
     html: true,
-    linkify: false,
+    linkify: true,
     typographer: true,
     breaks: true
 }).use(externalLinks, {
     externalTarget: '_blank'
 });
+md.linkify.set({ fuzzyEmail: false });  // disables converting email to link
 
 var PluginError = require('plugin-error');
 
