@@ -11,6 +11,7 @@
 
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
+    var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
     // CLASS DEFINITION
     // ======================
@@ -37,6 +38,7 @@
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,
+            last_news_timestamp: options.last_news_timestamp,
             dialogMaximizedWidth: options.dialog_maximized_width,
             dialogMaximizedHeight: options.dialog_maximized_height,
             dialogLeft: options.dialog_left,
@@ -60,7 +62,6 @@
         this.$wrapper = null;
         this.$wrapperSlides = null;
         this.$leftbar = null;
-        this.$leftbarBtnUpgrade = null;
         this.$btnCloseCompatibilityAlert = null;
 
     };
@@ -142,7 +143,14 @@
 
                     // Trigger updatable event
                     setTimeout(function () {
-                        that.$element.trigger(jQuery.Event('updatable.ladb.core'));
+
+                        // Fresh update, notify it
+                        if (!that.capabilities.update_muted) {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade' ]);
+                        } else {
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade', { muted: true } ]);
+                        }
+
                     }, 1000);
 
                 } else {
@@ -168,6 +176,74 @@
         }
 
     };
+
+    // News /////
+
+    LadbDialog.prototype.checkNews = function () {
+        var that = this;
+
+        // Check if the delay is enougth to check news
+        if (this.capabilities.last_news_timestamp == null) {
+            $.ajax({
+                url: GRAPHQL_ENDPOINT,
+                contentType: 'application/json',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    query: "query lastUpdateId($slug: String) { " +
+                            "collective(slug: $slug) { " +
+                                "updates(limit: 1, onlyPublishedUpdates: true) { " +
+                                    "nodes { " +
+                                        "publishedAt " +
+                                    "}" +
+                                "}" +
+                            "}" +
+                        "}",
+                    variables: {
+                        slug: GRAPHQL_SLUG
+                    }
+                }),
+                success: function (response) {
+                    console.log(response);
+
+                    if (response.data && response.data.collective.updates.nodes.length > 0) {
+
+                        var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+
+                        if (that.lastListedNewsTimestamp == null) {
+
+                            // First run lastListedNewsTimestamp is set to lastNewsTimestamp
+                            that.setLastListedNewsTimestamp(lastNewsTimestamp);
+
+                        } else if (lastNewsTimestamp > that.lastListedNewsTimestamp) {
+
+                            // Fresh news are available, notify it :)
+                            that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_news'])
+
+                        }
+
+                        // Save timestamp
+                        that.capabilities.last_news_timestamp = lastNewsTimestamp;
+
+                        // Send news status to ruby
+                        rubyCallCommand('core_set_news_status', {
+                            last_news_timestamp: that.capabilities.last_news_timestamp
+                        });
+
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    that.capabilities.last_news_timestamp = null;
+                }
+            });
+        }
+
+    };
+
+    LadbDialog.prototype.setLastListedNewsTimestamp = function (lastListedNewsTimestamp) {
+        this.lastListedNewsTimestamp = lastListedNewsTimestamp;
+        this.setSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, this.lastListedNewsTimestamp);
+    }
 
     // Settings /////
 
@@ -650,15 +726,7 @@
         // Bind dialog maximized events
         this.$element.on('maximized.ladb.dialog', function() {
             that.loadManifest();
-        });
-
-        // Bind core updatable events
-        this.$element.on('updatable.ladb.core', function() {
-            if (!that.capabilities.update_muted) {
-                that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade' ]);
-            } else {
-                that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade', { muted: true } ]);
-            }
+            that.checkNews();
         });
 
     };
@@ -668,13 +736,15 @@
 
         this.pullSettings([
                 SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN,
-                SETTING_KEY_MUTED_UPDATE_BUILD
+                SETTING_KEY_MUTED_UPDATE_BUILD,
+                SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP
             ],
             0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
             function () {
 
                 that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
                 that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
+                that.lastListedNewsTimestamp = that.getSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, null);
 
                 // Add i18next twig filter
                 Twig.extendFilter('i18next', function (value, options) {
@@ -730,19 +800,22 @@
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
-                    that.$leftbarBtnUpgrade = $('#ladb_leftbar_btn_upgrade', that.$element);
                     that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                     for (var i = 0; i < that.options.tabDefs.length; i++) {
                         var tabDef = that.options.tabDefs[i];
                         that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
                     }
 
+                    // Push desired notifications
                     if (that.capabilities.update_available) {
                         if (that.capabilities.update_muted) {
                             that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { muted: true } ]);
                         } else {
                             that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { silent: true } ]);
                         }
+                    }
+                    if (that.capabilities.last_news_timestamp > that.lastListedNewsTimestamp) {
+                        that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news', { silent: true } ]);
                     }
 
                     that.bind();
