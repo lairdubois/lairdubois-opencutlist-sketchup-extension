@@ -224,12 +224,12 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
-      labels: Labels
-      labels_help: |
+      tags: Labels # TODO
+      tags_help: | # TODO
         With *Labels* you can add keywords to customize the part definitions.
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
-      labels_multiple_info: Only common labels are shown
+      tags_multiple_info: Only common labels are shown # TODO
       axes: Axes
       axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
       part_folding: Group similar parts
-      part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.
+      part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.  # TODO
       hide_entity_names: Hide instance names
       hide_entity_names_help: If this option is selected, **instance names** of parts will not be displayed.
-      hide_labels: Hide labels
-      hide_labels_help: If this option is selected, **labels** will be hidden.
+      hide_tags: Hide labels  # TODO
+      hide_tags_help: If this option is selected, **labels** will be hidden.  # TODO
       hide_cutting_dimensions: Hide rough dimensions
       hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_bbox_dimensions: Hide finished dimensions
@@ -304,7 +304,7 @@ tab:
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       edge_material_names_filter: Material of edge banding to filter
-      labels_filter: Labels to filter
+      tags_filter: Labels to filter  # TODO
       dimensions_help: Illustration of the dimensions...
       summary: Summary
       material_type: Type
@@ -366,7 +366,7 @@ tab:
       material_thickness: Material / Thickness
       material_name: Material
       entity_names: Instance names
-      labels: Labels
+      tags: Labels  # TODO
       edge_ymax: Edge length 1
       edge_ymin: Edge length 2
       edge_xmin: Edge width 1
@@ -689,7 +689,7 @@ tab:
       bbox_width: Width
       bbox_thickness: Thickness
       material: Material
-      labels: Labels
+      tags: Labels  # TODO
     tooltip:
       errors: This part will not be imported because it produced the following errors
       warnings: This part will be imported but it produced the following warnings

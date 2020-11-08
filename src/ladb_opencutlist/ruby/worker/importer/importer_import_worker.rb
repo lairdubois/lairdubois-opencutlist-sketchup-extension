@@ -108,7 +108,7 @@ module Ladb::OpenCutList
         # Set part attributes
         definition_attributes = DefinitionAttributes.new(definition)
         definition_attributes.orientation_locked_on_axis = true                 # Force part to be locked on its axis
-        definition_attributes.labels = part[:labels] unless part[:labels].nil?  # Add labels if defined
+        definition_attributes.tags = part[:tags] unless part[:tags].nil?  # Add labels if defined
         definition_attributes.write_to_attributes
 
         offset_y += part[:width]

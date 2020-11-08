@@ -6,8 +6,10 @@ module Ladb::OpenCutList
   class HighlightPartTool < CutlistObserver
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
-    COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
-    COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
+    # COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
+    COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
+    # COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
+    COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(0, 62, 255, 128).freeze
     COLOR_TEXT_BG = Sketchup::Color.new(255, 255, 255, 191).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
@@ -334,7 +336,7 @@ module Ladb::OpenCutList
       if part
 
         @text_line_1 = "[#{part.number}] #{part.name}"
-        @text_line_2 = part.labels.join(' | ')
+        @text_line_2 = part.tags.join(' | ')
         @text_line_3 = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
             " | #{part.count.to_s} #{Plugin.instance.get_i18n_string(part.count > 1 ? 'default.part_plural' : 'default.part_single')}" +

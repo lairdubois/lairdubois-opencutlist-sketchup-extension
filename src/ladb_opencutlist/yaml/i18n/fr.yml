@@ -224,12 +224,12 @@ tab:
         - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur le <span style='color:green'>vert</span>
         - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
-      labels: Etiquettes
-      labels_help: |
-        Les *Etiquettes* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant d'étiquettes que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces étiquettes.
-      labels_multiple_info: Seules les étiquettes communes sont visibles
+      tags: Tags
+      tags_help: |
+        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant de tags que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
+      tags_multiple_info: Seuls les tags communs sont visibles
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       part_folding: Regrouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes étiquettes** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
+      part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
       hide_entity_names: Masquer les noms d'instance
       hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
-      hide_labels: Masquer les étiquettes
-      hide_labels_help: Si cette option est activée, les **étiquettes** placées sur les pièces ne sont pas affichées.
+      hide_tags: Masquer les tags
+      hide_tags_help: Si cette option est activée, les **tags** placés sur les pièces ne sont pas affichés.
       hide_cutting_dimensions: Masquer les dimensions de débit
       hide_cutting_dimensions_help: Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées.
       hide_bbox_dimensions: Masquer les dimensions capables
@@ -304,7 +304,7 @@ tab:
       filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
-      labels_filter: Etiquettes à filtrer
+      tags_filter: Tags à filtrer
       dimensions_help: Comprendre les dimensions...
       summary: Récapitulatif
       material_type: Type
@@ -366,7 +366,7 @@ tab:
       material_thickness: Matière / Dimension
       material_name: Matière
       entity_names: Noms d'instance
-      labels: Etiquettes
+      tags: Tags
       edge_ymax: Chant Longueur 1
       edge_ymin: Chant Longueur 2
       edge_xmin: Chant Largeur 1

@@ -22,7 +22,7 @@ module Ladb::OpenCutList
       @col_sep = settings['col_sep']
       @encoding = settings['encoding']
       @hide_entity_names = settings['hide_entity_names']
-      @hide_labels = settings['hide_labels']
+      @hide_tags = settings['hide_tags']
       @hide_cutting_dimensions = settings['hide_cutting_dimensions']
       @hide_bbox_dimensions = settings['hide_bbox_dimensions']
       @hide_untyped_material_dimensions = settings['hide_untyped_material_dimensions']
@@ -149,8 +149,8 @@ module Ladb::OpenCutList
                   unless @hide_entity_names
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.entity_names'))
                   end
-                  unless @hide_labels
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
+                  unless @hide_tags
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.tags'))
                   end
                   unless @hide_edges
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
@@ -190,8 +190,8 @@ module Ladb::OpenCutList
                       unless @hide_entity_names
                         row.push(part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '')
                       end
-                      unless @hide_labels
-                        row.push(part.labels.empty? ? '' : part.labels.join(','))
+                      unless @hide_tags
+                        row.push(part.tags.empty? ? '' : part.tags.join(','))
                       end
                       unless @hide_edges
                         row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
@@ -226,8 +226,8 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.final_area'))
                   end
                   header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
-                  unless @hide_labels
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.labels'))
+                  unless @hide_tags
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.tags'))
                   end
                   unless @hide_edges
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
@@ -281,8 +281,8 @@ module Ladb::OpenCutList
                             row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
                           end
                           row.push(group.material_display_name)
-                          unless @hide_labels
-                            row.push(part.labels.empty? ? '' : part.labels.join(','))
+                          unless @hide_tags
+                            row.push(part.tags.empty? ? '' : part.tags.join(','))
                           end
                           unless @hide_edges
                             row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))

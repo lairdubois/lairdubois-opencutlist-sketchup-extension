@@ -76,12 +76,12 @@
                     </div>
                 {% endif %}
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.labels_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.labels'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.tags_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.tags'|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_cutlist_part_input_labels" value="{{ part.labels|join(';')|escape }}">
+                        <input type="text" class="form-control" id="ladb_cutlist_part_input_tags" value="{{ part.tags|join(';')|escape }}">
                         {% if multiple %}
-                            <div class="help-block"><small><i class="ladb-opencutlist-icon-info"></i> {{ 'tab.cutlist.edit_part.labels_multiple_info'|i18next }}</small></div>
+                            <div class="help-block"><small><i class="ladb-opencutlist-icon-info"></i> {{ 'tab.cutlist.edit_part.tags_multiple_info'|i18next }}</small></div>
                         {% endif %}
                     </div>
                 </div>

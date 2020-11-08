@@ -43,7 +43,7 @@ module Ladb::OpenCutList
             :align => 'left',
             :data_type => DATA_TYPE_STRING
         },
-        :labels => {
+        :tags => {
             :align => 'left',
             :data_type => DATA_TYPE_STRING_ARRAY
         },
@@ -135,7 +135,7 @@ module Ladb::OpenCutList
                 :width => nil,
                 :thickness => nil,
                 :material => nil,
-                :labels => nil,
+                :tags => nil,
                 :errors => [],
                 :warnings => [],
                 :raw_values => []

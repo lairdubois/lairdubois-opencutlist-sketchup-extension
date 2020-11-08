@@ -2,4 +2,4 @@
 
 {% extends 'tabs/base-file-tab.twig' %}
 
-{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}{% if selectionOnly %} <span style="font-weight: normal" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.partial_cutlist'|i18next }}">({{ 'tab.cutlist.selection_only'|i18next }})</span>{% endif %}<span class="ladb-extra ladb-horizontal-left-separator">{{ generateAt|date(('default.date_format'|i18next())) }}</span>{% include 'core/_length-unit-extra.twig' %}{% endblock %}
+{% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}{% if selectionOnly %} <span style="font-weight: normal; color: #003eff;" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.partial_cutlist'|i18next }}">({{ 'tab.cutlist.selection_only'|i18next }})</span>{% endif %}<span class="ladb-extra ladb-horizontal-left-separator">{{ generateAt|date(('default.date_format'|i18next())) }}</span>{% include 'core/_length-unit-extra.twig' %}{% endblock %}

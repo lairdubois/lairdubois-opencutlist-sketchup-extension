@@ -43,10 +43,10 @@
         {% endif %}
     {% endif %}
     {% if not isChild %}
-        {% if not generateOptions.hide_labels and part.labels is not empty %}
-            <ul class="ladb-cutlist-part-labels">
-                {% for label in part.labels %}
-                    {% set active = label in generateFilters.labels_filter %}
+        {% if not generateOptions.hide_tags and part.tags is not empty %}
+            <ul class="ladb-cutlist-part-tags">
+                {% for label in part.tags %}
+                    {% set active = label in generateFilters.tags_filter %}
                     <li><a href="#" class="ladb-btn-label-filter{% if active %} ladb-active{% endif %}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(active ? 'remove' : 'add')~'_label_filter')|i18next({ 'label':label }) }}">{{ label }}</a></li>
                 {% endfor %}
             </ul>

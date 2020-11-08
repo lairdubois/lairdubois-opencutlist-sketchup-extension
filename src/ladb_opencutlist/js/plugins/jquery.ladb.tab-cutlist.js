@@ -13,7 +13,7 @@
     var SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP = 'cutlist.option.part_number_sequence_by_group';
     var SETTING_KEY_OPTION_PART_FOLDING = 'cutlist.option.part_folding';
     var SETTING_KEY_OPTION_HIDE_ENTITY_NAMES = 'cutlist.option.hide_entity_names';
-    var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_labels';
+    var SETTING_KEY_OPTION_HIDE_LABELS = 'cutlist.option.hide_tags';
     var SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS = 'cutlist.option.hide_cutting_dimensions';
     var SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS = 'cutlist.option.hide_bbox_dimensions';
     var SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS = 'cutlist.option.hide_untyped_material_dimensions';
@@ -107,7 +107,7 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.generateFilters = {
-          labels_filter: [],
+          tags_filter: [],
           edge_material_names_filter: []
         };
 
@@ -115,7 +115,7 @@
         this.filename = null;
         this.pageLabel = null;
         this.lengthUnit = null;
-        this.usedLabels = [];
+        this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
@@ -172,7 +172,7 @@
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
             var ignoredInstanceCount = response.ignored_instance_count;
-            var usedLabels = response.used_labels;
+            var usedTags = response.used_tags;
             var materialUsages = response.material_usages;
             var groups = response.groups;
 
@@ -180,7 +180,7 @@
             that.filename = filename;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
-            that.usedLabels = usedLabels;
+            that.usedTags = usedTags;
             that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
             that.groups = groups;
@@ -229,7 +229,7 @@
                 tips: tips,
                 instanceCount: instanceCount,
                 ignoredInstanceCount: ignoredInstanceCount,
-                usedLabels: usedLabels,
+                usedTags: usedTags,
                 usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
                 groups: groups
             }));
@@ -263,10 +263,10 @@
             }
 
             // Bind inputs
-            $('#ladb_cutlist_labels_filter', that.$page)
+            $('#ladb_cutlist_tags_filter', that.$page)
                 .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                     autocomplete: {
-                        source: that.usedLabels,
+                        source: that.usedTags,
                         delay: 100
                     },
                     showAutocompleteOnFocus: false
@@ -283,7 +283,7 @@
 
                     // Available token only
                     var available = false;
-                    $.each(that.usedLabels, function (index, token) {
+                    $.each(that.usedTags, function (index, token) {
                         if (token === e.attrs.value) {
                             available = true;
                             return false;
@@ -296,9 +296,9 @@
                 })
                 .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                     var tokenList = $(this).tokenfield('getTokensList');
-                    that.generateFilters.labels_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                    that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                     that.generateCutlist(function () {
-                        $('#ladb_cutlist_labels_filter-tokenfield', that.$page).focus();
+                        $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
                     });
                 })
             ;
@@ -348,9 +348,9 @@
                     page: i18next.t('core.model_info_page.units')
                 });
             });
-            $('#ladb_cutlist_btn_labels_filter_clear', that.$page).on('click', function () {
+            $('#ladb_cutlist_btn_tags_filter_clear', that.$page).on('click', function () {
                 $(this).blur();
-                that.generateFilters.labels_filter = [];
+                that.generateFilters.tags_filter = [];
                 that.generateCutlist();
             });
             $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
@@ -558,11 +558,11 @@
             $('a.ladb-btn-label-filter', that.$page).on('click', function () {
                 $(this).blur();
                 var labelFilter = $(this).html();
-                var indexOf = that.generateFilters.labels_filter.indexOf(labelFilter);
+                var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
                 if (indexOf > -1) {
-                    that.generateFilters.labels_filter.splice(indexOf, 1);
+                    that.generateFilters.tags_filter.splice(indexOf, 1);
                 } else {
-                    that.generateFilters.labels_filter.push(labelFilter);
+                    that.generateFilters.tags_filter.push(labelFilter);
                 }
                 that.generateCutlist();
                 return false;
@@ -974,8 +974,8 @@
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
-                editedPart.labels = editedPart.labels.filter(function(label) {  // Extract only commun labels
-                    return -1 !== editedParts[i].labels.indexOf(label);
+                editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
+                    return -1 !== editedParts[i].tags.indexOf(tag);
                 });
                 if (editedPart.length_increase !== editedParts[i].length_increase) {
                     editedPart.length_increase = MULTIPLE_VALUE;
@@ -1031,7 +1031,7 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
+                var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
                 var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
@@ -1293,8 +1293,8 @@
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
 
-                        var untouchLabels = editedParts[i].labels.filter(function (label) { return !editedPart.labels.includes(label) });
-                        editedParts[i].labels = untouchLabels.concat($inputLabels.tokenfield('getTokensList').split(';'));
+                        var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
+                        editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
                         if ($inputLengthIncrease.val() !== MULTIPLE_VALUE) {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
@@ -1365,11 +1365,11 @@
                 // Focus
                 $inputName.focus();
 
-                // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-                $inputLabels
+                // Init tokenfields (this must done after modal shown for correct token tag max width measurement)
+                $inputTags
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                         autocomplete: {
-                            source: that.usedLabels,
+                            source: that.usedTags,
                             delay: 100
                         }
                     }))
@@ -2325,7 +2325,7 @@
                     part_number_sequence_by_group: that.dialog.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP),
                     part_folding: that.dialog.getSetting(SETTING_KEY_OPTION_PART_FOLDING, OPTION_DEFAULT_PART_FOLDING),
                     hide_entity_names: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, OPTION_DEFAULT_HIDE_ENTITY_NAMES),
-                    hide_labels: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
+                    hide_tags: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_LABELS, OPTION_DEFAULT_HIDE_LABELS),
                     hide_cutting_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS),
                     hide_bbox_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS),
                     hide_untyped_material_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS),
@@ -2359,7 +2359,7 @@
         var $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
         var $inputPartFolding = $('#ladb_input_part_folding', $modal);
         var $inputHideInstanceNames = $('#ladb_input_hide_entity_names', $modal);
-        var $inputHideLabels = $('#ladb_input_hide_labels', $modal);
+        var $inputHideTags = $('#ladb_input_hide_tags', $modal);
         var $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideUntypedMaterialDimensions = $('#ladb_input_hide_untyped_material_dimensions', $modal);
@@ -2383,7 +2383,7 @@
             $inputPartNumberSequenceByGroup.prop('checked', generateOptions.part_number_sequence_by_group);
             $inputPartFolding.prop('checked', generateOptions.part_folding);
             $inputHideInstanceNames.prop('checked', generateOptions.hide_entity_names);
-            $inputHideLabels.prop('checked', generateOptions.hide_labels);
+            $inputHideTags.prop('checked', generateOptions.hide_tags);
             $inputHideCuttingDimensions.prop('checked', generateOptions.hide_cutting_dimensions);
             $inputHideBBoxDimensions.prop('checked', generateOptions.hide_bbox_dimensions);
             $inputHideUntypedMaterialDimensions
@@ -2462,7 +2462,7 @@
                 part_number_sequence_by_group: OPTION_DEFAULT_PART_NUMBER_SEQUENCE_BY_GROUP,
                 part_folding: OPTION_DEFAULT_PART_FOLDING,
                 hide_entity_names: OPTION_DEFAULT_HIDE_ENTITY_NAMES,
-                hide_labels: OPTION_DEFAULT_HIDE_LABELS,
+                hide_tags: OPTION_DEFAULT_HIDE_LABELS,
                 hide_cutting_dimensions: OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS,
                 hide_bbox_dimensions: OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS,
                 hide_untyped_material_dimensions: OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS,
@@ -2485,7 +2485,7 @@
             that.generateOptions.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             that.generateOptions.part_folding = $inputPartFolding.is(':checked');
             that.generateOptions.hide_entity_names = $inputHideInstanceNames.is(':checked');
-            that.generateOptions.hide_labels = $inputHideLabels.is(':checked');
+            that.generateOptions.hide_tags = $inputHideTags.is(':checked');
             that.generateOptions.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
             that.generateOptions.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             that.generateOptions.hide_untyped_material_dimensions = $inputHideUntypedMaterialDimensions.is(':checked');
@@ -2514,7 +2514,7 @@
                 { key:SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, value:that.generateOptions.part_number_sequence_by_group },
                 { key:SETTING_KEY_OPTION_PART_FOLDING, value:that.generateOptions.part_folding },
                 { key:SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, value:that.generateOptions.hide_entity_names },
-                { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.generateOptions.hide_labels },
+                { key:SETTING_KEY_OPTION_HIDE_LABELS, value:that.generateOptions.hide_tags },
                 { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.generateOptions.hide_cutting_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.generateOptions.hide_bbox_dimensions },
                 { key:SETTING_KEY_OPTION_HIDE_UNTYPED_MATERIAL_DIMENSIONS, value:that.generateOptions.hide_untyped_material_dimensions },

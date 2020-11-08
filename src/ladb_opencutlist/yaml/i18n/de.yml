@@ -224,12 +224,12 @@ tab:
         - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
-      labels: Etiketten
-      labels_help: |
+      tags: Etiketten # TODO
+      tags_help: | # TODO
         Mit *Etiketten* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
         Sie können beliebig viele Etiketten hinzufügen.
         Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Etiketten auswählen.
-      labels_multiple_info: Nur gemeinsame Etiketten werden angezeigt
+      tags_multiple_info: Nur gemeinsame Etiketten werden angezeigt # TODO
       axes: Achsen
       axes_help: Zuordnen der Dimensionen um diese mit den gewünschten Achsenfarben übereinstimmen zu lassen.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Aufzählung der Teile für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Aufzählung für jeden Abschnitt (Gruppe mit gleicher Materialdicke) auf 1 (oder A) reinitialisiert.
       part_folding: Ähnliche Teile zusammenfassen
-      part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Maße** und mit **gleichen Etiketten** zusammengefasst.
+      part_folding_help: Ist diese Option aktiv, werden Teile **gleicher Maße** und mit **gleichen Etiketten** zusammengefasst.  # TODO
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht eingeblendet.
-      hide_labels: Etiketten ausblenden
-      hide_labels_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.
+      hide_tags: Etiketten ausblenden  # TODO
+      hide_tags_help: Ist diese Option aktiv, werden die **Etiketten** nicht angezeigt.  # TODO
       hide_cutting_dimensions: Rohmaße ausblenden
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt.
       hide_bbox_dimensions: Fertigmaße ausblenden
@@ -304,7 +304,7 @@ tab:
       filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
       edge_material_names_filter: Kantenmateriale zum Filtern
-      labels_filter: Filteretiketten
+      tags_filter: Filteretiketten  # TODO
       dimensions_help: Erklärung zu den Dimensionen...
       summary: Übersicht
       material_type: Typ
@@ -366,7 +366,7 @@ tab:
       material_thickness: Material / Dicke
       material_name: Material
       entity_names: Instanzbezeichnungen
-      labels: Etiketten
+      tags: Etiketten  # TODO
       edge_ymax: Kantenband Länge 1
       edge_ymin: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
@@ -689,7 +689,7 @@ tab:
       bbox_width: Breite
       bbox_thickness: Dicke
       material: Material
-      labels: Etiketten
+      tags: Etiketten  # TODO
     tooltip:
       errors: Dieses Teil wird nicht importiert, weil es folgende Fehler enthält
       warnings: Dieses Teil wird importiert, aber es enthält folgende Fehler

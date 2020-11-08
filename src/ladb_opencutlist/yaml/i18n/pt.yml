@@ -224,12 +224,12 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
-      labels: Etiquetas
-      labels_help: |
+      tags: Etiquetas # TODO
+      tags_help: | # TODO
         Com *Etiquetas* é possível adicionar palavras-chave para personalizar as definições da parte.
         Pode adicionar tantas etiquetas quantas achar conveniente.
         As partes visíveis da sua lista de almofadas podem então ser filtradas de acordo com a lista de etiquetas.
-      labels_multiple_info: Apenas rótulos comuns são mostrados
+      tags_multiple_info: Apenas rótulos comuns são mostrados # TODO
       axes: Machados
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua parte.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Reinicialize a enumeração de partes para cada grupo
       part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das partes é reinicializada em 1 (ou A) para cada grupo do mesmo tipo de material e espessura.
       part_folding: Grupo de partes idênticas
-      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com** rótulos idênticos ** serão agrupadas.
+      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com** rótulos idênticos ** serão agrupadas.  # TODO
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: Se esta opção for selecionada, **nomes de instância** de partes não serão exibidos.
-      hide_labels: Esconda etiquetas
-      hide_labels_help: Se esta opção for selecionada, **rótulos** serão ocultados.
+      hide_tags: Esconda etiquetas  # TODO
+      hide_tags_help: Se esta opção for selecionada, **rótulos** serão ocultados.  # TODO
       hide_cutting_dimensions: Ocultar dimensões aproximadas
       hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das partes serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
@@ -304,7 +304,7 @@ tab:
       filters_warning: "Este filtro exibe apenas **{{ count }}** parte de um total de {{ total }}."
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** partes de um total de {{ total }}."
       edge_material_names_filter: Material de bandagem de borda para filtrar
-      labels_filter: Rótulos para filtrar
+      tags_filter: Rótulos para filtrar  # TODO
       dimensions_help: Ilustração das dimensões ...
       summary: Resumo
       material_type: Tipo
@@ -366,7 +366,7 @@ tab:
       material_thickness: Espessura do material
       material_name: Material
       entity_names: Nomes de instância
-      labels: Etiquetas
+      tags: Etiquetas  # TODO
       edge_ymax: Comprimento da borda 1
       edge_ymin: Comprimento da borda 2
       edge_xmin: Largura da borda 1
@@ -689,7 +689,7 @@ tab:
       bbox_width: Largura
       bbox_thickness: Espessura
       material: Material
-      labels: Etiquetas
+      tags: Etiquetas  # TODO
     tooltip:
       errors: Esta parte não será importada porque produziu os seguintes erros
       warnings: Esta parte será importada, mas produziu os seguintes avisos
