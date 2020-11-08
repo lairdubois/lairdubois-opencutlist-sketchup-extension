@@ -758,15 +758,15 @@ tab:
         *La création de **rapports** pourrait être disponible dans la prochaine mise à jour majeure.*
 
         Cette fonctionnalité a pour but de :
-        - Calculer le **coût** estimé du projet avec détails par matière
-        - Calculer le **poids** estimé des matières nécessaires
-        - Synthétiser les informations de tout le projet en un même document accessible par une seule action
+        - calculer le **coût** estimé du projet avec détails par matière,
+        - calculer le **poids** estimé des matières nécessaires,
+        - synthétiser les informations de tout le projet en un même document accessible par une seule action.
       labels: |
         *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
 
         Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        - permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adnésives,
+        - simplifier le travail en équipe.
     objective_crowdfunding: |
       Le développement des nouvelles fonctionnalités se fera grace au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
