@@ -41,7 +41,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
-  load_more: "Load more ..."
+  load_more: "Load older ..."
 core:
   menu:
     submenu: OpenCutList
@@ -224,12 +224,12 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis
         - *width* is on the <span style='color:green'>green</span> axis
         - *thickness* is on the <span style='color:blue'>blue</span> axis
-      tags: Labels # TODO
-      tags_help: | # TODO
-        With *Labels* you can add keywords to customize the part definitions.
+      tags: Tags
+      tags_help: |
+        With *Tags* you can add keywords to customize the part definitions.
         You can add as many labels as you see fit.
         The visible parts of your custlist can then be filtered according to the label list.
-      tags_multiple_info: Only common labels are shown # TODO
+      tags_multiple_info: Only common tags are displayed
       axes: Axes
       axes_help: Arrange the dimensions so they match the axes colors of your part.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group of same material type and thickness.
       part_folding: Group similar parts
-      part_folding_help: If this option is selected, parts with **identical size** and with **identical labels** will be grouped.  # TODO
+      part_folding_help: If this option is selected, parts with **identical size** and with **identical tags** will be grouped.
       hide_entity_names: Hide instance names
       hide_entity_names_help: If this option is selected, **instance names** of parts will not be displayed.
-      hide_tags: Hide labels  # TODO
-      hide_tags_help: If this option is selected, **labels** will be hidden.  # TODO
+      hide_tags: Hide tags
+      hide_tags_help: If this option is selected, **tags** will be hidden.
       hide_cutting_dimensions: Hide rough dimensions
       hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_bbox_dimensions: Hide finished dimensions
@@ -304,7 +304,7 @@ tab:
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       edge_material_names_filter: Material of edge banding to filter
-      tags_filter: Labels to filter  # TODO
+      tags_filter: Tags to filter
       dimensions_help: Illustration of the dimensions...
       summary: Summary
       material_type: Type
@@ -366,7 +366,7 @@ tab:
       material_thickness: Material / Thickness
       material_name: Material
       entity_names: Instance names
-      tags: Labels  # TODO
+      tags: Tags
       edge_ymax: Edge length 1
       edge_ymin: Edge length 2
       edge_xmin: Edge width 1
@@ -498,7 +498,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes # TODO
+      label: Labels
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -689,7 +689,7 @@ tab:
       bbox_width: Width
       bbox_thickness: Thickness
       material: Material
-      tags: Labels  # TODO
+      tags: Tags
     tooltip:
       errors: This part will not be imported because it produced the following errors
       warnings: This part will be imported but it produced the following warnings
@@ -732,7 +732,7 @@ tab:
     label: News
     title: News
     help: |
-      Find here the news from *OpenCutList*.
+      The latest news from *OpenCutList*.
     error:
       fail_to_load_list: Unable to download the news list.
   sponsor:
@@ -748,25 +748,25 @@ tab:
     objective: Objective
     objective_slogan: Let's climb Mont Blanc together!
     objective_title:
-      default: Ziel
+      default: Objective
       report: Generate a Report
-      labels: Imprimer des étiquettes # TODO
+      labels: Print Labels
     objective_details:
-      default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      default: |
+        *The generation of **reports** and printing **labels** may be available in the next major release.*
       report: |
         *Reporting may be available in the next major release.*
 
-        The purpose of this feature will be to:
-          - Calculate the **estimated cost** of the project with details per material
-          - Calculate the estimated **weight** of required materials
-          - Synthesize the information of the entire project in a single document accessible by a single action
-      labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+        The purpose of this feature is to:
+          - calculate the **estimated cost** of the project with details per material,
+          - calculate the estimated **weight** of required materials,
+          - synthesize the information of the entire project in a single document accessible by a single action.
+      labels: |
+        *Printing **labels** may be available in the next major release.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        The purpose of this feature is to:
+        - support printing of a batch of labels for this cutting diagram on adhesive labels,
+        - avoid mistakes by clearly marking each part once it has been cut.
     objective_crowdfunding: |
       The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
     objective_thanks: |
