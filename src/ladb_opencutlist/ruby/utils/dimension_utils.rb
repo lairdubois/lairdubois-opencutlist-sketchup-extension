@@ -27,6 +27,7 @@
 
   UNIT_SIGN_METER_3 = 'm³'
   UNIT_SIGN_FEET_3 = 'ft³'
+  UNIT_SIGN_BOARD_FEET_3 = 'FBM'
 
   class DimensionUtils
 
@@ -148,7 +149,7 @@
         i
       end
     end
-    
+
     # Take a single dimension as a string and
     # 1. add units if none are present, assuming that no units means model units
     # 2. prepend zero if just unit given (may happen!)
@@ -160,7 +161,7 @@
       i = i.strip
       nu = ""
       sum = 0
-      if i.is_a?(String) 
+      if i.is_a?(String)
         if match = i.match(/^(~?\s*)(\d*(([.,])\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three, four, five = match.captures
           if five.nil?
@@ -203,7 +204,7 @@
      i = i.strip
      sum = 0
       # make sure the entry is a string and starts with the proper magic
-      if i.is_a?(String) 
+      if i.is_a?(String)
         if match = i.match(/^(\d*([.,]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
@@ -414,7 +415,7 @@
         unit_sign = UNIT_SIGN_METER_2
       else
         multiplier = 1 / 144.0
-        precision = [2, @length_precision].max
+        precision = [2, @length_precision-3].max
         unit_sign = UNIT_SIGN_FEET_2
       end
       format_value(f2, multiplier, precision, unit_sign)
@@ -422,9 +423,9 @@
 
     # Take a float containing a volume in inch³
     # and convert it to a string representation according to the
-    # local unit settings.
+    # local unit settings and the material_type (for Board Foot).
     #
-    def format_to_readable_volume(f3)
+    def format_to_readable_volume(f3, material_type)
       if f3.nil?
         return nil
       end
@@ -433,9 +434,15 @@
         precision = [3, @length_precision].max
         unit_sign = UNIT_SIGN_METER_3
       else
-        multiplier = 1 / 1728.0
-        precision = [2, @length_precision].max
-        unit_sign = UNIT_SIGN_FEET_3
+        if material_type == MaterialAttributes::TYPE_SOLID_WOOD
+          multiplier = 1 / 144.0
+          precision = [2, @length_precision-3].max
+          unit_sign = UNIT_SIGN_BOARD_FEET_3
+        else
+          multiplier = 1 / 1728.0
+          precision = [2, @length_precision-3].max
+          unit_sign = UNIT_SIGN_FEET_3
+        end
       end
       format_value(f3, multiplier, precision, unit_sign)
     end

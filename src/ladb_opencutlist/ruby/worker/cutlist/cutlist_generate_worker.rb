@@ -241,7 +241,7 @@ module Ladb::OpenCutList
           group_def.std_dimension_rounded = std_info[:dimension_rounded]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
-          group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOW && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
+          group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
 
           _store_group_def(group_def)
 
@@ -438,7 +438,7 @@ module Ladb::OpenCutList
         part_def.add_entity_name(entity.name)
         part_def.store_instance_info(instance_info)
 
-        if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
+        if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN
           if group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_length += part_def.cutting_size.length
           end
@@ -532,7 +532,7 @@ module Ladb::OpenCutList
                 (folder_part_def.tags == part_def.tags || @hide_tags) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > MaterialAttributes::TYPE_UNKNOW) && # Part with untyped materiel are folded only if they have the same definition
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN) && # Part with untyped materiel are folded only if they have the same definition
                 folder_part_def.cumulable == part_def.cumulable
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
