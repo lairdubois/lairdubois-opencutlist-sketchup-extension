@@ -279,22 +279,29 @@ module Ladb::OpenCutList
       @pick_helper.do_pick(x, y)
       @pick_helper.count.times { |pick_path_index|
 
-        path = @pick_helper.path_at(pick_path_index)
-        if path
-          path.reverse.each { |entity|
-            if entity.is_a? Sketchup::ComponentInstance
-              @parts.each do |part|
-                part.entity_ids.each { |entity_id|
-                  if entity.entityID == entity_id
-                    @hover_part = part
-                    _update_text_lines
-                    view.invalidate
-                    return
-                  end
-                }
-              end
+        pick_path = @pick_helper.path_at(pick_path_index)
+        if pick_path
+
+          path = []
+          pick_path.each { |entity|
+            if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
+              path.push(entity);
             end
           }
+
+          serialized_path = PathUtils.serialize_path(path)
+
+          @parts.each do |part|
+            part.def.entity_serialized_paths.each { |sp|
+              if sp == serialized_path
+                @hover_part = part
+                _update_text_lines
+                view.invalidate
+                return
+              end
+            }
+          end
+
         end
 
       }
@@ -361,6 +368,7 @@ module Ladb::OpenCutList
     def _reset(view)
       if @hover_part
         @hover_part = nil
+        _update_text_lines
         view.invalidate
       end
     end
