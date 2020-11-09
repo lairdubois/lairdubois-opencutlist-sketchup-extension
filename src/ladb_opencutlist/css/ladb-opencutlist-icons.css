@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-comment:before {
+  content: "\e97b";
+}
 .ladb-opencutlist-icon-labels:before {
   content: "\e979";
 }
@@ -255,6 +258,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-news:before {
   content: "\e978";
+}
+.ladb-opencutlist-icon-forum:before {
+  content: "\e97a";
 }
 .ladb-opencutlist-icon-submenu:before {
   content: "\e91a";

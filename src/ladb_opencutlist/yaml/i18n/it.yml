@@ -735,6 +735,15 @@ tab:
       Trovate qui le ultima notizie di *OpenCutList*.
     error:
       fail_to_load_list: Impossibile caricare la lista delle notizie.
+  forum:
+    label: Forum  # TODO
+    title: Forum  # TODO
+    create_conversation: Démarrer une conversation  # TODO
+    reply: Répondre  # TODO
+    help: |  # TODO
+      Discuter ici d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
   sponsor:
     label: Sponsor
     title: Sponsor

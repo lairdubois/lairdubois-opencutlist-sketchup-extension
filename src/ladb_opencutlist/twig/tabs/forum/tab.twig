@@ -1,0 +1,18 @@
+{% extends 'tabs/base-tab.twig' %}
+
+{% block headerHeadingInner %}<i class="ladb-opencutlist-icon-forum"></i> {{ parent() }}{% endblock %}
+
+{% block headerToolsInner %}
+    <button type="button" id="ladb_btn_create_conversation" class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.forum.create_conversation'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {{ 'tab.forum.help'|i18next }}
+        </div>
+    </div>
+    <div class="ladb-page">
+        {% include 'core/_loading.twig' with { 'noHidden':true } %}
+    </div>
+{% endblock %}

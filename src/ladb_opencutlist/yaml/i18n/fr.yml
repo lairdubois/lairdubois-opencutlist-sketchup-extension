@@ -735,6 +735,15 @@ tab:
       Retrouvez ici les actualités d'*OpenCutList*.
     error:
       fail_to_load_list: Impossible de charger la liste des actualités.
+  forum:
+    label: Forum
+    title: Forum
+    create_conversation: Démarrer une conversation
+    reply: Répondre
+    help: |
+      Discuter ici d'*OpenCutList*.
+    error:
+      fail_to_load_list: Impossible de charger la liste des conversations.
   sponsor:
     label: Soutenir
     title: Soutenir
