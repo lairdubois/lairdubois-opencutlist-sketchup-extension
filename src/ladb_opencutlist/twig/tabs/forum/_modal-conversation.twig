@@ -1,0 +1,52 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_forum_conversation' %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <div class="ladb-forum-conversation-content">
+        <div class="media">
+            <div class="media-left"><img src="{{ conversation.fromCollective.imageUrl }}" alt="{{ conversation.fromCollective.name }}" class="ladb-forum-conversation-author-avatar"></div>
+            <div class="media-body">
+                <div class="ladb-forum-conversation-header">
+                    <div class="ladb-forum-conversation-title">{{ conversation.title }}</div>
+                    <div class="ladb-forum-conversation-subheader">
+                        <div class="ladb-forum-conversation-author"><a href="https://opencollective.com/{{ conversation.fromCollective.slug }}" target="_blank">{{ conversation.fromCollective.name }}</a></div>
+                        <div class="ladb-forum-conversation-age">{{ conversation.createdAt|date(('default.date_format'|i18next())) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="ladb-forum-conversation-body">
+        {{ conversation.body.html|sanitize_links }}
+    </div>
+    <div style="margin-left: 19px; border-left: 2px solid #ddd; padding-left: 19px; margin-top: 20px;">
+        {% for comment in conversation.comments.nodes %}
+            <div class="media ladb-forum-comment">
+                <div class="media-left"><img src="{{ comment.fromAccount.imageUrl }}" alt="{{ comment.fromAccount.name }}" class="ladb-forum-comment-author-avatar"></div>
+                <div class="media-body">
+                    <div class="ladb-forum-comment-header">
+                        <div class="ladb-forum-comment-author"><a href="https://opencollective.com/{{ comment.fromAccount.slug }}" target="_blank">{{ comment.fromAccount.name }}</a></div>
+                        <div class="ladb-forum-comment-age">{{ comment.createdAt|date(('default.date_format'|i18next())) }}</div>
+                    </div>
+                    <div class="ladb-forum-comment-body">{{ comment.html|sanitize_links }}</div>
+                    <ul class="ladb-forum-comment-reactions">
+                        {% for reaction, count in comment.reactions %}
+                            <li>{{ reaction }} {{ count }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-primary" id="ladb_forum_conversation_reply" data-conversation-slug="{{ conversation.slug }}" data-conversation-id="{{ conversation.id }}"><i class="ladb-opencutlist-icon-comment"></i> {{ 'tab.forum.reply'|i18next }}...</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+{% endblock %}

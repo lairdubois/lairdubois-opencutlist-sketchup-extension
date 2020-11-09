@@ -100,6 +100,12 @@
                 sponsorAd: false
             },
             {
+                name: 'forum',
+                bar: 'leftbar-bottom',
+                icon: 'ladb-opencutlist-icon-forum',
+                sponsorAd: false
+            },
+            {
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings',
@@ -765,6 +771,9 @@
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     });
+                });
+                Twig.extendFilter('sanitize_links', function (value, options) {
+                    return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
                 });
 
                 // Check if JS build number corresponds to Ruby build number
