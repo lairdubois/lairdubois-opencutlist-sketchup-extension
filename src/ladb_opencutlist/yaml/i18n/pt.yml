@@ -224,12 +224,12 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
-      tags: Etiquetas # TODO
+      tags: Tags # TODO
       tags_help: | # TODO
-        Com *Etiquetas* é possível adicionar palavras-chave para personalizar as definições da parte.
+        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da parte.
         Pode adicionar tantas etiquetas quantas achar conveniente.
         As partes visíveis da sua lista de almofadas podem então ser filtradas de acordo com a lista de etiquetas.
-      tags_multiple_info: Apenas rótulos comuns são mostrados # TODO
+      tags_multiple_info: Apenas tags comuns são mostrados # TODO
       axes: Machados
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua parte.
       axes_tip: |
@@ -266,11 +266,11 @@ tab:
       part_number_sequence_by_group: Reinicialize a enumeração de partes para cada grupo
       part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das partes é reinicializada em 1 (ou A) para cada grupo do mesmo tipo de material e espessura.
       part_folding: Grupo de partes idênticas
-      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com** rótulos idênticos ** serão agrupadas.  # TODO
+      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com **tags idênticos** serão agrupadas.  # TODO
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: Se esta opção for selecionada, **nomes de instância** de partes não serão exibidos.
-      hide_tags: Esconda etiquetas  # TODO
-      hide_tags_help: Se esta opção for selecionada, **rótulos** serão ocultados.  # TODO
+      hide_tags: Nascondi tags  # TODO
+      hide_tags_help: Se esta opção for selecionada, **tags** serão ocultados.  # TODO
       hide_cutting_dimensions: Ocultar dimensões aproximadas
       hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das partes serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
@@ -304,7 +304,7 @@ tab:
       filters_warning: "Este filtro exibe apenas **{{ count }}** parte de um total de {{ total }}."
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** partes de um total de {{ total }}."
       edge_material_names_filter: Material de bandagem de borda para filtrar
-      tags_filter: Rótulos para filtrar  # TODO
+      tags_filter: Tags para filtrar  # TODO
       dimensions_help: Ilustração das dimensões ...
       summary: Resumo
       material_type: Tipo
@@ -366,7 +366,7 @@ tab:
       material_thickness: Espessura do material
       material_name: Material
       entity_names: Nomes de instância
-      tags: Etiquetas  # TODO
+      tags: Tags  # TODO
       edge_ymax: Comprimento da borda 1
       edge_ymin: Comprimento da borda 2
       edge_xmin: Largura da borda 1
@@ -498,7 +498,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensões reduzidas pela espessura da faixa de borda.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes # TODO
+      label: Etiquetas # TODO
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -732,7 +732,7 @@ tab:
     label: Notícias # TODO
     title: Notícias
     help: |
-      Encontre aqui as notícias sobre *OpenCutList*.
+      As últimas notícias da *OpenCutList*.
     error:
       fail_to_load_list: Incapaz de carregar a lista de notícias.
   sponsor:
@@ -750,23 +750,23 @@ tab:
     objective_title:
       default: Ziel
       report: Gerar um relatório
-      labels: Imprimer des étiquettes # TODO
+      labels: Imprimir etiquetas # TODO
     objective_details:
       default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+        *Criar **relatórios** e imprimir **rótulos** podem estar disponíveis na próxima grande atualização.*
       report: |
-        *Relatórios podem estar disponíveis no próximo grande lançamento.*
+        ***Relatórios** podem estar disponíveis na próxima grande atualização.*
 
         O objetivo deste recurso será o de:
-          - Calcular o **custo estimado** do projeto com detalhes por material
-          - Calcular o **peso estimado** dos materiais necessários
-          - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação
+          - Calcular o **custo estimado** do projeto com detalhes por material,
+          - Calcular o **peso estimado** dos materiais necessários,
+          - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação.
       labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+        *A impressão de **rótulos** pode estar disponível na próxima grande atualização.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        Esta funcionalidade deveria:
+        - Suportam a impressão de etiquetas para este diagrama de corte,
+        - Evite erros ao marcar cada peça após o corte.
     objective_crowdfunding: |
       O desenvolvimento desta nova funcionalidade será feito através de **financiamento participativo** e começará quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |

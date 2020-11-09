@@ -111,7 +111,7 @@ tab:
     edit_part_properties: Modifica le proprietà della parte
     edit_part_axes_properties: Modifica le proprietà degli assi della parte
     tooltip:
-      show_hide_block: Mostra / Nascondi questo gruppo
+      show_hide_block: Mostra / Nascondi
       scroll_to_block: Scorri fino al gruppo
       not_available_std_width: La larghezza *{{ std_dimension }}* del materiale '{{ material_name }}' non è stata definita
       not_available_std_thickness: Lo spessore *{{ std_dimension }}* del materiale '{{ material_name }}' non è stato definito
@@ -753,20 +753,20 @@ tab:
       labels: Stampa etichette #
     objective_details:
       default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+        *La creazione di **Resoconti** e la stampa di **Etichette** possono essere disponibili nel prossimo importante aggiornamento.*
       report: |
-        *La funzionalità "Resoconto" potrebbe essere disponibile nella prossima revisione principale.*
+        *La funzionalità **Resoconto** potrebbe essere disponibile nel prossimo importante aggiornamento.*
 
         Lo scopo di questa funzione è di :
-          - Stimare il **costo** del progetto con i dettagli dei singoli materiali
-          - Calcolare il **peso** dei materiali richiesti
-          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando
+          - Stimare il **costo** del progetto con i dettagli dei singoli materiali.
+          - Calcolare il **peso** dei materiali richiesti.
+          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando.
       labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+        *La stampa di **etichette** può essere disponibile nel prossimo aggiornamento maggiore.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        Lo scopo di questa funzione è quello di:
+        - Supportare la stampa di etichette adesive.
+        - Evitare errori marcando chiaramente ogni parte una volta che è stata tagliata.
     objective_crowdfunding: |
       Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
     objective_thanks: |
