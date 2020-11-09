@@ -8,7 +8,7 @@
         {% for tabDef in tabDefs if tabDef.bar == 'leftbar-bottom' %}
             <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
         {% endfor %}
-        <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}7{% else %}4{% endif %}">
+        <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}8{% else %}5{% endif %}">
             <div class="ladb-subbar-toggle">
                 <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><div>{{ 'core.leftbar.more'|i18next }}</div></div>
                 <span class="ladb-toggle-arrow"></span>
@@ -21,6 +21,7 @@
                 {% endif %}
                 <a href="https://www.lairdubois.fr/plans/?q=@kind:%22sketchup%22%20@sort-recent" target="_blank"><i class="ladb-opencutlist-icon-plan"></i><div>{{ 'core.leftbar.more_plans'|i18next }}</div></a>
                 <a href="#" id="ladb_leftbar_btn_news" class="ladb-separator" data-ladb-tab-name="news"><i class="ladb-opencutlist-icon-news"></i><div>{{ 'tab.news.label'|i18next }}</div></a>
+                <a href="#" id="ladb_leftbar_btn_forum" data-ladb-tab-name="forum"><i class="ladb-opencutlist-icon-forum"></i><div>{{ 'tab.forum.label'|i18next }}</div></a>
                 <a href="#" id="ladb_leftbar_btn_upgrade"><i class="ladb-opencutlist-icon-update"></i><div>{{ 'core.leftbar.more_update'|i18next }}</div></a>
                 <a href="#" class="ladb-highlighted-sponsor" data-ladb-tab-name="sponsor"><i class="ladb-opencutlist-icon-sponsor"></i><div>{{ 'tab.sponsor.label'|i18next }}</div></a>
             </div>

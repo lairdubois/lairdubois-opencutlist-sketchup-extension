@@ -101,7 +101,7 @@
             },
             {
                 name: 'forum',
-                bar: 'leftbar-bottom',
+                bar: null,
                 icon: 'ladb-opencutlist-icon-forum',
                 sponsorAd: false
             },
