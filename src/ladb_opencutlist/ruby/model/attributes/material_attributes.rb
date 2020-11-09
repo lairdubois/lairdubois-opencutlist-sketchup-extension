@@ -7,14 +7,14 @@
 
   class MaterialAttributes
 
-    TYPE_UNKNOW = 0
+    TYPE_UNKNOWN = 0
     TYPE_SOLID_WOOD = 1
     TYPE_SHEET_GOOD = 2
     TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
 
     DEFAULTS = {
-        TYPE_UNKNOW => {
+        TYPE_UNKNOWN => {
             :thickness => '0',
             :length_increase => '0',
             :width_increase => '0',
@@ -121,12 +121,12 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOW or i_type > TYPE_EDGE
-          return TYPE_UNKNOW
+        if i_type < TYPE_UNKNOWN or i_type > TYPE_EDGE
+          return TYPE_UNKNOWN
         end
         i_type
       else
-        TYPE_UNKNOW
+        TYPE_UNKNOWN
       end
     end
 
@@ -373,7 +373,7 @@
           end
         end
 
-        @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOW))
+        @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOWN))
         @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(:thickness))
         @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
         @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))
@@ -386,7 +386,7 @@
         @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(:grained))
         @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(:edge_decremented))
       else
-        @type = TYPE_UNKNOW
+        @type = TYPE_UNKNOWN
       end
     end
 

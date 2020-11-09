@@ -759,7 +759,7 @@
         // Define usefull functions
         var fnComputeFieldsVisibility = function (type) {
             switch (type) {
-                case 0:   // TYPE_UNKNOW
+                case 0:   // TYPE_UNKNOWN
                     $inputLengthIncrease.closest('section').hide();
                     break;
                 case 1:   // TYPE_SOLID_WOOD

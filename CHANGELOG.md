@@ -8,6 +8,8 @@ in 1.x and 0.x versions.
 
   * Added "News" tab
   * Improved thickness and section precision display
+  * Improved readability of square feet hide_raw_dimensions
+  * Changed ft³ to FBM (foot, board measure) for Material Solid Wood
 
 * 1.9.8 (2020-10-28)
 
