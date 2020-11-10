@@ -740,8 +740,9 @@ tab:
     title: Forum  # TODO
     create_conversation: Démarrer une conversation  # TODO
     reply: Répondre  # TODO
+    tags: Tags  # TODO
     help: |  # TODO
-      Discuter ici d'*OpenCutList*.
+      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
     error:
       fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
   sponsor:
