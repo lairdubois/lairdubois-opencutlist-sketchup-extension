@@ -33,9 +33,9 @@ module Ladb::OpenCutList
       @part_number_sequence_by_group = settings['part_number_sequence_by_group']
       @part_folding = settings['part_folding']
       @part_order_strategy = settings['part_order_strategy']
-      @hide_labels = settings['hide_labels']
+      @hide_tags = settings['hide_tags']
       @hide_final_areas = settings['hide_final_areas']
-      @labels_filter = settings['labels_filter']
+      @tags_filter = settings['tags_filter']
       @edge_material_names_filter = settings['edge_material_names_filter']
 
       # Setup caches
@@ -120,11 +120,11 @@ module Ladb::OpenCutList
         definition = entity.definition
         definition_attributes = _get_definition_attributes(definition)
 
-        # Populate used labels
-        cutlist.add_used_labels(definition_attributes.labels)
+        # Populate used tags
+        cutlist.add_used_tags(definition_attributes.tags)
 
         # Labels filter
-        if !@labels_filter.empty? and !definition_attributes.has_labels(@labels_filter)
+        if !@tags_filter.empty? and !definition_attributes.has_tags(@tags_filter)
           cutlist.ignored_instance_count += 1
           next
         end
@@ -241,7 +241,7 @@ module Ladb::OpenCutList
           group_def.std_dimension_rounded = std_info[:dimension_rounded]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
-          group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOW && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
+          group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
 
           _store_group_def(group_def)
 
@@ -295,7 +295,7 @@ module Ladb::OpenCutList
           part_def.width_increase = definition_attributes.width_increase
           part_def.thickness_increase = definition_attributes.thickness_increase
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
-          part_def.labels = definition_attributes.labels
+          part_def.tags = definition_attributes.tags
           part_def.length_increased = length_increased
           part_def.width_increased = width_increased
           part_def.thickness_increased = thickness_increased
@@ -440,7 +440,7 @@ module Ladb::OpenCutList
         part_def.add_entity_name(entity.name)
         part_def.store_instance_info(instance_info)
 
-        if group_def.material_type != MaterialAttributes::TYPE_UNKNOW
+        if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN
           if group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_length += part_def.cutting_size.length
           end
@@ -532,14 +532,14 @@ module Ladb::OpenCutList
         # Folding
         if @part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.labels, v.final_area, v.cumulable ] }.each do |part_def|
+          group_def.part_defs.values.sort_by { |v| [v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
-                (folder_part_def.labels == part_def.labels || @hide_labels) &&
+                (folder_part_def.tags == part_def.tags || @hide_tags) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                ((folder_part_def.definition_id == part_def.definition_id && (group_def.material_type == MaterialAttributes::TYPE_UNKNOW || group_def.material_type == MaterialAttributes::TYPE_ACCESSORY)) || group_def.material_type != MaterialAttributes::TYPE_UNKNOW && group_def.material_type != MaterialAttributes::TYPE_ACCESSORY) && # Part with TYPE_UNKNOW or TYPE_ACCESSORY materiel are folded only if they have the same definition
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOW) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN || group_def.material_type == MaterialAttributes::TYPE_ACCESSORY) && # Part with TYPE_UNKNOW or TYPE_ACCESSORY materiel are folded only if they have the same definition
                 folder_part_def.cumulable == part_def.cumulable
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
@@ -551,7 +551,7 @@ module Ladb::OpenCutList
                 folder_part_def.size = first_child_part_def.size
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.cumulable = first_child_part_def.cumulable
-                folder_part_def.labels = first_child_part_def.labels
+                folder_part_def.tags = first_child_part_def.tags
                 folder_part_def.final_area = first_child_part_def.final_area
                 folder_part_def.edge_count = first_child_part_def.edge_count
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern

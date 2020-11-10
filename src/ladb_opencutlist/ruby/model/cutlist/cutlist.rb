@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_accessor :selection_only, :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
-    attr_reader :errors, :warnings, :tips, :used_labels, :material_usages, :groups
+    attr_reader :errors, :warnings, :tips, :used_tags, :material_usages, :groups
 
     def initialize(selection_only, length_unit, dir, filename, page_label, instance_count)
       @_obsolete = false
@@ -24,7 +24,7 @@ module Ladb::OpenCutList
       @instance_count = instance_count
       @ignored_instance_count = 0
       @max_number = nil
-      @used_labels = []
+      @used_tags = []
       @material_usages = []
       @groups = []
     end
@@ -60,8 +60,8 @@ module Ladb::OpenCutList
 
     # UsedLabels
 
-    def add_used_labels(used_labels)
-      @used_labels += used_labels - (@used_labels & used_labels)
+    def add_used_tags(used_tags)
+      @used_tags += used_tags - (@used_tags & used_tags)
     end
 
     # MaterialUsages

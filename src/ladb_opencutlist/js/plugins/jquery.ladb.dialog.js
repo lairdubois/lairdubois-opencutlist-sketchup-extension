@@ -100,6 +100,12 @@
                 sponsorAd: false
             },
             {
+                name: 'forum',
+                bar: null,
+                icon: 'ladb-opencutlist-icon-forum',
+                sponsorAd: false
+            },
+            {
                 name: 'settings',
                 bar: 'bottombar',
                 icon: 'ladb-opencutlist-icon-settings',
@@ -146,9 +152,9 @@
 
                         // Fresh update, notify it
                         if (!that.capabilities.update_muted) {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade' ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade' ]);
                         } else {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#btn_left_bar_upgrade', { muted: true } ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { muted: true } ]);
                         }
 
                     }, 1000);
@@ -332,6 +338,7 @@
 
             // Flag as inactive
             this.$tabBtns[this.activeTabName].removeClass('ladb-active');
+            $('[data-ladb-tab-name="' + this.activeTabName + '"]').removeClass('ladb-active');
 
             // Hide active tab
             this.$tabs[this.activeTabName].hide();
@@ -416,6 +423,7 @@
 
             // Flag tab as active
             this.$tabBtns[tabName].addClass('ladb-active');
+            $('[data-ladb-tab-name="' + tabName + '"]').addClass('ladb-active');
             this.activeTabName = tabName;
 
         }
@@ -765,6 +773,9 @@
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     });
+                });
+                Twig.extendFilter('sanitize_links', function (value, options) {
+                    return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
                 });
 
                 // Check if JS build number corresponds to Ruby build number

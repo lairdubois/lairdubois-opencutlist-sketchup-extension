@@ -6,9 +6,9 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
-{% if usedEdgeMaterialDisplayNames is not empty or usedLabels is not empty or ignoredInstanceCount > 0 %}
+{% if usedEdgeMaterialDisplayNames is not empty or usedTags is not empty or ignoredInstanceCount > 0 %}
 
-    {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.labels_filter is empty) %}
+    {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.tags_filter is empty) %}
 
     <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-filters">
         <thead>
@@ -34,7 +34,7 @@
                                 <input type="text" class="form-control" id="ladb_cutlist_edge_material_names_filter" value="{{ generateFilters.edge_material_names_filter|join(';') }}" placeholder="{{ 'tab.cutlist.list.edge_material_names_filter'|i18next() }}">
                             </div>
                             <div class="no-screen">
-                                <ul class="ladb-cutlist-labels-filters-printable">
+                                <ul class="ladb-cutlist-tags-filters-printable">
                                     {% for material_name in generateFilters.edge_material_names_filter %}
                                         <li>{{ material_name }}</li>
                                     {% endfor %}
@@ -48,27 +48,27 @@
                 </td>
             </tr>
         {% endif %}
-        {% if usedLabels is not empty or generateFilters.labels_filter is not empty %}
+        {% if usedTags is not empty or generateFilters.tags_filter is not empty %}
             <tr>
                 <td>
                     <div class="media">
                         <div class="media-left">
-                            <i class="ladb-opencutlist-icon-label" style="font-size: 150%; line-height: 32px;"></i>
+                            <i class="ladb-opencutlist-icon-tag" style="font-size: 150%; line-height: 32px;"></i>
                         </div>
                         <div class="media-body">
                             <div class="no-print">
-                                <input type="text" class="form-control" id="ladb_cutlist_labels_filter" value="{{ generateFilters.labels_filter|join(';')|escape }}" placeholder="{{ 'tab.cutlist.list.labels_filter'|i18next() }}">
+                                <input type="text" class="form-control" id="ladb_cutlist_tags_filter" value="{{ generateFilters.tags_filter|join(';')|escape }}" placeholder="{{ 'tab.cutlist.list.tags_filter'|i18next() }}">
                             </div>
                             <div class="no-screen">
-                                <ul class="ladb-cutlist-labels-filters-printable">
-                                    {% for label in generateFilters.labels_filter %}
-                                        <li>{{ label }}</li>
+                                <ul class="ladb-cutlist-tags-filters-printable">
+                                    {% for tag in generateFilters.tags_filter %}
+                                        <li>{{ tag }}</li>
                                     {% endfor %}
                                 </ul>
                             </div>
                         </div>
                         <div class="media-right no-print">
-                            <button class="btn btn-default" id="ladb_cutlist_btn_labels_filter_clear">{{ 'default.clear'|i18next() }}</button>
+                            <button class="btn btn-default" id="ladb_cutlist_btn_tags_filter_clear">{{ 'default.clear'|i18next() }}</button>
                         </div>
                     </div>
                 </td>

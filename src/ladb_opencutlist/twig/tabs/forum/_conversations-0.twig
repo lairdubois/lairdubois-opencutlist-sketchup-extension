@@ -1,0 +1,17 @@
+<div id="ladb_forum_page_content" class="row">
+    <div id="ladb_forum_conversations" class="col-xs-8">
+        {% include 'tabs/forum/_conversations-n.twig' %}
+    </div>
+    <div class="col-xs-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'tab.forum.tags'|i18next }}</div>
+            <div class="panel-body">
+                <ul class="ladb-forum-tags">
+                    {% for conversationsTag in conversationsTags %}
+                        <li><a href="#" class="ladb-forum-tag{% if conversationsTag.tag == tagFilter %} ladb-active{% endif %}" data-tag="{{ conversationsTag.tag }}">{{ conversationsTag.tag }}{% if conversationsTag.count > 0 %} <small>x{{ conversationsTag.count }}</small>{% endif %}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

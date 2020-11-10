@@ -6,8 +6,10 @@ module Ladb::OpenCutList
   class HighlightPartTool < CutlistObserver
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
-    COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
-    COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
+    # COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
+    COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
+    # COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
+    COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(0, 62, 255, 128).freeze
     COLOR_TEXT_BG = Sketchup::Color.new(255, 255, 255, 191).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
@@ -106,7 +108,7 @@ module Ladb::OpenCutList
             draw_def[:face_triangles].concat(_compute_children_faces_tirangles(view, instance_info.entity.definition.entities, instance_info.transformation))
 
             # Compute back and front face arrows
-            if group.material_type != MaterialAttributes::TYPE_UNKNOW
+            if group.material_type != MaterialAttributes::TYPE_UNKNOWN
 
               order = [ 1, 2, 3 ]
               if part.auto_oriented
@@ -277,22 +279,29 @@ module Ladb::OpenCutList
       @pick_helper.do_pick(x, y)
       @pick_helper.count.times { |pick_path_index|
 
-        path = @pick_helper.path_at(pick_path_index)
-        if path
-          path.reverse.each { |entity|
-            if entity.is_a? Sketchup::ComponentInstance
-              @parts.each do |part|
-                part.entity_ids.each { |entity_id|
-                  if entity.entityID == entity_id
-                    @hover_part = part
-                    _update_text_lines
-                    view.invalidate
-                    return
-                  end
-                }
-              end
+        pick_path = @pick_helper.path_at(pick_path_index)
+        if pick_path
+
+          path = []
+          pick_path.each { |entity|
+            if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
+              path.push(entity);
             end
           }
+
+          serialized_path = PathUtils.serialize_path(path)
+
+          @parts.each do |part|
+            part.def.entity_serialized_paths.each { |sp|
+              if sp == serialized_path
+                @hover_part = part
+                _update_text_lines
+                view.invalidate
+                return
+              end
+            }
+          end
+
         end
 
       }
@@ -334,7 +343,7 @@ module Ladb::OpenCutList
       if part
 
         @text_line_1 = "[#{part.number}] #{part.name}"
-        @text_line_2 = part.labels.join(' | ')
+        @text_line_2 = part.tags.join(' | ')
         @text_line_3 = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
             " | #{part.count.to_s} #{Plugin.instance.get_i18n_string(part.count > 1 ? 'default.part_plural' : 'default.part_single')}" +
@@ -359,6 +368,7 @@ module Ladb::OpenCutList
     def _reset(view)
       if @hover_part
         @hover_part = nil
+        _update_text_lines
         view.invalidate
       end
     end

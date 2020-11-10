@@ -226,12 +226,12 @@ tab:
         - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
         - *larghezza* è sull'asse <span style='color:green'>verde</span>
         - *spessore* è sull'asse <span style='color:blue'>blu</span>
-      labels: Etichette
-      labels_help: |
-        Con la funzione *Etichette* si possono aggiungere criteri per personalizzare la definizione delle parti.
+      tags: Tags # TODO
+      tags_help: |
+        Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
         Puoi aggiungere tutti gli elementi chiave che siano congruenti.
         La distinta puo essere filtrata mediante la lista degli elementi chiave.
-      labels_multiple_info: Solo
+      tags_multiple_info: Sono visibili solo i tag comuni
       axes: Assi
       axes_help: Modifica le dimensioni in modo da farle coincidere agli assi (colori) della parte.
       axes_tip: |
@@ -271,8 +271,8 @@ tab:
       part_folding_help: Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche**.
       hide_entity_names: Nascondi i nomi delle occorrenze
       hide_entity_names_help: Se questa opzione è attivata, il **nome occorrenza** delle parti non verrà mostrata.
-      hide_labels: Nascondi Etichette
-      hide_labels_help: Se questa opzione è attivata, non verranno visualizzate le **etichette**.
+      hide_tags: Nascondi Tags
+      hide_tags_help: Se questa opzione è attivata, non verranno visualizzate le **tags**.
       hide_cutting_dimensions: Nascondi le dimensioni semilavorate
       hide_cutting_dimensions_help: Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
@@ -304,7 +304,7 @@ tab:
       filters_warning: "Questo filtro mostra solo **{{ count }}** parte su un totale di {{ total }}."
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
       edge_material_names_filter: Materiale delle bordature da filtrare
-      labels_filter: Etichette da filtrare
+      tags_filter: Tags da filtrare
       dimensions_help: Schema delle dimensioni...
       summary: Sommario
       material_type: Tipo
@@ -366,7 +366,7 @@ tab:
       material_thickness: Materiale / Spessore
       material_name: Materiale
       entity_names: Nomi delle occorrenze
-      labels: Etichette
+      tags: Tags
       edge_ymax: Bordo Lunghezza 1
       edge_ymin: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
@@ -498,7 +498,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Le dimensioni sono state ridotte dello spessore della bordatura.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes # TODO
+      label: Etichette
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -693,7 +693,7 @@ tab:
       bbox_width: Larghezza
       bbox_thickness: Spessore
       material: Materiale
-      labels: Etichette
+      tags: Tags
     tooltip:
       errors: Questa parte non verrà importata a causa dei seguenti errori
       warnings: Questa parte verrà importata con i seguenti avvertimenti
@@ -733,12 +733,28 @@ tab:
     error:
       fail_to_load_list: Impossibile caricare la lista dei video.
   news:
-    label: Notizie  # TODO
+    label: Notizie
     title: Notizie
     help: |
-      Trovate qui le notizie di *OpenCutList*.
+      Trovate qui le ultima notizie di *OpenCutList*.
     error:
       fail_to_load_list: Impossibile caricare la lista delle notizie.
+  forum:
+    label: Forum  # TODO
+    title: Forum  # TODO
+    create_conversation: Démarrer une conversation  # TODO
+    reply: Répondre  # TODO
+    tags: Tags  # TODO
+    help: |  # TODO
+      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
+    redirection: |  # TODO
+      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
+      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
+      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+
+      Validez pour continuer.
+    error:
+      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
   sponsor:
     label: Sponsor
     title: Sponsor
@@ -752,9 +768,9 @@ tab:
     objective: Obiettivo
     objective_slogan: Scaliamo il Monte Bianco insieme!
     objective_title:
-      default: Ziel
+      default: Obiettivo # TODO
       report: La generazione di un resoconto
-      labels: Imprimer des étiquettes # TODO
+      labels: Stampa etichette #
     objective_details:
       default: |  # TODO
         *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*

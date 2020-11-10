@@ -29,7 +29,7 @@ module Ladb::OpenCutList
       @std_thickness = group_def.std_thickness.to_s.gsub(/~ /, ''), # Remove ~ if it exists
       @total_cutting_length = group_def.total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(group_def.total_cutting_length)
       @total_cutting_area = group_def.total_cutting_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_cutting_area)
-      @total_cutting_volume = group_def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(group_def.total_cutting_volume)
+      @total_cutting_volume = group_def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(group_def.total_cutting_volume, group_def.material_type)
       @total_final_area = group_def.total_final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_final_area)
       @invalid_final_area_part_count = group_def.invalid_final_area_part_count
       @show_cutting_dimensions = group_def.show_cutting_dimensions

@@ -12,7 +12,10 @@ in 1.x and 0.x versions.
 * 1.9.9 (WIP)
 
   * Added "News" tab
+  * Added "Forum" tab
   * Improved thickness and section precision display
+  * Improved readability of square feet area dimensions
+  * Changed ft³ to FBM (foot, board measure) for Material Solid Wood
 
 * 1.9.8 (2020-10-28)
 

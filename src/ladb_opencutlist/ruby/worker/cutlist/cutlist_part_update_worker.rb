@@ -21,7 +21,7 @@ module Ladb::OpenCutList
         :width_increase,
         :thickness_increase,
         :orientation_locked_on_axis,
-        :labels,
+        :tags,
         :axes_order,
         :axes_origin_position,
         :edge_material_names,
@@ -46,7 +46,7 @@ module Ladb::OpenCutList
             part_data['width_increase'],
             part_data['thickness_increase'],
             part_data['orientation_locked_on_axis'],
-            DefinitionAttributes.valid_labels(part_data['labels']),
+            DefinitionAttributes.valid_tags(part_data['tags']),
             part_data['axes_order'],
             part_data['axes_origin_position'],
             part_data['edge_material_names'],
@@ -92,7 +92,7 @@ module Ladb::OpenCutList
               part_data.width_increase != definition_attributes.width_increase ||
               part_data.thickness_increase != definition_attributes.thickness_increase ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
-              part_data.labels != definition_attributes.labels
+              part_data.tags != definition_attributes.tags
             definition_attributes.cumulable = part_data.cumulable
             definition_attributes.unit_price = part_data.unit_price
             definition_attributes.unit_mass = part_data.unit_mass
@@ -100,7 +100,7 @@ module Ladb::OpenCutList
             definition_attributes.width_increase = part_data.width_increase
             definition_attributes.thickness_increase = part_data.thickness_increase
             definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
-            definition_attributes.labels = part_data.labels
+            definition_attributes.tags = part_data.tags
             definition_attributes.write_to_attributes
           end
 

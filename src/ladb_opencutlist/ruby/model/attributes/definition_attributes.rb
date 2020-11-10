@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :unit_price, :unit_mass, :orientation_locked_on_axis, :labels, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :unit_price, :unit_mass, :orientation_locked_on_axis, :tags, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -49,12 +49,12 @@ module Ladb::OpenCutList
       end
     end
 
-    def self.valid_labels(labels)
-      if labels
-        if labels.is_a? Array and !labels.empty?
-          return labels.map(&:strip).reject { |label| label.empty? }.uniq.sort
-        elsif labels.is_a? String
-          return labels.split(';').map(&:strip).reject { |label| label.empty? }.uniq.sort
+    def self.valid_tags(tags)
+      if tags
+        if tags.is_a? Array and !tags.empty?
+          return tags.map(&:strip).reject { |tag| tag.empty? }.uniq.sort
+        elsif tags.is_a? String
+          return tags.split(';').map(&:strip).reject { |tag| tag.empty? }.uniq.sort
         end
       end
       return []
@@ -76,8 +76,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def has_labels(labels)
-      (labels - @labels).empty?
+    def has_tags(tags)
+      (tags - @tags).empty?
     end
 
     # -----
@@ -137,7 +137,7 @@ module Ladb::OpenCutList
         @unit_price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
         @unit_mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', '')
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
-        @labels = DefinitionAttributes.valid_labels(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))
+        @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
         @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
         @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
@@ -157,7 +157,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @unit_price)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', @unit_mass)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', @labels)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))
