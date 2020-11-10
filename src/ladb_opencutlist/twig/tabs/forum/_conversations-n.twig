@@ -1,32 +1,30 @@
 {% for conversation in conversations.nodes %}
-    <div class="col-xs-12">
-        <div class="ladb-forum-conversation-box" data-conversation-id="{{ conversation.id }}">
-            <div class="ladb-forum-conversation-content">
-                <div class="media">
-                    <div class="media-left"><img src="{{ conversation.fromCollective.imageUrl }}" alt="{{ conversation.fromCollective.name }}" class="ladb-forum-conversation-author-avatar"></div>
-                    <div class="media-body">
-                        <div class="ladb-forum-conversation-header">
-                            <div class="ladb-forum-conversation-title">{{ conversation.title }}</div>
-                            <div class="ladb-forum-conversation-subheader">
-                                <div class="ladb-forum-conversation-author"><a href="https://opencollective.com/{{ conversation.fromCollective.slug }}" target="_blank">{{ conversation.fromCollective.name }}</a></div>
-                                <div class="ladb-forum-conversation-age">{{ conversation.createdAt|date(('default.date_format'|i18next())) }}</div>
-                            </div>
+    <div class="ladb-forum-conversation-box" data-conversation-id="{{ conversation.id }}">
+        <div class="ladb-forum-conversation-content">
+            <div class="media">
+                <div class="media-left"><img src="{{ conversation.fromCollective.imageUrl }}" alt="{{ conversation.fromCollective.name }}" class="ladb-forum-conversation-author-avatar"></div>
+                <div class="media-body">
+                    <div class="ladb-forum-conversation-header">
+                        <div class="ladb-forum-conversation-title">{{ conversation.title }}</div>
+                        <div class="ladb-forum-conversation-subheader">
+                            <div class="ladb-forum-conversation-author"><a href="https://opencollective.com/{{ conversation.fromCollective.slug }}" target="_blank">{{ conversation.fromCollective.name }}</a></div>
+                            <div class="ladb-forum-conversation-age">{{ conversation.createdAt|date(('default.date_format'|i18next())) }}</div>
                         </div>
-                        <div class="ladb-forum-conversation-summary">{{ conversation.summary|sanitize_links }}</div>
-                        <ul class="ladb-forum-conversation-tags">
-                            {% for tag in conversation.tags %}
-                                <li>{{ tag }}</li>
-                            {% endfor %}
-                        </ul>
                     </div>
-                    <div class="media-right ladb-forum-conversation-comment-count{% if conversation.stats.commentsCount == 0 %} ladb-muted{% endif %}">{{ conversation.stats.commentsCount }}&nbsp;<i class="ladb-opencutlist-icon-comment"></i></div>
+                    <div class="ladb-forum-conversation-summary">{{ conversation.summary|sanitize_links }}</div>
+                    <ul class="ladb-forum-conversation-tags">
+                        {% for tag in conversation.tags %}
+                            <li><a href="#" class="ladb-forum-tag{% if tag == tagFilter %} ladb-active{% endif %}" data-tag="{{ conversationsTag.tag }}">{{ tag }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </div>
+                <div class="media-right ladb-forum-conversation-comment-count{% if conversation.stats.commentsCount == 0 %} ladb-muted{% endif %}">{{ conversation.stats.commentsCount }}&nbsp;<i class="ladb-opencutlist-icon-comment"></i></div>
             </div>
         </div>
     </div>
 {% endfor %}
 {% if nextPage %}
-    <div class="col-xs-12 text-center">
+    <div class="text-center">
         <button class="btn btn-default ladb-forum-next-page-btn"> {{ 'default.load_more'|i18next }}</button>
     </div>
 {% endif %}

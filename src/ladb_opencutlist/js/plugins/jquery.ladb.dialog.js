@@ -338,6 +338,7 @@
 
             // Flag as inactive
             this.$tabBtns[this.activeTabName].removeClass('ladb-active');
+            $('[data-ladb-tab-name="' + this.activeTabName + '"]').removeClass('ladb-active');
 
             // Hide active tab
             this.$tabs[this.activeTabName].hide();
@@ -422,6 +423,7 @@
 
             // Flag tab as active
             this.$tabBtns[tabName].addClass('ladb-active');
+            $('[data-ladb-tab-name="' + tabName + '"]').addClass('ladb-active');
             this.activeTabName = tabName;
 
         }

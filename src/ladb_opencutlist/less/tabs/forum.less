@@ -12,6 +12,24 @@
 
   .ladb-forum-conversation-summary {
     margin-top: 10px;
+    margin-right: 20px;
+  }
+
+  .ladb-forum-conversation-comment-count {
+    width: 50px;
+    text-align: right;
+    vertical-align: middle;
+    font-size: 150%;
+    margin-left: @ladb-gutter;
+    border-left: 1px solid #ddd;
+    padding-left: @ladb-gutter;
+    padding-right: 10px;
+    color: #999;
+
+    &.ladb-muted {
+      color: #ccc;
+    }
+
   }
 
 }
@@ -62,41 +80,54 @@
   br + br {
     content: "A" !important;
     display: block !important;
-    margin-bottom: .5em !important;
+    margin-bottom: .7em !important;
+  }
+
+}
+
+.ladb-forum-tags, .ladb-forum-conversation-tags {
+  list-style: none;
+  padding: 0;
+
+  > li {
+    display: inline-block;
+  }
+
+}
+
+.ladb-forum-tags {
+  margin: 0;
+
+  > li > a {
+    padding: 4px 6px;
+
+    small {
+      color: #999;
+    }
+
   }
 
 }
 
 .ladb-forum-conversation-tags {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-
-  > li {
-    display: inline-block;
-    color: #000;
-    padding: 0 3px 1px 3px;
-    margin-right: 4px;
-    border-radius: 3px;
-    font-size: 11px;
-    border: 1px solid #000;
-  }
-
+  margin: 10px 0 5px 0;
 }
 
-.ladb-forum-conversation-comment-count {
-  width: 50px;
-  text-align: right;
-  vertical-align: middle;
-  font-size: 150%;
-  margin-left: @ladb-gutter;
-  border-left: 1px solid #ddd;
-  padding-left: @ladb-gutter;
-  padding-right: 10px;
-  color: #999;
+a.ladb-forum-tag {
+  color: #000;
+  padding: 0 3px 1px 3px;
+  margin-right: 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  border: 1px solid #000;
 
-  &.ladb-muted {
-    color: #ccc;
+  &:hover {
+    text-decoration: none;
+    background-color: #ccc;
+  }
+
+  &.ladb-active {
+    border-width: 2px;
   }
 
 }
@@ -145,7 +176,7 @@
     br + br {
       content: "A" !important;
       display: block !important;
-      margin-bottom: .5em !important;
+      margin-bottom: .7em !important;
     }
 
   }

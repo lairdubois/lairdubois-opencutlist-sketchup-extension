@@ -23,7 +23,7 @@
 
     LadbTabForum.DEFAULTS = {};
 
-    LadbTabForum.prototype.loadConversations = function (page) {
+    LadbTabForum.prototype.loadConversations = function (tagFilter, page) {
         var that = this;
 
         // Fetch UI elements
@@ -35,15 +35,27 @@
         // Init page
         page = page ? page : 0;
 
+        // Reset if first page
+        if (page === 0) {
+
+            // Clear cache
+            this.conversations = {};
+
+            // Empty conversations
+            $('#ladb_forum_page_content', this.$page).remove();
+
+        }
+
         $.ajax({
             url: GRAPHQL_ENDPOINT,
             contentType: 'application/json',
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                query: "query conversations($slug: String) { " +
+                query: "query conversations($slug: String" + (tagFilter ? ", $tag: String" : "") + ") { " +
                         "collective(slug: $slug) { " +
-                            "conversations(offset: " + page * UPDATES_PAGE_SIZE + ", limit: " + UPDATES_PAGE_SIZE + ") { " +
+                            (page === 0 ? "conversationsTags { tag count } " : "") +
+                            "conversations(offset: " + page * UPDATES_PAGE_SIZE + ", limit: " + UPDATES_PAGE_SIZE + (tagFilter ? ", tag: $tag" : "") + ") { " +
                                 "totalCount " +
                                 "nodes { " +
                                     "id " +
@@ -56,6 +68,7 @@
                                         "imageUrl " +
                                     "}" +
                                     "summary " +
+                                    "tags " +
                                     "body { " +
                                         "html " +
                                     "} " +
@@ -79,13 +92,14 @@
                         "}" +
                     "}",
                 variables: {
-                    slug: GRAPHQL_SLUG
+                    slug: GRAPHQL_SLUG,
+                    tag: tagFilter
                 }
             }),
             success: function (response) {
                 if (response.data) {
 
-                    // Store conversations
+                    // Cache conversations
                     var conversation = null;
                     for (var i = 0; i < response.data.collective.conversations.nodes.length; i++) {
 
@@ -98,7 +112,9 @@
 
                     // Render conversations list
                     var $list = $(Twig.twig({ref: 'tabs/forum/_conversations-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
+                        conversationsTags: response.data.collective.conversationsTags,
                         conversations: response.data.collective.conversations,
+                        tagFilter: tagFilter,
                         nextPage: nextPage,
                     }));
                     if (page === 0) {
@@ -109,11 +125,15 @@
 
                     // Bind button
                     $('.ladb-forum-next-page-btn', $list).on('click', function () {
-                        that.loadConversations(nextPage);
+                        that.loadConversations(tagFilter, nextPage);
                         $(this).remove();
                     });
+                    $('.ladb-forum-tag', $list).on('click', function () {
+                        that.loadConversations($(this).hasClass('ladb-active') ? null : $(this).data('tag'));
+                        return false;
+                    });
 
-                    // Bind
+                    // Bind box
                     $('.ladb-forum-conversation-box', $list).on('click', function(e) {
                         var $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
@@ -143,6 +163,7 @@
     }
 
     LadbTabForum.prototype.showConversationModal = function (id) {
+        var that = this;
         var conversation = this.conversations[id];
 
         var $modal = this.appendModalInside('ladb_forum_conversation', 'tabs/forum/_modal-conversation.twig', {
@@ -153,7 +174,27 @@
         $('#ladb_forum_conversation_reply', $modal).on('click', function () {
             var slug = $(this).data('conversation-slug');
             var id = $(this).data('conversation-id');
-            rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/' + slug + '-' + id });
+
+            that.showRedirectionModal(function() {
+                rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/' + slug + '-' + id });
+            });
+
+            return false;
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbTabForum.prototype.showRedirectionModal = function (callback) {
+
+        var $modal = this.appendModalInside('ladb_forum_redirection', 'tabs/forum/_modal-redirection.twig', {
+        });
+
+        // Bind buttons
+        $('#ladb_forum_redirection_continue', $modal).on('click', function () {
+            callback();
             return false;
         });
 
@@ -165,9 +206,13 @@
     LadbTabForum.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
+        var that = this;
+
         // Bind buttons
         this.$btnCreateConversation.on('click', function () {
-            rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/new' });
+            that.showRedirectionModal(function() {
+                rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/new' });
+            });
             return false;
         });
 
