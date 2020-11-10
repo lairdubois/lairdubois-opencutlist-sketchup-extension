@@ -1036,7 +1036,9 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $inputLabels = $('#ladb_cutlist_part_input_labels', $modal);
+                var $inputUnitPrice = $('#ladb_cutlist_part_input_unit_price', $modal);
+                var $inputUnitMass = $('#ladb_cutlist_part_input_unit_mass', $modal);
+                var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
                 var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);

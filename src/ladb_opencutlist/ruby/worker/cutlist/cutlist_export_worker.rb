@@ -166,7 +166,7 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || MaterialAttributes::TYPE_ACCESSORY
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_ACCESSORY
 
                       row = []
                       row.push(part.number)
@@ -243,8 +243,8 @@ module Ladb::OpenCutList
                     next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
                     group.parts.each { |part|
 
-                      no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOW && @hide_untyped_material_dimensions
+                      no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_ACCESSORY
 
                       parts = part.is_a?(FolderPart) ? part.children : [ part ]
                       parts.each { |part|
