@@ -743,6 +743,12 @@ tab:
     tags: Tags
     help: |
       Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
+    redirection: |
+      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
+      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
+      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+
+      Validez pour continuer.
     error:
       fail_to_load_list: Impossible de charger la liste des conversations.
   sponsor:

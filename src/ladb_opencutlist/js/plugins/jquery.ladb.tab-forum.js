@@ -163,6 +163,7 @@
     }
 
     LadbTabForum.prototype.showConversationModal = function (id) {
+        var that = this;
         var conversation = this.conversations[id];
 
         var $modal = this.appendModalInside('ladb_forum_conversation', 'tabs/forum/_modal-conversation.twig', {
@@ -173,7 +174,27 @@
         $('#ladb_forum_conversation_reply', $modal).on('click', function () {
             var slug = $(this).data('conversation-slug');
             var id = $(this).data('conversation-id');
-            rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/' + slug + '-' + id });
+
+            that.showRedirectionModal(function() {
+                rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/' + slug + '-' + id });
+            });
+
+            return false;
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbTabForum.prototype.showRedirectionModal = function (callback) {
+
+        var $modal = this.appendModalInside('ladb_forum_redirection', 'tabs/forum/_modal-redirection.twig', {
+        });
+
+        // Bind buttons
+        $('#ladb_forum_redirection_continue', $modal).on('click', function () {
+            callback();
             return false;
         });
 
@@ -185,9 +206,13 @@
     LadbTabForum.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
+        var that = this;
+
         // Bind buttons
         this.$btnCreateConversation.on('click', function () {
-            rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/new' });
+            that.showRedirectionModal(function() {
+                rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/new' });
+            });
             return false;
         });
 
