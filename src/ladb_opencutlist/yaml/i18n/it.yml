@@ -109,11 +109,11 @@ tab:
     highlight_part: Evidenzia la parte nel modello
     highlight_parts: Evidenzia le parti nel modello
     edit_part_properties: Modifica le proprietà della parte
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Modifica le proprietà (assi) della parte
+    edit_part_size_increase_properties: Modifica le proprietà (sovramateriale) della parte
+    edit_part_edges_properties: Modifica le proprietà (finitura bordi) della parte
     tooltip:
-      show_hide_block: Mostra / Nascondi questo gruppo
+      show_hide_block: Mostra / Nascondi
       scroll_to_block: Scorri fino al gruppo
       not_available_std_width: La larghezza *{{ std_dimension }}* del materiale '{{ material_name }}' non è stata definita
       not_available_std_thickness: Lo spessore *{{ std_dimension }}* del materiale '{{ material_name }}' non è stato definito
@@ -226,7 +226,7 @@ tab:
         - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
         - *larghezza* è sull'asse <span style='color:green'>verde</span>
         - *spessore* è sull'asse <span style='color:blue'>blu</span>
-      tags: Tags # TODO
+      tags: Tags
       tags_help: |
         Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
         Puoi aggiungere tutti gli elementi chiave che siano congruenti.
@@ -738,21 +738,21 @@ tab:
     error:
       fail_to_load_list: Impossibile caricare la lista delle notizie.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Forum
+    title: Forum
+    create_conversation: Iniziare una conversazione
+    reply: Rispondere
+    tags: Tags
+    help: |
+      Questo spazio consente lo scambio con la comunità di utenti e con il team *OpenCutList*.
+    redirection: |
+      Sarete reindirizzati alla piattaforma **Open Collective** che ospita questo forum di discussione.
+      Per *avviare le conversazioni* o *rispondere* è necessario creare un account ed effettuare il login.
+      *E' gratuito, senza impegno e basta un semplice indirizzo e-mail.*
 
-      Validez pour continuer.
+      Convalidare per continuare.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Impossibile caricare la lista di conversazione.
   sponsor:
     label: Sponsor
     title: Sponsor
@@ -766,25 +766,25 @@ tab:
     objective: Obiettivo
     objective_slogan: Scaliamo il Monte Bianco insieme!
     objective_title:
-      default: Obiettivo # TODO
+      default: Obiettivo
       report: La generazione di un resoconto
-      labels: Stampa etichette #
+      labels: Stampa etichette
     objective_details:
-      default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      default: |
+        *La creazione di **Resoconti** e la stampa di **Etichette** possono essere disponibili nel prossimo importante aggiornamento.*
       report: |
-        *La funzionalità "Resoconto" potrebbe essere disponibile nella prossima revisione principale.*
+        *La funzionalità **Resoconto** potrebbe essere disponibile nel prossimo importante aggiornamento.*
 
         Lo scopo di questa funzione è di :
-          - Stimare il **costo** del progetto con i dettagli dei singoli materiali
-          - Calcolare il **peso** dei materiali richiesti
-          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando
-      labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+          - Stimare il **costo** del progetto con i dettagli dei singoli materiali.
+          - Calcolare il **peso** dei materiali richiesti.
+          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando.
+      labels: |
+        *La stampa di **etichette** può essere disponibile nel prossimo aggiornamento maggiore.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        Lo scopo di questa funzione è quello di:
+        - Supportare la stampa di etichette adesive.
+        - Evitare errori marcando chiaramente ogni parte una volta che è stata tagliata.
     objective_crowdfunding: |
       Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
     objective_thanks: |

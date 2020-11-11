@@ -268,7 +268,7 @@ tab:
       part_number_sequence_by_group: Нумерация каждой группы
       part_number_sequence_by_group_help: Если эта опция активна, перечисление деталей  в каждой группе одного и того же типа и толщины материала будет заново начинается с 1 (или A).
       part_folding: Группировать идентичные детали
-      part_folding_help: Если эта опция выбрана, части с **одинаковым размером** и с **одинаковыми ярлыками** будут сгруппированы.  # TODO
+      part_folding_help: Если эта опция выбрана, части с **одинаковым размером** и с **одинаковыми метки** будут сгруппированы.  # TODO
       hide_entity_names: Скрыть случайные имена
       hide_entity_names_help: Если эта опция выбрана, **случайные имена** деталей не будут отображаться.
       hide_tags: Скрыть метки  # TODO
@@ -500,7 +500,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes # TODO
+      label: Этикетки # TODO
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -691,7 +691,7 @@ tab:
       bbox_width: Ширина
       bbox_thickness: Толщина
       material: Материал
-      tags: Ярлык  # TODO
+      tags: Метки  # TODO
     tooltip:
       errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
       warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
@@ -734,7 +734,7 @@ tab:
     label: Новости # TODO
     title: Новости
     help: |
-      Найдите здесь новости из *OpenCutList*.
+      Последние новости из *OpenCutList*.
     error:
       fail_to_load_list: список новостей нельзя скачать.
   forum:
@@ -768,10 +768,10 @@ tab:
     objective_title:
       default: Ziel
       report: Создать отчет
-      labels: Imprimer des étiquettes # TODO
+      labels: Печать этикеток # TODO
     objective_details:
       default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+        *Поколение **отчетов** и печать **этикетки** могут быть доступны в следующем основном релизе*.
       report: |
         *Создание отчета может быть доступно в следующем основном обновлении.*
 
@@ -780,11 +780,11 @@ tab:
           - Рассчитать  **массу** заданного материала.
           - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
       labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+        *Вывод на печать **Ярлыков** может быть доступен в следующем основном выпуске.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        Целью этой функции является:
+        - поддержка печати партии клейких этикеток для этой схемы резки,
+        - избегайте ошибок, четко обозначая каждую деталь после того, как она была вырезана.
     objective_crowdfunding: |
       Разработка новой функции возможна только за счет **частных пожертвований** и сможет начаться, когда будет собрана **целевая сумма** проекта.
     objective_thanks: |

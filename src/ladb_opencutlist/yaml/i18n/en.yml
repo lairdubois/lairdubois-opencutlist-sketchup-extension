@@ -109,11 +109,11 @@ tab:
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Edit the properties (axes) of the part
+    edit_part_size_increase_properties: Edit the properties (oversizes) of the part
+    edit_part_edges_properties: Edit the properties (edge bandings) of the part
     tooltip:
-      show_hide_block: Show / Hide this group
+      show_hide_block: Show / Hide
       scroll_to_block: Scroll to group
       not_available_std_width: The width *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
       not_available_std_thickness: The thickness *{{ std_dimension }}* has not been defined on the material '{{ material_name }}'
@@ -301,12 +301,12 @@ tab:
       property_edge_pattern: Number of edge bandings
       reset: Restore Default Values
     list:
-      filters: Filters
+      filters: Filter
       filters_warning_0: "This filter masks all parts!"
       filters_warning: "This filter only displays **{{ count }}** part from a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts from a total of {{ total }}."
       edge_material_names_filter: Material of edge banding to filter
-      tags_filter: Tags to filter
+      tags_filter: Filter by Tags
       dimensions_help: Illustration of the dimensions...
       summary: Summary
       material_type: Type
@@ -738,21 +738,21 @@ tab:
     error:
       fail_to_load_list: Unable to download the news list.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Forum
+    title: Forum
+    create_conversation: Start a topic
+    reply: Reply
+    tags: Tags
+    help: |
+      This message board allows you to exchange with the user community and the *OpenCutList* team.
+    redirection: |
+      You will be redirected to the **Open Collective** platform hosting this discussion forum.
+      To *start conversations* or *reply* you will need to create an account and log in.
+      *It's free, without obligation and a simple email address is sufficient.*
 
-      Validez pour continuer.
+      Apply to continue.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Unable to load the topic list.
   sponsor:
     label: Sponsor
     title: Sponsor
@@ -773,17 +773,17 @@ tab:
       default: |
         *The generation of **reports** and printing **labels** may be available in the next major release.*
       report: |
-        *Reporting may be available in the next major release.*
+        ***Reports** may be available in the next major release.*
 
         The purpose of this feature is to:
           - calculate the **estimated cost** of the project with details per material,
           - calculate the estimated **weight** of required materials,
           - synthesize the information of the entire project in a single document accessible by a single action.
       labels: |
-        *Printing **labels** may be available in the next major release.*
+        *Printing **Labels** may be available in the next major release.*
 
         The purpose of this feature is to:
-        - support printing of a batch of labels for this cutting diagram on adhesive labels,
+        - support printing of a batch of adhesive labels for this cutting diagram,
         - avoid mistakes by clearly marking each part once it has been cut.
     objective_crowdfunding: |
       The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.

@@ -109,9 +109,9 @@ tab:
     highlight_part: Destaque parte no modelo
     highlight_parts: Destacar partes no modelo
     edit_part_properties: Editar propriedades da parte
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Editar as propriedades (eixos) da peça
+    edit_part_size_increase_properties: Editar as propriedades (tamanho grande) da peça
+    edit_part_edges_properties: Editar as propriedades (bandagens de borda) da peça
     tooltip:
       show_hide_block: Mostrar / ocultar este grupo
       scroll_to_block: Role para o grupo
@@ -226,12 +226,12 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
-      tags: Etiquetas # TODO
-      tags_help: | # TODO
-        Com *Etiquetas* é possível adicionar palavras-chave para personalizar as definições da parte.
+      tags: Tags
+      tags_help: |
+        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da parte.
         Pode adicionar tantas etiquetas quantas achar conveniente.
         As partes visíveis da sua lista de almofadas podem então ser filtradas de acordo com a lista de etiquetas.
-      tags_multiple_info: Apenas rótulos comuns são mostrados # TODO
+      tags_multiple_info: Apenas tags comuns são mostrados
       axes: Machados
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua parte.
       axes_tip: |
@@ -268,11 +268,11 @@ tab:
       part_number_sequence_by_group: Reinicialize a enumeração de partes para cada grupo
       part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das partes é reinicializada em 1 (ou A) para cada grupo do mesmo tipo de material e espessura.
       part_folding: Grupo de partes idênticas
-      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com** rótulos idênticos ** serão agrupadas.  # TODO
+      part_folding_help: Se esta opção for selecionada, as partes com **tamanho idêntico** e com **tags idênticos** serão agrupadas.
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: Se esta opção for selecionada, **nomes de instância** de partes não serão exibidos.
-      hide_tags: Esconda etiquetas  # TODO
-      hide_tags_help: Se esta opção for selecionada, **rótulos** serão ocultados.  # TODO
+      hide_tags: Esconder tags
+      hide_tags_help: Se esta opção for selecionada, **tags** serão ocultados.
       hide_cutting_dimensions: Ocultar dimensões aproximadas
       hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das partes serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
@@ -306,7 +306,7 @@ tab:
       filters_warning: "Este filtro exibe apenas **{{ count }}** parte de um total de {{ total }}."
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** partes de um total de {{ total }}."
       edge_material_names_filter: Material de bandagem de borda para filtrar
-      tags_filter: Rótulos para filtrar  # TODO
+      tags_filter: Tags para filtrar
       dimensions_help: Ilustração das dimensões ...
       summary: Resumo
       material_type: Tipo
@@ -368,9 +368,9 @@ tab:
       material_thickness: Espessura do material
       material_name: Material
       entity_names: Nomes de instância
-      tags: Etiquetas  # TODO
-      edge_ymin: Comprimento da borda 1
-      edge_ymax: Comprimento da borda 2
+      tags: Tags
+      edge_ymax: Comprimento da borda 1
+      edge_ymin: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
     report:
@@ -404,10 +404,10 @@ tab:
       option_presort: Pré-encomenda de partes
       option_presort_help: A ordem em que as partes serão consideradas para colocação.
       option_presort_0: Nenhum
-      option_presort_1: Redução de largura
-      option_presort_2: Diminuindo Comprimento
-      option_presort_3: Redução de área
-      option_presort_4: Diminuição do perímetro
+      option_presort_1: Largura Descendente
+      option_presort_2: Comprimento Descendente
+      option_presort_3: Área Descendente
+      option_presort_4: Perímetro Descendente
       option_stacking: Empilhar partes idênticas
       option_stacking_help: A maneira como as partes com largura ou comprimento comum são provisoriamente colocadas juntas.
       option_stacking_0: Nenhum
@@ -500,7 +500,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensões reduzidas pela espessura da faixa de borda.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes # TODO
+      label: Etiquetas
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -691,7 +691,7 @@ tab:
       bbox_width: Largura
       bbox_thickness: Espessura
       material: Material
-      tags: Etiquetas  # TODO
+      tags: Etiquetas
     tooltip:
       errors: Esta parte não será importada porque produziu os seguintes erros
       warnings: Esta parte será importada, mas produziu os seguintes avisos
@@ -731,28 +731,28 @@ tab:
     error:
       fail_to_load_list: Incapaz de carregar a lista de vídeos.
   news:
-    label: Notícias # TODO
+    label: Notícias
     title: Notícias
     help: |
-      Encontre aqui as notícias sobre *OpenCutList*.
+      As últimas notícias da *OpenCutList*.
     error:
       fail_to_load_list: Incapaz de carregar a lista de notícias.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Fórum
+    title: Fórum
+    create_conversation: Iniciar uma conversação
+    reply: Responder
+    tags: Tags
+    help: |
+      Este fórum permite a troca com a comunidade de usuários e a equipe *OpenCutList*.
+    redirection: |
+      Você será redirecionado para a plataforma **Open Collective** que hospeda este fórum de discussão.
+      Para *iniciar conversas* ou *resposta* você precisará criar uma conta e fazer o login.
+      *É gratuito, sem compromisso e um simples endereço de e-mail é suficiente.*
 
-      Validez pour continuer.
+      Inscreva-se para continuar.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Incapaz de carregar a lista de tópicos.
   sponsor:
     label: Patrocinador
     title: Patrocinador
@@ -768,23 +768,23 @@ tab:
     objective_title:
       default: Ziel
       report: Gerar um relatório
-      labels: Imprimer des étiquettes # TODO
+      labels: Imprimir etiquetas
     objective_details:
-      default: |  # TODO
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+      default: |
+        *Criar **relatórios** e imprimir **rótulos** podem estar disponíveis na próxima grande atualização.*
       report: |
-        *Relatórios podem estar disponíveis no próximo grande lançamento.*
+        ***Relatórios** podem estar disponíveis na próxima grande atualização.*
 
         O objetivo deste recurso será o de:
-          - Calcular o **custo estimado** do projeto com detalhes por material
-          - Calcular o **peso estimado** dos materiais necessários
-          - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação
-      labels: | # TODO
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+          - Calcular o **custo estimado** do projeto com detalhes por material,
+          - Calcular o **peso estimado** dos materiais necessários,
+          - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação.
+      labels: |
+        *A impressão de **rótulos** pode estar disponível na próxima grande atualização.*
 
-        Cette fonctionnalité a pour but de :
-        - Permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adésives.
-        - Simplifier le travail en équipe
+        Esta funcionalidade deveria:
+        - Suportam a impressão de etiquetas para este diagrama de corte,
+        - Evite erros ao marcar cada peça após o corte.
     objective_crowdfunding: |
       O desenvolvimento desta nova funcionalidade será feito através de **financiamento participativo** e começará quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |

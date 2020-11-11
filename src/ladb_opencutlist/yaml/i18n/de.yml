@@ -109,9 +109,9 @@ tab:
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften bearbeiten
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Eigenschaften (Achsen) des Teils editieren
+    edit_part_size_increase_properties: Eigenschaften (Übermasse) des Teils editieren
+    edit_part_edges_properties: Eigenschaften (Kanten) des Teils editieren
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -303,10 +303,10 @@ tab:
     list:
       filters: Filter
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
-      filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von {{ total }} Teilen an."
-      filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von {{ total }} Teilen an."
+      filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von insgesamt {{ total }} Teilen an."
+      filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von insgesamt {{ total }} Teilen an."
       edge_material_names_filter: Kantenmateriale zum Filtern
-      tags_filter: Tagfilter
+      tags_filter: Filtern nach Tag
       dimensions_help: Erklärung zu den Dimensionen...
       summary: Übersicht
       material_type: Typ
@@ -731,28 +731,28 @@ tab:
     error:
       fail_to_load_list: Videoliste kann nicht geladen werden.
   news:
-    label: Aktuelles
-    title: Aktuelles
+    label: Neuigkeiten
+    title: Neuigkeiten
     help: |
       Die aktuellen Nachrichten von *OpenCutList*.
     error:
       fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Forum
+    title: Forum
+    create_conversation: Diskussion starten
+    reply: Antworten
+    tags: Tags
+    help: |
+      Dieser Raum ermöglicht Ihnen den Austausch mit der Benutzergemeinschaft und dem *OpenCutList*-Team.
+    redirection: |
+      Sie werden auf die Plattform **Open Collective** weitergeleitet, die dieses Diskussionsforum beherbergt.
+      Um *Gespräche zu beginnen* oder *zu antworten*, müssen Sie ein Konto erstellen und sich einloggen.
+      *Es ist kostenlos, unverbindlich und eine einfache E-Mail-Adresse genügt.*
 
-      Validez pour continuer.
+      Zum Fortfahren bestätigen.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Die Konversationsliste konnte nicht geladen werden.
   sponsor:
     label: Sponsern
     title: Sponsoring
@@ -773,18 +773,18 @@ tab:
       default: |
         *Das Erstellen von **Berichten** und der Druck von **Etiketten** könnten in der nächsten größeren Aktualisierung verfügbar sein.*
       report: |
-        *Berichte könnten in der nächsten größeren Aktualisierung verfügbar sein.*
+        ***Berichte** könnten in der nächsten größeren Aktualisierung verfügbar sein.*
 
         Der Zweck dieser Funktion wird sein:
-          - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen.
-          - das geschätzte **Gewichts** des benötigten Materials zu berechnen.
+          - die geschätzten **Kosten** des Projekts mit Details pro Material zu berechnen;
+          - das geschätzte **Gewichts** des benötigten Materials zu berechnen;
           - alle projektrelevanten Daten in einem einzigen Dokument zu Verfügung zu stellen, ausgelöst durch eine einzige Aktion.
       labels: |
         *Der Druck von **Etiketten** könnte in der nächsten größeren Aktualisierung verfügbar sein.*
 
         Diese Funktionalität soll:
-        - das Drucken eines Etikettenstapels für dieses Schnittdiagramm auf Klebeetiketten unterstützen.
-        - helfen Fehler zu vermeiden, indem jedes Teil nach dem Schneiden deutlich markiert wird.
+        - das Drucken eines Etikettenstapels für dieses Schnittdiagramm unterstützen;
+        - Fehler vermeiden, indem jedes Teil nach dem Schneiden markiert wird.
     objective_crowdfunding: |
       Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
