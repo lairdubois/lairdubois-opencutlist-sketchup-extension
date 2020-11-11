@@ -736,21 +736,21 @@ tab:
     error:
       fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Forum
+    title: Forum
+    create_conversation: Diskussion starten
+    reply: Antworten
+    tags: Tags
+    help: |
+      Dieser Raum ermöglicht Ihnen den Austausch mit der Benutzergemeinschaft und dem *OpenCutList*-Team.
+    redirection: |
+      Sie werden auf die Plattform **Open Collective** weitergeleitet, die dieses Diskussionsforum beherbergt.
+      Um *Gespräche zu beginnen* oder *zu antworten*, müssen Sie ein Konto erstellen und sich einloggen.
+      *Es ist kostenlos, unverbindlich und eine einfache E-Mail-Adresse genügt.*
 
-      Validez pour continuer.
+      Zum Fortfahren bestätigen.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Die Konversationsliste konnte nicht geladen werden.
   sponsor:
     label: Sponsern
     title: Sponsoring

@@ -736,21 +736,21 @@ tab:
     error:
       fail_to_load_list: Unable to download the news list.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: Forum
+    title: Forum
+    create_conversation: Start a topic
+    reply: Reply
+    tags: Tags
+    help: |
+      This message board allows you to exchange with the user community and the *OpenCutList* team.
+    redirection: |
+      You will be redirected to the **Open Collective** platform hosting this discussion forum.
+      To *start conversations* or *reply* you will need to create an account and log in.
+      *It's free, without obligation and a simple email address is sufficient.*
 
-      Validez pour continuer.
+      Apply to continue.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Unable to load the topic list.
   sponsor:
     label: Sponsor
     title: Sponsor
