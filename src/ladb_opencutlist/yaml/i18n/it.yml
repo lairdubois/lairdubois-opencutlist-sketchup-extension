@@ -369,8 +369,8 @@ tab:
       material_name: Materiale
       entity_names: Nomi delle occorrenze
       tags: Tags
-      edge_ymax: Bordo Lunghezza 1
-      edge_ymin: Bordo Lunghezza 2
+      edge_ymin: Bordo Lunghezza 1
+      edge_ymax: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
     report:

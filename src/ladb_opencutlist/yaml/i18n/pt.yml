@@ -369,8 +369,8 @@ tab:
       material_name: Material
       entity_names: Nomes de instância
       tags: Etiquetas  # TODO
-      edge_ymax: Comprimento da borda 1
-      edge_ymin: Comprimento da borda 2
+      edge_ymin: Comprimento da borda 1
+      edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
     report:

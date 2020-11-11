@@ -369,8 +369,8 @@ tab:
       material_name: Matière
       entity_names: Noms d'instance
       tags: Tags
-      edge_ymax: Chant Longueur 1
-      edge_ymin: Chant Longueur 2
+      edge_ymin: Chant Longueur 1
+      edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
     report:

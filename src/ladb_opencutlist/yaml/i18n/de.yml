@@ -369,8 +369,8 @@ tab:
       material_name: Material
       entity_names: Instanzbezeichnungen
       tags: Tags
-      edge_ymax: Kantenband Länge 1
-      edge_ymin: Kantenband Länge 2
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
     report:

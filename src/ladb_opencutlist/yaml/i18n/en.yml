@@ -369,8 +369,8 @@ tab:
       material_name: Material
       entity_names: Instance names
       tags: Tags
-      edge_ymax: Edge length 1
-      edge_ymin: Edge length 2
+      edge_ymin: Edge length 1
+      edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
     report:
