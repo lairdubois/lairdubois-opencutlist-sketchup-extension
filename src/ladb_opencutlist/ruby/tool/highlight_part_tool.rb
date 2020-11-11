@@ -79,6 +79,7 @@ module Ladb::OpenCutList
       @initial_model_transparency = false
       @buttons = []
       @hover_part = nil
+      @hover_pick_path = nil
 
       model = Sketchup.active_model
       if model
@@ -275,37 +276,46 @@ module Ladb::OpenCutList
         end
       }
 
+      active_path = Sketchup.active_model.active_path.nil? ? [] : Sketchup.active_model.active_path
+
       # Try to pick a part
-      @pick_helper.do_pick(x, y)
-      @pick_helper.count.times { |pick_path_index|
+      if @pick_helper.do_pick(x, y) > 0
+        @pick_helper.count.times { |pick_path_index|
 
-        pick_path = @pick_helper.path_at(pick_path_index)
-        if pick_path
+          pick_path = @pick_helper.path_at(pick_path_index)
+          if pick_path == @hover_pick_path
+            return  # Previously detected path, stop process to optimize.
+          end
+          if pick_path
 
-          path = []
-          pick_path.each { |entity|
-            if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
-              path.push(entity);
-            end
-          }
-
-          serialized_path = PathUtils.serialize_path(path)
-
-          @parts.each do |part|
-            part.def.entity_serialized_paths.each { |sp|
-              if sp == serialized_path
-                @hover_part = part
-                _update_text_lines
-                view.invalidate
-                return
+            # Cleanup pick path to keep only ComponentInstances and Groups
+            path = active_path
+            pick_path.each { |entity|
+              if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
+                path.push(entity);
               end
             }
+
+            serialized_path = PathUtils.serialize_path(path)
+
+            @parts.each do |part|
+              part.def.entity_serialized_paths.each { |sp|
+                if sp == serialized_path
+                  @hover_part = part
+                  @hover_pick_path = pick_path
+                  _update_text_lines
+                  view.invalidate
+                  return
+                end
+              }
+            end
+
           end
 
-        end
-
-      }
-      _reset(view)
+        }
+      else
+        _reset(view)
+      end
 
     end
 
@@ -368,6 +378,7 @@ module Ladb::OpenCutList
     def _reset(view)
       if @hover_part
         @hover_part = nil
+        @hover_pick_path = nil
         _update_text_lines
         view.invalidate
       end
