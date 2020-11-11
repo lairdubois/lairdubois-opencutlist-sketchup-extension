@@ -863,7 +863,7 @@
                 defaultEdgeDecremented,
                 defaultVolumicMass;
             switch (type) {
-                case 0:   // TYPE_UNKNOW
+                case 0:   // TYPE_UNKNOWN
                     defaultThickness = '0';
                     defaultLengthIncrease = '0';
                     defaultWidthIncrease = '0';

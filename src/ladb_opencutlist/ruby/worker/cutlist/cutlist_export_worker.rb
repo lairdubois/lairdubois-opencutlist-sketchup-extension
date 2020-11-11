@@ -21,6 +21,7 @@ module Ladb::OpenCutList
       @source = settings['source']
       @col_sep = settings['col_sep']
       @encoding = settings['encoding']
+      @col_defs = settings['col_defs']
       @hide_entity_names = settings['hide_entity_names']
       @hide_tags = settings['hide_tags']
       @hide_cutting_dimensions = settings['hide_cutting_dimensions']
@@ -95,15 +96,11 @@ module Ladb::OpenCutList
 
                   # Header row
                   header = []
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_type'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_thickness'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.part_count'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_length'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_area'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_cutting_volume'))
-                  unless @hide_final_areas
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.total_final_area'))
-                  end
+                  @col_defs.each { |col_def|
+                    unless col_def['hidden']
+                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
+                    end
+                  }
 
                   csv << header
 
@@ -111,15 +108,28 @@ module Ladb::OpenCutList
                     next if @hidden_group_ids.include? group.id
 
                     row = []
-                    row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"))
-                    row.push((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''))
-                    row.push(group.part_count)
-                    row.push(group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length))
-                    row.push(group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area))
-                    row.push(group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume))
-                    unless @hide_final_areas
-                      row.push((group.total_final_area.nil? or group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area))
-                    end
+                    @col_defs.each { |col_def|
+                      unless col_def['hidden']
+                        case col_def['name']
+                          when 'material_type'
+                            row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"))
+                          when 'material_thickness'
+                            row.push((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''))
+                          when 'part_count'
+                            row.push(group.part_count)
+                          when 'total_cutting_length'
+                            row.push(group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length))
+                          when 'total_cutting_area'
+                            row.push(group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area))
+                          when 'total_cutting_volume'
+                            row.push(group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume))
+                          when 'total_final_area'
+                            row.push((group.total_final_area.nil? or group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area))
+                          else
+                            row.push('')
+                        end
+                      end
+                    }
 
                     csv << row
                   }
@@ -128,35 +138,11 @@ module Ladb::OpenCutList
 
                   # Header row
                   header = []
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.number'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.name'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.count'))
-                  unless @hide_cutting_dimensions
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_width'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_thickness'))
-                  end
-                  unless @hide_bbox_dimensions
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_width'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_thickness'))
-                  end
-                  unless @hide_final_areas
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.final_area'))
-                  end
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
-                  unless @hide_entity_names
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.entity_names'))
-                  end
-                  unless @hide_tags
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.tags'))
-                  end
-                  unless @hide_edges
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
-                  end
+                  @col_defs.each { |col_def|
+                    unless col_def['hidden']
+                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
+                    end
+                  }
 
                   csv << header
 
@@ -169,35 +155,48 @@ module Ladb::OpenCutList
                       no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_ACCESSORY
 
                       row = []
-                      row.push(part.number)
-                      row.push(part.name)
-                      row.push(part.count)
-                      unless @hide_cutting_dimensions
-                        row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
-                        row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
-                        row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
-                      end
-                      unless @hide_bbox_dimensions
-                        row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
-                        row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
-                        row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
-                      end
-                      unless @hide_final_areas
-                        row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
-                      end
-                      row.push(group.material_display_name)
-                      unless @hide_entity_names
-                        row.push(part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '')
-                      end
-                      unless @hide_tags
-                        row.push(part.tags.empty? ? '' : part.tags.join(','))
-                      end
-                      unless @hide_edges
-                        row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
-                        row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
-                        row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
-                        row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
-                      end
+                      @col_defs.each { |col_def|
+                        unless col_def['hidden']
+                          case col_def['name']
+                            when 'number'
+                              row.push(part.number)
+                            when 'name'
+                              row.push(part.name)
+                            when 'count'
+                              row.push(part.count)
+                            when 'cutting_length'
+                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
+                            when 'cutting_width'
+                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
+                            when 'cutting_thickness'
+                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
+                            when 'bbox_length'
+                              row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
+                            when 'bbox_width'
+                              row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
+                            when 'bbox_thickness'
+                              row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
+                            when 'final_area'
+                              row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
+                            when 'material_name'
+                              row.push(group.material_display_name)
+                            when 'entity_names'
+                              row.push(part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '')
+                            when 'tags'
+                              row.push(part.tags.empty? ? '' : part.tags.join(','))
+                            when 'edge_ymin'
+                              row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
+                            when 'edge_ymax'
+                              row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
+                            when 'edge_xmin'
+                              row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
+                            when 'edge_xmax'
+                              row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
+                            else
+                              row.push('')
+                          end
+                        end
+                      }
 
                       csv << row
                     }
@@ -207,33 +206,11 @@ module Ladb::OpenCutList
 
                   # Header row
                   header = []
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.number'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.path'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.instance_name'))
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.definition_name'))
-                  unless @hide_cutting_dimensions
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_width'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.cutting_thickness'))
-                  end
-                  unless @hide_bbox_dimensions
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_length'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_width'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.bbox_thickness'))
-                  end
-                  unless @hide_final_areas
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.final_area'))
-                  end
-                  header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.material_name'))
-                  unless @hide_tags
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.tags'))
-                  end
-                  unless @hide_edges
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
-                  end
+                  @col_defs.each { |col_def|
+                    unless col_def['hidden']
+                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
+                    end
+                  }
 
                   csv << header
 
@@ -262,36 +239,50 @@ module Ladb::OpenCutList
                           instance_name = path_names.pop
 
                           row = []
-                          row.push(part.number)
-                          row.push(path_names.join('/'))
-                          row.push(instance_name)
-                          row.push(part.name)
-                          unless @hide_cutting_dimensions
-                            row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
-                            row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
-                            row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
-                          end
-                          unless @hide_bbox_dimensions
-                            row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
-                            row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
-                            row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
-                          end
-                          unless @hide_final_areas
-                            row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
-                          end
-                          row.push(group.material_display_name)
-                          unless @hide_tags
-                            row.push(part.tags.empty? ? '' : part.tags.join(','))
-                          end
-                          unless @hide_edges
-                            row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
-                            row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
-                            row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
-                            row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
-                          end
+                          @col_defs.each { |col_def|
+                            unless col_def['hidden']
+                              case col_def['name']
+                                when 'number'
+                                  row.push(part.number)
+                                when 'path'
+                                  row.push(path_names.join('/'))
+                                when 'instance_name'
+                                  row.push(instance_name)
+                                when 'definition_name'
+                                  row.push(part.name)
+                                when 'cutting_length'
+                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
+                                when 'cutting_width'
+                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
+                                when 'cutting_thickness'
+                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
+                                when 'bbox_length'
+                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
+                                when 'bbox_width'
+                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
+                                when 'bbox_thickness'
+                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
+                                when 'final_area'
+                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
+                                when 'material_name'
+                                  row.push(group.material_display_name)
+                                when 'tags'
+                                  row.push(part.tags.empty? ? '' : part.tags.join(','))
+                                when 'edge_ymin'
+                                  row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
+                                when 'edge_ymax'
+                                  row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
+                                when 'edge_xmin'
+                                  row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
+                                when 'edge_xmax'
+                                  row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
+                                else
+                                  row.push('')
+                              end
+                            end
+                          }
 
                           csv << row
-
                         }
 
                       }

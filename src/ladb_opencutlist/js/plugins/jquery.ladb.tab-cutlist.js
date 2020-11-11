@@ -26,6 +26,9 @@
     var SETTING_KEY_EXPORT_OPTION_SOURCE = 'cutlist.export.option.source';
     var SETTING_KEY_EXPORT_OPTION_COL_SEP = 'cutlist.export.option.col_sep';
     var SETTING_KEY_EXPORT_OPTION_ENCODING = 'cutlist.export.option.encoding';
+    var SETTING_KEY_EXPORT_COLDEFS_SUMMARY = 'cutlist.export.coldefs.summary';
+    var SETTING_KEY_EXPORT_COLDEFS_CUTLIST = 'cutlist.export.coldefs.cutlist';
+    var SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST = 'cutlist.export.coldefs.instances_list';
 
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR = 'cutlist.cuttingdiagram1d.option.std_bar';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH = 'cutlist.cuttingdiagram1d.option.std_bar_length';
@@ -61,7 +64,6 @@
     var OPTION_DEFAULT_HIDE_LABELS = false;
     var OPTION_DEFAULT_HIDE_CUTTING_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_BBOX_DIMENSIONS = false;
-    var OPTION_DEFAULT_HIDE_UNTYPED_MATERIAL_DIMENSIONS = false;
     var OPTION_DEFAULT_HIDE_FINAL_AREAS = true;
     var OPTION_DEFAULT_HIDE_EDGES = false;
     var OPTION_DEFAULT_MINIMIZE_ON_HIGHLIGHT = true;
@@ -72,6 +74,12 @@
     var EXPORT_OPTION_DEFAULT_SOURCE = 1;      // cutlist
     var EXPORT_OPTION_DEFAULT_COL_SEP = 0;     // \t
     var EXPORT_OPTION_DEFAULT_ENCODING = 0;    // UTF-8
+
+    var EXPORT_DEFAULT_COLUMNS = {
+        0: [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
+        1: [ 'number', 'name', 'count', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'entity_names', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
+        2: [ 'number', 'path', 'instance_name', 'definition_name', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
+    };
 
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR = '';
     var CUTTINGDIAGRAM1D_OPTION_DEFAULT_STD_BAR_LENGTH = '2500mm';
@@ -600,16 +608,37 @@
 
                 SETTING_KEY_EXPORT_OPTION_SOURCE,
                 SETTING_KEY_EXPORT_OPTION_COL_SEP,
-                SETTING_KEY_EXPORT_OPTION_ENCODING
+                SETTING_KEY_EXPORT_OPTION_ENCODING,
+                SETTING_KEY_EXPORT_COLDEFS_SUMMARY,
+                SETTING_KEY_EXPORT_COLDEFS_CUTLIST,
+                SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST
 
             ],
             3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
             function () {
 
+                var fnDefaultColDefs = function (source) {
+                    var cols = EXPORT_DEFAULT_COLUMNS[source];
+                    var colDefs = [];
+                    for (var i = 0; i < cols.length; i++) {
+                        colDefs.push({
+                            name: cols[i],
+                            expr: '',
+                            hidden: false,
+                        });
+                    }
+                    return colDefs;
+                }
+
                 var exportOptions = {
                     source: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_SOURCE, EXPORT_OPTION_DEFAULT_SOURCE),
                     col_sep: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_COL_SEP, EXPORT_OPTION_DEFAULT_COL_SEP),
-                    encoding: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING)
+                    encoding: that.dialog.getSetting(SETTING_KEY_EXPORT_OPTION_ENCODING, EXPORT_OPTION_DEFAULT_ENCODING),
+                };
+                var exportColDefs = {
+                    0: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_SUMMARY, fnDefaultColDefs(0)),
+                    1: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_CUTLIST, fnDefaultColDefs(1)),
+                    2: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST, fnDefaultColDefs(2))
                 };
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
@@ -618,11 +647,70 @@
                 var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
                 var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
                 var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+                var $sortableColumnOrderSummary = $('#ladb_sortable_column_order_summary', $modal);
+                var $sortableColumnOrderCutlist = $('#ladb_sortable_column_order_cutlist', $modal);
+                var $sortableColumnOrderInstancesList = $('#ladb_sortable_column_order_instances_list', $modal);
                 var $btnExport = $('#ladb_cutlist_export', $modal);
+
+                // Define useful functions
+
+                var fnPopulateAndBindSorter = function($sorter, colDefs) {
+                    $sorter.empty();
+                    for (var i = 0; i < colDefs.length; i++) {
+                        $sorter.append(Twig.twig({ref: "tabs/cutlist/_export-col-def.twig"}).render({
+                            colDef: colDefs[i]
+                        }));
+                    }
+                    $sorter.find('a').on('click', function () {
+                        var $item = $(this).parent().parent();
+                        var $icon = $('i', $(this));
+                        var hidden = $item.data('hidden');
+                        if (hidden === true) {
+                            hidden = false;
+                            $item.css('opacity', '1.0');
+                            $icon.removeClass('ladb-opencutlist-icon-eye-close');
+                            $icon.addClass('ladb-opencutlist-icon-eye-open');
+                        } else {
+                            hidden = true;
+                            $item.css('opacity', '0.5');
+                            $icon.addClass('ladb-opencutlist-icon-eye-close');
+                            $icon.removeClass('ladb-opencutlist-icon-eye-open');
+                        }
+                        $item.data('hidden', hidden);
+                    });
+                    $sorter.sortable(SORTABLE_OPTIONS);
+                }
+                fnPopulateAndBindSorter($sortableColumnOrderSummary, exportColDefs[0]);
+                fnPopulateAndBindSorter($sortableColumnOrderCutlist, exportColDefs[1]);
+                fnPopulateAndBindSorter($sortableColumnOrderInstancesList, exportColDefs[2]);
+
+                var fnComputeSorterVisibility = function(source) {
+                    switch (parseInt(source)) {
+                        case 0: // EXPORT_OPTION_SOURCE_SUMMARY
+                            $sortableColumnOrderSummary.show();
+                            $sortableColumnOrderCutlist.hide();
+                            $sortableColumnOrderInstancesList.hide();
+                            break;
+                        case 1: // EXPORT_OPTION_SOURCE_CUTLIST
+                            $sortableColumnOrderSummary.hide();
+                            $sortableColumnOrderCutlist.show();
+                            $sortableColumnOrderInstancesList.hide();
+                            break;
+                        case 2: // EXPORT_OPTION_SOURCE_INSTANCES_LIST
+                            $sortableColumnOrderSummary.hide();
+                            $sortableColumnOrderCutlist.hide();
+                            $sortableColumnOrderInstancesList.show();
+                            break;
+                    }
+                };
 
                 // Bind select
                 $selectSource.val(exportOptions.source);
                 $selectSource.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectSource.on('change', function () {
+                    fnComputeSorterVisibility($(this).val());
+                });
+                fnComputeSorterVisibility(exportOptions.source);
                 $selectColSep.val(exportOptions.col_sep);
                 $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectEncoding.val(exportOptions.encoding);
@@ -637,14 +725,32 @@
                     exportOptions.col_sep = $selectColSep.val();
                     exportOptions.encoding = $selectEncoding.val();
 
+                    var fnFetchColumnDefs = function ($sorter) {
+                        var columnDefs = [];
+                        $sorter.children('li').each(function () {
+                            columnDefs.push({
+                                name: $(this).data('name'),
+                                expr: $(this).data('expr'),
+                                hidden: $(this).data('hidden'),
+                            });
+                        });
+                        return columnDefs;
+                    }
+                    exportColDefs[0] = fnFetchColumnDefs($sortableColumnOrderSummary);
+                    exportColDefs[1] = fnFetchColumnDefs($sortableColumnOrderCutlist);
+                    exportColDefs[2] = fnFetchColumnDefs($sortableColumnOrderInstancesList);
+
                     // Store options
                     that.dialog.setSettings([
                         { key:SETTING_KEY_EXPORT_OPTION_SOURCE, value:exportOptions.source },
                         { key:SETTING_KEY_EXPORT_OPTION_COL_SEP, value:exportOptions.col_sep },
-                        { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding }
+                        { key:SETTING_KEY_EXPORT_OPTION_ENCODING, value:exportOptions.encoding },
+                        { key:SETTING_KEY_EXPORT_COLDEFS_SUMMARY, value:exportColDefs[0] },
+                        { key:SETTING_KEY_EXPORT_COLDEFS_CUTLIST, value:exportColDefs[1] },
+                        { key:SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST, value:exportColDefs[2] },
                     ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                    rubyCallCommand('cutlist_export', $.extend(exportOptions, that.generateOptions), function (response) {
+                    rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportColDefs[exportOptions.source] }, that.generateOptions), function (response) {
 
                         var i;
 
@@ -2432,10 +2538,7 @@
                 }
                 $item.data('property', property);
             });
-            $sortablePartOrderStrategy.sortable({
-                cursor: 'ns-resize',
-                handle: '.ladb-handle'
-            });
+            $sortablePartOrderStrategy.sortable(SORTABLE_OPTIONS);
 
             // Dimension column order sortables
 
