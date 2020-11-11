@@ -46,8 +46,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Edit the part's properties
-      edit_part_axes_properties: Edit the axes properties of the part
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -109,7 +109,9 @@ tab:
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit part properties
-    edit_part_axes_properties: Edit properties of the axes of the part
+    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
+    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
+    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
     tooltip:
       show_hide_block: Show / Hide this group
       scroll_to_block: Scroll to group
@@ -367,8 +369,8 @@ tab:
       material_name: Material
       entity_names: Instance names
       tags: Tags
-      edge_ymax: Edge length 1
-      edge_ymin: Edge length 2
+      edge_ymin: Edge length 1
+      edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
     report:

@@ -152,8 +152,8 @@ module Ladb::OpenCutList
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.tags'))
                   end
                   unless @hide_edges
-                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymin'))
+                    header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_ymax'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmin'))
                     header.push(Plugin.instance.get_i18n_string('tab.cutlist.export.edge_xmax'))
                   end
@@ -193,8 +193,8 @@ module Ladb::OpenCutList
                         row.push(part.tags.empty? ? '' : part.tags.join(','))
                       end
                       unless @hide_edges
-                        row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
                         row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
+                        row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
                         row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
                         row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
                       end

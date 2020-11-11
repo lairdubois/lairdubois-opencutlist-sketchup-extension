@@ -12,6 +12,24 @@
         <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
     </g>
 
+    <g class="arrow">
+        {% set arrowOriginX = (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
+        {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
+        {% set arrowWidth = partLength - partOutlineWidth * 4 %}
+        {% set arrowLength = partWidth - partOutlineWidth * 4 %}
+        {% set arrowPattern = [
+            [     0 , 1/3.0 ],
+            [ 1/2.0 , 1/3.0 ],
+            [ 1/2.0 ,     0 ],
+            [     1 , 1/2.0 ],
+            [ 1/2.0 ,     1 ],
+            [ 1/2.0 , 2/3.0 ],
+            [     0 , 2/3.0 ],
+            [     0 , 1/3.0 ],
+        ] %}
+        <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"/>
+    </g>
+
     {% block extra %}{% endblock %}
 
     {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}

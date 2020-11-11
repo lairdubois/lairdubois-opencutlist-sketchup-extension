@@ -2593,10 +2593,15 @@
             var partId = parameters.part_id;
             var partSerializedPath = parameters.part_serialized_path;
             var tab = parameters.tab;
+            var dontGenerate = parameters.dontGenerate;
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
-                that.generateCutlist(function () {
+                if (dontGenerate) {
                     that.editPart(partId, partSerializedPath, tab);
-                });
+                } else {
+                    that.generateCutlist(function () {
+                        that.editPart(partId, partSerializedPath, tab);
+                    });
+                }
             }, 1);
         });
 

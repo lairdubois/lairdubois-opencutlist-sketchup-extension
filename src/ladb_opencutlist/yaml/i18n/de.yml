@@ -46,8 +46,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Eigenschaften des Teils editieren
-      edit_part_axes_properties: Eigenschaften der Achsen des Teils editieren
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -109,7 +109,9 @@ tab:
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften bearbeiten
-    edit_part_axes_properties: Eigenschaften der Achsen des Teils editieren
+    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
+    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
+    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -367,8 +369,8 @@ tab:
       material_name: Material
       entity_names: Instanzbezeichnungen
       tags: Tags
-      edge_ymax: Kantenband Länge 1
-      edge_ymin: Kantenband Länge 2
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
     report:
