@@ -109,9 +109,9 @@ tab:
     highlight_part: Das Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften bearbeiten
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Eigenschaften (Achsen) des Teils editieren
+    edit_part_size_increase_properties: Eigenschaften (Übermasse) des Teils editieren
+    edit_part_edges_properties: Eigenschaften (Kanten) des Teils editieren
     tooltip:
       show_hide_block: Einblenden / Ausblenden
       scroll_to_block: Zur Gruppe blättern
