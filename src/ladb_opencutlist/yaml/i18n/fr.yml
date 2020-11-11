@@ -46,8 +46,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Éditer les propriétés de la pièce
-      edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -109,7 +109,9 @@ tab:
     highlight_part: Voir la pièce dans le modèle
     highlight_parts: Voir les pièces dans le modèle
     edit_part_properties: Éditer les propriétés de la pièce
-    edit_part_axes_properties: Éditer les propriétés d'axes de la pièce
+    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
+    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
+    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe

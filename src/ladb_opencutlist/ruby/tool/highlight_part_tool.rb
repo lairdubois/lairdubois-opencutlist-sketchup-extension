@@ -6,9 +6,7 @@ module Ladb::OpenCutList
   class HighlightPartTool < CutlistObserver
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
-    # COLOR_FACE_HOVER = Sketchup::Color.new(247, 127, 0, 255).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
-    # COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(247, 127, 0, 128).freeze
     COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(0, 62, 255, 128).freeze
     COLOR_TEXT_BG = Sketchup::Color.new(255, 255, 255, 191).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
@@ -197,7 +195,7 @@ module Ladb::OpenCutList
         draw_def[:front_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
-        view.line_stipple = '_'
+        view.line_stipple = '-'
         draw_def[:back_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
@@ -234,14 +232,43 @@ module Ladb::OpenCutList
     else
       # Only works with SketchUp 2015 and newer:
       def getMenu(menu, flags, x, y, view)
-        build_menu(menu)
+        _pick_hover_part(x, y, view) unless view.nil?
+        build_menu(menu, view)
       end
     end
 
-    def build_menu(menu)
+    def build_menu(menu, view = nil)
       if @hover_part
-        menu.add_item('Hello') {
-          UI.messagebox('Please sponsor this project and you will be able to see cool features in the next release :)')
+        item = menu.add_item("[#{@hover_part.number}] #{@hover_part.name}") {}
+        menu.set_validation_proc(item) { MF_GRAYED }
+        menu.add_separator
+        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'general', dontGenerate: true }")
+        }
+        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'axes', dontGenerate: true }")
+        }
+        menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_size_increase_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'size_increase', dontGenerate: true }")
+        }) {
+          if @hover_part.group.material_type > MaterialAttributes::TYPE_UNKNOWN && @hover_part.group.material_type < MaterialAttributes::TYPE_EDGE
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_edges_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'edges', dontGenerate: true }")
+        }) {
+          if @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+      elsif view
+        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+          _quit(view)
         }
       end
     end
@@ -262,6 +289,7 @@ module Ladb::OpenCutList
           return
         end
       }
+      _pick_hover_part(x, y, view)
       if @hover_part
         UI.beep
         return
@@ -276,46 +304,7 @@ module Ladb::OpenCutList
         end
       }
 
-      active_path = Sketchup.active_model.active_path.nil? ? [] : Sketchup.active_model.active_path
-
-      # Try to pick a part
-      if @pick_helper.do_pick(x, y) > 0
-        @pick_helper.count.times { |pick_path_index|
-
-          pick_path = @pick_helper.path_at(pick_path_index)
-          if pick_path == @hover_pick_path
-            return  # Previously detected path, stop process to optimize.
-          end
-          if pick_path
-
-            # Cleanup pick path to keep only ComponentInstances and Groups
-            path = active_path
-            pick_path.each { |entity|
-              if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
-                path.push(entity);
-              end
-            }
-
-            serialized_path = PathUtils.serialize_path(path)
-
-            @parts.each do |part|
-              part.def.entity_serialized_paths.each { |sp|
-                if sp == serialized_path
-                  @hover_part = part
-                  @hover_pick_path = pick_path
-                  _update_text_lines
-                  view.invalidate
-                  return
-                end
-              }
-            end
-
-          end
-
-        }
-      else
-        _reset(view)
-      end
+      _pick_hover_part(x, y, view)
 
     end
 
@@ -486,6 +475,48 @@ module Ladb::OpenCutList
       ]
       view.drawing_color = color
       view.draw2d(GL_QUADS, @points)
+    end
+
+    def _pick_hover_part(x, y, view)
+      if @pick_helper.do_pick(x, y) > 0
+
+        active_path = Sketchup.active_model.active_path.nil? ? [] : Sketchup.active_model.active_path
+
+        @pick_helper.count.times { |pick_path_index|
+
+          pick_path = @pick_helper.path_at(pick_path_index)
+          if pick_path == @hover_pick_path
+            return  # Previously detected path, stop process to optimize.
+          end
+          if pick_path
+
+            # Cleanup pick path to keep only ComponentInstances and Groups
+            path = active_path
+            pick_path.each { |entity|
+              if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
+                path.push(entity);
+              end
+            }
+
+            serialized_path = PathUtils.serialize_path(path)
+
+            @parts.each do |part|
+              part.def.entity_serialized_paths.each { |sp|
+                if sp == serialized_path
+                  @hover_part = part
+                  @hover_pick_path = pick_path
+                  _update_text_lines
+                  view.invalidate
+                  return
+                end
+              }
+            end
+
+          end
+
+        }
+      end
+      _reset(view)
     end
 
   end

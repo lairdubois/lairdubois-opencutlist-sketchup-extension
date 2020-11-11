@@ -46,8 +46,8 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: Редактирование свойств деталей
-      edit_part_axes_properties: Редактирование свойств осей детали
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -109,7 +109,9 @@ tab:
     highlight_part: Просмотр детали в модели
     highlight_parts: Просмотр деталей в модели
     edit_part_properties: Редактировать свойства детали
-    edit_part_axes_properties: Редактирование направляющих осей детали
+    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
+    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
+    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
