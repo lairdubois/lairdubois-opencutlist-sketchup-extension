@@ -845,33 +845,33 @@
                     that.dialog.notifyErrors(response.errors);
                 } else {
 
-                    var defaultThickness = response.thickness;
-                    var defaultLengthIncrease = response.length_increase;
-                    var defaultWidthIncrease = response.width_increase;
-                    var defaultThicknessIncrease = response.thickness_increase;
-                    var defaultStdLengths = response.std_lengths;
-                    var defaultStdWidths = response.std_widths;
-                    var defaultStdThicknesses = response.std_thicknesses;
-                    var defaultStdSections = response.std_sections;
-                    var defaultStdSizes = response.std_sizes;
-                    var defaultGrained = response.grained;
-                    var defaultEdgeDecremented = response.edge_decremented;
+                    var nativeThickness = response.thickness;
+                    var nativeLengthIncrease = response.length_increase;
+                    var nativeWidthIncrease = response.width_increase;
+                    var nativeThicknessIncrease = response.thickness_increase;
+                    var nativeStdLengths = response.std_lengths;
+                    var nativeStdWidths = response.std_widths;
+                    var nativeStdThicknesses = response.std_thicknesses;
+                    var nativeStdSections = response.std_sections;
+                    var nativeStdSizes = response.std_sizes;
+                    var nativeGrained = response.grained;
+                    var nativeEdgeDecremented = response.edge_decremented;
 
                     var setTokens = function ($input, tokens) {
                         // Workaround for empty string tokens
                         $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
                     };
-                    $inputThickness.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
-                    $inputLengthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
-                    $inputWidthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
-                    $inputThicknessIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
-                    setTokens($inputStdLengths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
-                    setTokens($inputStdWidths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
-                    setTokens($inputStdThicknesses, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
-                    setTokens($inputStdSections, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
-                    setTokens($inputStdSizes, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
-                    $selectGrained.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
-                    $selectEdgeDecremented.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
+                    $inputThickness.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, nativeThickness));
+                    $inputLengthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, nativeLengthIncrease));
+                    $inputWidthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, nativeWidthIncrease));
+                    $inputThicknessIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, nativeThicknessIncrease));
+                    setTokens($inputStdLengths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, nativeStdLengths));
+                    setTokens($inputStdWidths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, nativeStdWidths));
+                    setTokens($inputStdThicknesses, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, nativeStdThicknesses));
+                    setTokens($inputStdSections, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, nativeStdSections));
+                    setTokens($inputStdSizes, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, nativeStdSizes));
+                    $selectGrained.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, nativeGrained) ? '1' : '0');
+                    $selectEdgeDecremented.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, nativeEdgeDecremented) ? '1' : '0');
 
                 }
 
