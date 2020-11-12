@@ -882,8 +882,8 @@
                     setTokens($inputStdWidths, native ? nativeStdWidths : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, nativeStdWidths));
                     setTokens($inputStdThicknesses, native ? nativeStdThicknesses : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, nativeStdThicknesses));
                     setTokens($inputStdSections, native ? nativeStdSections : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, nativeStdSections));
-                    setTokens($inputStdSizes, native ? nativeGrained : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, nativeStdSizes));
-                    $selectGrained.selectpicker('val', (native ? nativeThickness : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, nativeGrained)) ? '1' : '0');
+                    setTokens($inputStdSizes, native ? nativeStdSizes : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, nativeStdSizes));
+                    $selectGrained.selectpicker('val', (native ? nativeGrained : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, nativeGrained)) ? '1' : '0');
                     $selectEdgeDecremented.selectpicker('val', (native ? nativeEdgeDecremented : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, nativeEdgeDecremented)) ? '1' : '0');
                     $inputVolumicMass.val(native ? nativeVolumicMass : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, nativeVolumicMass));
 
