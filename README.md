@@ -26,6 +26,10 @@ We are looking for volunteering translators to spanish, preferably woodworkers a
 
 In addition to the selected SketchUp unit, OpenCutList works with dimensions of solid wood, panels and dimensional lumber in fractional inches, even if the selected SketchUp units are metric and vice versa.
 
+## FAQ
+
+A few frequently asked questions are listed [here](docs/02-faq.md).
+
 ## Tutorials
 
 There are a number of great videos on YouTube about using **OpenCutList** for woodworking projects.
