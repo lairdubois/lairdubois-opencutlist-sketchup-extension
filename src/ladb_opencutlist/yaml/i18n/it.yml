@@ -611,6 +611,7 @@ tab:
           **{{ type_name }}**
           *Impostazioni di taglio* predefinite salvate correttamente
         reset: Ripristina i valori predefiniti
+        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)

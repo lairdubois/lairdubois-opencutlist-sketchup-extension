@@ -611,6 +611,7 @@ tab:
           **{{ type_name }}**
           *Schnittparameter* als vorgegebene Werte gespeichert
         reset: Auf vorgegebene Werte zurücksetzen
+        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)

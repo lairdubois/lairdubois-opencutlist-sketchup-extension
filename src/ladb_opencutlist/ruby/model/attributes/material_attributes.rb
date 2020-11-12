@@ -212,7 +212,7 @@
       when TYPE_EDGE
         @thickness
       else
-        get_native_value(:thickness)
+        MaterialAttributes.get_native_value(@type,:thickness)
       end
     end
 
@@ -225,7 +225,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
           @length_increase
         else
-          get_native_value(:length_increase)
+          MaterialAttributes.get_native_value(@type,:length_increase)
       end
     end
 
@@ -238,7 +238,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
           @width_increase
         else
-          get_native_value(:width_increase)
+          MaterialAttributes.get_native_value(@type,:width_increase)
       end
     end
 
@@ -251,7 +251,7 @@
         when TYPE_SOLID_WOOD
           @thickness_increase
         else
-          get_native_value(:thickness_increase)
+          MaterialAttributes.get_native_value(@type,:thickness_increase)
       end
     end
 
@@ -264,7 +264,7 @@
       when TYPE_DIMENSIONAL
         @std_lengths
       else
-        get_native_value(:std_lengths)
+        MaterialAttributes.get_native_value(@type,:std_lengths)
       end
     end
 
@@ -286,7 +286,7 @@
       when TYPE_EDGE
         @std_widths
       else
-        get_native_value(:std_widths)
+        MaterialAttributes.get_native_value(@type,:std_widths)
       end
     end
 
@@ -308,7 +308,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
           @std_thicknesses
         else
-          get_native_value(:std_thicknesses)
+          MaterialAttributes.get_native_value(@type,:std_thicknesses)
       end
     end
 
@@ -330,7 +330,7 @@
         when TYPE_DIMENSIONAL
           @std_sections
         else
-          get_native_value(:std_sections)
+          MaterialAttributes.get_native_value(@type,:std_sections)
       end
     end
 
@@ -351,7 +351,7 @@
         when TYPE_SHEET_GOOD
           @std_sizes
         else
-          get_native_value(:@std_sizes)
+          MaterialAttributes.get_native_value(@type,:@std_sizes)
       end
     end
 
@@ -385,17 +385,17 @@
         end
 
         @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOWN))
-        @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_native_value(@type, :thickness))
-        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_native_value(@type, :length_increase))
-        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_native_value(@type, :width_increase))
-        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', get_native_value(@type, :thickness_increase))
-        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', get_native_value(@type, :std_lengths))
-        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', get_native_value(@type, :std_widths))
-        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', get_native_value(@type, :std_thicknesses))
-        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', get_native_value(@type, :std_sections))
-        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_native_value(@type, :std_sizes))
-        @grained = Plugin.instance.get_attribute(@material, 'grained', get_native_value(@type, :grained))
-        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_native_value(@type, :edge_decremented))
+        @thickness = Plugin.instance.get_attribute(@material, 'thickness', MaterialAttributes.get_native_value(@type, :thickness))
+        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', MaterialAttributes.get_native_value(@type, :length_increase))
+        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', MaterialAttributes.get_native_value(@type, :width_increase))
+        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', MaterialAttributes.get_native_value(@type, :thickness_increase))
+        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', MaterialAttributes.get_native_value(@type, :std_lengths))
+        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', MaterialAttributes.get_native_value(@type, :std_widths))
+        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', MaterialAttributes.get_native_value(@type, :std_thicknesses))
+        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', MaterialAttributes.get_native_value(@type, :std_sections))
+        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', MaterialAttributes.get_native_value(@type, :std_sizes))
+        @grained = Plugin.instance.get_attribute(@material, 'grained', MaterialAttributes.get_native_value(@type, :grained))
+        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', MaterialAttributes.get_native_value(@type, :edge_decremented))
       else
         @type = TYPE_UNKNOWN
       end

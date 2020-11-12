@@ -611,6 +611,7 @@ tab:
           **{{ type_name }}**
           *Options de débit* par défaut enregistrées
         reset: Restaurer aux valeurs par défaut
+        reset_native: Restaurer aux valeurs d'origine
       texture_width: Largeur
       texture_height: Hauteur
       export_to_skm: Exporter (.skm)

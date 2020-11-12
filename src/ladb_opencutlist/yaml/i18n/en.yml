@@ -611,6 +611,7 @@ tab:
           **{{ type_name }}**
           default *Cutting Parameters* saved
         reset: Restore to default values
+        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
