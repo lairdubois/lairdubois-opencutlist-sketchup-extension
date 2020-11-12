@@ -14,6 +14,12 @@
 {% block bodyInner %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="tab_export_general">
+            <div class="row">
+                <div class="col-xs-push-1 col-xs-10">
+                    {{ 'tab.cutlist.export.info'|i18next }}
+                </div>
+            </div>
+            <hr>
             <div class="form form-horizontal">
                 <div class="form-group">
                     <label for="ladb_cutlist_export_select_source" class="control-label col-xs-4">{{ 'tab.cutlist.export.option_source'|i18next }}</label>
@@ -45,10 +51,6 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <hr>
-            <div style="margin: 20px;">
-                {{ 'tab.cutlist.export.info'|i18next }}
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="tab_export_customize">

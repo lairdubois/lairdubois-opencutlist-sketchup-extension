@@ -273,13 +273,17 @@
       cursor: pointer;
       margin-left: 5px;
 
+      &:focus {
+        color: inherit;
+      }
+
       &.ladb-active {
-        background-color: @ladb-brand-info;
+        background-color: #333;
         color: #fff;
         border-radius: 4px;
 
         &:hover {
-          background-color: darken(@ladb-brand-info, 10%);
+          background-color: lighten(#333, 30%);
         }
 
       }
