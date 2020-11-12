@@ -29,12 +29,12 @@
         },
         TYPE_SOLID_WOOD => {
             :thickness => '0',
-            :length_increase => '50mm',
-            :width_increase => '5mm',
-            :thickness_increase => '5mm',
+            :length_increase => { :metric => '50mm', :imperial => '50mm' },
+            :width_increase => { :metric => '5mm', :imperial => '5mm' },
+            :thickness_increase => { :metric => '5mm', :imperial => '5mm' },
             :std_lengths => '',
             :std_widths => '',
-            :std_thicknesses => '18mm;27mm;35mm;45mm;64mm;80mm;100mm',
+            :std_thicknesses => { :metric => '18mm;27mm;35mm;45mm;64mm;80mm;100mm', :imperial => '18mm;27mm;35mm;45mm;64mm;80mm;100mm' },
             :std_sections => '',
             :std_sizes => '',
             :grained => true,
@@ -47,7 +47,7 @@
             :thickness_increase => '0',
             :std_lengths => '',
             :std_widths => '',
-            :std_thicknesses => '5mm;8mm;10mm;15mm;18mm;22mm',
+            :std_thicknesses => { :metric => '5mm;8mm;10mm;15mm;18mm;22mm', :imperial => '5mm;8mm;10mm;15mm;18mm;22mm' },
             :std_sections => '',
             :std_sizes => '',
             :grained => false,
@@ -55,24 +55,24 @@
         },
         TYPE_DIMENSIONAL => {
             :thickness => '0',
-            :length_increase => '50mm',
+            :length_increase => { :metric => '50mm', :imperial => '50mm' },
             :width_increase => '0',
             :thickness_increase => '0',
-            :std_lengths => '2400mm',
+            :std_lengths => { :metric => '2400mm', :imperial => '2400mm' },
             :std_widths => '',
             :std_thicknesses => '',
-            :std_sections => '30mm x 40mm;40mm x 50mm',
+            :std_sections => { :metric => '30mm x 40mm;40mm x 50mm', :imperial => '30mm x 40mm;40mm x 50mm' },
             :std_sizes => '',
             :grained => false,
             :edge_decremented => false,
         },
         TYPE_EDGE => {
-            :thickness => '2mm',
+            :thickness => { :metric => '2mm', :imperial => '2mm' },
             :length_increase => '0',
             :width_increase => '0',
             :thickness_increase => '0',
             :std_lengths => '',
-            :std_widths => '23mm;33mm;43mm',
+            :std_widths => { :metric => '23mm;33mm;43mm', :imperial => '23mm;33mm;43mm' },
             :std_thicknesses => '',
             :std_sections => '',
             :std_sizes => '',
@@ -179,6 +179,17 @@
         else
           99
       end
+    end
+
+    def self.get_default(type, key)
+      unless DEFAULTS[type].nil? || DEFAULTS[type][key].nil? || !(DEFAULTS[type][key].is_a?(Hash))
+        if DimensionUtils.instance.model_unit_is_metric
+          return DEFAULTS[type][key][:metric] unless DEFAULTS[type][key][:metric].nil?
+        else
+          return DEFAULTS[type][key][:imperial] unless DEFAULTS[type][key][:imperial].nil?
+        end
+      end
+      DEFAULTS[type][key] unless DEFAULTS[type][key].is_a?(Hash)
     end
 
     # -----
@@ -374,17 +385,17 @@
         end
 
         @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOWN))
-        @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(:thickness))
-        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(:length_increase))
-        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(:width_increase))
-        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', get_default(:thickness_increase))
-        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', get_default(:std_lengths))
-        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', get_default(:std_widths))
-        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', get_default(:std_thicknesses))
-        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', get_default(:std_sections))
-        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_default(:std_sizes))
-        @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(:grained))
-        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(:edge_decremented))
+        @thickness = Plugin.instance.get_attribute(@material, 'thickness', get_default(@type, :thickness))
+        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', get_default(@type, :length_increase))
+        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', get_default(@type, :width_increase))
+        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', get_default(@type, :thickness_increase))
+        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', get_default(@type, :std_lengths))
+        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', get_default(@type, :std_widths))
+        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', get_default(@type, :std_thicknesses))
+        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', get_default(@type, :std_sections))
+        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', get_default(@type, :std_sizes))
+        @grained = Plugin.instance.get_attribute(@material, 'grained', get_default(@type, :grained))
+        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', get_default(@type, :edge_decremented))
       else
         @type = TYPE_UNKNOWN
       end
@@ -411,10 +422,6 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
       end
-    end
-
-    def get_default(key)
-      DEFAULTS[@type][key] unless DEFAULTS[@type].nil?
     end
 
   end

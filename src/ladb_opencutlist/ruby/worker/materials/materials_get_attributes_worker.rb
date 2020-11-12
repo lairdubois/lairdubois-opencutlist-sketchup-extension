@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
-  class MaterialsGetAttributeWorker
+  require_relative '../../model/attributes/material_attributes'
+
+  class MaterialsGetAttributesWorker
 
     def initialize(material_data)
       @name = material_data['name']
@@ -25,6 +27,7 @@ module Ladb::OpenCutList
           :std_sections => [],
           :std_sizes => [],
           :grained => false,
+          :edge_decremented => false,
       }
 
       # Fetch material
