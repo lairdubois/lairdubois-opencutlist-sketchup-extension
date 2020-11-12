@@ -203,6 +203,21 @@
 
     };
 
+    // Init ///
+
+    LadbTabForum.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('load_conversations', function (parameters) {
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                var tagFilter = parameters ? parameters.tagFilter : null;
+                that.loadConversations(tagFilter);
+            }, 1);
+        });
+    };
+
     LadbTabForum.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 

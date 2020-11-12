@@ -14,6 +14,9 @@
                 </div>
             </div>
             <div class="ladb-news-update-body">{{ update.html|sanitize_links }}</div>
+            <div class="ladb-news-update-footer">
+                <button class="btn btn-default ladb-news-comment-btn"><i class="ladb-opencutlist-icon-comment"></i> {{ 'tab.news.comment'|i18next }}...</button>
+            </div>
         </div>
     </div>
 {% endfor %}

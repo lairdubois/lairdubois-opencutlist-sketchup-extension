@@ -736,16 +736,17 @@ tab:
     title: Neuigkeiten
     help: |
       Die aktuellen Nachrichten von *OpenCutList*.
+    comment: Commenter  # TODO
     error:
       fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
   forum:
     label: Forum
     title: Forum
+    help: |
+      Dieser Raum ermöglicht Ihnen den Austausch mit der Benutzergemeinschaft und dem *OpenCutList*-Team.
     create_conversation: Diskussion starten
     reply: Antworten
     tags: Tags
-    help: |
-      Dieser Raum ermöglicht Ihnen den Austausch mit der Benutzergemeinschaft und dem *OpenCutList*-Team.
     redirection: |
       Sie werden auf die Plattform **Open Collective** weitergeleitet, die dieses Diskussionsforum beherbergt.
       Um *Gespräche zu beginnen* oder *zu antworten*, müssen Sie ein Konto erstellen und sich einloggen.
