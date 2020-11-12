@@ -267,10 +267,27 @@
       font-size: 80%;
     }
 
-    a {
+    .ladb-minitools > a {
       float: right;
       color: #000;
       cursor: pointer;
+      margin-left: 5px;
+
+      &.ladb-active {
+        background-color: @ladb-brand-info;
+        color: #fff;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: darken(@ladb-brand-info, 10%);
+        }
+
+      }
+
+    }
+
+    &.ladb-inactive {
+      opacity: 0.5;
     }
 
   }

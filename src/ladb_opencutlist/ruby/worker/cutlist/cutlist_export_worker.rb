@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require 'csv'
   require_relative '../../model/attributes/material_attributes'
+  require_relative '../../lib/dentaku'
 
   class CutlistExportWorker
 
@@ -32,6 +33,38 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
+    end
+
+    def _sanitize_value_string(value)
+      value.gsub(/^~ /, '') unless value.nil?
+    end
+
+    def _format_edge_value(material_name, std_dimension)
+      if material_name
+        return "#{material_name} (#{std_dimension})"
+      end
+      ''
+    end
+
+    def _evaluate_row(calculator, vars)
+      row = []
+      @col_defs.each { |col_def|
+        unless col_def['hidden']
+          if col_def['formula'].nil? || col_def['formula'].empty?
+            formula = col_def['name']
+          else
+            vars[:value] = vars[col_def['name'].to_sym]
+            formula = col_def['formula']
+          end
+          begin
+            value = calculator.evaluate!(formula, vars)
+          rescue => e
+            value = "!ERROR"
+          end
+          row.push(value)
+        end
+      }
+      row
     end
 
     # -----
@@ -80,15 +113,8 @@ module Ladb::OpenCutList
             options = { :col_sep => col_sep, :force_quotes => force_quotes }
             csv_file = CSV.generate(**options) do |csv|
 
-              def _sanitize_value_string(value)
-                value.gsub(/^~ /, '') unless value.nil?
-              end
-              def _format_edge_value(material_name, std_dimension)
-                if material_name
-                  return "#{material_name} (#{std_dimension})"
-                end
-                ''
-              end
+              # Create the formula calculator
+              calculator = Dentaku::Calculator.new
 
               case @source.to_i
 
@@ -107,31 +133,17 @@ module Ladb::OpenCutList
                   @cutlist.groups.each { |group|
                     next if @hidden_group_ids.include? group.id
 
-                    row = []
-                    @col_defs.each { |col_def|
-                      unless col_def['hidden']
-                        case col_def['name']
-                          when 'material_type'
-                            row.push(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"))
-                          when 'material_thickness'
-                            row.push((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''))
-                          when 'part_count'
-                            row.push(group.part_count)
-                          when 'total_cutting_length'
-                            row.push(group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length))
-                          when 'total_cutting_area'
-                            row.push(group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area))
-                          when 'total_cutting_volume'
-                            row.push(group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume))
-                          when 'total_final_area'
-                            row.push((group.total_final_area.nil? or group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area))
-                          else
-                            row.push('')
-                        end
-                      end
+                    vars = {
+                      :material_type => Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"),
+                      :material_thickness => (group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''),
+                      :part_count => group.part_count,
+                      :total_cutting_length => group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length),
+                      :total_cutting_area => group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area),
+                      :total_cutting_volume => group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume),
+                      :total_final_area => (group.total_final_area.nil? or group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
                     }
 
-                    csv << row
+                    csv << _evaluate_row(calculator, vars)
                   }
 
                 when EXPORT_OPTION_SOURCE_CUTLIST
@@ -152,53 +164,29 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_ACCESSORY
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_ACCESSORY
 
-                      row = []
-                      @col_defs.each { |col_def|
-                        unless col_def['hidden']
-                          case col_def['name']
-                            when 'number'
-                              row.push(part.number)
-                            when 'name'
-                              row.push(part.name)
-                            when 'count'
-                              row.push(part.count)
-                            when 'cutting_length'
-                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
-                            when 'cutting_width'
-                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
-                            when 'cutting_thickness'
-                              row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
-                            when 'bbox_length'
-                              row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
-                            when 'bbox_width'
-                              row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
-                            when 'bbox_thickness'
-                              row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
-                            when 'final_area'
-                              row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
-                            when 'material_name'
-                              row.push(group.material_display_name)
-                            when 'entity_names'
-                              row.push(part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '')
-                            when 'tags'
-                              row.push(part.tags.empty? ? '' : part.tags.join(','))
-                            when 'edge_ymin'
-                              row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
-                            when 'edge_ymax'
-                              row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
-                            when 'edge_xmin'
-                              row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
-                            when 'edge_xmax'
-                              row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
-                            else
-                              row.push('')
-                          end
-                        end
+                      vars = {
+                        :number => part.number,
+                        :name => part.name,
+                        :count => part.count,
+                        :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
+                        :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
+                        :cutting_thickness => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
+                        :bbox_length => no_dimensions ? '' : _sanitize_value_string(part.length),
+                        :bbox_width => no_dimensions ? '' : _sanitize_value_string(part.width),
+                        :bbox_thickness => no_dimensions ? '' : _sanitize_value_string(part.thickness),
+                        :final_area => no_dimensions ? '' : _sanitize_value_string(part.final_area),
+                        :material_name => group.material_display_name,
+                        :entity_names => part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '',
+                        :tags => part.tags.empty? ? '' : part.tags.join(','),
+                        :edge_ymin => _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+                        :edge_ymax => _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+                        :edge_xmin => _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+                        :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
                       }
 
-                      csv << row
+                      csv << _evaluate_row(calculator, vars)
                     }
                   }
 
@@ -238,51 +226,27 @@ module Ladb::OpenCutList
                           # Pop the instance name to put it in a separated column
                           instance_name = path_names.pop
 
-                          row = []
-                          @col_defs.each { |col_def|
-                            unless col_def['hidden']
-                              case col_def['name']
-                                when 'number'
-                                  row.push(part.number)
-                                when 'path'
-                                  row.push(path_names.join('/'))
-                                when 'instance_name'
-                                  row.push(instance_name)
-                                when 'definition_name'
-                                  row.push(part.name)
-                                when 'cutting_length'
-                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length))
-                                when 'cutting_width'
-                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width))
-                                when 'cutting_thickness'
-                                  row.push(no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness))
-                                when 'bbox_length'
-                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.length))
-                                when 'bbox_width'
-                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.width))
-                                when 'bbox_thickness'
-                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.thickness))
-                                when 'final_area'
-                                  row.push(no_dimensions ? '' : _sanitize_value_string(part.final_area))
-                                when 'material_name'
-                                  row.push(group.material_display_name)
-                                when 'tags'
-                                  row.push(part.tags.empty? ? '' : part.tags.join(','))
-                                when 'edge_ymin'
-                                  row.push(_format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]))
-                                when 'edge_ymax'
-                                  row.push(_format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]))
-                                when 'edge_xmin'
-                                  row.push(_format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]))
-                                when 'edge_xmax'
-                                  row.push(_format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]))
-                                else
-                                  row.push('')
-                              end
-                            end
+                          vars = {
+                            :number => part.number,
+                            :path => path_names.join('/'),
+                            :instance_name => instance_name,
+                            :definition_name => part.name,
+                            :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
+                            :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
+                            :cutting_thickness => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
+                            :bbox_length => no_dimensions ? '' : _sanitize_value_string(part.length),
+                            :bbox_width => no_dimensions ? '' : _sanitize_value_string(part.width),
+                            :bbox_thickness => no_dimensions ? '' : _sanitize_value_string(part.thickness),
+                            :final_area => no_dimensions ? '' : _sanitize_value_string(part.final_area),
+                            :material_name => group.material_display_name,
+                            :tags => part.tags.empty? ? '' : part.tags.join(','),
+                            :edge_ymin => _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+                            :edge_ymax => _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+                            :edge_xmin => _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+                            :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
                           }
 
-                          csv << row
+                          csv << _evaluate_row(calculator, vars)
                         }
 
                       }

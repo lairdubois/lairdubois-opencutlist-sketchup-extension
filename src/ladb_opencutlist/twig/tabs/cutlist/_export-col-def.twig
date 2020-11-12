@@ -1,1 +1,10 @@
-<li data-name="{{ colDef.name }}" data-expr="{{ colDef.expr }}" data-hidden="{{ colDef.hidden }}"{% if colDef.hidden %} style="opacity: 0.5;"{% endif %}><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ ('tab.cutlist.export.'~colDef.name)|i18next }}<div class="ladb-minitools ladb-minitools-right"><a><i class="ladb-opencutlist-icon-eye-{% if colDef.hidden %}close{% else %}open{% endif %}"></i></a></div></li>
+<li data-name="{{ colDef.name }}" data-hidden="{{ colDef.hidden }}"{% if colDef.hidden %} class="ladb-inactive"{% endif %}>
+    <span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ ('tab.cutlist.export.'~colDef.name)|i18next }}
+    <div class="ladb-minitools ladb-minitools-right">
+        <a href="#" class="ladb-cutlist-export-col-visibility-btn"><i class="ladb-opencutlist-icon-eye-{% if colDef.hidden %}close{% else %}open{% endif %}"></i></a>
+        <a href="#ladb_cutlist_export_col_{{ colDef.name }}_formula" class="ladb-cutlist-export-col-formula-btn{% if colDef.formula %} ladb-active{% endif %}" data-toggle="collapse"><i class="ladb-opencutlist-icon-formula"></i></a>
+    </div>
+    <div id="ladb_cutlist_export_col_{{ colDef.name }}_formula" class="collapse" style="margin: 5px 0 5px 10px;">
+        <input type="text" class="form-control ladb-formula" value="{{ colDef.formula|raw }}" style="font-family: monospace; font-size: 11px;"/>
+    </div>
+</li>

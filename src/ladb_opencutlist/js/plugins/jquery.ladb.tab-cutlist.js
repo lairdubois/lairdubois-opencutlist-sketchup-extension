@@ -623,7 +623,7 @@
                     for (var i = 0; i < cols.length; i++) {
                         colDefs.push({
                             name: cols[i],
-                            expr: '',
+                            formula: '',
                             hidden: false,
                         });
                     }
@@ -661,22 +661,23 @@
                             colDef: colDefs[i]
                         }));
                     }
-                    $sorter.find('a').on('click', function () {
+                    $sorter.find('a.ladb-cutlist-export-col-visibility-btn').on('click', function () {
                         var $item = $(this).parent().parent();
                         var $icon = $('i', $(this));
                         var hidden = $item.data('hidden');
                         if (hidden === true) {
                             hidden = false;
-                            $item.css('opacity', '1.0');
+                            $item.removeClass('ladb-inactive');
                             $icon.removeClass('ladb-opencutlist-icon-eye-close');
                             $icon.addClass('ladb-opencutlist-icon-eye-open');
                         } else {
                             hidden = true;
-                            $item.css('opacity', '0.5');
+                            $item.addClass('ladb-inactive');
                             $icon.addClass('ladb-opencutlist-icon-eye-close');
                             $icon.removeClass('ladb-opencutlist-icon-eye-open');
                         }
                         $item.data('hidden', hidden);
+                        return false;
                     });
                     $sorter.sortable(SORTABLE_OPTIONS);
                 }
@@ -730,7 +731,7 @@
                         $sorter.children('li').each(function () {
                             columnDefs.push({
                                 name: $(this).data('name'),
-                                expr: $(this).data('expr'),
+                                formula: $('input', $(this)).val(),
                                 hidden: $(this).data('hidden'),
                             });
                         });
