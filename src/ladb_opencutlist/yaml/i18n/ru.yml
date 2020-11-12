@@ -615,6 +615,7 @@ tab:
           **{{ type_name }}**
           по умолчанию *Параметры раскроя* сохранены
         reset: Восстановить значения по умолчанию
+        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)

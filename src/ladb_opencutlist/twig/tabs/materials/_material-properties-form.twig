@@ -134,6 +134,14 @@
     <div class="text-center">
         <p class="help-block">{{ 'tab.materials.edit_material.cut_options_defaults.manage_help'|i18next }} - <strong><span id="ladb_materials_span_cut_options_defaults_type_1">{{ 'tab.materials.type_1'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_2">{{ 'tab.materials.type_2'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_3">{{ 'tab.materials.type_3'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_4">{{ 'tab.materials.type_4'|i18next }}</span></strong></p>
         <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_save">{{ 'tab.materials.edit_material.cut_options_defaults.save'|i18next() }}</button>
-        <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_reset">{{ 'tab.materials.edit_material.cut_options_defaults.reset'|i18next() }}</button>
+        <div class="btn-group">
+            <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_reset">{{ 'tab.materials.edit_material.cut_options_defaults.reset'|i18next() }}</button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="#" id="ladb_materials_btn_cut_options_defaults_reset_native">{{ 'tab.materials.edit_material.cut_options_defaults.reset_native'|i18next() }}</a></li>
+            </ul>
+        </div>
     </div>
 </section>

@@ -615,6 +615,7 @@ tab:
           **{{ type_name }}**
           padrão *Parâmetros de corte* salvos
         reset: Restaurar para os valores padrão
+        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)

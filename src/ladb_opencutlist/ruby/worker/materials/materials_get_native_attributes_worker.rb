@@ -29,6 +29,7 @@ module Ladb::OpenCutList
           :std_sizes => MaterialAttributes.get_native_value(@type, :std_sizes),
           :grained => MaterialAttributes.get_native_value(@type, :grained),
           :edge_decremented => MaterialAttributes.get_native_value(@type, :edge_decremented),
+          :volumic_mass => MaterialAttributes.get_native_value(@type, :volumic_mass),
       }
     end
 
