@@ -128,7 +128,7 @@
             } else {
                 data.init();
             }
-        })
+        });
         return typeof value !== 'undefined' ? value : elements;
     }
 

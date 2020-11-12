@@ -416,7 +416,6 @@
     "tooltip.js",
     "popover.js",
     "tab.js",
-    "collapse.js",
     "transition.js"
   ]
 }

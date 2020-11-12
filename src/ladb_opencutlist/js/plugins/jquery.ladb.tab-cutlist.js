@@ -661,8 +661,13 @@
                             colDef: colDefs[i]
                         }));
                     }
+                    $sorter.find('a.ladb-cutlist-export-col-formula-btn').on('click', function () {
+                        var $item = $(this).closest('li');
+                        var $formula = $('.ladb-cutlist-export-col-formula', $item);
+                        $formula.toggleClass('hidden');
+                    });
                     $sorter.find('a.ladb-cutlist-export-col-visibility-btn').on('click', function () {
-                        var $item = $(this).parent().parent();
+                        var $item = $(this).closest('li');
                         var $icon = $('i', $(this));
                         var hidden = $item.data('hidden');
                         if (hidden === true) {
@@ -680,6 +685,17 @@
                         return false;
                     });
                     $sorter.sortable(SORTABLE_OPTIONS);
+                    var wordDefs = [];
+                    for (var i = 0; i < colDefs.length; i++) {
+                        wordDefs.push({
+                            value: colDefs[i].name,
+                            label: i18next.t('tab.cutlist.export.' + colDefs[i].name) ,
+                            class: 'variable'
+                        });
+                    }
+                    $('.ladb-formula-editor', $sorter).ladbFormulaEditor({
+                        wordDefs: wordDefs
+                    });
                 }
                 fnPopulateAndBindSorter($sortableColumnOrderSummary, exportColDefs[0]);
                 fnPopulateAndBindSorter($sortableColumnOrderCutlist, exportColDefs[1]);
@@ -729,9 +745,10 @@
                     var fnFetchColumnDefs = function ($sorter) {
                         var columnDefs = [];
                         $sorter.children('li').each(function () {
+                            console.log('l', $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'));
                             columnDefs.push({
                                 name: $(this).data('name'),
-                                formula: $('input', $(this)).val(),
+                                formula: $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'),
                                 hidden: $(this).data('hidden'),
                             });
                         });
