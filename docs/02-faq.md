@@ -59,4 +59,8 @@ When you plan to use a panel (OSB, plywood, ...), make sure you note the correct
 
   Birch Plywood **(Common: 3/4 in. x 2 ft. x 4 ft.; Actual: 0.728 in. x 23.75 in. x 47.75 in.)**
 
-This means that instead of 0.75 in. the panel's thickness is only 0.728 in., not much, but 2 ft. x 4 ft. is missing 1/4 in. You need to take this into account when setting up the trimming size for the panel.
+This means that instead of 0.75 in. the panel's thickness is only 0.728 in., not much difference, but 2 ft. x 4 ft. is missing 1/4 in. You need to take this into account when setting up the trimming size for the panel.
+
+### The volume of solid wood is labeled **FBM**, what does that mean?
+
+Rough wood volumes are usually measured in FBM (for "foot, board measure"). One board foot equals 1 ft x 1 ft x 1 in or 12 in x 12 in x 1 in. A measure in FBM is 12 times larger than the volume in ft³. See also the [National Hardwood Lumber Association Grading Rules](https://www.nhla.com/nhla-services/hardwood-industry-rules/).

@@ -584,17 +584,17 @@ tab:
       std_thicknesses: Standard Thicknesses
       std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
-        Available rough thicknesses.
+        Available **actual** rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Standard Cross Sections
       std_sections_placeholder: width x thickness ; ...
       std_sections_help: |
-        Expected format: **W**x**T**, where **W** and **T** represent the *width* and the *thickness* of the dimensional piece (*in actual not nominal sizes*).
+        Expected format: **W**x**T**, where **W** and **T** represent the **actual** *width* and *thickness* of the dimensional piece.
         *Sizes without units are considered to be in model units.*
       std_sizes: Standard Panel Sizes
       std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
-        Expected format: **L**x**W**, where **L** and **W** represent the *length* and the *width* of the panel.
+        Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
         *Sizes without units are considered to be in model units.*
       grained: Grain Direction
       grained_help: Configures the grain direction of the material.
