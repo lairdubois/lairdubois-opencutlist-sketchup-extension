@@ -1,5 +1,5 @@
 _label: Deutsch
-_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList-Fenster **schließen** und **erneut öffnen**.
+_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **erneut öffnen**.
 _description: Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)
 default:
   minimize: Minimieren
@@ -610,8 +610,8 @@ tab:
         save_success: |
           **{{ type_name }}**
           *Schnittparameter* als vorgegebene Werte gespeichert
-        reset: Auf vorgegebene Werte zurücksetzen
-        reset_native: Restaurer aux valeurs d'origine # TODO
+        reset: Auf gespeicherte Werte zurücksetzen
+        reset_native: Auf vorgegebene Werte zurücksetzen
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -736,7 +736,7 @@ tab:
     title: Neuigkeiten
     help: |
       Die aktuellen Nachrichten von *OpenCutList*.
-    comment: Commenter  # TODO
+    comment: Kommentieren
     error:
       fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
   forum:

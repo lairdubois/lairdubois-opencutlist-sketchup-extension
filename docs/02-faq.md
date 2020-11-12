@@ -22,6 +22,15 @@ If you have just applied material defined in SketchUp, the plugin lacks the addi
 
 This happens when the dimensions are not exact with respect to the precision of your model. See the menu `Tools -> Model Info -> Units`. Enable the *length snapping* and configure it to the same value as *precision* to minimize the effect. However there are situations where this will almost always happen (because you cut a curve or a bevel or because you changed the units of your model after creating your components).
 
+## How do I add texture to the OpenCutList material?
+
+OpenCutList material **is** SketchUp material with some attributes attached to it. Textures cannot be added directly from OpenCutList to the material, but you can edit material directly in SketchUp if you want to customize its appearance.
+
+## My panel parts are displayed in different groups, even though they all have the same thickness
+
+This may happen when your drawing is not *super* precise. Increase the displayed precision in the model info to the maximum, menu `Tools -> Model Info -> Units`. You should now see that not all parts have the same thickness.
+If you use fractional inches a ~ (tilde) is displayed in front of the thickness, switch to decimal inches to better see the difference.
+
 ## North America only Problems
 
 In North America, there is a distinction between the **nominal** and the **actual** size of many wood products (rough wood, dimensional lumber, wood panels).
