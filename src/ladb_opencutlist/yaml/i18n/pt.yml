@@ -740,16 +740,17 @@ tab:
     title: Notícias
     help: |
       As últimas notícias da *OpenCutList*.
+    comment: Commenter  # TODO
     error:
       fail_to_load_list: Incapaz de carregar a lista de notícias.
   forum:
     label: Fórum
     title: Fórum
+    help: |
+      Este fórum permite a troca com a comunidade de usuários e a equipe *OpenCutList*.
     create_conversation: Iniciar uma conversação
     reply: Responder
     tags: Tags
-    help: |
-      Este fórum permite a troca com a comunidade de usuários e a equipe *OpenCutList*.
     redirection: |
       Você será redirecionado para a plataforma **Open Collective** que hospeda este fórum de discussão.
       Para *iniciar conversas* ou *resposta* você precisará criar uma conta e fazer o login.

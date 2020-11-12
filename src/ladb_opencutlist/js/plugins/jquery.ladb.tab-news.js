@@ -87,6 +87,10 @@
                         that.loadUpdates(nextPage);
                         $(this).remove();
                     });
+                    $('.ladb-news-comment-btn', $list).on('click', function () {
+                        that.dialog.executeCommandOnTab('forum', 'load_conversations');
+                        return false;
+                    });
 
                     // Bind
                     $('.ladb-news-update-box', $list).on('click', function(e) {

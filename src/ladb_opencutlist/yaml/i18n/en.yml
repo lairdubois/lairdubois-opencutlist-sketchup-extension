@@ -740,16 +740,17 @@ tab:
     title: News
     help: |
       The latest news from *OpenCutList*.
+    comment: Commenter  # TODO
     error:
       fail_to_load_list: Unable to download the news list.
   forum:
     label: Forum
     title: Forum
+    help: |
+      This message board allows you to exchange with the user community and the *OpenCutList* team.
     create_conversation: Start a topic
     reply: Reply
     tags: Tags
-    help: |
-      This message board allows you to exchange with the user community and the *OpenCutList* team.
     redirection: |
       You will be redirected to the **Open Collective** platform hosting this discussion forum.
       To *start conversations* or *reply* you will need to create an account and log in.
