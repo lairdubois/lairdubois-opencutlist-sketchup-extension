@@ -22,6 +22,15 @@ If you have just applied material defined in SketchUp, the plugin lacks the addi
 
 This happens when the dimensions are not exact with respect to the precision of your model. See the menu `Tools -> Model Info -> Units`. Enable the *length snapping* and configure it to the same value as *precision* to minimize the effect. However there are situations where this will almost always happen (because you cut a curve or a bevel or because you changed the units of your model after creating your components).
 
+## How do I add texture to the OpenCutList material?
+
+OpenCutList material **is** SketchUp material with some attributes attached to it. Textures cannot be added directly from OpenCutList to the material, but you can edit material directly in SketchUp if you want to customize its appearance.
+
+## My panel parts are displayed in different groups, even though they all have the same thickness
+
+This may happen when your drawing is not *super* precise. Increase the displayed precision in the model info to the maximum, menu `Tools -> Model Info -> Units`. You should now see that not all parts have the same thickness.
+If you use fractional inches a ~ (tilde) is displayed in front of the thickness, switch to decimal inches to better see the difference.
+
 ## North America only Problems
 
 In North America, there is a distinction between the **nominal** and the **actual** size of many wood products (rough wood, dimensional lumber, wood panels).
@@ -50,4 +59,8 @@ When you plan to use a panel (OSB, plywood, ...), make sure you note the correct
 
   Birch Plywood **(Common: 3/4 in. x 2 ft. x 4 ft.; Actual: 0.728 in. x 23.75 in. x 47.75 in.)**
 
-This means that instead of 0.75 in. the panel's thickness is only 0.728 in., not much, but 2 ft. x 4 ft. is missing 1/4 in. You need to take this into account when setting up the trimming size for the panel.
+This means that instead of 0.75 in. the panel's thickness is only 0.728 in., not much difference, but 2 ft. x 4 ft. is missing 1/4 in. You need to take this into account when setting up the trimming size for the panel.
+
+### The volume of solid wood is labeled **FBM**, what does that mean?
+
+Rough wood volumes are usually measured in FBM (for "foot, board measure"). One board foot equals 1 ft x 1 ft x 1 in or 12 in x 12 in x 1 in. A measure in FBM is 12 times larger than the volume in ft³. See also the [National Hardwood Lumber Association Grading Rules](https://www.nhla.com/nhla-services/hardwood-industry-rules/).
