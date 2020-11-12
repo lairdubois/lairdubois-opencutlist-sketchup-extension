@@ -30,6 +30,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
+      Plugin.instance.register_command("materials_get_native_attributes") do |settings|
+        get_native_attributes_command(settings)
+      end
       Plugin.instance.register_command("materials_get_attributes_command") do |material_data|
         get_attributes_command(material_data)
       end
@@ -130,11 +133,21 @@ module Ladb::OpenCutList
       worker.run
     end
 
+    def get_native_attributes_command(settings)
+      require_relative '../worker/materials/materials_get_native_attributes_worker'
+
+      # Setup worker
+      worker = MaterialsGetNativeAttributesWorker.new(settings)
+
+      # Run !
+      worker.run
+    end
+
     def get_attributes_command(material_data)
       require_relative '../worker/materials/materials_get_attributes_worker'
 
       # Setup worker
-      worker = MaterialsGetAttributeWorker.new(material_data)
+      worker = MaterialsGetAttributesWorker.new(material_data)
 
       # Run !
       worker.run

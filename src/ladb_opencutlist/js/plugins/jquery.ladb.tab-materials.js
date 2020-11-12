@@ -850,120 +850,44 @@
         fnComputeFieldsVisibility(material.attributes.type);
 
         var fnSetFieldValuesToDefaults = function (type) {
-            var defaultThickness,
-                defaultLengthIncrease,
-                defaultWidthIncrease,
-                defaultThicknessIncrease,
-                defaultStdLengths,
-                defaultStdWidths,
-                defaultStdThicknesses,
-                defaultStdSections,
-                defaultStdSizes,
-                defaultGrained,
-                defaultEdgeDecremented,
-                defaultVolumicMass;
-            switch (type) {
-                case 0:   // TYPE_UNKNOWN
-                    defaultThickness = '0';
-                    defaultLengthIncrease = '0';
-                    defaultWidthIncrease = '0';
-                    defaultThicknessIncrease = '0';
-                    defaultStdLengths = '';
-                    defaultStdWidths = '';
-                    defaultStdThicknesses = '';
-                    defaultStdSections = '';
-                    defaultStdSizes = '';
-                    defaultGrained = false;
-                    defaultEdgeDecremented = false;
-                    defaultVolumicMass = '';
-                    break;
-                case 1:   // TYPE_SOLID_WOOD
-                    defaultThickness = '0';
-                    defaultLengthIncrease = '50mm';
-                    defaultWidthIncrease = '5mm';
-                    defaultThicknessIncrease = '5mm';
-                    defaultStdLengths = '';
-                    defaultStdWidths = '';
-                    defaultStdThicknesses = '18mm;27mm;35mm;45mm;54mm;65mm;80mm;100mm';
-                    defaultStdSections = '';
-                    defaultStdSizes = '';
-                    defaultGrained = true;
-                    defaultEdgeDecremented = true;
-                    defaultVolumicMass = '';
-                    break;
-                case 2:   // TYPE_SHEET_GOOD
-                    defaultThickness = '0';
-                    defaultLengthIncrease = '0';
-                    defaultWidthIncrease = '0';
-                    defaultThicknessIncrease = '0';
-                    defaultStdLengths = '';
-                    defaultStdWidths = '';
-                    defaultStdThicknesses = '5mm;8mm;10mm;15mm;18mm;22mm';
-                    defaultStdSections = '';
-                    defaultStdSizes = '';
-                    defaultGrained = false;
-                    defaultEdgeDecremented = false;
-                    defaultVolumicMass = '';
-                    break;
-                case 3:   // TYPE_DIMENSIONAL
-                    defaultThickness = '0';
-                    defaultLengthIncrease = '0';
-                    defaultWidthIncrease = '0';
-                    defaultThicknessIncrease = '0';
-                    defaultStdLengths = '3000mm';
-                    defaultStdWidths = '';
-                    defaultStdThicknesses = '';
-                    defaultStdSections = '40mm x 30mm;50mm x 40mm';
-                    defaultStdSizes = '';
-                    defaultGrained = false;
-                    defaultEdgeDecremented = false;
-                    defaultVolumicMass = '';
-                    break;
-                case 4:   // TYPE_EDGE
-                    defaultThickness = '2mm';
-                    defaultLengthIncrease = '50mm';
-                    defaultWidthIncrease = '0';
-                    defaultThicknessIncrease = '0';
-                    defaultStdLengths = '';
-                    defaultStdWidths = '23mm;33mm;43mm';
-                    defaultStdThicknesses = '';
-                    defaultStdSections = '';
-                    defaultStdSizes = '';
-                    defaultGrained = false;
-                    defaultEdgeDecremented = true;
-                    defaultVolumicMass = '';
-                    break;
-                case 5:   // TYPE_ACCESSORY
-                    defaultThickness = '';
-                    defaultLengthIncrease = '0';
-                    defaultWidthIncrease = '0';
-                    defaultThicknessIncrease = '0';
-                    defaultStdLengths = '';
-                    defaultStdWidths = '';
-                    defaultStdThicknesses = '';
-                    defaultStdSections = '';
-                    defaultStdSizes = '';
-                    defaultGrained = false;
-                    defaultEdgeDecremented = false;
-                    defaultVolumicMass = '';
-                    break;
-            }
-            var setTokens = function ($input, tokens) {
-                // Workaround for empty string tokens
-                $input.tokenfield('setTokens', tokens === ''  ? ' ' : tokens);
-            };
-            $inputThickness.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
-            $inputLengthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
-            $inputWidthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
-            $inputThicknessIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
-            setTokens($inputStdLengths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
-            setTokens($inputStdWidths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
-            setTokens($inputStdThicknesses, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
-            setTokens($inputStdSections, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
-            setTokens($inputStdSizes, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
-            $selectGrained.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
-            $selectEdgeDecremented.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
-            $inputVolumicMass.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, defaultVolumicMass));
+            rubyCallCommand('materials_get_native_attributes', { type: type }, function (response) {
+
+                if (response.errors && response.errors.length > 0) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    var defaultThickness = response.thickness;
+                    var defaultLengthIncrease = response.length_increase;
+                    var defaultWidthIncrease = response.width_increase;
+                    var defaultThicknessIncrease = response.thickness_increase;
+                    var defaultStdLengths = response.std_lengths;
+                    var defaultStdWidths = response.std_widths;
+                    var defaultStdThicknesses = response.std_thicknesses;
+                    var defaultStdSections = response.std_sections;
+                    var defaultStdSizes = response.std_sizes;
+                    var defaultGrained = response.grained;
+                    var defaultEdgeDecremented = response.edge_decremented;
+                    var defaultVolumicMass = response.volumic_mass;
+
+                    var setTokens = function ($input, tokens) {
+                        // Workaround for empty string tokens
+                        $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
+                    };
+                    $inputThickness.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, defaultThickness));
+                    $inputLengthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, defaultLengthIncrease));
+                    $inputWidthIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, defaultWidthIncrease));
+                    $inputThicknessIncrease.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, defaultThicknessIncrease));
+                    setTokens($inputStdLengths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, defaultStdLengths));
+                    setTokens($inputStdWidths, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, defaultStdWidths));
+                    setTokens($inputStdThicknesses, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, defaultStdThicknesses));
+                    setTokens($inputStdSections, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, defaultStdSections));
+                    setTokens($inputStdSizes, that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, defaultStdSizes));
+                    $selectGrained.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, defaultGrained) ? '1' : '0');
+                    $selectEdgeDecremented.selectpicker('val', that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, defaultEdgeDecremented) ? '1' : '0');
+                    $inputVolumicMass.val(that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, defaultVolumicMass));
+                }
+
+            });
         };
 
         var fnCheckInputNameValue = function(verbose) {

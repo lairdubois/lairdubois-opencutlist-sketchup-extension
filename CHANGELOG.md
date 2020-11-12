@@ -14,6 +14,7 @@ in 1.x and 0.x versions.
   * Added "News" tab
   * Added "Forum" tab
   * Fixed "Highlight part" tool 
+  * Improved material attributes default according to unit system
   * Improved thickness and section precision display
   * Improved readability of square feet area dimensions
   * Changed ft³ to FBM (foot, board measure) for Material Solid Wood
