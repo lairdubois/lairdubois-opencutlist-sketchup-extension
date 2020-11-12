@@ -839,7 +839,7 @@
         fnComputeFieldsVisibility(material.attributes.type);
 
         var fnSetFieldValuesToDefaults = function (type) {
-            rubyCallCommand('materials_get_default_attributes', { type: type }, function (response) {
+            rubyCallCommand('materials_get_native_attributes', { type: type }, function (response) {
 
                 if (response.errors && response.errors.length > 0) {
                     that.dialog.notifyErrors(response.errors);
