@@ -1,7 +1,5 @@
 {
   "0": {
-    "std_bar": "",
-    "std_bar_length": { "metric": "2500mm", "imperial": "2500mm" },
     "bar_folding": true,
     "hide_part_list": false,
     "wrap_length": { "metric": "3000mm", "imperial": "3000mm" },
