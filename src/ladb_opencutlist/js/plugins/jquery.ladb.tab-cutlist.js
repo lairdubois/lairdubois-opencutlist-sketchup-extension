@@ -1708,8 +1708,8 @@
                         var appDefaults = response.defaults;
 
                         var cuttingdiagram1dOptions = {
-                            std_bar: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, appDefaults.std_bar),
-                            std_bar_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, appDefaults.std_bar_length),
+                            std_bar: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, ''),
+                            std_bar_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, ''),
                             scrap_bar_lengths: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, appDefaults.scrap_bar_lengths),
                             saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf)),
                             trimming: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming)),
@@ -2036,9 +2036,9 @@
                         var appDefaults = response.defaults;
 
                         var cuttingdiagram2dOptions = {
-                            std_sheet: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, appDefaults.std_sheet),
-                            std_sheet_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, appDefaults.std_sheet_length),
-                            std_sheet_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, appDefaults.std_sheet_width),
+                            std_sheet: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, ''),
+                            std_sheet_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, ''),
+                            std_sheet_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, ''),
                             scrap_sheet_sizes: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, appDefaults.scrap_sheet_sizes),
                             grained: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, appDefaults.grained),
                             saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, appDefaults.saw_kerf)),

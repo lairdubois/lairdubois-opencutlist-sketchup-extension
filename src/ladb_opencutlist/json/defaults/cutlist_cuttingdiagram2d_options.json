@@ -1,17 +1,14 @@
 {
   "0": {
-    "std_sheet": "",
-    "std_sheet_length": { "metric": "2800mm", "imperial": "2800mm" },
-    "std_sheet_width": { "metric": "2070mm", "imperial": "2070mm" },
     "grained": false,
     "sheet_folding": true,
     "hide_part_list": false,
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "3mm" },
     "trimming": { "metric": "20mm", "imperial": "20mm" },
-    "presort": 1,           /* PRESORT_WIDTH_DECR */
-    "stacking": 0,          /* STACKING_NONE */
-    "bbox_optimization": 0,  /* BBOX_OPTIMIZATION_NONE */
+    "presort": 1,             /* PRESORT_WIDTH_DECR */
+    "stacking": 0,            /* STACKING_NONE */
+    "bbox_optimization": 0,   /* BBOX_OPTIMIZATION_NONE */
     "sheet_folding": true,
     "hide_part_list": false
   }
