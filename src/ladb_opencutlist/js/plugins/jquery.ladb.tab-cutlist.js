@@ -53,9 +53,9 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
 
     var EXPORT_DEFAULT_COLUMNS = {
-        0: [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
-        1: [ 'number', 'name', 'count', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'entity_names', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
-        2: [ 'number', 'path', 'instance_name', 'definition_name', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
+        0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
+        1 /* EXPORT_OPTION_SOURCE_CUTLIST */        : [ 'number', 'name', 'count', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'entity_names', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
+        2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */ : [ 'number', 'path', 'instance_name', 'definition_name', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
     };
 
     // Various Consts
@@ -592,17 +592,17 @@
                             for (var i = 0; i < cols.length; i++) {
                                 colDefs.push({
                                     name: cols[i],
-                                    formula: '',
                                     hidden: false,
+                                    formula: '',
                                 });
                             }
                             return colDefs;
                         }
 
                         var exportColDefs = {
-                            0: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_SUMMARY, fnDefaultColDefs(0)),
-                            1: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_CUTLIST, fnDefaultColDefs(1)),
-                            2: that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST, fnDefaultColDefs(2))
+                            0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_SUMMARY, fnDefaultColDefs(0 /* EXPORT_OPTION_SOURCE_SUMMARY */)),
+                            1 /* EXPORT_OPTION_SOURCE_CUTLIST */        : that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_CUTLIST, fnDefaultColDefs(1 /* EXPORT_OPTION_SOURCE_CUTLIST */)),
+                            2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */ : that.dialog.getSetting(SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST, fnDefaultColDefs(2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */))
                         };
 
                         var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
@@ -619,18 +619,43 @@
                         // Define useful functions
 
                         var fnPopulateAndBindSorter = function ($sorter, colDefs) {
+
+                            // Generate wordDefs
+                            var wordDefs = [];
+                            for (var i = 0; i < colDefs.length; i++) {
+                                wordDefs.push({
+                                    value: colDefs[i].name,
+                                    label: i18next.t('tab.cutlist.export.' + colDefs[i].name),
+                                    class: 'variable'
+                                });
+                            }
+
+                            // Populate rows
                             $sorter.empty();
                             for (var i = 0; i < colDefs.length; i++) {
+
+                                // Create ans append row
                                 $sorter.append(Twig.twig({ref: "tabs/cutlist/_export-col-def.twig"}).render({
                                     colDef: colDefs[i]
                                 }));
+
+                                // Setup formula editor
+                                $('li:last-child .ladb-formula-editor', $sorter)
+                                    .ladbFormulaEditor({
+                                        wordDefs: wordDefs
+                                    })
+                                    .ladbFormulaEditor('setFormula', [ colDefs[i].formula ])
+                                ;
+
                             }
-                            $sorter.find('a.ladb-cutlist-export-col-formula-btn').on('click', function () {
+
+                            // Bind buttons
+                            $('a.ladb-cutlist-export-col-formula-btn', $sorter).on('click', function () {
                                 var $item = $(this).closest('li');
                                 var $formula = $('.ladb-cutlist-export-col-formula', $item);
                                 $formula.toggleClass('hidden');
                             });
-                            $sorter.find('a.ladb-cutlist-export-col-visibility-btn').on('click', function () {
+                            $('a.ladb-cutlist-export-col-visibility-btn', $sorter).on('click', function () {
                                 var $item = $(this).closest('li');
                                 var $icon = $('i', $(this));
                                 var hidden = $item.data('hidden');
@@ -648,18 +673,10 @@
                                 $item.data('hidden', hidden);
                                 return false;
                             });
+
+                            // Bind sorter
                             $sorter.sortable(SORTABLE_OPTIONS);
-                            var wordDefs = [];
-                            for (var i = 0; i < colDefs.length; i++) {
-                                wordDefs.push({
-                                    value: colDefs[i].name,
-                                    label: i18next.t('tab.cutlist.export.' + colDefs[i].name),
-                                    class: 'variable'
-                                });
-                            }
-                            $('.ladb-formula-editor', $sorter).ladbFormulaEditor({
-                                wordDefs: wordDefs
-                            });
+
                         }
                         fnPopulateAndBindSorter($sortableColumnOrderSummary, exportColDefs[0]);
                         fnPopulateAndBindSorter($sortableColumnOrderCutlist, exportColDefs[1]);
@@ -709,11 +726,10 @@
                             var fnFetchColumnDefs = function ($sorter) {
                                 var columnDefs = [];
                                 $sorter.children('li').each(function () {
-                                    console.log('l', $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'));
                                     columnDefs.push({
                                         name: $(this).data('name'),
-                                        formula: $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'),
                                         hidden: $(this).data('hidden'),
+                                        formula: $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'),
                                     });
                                 });
                                 return columnDefs;
@@ -732,7 +748,7 @@
                                 {key: SETTING_KEY_EXPORT_COLDEFS_INSTANCES_LIST, value: exportColDefs[2]},
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                            rubyCallCommand('cutlist_export', $.extend(exportOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportColDefs[exportOptions.source] }, that.generateOptions), function (response) {
 
                                 var i;
 
@@ -740,7 +756,7 @@
                                     that.dialog.notifyErrors(response.errors);
                                 }
                                 if (response.export_path) {
-                                    that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', {export_path: response.export_path}), 'success', [
+                                    that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
                                         Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                             rubyCallCommand('core_open_external_file', {

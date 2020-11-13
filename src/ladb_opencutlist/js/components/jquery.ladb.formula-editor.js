@@ -14,18 +14,45 @@
         wordDefs: []
     };
 
+    LadbFormulaEditor.prototype.tagFromWordDef = function (wordDef) {
+        return "<span class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'>" + wordDef.label + "</span>";
+    }
+
+    LadbFormulaEditor.prototype.setFormula = function (formula) {
+        if (formula.length > 0) {
+            for (var i = 0; i < this.options.wordDefs.length; i++) {
+                var wordDef = this.options.wordDefs[i];
+                var re = new RegExp('(?:\\b)(' + wordDef.value + ')(?:\\b)', 'g');
+                formula = formula.replace(re, this.tagFromWordDef(wordDef));
+            }
+            formula = '<span></span>' + formula + '<span></span>';
+        }
+        this.$element
+            .empty()
+            .html(formula)
+        ;
+    };
 
     LadbFormulaEditor.prototype.getFormula = function () {
-        var formula = '';
-        this.$element.children().each(function () {
-            var value = $(this).data('value');
-            if (value) {
-                formula += value;
-            } else {
-                formula += $(this).html().replace(/&nbsp;/, ' ').trim();
+
+        var fnExplore = function(element, words) {
+            if (element.nodeType === 1 /* ELEMENT_NODE */) {
+                var $element = $(element);
+                if ($element.data('value')) {
+                    words.push($element.data('value'));
+                } else {
+                    $element.contents().each(function () {
+                        fnExplore(this, words);
+                    });
+                }
+            } else if (element.nodeType === 3 /* TEXT_NODE */) {
+                words.push(element.data.trim());
             }
-        });
-        return formula;
+            return words;
+        };
+
+        var words = fnExplore(this.$element.get(0), []);
+        return words.join(' ').trim();
     };
 
     LadbFormulaEditor.prototype.bind = function () {
@@ -33,7 +60,7 @@
 
         this.$element.textcomplete([
             {
-                match: /(^|\b)(\w{1,}|[+\-*/%^|&])$/,
+                match: /(^|\b)(\w{1,}|&])$/,
                 search: function (term, callback) {
                     callback($.map(that.options.wordDefs, function (wordDef) {
                         return wordDef.label.toLowerCase().indexOf(term.toLowerCase()) === 0 ? wordDef : null;
@@ -43,7 +70,7 @@
                     return wordDef.label;
                 },
                 replace: function (wordDef) {
-                    return "<span class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'>" + wordDef.label + "</span>";
+                    return that.tagFromWordDef(wordDef);
                 },
             }
         ], {
