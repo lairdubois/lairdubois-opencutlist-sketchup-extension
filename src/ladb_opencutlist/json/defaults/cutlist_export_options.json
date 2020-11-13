@@ -1,0 +1,7 @@
+{
+  "0": {
+    "source": "1",    /* cutlist */
+    "col_sep": "0",   /* \t */
+    "encoding": "1"   /* UTF-8 */
+  }
+}

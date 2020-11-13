@@ -8,15 +8,6 @@
     var SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS = 'importer.import.option.keep_definitions_settings';
     var SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS = 'importer.import.option.keep_materials_settings';
 
-    // Options defaults
-
-    var OPTION_DEFAULT_COL_SEP = 1;     // ,
-    var OPTION_DEFAULT_FIRST_LINE_HEADERS = 1;  // headers
-    var OPTION_DEFAULT_COLUMN_MAPPGING = {};
-
-    var OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS = true;
-    var OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS = true;
-
     // CLASS DEFINITION
     // ======================
 
@@ -85,59 +76,74 @@
                     0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
                     function () {
 
-                        var loadOptions = {
-                            path: response.path,
-                            filename: response.filename,
-                            col_sep: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, OPTION_DEFAULT_COL_SEP),
-                            first_line_headers: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, OPTION_DEFAULT_FIRST_LINE_HEADERS),
-                            column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, OPTION_DEFAULT_COLUMN_MAPPGING)
-                        };
+                        var path = response.path;
+                        var filename = response.filename;
 
-                        var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
-                            lengthUnit: lengthUnit
-                        }));
+                        rubyCallCommand('core_get_app_defaults', { dictionary: 'importer_load_options' }, function (response) {
 
-                        // Fetch UI elements
-                        var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
-                        var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
-                        var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
-                        var $btnLoad = $('#ladb_importer_load', $modal);
+                            if (response.errors && response.errors.length > 0) {
+                                that.dialog.notifyErrors(response.errors);
+                            } else {
 
-                        // Bind select
-                        $selectColSep.val(loadOptions.col_sep);
-                        $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                        $selectFirstLineHeaders.val(loadOptions.first_line_headers ? '1' : '0');
-                        $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
+                                var appDefaults = response.defaults;
 
-                        // Bind buttons
-                        $btnLoad.on('click', function () {
+                                var loadOptions = {
+                                    path: path,
+                                    filename: filename,
+                                    col_sep: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, appDefaults.col_sep),
+                                    first_line_headers: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, appDefaults.first_line_headers),
+                                    column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, {})
+                                };
 
-                            // Fetch options
+                                var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
+                                    lengthUnit: lengthUnit
+                                }));
 
-                            loadOptions.col_sep = $selectColSep.val();
-                            loadOptions.first_line_headers = $selectFirstLineHeaders.val() === '1';
+                                // Fetch UI elements
+                                var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
+                                var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
+                                var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
+                                var $btnLoad = $('#ladb_importer_load', $modal);
 
-                            // Store options
-                            that.dialog.setSettings([
-                                { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
-                                { key:SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, value:loadOptions.first_line_headers }
-                            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
+                                // Bind select
+                                $selectColSep.val(loadOptions.col_sep);
+                                $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
+                                $selectFirstLineHeaders.val(loadOptions.first_line_headers ? '1' : '0');
+                                $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
 
-                            that.loadCSV(loadOptions);
+                                // Bind buttons
+                                $btnLoad.on('click', function () {
 
-                            // Hide modal
-                            $modal.modal('hide');
+                                    // Fetch options
+
+                                    loadOptions.col_sep = $selectColSep.val();
+                                    loadOptions.first_line_headers = $selectFirstLineHeaders.val() === '1';
+
+                                    // Store options
+                                    that.dialog.setSettings([
+                                        { key:SETTING_KEY_LOAD_OPTION_COL_SEP, value:loadOptions.col_sep },
+                                        { key:SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, value:loadOptions.first_line_headers }
+                                    ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
+
+                                    that.loadCSV(loadOptions);
+
+                                    // Hide modal
+                                    $modal.modal('hide');
+
+                                });
+                                $btnSetupModelUnits.on('click', function () {
+                                    $(this).blur();
+                                    rubyCallCommand('core_open_model_info_page', {
+                                        page: i18next.t('core.model_info_page.units')
+                                    });
+                                });
+
+                                // Show modal
+                                $modal.modal('show');
+
+                            }
 
                         });
-                        $btnSetupModelUnits.on('click', function () {
-                            $(this).blur();
-                            rubyCallCommand('core_open_model_info_page', {
-                                page: i18next.t('core.model_info_page.units')
-                            });
-                        });
-
-                        // Show modal
-                        $modal.modal('show');
 
                     });
 
@@ -240,6 +246,8 @@
                 // Stick header
                 that.stickSlideHeader(that.$rootSlide);
 
+            } else if (response.errors && response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
             }
 
         });
@@ -259,106 +267,118 @@
             3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
             function () {
 
-                var importOptions = {
-                    remove_all: false,      // This option is not stored to force user to know the option status
-                    keep_definitions_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, OPTION_DEFAULT_KEEP_DEFINITIONS_SETTINGS),
-                    keep_materials_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, OPTION_DEFAULT_KEEP_MATERIALS_SETTINGS)
-                };
+                rubyCallCommand('core_get_app_defaults', { dictionary: 'importer_import_options' }, function (response) {
 
-                var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
-                    importablePartCount: that.importablePartCount,
-                    model_is_empty: that.model_is_empty
-                }));
+                    if (response.errors && response.errors.length > 0) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
 
-                // Fetch UI elements
-                var $SelectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
-                var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
-                var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
-                var $btnImport = $('#ladb_importer_import', $modal);
+                        var appDefaults = response.defaults;
 
-                $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
-                $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
+                        var importOptions = {
+                            remove_all: false,      // This option is not stored to force user to know the option status
+                            keep_definitions_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, appDefaults.keep_definitions_settings),
+                            keep_materials_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, appDefaults.keep_materials_settings)
+                        };
 
-                // Bind select
-                $SelectRemoveAll
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        var removeAll = $(e.currentTarget).selectpicker('val');
-                        if (removeAll === '1') {
-                            $inputKeepDefinitionsSettings.closest('.form-group').show();
-                        } else {
-                            $inputKeepDefinitionsSettings.closest('.form-group').hide();
-                        }
-                    })
-                    .selectpicker(SELECT_PICKER_OPTIONS);
+                        var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
+                            importablePartCount: that.importablePartCount,
+                            model_is_empty: that.model_is_empty
+                        }));
 
-                // Bind buttons
-                $btnImport.on('click', function () {
+                        // Fetch UI elements
+                        var $SelectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
+                        var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
+                        var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
+                        var $btnImport = $('#ladb_importer_import', $modal);
 
-                    // Fetch options
+                        $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
+                        $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
 
-                    importOptions.remove_all = $SelectRemoveAll.selectpicker('val') === '1';
-                    importOptions.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
-                    importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
+                        // Bind select
+                        $SelectRemoveAll
+                            .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                                var removeAll = $(e.currentTarget).selectpicker('val');
+                                if (removeAll === '1') {
+                                    $inputKeepDefinitionsSettings.closest('.form-group').show();
+                                } else {
+                                    $inputKeepDefinitionsSettings.closest('.form-group').hide();
+                                }
+                            })
+                            .selectpicker(SELECT_PICKER_OPTIONS);
 
-                    // Store options
-                    that.dialog.setSettings([
-                        { key:SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, value:importOptions.keep_definitions_settings },
-                        { key:SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, value:importOptions.keep_materials_settings }
-                    ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
+                        // Bind buttons
+                        $btnImport.on('click', function () {
 
-                    rubyCallCommand('importer_import', importOptions, function (response) {
+                            // Fetch options
 
-                        var i;
+                            importOptions.remove_all = $SelectRemoveAll.selectpicker('val') === '1';
+                            importOptions.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
+                            importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
 
-                        if (response.errors.length > 0) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                        if (response.imported_part_count) {
+                            // Store options
+                            that.dialog.setSettings([
+                                { key:SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, value:importOptions.keep_definitions_settings },
+                                { key:SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, value:importOptions.keep_materials_settings }
+                            ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
-                            // Update filename
-                            that.$fileTabs.empty();
+                            rubyCallCommand('importer_import', importOptions, function (response) {
 
-                            // Unstick header
-                            that.unstickSlideHeader(that.$rootSlide);
+                                var i;
 
-                            // Update page
-                            that.$page.empty();
-                            that.$page.append(Twig.twig({ ref: "tabs/importer/_alert-success.twig" }).render({
-                                importedPartCount: response.imported_part_count
-                            }));
+                                if (response.errors.length > 0) {
+                                    that.dialog.notifyErrors(response.errors);
+                                }
+                                if (response.imported_part_count) {
 
-                            // Bind buttons
-                            $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
-                                this.blur();
-                                that.dialog.minimize();
-                                rubyCallCommand('core_zoom_extents')
+                                    // Update filename
+                                    that.$fileTabs.empty();
+
+                                    // Unstick header
+                                    that.unstickSlideHeader(that.$rootSlide);
+
+                                    // Update page
+                                    that.$page.empty();
+                                    that.$page.append(Twig.twig({ ref: "tabs/importer/_alert-success.twig" }).render({
+                                        importedPartCount: response.imported_part_count
+                                    }));
+
+                                    // Bind buttons
+                                    $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
+                                        this.blur();
+                                        that.dialog.minimize();
+                                        rubyCallCommand('core_zoom_extents')
+                                    });
+                                    $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
+                                        this.blur();
+                                        that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+                                    });
+
+                                    // Manage buttons
+                                    that.$btnOpen.removeClass('btn-default');
+                                    that.$btnOpen.addClass('btn-primary');
+                                    that.$btnImport.hide();
+
+                                    // Cleanup keeped data
+                                    that.loadOptions = null;
+                                    that.importablePartCount = 0;
+                                    that.model_is_empty = false;
+
+                                }
+
                             });
-                            $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
-                                this.blur();
-                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
-                            });
 
-                            // Manage buttons
-                            that.$btnOpen.removeClass('btn-default');
-                            that.$btnOpen.addClass('btn-primary');
-                            that.$btnImport.hide();
+                            // Hide modal
+                            $modal.modal('hide');
 
-                            // Cleanup keeped data
-                            that.loadOptions = null;
-                            that.importablePartCount = 0;
-                            that.model_is_empty = false;
+                        });
 
-                        }
+                        // Show modal
+                        $modal.modal('show');
 
-                    });
-
-                    // Hide modal
-                    $modal.modal('hide');
+                    }
 
                 });
-
-                // Show modal
-                $modal.modal('show');
 
             }
 

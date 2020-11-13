@@ -57,7 +57,8 @@ module Ladb::OpenCutList
       @temp_dir = nil
       @language = nil
       @current_os = nil
-      @i18n_strings = nil
+      @i18n_strings_cache = nil
+      @app_defaults_cache = nil
       @html_dialog_compatible = nil
       @manifest = nil
       @update_available = nil
@@ -115,7 +116,7 @@ module Ladb::OpenCutList
       if persist
         write_default(SETTINGS_KEY_LANGUAGE, language)
       end
-      @i18n_strings = nil # Reset i18n strings cache
+      @i18n_strings_cache = nil # Reset i18n strings cache
     end
 
     def get_available_languages
@@ -135,18 +136,18 @@ module Ladb::OpenCutList
 
     def get_i18n_string(path_key)
 
-      unless @i18n_strings
+      unless @i18n_strings_cache
+        file_path = File.join(__dir__, '..', 'yaml', 'i18n', "#{language}.yml")
         begin
-          yaml_file = "#{__dir__}/../yaml/i18n/#{language}.yml"
-          @i18n_strings = YAML::load_file(yaml_file)
-        rescue
-          raise "Error loading i18n file (file='#{yaml_file}')."
+          @i18n_strings_cache = YAML::load_file(file_path)
+        rescue => e
+          raise "Error loading i18n file (file='#{file_path}') : #{e.message}."
         end
       end
 
       # Iterate over values
       begin
-        i18n_string = path_key.split('.').inject(@i18n_strings) { |hash, key| hash[key] }
+        i18n_string = path_key.split('.').inject(@i18n_strings_cache) { |hash, key| hash[key] }
       rescue
         i18n_string = nil
         puts "I18n value not found (key=#{path_key})."
@@ -158,6 +159,58 @@ module Ladb::OpenCutList
         path_key
       end
 
+    end
+
+    def clear_app_defaults_cache
+      @app_defaults_cache = nil
+    end
+
+    def get_app_defaults(dictionary, section = nil)
+
+      section = '0' if section.nil?
+      section = section.to_s
+      cache_key = "#{dictionary}_#{section}"
+
+      unless @app_defaults_cache && @app_defaults_cache.has_key?(cache_key)
+
+        file_path = File.join(__dir__, '..', 'json', 'defaults', "#{dictionary}.json")
+        begin
+          file = File.open(file_path)
+          data = JSON.load(file)
+        rescue => e
+          raise "Error loading defaults file (file='#{file_path}') : #{e.message}."
+        end
+
+        model_unit_is_metric = DimensionUtils.instance.model_unit_is_metric
+
+        defaults = {}
+        if data.has_key? section
+          data = data[section]
+          data.each do |key, value|
+            if value.is_a? Hash
+              if model_unit_is_metric
+                value = value['metric'] if value.has_key? 'metric'
+              else
+                value = value['imperial'] if value.has_key? 'imperial'
+              end
+            end
+            defaults.store(key, value)
+          end
+        else
+          raise "Error loading defaults file (file='#{file_path}') : Section not found (section=#{section})."
+        end
+
+        file.close
+
+        # Cache loaded defaults
+        unless @app_defaults_cache
+          @app_defaults_cache = {}
+        end
+        @app_defaults_cache.store(cache_key, defaults)
+
+      end
+
+      @app_defaults_cache[cache_key]
     end
 
     def html_dialog_compatible
@@ -337,6 +390,9 @@ module Ladb::OpenCutList
         end
         register_command('core_upgrade') do |params|
           upgrade_command(params)
+        end
+        register_command('core_get_app_defaults') do |params|
+          get_app_defaults_command(params)
         end
         register_command('core_read_settings') do |params|
           read_settings_command(params)
@@ -684,6 +740,13 @@ module Ladb::OpenCutList
         return { :cancelled => true }
       end
 
+    end
+
+    def get_app_defaults_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION }
+      dictionary = params['dictionary']
+      section = params['section']
+
+      { :defaults => get_app_defaults(dictionary, section) }
     end
 
     def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }

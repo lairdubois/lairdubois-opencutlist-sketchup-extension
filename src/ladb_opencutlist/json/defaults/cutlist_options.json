@@ -1,0 +1,20 @@
+{
+  "0": {
+    "auto_orient": true,
+    "smart_material": true,
+    "dynamic_attribute_name": false,
+    "part_number_with_letters": true,
+    "part_number_sequence_by_group": true,
+    "part_folding": false,
+    "hide_entity_names": false,
+    "hide_tags": false,
+    "hide_cutting_dimensions": false,
+    "hide_bbox_dimensions": false,
+    "hide_untyped_material_dimensions": false,
+    "hide_final_areas": true,
+    "hide_edges": true,
+    "minimize_on_highlight": true,
+    "part_order_strategy": "-thickness>-length>-width>-count>name>-edge_pattern",
+    "dimension_column_order_strategy": "length>width>thickness"
+  }
+}
