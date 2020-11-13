@@ -9,10 +9,12 @@ var concat = require('gulp-concat');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
 var replace = require('gulp-replace');
+var rename = require("gulp-rename");
 var touch = require('gulp-touch-custom');
 var glob = require('glob');
 var yaml = require('js-yaml');
 var path = require('path');
+var cleanCSS = require('gulp-clean-css');
 
 var knownOptions = {
     string: 'env',
@@ -28,14 +30,18 @@ gulp.task('less_compile', function () {
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
+// Minify .css files
+gulp.task('css_minify', function () {
+    return gulp.src('../src/ladb_opencutlist/css/**/!(*.min).css')
+        .pipe(cleanCSS())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest('../src/ladb_opencutlist/css'));
+});
+
 // Convert twig runtime templates to .js precompiled files
 gulp.task('twig_compile', function () {
     'use strict';
-    return gulp.src(
-        [
-            '../src/ladb_opencutlist/twig/**/*.twig',
-            '!../src/ladb_opencutlist/twig/dialog.twig'     // dialog.twig is used on build time then it is excluded from this task.
-        ])
+    return gulp.src('../src/ladb_opencutlist/twig/**/!(dialog).twig')   // dialog.twig is used on build time then it is excluded from this task.
         .pipe(ladb_twig_compile())
         .pipe(concat('twig-templates.js'))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
@@ -97,28 +103,16 @@ gulp.task('i18n_dialog_compile', function () {
 
 // Create the .rbz archive
 gulp.task('rbz_create', function () {
-    return gulp.src(
-        [
-
-            '../src/**/*',
-
-            '!../src/**/.DS_store',
-
-            '!../src/**/*.less',
-            '!../src/**/less/**',
-            '!../src/**/less/',
-
-            '!../src/**/*.twig',
-            '!../src/**/twig/**',
-            '!../src/**/twig/'
-
-        ])
+    return gulp.src([
+        'src/**/!(.DS_store|*.less|*.twig|!(*.min).css)',
+        '!src/**/less/**',
+        '!src/**/twig/**',
+    ], { cwd: '../'})
         .pipe(gulpif(options.env.toLowerCase() === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env.toLowerCase() + '.rbz')))
         .pipe(gulp.dest('../dist'));
 });
 
 // Version
-
 gulp.task('version', function () {
 
     // --no-manifest        # default = --manifest=true
@@ -160,7 +154,7 @@ gulp.task('version', function () {
         .pipe(touch());
 });
 
-gulp.task('compile', gulp.series('less_compile', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
+gulp.task('compile', gulp.series('less_compile', 'css_minify', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
 gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
 
 gulp.task('default', gulp.series('build'));
