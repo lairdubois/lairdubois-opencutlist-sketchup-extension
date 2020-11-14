@@ -1,8 +1,6 @@
 {
   "0": {
     "grained": false,
-    "sheet_folding": true,
-    "hide_part_list": false,
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "3mm" },
     "trimming": { "metric": "20mm", "imperial": "20mm" },
