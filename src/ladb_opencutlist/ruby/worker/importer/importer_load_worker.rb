@@ -48,8 +48,8 @@ module Ladb::OpenCutList
     def initialize(settings)
       @path = settings['path']
       @filename = settings['filename']
-      @first_line_headers = settings['first_line_headers']
       @col_sep = settings['col_sep']
+      @first_line_headers = settings['first_line_headers']
       @column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
     end
 
@@ -97,7 +97,8 @@ module Ladb::OpenCutList
           options = {
               :encoding => encoding + ':utf-8',
               :headers => @first_line_headers,
-              :col_sep => @col_sep
+              :col_sep => @col_sep,
+              :quote_char => '"'
           }
 
           rows = CSV.read(@path, **options)

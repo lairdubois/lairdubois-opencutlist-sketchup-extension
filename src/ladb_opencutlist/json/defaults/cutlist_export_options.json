@@ -1,7 +1,7 @@
 {
   "0": {
-    "source": "1",    /* cutlist */
-    "col_sep": "0",   /* \t */
-    "encoding": "1"   /* UTF-8 */
+    "source": 1,    /* EXPORT_OPTION_SOURCE_CUTLIST */
+    "col_sep": 1,   /* EXPORT_OPTION_COL_SEP_COMMA */
+    "encoding": 0   /* EXPORT_OPTION_ENCODING_UTF8 */
   }
 }
