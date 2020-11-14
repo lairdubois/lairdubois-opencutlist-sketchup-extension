@@ -42,6 +42,9 @@ default:
   part_plural: partes
   setup_model_units: Configure as unidades do modelo
   load_more: "Carregue mais ..."
+  save_to_defaults: Salvar como valores padrão
+  reset_to_defaults: Restaurar para os valores padrão
+  reset_to_app_defaults: Restaurer aux valeurs d'origine  # TODO
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Descrição
       property_count: Quantidade
       property_edge_pattern: Número de bandas de borda
-      reset: Restaurar valores padrão
     list:
       filters: Filtros
       filters_warning_0: "Este filtro mascara todas as partes!"
@@ -450,9 +452,7 @@ tab:
         *Os tamanhos sem unidades são considerados em unidades modelo.*
       options_defaults:
         manage_help: Administração dos *parâmetros do diagrama de corte* padrão
-        save: Salvar como valores padrão
         save_success: Padrão *Parâmetros do diagrama de corte* salvos
-        reset: Restaurar para os valores padrão
       tooltip:
         scroll_to_block_1d: Role para o primeiro quadro
         scroll_to_block_2d: Role para o primeiro painel
@@ -606,12 +606,9 @@ tab:
       edge_decremented_1: Reduzir por Espessura de Faixa de Borda
       cut_options_defaults:
         manage_help: Administração dos *parâmetros de corte* padrão
-        save: Salvar como valores padrão
         save_success: |
           **{{ type_name }}**
           padrão *Parâmetros de corte* salvos
-        reset: Restaurar para os valores padrão
-        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
@@ -626,7 +623,6 @@ tab:
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Tipo
       property_name: Nome
-      reset: Restaurar valores padrão
     remove:
       message: |
         Você está prestes a suprimir o material **{{{material_name}}** de seu modelo.
@@ -795,7 +791,6 @@ tab:
   settings:
     label: Preferências
     title: Preferências
-    reset: Restaurar para os valores padrão
     language: Língua
     size_and_position: Tamanho e posição da janela
   about:

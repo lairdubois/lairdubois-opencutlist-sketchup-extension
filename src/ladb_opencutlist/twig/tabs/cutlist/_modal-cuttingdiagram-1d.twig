@@ -90,11 +90,19 @@
                     </div>
                 </div>
             </div>
-            <div id="ladb_panel_cuttingdiagram_options_defaults" class="text-center" style="display: none;">
+            <div id="ladb_panel_cuttingdiagram_options_defaults" class="text-center"{% if tab == 'material' %} style="display: none;"{% endif %}>
                 <hr>
                 <p class="help-block">{{ 'tab.cutlist.cuttingdiagram.options_defaults.manage_help'|i18next }}</p>
-                <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_save">{{ 'tab.cutlist.cuttingdiagram.options_defaults.save'|i18next() }}</button>
-                <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_reset">{{ 'tab.cutlist.cuttingdiagram.options_defaults.reset'|i18next() }}</button>
+                <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_save">{{ 'default.save_to_defaults'|i18next() }}</button>
+                <div class="btn-group">
+                    <button class="btn btn-default" id="ladb_btn_cuttingdiagram_options_defaults_reset">{{ 'default.reset_to_defaults'|i18next() }}</button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="#" id="ladb_btn_cuttingdiagram_options_defaults_reset_native">{{ 'default.reset_to_app_defaults'|i18next() }}</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

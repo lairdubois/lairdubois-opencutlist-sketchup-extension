@@ -42,6 +42,9 @@ default:
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
   load_more: "Ältere laden ..."
+  save_to_defaults: Als vorgegebene Werte speichern
+  reset_to_defaults: Auf gespeicherte Werte zurücksetzen
+  reset_to_app_defaults: Auf vorgegebene Werte zurücksetzen
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Bezeichnung
       property_count: Anzahl
       property_edge_pattern: Anzahl Kantenbänder
-      reset: Einstellungen zurücksetzen
     list:
       filters: Filter
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
@@ -450,9 +452,7 @@ tab:
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
-        save: Als vorgegebene Werte speichern
         save_success: "*Schnittparameter* als vorgegebene Werte gespeichert"
-        reset: Auf vorgegebene Werte zurücksetzen
       tooltip:
         scroll_to_block_1d: Zur ersten Stange blättern
         scroll_to_block_2d: Zur ersten Platte blättern
@@ -606,12 +606,9 @@ tab:
       edge_decremented_1: Verringerung um Stärke des Kantenbands
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
-        save: Als vorgegebene Werte speichern
         save_success: |
           **{{ type_name }}**
           *Schnittparameter* als vorgegebene Werte gespeichert
-        reset: Auf gespeicherte Werte zurücksetzen
-        reset_native: Auf vorgegebene Werte zurücksetzen
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -626,7 +623,6 @@ tab:
         Die Teile können für jede Eigenschaft <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigend* geordnet werden.
       property_type: Typ
       property_name: Bezeichnung
-      reset: Einstellungen zurücksetzen
     remove:
       message: |
         Sie sind gerade dabei das Material **{{ material_name }}** aus Ihrem Modell zu löschen.
@@ -795,7 +791,6 @@ tab:
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
-    reset: Auf vorgegebene Werte zurücksetzen
     language: Sprache
     size_and_position: Größe und Position des Fensters
   about:
