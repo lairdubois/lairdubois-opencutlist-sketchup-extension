@@ -42,6 +42,9 @@ default:
   part_plural: детали
   setup_model_units: Установка единиц измерения
   load_more: "Загрузить больше ..."
+  save_to_defaults: Сохранить как по умолчанию
+  reset_to_defaults: Восстановить значения по умолчанию
+  reset_to_app_defaults: Restaurer aux valeurs d'origine  # TODO
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Описание
       property_count: Количество
       property_edge_pattern: Количество кромок
-      reset: Восстановить значения по умолчанию
     list:
       filters: Фильтры
       filters_warning_0: "Этот фильтр скрывает все детали!"
@@ -450,9 +452,7 @@ tab:
         *Цифры без единиц измерения будут рассчитаны по единицам измерения исходной модели.*
       options_defaults:
         manage_help: Управление настройками по умолчанию *Параметры карты раскроя*
-        save: Сохранить как по умолчанию
         save_success: По умолчанию *Параметры карты раскроя* сохранены
-        reset: Восстановить значения по умолчанию
       tooltip:
         scroll_to_block_1d: Прокрутка до первой строки
         scroll_to_block_2d: Прокрутка до первой панели
@@ -610,12 +610,9 @@ tab:
       volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Управление параметрами по умолчанию *Параметры раскроя*
-        save: Сохранить как значения по умолчанию
         save_success: |
           **{{ type_name }}**
           по умолчанию *Параметры раскроя* сохранены
-        reset: Восстановить значения по умолчанию
-        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)
@@ -630,7 +627,6 @@ tab:
         Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* or <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       property_type: Тип
       property_name: Имя
-      reset: Восстановить по умолчанию
     remove:
       message: |
         Вы собираетесь скрыть материал **{{ material_name }}** для вашей модели.
@@ -799,7 +795,6 @@ tab:
   settings:
     label: Параметры
     title: Параметры
-    reset: Восстановить значения по умолчанию
     language: Язык
     size_and_position: Размер и позиция окна
   about:

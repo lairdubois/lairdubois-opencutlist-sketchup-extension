@@ -42,6 +42,9 @@ default:
   part_plural: parti
   setup_model_units: Impostare l'unita di misura del modello
   load_more: "Aggiungi ..."
+  save_to_default: Salva come impostazione predefinita
+  reset_to_default: Ripristina i valori predefiniti
+  reset_to_app_default: Restaurer aux valeurs d'origine # TODO
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Descrizione
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
-      reset: Ripristina i valori iniziali
     list:
       filters: Filtri
       filters_warning_0: "Questo filtro esclude tutte le parti!"
@@ -450,9 +452,7 @@ tab:
         *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
       options_defaults:
         manage_help: Gestione dei valori predefiniti dello *Schema di Taglio*
-        save: Salva come valori predefiniti
         save_success: Salvataggio dei valori predefiniti per lo *Schema di Taglio* completato
-        reset: Ripristina i valori predefiniti
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola
         scroll_to_block_2d: Scorri al primo pannello
@@ -610,12 +610,9 @@ tab:
       volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Gestione delle *impostazioni di taglio* predefinite
-        save: Salva come impostazione predefinita
         save_success: |
           **{{ type_name }}**
           *Impostazioni di taglio* predefinite salvate correttamente
-        reset: Ripristina i valori predefiniti
-        reset_native: Restaurer aux valeurs d'origine # TODO
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)
@@ -630,7 +627,6 @@ tab:
         Le proprietà possono essere ordinate in ordine <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
       property_type: Tipo
       property_name: Nome
-      reset: Ripristina Valori Predefiniti
     remove:
       message: |
         Stai eliminando il materiale **{{ material_name }}** dal modello.
@@ -799,7 +795,6 @@ tab:
   settings:
     label: Preferenze
     title: Preferenze
-    reset: Ripristina ai valori predefiniti
     language: Lingua
     size_and_position: Dimensione e posizione della finestra
   about:

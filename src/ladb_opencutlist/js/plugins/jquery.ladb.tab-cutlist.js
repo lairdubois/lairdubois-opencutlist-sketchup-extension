@@ -1687,7 +1687,6 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH,
 
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId,
@@ -1709,7 +1708,6 @@
 
                         var cuttingdiagram1dOptions = {
                             std_bar: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, ''),
-                            std_bar_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, ''),
                             scrap_bar_lengths: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, appDefaults.scrap_bar_lengths),
                             saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf)),
                             trimming: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming)),
@@ -1735,9 +1733,10 @@
                             var $inputTrimming = $('#ladb_input_trimming', $modal);
                             var $selectBarFolding = $('#ladb_select_bar_folding', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                            var $inputBreakLength = $('#ladb_input_wrap_length', $modal);
+                            var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
+                            var $btnCuttingdiagramOptionsDefaultsResetNative = $('#ladb_btn_cuttingdiagram_options_defaults_reset_native', $modal);
                             var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                             var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
 
@@ -1763,7 +1762,8 @@
                             $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectHidePartList.val(cuttingdiagram1dOptions.hide_part_list ? '1' : '0');
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                            $inputBreakLength.val(cuttingdiagram1dOptions.wrap_length);
+                            $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
+                            $inputWrapLength.ladbTextinputDimension();
 
                             var fnEditMaterial = function (callback) {
 
@@ -1786,6 +1786,13 @@
                                 } else if (value) {
                                     $inputStdBarLength.val(value);
                                 }
+                            };
+                            var fnSetFieldValuesToDefaults = function (isAppDefaults) {
+                                $inputSawKerf.val(isAppDefaults ? appDefaults.saw_kerf : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf));
+                                $inputTrimming.val(isAppDefaults ? appDefaults.trimming : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming));
+                                $selectBarFolding.selectpicker('val', (isAppDefaults ? appDefaults.bar_folding : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, appDefaults.bar_folding)) ? '1' : '0');
+                                $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
+                                $inputWrapLength.val(isAppDefaults ? appDefaults.wrap_length : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length));
                             };
 
                             $inputStdBar.on('changed.bs.select', function (e) {
@@ -1811,7 +1818,7 @@
                                 var trimming = $inputTrimming.val();
                                 var bar_folding = $selectBarFolding.val();
                                 var hide_part_list = $selectHidePartList.val();
-                                var wrap_length = $inputBreakLength.val();
+                                var wrap_length = $inputWrapLength.val();
 
                                 // Update default cut options for specific type to last used
                                 that.dialog.setSettings([
@@ -1828,21 +1835,12 @@
 
                             });
                             $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
-
-                                var saw_kerf = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf);
-                                var trimming = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming);
-                                var bar_folding = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, appDefaults.bar);
-                                var hide_part_list = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list);
-                                var wrap_length = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length);
-
-                                $inputSawKerf.val(saw_kerf);
-                                $inputTrimming.val(trimming);
-                                $selectBarFolding.selectpicker('val', bar_folding ? '1' : '0');
-                                $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
-                                $inputBreakLength.val(wrap_length);
-
+                                fnSetFieldValuesToDefaults(false);
                                 this.blur();
-
+                            });
+                            $btnCuttingdiagramOptionsDefaultsResetNative.on('click', function () {
+                                fnSetFieldValuesToDefaults(true);
+                                this.blur();
                             });
                             $btnEditMaterial.on('click', function () {
                                 fnEditMaterial();
@@ -1858,12 +1856,11 @@
                                 cuttingdiagram1dOptions.trimming = $inputTrimming.val();
                                 cuttingdiagram1dOptions.bar_folding = $selectBarFolding.val() === '1';
                                 cuttingdiagram1dOptions.hide_part_list = $selectHidePartList.val() === '1';
-                                cuttingdiagram1dOptions.wrap_length = $inputBreakLength.val();
+                                cuttingdiagram1dOptions.wrap_length = $inputWrapLength.val();
 
                                 // Store options
                                 that.dialog.setSettings([
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId, value:cuttingdiagram1dOptions.std_bar },
-                                    { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.std_bar_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId, value:cuttingdiagram1dOptions.scrap_bar_lengths, preprocessor:2 /* SETTINGS_PREPROCESSOR_DXQ */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram1dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram1dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
@@ -2011,8 +2008,6 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
 
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId,
@@ -2037,8 +2032,8 @@
 
                         var cuttingdiagram2dOptions = {
                             std_sheet: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, ''),
-                            std_sheet_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, ''),
-                            std_sheet_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, ''),
+                            std_sheet_length: '',
+                            std_sheet_width: '',
                             scrap_sheet_sizes: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, appDefaults.scrap_sheet_sizes),
                             grained: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, appDefaults.grained),
                             saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, appDefaults.saw_kerf)),
@@ -2074,6 +2069,7 @@
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
+                            var $btnCuttingdiagramOptionsDefaultsResetNative = $('#ladb_btn_cuttingdiagram_options_defaults_reset_native', $modal);
                             var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                             var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
 
@@ -2143,6 +2139,15 @@
                                     }
                                 }
                             };
+                            var fnSetFieldValuesToDefaults = function (isAppDefaults) {
+                                $inputSawKerf.val(isAppDefaults ? appDefaults.saw_kerf : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, appDefaults.saw_kerf));
+                                $inputTrimming.val(isAppDefaults ? appDefaults.trimming : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, appDefaults.trimming));
+                                $selectPresort.selectpicker('val', isAppDefaults ? appDefaults.presort : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, appDefaults.presort));
+                                $selectStacking.selectpicker('val', isAppDefaults ? appDefaults.stacking : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, appDefaults.stacking));
+                                $selectBBoxOptimization.selectpicker('val', isAppDefaults ? appDefaults.bbox_optimization : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, appDefaults.bbox_optimization));
+                                $selectSheetFolding.selectpicker('val', (isAppDefaults ? appDefaults.sheet_folding : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding)) ? '1' : '0');
+                                $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
+                            };
 
                             $inputStdSheet.on('changed.bs.select', function (e) {
                                 fnSelectSize();
@@ -2188,25 +2193,12 @@
 
                             });
                             $btnCuttingdiagramOptionsDefaultsReset.on('click', function () {
-
-                                var saw_kerf = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF, appDefaults.saw_kerf);
-                                var trimming = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_TRIMMING, appDefaults.trimming);
-                                var presort = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_PRESORT, appDefaults.presort);
-                                var stacking = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, appDefaults.stacking);
-                                var bbox_optimization = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_BBOX_OPTIMIZATION, appDefaults.bbox_optimization);
-                                var sheet_folding = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding);
-                                var hide_part_list = that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list);
-
-                                $inputSawKerf.val(saw_kerf);
-                                $inputTrimming.val(trimming);
-                                $selectPresort.selectpicker('val', presort);
-                                $selectStacking.selectpicker('val', stacking);
-                                $selectBBoxOptimization.selectpicker('val', bbox_optimization);
-                                $selectHidePartList.selectpicker('val', sheet_folding ? '1' : '0');
-                                $selectHidePartList.selectpicker('val', hide_part_list ? '1' : '0');
-
+                                fnSetFieldValuesToDefaults(false);
                                 this.blur();
-
+                            });
+                            $btnCuttingdiagramOptionsDefaultsResetNative.on('click', function () {
+                                fnSetFieldValuesToDefaults(true);
+                                this.blur();
                             });
                             $btnEditMaterial.on('click', function () {
                                 fnEditMaterial();
@@ -2231,8 +2223,6 @@
                                 // Store options
                                 that.dialog.setSettings([
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet },
-                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_LENGTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET_WIDTH + '_' + groupId, value:cuttingdiagram2dOptions.std_sheet_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId, value:cuttingdiagram2dOptions.scrap_sheet_sizes, preprocessor:4 /* SETTINGS_PREPROCESSOR_DXDXQ */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_GRAINED + '_' + groupId, value:cuttingdiagram2dOptions.grained },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram2dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },

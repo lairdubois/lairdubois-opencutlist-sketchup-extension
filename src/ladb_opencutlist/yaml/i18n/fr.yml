@@ -42,6 +42,9 @@ default:
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
   load_more: "Charger la suite..."
+  save_to_defaults: Enregistrer comme valeurs par défaut
+  reset_to_defaults: Restaurer aux valeurs par défaut
+  reset_to_app_defaults: Restaurer aux valeurs d'origine
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Désignation
       property_count: Quantité
       property_edge_pattern: Nombre de chant
-      reset: Restaurer aux valeurs par défaut
     list:
       filters: Filtres
       filters_warning_0: "Ce filtrage masque toutes les pièces !"
@@ -450,9 +452,7 @@ tab:
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       options_defaults:
         manage_help: Gestion des *Options de calepinage* par défaut
-        save: Enregistrer comme valeurs par défaut
         save_success: "*Options de calepinage* par défaut enregistrées"
-        reset: Restaurer aux valeurs par défaut
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre
         scroll_to_block_2d: Défiler vers le premier panneau
@@ -610,12 +610,9 @@ tab:
       volumic_mass: Masse volumique
       cut_options_defaults:
         manage_help: Gestion des *Options de débit* par défaut
-        save: Enregistrer comme valeurs par défaut
         save_success: |
           **{{ type_name }}**
           *Options de débit* par défaut enregistrées
-        reset: Restaurer aux valeurs par défaut
-        reset_native: Restaurer aux valeurs d'origine
       texture_width: Largeur
       texture_height: Hauteur
       export_to_skm: Exporter (.skm)
@@ -630,7 +627,6 @@ tab:
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       property_type: Type
       property_name: Nom
-      reset: Restaurer aux valeurs par défaut
     remove:
       message: |
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
@@ -799,7 +795,6 @@ tab:
   settings:
     label: Préférences
     title: Préférences
-    reset: Restaurer aux valeurs par défaut
     language: Langue
     size_and_position: Taille et Position de la fenêtre
   about:

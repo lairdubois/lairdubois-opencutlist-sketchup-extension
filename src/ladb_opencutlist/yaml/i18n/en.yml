@@ -42,6 +42,9 @@ default:
   part_plural: parts
   setup_model_units: Setup the model units
   load_more: "Load older ..."
+  save_to_defaults: Save as default values
+  reset_to_defaults: Restore to saved values
+  reset_to_app_defaults: Restore to default values
 core:
   menu:
     submenu: OpenCutList
@@ -299,7 +302,6 @@ tab:
       property_name: Description
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
-      reset: Restore Default Values
     list:
       filters: Filter
       filters_warning_0: "This filter masks all parts!"
@@ -450,9 +452,7 @@ tab:
         *Sizes without units are considered to be in model units.*
       options_defaults:
         manage_help: Administration of the default *Cutting Diagram Parameters*
-        save: Save as default values
         save_success: Default *Cutting Diagram Parameters* saved
-        reset: Restore to default values
       tooltip:
         scroll_to_block_1d: Scroll to first board
         scroll_to_block_2d: Scroll to first panel
@@ -610,12 +610,9 @@ tab:
       volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
-        save: Save as default values
         save_success: |
           **{{ type_name }}**
           default *Cutting Parameters* saved
-        reset: Restore to saved values
-        reset_native: Restore to default values
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -630,7 +627,6 @@ tab:
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Type
       property_name: Name
-      reset: Restore Default Values
     remove:
       message: |
         You are about to suppress the material **{{ material_name }}** from your model.
@@ -799,7 +795,6 @@ tab:
   settings:
     label: Preferences
     title: Preferences
-    reset: Restore to default values
     language: Language
     size_and_position: Size and Position of the Window
   about:
