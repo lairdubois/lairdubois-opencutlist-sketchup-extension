@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-reset:before {
+  content: "\e97d";
+}
 .ladb-opencutlist-icon-formula:before {
   content: "\e97c";
 }

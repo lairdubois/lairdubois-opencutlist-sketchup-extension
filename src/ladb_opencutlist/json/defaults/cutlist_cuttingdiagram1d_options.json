@@ -1,10 +1,10 @@
 {
   "0": {
-    "bar_folding": true,
-    "hide_part_list": false,
-    "wrap_length": { "metric": "3000mm", "imperial": "3000mm" },
     "scrap_bar_lengths": "",
     "saw_kerf": { "metric": "3mm", "imperial": "3mm" },
-    "trimming": { "metric": "20mm", "imperial": "20mm" }
+    "trimming": { "metric": "20mm", "imperial": "20mm" },
+    "bar_folding": true,
+    "hide_part_list": false,
+    "wrap_length": { "metric": "3000mm", "imperial": "3000mm" }
   }
 }

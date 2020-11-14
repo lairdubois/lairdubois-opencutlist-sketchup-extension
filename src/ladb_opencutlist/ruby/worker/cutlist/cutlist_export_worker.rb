@@ -87,13 +87,10 @@ module Ladb::OpenCutList
           case @col_sep.to_i
             when EXPORT_OPTION_COL_SEP_COMMA
               col_sep = ','
-              force_quotes = true
             when EXPORT_OPTION_COL_SEP_SEMICOLON
               col_sep = ';'
-              force_quotes = false
             else
               col_sep = "\t"
-              force_quotes = false
           end
 
           # Convert col_sep
@@ -110,7 +107,7 @@ module Ladb::OpenCutList
           end
 
           File.open(export_path, "wb+:#{encoding}") do |f|
-            options = { :col_sep => col_sep, :force_quotes => force_quotes }
+            options = { :col_sep => col_sep }
             csv_file = CSV.generate(**options) do |csv|
 
               # Create the formula calculator
