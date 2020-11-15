@@ -44,7 +44,7 @@ default:
   load_more: "Load older ..."
   save_to_defaults: Save as default values
   reset_to_defaults: Restore to saved values
-  reset_to_app_defaults: Restore to default values
+  reset_to_app_defaults: Restore to original values
 core:
   menu:
     submenu: OpenCutList

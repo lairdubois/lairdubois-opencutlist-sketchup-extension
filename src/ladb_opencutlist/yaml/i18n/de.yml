@@ -1,5 +1,5 @@
 _label: Deutsch
-_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **erneut öffnen**.
+_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**.
 _description: Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)
 default:
   minimize: Minimieren
@@ -42,9 +42,9 @@ default:
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
   load_more: "Ältere laden ..."
-  save_to_defaults: Als vorgegebene Werte speichern
-  reset_to_defaults: Auf gespeicherte Werte zurücksetzen
-  reset_to_app_defaults: Auf vorgegebene Werte zurücksetzen
+  save_to_defaults: Als Standardwerte speichern
+  reset_to_defaults: Standardwerte wiederherstellen
+  reset_to_app_defaults: Originalwerte wiederherstellen
 core:
   menu:
     submenu: OpenCutList
