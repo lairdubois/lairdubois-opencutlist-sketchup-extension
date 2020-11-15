@@ -18,6 +18,16 @@ On the **Material** tab of OpenCutList, add a new material and configure its typ
 
 If you have just applied material defined in SketchUp, the plugin lacks the additional information it needs to exactly compute the cut list. Check out the tab **Materials** to enter this information for all material used in your model.
 
+## The available thickness/size does not correspond to my material
+
+It is not possible to make an exhaustive list of all thicknesses, sizes and personal preferences. For each material we have listed *default* sizes, which you have to adapt to your local market availability. There is one set for metric units in mm and one for imperial (fractional) units in inches listing a limited set of parameters. You can save your customization and restore it at any time. You can also revert to the original defaults.
+
+## How do I define the grain direction?
+
+On material of type **Solid Wood**, it is assumed that the grain direction runs along the length.
+
+On material of type **Sheet Good**, there may be no grain direction (like for mdf sheets) or a grain direction along the length of the sheet. Some material do have the grain running across the sheet (some birch plywoods), therefore you will have to define the length as being the smaller size.
+
 ## I have a ~ (tilde) in front of some of the dimensions
 
 This happens when the dimensions are not exact with respect to the precision of your model. See the menu `Tools -> Model Info -> Units`. Enable the *length snapping* and configure it to the same value as *precision* to minimize the effect. However there are situations where this will almost always happen (because you cut a curve or a bevel or because you changed the units of your model after creating your components).
@@ -25,6 +35,14 @@ This happens when the dimensions are not exact with respect to the precision of 
 ## How do I add texture to the OpenCutList material?
 
 OpenCutList material **is** SketchUp material with some attributes attached to it. Textures cannot be added directly from OpenCutList to the material, but you can edit material directly in SketchUp if you want to customize its appearance.
+
+## I applied material to my component, but I want some faces to have different materials
+
+OpenCutList selects the top level material of the component to assign the part to a group. You may define other materials to the faces of the component. If you do this on all faces of the part, the color of the component material will not be visible anymore.
+
+## I applied material to all the faces of my component, OpenCutList still says *No Material defined*
+
+Material must be applied to the component, assigning it to all faces is cumbersome and unnecessary.
 
 ## My panel parts are displayed in different groups, even though they all have the same thickness
 
@@ -64,3 +82,7 @@ This means that instead of 0.75 in. the panel's thickness is only 0.728 in., not
 ### The volume of solid wood is labeled **FBM**, what does that mean?
 
 Rough wood volumes are usually measured in FBM (for "foot, board measure"). One board foot equals 1 ft x 1 ft x 1 in or 12 in x 12 in x 1 in. A measure in FBM is 12 times larger than the volume in ft³. See also the [National Hardwood Lumber Association Grading Rules](https://www.nhla.com/nhla-services/hardwood-industry-rules/).
+
+### Is 4 ft. x 8 ft. the same as 8 ft. x 4 ft.?
+
+It depends! In OpenCutList, the larger dimension or the dimension of the grain direction is the **length** of the panel, the other being the width. If your material has no grain (like mdf) it probably does not matter. For material like baltic birch plywood, the grain may run along the largest dimension or across the board.

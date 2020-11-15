@@ -44,7 +44,7 @@ default:
   load_more: "Carregue mais ..."
   save_to_defaults: Salvar como valores padrão
   reset_to_defaults: Restaurar para os valores padrão
-  reset_to_app_defaults: Restaurer aux valeurs d'origine  # TODO
+  reset_to_app_defaults: Restaurar os valores originais
 core:
   menu:
     submenu: OpenCutList
@@ -732,7 +732,7 @@ tab:
     title: Notícias
     help: |
       As últimas notícias da *OpenCutList*.
-    comment: Commenter  # TODO
+    comment: Comentar
     error:
       fail_to_load_list: Incapaz de carregar a lista de notícias.
   forum:
