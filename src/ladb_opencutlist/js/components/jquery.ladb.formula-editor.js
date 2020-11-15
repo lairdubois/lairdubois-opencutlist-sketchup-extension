@@ -15,7 +15,7 @@
     };
 
     LadbFormulaEditor.prototype.tagFromWordDef = function (wordDef) {
-        return "<span class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'>" + wordDef.label + "</span>";
+        return "<div class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'><span>" + wordDef.label + "</span></div>";
     }
 
     LadbFormulaEditor.prototype.setFormula = function (formula) {
@@ -58,24 +58,26 @@
     LadbFormulaEditor.prototype.bind = function () {
         var that = this;
 
-        this.$element.textcomplete([
-            {
-                match: /(^|\b)(\w{1,}|&])$/,
-                search: function (term, callback) {
-                    callback($.map(that.options.wordDefs, function (wordDef) {
-                        return wordDef.label.toLowerCase().indexOf(term.toLowerCase()) === 0 ? wordDef : null;
-                    }));
-                },
-                template: function (wordDef) {
-                    return wordDef.label;
-                },
-                replace: function (wordDef) {
-                    return that.tagFromWordDef(wordDef);
-                },
+        var tribute = new Tribute({
+            autocompleteMode: true,
+            noMatchTemplate: "",
+            values: that.options.wordDefs,
+            allowSpaces: false,
+            replaceTextSuffix: '<span></span>',
+            lookup: 'label',
+            selectTemplate: function(item) {
+                if (typeof item === "undefined") return null;
+                if (this.range.isContentEditable(this.current.element)) {
+                    return that.tagFromWordDef(item.original);
+                }
+                return item.original.value;
+            },
+            menuItemTemplate: function(item) {
+                return item.string;
             }
-        ], {
-            adapter: $.fn.textcomplete.HTMLContentEditable
         });
+        tribute.attach(this.$element.get( 0 ));
+
     };
 
     LadbFormulaEditor.prototype.init = function () {
