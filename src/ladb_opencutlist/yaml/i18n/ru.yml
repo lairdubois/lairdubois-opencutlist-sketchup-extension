@@ -55,7 +55,7 @@ core:
     name: OpenCutList
     command: OpenCutList
   dialog:
-    title: OpenCutList by L'Air du Bois
+    title: OpenCutList от L'Air du Bois
   leftbar:
     more: Ещё
     more_docs: Архив

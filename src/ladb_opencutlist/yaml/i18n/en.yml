@@ -41,7 +41,7 @@ default:
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
-  load_more: "Load older ..."
+  load_more: "Load more ..."
   save_to_defaults: Save as default values
   reset_to_defaults: Restore to saved values
   reset_to_app_defaults: Restore to original values
