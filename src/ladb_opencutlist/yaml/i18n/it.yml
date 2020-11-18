@@ -41,7 +41,7 @@ default:
   part_single: parte
   part_plural: parti
   setup_model_units: Impostare l'unita di misura del modello
-  load_more: "Aggiungi ..."
+  load_more: "Carica di più ..."
   save_to_defaults: Salva come impostazione predefinita
   reset_to_defaults: Ripristina i valori predefiniti
   reset_to_app_defaults: Ripristina i valori originali
