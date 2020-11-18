@@ -333,7 +333,7 @@ tab:
       thickness_short: D
       edges: Kantenbänder
     export:
-      title: CSV Format exportieren
+      title: CSV-formatierter Export
       info: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
 
@@ -643,8 +643,8 @@ tab:
     help: |
       An dieser Stelle können Sie Teile, als rechteckige Volumen, aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
-      Clicken Sie auf **Öffnen einer CSV Datei** zum Starten.
-    open_csv: Öffnen einer CSV Datei
+      Clicken Sie auf **CSV Datei öffnen** zum Starten.
+    open_csv: CSV Datei öffnen
     import_to_model: Ins Modell importieren
     load:
       title: Laden einer CSV Datei
