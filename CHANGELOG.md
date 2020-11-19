@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.9 (WIP)
+* 1.9.9 (2020-11-19)
 
   * Added "News" tab
   * Added "Forum" tab
