@@ -688,7 +688,7 @@ tab:
       bbox_width: Largura
       bbox_thickness: Espessura
       material: Material
-      tags: Etiquetas
+      tags: Tags
     tooltip:
       errors: Esta parte não será importada porque produziu os seguintes erros
       warnings: Esta parte será importada, mas produziu os seguintes avisos

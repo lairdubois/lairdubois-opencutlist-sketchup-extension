@@ -688,7 +688,7 @@ tab:
       bbox_width: Largeur capable
       bbox_thickness: Epaisseur capable
       material: Matière
-      labels: Etiquettes
+      tags: Tags
     tooltip:
       errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
       warnings: Cette pièce sera importée mais elle contient les avertissements suivants
