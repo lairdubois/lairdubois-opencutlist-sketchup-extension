@@ -35,7 +35,7 @@
 
     attr_accessor :decimal_separator, :length_unit
 
-    MAX_PRECISION = 6
+    MAX_PRECISION = 4
 
     # Separators
     LIST_SEPARATOR = ';'.freeze
