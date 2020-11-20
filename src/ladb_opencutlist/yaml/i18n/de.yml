@@ -1,5 +1,5 @@
 _label: Deutsch
-_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **erneut öffnen**.
+_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**.
 _description: Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)
 default:
   minimize: Minimieren
@@ -41,10 +41,10 @@ default:
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
-  load_more: "Ältere laden ..."
-  save_to_defaults: Als vorgegebene Werte speichern
-  reset_to_defaults: Auf gespeicherte Werte zurücksetzen
-  reset_to_app_defaults: Auf vorgegebene Werte zurücksetzen
+  load_more: "Weitere laden ..."
+  save_to_defaults: Als Standardwerte speichern
+  reset_to_defaults: Standardwerte wiederherstellen
+  reset_to_app_defaults: Originalwerte wiederherstellen
 core:
   menu:
     submenu: OpenCutList
@@ -333,7 +333,7 @@ tab:
       thickness_short: D
       edges: Kantenbänder
     export:
-      title: CSV Format exportieren
+      title: CSV-formatierter Export
       info: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
 
@@ -647,8 +647,8 @@ tab:
     help: |
       An dieser Stelle können Sie Teile, als rechteckige Volumen, aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
-      Clicken Sie auf **Öffnen einer CSV Datei** zum Starten.
-    open_csv: Öffnen einer CSV Datei
+      Clicken Sie auf **CSV Datei öffnen** zum Starten.
+    open_csv: CSV Datei öffnen
     import_to_model: Ins Modell importieren
     load:
       title: Laden einer CSV Datei

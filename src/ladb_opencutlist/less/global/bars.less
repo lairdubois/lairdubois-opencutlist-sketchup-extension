@@ -57,7 +57,7 @@
 }
 
 .ladb-leftbar {
-  z-index: 1040;
+  z-index: 1060;
   position: fixed;
   top: 0;
   left: 0;
@@ -90,7 +90,7 @@
 
     &.ladb-highlighted-sponsor {
       background-color: @ladb-brand-sponsor;
-      color: #fff !important;
+      color: #fff;
     }
 
     &:hover {
@@ -98,7 +98,7 @@
       color: @ladb-brand-dark;
 
       &.ladb-highlighted-sponsor {
-        color: @ladb-brand-sponsor !important;
+        color: @ladb-brand-sponsor;
       }
 
     }
@@ -106,6 +106,12 @@
     &.ladb-active {
       background-color: @ladb-brand-primary;
       color: #fff;
+
+      &.ladb-highlighted-sponsor {
+        background-color: @ladb-brand-primary;
+        color: #fff;
+      }
+
     }
 
     i {

@@ -9,7 +9,7 @@ in 1.x and 0.x versions.
   * Added Accessory material type
   * Added part unit price field for accessories
   
-* 1.9.9 (WIP)
+* 1.9.9 (2020-11-19)
 
   * Added "News" tab
   * Added "Forum" tab

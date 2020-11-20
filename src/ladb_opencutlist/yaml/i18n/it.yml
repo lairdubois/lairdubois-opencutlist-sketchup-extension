@@ -41,10 +41,10 @@ default:
   part_single: parte
   part_plural: parti
   setup_model_units: Impostare l'unita di misura del modello
-  load_more: "Aggiungi ..."
-  save_to_default: Salva come impostazione predefinita
-  reset_to_default: Ripristina i valori predefiniti
-  reset_to_app_default: Restaurer aux valeurs d'origine # TODO
+  load_more: "Carica di più ..."
+  save_to_defaults: Salva come impostazione predefinita
+  reset_to_defaults: Ripristina i valori predefiniti
+  reset_to_app_defaults: Ripristina i valori originali
 core:
   menu:
     submenu: OpenCutList
@@ -736,7 +736,7 @@ tab:
     title: Notizie
     help: |
       Trovate qui le ultima notizie di *OpenCutList*.
-    comment: Commenter  # TODO
+    comment: Commentare
     error:
       fail_to_load_list: Impossibile caricare la lista delle notizie.
   forum:

@@ -1,5 +1,5 @@
 _label: Русский
-_reload_msg: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново OpenCutList.
+_reload_msg: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** это окно.
 _description: Плагин расчета карт раскроя для деревообработчиков. Открытый исходный код, краундфандинг и простота использования.
 default:
   minimize: Свернуть
@@ -44,7 +44,7 @@ default:
   load_more: "Загрузить больше ..."
   save_to_defaults: Сохранить как по умолчанию
   reset_to_defaults: Восстановить значения по умолчанию
-  reset_to_app_defaults: Restaurer aux valeurs d'origine  # TODO
+  reset_to_app_defaults: Восстановить исходные значения
 core:
   menu:
     submenu: OpenCutList
@@ -55,7 +55,7 @@ core:
     name: OpenCutList
     command: OpenCutList
   dialog:
-    title: OpenCutList by L'Air du Bois
+    title: OpenCutList от L'Air du Bois
   leftbar:
     more: Ещё
     more_docs: Архив
@@ -112,9 +112,9 @@ tab:
     highlight_part: Просмотр детали в модели
     highlight_parts: Просмотр деталей в модели
     edit_part_properties: Редактировать свойства детали
-    edit_part_axes_properties: Éditer les propriétés (axes) de la pièce # TODO
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce # TODO
-    edit_part_edges_properties: Éditer les propriétés (chants) de la pièce # TODO
+    edit_part_axes_properties: Отредактируйте свойства (оси) детали
+    edit_part_size_increase_properties: Отредактируйте свойства (размеры) части
+    edit_part_edges_properties: Отредактируйте свойства (кромки) детали
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
@@ -231,12 +231,12 @@ tab:
         - *длина* соответствует <span style='color:red'>красной</span> оси
         - *ширина* соответствует <span style='color:green'>зелёной</span> оси
         - *толщина* соответствует <span style='color:blue'>синей</span> оси
-      tags: Метки # TODO
-      tags_help: | # TODO
-        С опцией *Метки* вы можете добавить ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
+      tags: Теги
+      tags_help: |
+        С опцией *Теги* вы можете добавить ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
         Вы можете добавить столько меток, сколько сочтете нужным
         Видимые детали Вашего списка раскроя в последующем могут быть отфильтрованы по меткам.
-      tags_multiple_info: Отображаются только обычные метки # TODO
+      tags_multiple_info: Отображаются только обычные Теги
       axes: Оси
       axes_help: Задайте размеры так, чтобы они соответствовали цветам осей вашей детали.
       axes_tip: |
@@ -273,11 +273,11 @@ tab:
       part_number_sequence_by_group: Нумерация каждой группы
       part_number_sequence_by_group_help: Если эта опция активна, перечисление деталей  в каждой группе одного и того же типа и толщины материала будет заново начинается с 1 (или A).
       part_folding: Группировать идентичные детали
-      part_folding_help: Если эта опция выбрана, части с **одинаковым размером** и с **одинаковыми метки** будут сгруппированы.  # TODO
+      part_folding_help: Если эта опция выбрана, части с **одинаковым размером** и с **одинаковыми метки** будут сгруппированы.
       hide_entity_names: Скрыть случайные имена
       hide_entity_names_help: Если эта опция выбрана, **случайные имена** деталей не будут отображаться.
-      hide_tags: Скрыть метки  # TODO
-      hide_tags_help: Если эта опция активирована, **метки** будут скрыты.  # TODO
+      hide_tags: Скрыть Теги
+      hide_tags_help: Если эта опция активирована, **Теги** будут скрыты.
       hide_cutting_dimensions: Скрыть пильные размеры
       hide_cutting_dimensions_help: Если эта опция активирована, то  **пильные** размеры деталей будут скрыты.
       hide_bbox_dimensions: Скрыть итоговые размеры
@@ -308,7 +308,7 @@ tab:
       filters_warning: "Данный фильтр отображает только **{{ count }}** деталь из общего {{ total }}."
       filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
       edge_material_names_filter: Фильтр по материалу кромок
-      tags_filter: Фильтр по Метке  # TODO
+      tags_filter: Фильтр по тегам
       dimensions_help: Иллюстрация размеров...
       summary: Расчёт
       material_type: Тип
@@ -370,7 +370,7 @@ tab:
       material_thickness: Материал / Толщина
       material_name: Материал
       entity_names: Имена инстанций
-      tags: Метки  # TODO
+      tags: Теги
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
@@ -500,7 +500,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Размеры уменьшить на толщину кромки.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Этикетки # TODO
+      label: Этикетки
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -692,7 +692,7 @@ tab:
       bbox_width: Ширина
       bbox_thickness: Толщина
       material: Материал
-      tags: Метки  # TODO
+      tags: Теги
     tooltip:
       errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
       warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
@@ -732,29 +732,29 @@ tab:
     error:
       fail_to_load_list: Список видеозаписей не может быть загружен.
   news:
-    label: Новости # TODO
+    label: Новости
     title: Новости
     help: |
       Последние новости из *OpenCutList*.
-    comment: Commenter  # TODO
+    comment: Комментарий
     error:
       fail_to_load_list: список новостей нельзя скачать.
   forum:
-    label: Forum  # TODO
-    title: Forum  # TODO
-    help: |  # TODO
-      Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    create_conversation: Démarrer une conversation  # TODO
-    reply: Répondre  # TODO
-    tags: Tags  # TODO
-    redirection: |  # TODO
-      Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
-      Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
-      *C'est gratuit, sans engagement et une simple addresse email suffit.*
+    label: форум
+    title: форум
+    help: |
+      Эта доска сообщений позволяет обмениваться информацией с сообществом пользователей и командой *OpenCutList*.
+    create_conversation: Начать тему
+    reply: Ответить на
+    tags: Теги
+    redirection: |
+      Вы будете перенаправлены на платформу **Open Collective**, на которой расположен этот дискуссионный форум.
+      Для *запуска разговоров* или *ответа* вам необходимо создать аккаунт и войти в систему.
+      *Это бесплатно, без обязательств и достаточно простого адреса электронной почты.
 
-      Validez pour continuer.
+      Подайте заявку, чтобы продолжить.
     error:
-      fail_to_load_list: Impossible de charger la liste des conversations.  # TODO
+      fail_to_load_list: Невозможно загрузить список тем.
   sponsor:
     label: Спонсоры
     title: Спонсоры
@@ -770,9 +770,9 @@ tab:
     objective_title:
       default: Ziel
       report: Создать отчет
-      labels: Печать этикеток # TODO
+      labels: Печать этикеток
     objective_details:
-      default: |  # TODO
+      default: |
         *Поколение **отчетов** и печать **этикетки** могут быть доступны в следующем основном релизе*.
       report: |
         *Создание отчета может быть доступно в следующем основном обновлении.*
@@ -781,7 +781,7 @@ tab:
           - Рассчитать **стоимость** проекта с детализацией по материалу.
           - Рассчитать  **массу** заданного материала.
           - Обобщить детализированные расчеты карт раскроя каждой группы материалов в единый документ в рамках одного проекта.
-      labels: | # TODO
+      labels: |
         *Вывод на печать **Ярлыков** может быть доступен в следующем основном выпуске.*
 
         Целью этой функции является:
