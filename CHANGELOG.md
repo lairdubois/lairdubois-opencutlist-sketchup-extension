@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
+* 1.9.10 (WIP)
+
+  * Changed fixed dimension precision from 0.000000 to 0.0000
+  
 * 1.9.9 (2020-11-19)
 
   * Added "News" tab
