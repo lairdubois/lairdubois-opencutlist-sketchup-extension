@@ -30,7 +30,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Add scrap bins.
     #
     def add_bin(length)
-      dbg("   . BIN length #{length}")
+      #dbg("   . BIN length #{length}")
       if length <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BIN
       else
@@ -44,7 +44,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Add a box to be packed into bins.
     #
     def add_box(length, data = nil)
-      dbg("   . BOX length=#{length}, data=#{data}")
+      #dbg("   . BOX length=#{length}, data=#{data}")
       if length <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BOX if length <= 0
       else
@@ -87,28 +87,28 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def run
 
-      dbg("-- packengine run")
+      #dbg("-- packengine run")
       
       update_min_max_bin()
 
       # check for boxes and bins
       return nil, ERROR_NO_BOX if @boxes.empty?
 
-      return nil, ERROR_NO_BIN if @options.base_bin_length < EPS and @leftovers.empty?
+      return nil, ERROR_NO_BIN if @options.base_bin_length < EPS && @leftovers.empty?
       # check parameters
       return nil, ERROR_PARAMETERS if !valid_trimsize()
       @warnings << WARNING_TRIM_SIZE_LARGE if @options.trimsize > SIZE_WARNING_FACTOR*@largest_bin
       
       return nil, ERROR_PARAMETERS if !valid_saw_kerf()
       @warnings << WARNING_SAW_KERF_LARGE if @options.saw_kerf > EPS \
-        and @options.saw_kerf > SIZE_WARNING_FACTOR*@largest_bin
+        && @options.saw_kerf > SIZE_WARNING_FACTOR*@largest_bin
       
-      dbg("-> create packer with nb of leftovers=#{@leftovers.length}") 
+      #dbg("-> create packer with nb of leftovers=#{@leftovers.length}") 
       begin
         packer = Packer.new(@options)
         packer.add_leftovers(@leftovers)
         packer.add_boxes(@boxes)
-        dbg("-> running packer")
+        #dbg("-> running packer")
         err = packer.run()
       rescue Packing1DError => err
         puts ("Rescued in PackEngine: #{err.inspect}")

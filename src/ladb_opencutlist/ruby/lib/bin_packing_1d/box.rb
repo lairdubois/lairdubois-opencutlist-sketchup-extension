@@ -19,11 +19,12 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def initialize(length = 0, data = nil)
       @x = 0.0
-      @length = length*1.0
+      @length = length
       if @length <= 0
-        raise(Packing1DError, "Trying to initialize a box with zero or negative length")
+        raise(Packing1DError, "Trying to initialize a box with zero or negative length!")
       end
       @data = data
     end
+    
   end
 end

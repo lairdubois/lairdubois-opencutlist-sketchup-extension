@@ -54,18 +54,37 @@ module Ladb::OpenCutList::BinPacking1D
     def initialize(options)
       super(options)
 
+      # Boxes to pack.
       @boxes = []
+      
+      # Offcuts after packing.
       @leftovers = []
+      
+      # Bins used to pack.
       @bins = []
       
+      # Boxes that could not be placed.
       @unplaced_boxes = []
+      
+      # Offcut bins that were not used.
       @unused_bins = []
-      @overall_efficiency = 0
-      @total_nb_boxes = 0           # total number of boxes to pack
+      
+      # Total number of boxes to pack.
+      @total_nb_boxes = 0    
 
-      @unfit_boxes = []             # boxes that are rejected because too large!
-      @smallest = 0                 # the smallest box to pack
+      # Number of valid boxes, i.e. not too large
+      @nb_valid_boxes = 0
+      
+      # Boxes that are rejected because too large!
+      @unfit_boxes = []
+      
+      # Smallest box length to pack.
+      @smallest = 0
+      
       @algorithm = ALG_SUBSET_SUM
+      
+      # Overall efficiency [0,100] as a percentage of used/waste.
+      @overall_efficiency = 0
     end
     
     #
@@ -74,7 +93,7 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def add_boxes(boxes)
       @boxes = boxes
-      @total_nb_boxes = @boxes.length
+      @total_nb_boxes = @boxes.size
     end
     
     #
@@ -83,8 +102,8 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def add_leftovers(leftovers)
       @leftovers = leftovers
-      if @leftovers.empty? and @options.base_bin_length < EPS
-        raise(Packing1DError, "No leftovers and base_bin_length too small")
+      if @leftovers.empty? && @options.base_bin_length < EPS
+        raise(Packing1DError, "No leftovers and base_bin_length too small!")
       end
     end
     
@@ -94,12 +113,12 @@ module Ladb::OpenCutList::BinPacking1D
     # in which case bin packing may take too much time.
     # 
     def clone_split(boxes, leftovers)
-      length = boxes.length
+      length = boxes.size
       boxes_clone = []
       #
       # we don't need a deep clone of boxes, because they
       # will receive their position once the best packing
-      # has be found.
+      # has been found.
       #
       if length < MAX_PARTS
         boxes_clone = [boxes.clone()]
@@ -108,12 +127,10 @@ module Ladb::OpenCutList::BinPacking1D
         # in the slices.
         index_half = (boxes.length/2).round + 1
         boxes = boxes.each_slice(index_half).to_a
-        boxes.each do |slice|
-          slice.reject!{|item| item.nil?}
-        end
+        boxes.map(&:compact!)
         boxes = boxes[0].zip(boxes[1]).flatten
         boxes_clone = boxes.each_slice(MAX_PARTS).to_a
-        dbg("boxes clone length: #{boxes_clone.length}")
+        #dbg("boxes clone length: #{boxes_clone.length}")
       end
       #
       # we absolutely need deep clones of leftovers!
@@ -135,21 +152,20 @@ module Ladb::OpenCutList::BinPacking1D
       # not a super precise way of measuring compute time.
       @start_time = Time.now
       remove_unfit()
-      best_bins = []
       #
       # compute this t times with different epsilon's, keep the best
       #
-      if @boxes.length > MAX_PARTS
-        dbg("-> First Fit Decreasing because more than #{MAX_PARTS}")
+      if @boxes.size > 4*MAX_PARTS
+        #dbg("-> First Fit Decreasing because more than #{MAX_PARTS}")
         err = first_fit_decreasing()
       else
         begin
-          dbg("-> pack start")
+          #dbg("-> pack start")
           #sleep(15) # for tc_3
-          dbg("-- pass using epsilons")
+          #dbg("-- pass using epsilons")
           # get our copies of leftovers and boxes
+
           bclone, lclone = clone_split(@boxes, @leftovers)
-          dbg("   data cloned")
           #
           # watchdog for excessive computation time
           #
@@ -157,16 +173,18 @@ module Ladb::OpenCutList::BinPacking1D
             raise(TimeoutError, 'Timeout expired ...')
           end
 
-          dbg("   using leftover #{lclone.length}")
+          #dbg("   using leftover #{lclone.length}")
           bins, err = pack(bclone, lclone)
 
-          dbg("-> after single packing, nb bins #{bins.length}, error #{err}")
-          dbg("   optimal nb of bins would be #{@opt_nb_bins}")
+          #dbg("-> after single packing, nb bins #{bins.length}, error #{err}")
+          #dbg("   optimal nb of bins would be #{@opt_nb_bins}")
           if err == ERROR_NONE
-            dbg("   packed everything error=#{err}")
+            #dbg("   packed everything error=#{err}")
             # tidy up the best result so far
             @bins = bins
-            @leftovers = lclone            
+            @unused_bins += lclone
+            @leftovers = []
+
             # remove from boxes all elements that have been
             # packed into bins.
             #
@@ -175,11 +193,10 @@ module Ladb::OpenCutList::BinPacking1D
                 @boxes.delete(box)
               end
             end
-            @unplaced_boxes = @boxes + @unfit_boxes
-            @boxes = []
+            @unplaced_boxes = @boxes + @unfit_boxes            
           elsif err == ERROR_NO_BIN
             if !bins.empty?
-              dbg("   found some, but no more bins available error=#{err}")
+              #dbg("   found placements, but no more bins available error=#{err}", true)
               err = ERROR_SUBOPT
               @bins = bins
               @leftovers = lclone            
@@ -201,7 +218,7 @@ module Ladb::OpenCutList::BinPacking1D
         end
       end
       
-      dbg("-> total time = #{Time.now - start_time}")
+      #dbg("-> total time = #{Time.now - start_time}")
       prepare_results() if err <= ERROR_SUBOPT
       err
     end
@@ -214,8 +231,7 @@ module Ladb::OpenCutList::BinPacking1D
       @algorithm = ALG_FFD
       @bins += @leftovers
       if @bins.empty?
-        bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
-        @bins << bin
+        @bins << Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
       end
       @boxes.each do |box|
         packed = false
@@ -230,7 +246,7 @@ module Ladb::OpenCutList::BinPacking1D
         # box could not be packed, create new bin if allowed to
         if not packed
           if @options.base_bin_length > EPS
-            dbg("creating new bin")
+            #dbg("creating new bin")
             bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
             if box.length <= bin.current_leftover
               bin.add(box)
@@ -243,24 +259,23 @@ module Ladb::OpenCutList::BinPacking1D
           end
         end
       end
-      nbins = []
+      packed_bins = []
       @bins.each do |bin|
-        if bin.type == BIN_TYPE_LO and bin.boxes.length == 0
+        if bin.type == BIN_TYPE_LO && bin.boxes.size == 0
           @unused_bins << bin 
         else
-          nbins << bin
+          packed_bins << bin
         end
       end
       # make sure these two are empty
       @boxes = []
       @leftovers = []
       # remove bins that have not been used
-      @bins = nbins
-      if @unplaced_boxes.empty?
-        return ERROR_SUBOPT
-      else
-        return ERROR_NO_BIN
-      end
+      @bins = packed_bins
+      @unplaced_boxes += @unfit_boxes
+      @unfit_boxes = []
+        
+      return ERROR_SUBOPT
     end
     
     #
@@ -272,32 +287,12 @@ module Ladb::OpenCutList::BinPacking1D
       # check if @boxes fit within either bins in @leftovers
       # or @options.base_bin_length
       #
-      dbg("-> removing boxes too small to fit")
-      good_parts = []
-      # compute all lengths available
-      available_lengths = []
-      @leftovers.each do |bin|
-        available_lengths << bin.netlength
-      end
+      available_lengths = @leftovers.collect(&:netlength)
       available_lengths << (@options.base_bin_length - 2 * @options.trimsize)
-      
-      @boxes.each do |box|
-        fits = false
-        available_lengths.each do |len|
-          # boxes need to fit into this!
-          if box.length <= len
-            fits = true
-            break
-          end
-        end
-        if fits
-          good_parts << box
-        else
-          dbg("   unfit #{box.length}")
-          @unfit_boxes << box
-        end
-      end
-      @boxes = good_parts
+      max_length = available_lengths.max
+      @unfit_boxes = @boxes.select { |box| box.length > max_length }
+      @boxes = @boxes.select { |box| box.length <= max_length }
+      @nb_valid_boxes = @boxes.size
     end
 
     #
@@ -305,7 +300,7 @@ module Ladb::OpenCutList::BinPacking1D
     # a list of leftovers and prepares packing.
     #
     def pack(chunk, leftovers)
-      dbg("-> pack")
+      #dbg("-> pack")
       bins = []
 
       # chunks of boxes, normally we only have one unless
@@ -314,9 +309,9 @@ module Ladb::OpenCutList::BinPacking1D
       chunk.each_with_index do |boxes, idx|
         using_std_bin = leftovers.empty?
         # slicing may add nil objects, remove them
-        boxes.reject!{|item| item.nil?}
+        boxes.compact!
       
-        dbg(" > chunk loop #{idx}, nb boxes #{boxes.length}")
+        #dbg(" > chunk loop #{idx}, nb boxes #{boxes.length}")
         #
         # remove all boxes assigned to the last bin so far
         # and add them to the current group
@@ -334,30 +329,27 @@ module Ladb::OpenCutList::BinPacking1D
         # from here on we work only with the lengths, not the 
         # boxes themselves.
         #
-        lengths = []
-        boxes.each do |box|
-          lengths << box.length
-        end
-        dbg("   lengths to fit in this chunk = #{lengths}")
+        lengths = boxes.collect(&:length)
+        #dbg("   lengths to fit in this chunk = #{lengths}")
         #
         # run this loop until 
         # . lengths is empty
         # . or running out of bins
         #
         until lengths.empty?
-          dbg("-> parts placement loop")
+          #dbg("-> parts placement loop")
           if leftovers.empty?
-            dbg("   leftovers are empty")
+            #dbg("   leftovers are empty")
             if @options.base_bin_length > EPS
               bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
               using_std_bin = true
               target_length = bin.netlength()
-              dbg("   making new standard bin with netlength = #{target_length}")
+              #dbg("   making new standard bin with netlength = #{target_length}")
             else
-              dbg("   no base_bin_length, running out of bins")
+              #dbg("   no base_bin_length, running out of bins")
               #
               # returning what we have found so far
-              # all placed boxes are in the bins
+              # all placed boxes are in the bins (tc_28.txt)
               return [bins, ERROR_NO_BIN]
             end
           else
@@ -366,12 +358,12 @@ module Ladb::OpenCutList::BinPacking1D
             #
             bin = leftovers.shift
             target_length = bin.netlength()
-            dbg("   using leftover bin with netlength = #{target_length}")
+            #dbg("   using leftover bin with netlength = #{target_length}")
           end
           
           # filter lengths to match and sort by decreasing length
           valid_lengths = lengths.select{|el| el <= target_length}
-          valid_lengths = valid_lengths.sort_by {|e| -e}
+          valid_lengths.sort!.reverse!
 
           if valid_lengths.empty? 
             if not using_std_bin
@@ -384,7 +376,7 @@ module Ladb::OpenCutList::BinPacking1D
 
           # this is the core algorithm, finding subsetsums
           # of lengths that best match the target size
-          dbg("   valid length #{valid_lengths.length} smallest = #{valid_lengths.last}")
+          #dbg("   valid length #{valid_lengths.length} smallest = #{valid_lengths.last}")
           
           if @total_nb_boxes > MAX_PARTS
             epsilon = 0.95*valid_lengths.last
@@ -399,16 +391,16 @@ module Ladb::OpenCutList::BinPacking1D
             # see tc_4.txt
             # returning whatever was found, not sure this really works!
             #
-            dbg("   boxes, but no fit found")
+            #dbg("   boxes, but no fit found")
             if using_std_bin
               return [bins, ERROR_NONE]
             end
-            dbg("   using leftover #{bin.length}")
+            #dbg("   using leftover #{bin.length}")
           else
             # 
             # remove objects from bins having the adequate lengths
             # and add them to the bin
-            dbg("-> subsetsum found #{y_list}")
+            #dbg("-> subsetsum found #{y_list}")
             y_list.each do |found_length|
               # 
               # get index of first element having a matching lengths
@@ -418,13 +410,13 @@ module Ladb::OpenCutList::BinPacking1D
               #i = boxes.index { |x| (x.length - found_length).abs < EPS}
               i = boxes.index { |x| x.length == found_length}
               if !i.nil?
-                dbg("   found box at #{i} #{boxes[i].length}, #{boxes[i].data}")
+                #dbg("   found box at #{i} #{boxes[i].length}, #{boxes[i].data}")
                 bin.add(boxes[i])
                 d = boxes.delete_at(i)
-                if d == nil
-                  raise(Packing1DError, "packer.pack box is gone")
+                if d.nil?
+                  raise(Packing1DError, "Box is gone!")
                 end
-                dbg("   to be placed boxes has #{boxes.length} elements")
+                #dbg("   to be placed boxes has #{boxes.length} elements")
                 #
                 # remove this length (found_length) from the ones we
                 # are looking for
@@ -450,23 +442,30 @@ module Ladb::OpenCutList::BinPacking1D
     # Prepare final results once solution found.
     #
     def prepare_results
-      dbg("-> preping results")
+      #dbg("-> preping results")
       
       net_used = 0
       length = 0
+      nb_packed_boxes = 0
       @bins.each do |bin|
         bin.sort_boxes()
         net_used += bin.net_used
         length += bin.length
+        nb_packed_boxes += bin.boxes.size
       end
-      @bins = @bins.sort_by {|bin| -bin.efficiency}
-      @overall_efficiency = net_used/length*100.0 if length != 0
       
-      if @leftovers.length > 0
-        @unused_bins += @leftovers
-        puts("must fix non-empty leftovers")
+      @bins = @bins.sort_by {|bin| -bin.efficiency}
+      @overall_efficiency = 100*net_used/length if length > EPS
+      
+      if @total_nb_boxes - @unplaced_boxes.size != nb_packed_boxes
+        raise(Packing1DError, "Lost boxes during packing!")
       end
-      dbg("-> done preping results")
+      
+      # WHY? do we ever have a leftover left here?
+      if @leftovers.size > 0
+        raise(Packing1DError, "Leftovers not assigned!")
+      end
+      #dbg("-> done preping results")
     end
     
     #
@@ -476,7 +475,7 @@ module Ladb::OpenCutList::BinPacking1D
     # too greedy.
     #
     def allsubsetsums(x_list, target, saw_kerf, epsilon)
-      dbg("-> subsetsums target=#{target}, epsilon=#{epsilon}")
+      #dbg("-> subsetsums target=#{target}, epsilon=#{epsilon}")
       se = { 0 => [] }
       # sorting or not sorting here? let's dot it
       # tc_12 says yes!
@@ -485,40 +484,40 @@ module Ladb::OpenCutList::BinPacking1D
       max = 0
       x_list.each do |x|
         te = {}
-        dbg("   add #{x} to se = #{se}")
+        #dbg("   add #{x} to se = #{se}")
         se.each do |y, y_list|
           length = y_list.reduce(&:+).to_f + x + y_list.length*saw_kerf
           if length > target
-            dbg("  #{y} rejected")
+            #dbg("  #{y} rejected")
             next
           else
-            dbg("   add y = #{y} length=#{length}")
+            #dbg("   add y = #{y} length=#{length}")
             if y + x > max
               max = y + x
-              dbg("   new max = #{max}")
+              #dbg("   new max = #{max}")
             end
           end
           # new target that can be reached
           te.store(y + x, y_list + [x])
-          dbg("   + #{te}")
+          #dbg("   + #{te}")
           if @options.max_time && (Time.now - @start_time > @options.max_time)
-            raise(TimeoutError, 'Timeout expired ...')
+            raise(TimeoutError, 'Timeout expired ...!')
           end
         end
         # merge te with se, resolve conflicts by
         # keeping the key with the least number of parts
         se.merge!(te) { |_k, v1, v2| v1.length < v2.length ? v1 : v2 }
-        dbg("   se merged = #{se}")
+        #dbg("   se merged = #{se}")
         # the first max to reach the sum within a term of epsilon
         # (depending on the size of the smallest element) will
         # be returned. this avoids being too greedy and doing
         # too much computation
-        if max <= target and max >= target - epsilon
+        if max <= target && max >= target - epsilon
           return se.max_by{|k, v| k}
         end
       end
       
-      dbg("   - solution -")
+      #dbg("   - solution -")
       return se.max_by{|k, v| k}
     end
   end
