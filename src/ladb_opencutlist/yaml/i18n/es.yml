@@ -226,9 +226,9 @@ tab:
         Si se selecciona esta opción, la opción *Orientación automática de piezas* no tendrá ningún efecto en esta pieza,
 
         por lo tanto, en el sistema de coordenadas local:
-        - la longitud * está en el eje <span style='color:red'>red</span> eje
-        - El *ancho* está en los <span style='color:green'>green</span> ejes
-        - el *espesor* está en el <span style='color:blue'>blue</span> ejes
+        - la *longitud* está en el eje <span style='color:red'>rojo</span>
+        - el *ancho* está en el eje <span style='color:green'>verde</span>
+        - el *espesor* está en el eje <span style='color:blue'>azul</span>.
       tags: Tags
       tags_help: |
         Con las *tags*, puede agregar palabras clave para personalizar las definiciones de las piezas.
@@ -239,9 +239,9 @@ tab:
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
         Tenga en cuenta que si la opción *Orientación automática de piezas* no está activa o la pieza está *bloqueada en sus ejes*, entonces:
-         - la **longitud** se lee en los style='color:red'>red</strong> ejes,
-         - el **ancho** se lee en los <strong style='color:green'>green</strong> ejes y
-         - el **espesor** se lee en los <strong style='color:blue'>blue</strong> ejes.
+         - la **longitud** se lee en los ejes <strong style='color:red'>rojos</strong>,
+         - el **ancho** se lee en los ejes <strong style='color:green'>verdes</strong> y
+         - el **espesor** se lee en los ejes <strong style='color:blue'>azules</strong>.
       axes_origin_position_none: No cambies el origen
       axes_origin_position_min: Coloque el origen en una esquina
       axes_origin_position_center: Coloque el origen en el centro
@@ -256,9 +256,9 @@ tab:
         Si se selecciona esta opción, las 3 dimensiones de una pieza se ordenan de modo que la más grande represente la *longitud* y la más pequeña represente el *espesor*.
 
         Si esta opción no se selecciona, los ejes locales de la pieza definen las dimensiones de la siguiente manera
-         - *longitud* está en el <span style='color:red'>red</span> ejes
-         - *width* is on the <span style='color:green'>green</span> ejes
-         - *espesor* está en el <span style='color:blue'>blue</span> ejes
+         - *longitud* está en el eje <span style='color:red'>rojo</span>
+         - *ancho* está en el eje <span style='color:green'>verde</span>
+         - *espesor* está en el eje <span style='color:blue'>azul</span>.
       smart_material: "*Asignación inteligente* de material"
       smart_material_help: Si seleccionas esta opción, a las partes sin material definido se les puede asignar el material asignado a uno de sus padres o hijos.
       dynamic_attributes_name: Utilice el atributo *Nombre* de componentes dinámicos
@@ -283,11 +283,11 @@ tab:
       hide_untyped_material_dimensions: Ocultar las dimensiones de las piezas con tipo de material indefinido
       hide_untyped_material_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones de las piezas con un tipo de material indefinido (no **Madera maciza**, **Tablero** o **Listones**).
       hide_final_areas: Ocultar el área real de las piezas del tipo *Tablero*
-      hide_final_areas_help: Si se selecciona esta opción, se ocultarán las **áreas reales** de las partes del tipo *Hoja buena*.
+      hide_final_areas_help: Si se selecciona esta opción, se ocultarán las **áreas reales** de las partes del tipo *Tablero*.
       hide_edges: Ocultar la columna de bandas de cantos
       hide_edges_help: Si se selecciona esta opción, las **columnas de Bandas de Cantos** de las partes del tipo *Tableros* se ocultarán.
       minimize_on_highlight: Minimizar después *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: Si se selecciona esta opción, la ventana OpenCutList se minimizará cuando se aplique *'$t(tab.cutlist.highlight_part)'* la función.
+      minimize_on_highlight_help: Si se selecciona esta opción, la ventana OpenCutList se minimizará *'$t(tab.cutlist.highlight_part)'* cuando se aplique la función.
       general: General
       part_order_strategy: Clasificación de piezas
       part_order_strategy_help: |
@@ -319,7 +319,7 @@ tab:
       volume: Volumen
       number: No.
       name: Descripción
-      count: Qty
+      count: Cant.
       cutting: Áspera
       bbox: Terminada
       final: Actual
@@ -328,9 +328,9 @@ tab:
       length: Longitud
       length_short: L
       width: Anchura
-      width_short: W
+      width_short: A
       thickness: Espesor
-      thickness_short: T
+      thickness_short: E
       edges: Bandas de cantos
     export:
       title: Exportar en formato CSV
@@ -494,9 +494,9 @@ tab:
         cutting_dimensions: |
           Este diagrama de corte muestra las piezas con sus dimensiones en bruto.
         cutting_dimensions_increase_1d: |
-          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud muy grande (**{{ length_increase }}**).*
+          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud muy grande (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**).*
+          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
           *Dimensiones reducidas por el grosor de las bandas de canto.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
@@ -565,7 +565,7 @@ tab:
       type: Tipo
       cut_options: Parámetros de corte
       thickness: Grosor
-      length_increase: Longitud muy grande
+      length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho muy grande
       width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
@@ -771,7 +771,7 @@ tab:
       default: |
         *La generación de **informes** y la impresión de **etiquetas** pueden estar disponibles en la próxima versión principal.*
       report: |
-        ***Los informes** pueden estar disponibles en la próxima versión principal. *
+        ***Los informes** pueden estar disponibles en la próxima versión principal.*
 
         El propósito de esta función es:
           - calcular el **costo estimado** del proyecto con detalles por material,
@@ -784,7 +784,7 @@ tab:
         - admite la impresión de un lote de etiquetas adhesivas para este diagrama de corte,
         - Evite errores marcando claramente cada parte una vez cortada.
     objective_crowdfunding: |
-      El desarrollo de esta nueva funcionalidad se hará mediante ** financiamiento participativo ** y comenzará cuando se alcance su ** Objetivo Financiero **.
+      El desarrollo de esta nueva funcionalidad se hará mediante **financiamiento participativo** y comenzará cuando se alcance su **Objetivo Financiero**.
     objective_thanks: |
       ¡Gracias por tu contribución!
     objective_funded_progress: financiado en {{ progress }}%
