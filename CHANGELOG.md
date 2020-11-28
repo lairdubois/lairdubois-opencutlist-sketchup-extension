@@ -6,7 +6,7 @@ in 1.x and 0.x versions.
 
 * 1.9.10 (WIP)
 
-  * Changed fixed dimension precision from 0.000000 to 0.0000
+  * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
   
 * 1.9.9 (2020-11-19)
 
