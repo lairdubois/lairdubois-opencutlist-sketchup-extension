@@ -805,7 +805,8 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
       - Vladimir Badulya (*Russisch*)
       - Pierluigi Colombo (*Italienisch*)
-      - Nayton Sanches Barbosa (*portugiesisch*)
+      - Nayton Sanches Barbosa (*Portugiesisch*)
+      - Leonardo Romero Giménez (*Spanish*)
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist sie auch *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
@@ -818,4 +819,4 @@ tab:
 tool:
   highlight:
     transparency: Transparenz
-    zoom_extents: Zoom Grenzen
+    zoom_extents: Alles zeigen
