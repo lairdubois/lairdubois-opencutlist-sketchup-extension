@@ -608,7 +608,7 @@ tab:
         manage_help: Administración de los *parámetros de corte* predeterminados
         save_success: |
           **{{ type_name }}**
-          *Parámetros de corte*  predeterminados guardados
+          *Parámetros de corte* predeterminados guardados
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
