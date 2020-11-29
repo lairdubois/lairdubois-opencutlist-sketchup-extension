@@ -567,9 +567,9 @@ tab:
       thickness: Grosor
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
-      width_increase: Ancho muy grande
+      width_increase: Ancho sobremedida
       width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
-      thickness_increase: Espesor muy grande
+      thickness_increase: Espesor sobremedida
       thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
       std_lengths: Longitudes estándar
       std_lengths_placeholder: longitud ; ...
@@ -608,14 +608,14 @@ tab:
         manage_help: Administración de los *parámetros de corte* predeterminados
         save_success: |
           **{{ type_name }}**
-          default *Parámetros de corte* guardados
+          *Parámetros de corte*  predeterminados guardados
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
     import_from_skm:
-      title: Importa ficher .skm
+      title: Importar fichero .skm
     export_to_skm:
-      title: Exportar a ficher .skm
+      title: Exportar a fichero .skm
     option:
       material_order_strategy: Clasificación de materiales
       material_order_strategy_help: |
