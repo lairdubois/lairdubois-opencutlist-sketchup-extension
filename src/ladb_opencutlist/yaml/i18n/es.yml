@@ -111,10 +111,10 @@ tab:
     not_available_std_section: Sección transversal no definida
     highlight_part: Resalta parte en el modelo # TODO check
     highlight_parts: Resalta partes en el modelo # TODO check
-    edit_part_properties: Editar propiedades de la pieza
-    edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
+    edit_part_properties: Editar las propiedades de la pieza
+    edit_part_axes_properties: Edita las propiedades (tiras de los cantos) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
-    edit_part_edges_properties: Edita las propiedades (bandas de cantos) de la pieza
+    edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
     tooltip:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
@@ -174,9 +174,9 @@ tab:
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
       is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Nombre' del componente dinámico
       size_increased: La dimensión aumenta con un tamaño superior a {{ value }}
-      has_edges: Esta parte contiene {{ count }} bandas de cantos
-      has_edges_plural: Esta parte contiene {{ count }} bandas de cantos
-      edge_decremented: Reducido por el grosor de las bandas de cantos ({{ decrement }})
+      has_edges: Esta parte contiene {{ count }} tiras de los cantos
+      has_edges_plural: Esta parte contiene {{ count }} tiras de los cantos
+      edge_decremented: Reducido por el grosor de las tiras de los cantos ({{ decrement }})
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
       edge_xmin: Ancho de borde 1
@@ -201,7 +201,7 @@ tab:
       title_multiple: Propiedades del grupo de partes
       multiple_alert: Propiedades comunes del grupo de {{ part_count }} partes.
       general: General
-      edges: Bandas de cantos
+      edges: Tiras de cantos
       name: Descripción
       material: Material
       cumulable: Acumulable
@@ -278,14 +278,14 @@ tab:
       hide_tags_help: Si se selecciona esta opción, se ocultarán las **tags**.
       hide_cutting_dimensions: Ocultar dimensiones aproximadas
       hide_cutting_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones **aproximadas** de las piezas.
-      hide_bbox_dimensions: Ocultar dimensiones terminadas
-      hide_bbox_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones **terminadas** de las piezas.
+      hide_bbox_dimensions: Ocultar dimensiones Finales
+      hide_bbox_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones **finales** de las piezas.
       hide_untyped_material_dimensions: Ocultar las dimensiones de las piezas con tipo de material indefinido
       hide_untyped_material_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones de las piezas con un tipo de material indefinido (no **Madera maciza**, **Tablero** o **Listones**).
       hide_final_areas: Ocultar el área real de las piezas del tipo *Tablero*
       hide_final_areas_help: Si se selecciona esta opción, se ocultarán las **áreas reales** de las partes del tipo *Tablero*.
-      hide_edges: Ocultar la columna de bandas de cantos
-      hide_edges_help: Si se selecciona esta opción, las **columnas de Bandas de Cantos** de las partes del tipo *Tableros* se ocultarán.
+      hide_edges: Ocultar la columna de tiras de cantos
+      hide_edges_help: Si se selecciona esta opción, las **columnas de Tiras de Cantos** de las partes del tipo *Tableros* se ocultarán.
       minimize_on_highlight: Minimizar después *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: Si se selecciona esta opción, la ventana OpenCutList se minimizará *'$t(tab.cutlist.highlight_part)'* cuando se aplique la función.
       general: General
@@ -301,7 +301,7 @@ tab:
       property_width: Anchura
       property_name: Descripción
       property_count: Cantidad
-      property_edge_pattern: Número de bandas de cantos
+      property_edge_pattern: Número de tiras de cantos
     list:
       filters: Filtro
       filters_warning_0: "¡Este filtro enmascara todas las partes!"
@@ -321,7 +321,7 @@ tab:
       name: Descripción
       count: Cant.
       cutting: Áspera
-      bbox: Terminada
+      bbox: Finales
       final: Actual
       total_cutting: Σ Áspera
       total_final: Σ Actual
@@ -331,7 +331,7 @@ tab:
       width_short: A
       thickness: Espesor
       thickness_short: E
-      edges: Bandas de cantos
+      edges: Tiras de cantos
     export:
       title: Exportar en formato CSV
       info: |
@@ -498,7 +498,7 @@ tab:
         cutting_dimensions_increase_2d: |
           *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
-          *Dimensiones reducidas por el grosor de las bandas de canto.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+          *Dimensiones reducidas por el grosor de las tiras del canto.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       label: Etiquetas
     error:
@@ -521,7 +521,7 @@ tab:
         Las partes que se incluirán en la *lista de partes* deben ser instancias de un **componente**.
         Si usa solo grupos, conviértalos en componentes.
         Al usar componentes para las piezas, se pueden replicar sin duplicar.
-      no_typed_materials: Aplique un material a las piezas que se incluirán en la lista de piezas y defina las propiedades de este material (**Madera maciza** o **Tablero** o **Listones**) en la pestaña <i class="ladb-opencutlist-icon-materials"></i> **Materiales**.
+      no_typed_materials: Aplique un material a las piezas que se incluirán en la lista de piezas y defina las propiedades de este material (**Madera maciza**, **Tablero** o **Listones**) en la pestaña <i class="ladb-opencutlist-icon-materials"></i> **Materiales**.
     obsolete_base: Para permanecer sincronizado, debe volver a generar la lista de piezas.
   materials:
     label: Materiales
@@ -579,7 +579,7 @@ tab:
       std_widths: Anchos estándar
       std_widths_placeholder: anchura ; ...
       std_widths_help: |
-        Anchos estándar de bandas de canto.
+        Anchos estándar de las tiras del canto.
         *Los anchos sin unidades se consideran en unidades modelo.*
       std_thicknesses: Espesores estándar
       std_thicknesses_placeholder: grosor ; ...
@@ -601,9 +601,9 @@ tab:
       grained_0: Sin fibra
       grained_1: La fibra sigue la longitud
       edge_decremented: Reducir
-      edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las bandas de canto.
+      edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
-      edge_decremented_1: Reducir por el grosor de las bandas de canto
+      edge_decremented_1: Reducir por el grosor de las tiras del canto
       cut_options_defaults:
         manage_help: Administración de los *parámetros de corte* predeterminados
         save_success: |
