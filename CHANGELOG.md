@@ -7,12 +7,14 @@ in 1.x and 0.x versions.
 * 1.9.10 (WIP)
 
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
-  
+  * Added **Spanish** language (thanks to Leonardo Romero Giménez for joining the translators team)
+  * Fixed a bug in 1D packing pertaining to offcuts
+
 * 1.9.9 (2020-11-19)
 
   * Added "News" tab
   * Added "Forum" tab
-  * Fixed "Highlight part" tool 
+  * Fixed "Highlight part" tool
   * Improved material attributes default according to unit system
   * Improved thickness and section precision display
   * Improved readability of square feet area dimensions
@@ -24,7 +26,7 @@ in 1.x and 0.x versions.
 
 * 1.9.7 (2020-10-21)
 
-  * Added embeded tutorial's videos
+  * Added embedded tutorial's videos
   * Improved "undo" management for a better User Experience :P
   * Minor Fixes and Improvements
 
@@ -38,7 +40,7 @@ in 1.x and 0.x versions.
 * 1.9.5 (2020-10-01)
 
   * Fixed cumulative length or width on folded parts
-  * Added **portuguese** language (thanks to Nayton Sanches Barbosa for joining the translators team)
+  * Added **Portuguese** language (thanks to Nayton Sanches Barbosa for joining the translators team)
   * Added sponsor objective display
   * Added cutting diagram (1d and 2d) capability to compute only for selected (in part list) parts
   * Added possibility to add a quantity in cutting diagram 1d and 2d "offcut" field
@@ -58,7 +60,7 @@ in 1.x and 0.x versions.
 * 1.9.2 (2020-08-27)
 
   * Fixed cutting size with edge reduction in cutting diagrams
-  * Added **italian** language (thanks to Pierluigi Colombo for joining the translators team)
+  * Added **Italian** language (thanks to Pierluigi Colombo for joining the translators team)
   * Added part oversize view
   * Added edit part tab memory
   * Added cutting diagram 1d / 2d options tab memory
@@ -75,7 +77,7 @@ in 1.x and 0.x versions.
 
 * 1.9.0 (2020-06-04)
 
-  * Added **russian** language (thanks to Vladimir Badulya for joining the translators team)
+  * Added **Russian** language (thanks to Vladimir Badulya for joining the translators team)
   * Added **self-updater**
   * Added **dimensional cutting diagram** feature (thanks to Kai Schröder, CyberBLN, for code review and fixes)
   * Added flipped part detection  
