@@ -18,9 +18,7 @@ https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/o
 
 ## Supported Languages
 
-OpenCutList is available in english, french, german, russian, italian and portuguese. The interface language of the extension can be selected independently of the language version of SketchUp.
-
-We are looking for volunteering translators to spanish, preferably woodworkers already familiar with the extension.
+OpenCutList is available in french, english, german, russian, italian, portuguese and spanish. The interface language of the extension can be selected independently of the language version of SketchUp.
 
 ## Supported Units
 
