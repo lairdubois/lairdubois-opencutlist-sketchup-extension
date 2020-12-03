@@ -646,7 +646,7 @@ module Ladb::OpenCutList
     end
 
     def _group_defs_include_number?(number)
-      @group_defs.each { |key, group_def|
+      @group_defs_cache.each { |key, group_def|
         if group_def.include_number? number
           return true
         end
