@@ -43,9 +43,9 @@ module Ladb::OpenCutList::BinPacking1D
 
       @type = type
       # making sure it is a float
-      @length = length
+      @length = length*1.0
       if @length <= 0
-        raise(Packing1DError, "Trying to initialize a bin with zero or negative length")
+        raise(Packing1DError, "Trying to initialize a bin with zero or negative length!")
       end
       
       @current_position = @options.trimsize 
@@ -61,20 +61,19 @@ module Ladb::OpenCutList::BinPacking1D
     # Add a box to this bin and update the current position and leftover.
     #
     def add(box)
-      dbg("   adding box #{box.length} after #{@current_position} in bin #{length}")
+      #dbg("   adding box #{box.length} after #{@current_position} in bin #{length}")
       @current_position += box.length + @options.saw_kerf
-      #@current_position += @options.trimsize if @boxes.empty?
       @boxes << box
       # current leftover cannot be negative
       @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max
     end
     
     #
-    # Sorts the boxes in descending order, run at the
-    # end of packing.
+    # Sorts the boxes in descending order, position them.
+    # Run at the end of packing.
     #
     def sort_boxes()
-      dbg("   sorting boxes")
+      #dbg("   sorting boxes")
       @boxes.sort!{|a, b| -a.length <=> -b.length}
       @cuts = []
       @current_position = @options.trimsize
@@ -89,14 +88,13 @@ module Ladb::OpenCutList::BinPacking1D
       # the last part exactly fits into the leftover without cutting
       #
       @current_leftover = [(@length - @options.trimsize) - @current_position, 0].max
-      # current position should not be out of the board for drawing purposes
+      # current position should not be outside of the board for drawing purposes
       @current_position = [@current_position, @length].min
       
       @net_used = @length - @current_leftover
       @efficiency = @net_used/@length.to_f*100.0
       if @efficiency > 100 + EPS
-        #@efficiency = 100
-        raise(Packing1DError, "Bin.sort_boxes: float precision error, length=#{@length}, current leftover=#{@current_leftover}")
+        raise(Packing1DError, "Float precision error, length=#{@length}, current leftover=#{@current_leftover}")
       end
     end
     

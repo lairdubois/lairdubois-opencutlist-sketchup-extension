@@ -35,7 +35,7 @@
 
     attr_accessor :decimal_separator, :length_unit
 
-    MAX_PRECISION = 6
+    LENGTH_MIN_PRECISION = 3
 
     # Separators
     LIST_SEPARATOR = ';'.freeze
@@ -45,24 +45,6 @@
     @length_unit
     @length_format
     @length_precision
-
-    # -----
-
-    # Take a Length, convert to float in inches rounded to "Sketchup" max precision
-    def self.to_max_precision_f(l)
-      l.to_f.round(MAX_PRECISION)
-    end
-
-    # Take a Length, convert to string representation in model unit rounded to "Sketchup" max precision
-    def self.to_max_precision_s(l)
-      Sketchup.format_length(l, MAX_PRECISION).gsub(/~ /, '') # Remove ~ if it exists
-    end
-
-    # Check if given length value is rounded by model precision
-    def self.rounded_by_model_precision?(f)
-      f.to_l.to_s.to_l.to_f.round(MAX_PRECISION) != f.to_l.to_f.round(MAX_PRECISION)
-    end
-
 
     # -----
 
@@ -81,6 +63,28 @@
       @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : MILLIMETER
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : DECIMAL
       @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
+    end
+
+    # -----
+
+    def ocl_length_precision
+      [ LENGTH_MIN_PRECISION, @length_precision ].max
+    end
+
+    # Take a Length, convert to float in inches rounded to "OpenCutList" precision
+    def to_ocl_precision_f(l)
+      l.to_f.round(ocl_length_precision)
+    end
+
+    # Take a Length, convert to string representation in model unit rounded to "OpenCutList" precision
+    def to_ocl_precision_s(l)
+      Sketchup.format_length(l, ocl_length_precision).gsub(/~ /, '') # Remove ~ if it exists
+    end
+
+    # Check if given length value is rounded by model precision
+    def rounded_by_model_precision?(f)
+      precision = ocl_length_precision
+      f.to_l.to_s.to_l.to_f.round(precision) != f.to_l.to_f.round(precision)
     end
 
     # -----

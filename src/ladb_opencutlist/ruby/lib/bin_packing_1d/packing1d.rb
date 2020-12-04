@@ -46,8 +46,8 @@ module Ladb::OpenCutList
 
     # With more than this number of parts, we split into
     # groups and optimize each group
-    MAX_PARTS = 100
-
+    MAX_PARTS = 80
+    
     # Algorithm used is subset sum.
     ALG_SUBSET_SUM = 1
     # Algorithm used is FFD.
@@ -73,13 +73,6 @@ module Ladb::OpenCutList
       #
       def initialize(options = nil)
         @options = options
-      end
-      
-      # Converts a number to a string. Used in Sketchup
-      # to convert internal representation to model units.
-      def to_ls(nb)
-        return nb.to_l.to_s
-        #return nb.to_s
       end
       
       # Prints a message when debug option is on or

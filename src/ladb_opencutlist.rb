@@ -18,6 +18,8 @@ module Ladb
       ## DESCRIPTION_START ##
       when 'de'
         ex.description = 'Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)'
+      when 'es'
+        ex.description = 'Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding es fácil de usar;)'
       when 'fr'
         ex.description = 'Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'it'
