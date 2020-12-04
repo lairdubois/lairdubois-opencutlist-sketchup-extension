@@ -244,7 +244,7 @@ module Ladb::OpenCutList
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'general', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'general', dontGenerate: true }") unless @hover_part.nil?
         }) {
           if @hover_part
             MF_ENABLED
@@ -253,7 +253,7 @@ module Ladb::OpenCutList
           end
         }
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'axes', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'axes', dontGenerate: true }") unless @hover_part.nil?
         }) {
           if @hover_part
             MF_ENABLED
@@ -262,7 +262,7 @@ module Ladb::OpenCutList
           end
         }
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_size_increase_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'size_increase', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'size_increase', dontGenerate: true }") unless @hover_part.nil?
         }) {
           if @hover_part && @hover_part.group.material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
               @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
@@ -273,7 +273,7 @@ module Ladb::OpenCutList
           end
         }
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_edges_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'edges', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'edges', dontGenerate: true }") unless @hover_part.nil?
         }) {
           if @hover_part && @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             MF_ENABLED
