@@ -218,6 +218,7 @@ module Ladb::OpenCutList
         @buttons.each { |button|
           button.draw(view)
         }
+
       end
 
     end
@@ -242,16 +243,28 @@ module Ladb::OpenCutList
         item = menu.add_item("[#{@hover_part.number}] #{@hover_part.name}") {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
-        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_properties')) {
+        menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'general', dontGenerate: true }")
+        }) {
+          if @hover_part
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
         }
-        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
+        menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'axes', dontGenerate: true }")
+        }) {
+          if @hover_part
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
         }
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_size_increase_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'size_increase', dontGenerate: true }")
         }) {
-          if @hover_part.group.material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
+          if @hover_part && @hover_part.group.material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
               @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
               @hover_part.group.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             MF_ENABLED
@@ -262,7 +275,7 @@ module Ladb::OpenCutList
         menu.set_validation_proc(menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_edges_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{@hover_part.id}', tab: 'edges', dontGenerate: true }")
         }) {
-          if @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD
+          if @hover_part && @hover_part.group.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             MF_ENABLED
           else
             MF_GRAYED
@@ -504,7 +517,7 @@ module Ladb::OpenCutList
 
             @parts.each do |part|
               part.def.entity_serialized_paths.each { |sp|
-                if sp == serialized_path
+                if serialized_path.start_with?(sp)
                   @hover_part = part
                   @hover_pick_path = pick_path
                   _update_text_lines

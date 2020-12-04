@@ -9,6 +9,7 @@ in 1.x and 0.x versions.
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
   * Added **Spanish** language (thanks to Leonardo Romero Giménez for joining the translators team)
   * Fixed a bug in 1D packing pertaining to offcuts
+  * Fixed a bug highlight part tool when part drawing was in sub group
 
 * 1.9.9 (2020-11-19)
 
