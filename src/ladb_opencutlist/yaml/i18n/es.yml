@@ -109,8 +109,8 @@ tab:
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido
     not_available_std_section: Sección transversal no definida
-    highlight_part: Resalta parte en el modelo # TODO check
-    highlight_parts: Resalta partes en el modelo # TODO check
+    highlight_part: Resalta parte en el modelo
+    highlight_parts: Resalta partes en el modelo
     edit_part_properties: Editar las propiedades de la pieza
     edit_part_axes_properties: Edita las propiedades (tiras de los cantos) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
@@ -119,7 +119,7 @@ tab:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
       not_available_std_width: El ancho *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'
-      not_available_std_thickness: El grosor *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}' # TODO grosor = espesor
+      not_available_std_thickness: El espesor *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'
       not_available_std_section: La sección transversal *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'
       add_std_width_to_material: |
         Añade anchura *{{ std_dimension }}*
@@ -210,7 +210,7 @@ tab:
       cumulable_0: No sumable
       cumulable_1: Sumable sobre la longitud
       cumulable_2: Sumable a lo ancho
-      size_increase: Aumento de tamaño # TODO check
+      size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
         (*Ejemplo: tamaño extragrande para un rodapié o una moldura de trazado que deben ajustarse al instalar.*)
@@ -278,7 +278,7 @@ tab:
       hide_tags_help: Si se selecciona esta opción, se ocultarán las **tags**.
       hide_cutting_dimensions: Ocultar dimensiones aproximadas
       hide_cutting_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones **aproximadas** de las piezas.
-      hide_bbox_dimensions: Ocultar dimensiones Finales
+      hide_bbox_dimensions: Ocultar dimensiones finales
       hide_bbox_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones **finales** de las piezas.
       hide_untyped_material_dimensions: Ocultar las dimensiones de las piezas con tipo de material indefinido
       hide_untyped_material_dimensions_help: Si se selecciona esta opción, se ocultarán las dimensiones de las piezas con un tipo de material indefinido (no **Madera maciza**, **Tablero** o **Listones**).
@@ -350,7 +350,7 @@ tab:
       option_encoding: Codificación
       number: No.
       path: Camino
-      instance_name: Instancia # TODO in SketchUp => Copia
+      instance_name: Copia
       definition_name: Definición
       name: Descripción
       total_cutting_length: Longitud - crudo
@@ -467,7 +467,7 @@ tab:
         total_length: Σ Longitudes
         total_area: Σ Areas
         total_used: Total utilizado
-        trimming: Guarnición # TODO Recorte ?
+        trimming: Guarnición # TODO Recorte, Marge ?
         total_length_cuts: Longitud de cortes
         efficiency: Eficiencia
         leftover: Sobrante
@@ -530,7 +530,7 @@ tab:
     type_0: Indefinido
     type_1: Madera maciza
     type_2: Tablero
-    type_3: Listones # TODO Liston, singular
+    type_3: Listón
     type_4: Laminado
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
@@ -553,9 +553,9 @@ tab:
     new_material:
       title: Crea un nuevo material
       name: Nombre
-      name_warning: Nombre inválido # TODO Nombre no válido
+      name_warning: Nombre inválido
       color: Color
-      color_warning: Color no válido
+      color_warning: Color inválido
       type: Tipo
     edit_material:
       title: Propiedades del material '{{ name }}'
