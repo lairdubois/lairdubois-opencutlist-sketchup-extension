@@ -23,48 +23,10 @@ module Ladb::OpenCutList
       @col_sep = settings['col_sep']
       @encoding = settings['encoding']
       @col_defs = settings['col_defs']
-      @hide_entity_names = settings['hide_entity_names']
-      @hide_tags = settings['hide_tags']
-      @hide_cutting_dimensions = settings['hide_cutting_dimensions']
-      @hide_bbox_dimensions = settings['hide_bbox_dimensions']
-      @hide_final_areas = settings['hide_final_areas']
-      @hide_edges = settings['hide_edges']
       @hidden_group_ids = settings['hidden_group_ids']
 
       @cutlist = cutlist
 
-    end
-
-    def _sanitize_value_string(value)
-      value.gsub(/^~ /, '') unless value.nil?
-    end
-
-    def _format_edge_value(material_name, std_dimension)
-      if material_name
-        return "#{material_name} (#{std_dimension})"
-      end
-      ''
-    end
-
-    def _evaluate_row(calculator, vars)
-      row = []
-      @col_defs.each { |col_def|
-        unless col_def['hidden']
-          if col_def['formula'].nil? || col_def['formula'].empty?
-            formula = col_def['name']
-          else
-            vars[:value] = vars[col_def['name'].to_sym]
-            formula = col_def['formula']
-          end
-          begin
-            value = calculator.evaluate!(formula, vars)
-          rescue => e
-            value = "!ERROR"
-          end
-          row.push(value)
-        end
-      }
-      row
     end
 
     # -----
@@ -273,6 +235,40 @@ module Ladb::OpenCutList
       end
 
       response
+    end
+
+    # -----
+
+    def _sanitize_value_string(value)
+      value.gsub(/^~ /, '') unless value.nil?
+    end
+
+    def _format_edge_value(material_name, std_dimension)
+      if material_name
+        return "#{material_name} (#{std_dimension})"
+      end
+      ''
+    end
+
+    def _evaluate_row(calculator, vars)
+      row = []
+      @col_defs.each { |col_def|
+        unless col_def['hidden']
+          if col_def['formula'].nil? || col_def['formula'].empty?
+            formula = col_def['name']
+          else
+            vars[:value] = vars[col_def['name'].to_sym]
+            formula = col_def['formula']
+          end
+          begin
+            value = calculator.evaluate!(formula, vars)
+          rescue => e
+            value = "!ERROR"
+          end
+          row.push(value)
+        end
+      }
+      row
     end
 
   end
