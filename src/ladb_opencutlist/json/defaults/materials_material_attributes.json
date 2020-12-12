@@ -63,5 +63,18 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": true
+  },
+  "5": {  /* TYPE_ACCESSORY */
+    "thickness": "",
+    "length_increase": "",
+    "width_increase": "",
+    "thickness_increase": "",
+    "std_lengths": "",
+    "std_widths": "",
+    "std_thicknesses": "",
+    "std_sections": "",
+    "std_sizes": "",
+    "grained": false,
+    "edge_decremented": false
   }
 }
