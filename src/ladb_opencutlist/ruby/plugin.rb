@@ -105,7 +105,7 @@ module Ladb::OpenCutList
     end
 
     def set_language(language, persist = false)
-      if language.nil? or language == 'auto'
+      if language.nil? || language == 'auto'
         language = Sketchup.get_locale.split('-')[0].downcase  # Retrieve SU language
       end
       available_languages = self.get_available_languages

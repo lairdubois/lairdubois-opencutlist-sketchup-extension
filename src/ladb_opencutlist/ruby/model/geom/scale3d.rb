@@ -27,7 +27,7 @@ module Ladb::OpenCutList
     # -----
 
     def identity?
-      self.x == 1.to_l and self.y == 1.to_l and self.z == 1.to_l
+      self.x == 1.to_l && self.y == 1.to_l && self.z == 1.to_l
     end
 
     def mult(scale)

@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       value1 = '0'
       value2 = '0'
       value3 = '0'
-      if str.is_a? String
+      if str.is_a?(String)
         a = str.split('x')
         if a.length == 3
           value1 = a[0].strip

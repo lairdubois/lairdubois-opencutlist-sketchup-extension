@@ -137,7 +137,7 @@ module Ladb::OpenCutList
                       :total_cutting_length => group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length),
                       :total_cutting_area => group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area),
                       :total_cutting_volume => group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume),
-                      :total_final_area => (group.total_final_area.nil? or group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
+                      :total_final_area => (group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
                     }
 
                     csv << _evaluate_row(calculator, vars)

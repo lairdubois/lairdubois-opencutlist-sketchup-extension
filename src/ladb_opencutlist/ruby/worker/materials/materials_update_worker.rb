@@ -67,7 +67,7 @@ module Ladb::OpenCutList
       # Update texture
       unless @texture_file.nil?
 
-        if @texture_rotation > 0 or (@texture_colorized and @texture_colorizable)
+        if @texture_rotation > 0 || (@texture_colorized and @texture_colorizable)
 
           # Rotate texture
           ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0
@@ -92,7 +92,7 @@ module Ladb::OpenCutList
 
         end
 
-        unless @texture_width.nil? or @texture_height.nil?
+        unless @texture_width.nil? || @texture_height.nil?
 
           material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
 

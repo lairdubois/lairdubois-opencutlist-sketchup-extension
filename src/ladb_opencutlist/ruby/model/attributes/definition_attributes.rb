@@ -40,7 +40,7 @@ module Ladb::OpenCutList
     def self.valid_cumulable(cumulable)
       if cumulable
         i_cumulable = cumulable.to_i
-        if i_cumulable < CUMULABLE_NONE or i_cumulable > CUMULABLE_WIDTH
+        if i_cumulable < CUMULABLE_NONE || i_cumulable > CUMULABLE_WIDTH
           CUMULABLE_NONE
         end
         i_cumulable
@@ -51,9 +51,9 @@ module Ladb::OpenCutList
 
     def self.valid_tags(tags)
       if tags
-        if tags.is_a? Array and !tags.empty?
+        if tags.is_a?(Array) && !tags.empty?
           return tags.map(&:strip).reject { |tag| tag.empty? }.uniq.sort
-        elsif tags.is_a? String
+        elsif tags.is_a?(String)
           return tags.split(';').map(&:strip).reject { |tag| tag.empty? }.uniq.sort
         end
       end

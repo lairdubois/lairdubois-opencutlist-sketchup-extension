@@ -79,7 +79,7 @@ module Ladb::OpenCutList
         if definition
 
           # Update definition's name
-          if definition.name != part_data.name and !part_data.is_dynamic_attributes_name
+          if definition.name != part_data.name && !part_data.is_dynamic_attributes_name
             definition.name = part_data.name
           end
 
@@ -112,7 +112,7 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
 
           # Transform part axes if axes order exist
-          if part_data.axes_order.is_a?(Array) and part_data.axes_order.length == 3
+          if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3
 
             axes_convertor = {
                 'x' => X_AXIS,
@@ -191,12 +191,12 @@ module Ladb::OpenCutList
     def _apply_material(material_name, entity_ids, model)
       unless entity_ids.nil?
         material = nil
-        if material_name.nil? or material_name.empty? or (material = model.materials[material_name])
+        if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
 
           entity_ids.each { |entity_id|
             entity = ModelUtils::find_entity_by_id(model, entity_id)
             if entity
-              if material_name.nil? or material_name.empty?
+              if material_name.nil? || material_name.empty?
                 entity.material = nil
               elsif entity.material != material
                 entity.material = material
