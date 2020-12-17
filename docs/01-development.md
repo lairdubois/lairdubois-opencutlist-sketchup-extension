@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v14.15.0
-    $ npm -v
-    6.14.6
-    $ npm install npm@latest -g
+    v14.15.2
     $ npm -v
     6.14.8
+    $ npm install npm@latest -g
+    $ npm -v
+    6.14.9
 ```
 
 On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
