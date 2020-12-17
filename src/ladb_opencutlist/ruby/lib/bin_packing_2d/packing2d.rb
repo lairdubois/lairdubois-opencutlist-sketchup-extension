@@ -1,83 +1,139 @@
-module Ladb::OpenCutList
-
+﻿module Ladb::OpenCutList
   module BinPacking2D
 
+    # Number of bytes of computer running code
+    # from https://gist.github.com/pithyless/9738125
+    N_BYTES = [42].pack('i').size
+
+    # Number of bits.
+    N_BITS = N_BYTES * 16
+
+    # Largest integer on this platform. This is actually wrong since
+    # ruby merged Fixnum and Bignum into Integer. We just want a rather
+    # large number.
+    MAX_INT = 2**(N_BITS - 2) - 1
+
+    # Working precision to compare decimal inches (max. SketchUp precision)
+    EPS = 0.00001
+
+    # Maximum time for execution, beyond that interrupt.
+    MAX_TIME = 30
+
+    # Bin has illegal size <= 0, has been ignored.
+    WARNING_ILLEGAL_SIZED_BIN = 0
+    # Box has illegal size <= 0, has been ignored.
+    WARNING_ILLEGAL_SIZED_BOX = 1
+
+    # No error.
+    ERROR_NONE = 0
+    # Timeout error.
+    ERROR_TIMEOUT = 1
+    # Error when no bin for packing available.
+    ERROR_NO_BIN = 2
+    # Error when no boxes for packing available.
+    ERROR_NO_BOX = 3
+    # Error when no placement possible, e.g. boxes larger than bin.
+    ERROR_NO_PLACEMENT_POSSIBLE = 4
+    # Error that needs further debugging.
+    ERROR_BAD_ERROR = 5
+    # Error in parameters.
+    ERROR_PARAMETERS = 6
+    # Error in input.
+    ERROR_INVALID_INPUT = 7
+
+    # Type of standard bin.
+    BIN_TYPE_AUTO_GENERATED  = 0
+    # Type of leftover bin.
+    BIN_TYPE_USER_DEFINED = 1
+
+    # Do not presort input.
     PRESORT_INPUT_ORDER = 0
+    # Sort by width decreasing.
     PRESORT_WIDTH_DECR = 1
+    # Sort by length decreasing.
     PRESORT_LENGTH_DECR = 2
+    # Sort by area decreasing.
     PRESORT_AREA_DECR = 3
+    # Sort by perimeter decreasing.
     PRESORT_PERIMETER_DECR = 4
+    # Sort by shortest side increasing.
+    PRESORT_LONGEST_SIDE_DECR = 5
+    # Sort by longest side increasing.
+    PRESORT_SHORTEST_SIDE_DECR = 6
+    PRESORT = ['input', 'width', 'length', 'area', 'perimeter', 'longest', 'shortest']
 
+    # Do not try to stack boxes.
     STACKING_NONE = 0
+    # Stack boxes lengthwise.
     STACKING_LENGTH = 1
+    # Stack boxes widthwise.
     STACKING_WIDTH = 2
+    STACKING_ALL = 3
+    STACKING = ['do not care', 'lengthwise', 'widthwise', 'all stackings']
 
-    BBOX_OPTIMIZATION_NONE = 0
-    BBOX_OPTIMIZATION_ONLY_FINAL = 1
-    BBOX_OPTIMIZATION_ALWAYS = 2
-
+    # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0
     SCORE_BESTSHORTSIDE_FIT = 1
     SCORE_BESTLONGSIDE_FIT = 2
     SCORE_WORSTAREA_FIT = 3
     SCORE_WORSTSHORTSIDE_FIT = 4
     SCORE_WORSTLONGSIDE_FIT = 5
+    SCORE = [' best area', 'short side', 'long side', 'worst area', 'worst short side', 'worst long side']
 
+    # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
     SPLIT_LONGERLEFTOVER_AXIS = 1
     SPLIT_MINIMIZE_AREA = 2
     SPLIT_MAXIMIZE_AREA = 3
-    SPLIT_SHORTER_AXIS = 4
-    SPLIT_LONGER_AXIS = 5
+    SPLIT_HORIZONTAL_FIRST = 4
+    SPLIT_VERTICAL_FIRST = 5
+    SPLIT_SHORTER_AXIS = 6
+    SPLIT_LONGER_AXIS = 7
+    SPLIT = ['shorter leftover', 'longer leftover', 'min. area', 'max. area', 'horizontal_first', 'vertical_first', 'shorter axis', 'longer axis']
 
-    BIN_TYPE_AUTO_GENERATED  = 0
-    BIN_TYPE_USER_DEFINED = 1
+    # Orientation of a box. Better for sorting than boolean value.
+    NOT_ROTATED = 0
+    ROTATED = 1
 
-    ERROR_NONE = 0
-    ERROR_NO_BIN = 1
-    ERROR_NO_PLACEMENT_POSSIBLE = 2
-    ERROR_BAD_ERROR = 3
-
-    class Packing2D
-
-      def self.valid_presort(presort)
-        if presort
-          i_presort = presort.to_i
-          if i_presort < PRESORT_INPUT_ORDER or i_presort > PRESORT_PERIMETER_DECR
-            PRESORT_INPUT_ORDER
-          end
-          i_presort
-        else
-          PRESORT_INPUT_ORDER
-        end
-      end
-
-      def self.valid_stacking(stacking)
-        if stacking
-          i_stacking = stacking.to_i
-          if i_stacking < STACKING_NONE or i_stacking > STACKING_WIDTH
-            STACKING_NONE
-          end
-          i_stacking
-        else
-          STACKING_NONE
-        end
-      end
-
-      def self.valid_bbox_optimization(bbox_optimization)
-        if bbox_optimization
-          i_bbox_optimization = bbox_optimization.to_i
-          if i_bbox_optimization < BBOX_OPTIMIZATION_NONE or i_bbox_optimization > BBOX_OPTIMIZATION_ALWAYS
-            BBOX_OPTIMIZATION_NONE
-          end
-          i_bbox_optimization
-        else
-          BBOX_OPTIMIZATION_NONE
-        end
-      end
-
+    # Optimization level.
+    OPT_LIGHT = 0
+    OPT_MEDIUM = 1
+    OPT_ADVANCED = 2
+    OPTIMIZATION = ['light', 'medium', 'advanced']
+    #
+    # Exception raised in this module.
+    #
+    class Packing2DError < StandardError
     end
 
-  end
+    #
+    # Top level class (abstract class)
+    #
+    class Packing2D
 
+      attr_accessor :options
+
+      #
+      # Initializes the abstract object.
+      #
+      def initialize(options = nil)
+        @options = options
+      end
+
+      #
+      # Prints very verbose debugging messages when global
+      # option debug == true or when called with parameter
+      # debug = true.
+      #
+      def dbg(msg, debug=false)
+        # assuming @options exists
+        if debug
+          puts(msg)
+        elsif !@options.nil? && @options.debug
+          puts(msg)
+        end
+        STDOUT.flush
+      end
+    end
+  end
 end

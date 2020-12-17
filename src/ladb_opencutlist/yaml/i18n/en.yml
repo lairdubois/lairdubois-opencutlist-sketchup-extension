@@ -403,25 +403,17 @@ tab:
       option_trimming: Trimming Size
       option_trimming_help_1d: The amount of material at each end of the board to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_presort: Preordering of Parts
-      option_presort_help: The order in which the parts will be considered for placement.
-      option_presort_0: None
-      option_presort_1: Width Decreasing
-      option_presort_2: Length Decreasing
-      option_presort_3: Area Decreasing
-      option_presort_4: Perimeter Decreasing
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Stack Identical Parts
       option_stacking_help: The way parts with common width or length are tentatively placed together.
       option_stacking_0: None
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
-      option_bbox_optimization: Bounding Box Optimization
-      option_bbox_optimization_help: |
-        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
-        This option may be applied every time a new panel is added, only at the end of the optimization or never.
-      option_bbox_optimization_0: Never
-      option_bbox_optimization_1: Only Final
-      option_bbox_optimization_2: Always
+      option_stacking_3: All Possibilities
       option_std_bar: Standard Board
       option_std_bar_help: |
         Select the standard board, which will be duplicated to contain all the parts.

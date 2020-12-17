@@ -403,25 +403,17 @@ tab:
       option_trimming: Marge
       option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
-      option_presort: Ordre de tri des pièces
-      option_presort_help: Ordre dans lesquel les pièces sont sélectionnées pour le placement.
-      option_presort_0: Pas de tri préalable
-      option_presort_1: Par largeur décroissante
-      option_presort_2: Par longueur décroissante
-      option_presort_3: Par superficie décroissante
-      option_presort_4: Par périmètre décroissant
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
-      option_stacking_0: Non
+      option_stacking_0: Aucune
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
-      option_bbox_optimization: Optimisation de l'enveloppe
-      option_bbox_optimization_help: |
-        Optimiser les coupes de part en part du panneau afin de maximiser la taille des chutes.
-        Cette procédure peut être appliquée à chaque ajout d'un nouveau panneau sur les panneaux déjà pleins, seulement à la fin du calepinage ou jamais.
-      option_bbox_optimization_0: Jamais
-      option_bbox_optimization_1: Seulement à la fin
-      option_bbox_optimization_2: Toujours
+      option_stacking_3: Toutes les possibilités
       option_std_bar: Barre standard
       option_std_bar_help: |
         Sélectionnez ici la taille de la barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.

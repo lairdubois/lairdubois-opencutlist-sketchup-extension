@@ -403,25 +403,17 @@ tab:
       option_trimming: Размер обрезки
       option_trimming_help_1d: Размер обрезки каждого края листа для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
       option_trimming_help_2d: Размер обрезки листа по периметру для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
-      option_presort: Распределить на листе
-      option_presort_help: Выбор порядка расположения деталей на листе для его оптимального раскроя.
-      option_presort_0: Нет
-      option_presort_1: По убыванию ширины
-      option_presort_2: По убыванию длины
-      option_presort_3: По убыванию площади
-      option_presort_4: По убыванию периметра
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Сложить идентичные детали
       option_stacking_help: Способ предварительного планирования размещения деталей, имеющих равную ширину или длину.
       option_stacking_0: Нет
       option_stacking_1: По длине
       option_stacking_2: По ширине
-      option_bbox_optimization: Оптимизация контура раскроя
-      option_bbox_optimization_help: |
-        Оптимизация раскроя во избежание небольших остатков.
-        Эта опция может применяться в трех вариантах: всегда при добавлении новой панели, только в конце или никогда.
-      option_bbox_optimization_0: Никогда
-      option_bbox_optimization_1: Только в конце
-      option_bbox_optimization_2: Всегда
+      option_stacking_3: All Possibilities # TODO
       option_std_bar: Стандартная панель
       option_std_bar_help: |
         Выберите стандартную панель, для дублирования содержащихся деталей.

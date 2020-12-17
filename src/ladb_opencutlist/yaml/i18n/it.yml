@@ -404,24 +404,16 @@ tab:
       option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_presort: Pre-ordinamento delle parti
-      option_presort_help: L'ordine con cui le parti verranno trattate nel posizionamento.
-      option_presort_0: Nessuno
-      option_presort_1: Larghezza Decresente
-      option_presort_2: Lunghezza Decresente
-      option_presort_3: Area Decresente
-      option_presort_4: Perimetro Decresente
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Raggruppa parti identiche
       option_stacking_help: Il criterio con cui le parti di eguale lunghezza o larghezza verranno disposte insieme.
       option_stacking_0: Nessuna
       option_stacking_1: Per lunghezza
       option_stacking_2: Per larghezza
-      option_bbox_optimization: Ottimizzazione del rettangolo di selezione
-      option_bbox_optimization_help: |
-        Ottimizzazione atta a rimuovere tagli non necessari e diminuire avanzi di piccole dimensioni.
-        Questa opzione può essere applicata ad ogni nuovo pannello aggiunto, solo alla fine dell'ottimizzazione oppure mai.
-      option_bbox_optimization_0: Mai
-      option_bbox_optimization_1: Solo ultimo
-      option_bbox_optimization_2: Sempre
       option_std_bar: Tavola Standard
       option_std_bar_help: |
         Seleziona una tavola standard, che sarà duplicata in modo da contenere tutte le parti.

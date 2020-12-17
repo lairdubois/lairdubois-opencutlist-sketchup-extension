@@ -15,9 +15,12 @@ module Ladb::OpenCutList
       @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
-      @stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
-      @bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
+      # TODO presort, bbox is gone
+      #@presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
+      #@stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
+      @optimization = settings['optimization'].to_i
+      @stacking = settings['stacking'].to_i
+      #@bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
       @sheet_folding = settings['sheet_folding']
       @hide_part_list = settings['hide_part_list']
 
@@ -38,14 +41,18 @@ module Ladb::OpenCutList
 
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking2D::Options.new
-      options.base_bin_length = @std_sheet_length
-      options.base_bin_width = @std_sheet_width
+      # TODO changed name
+      options.base_length = @std_sheet_length
+      options.base_width = @std_sheet_width
       options.rotatable = !@grained
       options.saw_kerf = @saw_kerf
-      options.trimming = @trimming
-      options.stacking = @stacking
-      options.bbox_optimization = @bbox_optimization
-      options.presort = @presort
+      # TODO changed name
+      options.trimsize = @trimming
+      options.optimization = @optimization
+      options.stacking_pref = @stacking
+      # TODO gone
+      #options.bbox_optimization = @bbox_optimization
+      #options.presort = @presort
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking2D::PackEngine.new(options)
@@ -64,9 +71,11 @@ module Ladb::OpenCutList
       }
 
       # Add boxes from parts
+      # TODO future possible, single parts can be made non-rotatable, for now
+      # they inherit the attribute from options
       parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
+          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
         end
       }
 
@@ -87,10 +96,13 @@ module Ladb::OpenCutList
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,
-              :trimming => options.trimming.to_l.to_s,
+              # TODO changed name
+              :trimming => options.trimsize.to_l.to_s,
+              :optimization => @optimization,
               :stacking => @stacking,
-              :bbox_optimization => @bbox_optimization,
-              :presort => @presort,
+              # TODO removed
+              #:bbox_optimization => @bbox_optimization,
+              #:presort => @presort,
           },
 
           :unplaced_parts => [],
@@ -170,7 +182,8 @@ module Ladb::OpenCutList
         result.unused_bins.each { |bin|
           _append_bin_to_summary_sheets(bin, group, false, summary_sheets)
         }
-        result.original_bins.each { |bin|
+        # TODO moved to packed bin
+        result.packed_bins.each { |bin|
           _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
           response[:summary][:total_used_count] += 1
           response[:summary][:total_used_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
@@ -183,7 +196,8 @@ module Ladb::OpenCutList
 
         # Sheets
         grouped_sheets = {}
-        result.original_bins.each { |bin|
+        # TODO moved to packed bin
+        result.packed_bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
 
