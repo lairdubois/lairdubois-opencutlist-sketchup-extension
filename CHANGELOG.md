@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 1.x and 0.x versions.
 
-* 1.9.10 (2020-12-09)
+* 1.9.10 (2020-12-17)
 
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
   * Added **Spanish** language (thanks to Leonardo Romero Giménez for joining the translators team)
