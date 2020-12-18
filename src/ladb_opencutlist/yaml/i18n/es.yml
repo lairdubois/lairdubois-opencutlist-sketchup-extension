@@ -31,8 +31,8 @@ default:
   good: Bien
   bad: Mal
   by: por
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y g:ia
+  date_format_short: d/m/Y
   unit_0: Pulgadas
   unit_1: Pies
   unit_2: Milimetros

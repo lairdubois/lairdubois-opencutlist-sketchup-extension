@@ -15,12 +15,8 @@ module Ladb::OpenCutList
       @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      # TODO presort, bbox is gone
-      #@presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
-      #@stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
       @optimization = settings['optimization'].to_i
       @stacking = settings['stacking'].to_i
-      #@bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
       @sheet_folding = settings['sheet_folding']
       @hide_part_list = settings['hide_part_list']
 
@@ -41,18 +37,13 @@ module Ladb::OpenCutList
 
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking2D::Options.new
-      # TODO changed name
       options.base_length = @std_sheet_length
       options.base_width = @std_sheet_width
       options.rotatable = !@grained
       options.saw_kerf = @saw_kerf
-      # TODO changed name
       options.trimsize = @trimming
       options.optimization = @optimization
       options.stacking_pref = @stacking
-      # TODO gone
-      #options.bbox_optimization = @bbox_optimization
-      #options.presort = @presort
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking2D::PackEngine.new(options)
@@ -71,7 +62,7 @@ module Ladb::OpenCutList
       }
 
       # Add boxes from parts
-      # TODO future possible, single parts can be made non-rotatable, for now
+      # TODO possible future, single parts can be made non-rotatable, for now
       # they inherit the attribute from options
       parts.each { |part|
         for i in 1..part.count
@@ -96,13 +87,9 @@ module Ladb::OpenCutList
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,
-              # TODO changed name
               :trimming => options.trimsize.to_l.to_s,
               :optimization => @optimization,
               :stacking => @stacking,
-              # TODO removed
-              #:bbox_optimization => @bbox_optimization,
-              #:presort => @presort,
           },
 
           :unplaced_parts => [],
@@ -196,7 +183,6 @@ module Ladb::OpenCutList
 
         # Sheets
         grouped_sheets = {}
-        # TODO moved to packed bin
         result.packed_bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
