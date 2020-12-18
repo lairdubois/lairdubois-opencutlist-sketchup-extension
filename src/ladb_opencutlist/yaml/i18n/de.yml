@@ -403,25 +403,17 @@ tab:
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_presort: Vorsortierung der Teile
-      option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
-      option_presort_0: keine Vorsortierung
-      option_presort_1: abnehmende Breiten
-      option_presort_2: abnehmende Längen
-      option_presort_3: abnehmende Flächen
-      option_presort_4: abnehmende Perimeter
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Identische Teile stapeln
       option_stacking_help: Richtung in welche Teile gleicher Länge oder Breite bevorzugt zusammengefasst werden.
       option_stacking_0: kein Stapeln
       option_stacking_1: der Länge nach
       option_stacking_2: der Breite nach
-      option_bbox_optimization: Hüllenoptimierung
-      option_bbox_optimization_help: |
-        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass größere Reste übrigbleiben.
-        Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Schnittplanberechnung.
-      option_bbox_optimization_0: Nie
-      option_bbox_optimization_1: Nur am Schluss
-      option_bbox_optimization_2: Immer
+      option_stacking_3: Toutes les possibilités
       option_std_bar: Standard Stange
       option_std_bar_help: |
         Wählen Sie hier die Standardstangenware welche dupliziert wird um alle Teile zu enthalten.

@@ -31,8 +31,8 @@ default:
   good: Bien
   bad: Mal
   by: por
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y g:ia
+  date_format_short: d/m/Y
   unit_0: Pulgadas
   unit_1: Pies
   unit_2: Milimetros
@@ -403,25 +403,17 @@ tab:
       option_trimming: Tamaño de recorte
       option_trimming_help_1d: La cantidad de material en cada extremo del tablero que se tratará como desecho.
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
-      option_presort: Pedido anticipado de piezas
-      option_presort_help: El orden en el que se considerará la colocación de las piezas.
-      option_presort_0: Ninguno
-      option_presort_1: Ancho decreciente
-      option_presort_2: Longitud decreciente
-      option_presort_3: Área decreciente
-      option_presort_4: Perímetro decreciente
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Apilar piezas idénticas
       option_stacking_help: La forma en que las partes con ancho o largo común se colocan provisionalmente juntas.
       option_stacking_0: Ninguno
       option_stacking_1: Longitudinal
       option_stacking_2: A lo ancho
-      option_bbox_optimization: Optimización del cuadro delimitador
-      option_bbox_optimization_help: |
-        Optimización para eliminar paneles innecesarios mediante cortes para evitar pequeños restos.
-        Esta opción se puede aplicar cada vez que se agrega un nuevo panel, solo al final de la optimización o nunca.
-      option_bbox_optimization_0: Nunca
-      option_bbox_optimization_1: Solo final
-      option_bbox_optimization_2: Siempre
+      option_stacking_3: Toutes les possibilités
       option_std_bar: Tablero Estándar
       option_std_bar_help: |
         Seleccione el tablero estándar, que se duplicará para contener todas las partes.
@@ -467,7 +459,7 @@ tab:
         total_length: Σ Longitudes
         total_area: Σ Areas
         total_used: Total utilizado
-        trimming: Guarnición # TODO Recorte ?
+        trimming: Guarnición
         total_length_cuts: Longitud de cortes
         efficiency: Eficiencia
         leftover: Sobrante
@@ -530,14 +522,16 @@ tab:
     type_0: Indefinido
     type_1: Madera maciza
     type_2: Tablero
-    type_3: Listones # TODO Liston, singular
+    type_3: Liston
     type_4: Laminado
+    type_5: Accessoire # TODO
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
       type_2: Tipo de material '$t(tab.materials.type_2)'
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
+      type_5: Type de matière '$t(tab.materials.type_5)' # TODO
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
@@ -553,9 +547,9 @@ tab:
     new_material:
       title: Crea un nuevo material
       name: Nombre
-      name_warning: Nombre inválido # TODO Nombre no válido
+      name_warning: Nombre inválido
       color: Color
-      color_warning: Color no válido
+      color_warning: Color inválido
       type: Tipo
     edit_material:
       title: Propiedades del material '{{ name }}'
@@ -564,6 +558,7 @@ tab:
       name: Nombre
       type: Tipo
       cut_options: Parámetros de corte
+      attributes: Attributs # TODO
       thickness: Grosor
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
@@ -604,6 +599,7 @@ tab:
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administración de los *parámetros de corte* predeterminados
         save_success: |

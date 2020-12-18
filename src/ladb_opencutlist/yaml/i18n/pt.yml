@@ -31,8 +31,8 @@ default:
   good: Bom
   bad: Ruim
   by: por
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y g:ia
+  date_format_short: d/m/Y
   unit_0: Polegadas
   unit_1: Pés
   unit_2: Milímetro
@@ -403,25 +403,17 @@ tab:
       option_trimming: Tamanho de corte
       option_trimming_help_1d: A quantidade de material em cada extremidade da placa a ser tratada como resíduo.
       option_trimming_help_2d: A quantidade de material ao redor do painel bruto a ser tratada como resíduo.
-      option_presort: Pré-encomenda de partes
-      option_presort_help: A ordem em que as partes serão consideradas para colocação.
-      option_presort_0: Nenhum
-      option_presort_1: Largura Descendente
-      option_presort_2: Comprimento Descendente
-      option_presort_3: Área Descendente
-      option_presort_4: Perímetro Descendente
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Empilhar partes idênticas
       option_stacking_help: A maneira como as partes com largura ou comprimento comum são provisoriamente colocadas juntas.
       option_stacking_0: Nenhum
       option_stacking_1: Longitudinalmente
       option_stacking_2: Largura
-      option_bbox_optimization: Otimização de caixa delimitadora
-      option_bbox_optimization_help: |
-        Otimização para remover painéis desnecessários através de cortes, a fim de evitar pequenos restos.
-        Esta opção pode ser aplicada toda vez que um novo painel é adicionado, somente no final da otimização ou nunca.
-      option_bbox_optimization_0: Nunca
-      option_bbox_optimization_1: Apenas final
-      option_bbox_optimization_2: Sempre
+      option_stacking_3: Todas as possibilidades # TODO
       option_std_bar: Quadro Padrão
       option_std_bar_help: |
         Selecione a placa padrão, que será duplicada para conter todas as partes.

@@ -3,9 +3,8 @@
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "1/8\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
-    "presort": 1,             /* PRESORT_WIDTH_DECR */
-    "stacking": 0,            /* STACKING_NONE */
-    "bbox_optimization": 0,   /* BBOX_OPTIMIZATION_NONE */
+    "optimization": 0,        /* OPT_LIGHT */
+    "stacking": 1,            /* STACKING_LENGTH */
     "sheet_folding": true,
     "hide_part_list": false
   }

@@ -1,119 +1,146 @@
 module Ladb::OpenCutList::BinPacking2D
-  
-  class Box < Packing2D
 
-    attr_reader :length, :width, :x, :y, :rotated, :data, :sboxes, :is_superbox
+  #
+  # Implements an element to pack into a Bin.
+  #
+  class Box
 
-    def initialize(length, width, data = nil)
-      @length = length
-      @width = width
+    # Position of the box inside the enclosing bin.
+    attr_reader :x, :y
+
+    # Length this box.
+    attr_reader :length
+
+    # Width of this box.
+    attr_reader :width
+
+    # True if this box can be rotated.
+    attr_reader :rotatable
+
+    # True if this box has been rotated by 90 deg. from its original orientation.
+    attr_reader :rotated
+
+    # Reference to an external object. This value is kept during optimization.
+    attr_reader :data
+
+    #
+    # Initializes a new Box, ensure that it has a length and width > 0.
+    #
+    def initialize(length, width, rotatable, data)
       @x = 0
       @y = 0
+
+      @length = length*1.0
+      @width = width*1.0
+
+      @rotatable = rotatable
       @rotated = false
+
+      if @length <= 0.0 || @width <= 0.0
+        raise(Packing2DError, "Trying to initialize a box with zero or negative length/width!")
+      end
+
       @data = data
-      @sboxes = []
-      @is_superbox = false
-      @stack_is_horizontal = true
     end
 
-    # Sets the position and the index of a box
-    # called when placed in packer
+    #
+    # Returns true if the box was rotated.
+    #
+    def rotated?
+      return @rotated
+    end
+
+    #
+    # Rotates the box by 90 deg. if option permits.
+    #
+    def rotate
+      if @rotatable
+        # TODO dangerous comparaison with float numbers
+        if @length < @width || @length > @width
+          @width, @length = [@length, @width]
+          @rotated = !@rotated
+        end
+      end
+    end
+
+    #
+    # Sets the position of this box inside a Bin when
+    # placed into a Leftover by Packer.
     #
     def set_position(x, y)
       @x = x
       @y = y
     end
 
-    # Stack box horizontally. The container box is the bounding
-    # box of the contained boxes in @sboxes
     #
-    def stack_length(box, saw_kerf, max)
-      return false if box.width != @width
-
-      if box.length + @length > max
-        return false
-      else
-        @length += saw_kerf if @length > 0
-        @length += box.length
-        @sboxes << box
-        @is_superbox = true
+    # Checks if this box would fit into the given leftover.
+    # The top level leftover of a bin has already been trimmed.
+    #
+    def fits_into?(length, width)
+      # EPS tolerance because of decimal inches!
+      if length - @length >= -EPS && width - @width >= -EPS
+        return true
+      elsif @rotatable && width - @length >= -EPS && length - @width >= -EPS
         return true
       end
+      return false
     end
 
-    # Stack box vertically. The container box is the bounding
-    # box of the contained boxes in @sboxes
     #
-    def stack_width(box, saw_kerf, max)
-      return false if box.length != @length
-
-      if box.width + @width > max
+    # Returns true if this box fits into given leftover.
+    #
+    def fits_into_leftover?(leftover)
+      if leftover.nil?
         return false
-      else
-        @width += saw_kerf if @width > 0
-        @width += box.width
-        @sboxes << box
-        @is_superbox = true
-        @stack_is_horizontal = false
-        return true
       end
+      return fits_into?(leftover.length, leftover.width)
     end
 
-    # Break up a superbox into array of contained boxes. 
-    # When called, we know that we are a a superbox, no need to check
     #
-    def break_up_supergroup
-      boxes = []
-      @sboxes.each do |box|
-        boxes << box
-      end
-      return boxes
-    end
-
-    # Reduce the size of a supergroup. If it contains more than
-    # 2 elements, remove just the last one. 
-    # When called, we know that we are a a superbox, no need to check
+    # Returns the area of this box.
     #
-    def reduce_supergroup(saw_kerf)
-      boxes = []
-      if @sboxes.length() > 2
-        *@sboxes, last = @sboxes
-        if @stack_is_horizontal
-          @length = @length - last.length - saw_kerf
-        else
-          @width = @width - last.width - saw_kerf
-        end
-        boxes.unshift(last)
-        boxes.unshift(self) # we are still a valid superbox
-      else
-        @sboxes.each do |box|
-          boxes.unshift(box)
-        end
-      end
-      return boxes
-    end
-
     def area
       return @length * @width
     end
 
-    # Rotate the box, used when grain direction does not matter
     #
-    def rotate
-      @width, @length = [@length, @width]
-      @rotated = !@rotated
-      return self
+    # Returns true if this box is equal to box.
+    #
+    def equal?(box)
+      return true if box.nil?
+      if (@length - box.length).abs <= EPS && (@width - box.width).abs <= EPS
+        return true
+      elsif @rotatable && (@length - box.width).abs <= EPS && (@width - box.length).abs <= EPS
+        return true
+      end
+      return false
     end
 
-    # Returns if box has been rotated
     #
-    def rotated?
-      return @rotated
+    # Returns true if at least one of the dimensions of the two
+    # boxes are equal.
+    #
+    def equal_one_dimension?(box)
+      return true if box.nil?
+      if (@length - box.length).abs <= EPS || (@width - box.width).abs <= EPS
+        return true
+      elsif @rotatable && ((@length - box.width).abs < EPS || (@width - box.length).abs <= EPS)
+        return true
+      end
+      return false
     end
 
-    # Returns if a box will fit a bin that has not yet been created
-    def fits_into_bin?(length, width, trimsize, rotatable)
-      (@length <= length - 2 * trimsize && @width <= width - 2 * trimsize) || (@rotatable and @length <= width - 2 * trimsize && @width <= length - 2 * trimsize)
+    #
+    # Debugging!
+    #
+    def to_str
+      s = "box : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}, #{'%9.2f' % @width}], "
+      s += "rotated = #{@rotated}/#{@rotatable}" #, data = #{@data}"
+      return s
+    end
+
+    def to_octave
+      return "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", blue); # box"
     end
   end
 end
