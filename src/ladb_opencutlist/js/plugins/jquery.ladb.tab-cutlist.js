@@ -35,6 +35,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF = 'cutlist.cuttingdiagram1d.option.saw_kerf';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING = 'cutlist.cuttingdiagram1d.option.trimming';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING = 'cutlist.cuttingdiagram1d.option.bar_folding';
+    var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS = 'cutlist.cuttingdiagram1d.option.hide_cross';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram1d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH = 'cutlist.cuttingdiagram1d.option.wrap_length';
 
@@ -45,6 +46,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION = 'cutlist.cuttingdiagram2d.option.optimization';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING = 'cutlist.cuttingdiagram2d.option.stacking';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING = 'cutlist.cuttingdiagram1d.option.sheet_folding';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS = 'cutlist.cuttingdiagram2d.option.hide_cross';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
 
     var EXPORT_DEFAULT_COLUMNS = {
@@ -1685,6 +1687,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING,
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH,
 
@@ -1693,6 +1696,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId,
 
@@ -1714,6 +1718,7 @@
                             saw_kerf: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf)),
                             trimming: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming)),
                             bar_folding: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, appDefaults.bar)),
+                            hide_cross: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, appDefaults.hide_part_list)),
                             hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)),
                             wrap_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length)),
                         };
@@ -1734,6 +1739,7 @@
                             var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                             var $inputTrimming = $('#ladb_input_trimming', $modal);
                             var $selectBarFolding = $('#ladb_select_bar_folding', $modal);
+                            var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                             var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
@@ -1762,6 +1768,8 @@
                             $inputTrimming.ladbTextinputDimension();
                             $selectBarFolding.val(cuttingdiagram1dOptions.bar_folding ? '1' : '0');
                             $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
+                            $selectHideCross.val(cuttingdiagram1dOptions.hide_cross ? '1' : '0');
+                            $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectHidePartList.val(cuttingdiagram1dOptions.hide_part_list ? '1' : '0');
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                             $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
@@ -1793,6 +1801,7 @@
                                 $inputSawKerf.val(isAppDefaults ? appDefaults.saw_kerf : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, appDefaults.saw_kerf));
                                 $inputTrimming.val(isAppDefaults ? appDefaults.trimming : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, appDefaults.trimming));
                                 $selectBarFolding.selectpicker('val', (isAppDefaults ? appDefaults.bar_folding : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, appDefaults.bar_folding)) ? '1' : '0');
+                                $selectHideCross.selectpicker('val', (isAppDefaults ? appDefaults.hide_cross : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, appDefaults.hide_cross)) ? '1' : '0');
                                 $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
                                 $inputWrapLength.val(isAppDefaults ? appDefaults.wrap_length : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length));
                             };
@@ -1819,6 +1828,7 @@
                                 var saw_kerf = $inputSawKerf.val();
                                 var trimming = $inputTrimming.val();
                                 var bar_folding = $selectBarFolding.val();
+                                var hide_cross = $selectHideCross.val();
                                 var hide_part_list = $selectHidePartList.val();
                                 var wrap_length = $inputWrapLength.val();
 
@@ -1827,6 +1837,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF, value:saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING, value:trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING, value:bar_folding },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, value:hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, value:wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
@@ -1857,6 +1868,7 @@
                                 cuttingdiagram1dOptions.saw_kerf = $inputSawKerf.val();
                                 cuttingdiagram1dOptions.trimming = $inputTrimming.val();
                                 cuttingdiagram1dOptions.bar_folding = $selectBarFolding.val() === '1';
+                                cuttingdiagram1dOptions.hide_cross = $selectHideCross.val() === '1';
                                 cuttingdiagram1dOptions.hide_part_list = $selectHidePartList.val() === '1';
                                 cuttingdiagram1dOptions.wrap_length = $inputWrapLength.val();
 
@@ -1867,6 +1879,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SAW_KERF + '_' + groupId, value:cuttingdiagram1dOptions.saw_kerf, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_TRIMMING + '_' + groupId, value:cuttingdiagram1dOptions.trimming, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_BAR_FOLDING + '_' + groupId, value:cuttingdiagram1dOptions.bar_folding },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId, value:cuttingdiagram1dOptions.hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram1dOptions.hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
@@ -2006,6 +2019,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
 
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId,
@@ -2015,6 +2029,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId,
 
             ],
@@ -2040,6 +2055,7 @@
                             optimization: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION, appDefaults.optimization)),
                             stacking: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, appDefaults.stacking)),
                             sheet_folding: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding)),
+                            hide_cross: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)),
                             hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)),
                         };
 
@@ -2063,6 +2079,7 @@
                             var $selectOptimization = $('#ladb_select_optimization', $modal);
                             var $selectStacking = $('#ladb_select_stacking', $modal);
                             var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
+                            var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
@@ -2094,6 +2111,8 @@
                             $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectSheetFolding.val(cuttingdiagram2dOptions.sheet_folding ? '1' : '0');
                             $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
+                            $selectHideCross.val(cuttingdiagram2dOptions.hide_cross ? '1' : '0');
+                            $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectHidePartList.val(cuttingdiagram2dOptions.hide_part_list ? '1' : '0');
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
 
@@ -2132,6 +2151,7 @@
                                 $selectOptimization.selectpicker('val', isAppDefaults ? appDefaults.optimization : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION, appDefaults.optimization));
                                 $selectStacking.selectpicker('val', isAppDefaults ? appDefaults.stacking : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, appDefaults.stacking));
                                 $selectSheetFolding.selectpicker('val', (isAppDefaults ? appDefaults.sheet_folding : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding)) ? '1' : '0');
+                                $selectHideCross.selectpicker('val', (isAppDefaults ? appDefaults.hide_cross : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)) ? '1' : '0');
                                 $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
                             };
 
@@ -2159,6 +2179,7 @@
                                 var optimization = $selectOptimization.val();
                                 var stacking = $selectStacking.val();
                                 var sheet_folding = $selectSheetFolding.val();
+                                var hide_cross = $selectHideCross.val();
                                 var hide_part_list = $selectHidePartList.val();
 
                                 // Update default cut options for specific type to last used
@@ -2168,6 +2189,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION, value:optimization },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING, value:stacking },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, value:sheet_folding },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, value:hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
@@ -2201,6 +2223,7 @@
                                 cuttingdiagram2dOptions.optimization = $selectOptimization.val();
                                 cuttingdiagram2dOptions.stacking = $selectStacking.val();
                                 cuttingdiagram2dOptions.sheet_folding = $selectSheetFolding.val() === '1';
+                                cuttingdiagram2dOptions.hide_cross = $selectHideCross.val() === '1';
                                 cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
 
                                 // Store options
@@ -2212,6 +2235,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_OPTIMIZATION + '_' + groupId, value:cuttingdiagram2dOptions.optimization },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STACKING + '_' + groupId, value:cuttingdiagram2dOptions.stacking },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, value:cuttingdiagram2dOptions.sheet_folding },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, value:cuttingdiagram2dOptions.hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 

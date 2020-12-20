@@ -8,6 +8,7 @@ in 1.x and 0.x versions.
 
   * Added Accessory material type
   * Added part unit price field for accessories
+  * Added bars and sheets scrap's cross display / hide in cutting diagram options
   
 * 1.9.10 (WIP)
 

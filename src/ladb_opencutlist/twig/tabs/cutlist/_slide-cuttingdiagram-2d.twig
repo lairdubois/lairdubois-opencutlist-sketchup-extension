@@ -227,7 +227,7 @@
                             {% for leftover in sheet.leftovers %}
                                 <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
                                     <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
-                                    {% set hideCross = leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
+                                    {% set hideCross = options.hide_cross or leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                     {% if not hideCross %}
                                         <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                         <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>

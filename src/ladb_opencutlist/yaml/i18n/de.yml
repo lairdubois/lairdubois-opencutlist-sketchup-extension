@@ -398,6 +398,10 @@ tab:
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Randabfallbreite

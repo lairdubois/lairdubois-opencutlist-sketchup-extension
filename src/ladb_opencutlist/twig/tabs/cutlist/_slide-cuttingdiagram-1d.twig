@@ -222,7 +222,7 @@
                                 {% set displayedDimensions = false %}
                                 {% for slice in bar.leftover.slices %}
                                     {% set yOffset = slice.index * sliceHeight %}
-                                    {% set hideCross = slice.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
+                                    {% set hideCross = options.hide_cross or slice.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
                                     {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * bar.leftover.length|length) %}
                                     <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
                                     {% if not hideCross %}

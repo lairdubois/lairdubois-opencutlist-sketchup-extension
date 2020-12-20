@@ -18,6 +18,7 @@ module Ladb::OpenCutList
       @optimization = settings['optimization'].to_i
       @stacking = settings['stacking'].to_i
       @sheet_folding = settings['sheet_folding']
+      @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
 
       @cutlist = cutlist
@@ -84,6 +85,7 @@ module Ladb::OpenCutList
           :options => {
               :grained => @grained,
               :sheet_folding => @sheet_folding,
+              :hide_cross => @hide_cross,
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,

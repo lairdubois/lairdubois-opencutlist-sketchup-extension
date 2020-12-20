@@ -398,6 +398,10 @@ tab:
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
+      option_hide_cross: Chutes
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_hide_cross_0: Dimensions et Croix
+      option_hide_cross_1: Dimensions seules
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge

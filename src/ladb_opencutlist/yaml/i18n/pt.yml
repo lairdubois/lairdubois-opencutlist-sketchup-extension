@@ -398,6 +398,10 @@ tab:
       option_hide_part_list_2d_help: Exiba ou mascare a lista de partes de cada painel.
       option_wrap_length: Comprimento da placa de embrulho
       option_wrap_length_help: Comprimento máximo após o qual uma placa será quebrada em várias linhas.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Espessura da lâmina
       option_saw_kerf_help: A largura do material removido pelo corte da serra.
       option_trimming: Tamanho de corte

@@ -13,6 +13,7 @@ module Ladb::OpenCutList
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @bar_folding = settings['bar_folding']
+      @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings['wrap_length']).to_l.to_f
 
@@ -72,6 +73,7 @@ module Ladb::OpenCutList
               :saw_kerf => @saw_kerf.to_l.to_s,
               :trimming => @trimming.to_l.to_s,
               :bar_folding => @bar_folding,
+              :hide_cross => @hide_cross,
               :hide_part_list => @hide_part_list,
               :wrap_length => @wrap_length,
           },

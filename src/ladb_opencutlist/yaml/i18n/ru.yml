@@ -398,6 +398,10 @@ tab:
       option_hide_part_list_2d_help: Отобразить или скрыть список деталей для каждой панели.
       option_wrap_length: Длина обёртки доски
       option_wrap_length_help: Максимальная длина, после которой доска будет обернута в несколько слоёв.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Ширина пропила
       option_saw_kerf_help: Зубья пильного диска при распиле удаляют часть материала по их ширине. Это необходимо учитывать в расчетах раскроя.
       option_trimming: Размер обрезки
