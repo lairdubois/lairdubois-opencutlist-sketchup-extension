@@ -350,7 +350,9 @@
 
       dbg(@options.to_str, true)
 
-      return nil, ERROR_INVALID_INPUT if !valid_input?
+      if !valid_input? && @errors.size > 0
+        return nil, @errors[0]
+      end
 
       if @estimated_nb_bins > 3 && @options.optimization == OPT_ADVANCED
         @options.set_optimization(OPT_LIGHT)
