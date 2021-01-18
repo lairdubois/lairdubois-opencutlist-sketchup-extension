@@ -38,12 +38,15 @@ module Ladb::OpenCutList::BinPacking2D
       @maxlength = maxlength
       @maxwidth = maxwidth
 
-      # shape is currently unknown, assuming, but not important!
+      # Shape is currently unknown, assuming, but not important!
       @shape = SL
 
       @sboxes = []
     end
 
+    #
+    # Adds a first box to the superbox
+    #
     def add_first_box(box)
       @sboxes << box
       # Check if box fits into @maxlength, @maxwidth!
@@ -53,6 +56,7 @@ module Ladb::OpenCutList::BinPacking2D
       @rotated = false
       # Superbox has no shape yet, we could stack either way!
     end
+
     #
     # Stacks identical elements in boxes until maxlength reached.
     # Boxes passed in should all have the same width.

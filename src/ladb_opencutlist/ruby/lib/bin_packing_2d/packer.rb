@@ -36,6 +36,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Statistic objects for this packing.
     attr_reader :stat, :gstat
 
+    attr_reader :previous_packer
+
     def initialize(options)
       super
 
@@ -45,37 +47,19 @@ module Ladb::OpenCutList::BinPacking2D
       @unused_bins = []
 
       @boxes = []
-      #@nb_input_boxes = 0
-      #@nb_valid_boxes = 0
       @unplaced_boxes = []
       @invalid_boxes = []
 
       @stacking_maxlength = 0
       @stacking_maxwidth = 0
 
+      @min_length = 0
+      @min_width = 0
+
       @previous_packer = nil
 
       # statistic per packer/bin
       @stat = nil
-
-=begin
-      # from bin
-      @stat[:net_area] = 0
-      @stat[:used_area] = 0
-      @stat[:bbox_area] = 0
-      @stat[:compactness] = 0
-      @stat[:l_measure] = 0
-      @stat[:efficiency] = 0
-      @stat[:nb_cuts] = 0
-      @stat[:total_length_cuts] = 0
-      @stat[:nb_leftovers] = 0
-      @stat[:largest_leftover_area] = 0
-      @stat[:nb_placed_boxes] = 0
-      @stat[:signature] = "not packed"
-      # added in packer
-      @stat[:nb_unplaced_boxes] = 0
-      @stat[:area_unplaced_boxes] = 0
-=end
 
       # statistic collected for final report
       @gstat = {}
@@ -85,6 +69,8 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_packed_bins] = 0
       @gstat[:nb_unused_bins] = 0
       @gstat[:nb_leftovers] = 0
+      @gstat[:rank] = 0
+      @gstat[:total_compactness] = 0
     end
 
     #
@@ -96,29 +82,24 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def link_to(previous_packer)
       if !previous_packer.nil?
-        #dbg("Link to previous!")
         @previous_packer = previous_packer
         @next_bin_index = previous_packer.next_bin_index
 
-        #dbg("packed bins")
         @previous_packer.packed_bins.each do |bin|
-          #dbg(bin.to_str, true)
           @packed_bins << bin
         end
-        #dbg("unused bins", true)
+
         @previous_packer.unused_bins.each do |bin|
           new_bin = Bin.new(bin.length, bin.width, bin.type, @options)
           @next_bin_index = new_bin.set_index(bin.index)
-          #dbg(new_bin.to_str, true)
           @bins << new_bin
         end
-        #dbg("unplaced_boxes", true)
+
         @previous_packer.unplaced_boxes.each do |box|
           new_box = Box.new(box.length, box.width, box.rotatable, box.data)
-          #dbg(new_box.to_str, true)
           @boxes << new_box
         end
-        #dbg("invalid_boxes", true)
+
         @previous_packer.invalid_boxes.each do |box|
           @invalid_boxes << box
         end
@@ -127,7 +108,7 @@ module Ladb::OpenCutList::BinPacking2D
         @gstat[:nb_input_boxes] = previous_packer.gstat[:nb_input_boxes]
         @gstat[:nb_leftovers] = previous_packer.gstat[:nb_leftovers]
         @gstat[:nb_packed_boxes] = previous_packer.gstat[:nb_packed_boxes]
-
+        @gstat[:total_compactness] = previous_packer.gstat[:total_compactness]
       end
     end
 
@@ -187,15 +168,45 @@ module Ladb::OpenCutList::BinPacking2D
         @boxes.sort_by! { |box| [-box.length, -box.width] }
       when PRESORT_AREA_DECR
         @boxes.sort_by! { |box| [-box.width * box.length] }
-      when PRESORT_PERIMETER_DECR
-        @boxes.sort_by! { |box| [-box.length - box.width] }
-      when PRESORT_SHORTEST_SIDE_DECR
-        @boxes.sort_by! { |box| [-[box.length, box.width].min] }
       when PRESORT_LONGEST_SIDE_DECR
         @boxes.sort_by! { |box| [-[box.length, box.width].max] }
+      when PRESORT_SHORTEST_SIDE_DECR
+        @boxes.sort_by! { |box| [-[box.length, box.width].min] }
+      when PRESORT_PERIMETER_DECR
+        @boxes.sort_by! { |box| [-box.length - box.width] }
+      when PRESORT_ALTERNATING_WIDTHS
+        w_max = @boxes.max_by { |box| box.width}
+        wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
+        wl.sort_by! { |box| -box.width }
+        ws.sort_by! { |box| -box.width }
+        if wl.size == 0 || ws.size == 0
+          @options.presort = PRESORT_WIDTH_DECR
+          sort_boxes
+        elsif ws.size >= wl.size
+          @boxes = ws.zip(wl).flatten!.compact
+        else
+          @boxes = wl.zip(ws).flatten!.compact
+        end
+      when PRESORT_ALTERNATING_LENGTHS
+        l_max = @boxes.max_by { |box| box.length}
+        ll, ls = @boxes.partition { |box| box.length >= (@stacking_maxlength - l_max.length) }
+        ll.sort_by! { |box| -box.length }
+        ls.sort_by! { |box| -box.length }
+        if ll.size == 0 || ls.size == 0
+          @options.presort = PRESORT_ALTERNATING_WIDTHS
+          sort_boxes
+        elsif ls.size >= ll.size
+          @boxes = ls.zip(ll).flatten!.compact
+        else
+          @boxes = ll.zip(ls).flatten!.compact
+        end
       else
         raise(Packing2DError, "Presorting option not available in packer.sort_boxes!")
       end
+
+      #@min_length_box = @boxes.min{ |a, b| a.length <=> b.length }
+      #@min_width_box = @boxes.min{ |a, b| a.width <=> b.width }
+      #puts("min length = #{@min_length_box.length}, min_width = #{@min_width_box.width}")
 
       #dbg("-> sorted input boxes/superboxes", true)
       #@boxes.each { |box| dbg("    " + box.to_str, true) }
@@ -220,7 +231,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       sboxes = []
       while !@boxes.empty?
-        box = @boxes.shift
+      box = @boxes.shift
         sbox = SuperBox.new(@stacking_maxlength, @stacking_maxwidth, @options.saw_kerf)
         sbox.add_first_box(box)
         sboxes << sbox
@@ -243,7 +254,7 @@ module Ladb::OpenCutList::BinPacking2D
         end
       end
 
-      # Start with smallest element!
+      # Start with width decreasing!
       @boxes.sort_by!(&:width) .reverse!
 
       sboxes = []
@@ -252,12 +263,8 @@ module Ladb::OpenCutList::BinPacking2D
         sbox = SuperBox.new(@stacking_maxlength, @stacking_maxwidth, @options.saw_kerf)
         sbox.add_first_box(box)
         sboxes << sbox
-        #puts("starting stack with")
-        #puts(sbox.to_str)
         if !@boxes.empty?
           @boxes = sbox.stack_width(@boxes)
-          #puts("resulting")
-          #puts(sbox.to_str)
         end
       end
       @boxes = sboxes
@@ -306,7 +313,7 @@ module Ladb::OpenCutList::BinPacking2D
           return false
         end
       else
-        # Offcuts are used in increasing order of area
+        # Offcuts are used in increasing order of area.
         @bins.sort_by! { |bin| [bin.length * bin.width]}
         @bins.each do |bin|
           # Assign index to each user defined bin.
@@ -327,9 +334,12 @@ module Ladb::OpenCutList::BinPacking2D
         make_superboxes_width
       end
       sort_boxes
+=begin
+      puts("new run")
       @boxes.each do |box|
-        #puts(box.to_str)
+        puts(box.to_str())
       end
+=end
       return true
     end
 
@@ -358,20 +368,16 @@ module Ladb::OpenCutList::BinPacking2D
       current_bin = get_next_bin
       return ERROR_NO_BIN if current_bin.nil?
 
-      # TODO: no need to pass boxes!
       pack_single(current_bin)
 
-      #current_bin.leftover_merge_possible?
       current_bin.final_bounding_box
       current_bin.keep_signature(@options.signature)
 
       @packed_bins << current_bin
 
       @unplaced_boxes = @boxes
-      # TODO:  only on the last pass?
       @unplaced_boxes = unmake_superboxes(@unplaced_boxes)
 
-      # TODO packer.pack can this be above?
       postprocess(current_bin)
 
       @unused_bins = @bins
@@ -391,11 +397,8 @@ module Ladb::OpenCutList::BinPacking2D
       previous_box = nil
       begin
         until @boxes.empty?
-          #
           # Select next box and get ranked score from current_bin.
-          #
           box = @boxes.shift
-          #puts("trying " + box.to_str)
           if current_bin.boxes.size > 1 && !box.equal?(previous_box)
             current_bin.bounding_box(box, false)
             # Only recompute bounding box when no merge is possible!
@@ -404,13 +407,11 @@ module Ladb::OpenCutList::BinPacking2D
             #end
             #end
           end
-
           #dbg("\n-> trying box: length=#{box.length}, width=#{box.width}", true)
 
           score = current_bin.best_ranked_score(box)
-          #
+
           # No placement possible in current bin.
-          #
           if score.nil?
             #
             # Step 1: if this box is a superbox, reduce it by one. Push single box
@@ -450,7 +451,7 @@ module Ladb::OpenCutList::BinPacking2D
             leftover_index = score[0]
             box.rotate if score[2] == ROTATED
             # Caution! once the box is placed, the leftover index is NOT VALID anymore!
-            current_bin.add_box(box, leftover_index)
+            current_bin.add_box(box, leftover_index, @min_length, @min_width)
             previous_box = box
           end
         end
@@ -469,33 +470,30 @@ module Ladb::OpenCutList::BinPacking2D
     # Collects all pieces per bin, runs statistics.
     # TODO packer.postprocess verify that we havent lost any boxes in the packing process
     #
-
     def postprocess(current_bin)
 
       current_bin.summarize
 
+      # Get statistics from bin, add our own.
       @stat = current_bin.stat
       @stat[:area_unplaced_boxes] = @unplaced_boxes.inject(0) { |sum, box| sum + box.area }
       @stat[:nb_unplaced_boxes] = @unplaced_boxes.size
-=begin
-      @stat[:nb_unplaced_boxes] = @unplaced_boxes.size
-      @stat[:compactness] = current_bin.stat[:compactness]
-      @stat[:l_measure] = current_bin.stat[:l_measure]
-      @stat[:nb_cuts] = current_bin.stat[:nb_cuts]
 
-      @stat[:largest_leftover_area] = current_bin.stat[:largest_leftover_area]
-      @stat[:efficiency] = current_bin.stat[:efficiency]
-      @stat[:total_length_cuts] = current_bin.stat[:total_length_cuts]
-      @stat[:nb_leftovers] = current_bin.stat[:nb_leftovers]
-
-=end
       @gstat[:nb_invalid_boxes] = @invalid_boxes.size
       @gstat[:nb_packed_bins] = @packed_bins.size
       @gstat[:nb_leftovers] += current_bin.stat[:nb_leftovers]
       @gstat[:nb_packed_boxes] += current_bin.boxes.size
       @gstat[:nb_unused_bins] = @unused_bins.size
+      @gstat[:total_compactness] += @stat[:compactness]
     end
 
+    #
+    # We do not yet make a difference between invalid and unplaceable box
+    # in the GUI.
+    #
+    def finish()
+      @unplaced_boxes += @invalid_boxes if invalid_boxes.size() > 0
+    end
     #
     # Sorts used bins by efficiency.
     #
@@ -506,7 +504,6 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging!
     #
-
     def to_term
 
       debug_old = @options.debug
@@ -521,7 +518,6 @@ module Ladb::OpenCutList::BinPacking2D
         dbg("    l_measure           #{'%12.2f' % bin.stat[:l_measure]}")
         dbg("    efficiency                #{'%6.2f' % bin.stat[:efficiency]}")
         dbg("    nb_leftovers               #{'%5d' % bin.stat[:nb_leftovers]}")
-        #pp(bin)
         bin.to_term
       end
 

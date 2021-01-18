@@ -54,13 +54,15 @@
     PRESORT_LENGTH_DECR = 2
     # Sort by area decreasing.
     PRESORT_AREA_DECR = 3
-    # Sort by perimeter decreasing.
-    PRESORT_PERIMETER_DECR = 4
     # Sort by shortest side increasing.
-    PRESORT_LONGEST_SIDE_DECR = 5
+    PRESORT_LONGEST_SIDE_DECR = 4
     # Sort by longest side increasing.
-    PRESORT_SHORTEST_SIDE_DECR = 6
-    PRESORT = ['input', 'width', 'length', 'area', 'perimeter', 'longest', 'shortest']
+    PRESORT_SHORTEST_SIDE_DECR = 5
+    # Sort by perimeter decreasing.
+    PRESORT_PERIMETER_DECR = 6
+    PRESORT_ALTERNATING_LENGTHS = 7
+    PRESORT_ALTERNATING_WIDTHS = 8
+    PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest', 'perimeter', 'alt_length', 'alt_width']
 
     # Do not try to stack boxes.
     STACKING_NONE = 0
@@ -97,9 +99,8 @@
 
     # Optimization level.
     OPT_LIGHT = 0
-    OPT_MEDIUM = 1
-    OPT_ADVANCED = 2
-    OPTIMIZATION = ['light', 'medium', 'advanced']
+    OPT_ADVANCED = 1
+    OPTIMIZATION = ['light', 'advanced']
     #
     # Exception raised in this module.
     #

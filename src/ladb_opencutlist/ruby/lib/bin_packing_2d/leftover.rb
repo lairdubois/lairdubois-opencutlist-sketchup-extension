@@ -130,15 +130,12 @@
     def score(bin_index, leftover_index, box)
 
       s = []
-      #dbg(" #{@level} " + to_str(), true)
       s1 = heuristic_score(box.length, box.width)
       if s1 < MAX_INT
         # Make score lower if one of the dimensions matches with a preference to length.
         # TODO leftover.score: check if matching should be aligned with shape of bin.
         s1 = EPS if (@length - box.length).abs <= EPS
         s1 = EPS if (@width - box.width).abs <= EPS
-        # Not a so good idea
-        #s1 = s1/2 if @options.stacking == STACKING_LENGTH && box.length < box.width
         s << [leftover_index, s1, NOT_ROTATED, @level]
       end
       if box.rotatable
@@ -146,14 +143,9 @@
         if s2 < MAX_INT
           s2 = EPS if (@length - box.width).abs <= EPS
           s2 = EPS if (@width - box.length).abs <= EPS
-          #s2 = s2/2 if @options.stacking == STACKING_WIDTH && box.width < box.length
           s << [leftover_index, s2, ROTATED, @level]
         end
       end
-      #puts("scores for #{box.length}, #{box.width} in #{@length}, #{@width}")
-      #s.each do |e|
-      #  puts("lo=#{e[0]}, s=#{e[1]}, r=#{e[2]}, #{@level}")
-      #end
       return s
     end
 
@@ -161,18 +153,24 @@
     # Returns true if order of guillotine cut is horizontal, then vertical,
     # false otherwise.
     #
-    def split_horizontally_first?(box)
+    def split_horizontally_first?(box, min_length, min_width)
       #
-      # When stacking is on, always do the first cut in the direction of stacking, always!
-      #
-=begin
+      # When stacking is on, one would be tempted to always do the first cut
+      # in the direction of stacking, always!
       # Does not work well in practice!
-      if (@x - @options.trimsize).abs < EPS && @options.stacking == STACKING_LENGTH
+
+      # there is no need to make right leftover longer than necessary
+      lo_right_length = @length - box.length
+      lo_bottom_width = @width - box.width
+      m = [min_length, min_width].min
+
+      if lo_right_length < m
         return true
-      elsif (@y - @options.trimsize).abs < EPS && @options.stacking == STACKING_WIDTH
+      end
+      if lo_bottom_width < m
         return false
       end
-=end
+
       case @options.split
       when SPLIT_SHORTERLEFTOVER_AXIS
         return (@length - box.length < @width - box.width)
@@ -203,16 +201,8 @@
     # Positions the box inside the leftover and splits it horizontally first.
     #
     def split_horizontal_first(x, y, box=nil)
-=begin
-      if !box.nil?
-        box.set_position(@x, @y)
-        x = box.x + box.length
-        y = box.y + box.width
-      end
-=end
+      # Trying to split outside of this leftover!
       if x > @x + @length + EPS || y > @y + @width + EPS
-        #dbg(to_str(), true)
-        #dbg("#{x}, #{y}", true)
         raise(Packing2DError, "Splitting outside of this leftover in split_horizontal_first! #{@options.signature}")
       end
 
@@ -222,7 +212,6 @@
       # Horizontal cut.
       if (@y + @width - y).abs >= EPS
         cf = Cut.new(@x, y, @length, true, @level)
-        #dbg("    " + cf.to_str())
         new_cuts << cf
       end
 
@@ -233,7 +222,6 @@
       # Vertical cut.
       if (@x + @length - x).abs >= EPS
         cs = Cut.new(x, @y, y - @y, false, @level)
-        #dbg("    " + cs.to_str())
         new_cuts << cs
       end
 
@@ -241,7 +229,7 @@
       lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level+1, @options)
       new_leftovers << lr
 
-      # Unmake it if it is a superbox.
+      # If the box is a superbox, unmake it!
       new_boxes, more_cuts = unmake_superbox(box)
       new_cuts += more_cuts
 
@@ -299,7 +287,6 @@
       return [new_leftovers, new_cuts, new_boxes]
     end
 
-
     #
     # Unmakes a superbox, adding the necessary cuts.
     #
@@ -312,15 +299,12 @@
       if sbox.is_a?(SuperBox)
         if sbox.sboxes.size == 1
           single_box = sbox.sboxes.shift()
-          #dbg("    single " + single_box.to_str())
           single_box.set_position(sbox.x, sbox.y)
           unpacked_boxes << single_box
         else
-          #dbg("    multiple " + sbox.to_str(), true)
           if (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
             (@options.stacking == STACKING_WIDTH && sbox.rotated)
             top_box = sbox.sboxes.shift()
-            #dbg(top_box.to_str())
             top_box.set_position(sbox.x, sbox.y)
             offset = sbox.x + top_box.length
             unpacked_boxes << top_box
@@ -347,7 +331,6 @@
           end
         end
       elsif sbox.is_a?(Box)
-        #dbg("    simple " + sbox.to_str())
         unpacked_boxes << sbox
       else
         raise(Packing2DError, "Unpacking weird stuff in bin.unmake_superbox!")
