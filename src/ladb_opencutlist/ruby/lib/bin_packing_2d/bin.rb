@@ -62,6 +62,8 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:l_measure] = 0
       @stat[:nb_cuts] = 0
       @stat[:largest_leftover_area] = 0
+      @stat[:longest_leftover] = 0
+      @stat[:widest_leftover] = 0
       @stat[:total_length_cuts] = 0
       @stat[:efficiency] = 0
       @stat[:signature] = "not packed"
@@ -173,7 +175,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Adds a box to this bin into leftover at position leftover_index.
     #
-    def add_box(box, leftover_index)
+    def add_box(box, leftover_index, min_length, min_width)
 
       #dbg("   best bin=#{@index}, leftover_id=#{leftover_index} <= box #{box.length}, #{box.width}", true)
 
@@ -182,7 +184,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       # Split heuristic.
       box.set_position(selected_leftover.x, selected_leftover.y)
-      if selected_leftover.split_horizontally_first?(box)
+      if selected_leftover.split_horizontally_first?(box, min_length, min_width)
         new_leftovers, new_cuts, new_boxes =
           selected_leftover.split_horizontal_first(box.x + box.length, box.y + box.width, box)
       else
@@ -236,22 +238,22 @@ module Ladb::OpenCutList::BinPacking2D
         @stat[:compactness] = MAX_INT
       end
 
-      if @leftovers.size > 0
-        @leftovers.each do |leftover|
-          #@stat[:l_measure] += Math.sqrt((leftover.x + leftover.length/2.0)**2 + (leftover.y + leftover.width/2.0)**2)*leftover.area
-          # TODO check which measure is best
-          #@stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
-          #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_length + (leftover.y + leftover.width/2.0)/@max_width
-          #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_x + (leftover.y + leftover.width/2.0)/@max_y
-          if leftover.x + leftover.length <= @max_x &&
-            leftover.y + leftover.width <= @max_y
-            @stat[:l_measure] += (leftover.x)/@max_x + (leftover.y)/@max_y
-          end
-          @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
+      @leftovers.each do |leftover|
+        #@stat[:l_measure] += Math.sqrt((leftover.x + leftover.length/2.0)**2 + (leftover.y + leftover.width/2.0)**2)*leftover.area
+        # TODO check which measure is best
+        #@stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
+        #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_length + (leftover.y + leftover.width/2.0)/@max_width
+        #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_x + (leftover.y + leftover.width/2.0)/@max_y
+        @stat[:longest_leftover] = [@stat[:longest_leftover], leftover.length].max
+        @stat[:widest_leftover] = [@stat[:widest_leftover], leftover.width].max
+        if leftover.x + leftover.length <= @max_x &&
+          leftover.y + leftover.width <= @max_y
+          @stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
+        #@stat[:l_measure] += (leftover.x)/@max_x + (leftover.y)/@max_y
+          #@stat[:l_measure] += leftover.area * ((leftover.x + leftover.length/2) + (leftover.y + leftover.width/2))
+
         end
-      #  @stat[:l_measure] /= @leftovers.size
-      else
-        @stat[:l_measure] = MAX_INT
+        @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
       end
 
       @stat[:efficiency] = 100*@stat[:used_area]/@stat[:net_area]

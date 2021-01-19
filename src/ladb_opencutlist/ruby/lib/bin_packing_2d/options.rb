@@ -5,41 +5,73 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Options
 
-    attr_accessor :debug
-    attr_accessor :optimization, :stacking_pref
-    attr_accessor :base_length, :base_width
-    attr_accessor :saw_kerf, :trimsize, :rotatable
+    attr_reader :debug
+    attr_reader :optimization, :stacking_pref
+    attr_reader :base_length, :base_width
+    attr_reader :saw_kerf, :trimsize, :rotatable
     attr_accessor :presort, :stacking, :score, :split
 
     def initialize
       @debug = debug
+
+      # General algorithm options.
       @optimization = 0
       @stacking_pref = 0
-
+      @base_length = 0
+      @base_width = 0
       # Bin configuration options.
-      #@rotatable = false
+      @rotatable = false
       @saw_kerf = 0
       @trimsize = 0
 
-      # Used internally by algorithm
+      # Used internally by algorithm.
       @presort = 0
       @score = 0
       @split = 0
       @stacking = 0
     end
 
-    #
-    # Returns true if a standard bin has been setup.
-    #
-    def std_bin_exists?
-      return (@base_length - 2 * @trimsize) > EPS &&
-        (@base_width - 2 * @trimsize) > EPS
+    def set_debug(debug)
+      @debug = debug
     end
 
+    def set_optimization(optimization)
+      @optimization = optimization
+    end
+
+    def set_stacking_pref(stacking_pref)
+      @stacking_pref = stacking_pref
+    end
+
+    def set_base_length(base_length)
+      @base_length = base_length
+    end
+
+    def set_base_width(base_width)
+      @base_width = base_width
+    end
+
+    def set_rotatable(rotatable)
+      @rotatable = rotatable
+    end
+
+    def set_saw_kerf(saw_kerf)
+      @saw_kerf = saw_kerf
+    end
+
+    def set_trimsize(trimsize)
+      @trimsize = trimsize
+    end
+    #
+    # Make a signature string of the options.
+    #
     def signature
       return "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{'%5.3f' % @saw_kerf}/#{'%5.3f' % @trimsize}"
     end
 
+    #
+    # Get number of packings for this option setup.
+    #
     def get_computations(optimization, stacking_pref)
       case optimization
       when OPT_LIGHT
@@ -47,12 +79,6 @@ module Ladb::OpenCutList::BinPacking2D
           return 16
         else
           return 48
-        end
-      when OPT_MEDIUM
-        if stacking_pref <= STACKING_WIDTH
-          return 72
-        else
-          return 216
         end
       when OPT_ADVANCED
         if stacking_pref <= STACKING_WIDTH

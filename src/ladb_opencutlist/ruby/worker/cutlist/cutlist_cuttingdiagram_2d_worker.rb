@@ -38,13 +38,13 @@ module Ladb::OpenCutList
 
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking2D::Options.new
-      options.base_length = @std_sheet_length
-      options.base_width = @std_sheet_width
-      options.rotatable = !@grained
-      options.saw_kerf = @saw_kerf
-      options.trimsize = @trimming
-      options.optimization = @optimization
-      options.stacking_pref = @stacking
+      options.set_base_length(@std_sheet_length)
+      options.set_base_width(@std_sheet_width)
+      options.set_rotatable(!@grained)
+      options.set_saw_kerf(@saw_kerf)
+      options.set_trimsize(@trimming)
+      options.set_optimization(@optimization)
+      options.set_stacking_pref(@stacking)
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking2D::PackEngine.new(options)
