@@ -137,7 +137,7 @@ tab:
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
         L'épaisseur *{{ std_dimension }}* est arrondie par la précision du modèle.
-        Epaisseur réelle : *{{ std_dimension_real }}*
+        Épaisseur réelle : *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
@@ -166,7 +166,7 @@ tab:
       add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
       remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
-      multiple_layers: "Attention, cette pièce est composée de sous parties présentent dans {{ count }} calques différents :<br>{{ layers }}"
+      multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
       children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
@@ -229,8 +229,8 @@ tab:
 
         Et donc,
         - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+        - la *largeur* sur l'axe <span style='color:green'>vert</span>
+        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
       tags: Tags
       tags_help: |
         Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
@@ -259,8 +259,8 @@ tab:
 
         Sinon,
         - la *longueur* est lue sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur le <span style='color:green'>vert</span>
-        - l'*épaisseur* sur le <span style='color:blue'>bleu</span>
+        - la *largeur* sur l'axe <span style='color:green'>vert</span>
+        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
       smart_material: Attribution *intelligente* des matières
       smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
@@ -275,7 +275,7 @@ tab:
       part_folding: Regrouper les pièces identiques
       part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
       hide_entity_names: Masquer les noms d'instance
-      hide_entity_names_help: Si cette option est activée, les **noms d'instance** des pièces ne sont pas affichées.
+      hide_entity_names_help: Si cette option est activée, les **noms d'instances** des pièces ne sont pas affichés.
       hide_tags: Masquer les tags
       hide_tags_help: Si cette option est activée, les **tags** placés sur les pièces ne sont pas affichés.
       hide_cutting_dimensions: Masquer les dimensions de débit
@@ -394,8 +394,8 @@ tab:
       option_hide_part_list_1d_0: Affichée pour chaque barre
       option_hide_part_list_2d_0: Affichée pour chaque panneau
       option_hide_part_list_1: Masquée
-      option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentent dans chaque barre.
-      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentent dans chaque panneau.
+      option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre.
+      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_hide_cross: Chutes
@@ -410,7 +410,8 @@ tab:
       option_optimization: Niveau d'optimisation
       option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
       option_optimization_0: Léger
-      option_optimization_1: Avancé
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
       option_stacking_0: Aucune
@@ -421,7 +422,7 @@ tab:
       option_std_bar_help: |
         Sélectionnez ici la taille de la barre standard qui sera dupliquée pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_bar_add: Ajouter une taille...
       option_std_bar_none: Aucune
       option_scrap_bar_lengths: Restes de barre
@@ -435,7 +436,7 @@ tab:
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
-        Editez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_add: Ajouter une taille...
       option_std_sheet_none: Aucun
       option_scrap_sheet_sizes: Restes de panneau
@@ -489,7 +490,7 @@ tab:
         cutting_dimensions: |
           Ce calepinage présente les pièces dans leur dimensions de **débit**.
         cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcotes de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.*
+          *Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.*
         cutting_dimensions_increase_2d: |
           *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
@@ -562,7 +563,7 @@ tab:
       type: Type
       cut_options: Options de débit
       attributes: Attributs
-      thickness: Epaisseur
+      thickness: Épaisseur
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
       width_increase: Surcote de largeur
@@ -685,7 +686,7 @@ tab:
       count: Quantité
       bbox_length: Longueur capable
       bbox_width: Largeur capable
-      bbox_thickness: Epaisseur capable
+      bbox_thickness: Épaisseur capable
       material: Matière
       tags: Tags
     tooltip:
@@ -704,7 +705,7 @@ tab:
       invalid_length: Pas de longueur valide
       invalid_width: Pas de largeur valide
       invalid_thickness: Pas d'épaisseur valide
-      failed_to_import: L'importation a échouée.
+      failed_to_import: L'importation a échoué.
     warning:
       invalid_count: Pas de quantité valide
       invalid_material: Pas de matière valide
@@ -791,7 +792,7 @@ tab:
     label: Préférences
     title: Préférences
     language: Langue
-    size_and_position: Taille et Position de la fenêtre
+    size_and_position: Taille et position de la fenêtre
   about:
     label: A propos
     title: A propos
