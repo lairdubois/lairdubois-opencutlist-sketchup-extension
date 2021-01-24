@@ -210,6 +210,8 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
+      unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Oversizes
       size_increase_help: |
         Oversizes allow you to increase the dimensions of a single part.
@@ -280,8 +282,6 @@ tab:
       hide_cutting_dimensions_help: If this option is selected, the **rough** dimensions of parts will be hidden.
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: If this option is selected, the **finished** dimensions of parts will be hidden.
-      hide_untyped_material_dimensions: Hide the dimensions for parts with undefined material type
-      hide_untyped_material_dimensions_help: If this option is selected, the dimensions of parts with an undefined material type (not **Solid Wood**, **Sheet Good** or **Dimensional**) will be hidden.
       hide_final_areas: Hide actual area of parts of type *Sheet Good*
       hide_final_areas_help: If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden.
       hide_edges: Hide the column of edge bandings
@@ -398,30 +398,26 @@ tab:
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board will be wrapped over multiple lines.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
       option_trimming_help_1d: The amount of material at each end of the board to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_presort: Preordering of Parts
-      option_presort_help: The order in which the parts will be considered for placement.
-      option_presort_0: None
-      option_presort_1: Width Decreasing
-      option_presort_2: Length Decreasing
-      option_presort_3: Area Decreasing
-      option_presort_4: Perimeter Decreasing
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Stack Identical Parts
       option_stacking_help: The way parts with common width or length are tentatively placed together.
       option_stacking_0: None
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
-      option_bbox_optimization: Bounding Box Optimization
-      option_bbox_optimization_help: |
-        Optimization to remove unnecessary panel through cuts in order to avoid small leftovers.
-        This option may be applied every time a new panel is added, only at the end of the optimization or never.
-      option_bbox_optimization_0: Never
-      option_bbox_optimization_1: Only Final
-      option_bbox_optimization_2: Always
+      option_stacking_3: All Possibilities
       option_std_bar: Standard Board
       option_std_bar_help: |
         Select the standard board, which will be duplicated to contain all the parts.
@@ -532,12 +528,14 @@ tab:
     type_2: Sheet Good
     type_3: Dimensional
     type_4: Edge Banding
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
       type_2: Material type '$t(tab.materials.type_2)'
       type_3: Material type '$t(tab.materials.type_3)'
       type_4: Material type '$t(tab.materials.type_4)'
+      type_5: Material type '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Grain direction
@@ -564,6 +562,7 @@ tab:
       name: Name
       type: Type
       cut_options: Cutting Parameters
+      attributes: Attributs  # TODO
       thickness: Thickness
       length_increase: Length Oversize
       length_increase_help: Oversize applied to the length to define the **raw length**.
@@ -604,6 +603,7 @@ tab:
       edge_decremented_help: Indicates whether the dimensions of parts must be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administration of the default *Cutting Parameters*
         save_success: |

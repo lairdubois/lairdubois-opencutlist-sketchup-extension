@@ -2,27 +2,43 @@
 // Bootstrap Tab
 //
 
-.nav.nav-tabs li {
+.nav.nav-tabs {
 
-  > a, .ladb-fake-tab {
-    color: #333 !important;
-    border: 1px solid #ddd;
-    border-bottom-color: transparent;
-    cursor: default;
-    margin-right: 2px;
-    line-height: 1.42857143;
-    border-radius: 0 0 0 0;
-    position: relative;
-    display: block;
-    padding: 10px 15px;
-    white-space: nowrap;
+  &.nav-centred {
+    text-align:center;
+
+    li {
+      float: none;
+      display: inline-block;
+      *display: inline;
+      zoom: 1;
+    }
+
   }
 
-  &.active {
+  li {
 
     > a, .ladb-fake-tab {
-      background-color: #fff !important;
-      font-weight: bold;
+      color: #333 !important;
+      border: 1px solid #ddd;
+      border-bottom-color: transparent;
+      cursor: default;
+      margin-right: 2px;
+      line-height: 1.42857143;
+      border-radius: 0 0 0 0;
+      position: relative;
+      display: block;
+      padding: 10px 15px;
+      white-space: nowrap;
+    }
+
+    &.active {
+
+      > a, .ladb-fake-tab {
+        background-color: #fff !important;
+        font-weight: bold;
+      }
+
     }
 
   }

@@ -74,7 +74,7 @@ module Ladb::OpenCutList
     # -- Internal --
 
     def inside?(x, y)
-      x >= @left and x <= @right and y >= @top and y <= @bottom
+      x >= @left && x <= @right && y >= @top && y <= @bottom
     end
 
     def update_coords(view)

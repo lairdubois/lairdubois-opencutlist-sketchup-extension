@@ -210,6 +210,8 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
+      unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -280,8 +282,6 @@ tab:
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt.
       hide_bbox_dimensions: Fertigmaße ausblenden
       hide_bbox_dimensions_help: Ist diese Option aktiv, werden die **Fertigmaße** nicht angezeigt.
-      hide_untyped_material_dimensions: Abmessungen für Teile ohne Materialtyp ausblenden
-      hide_untyped_material_dimensions_help: Ist diese Option aktiv, werden die Abmessungen für Teile ohne Materialtyp (**Massivholz**, **Platte** oder **Stangenware**) nicht angezeigt.
       hide_final_areas: Effektive Flächen von Plattenteilen ausblenden
       hide_final_areas_help: Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt.
       hide_edges: Spalten der Kantenbänder ausblenden
@@ -398,30 +398,26 @@ tab:
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Der durch das Sägeblatt verursachte Materialverlust.
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_presort: Vorsortierung der Teile
-      option_presort_help: Reihenfolge in welcher die Teile für die Platzierung berücksichtigt werden.
-      option_presort_0: keine Vorsortierung
-      option_presort_1: abnehmende Breiten
-      option_presort_2: abnehmende Längen
-      option_presort_3: abnehmende Flächen
-      option_presort_4: abnehmende Perimeter
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Identische Teile stapeln
       option_stacking_help: Richtung in welche Teile gleicher Länge oder Breite bevorzugt zusammengefasst werden.
       option_stacking_0: kein Stapeln
       option_stacking_1: der Länge nach
       option_stacking_2: der Breite nach
-      option_bbox_optimization: Hüllenoptimierung
-      option_bbox_optimization_help: |
-        Nicht notwendige Schnitte über die gesamte Plattelänge /-breite werden optimiert, so dass größere Reste übrigbleiben.
-        Diese Optimierung erfolgt nie, immer wenn eine neue Platte hinzugefügt wird oder aber nur am Schluss der Schnittplanberechnung.
-      option_bbox_optimization_0: Nie
-      option_bbox_optimization_1: Nur am Schluss
-      option_bbox_optimization_2: Immer
+      option_stacking_3: Toutes les possibilités
       option_std_bar: Standard Stange
       option_std_bar_help: |
         Wählen Sie hier die Standardstangenware welche dupliziert wird um alle Teile zu enthalten.
@@ -532,12 +528,14 @@ tab:
     type_2: Platte
     type_3: Stangenware
     type_4: Kantenband
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
       type_2: Materialtyp '$t(tab.materials.type_2)'
       type_3: Materialtyp '$t(tab.materials.type_3)'
       type_4: Materialtyp '$t(tab.materials.type_4)'
+      type_5: Materialtyp '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
@@ -564,6 +562,7 @@ tab:
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
+      attributes: Attributs  # TODO
       thickness: Dicke
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches das **Längenrohmass** vergrössert.
@@ -604,6 +603,7 @@ tab:
       edge_decremented_help: Zeigt an ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden muss.
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
         save_success: |

@@ -22,6 +22,7 @@
     var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
     var SETTING_KEY_OPTION_SUFFIX_GRAINED = '_grained';
     var SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED = '_edge_decremented';
+    var SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS = '_volumic_mass';
 
     // CLASS DEFINITION
     // ======================
@@ -192,7 +193,8 @@
                     std_sections: $inputs.inputStdSections.ladbTextinputTokenfield('getValidTokensList'),
                     std_sizes: $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList'),
                     grained: $inputs.selectGrained.val() === '1',
-                    edge_decremented: $inputs.selectEdgeDecremented.val() === '1'
+                    edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
+                    volumic_mass: $inputs.inputVolumicMass.val()
                 }
             }, function (response) {
 
@@ -390,6 +392,7 @@
                 that.editedMaterial.attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
                 that.editedMaterial.attributes.grained = $inputs.selectGrained.val() === '1';
                 that.editedMaterial.attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
+                that.editedMaterial.attributes.volumic_mass = $inputs.inputVolumicMass.val();
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialEvents = true;
@@ -770,6 +773,7 @@
         var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
         var $selectGrained = $('#ladb_materials_select_grained', $modal);
         var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
+        var $inputVolumicMass = $('#ladb_materials_input_volumic_mass', $modal);
         var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
         var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
         var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
@@ -797,6 +801,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $inputVolumicMass.closest('.form-group').show();
                     $spanCutOptionsDefaultsType1.show();
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.hide();
@@ -815,6 +820,7 @@
                     $inputStdSizes.closest('.form-group').show();
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $inputVolumicMass.closest('.form-group').show();
                     $spanCutOptionsDefaultsType1.hide();
                     $spanCutOptionsDefaultsType2.show();
                     $spanCutOptionsDefaultsType3.hide();
@@ -833,6 +839,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $inputVolumicMass.closest('.form-group').show();
                     $spanCutOptionsDefaultsType1.hide();
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.show();
@@ -851,10 +858,14 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
+                    $inputVolumicMass.closest('.form-group').show();
                     $spanCutOptionsDefaultsType1.hide();
                     $spanCutOptionsDefaultsType2.hide();
                     $spanCutOptionsDefaultsType3.hide();
                     $spanCutOptionsDefaultsType4.show();
+                    break;
+                case 5:   // TYPE_ACCESSORY
+                    $inputLengthIncrease.closest('section').hide();
                     break;
             }
         };
@@ -884,6 +895,7 @@
                     setTokens($inputStdSizes, isAppDefaults ? appDefaults.std_sizes : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, appDefaults.std_sizes));
                     $selectGrained.selectpicker('val', (isAppDefaults ? appDefaults.grained : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, appDefaults.grained)) ? '1' : '0');
                     $selectEdgeDecremented.selectpicker('val', (isAppDefaults ? appDefaults.edge_decremented : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, appDefaults.edge_decremented)) ? '1' : '0');
+                    $inputVolumicMass.val(isAppDefaults ? appDefaults.volumic_mass : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, appDefaults.volumic_mass));
 
                 }
 
@@ -965,6 +977,7 @@
             var std_sizes = $inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
             var grained = $selectGrained.val() === '1';
             var edgeDecrement = $selectEdgeDecremented.val() === '1';
+            var volumicMass = $inputVolumicMass.val();
 
             // Update default cut options for specific type to last used
             that.dialog.setSettings([
@@ -978,7 +991,8 @@
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
                 { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, value:edgeDecrement }
+                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, value:edgeDecrement },
+                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, value:volumicMass }
             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
             that.dialog.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
@@ -1033,6 +1047,7 @@
             inputStdSizes: $inputStdSizes,
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
+            inputVolumicMass: $inputVolumicMass,
             hueb: hueb
         }
     };
@@ -1120,7 +1135,7 @@
 
         // Load settings
         var settingsKeys = [];
-        for (var type = 0; type <= 4; type++) {     // 4 = TYPE_EDGE_BAND
+        for (var type = 0; type <= 5; type++) {     // 5 = TYPE_ACCESSORY
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE);
             settingsKeys.push(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE);

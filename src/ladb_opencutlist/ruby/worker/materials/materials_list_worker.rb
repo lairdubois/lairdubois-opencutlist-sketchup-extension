@@ -28,6 +28,7 @@ module Ladb::OpenCutList
           :sheet_good_material_count => 0,
           :dimensional_material_count => 0,
           :edge_material_count => 0,
+          :accessory_material_count => 0,
           :untyped_material_count => 0,
           :materials => [],
           :current_material_name => materials && materials.current ? materials.current.name : nil
@@ -51,7 +52,7 @@ module Ladb::OpenCutList
                   :color => ("#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue]),
                   :alpha => material.alpha,
                   :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-                  :textured => (material.materialType == 1 or material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+                  :textured => (material.materialType == 1 || material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
                   :texture_rotation => 0,
                   :texture_file => nil,
                   :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,
@@ -74,6 +75,7 @@ module Ladb::OpenCutList
                       :std_sizes => material_attributes.std_sizes,
                       :grained => material_attributes.grained,
                       :edge_decremented => material_attributes.edge_decremented,
+                      :volumic_mass => material_attributes.volumic_mass,
                   }
               }
           )
@@ -87,6 +89,8 @@ module Ladb::OpenCutList
               response[:dimensional_material_count] += 1
             when MaterialAttributes::TYPE_EDGE
               response[:edge_material_count] += 1
+            when MaterialAttributes::TYPE_ACCESSORY
+              response[:accessory_material_count] += 1
             else
               response[:untyped_material_count] += 1
           end

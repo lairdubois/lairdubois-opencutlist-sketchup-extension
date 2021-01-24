@@ -124,7 +124,7 @@ module Ladb::OpenCutList
         cutlist.add_used_tags(definition_attributes.tags)
 
         # Labels filter
-        if !@tags_filter.empty? and !definition_attributes.has_tags(@tags_filter)
+        if !@tags_filter.empty? && !definition_attributes.has_tags(@tags_filter)
           cutlist.ignored_instance_count += 1
           next
         end
@@ -143,7 +143,7 @@ module Ladb::OpenCutList
           end
 
           # Edge materials filter -> exclude all non sheet good parts
-          if !@edge_material_names_filter.empty? and material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
+          if !@edge_material_names_filter.empty? && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
           end
@@ -257,11 +257,11 @@ module Ladb::OpenCutList
           saved_number = definition_attributes.fetch_number(part_id)
           if saved_number
             if @part_number_with_letters
-              if saved_number.is_a? String
+              if saved_number.is_a?(String)
                 number = saved_number
               end
             else
-              if saved_number.is_a? Numeric
+              if saved_number.is_a?(Numeric)
                 number = saved_number
               end
             end
@@ -289,6 +289,8 @@ module Ladb::OpenCutList
           part_def.size = size
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
+          part_def.unit_price = definition_attributes.unit_price
+          part_def.unit_mass = definition_attributes.unit_mass
           part_def.length_increase = definition_attributes.length_increase
           part_def.width_increase = definition_attributes.width_increase
           part_def.thickness_increase = definition_attributes.thickness_increase
@@ -308,7 +310,7 @@ module Ladb::OpenCutList
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 or w_area_ratio >= 0.7)
+              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 || w_area_ratio >= 0.7)
               part_def.layers = layers
 
             when MaterialAttributes::TYPE_SHEET_GOOD
@@ -317,7 +319,7 @@ module Ladb::OpenCutList
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.final_area = t_final_area
-              part_def.not_aligned_on_axes = !(t_plane_count >= 2 and (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 or _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.not_aligned_on_axes = !(t_plane_count >= 2 && (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 || _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
               part_def.layers = layers
 
               # -- Edges --
@@ -395,7 +397,7 @@ module Ladb::OpenCutList
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
-              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 and w_area_ratio >= 0.7 and (t_plane_count >= 2 and w_plane_count >= 2))
+              part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 && w_area_ratio >= 0.7 && (t_plane_count >= 2 && w_plane_count >= 2))
               part_def.layers = layers
 
             else
@@ -472,7 +474,9 @@ module Ladb::OpenCutList
               }
             end
           end
-          group_def.total_cutting_volume += part_def.cutting_size.volume
+          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
+            group_def.total_cutting_volume += part_def.cutting_size.volume
+          end
         end
         group_def.part_count += 1
 
@@ -484,6 +488,7 @@ module Ladb::OpenCutList
         sheet_good_material_count = 0
         bar_material_count = 0
         edge_material_count = 0
+        accessory_material_count = 0
         @material_usages_cache.each { |key, material_usage|
           if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
             solid_wood_material_count += material_usage.use_count
@@ -493,9 +498,11 @@ module Ladb::OpenCutList
             bar_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_EDGE
             edge_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_ACCESSORY
+            accessory_material_count += material_usage.use_count
           end
         }
-        if cutlist.instance_count - cutlist.ignored_instance_count > 0 and solid_wood_material_count == 0 and sheet_good_material_count == 0 and bar_material_count == 0
+        if cutlist.instance_count - cutlist.ignored_instance_count > 0 && solid_wood_material_count == 0 && sheet_good_material_count == 0 && bar_material_count == 0 && accessory_material_count == 0
           cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{selection_only ? "selection" : "model"}")
           cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
         end
@@ -530,9 +537,9 @@ module Ladb::OpenCutList
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
                 (folder_part_def.tags == part_def.tags || @hide_tags) &&
-                (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 or @hide_final_areas) &&      # final_area workaround for rounding error
+                (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 || @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN) && # Part with untyped materiel are folded only if they have the same definition
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN || group_def.material_type == MaterialAttributes::TYPE_ACCESSORY) && # Part with TYPE_UNKNOWN or TYPE_ACCESSORY materiel are folded only if they have the same definition
                 folder_part_def.cumulable == part_def.cumulable
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
@@ -690,18 +697,18 @@ module Ladb::OpenCutList
     # -- Components utils --
 
     def _fetch_useful_instance_infos(entity, path, auto_orient)
-      return 0 if entity.is_a? Sketchup::Edge   # Minor Speed improvement when there's a lot of edges
+      return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       face_count = 0
-      if entity.visible? and (entity.layer.visible? or (entity.layer.equal?(self.cached_layer0) and !path.empty?))   # Layer0 hide entities only on root scene
+      if entity.visible? && (entity.layer.visible? || (entity.layer.equal?(self.cached_layer0) && !path.empty?))   # Layer0 hide entities only on root scene
 
-        if entity.is_a? Sketchup::Group
+        if entity.is_a?(Sketchup::Group)
 
           # Entity is a group : check its children
           entity.entities.each { |child_entity|
             face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
           }
 
-        elsif entity.is_a? Sketchup::ComponentInstance
+        elsif entity.is_a?(Sketchup::ComponentInstance)
 
           # Exclude special behavior components
           if entity.definition.behavior.always_face_camera?
@@ -722,7 +729,7 @@ module Ladb::OpenCutList
           if face_count > 0
 
             bounds = _compute_faces_bounds(entity.definition, nil)
-            unless bounds.empty? or [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+            unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
               # Create the instance info
               instance_info = InstanceInfo.new(path + [ entity ])
@@ -736,7 +743,7 @@ module Ladb::OpenCutList
             end
           end
 
-        elsif entity.is_a? Sketchup::Face
+        elsif entity.is_a?(Sketchup::Face)
 
           # Entity is a face : return 1
           return 1
@@ -750,9 +757,9 @@ module Ladb::OpenCutList
 
     def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = Set[], transformation = nil)
       definition_or_group.entities.each { |entity|
-        next if entity.is_a? Sketchup::Edge   # Minor Speed imrovement when there's a lot of edges
-        if entity.visible? and (entity.layer.visible? or entity.layer.equal?(self.cached_layer0))
-          if entity.is_a? Sketchup::Face
+        next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
+        if entity.visible? && (entity.layer.visible? || entity.layer.equal?(self.cached_layer0))
+          if entity.is_a?(Sketchup::Face)
             transformed_normal = transformation.nil? ? entity.normal : entity.normal.transform(transformation)
             if transformed_normal.parallel?(X_AXIS)
               x_face_infos.push(FaceInfo.new(entity, transformation))
@@ -762,9 +769,9 @@ module Ladb::OpenCutList
               z_face_infos.push(FaceInfo.new(entity, transformation))
             end
             layers = layers + Set[ entity.layer ]
-          elsif entity.is_a? Sketchup::Group
+          elsif entity.is_a?(Sketchup::Group)
             _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
-          elsif entity.is_a? Sketchup::ComponentInstance and entity.definition.behavior.cuts_opening?
+          elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
             _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
           end
         end
@@ -823,7 +830,7 @@ module Ladb::OpenCutList
 
       plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos, instance_info.transformation)
       area = instance_info.size.area_by_axis(axis)
-      area_ratio = (final_area.nil? or area.nil?) ? 0 : final_area / area
+      area_ratio = (final_area.nil? || area.nil?) ? 0 : final_area / area
 
       [ plane_count, final_area, area_ratio ]
     end
@@ -917,13 +924,13 @@ module Ladb::OpenCutList
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
       entity = path.last
-      unless entity.is_a? Sketchup::Drawingelement
+      unless entity.is_a?(Sketchup::Drawingelement)
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
       material = entity.material
       material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
       material_origin = MATERIAL_ORIGIN_OWNED
-      unless material or !smart
+      unless material || !smart
         material = _get_dominant_child_material(entity)
         material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
         if material
@@ -941,12 +948,12 @@ module Ladb::OpenCutList
 
     def _get_dominant_child_material(entity, level = 0)
       material = nil
-      if entity.is_a? Sketchup::Group or (entity.is_a? Sketchup::ComponentInstance and level == 0)
+      if entity.is_a?(Sketchup::Group) || (entity.is_a?(Sketchup::ComponentInstance) && level == 0)
 
         materials = {}
 
         # Entity is a group : check its children
-        if entity.is_a? Sketchup::ComponentInstance
+        if entity.is_a?(Sketchup::ComponentInstance)
           entities = entity.definition.entities
         else
           entities = entity.entities
@@ -977,7 +984,7 @@ module Ladb::OpenCutList
           material = entity.material
         end
 
-      elsif entity.is_a? Sketchup::Face
+      elsif entity.is_a?(Sketchup::Face)
 
         # Entity is a face : return entity's material
         material = entity.material
@@ -991,7 +998,7 @@ module Ladb::OpenCutList
         return nil
       end
       entity = path.last
-      unless entity.is_a? Sketchup::Drawingelement
+      unless entity.is_a?(Sketchup::Drawingelement)
         return nil
       end
       material = entity.material

@@ -6,6 +6,9 @@ module Ladb::OpenCutList
 
   class CutlistCuttingdiagram2dWorker
 
+    ORIGIN_POSITION_TOP_LEFT = 0
+    ORIGIN_POSITION_BOTTOM_LEFT = 1
+
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
@@ -15,11 +18,12 @@ module Ladb::OpenCutList
       @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @presort = BinPacking2D::Packing2D.valid_presort(settings['presort'])
-      @stacking = BinPacking2D::Packing2D.valid_stacking(settings['stacking'])
-      @bbox_optimization = BinPacking2D::Packing2D.valid_bbox_optimization(settings['bbox_optimization'])
+      @optimization = settings['optimization'].to_i
+      @stacking = settings['stacking'].to_i
       @sheet_folding = settings['sheet_folding']
+      @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
+      @origin_position = settings['origin_position'].to_i
 
       @cutlist = cutlist
 
@@ -38,14 +42,13 @@ module Ladb::OpenCutList
 
       # The dimensions need to be in Sketchup internal units AND float
       options = BinPacking2D::Options.new
-      options.base_bin_length = @std_sheet_length
-      options.base_bin_width = @std_sheet_width
-      options.rotatable = !@grained
-      options.saw_kerf = @saw_kerf
-      options.trimming = @trimming
-      options.stacking = @stacking
-      options.bbox_optimization = @bbox_optimization
-      options.presort = @presort
+      options.set_base_length(@std_sheet_length)
+      options.set_base_width(@std_sheet_width)
+      options.set_rotatable(!@grained)
+      options.set_saw_kerf(@saw_kerf)
+      options.set_trimsize(@trimming)
+      options.set_optimization(@optimization)
+      options.set_stacking_pref(@stacking)
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking2D::PackEngine.new(options)
@@ -64,9 +67,11 @@ module Ladb::OpenCutList
       }
 
       # Add boxes from parts
+      # TODO possible future, single parts can be made non-rotatable, for now
+      # they inherit the attribute from options
       parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
+          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
         end
       }
 
@@ -84,13 +89,13 @@ module Ladb::OpenCutList
           :options => {
               :grained => @grained,
               :sheet_folding => @sheet_folding,
+              :hide_cross => @hide_cross,
               :hide_part_list => @hide_part_list,
               :px_saw_kerf => _to_px(options.saw_kerf),
               :saw_kerf => options.saw_kerf.to_l.to_s,
-              :trimming => options.trimming.to_l.to_s,
+              :trimming => options.trimsize.to_l.to_s,
+              :optimization => @optimization,
               :stacking => @stacking,
-              :bbox_optimization => @bbox_optimization,
-              :presort => @presort,
           },
 
           :unplaced_parts => [],
@@ -170,7 +175,8 @@ module Ladb::OpenCutList
         result.unused_bins.each { |bin|
           _append_bin_to_summary_sheets(bin, group, false, summary_sheets)
         }
-        result.original_bins.each { |bin|
+        # TODO moved to packed bin
+        result.packed_bins.each { |bin|
           _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
           response[:summary][:total_used_count] += 1
           response[:summary][:total_used_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
@@ -183,7 +189,7 @@ module Ladb::OpenCutList
 
         # Sheets
         grouped_sheets = {}
-        result.original_bins.each { |bin|
+        result.packed_bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
 
@@ -222,7 +228,7 @@ module Ladb::OpenCutList
                 :number => box.data.number,
                 :name => box.data.name,
                 :px_x => _to_px(box.x),
-                :px_y => _to_px(box.y),
+                :px_y => _to_px(_compute_y_with_origin_position(@origin_position, box.y, box.width, bin.width)),
                 :px_length => _to_px(box.length),
                 :px_width => _to_px(box.width),
                 :length => box.data.cutting_length,
@@ -261,7 +267,7 @@ module Ladb::OpenCutList
             sheet[:leftovers].push(
                 {
                     :px_x => _to_px(box.x),
-                    :px_y => _to_px(box.y),
+                    :px_y => _to_px(_compute_y_with_origin_position(@origin_position, box.y, box.width, bin.width)),
                     :px_length => _to_px(box.length),
                     :px_width => _to_px(box.width),
                     :length => box.length.to_l.to_s,
@@ -275,7 +281,7 @@ module Ladb::OpenCutList
             sheet[:cuts].push(
                 {
                     :px_x => _to_px(cut.x),
-                    :px_y => _to_px(cut.y),
+                    :px_y => _to_px(_compute_y_with_origin_position(@origin_position, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width)),
                     :px_length => _to_px(cut.length),
                     :x => cut.x.to_l.to_s,
                     :y => cut.y.to_l.to_s,
@@ -332,6 +338,15 @@ module Ladb::OpenCutList
       end
       sheet[:count] += 1
       sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+    end
+
+    def _compute_y_with_origin_position(origin_position, y, y_size, y_translation)
+      case origin_position
+      when ORIGIN_POSITION_TOP_LEFT
+        y
+      when ORIGIN_POSITION_BOTTOM_LEFT
+        y_translation - y - y_size
+      end
     end
 
     # Convert inch float value to pixel

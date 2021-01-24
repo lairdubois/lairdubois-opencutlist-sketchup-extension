@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :unit_price, :unit_mass, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
 
     def initialize(part_def, group)
       @_def = part_def
@@ -27,6 +27,8 @@ module Ladb::OpenCutList
       @cumulable = part_def.cumulable
       @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
       @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
+      @unit_price = part_def.unit_price
+      @unit_mass = part_def.unit_mass
       @tags = part_def.tags
       @edge_count = part_def.edge_count
       @edge_pattern = part_def.edge_pattern

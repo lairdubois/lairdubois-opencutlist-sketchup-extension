@@ -27,6 +27,7 @@ module Ladb::OpenCutList
       @std_sizes = attributes['std_sizes']
       @grained = attributes['grained']
       @edge_decremented = attributes['edge_decremented']
+      @volumic_mass = attributes['volumic_mass']
     end
 
     # -----
@@ -66,7 +67,7 @@ module Ladb::OpenCutList
       # Update texture
       unless @texture_file.nil?
 
-        if @texture_rotation > 0 or (@texture_colorized and @texture_colorizable)
+        if @texture_rotation > 0 || (@texture_colorized and @texture_colorizable)
 
           # Rotate texture
           ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0
@@ -91,7 +92,7 @@ module Ladb::OpenCutList
 
         end
 
-        unless @texture_width.nil? or @texture_height.nil?
+        unless @texture_width.nil? || @texture_height.nil?
 
           material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
 
@@ -102,21 +103,22 @@ module Ladb::OpenCutList
 
       end
 
-      # Update attributes
-      material_attributes = MaterialAttributes.new(material)
-      material_attributes.type = @type
-      material_attributes.thickness = @thickness
-      material_attributes.length_increase = @length_increase
-      material_attributes.width_increase = @width_increase
-      material_attributes.thickness_increase = @thickness_increase
-      material_attributes.std_lengths = @std_lengths
-      material_attributes.std_widths = @std_widths
-      material_attributes.std_thicknesses = @std_thicknesses
-      material_attributes.std_sections = @std_sections
-      material_attributes.std_sizes = @std_sizes
-      material_attributes.grained = @grained
-      material_attributes.edge_decremented = @edge_decremented
-      material_attributes.write_to_attributes
+        # Update attributes
+        material_attributes = MaterialAttributes.new(material)
+        material_attributes.type = @type
+        material_attributes.thickness = @thickness
+        material_attributes.length_increase = @length_increase
+        material_attributes.width_increase = @width_increase
+        material_attributes.thickness_increase = @thickness_increase
+        material_attributes.std_lengths = @std_lengths
+        material_attributes.std_widths = @std_widths
+        material_attributes.std_thicknesses = @std_thicknesses
+        material_attributes.std_sections = @std_sections
+        material_attributes.std_sizes = @std_sizes
+        material_attributes.grained = @grained
+        material_attributes.edge_decremented = @edge_decremented
+        material_attributes.volumic_mass = @volumic_mass
+        material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed
       if trigger_change_event

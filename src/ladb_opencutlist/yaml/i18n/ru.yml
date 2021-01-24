@@ -210,6 +210,8 @@ tab:
       cumulable_0: Не суммировать
       cumulable_1: Суммировть по длине
       cumulable_2: Суммировать по ширине
+      unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Припуски
       size_increase_help: |
        Припуски это добавочные размеры ‘под подгонку’ которые увеличивают расчетные размеры детали.
@@ -280,8 +282,6 @@ tab:
       hide_cutting_dimensions_help: Если эта опция активирована, то  **пильные** размеры деталей будут скрыты.
       hide_bbox_dimensions: Скрыть итоговые размеры
       hide_bbox_dimensions_help: Если эта опция активна, то размеры деталей **итоговые** будут скрыты.
-      hide_untyped_material_dimensions: Скрыть размеры деталей без типа материала
-      hide_untyped_material_dimensions_help: Если эта опция активна, то размеры деталей с неопределенным типом материала (не **Массив дерева**, **Листовой** или **Погонаж**) будут скрыты.
       hide_final_areas: Скрыть фактическую площадь деталей из *Листовой*
       hide_final_areas_help: Если эта опция активирована, то **фактическая площадь** деталей с типом *Листовой* будет скрыта.
       hide_edges: Скрыть столбец кромок
@@ -398,30 +398,26 @@ tab:
       option_hide_part_list_2d_help: Отобразить или скрыть список деталей для каждой панели.
       option_wrap_length: Длина обёртки доски
       option_wrap_length_help: Максимальная длина, после которой доска будет обернута в несколько слоёв.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Ширина пропила
       option_saw_kerf_help: Зубья пильного диска при распиле удаляют часть материала по их ширине. Это необходимо учитывать в расчетах раскроя.
       option_trimming: Размер обрезки
       option_trimming_help_1d: Размер обрезки каждого края листа для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
       option_trimming_help_2d: Размер обрезки листа по периметру для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
-      option_presort: Распределить на листе
-      option_presort_help: Выбор порядка расположения деталей на листе для его оптимального раскроя.
-      option_presort_0: Нет
-      option_presort_1: По убыванию ширины
-      option_presort_2: По убыванию длины
-      option_presort_3: По убыванию площади
-      option_presort_4: По убыванию периметра
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Сложить идентичные детали
       option_stacking_help: Способ предварительного планирования размещения деталей, имеющих равную ширину или длину.
       option_stacking_0: Нет
       option_stacking_1: По длине
       option_stacking_2: По ширине
-      option_bbox_optimization: Оптимизация контура раскроя
-      option_bbox_optimization_help: |
-        Оптимизация раскроя во избежание небольших остатков.
-        Эта опция может применяться в трех вариантах: всегда при добавлении новой панели, только в конце или никогда.
-      option_bbox_optimization_0: Никогда
-      option_bbox_optimization_1: Только в конце
-      option_bbox_optimization_2: Всегда
+      option_stacking_3: All Possibilities # TODO
       option_std_bar: Стандартная панель
       option_std_bar_help: |
         Выберите стандартную панель, для дублирования содержащихся деталей.
@@ -532,12 +528,14 @@ tab:
     type_2: Листовой
     type_3: Погонаж
     type_4: Кромочный
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Тип материала '$t(tab.materials.type_0)'
       type_1: Тип материала '$t(tab.materials.type_1)'
       type_2: Тип материала '$t(tab.materials.type_2)'
       type_3: Тип материала '$t(tab.materials.type_3)'
       type_4: Тип материала '$t(tab.materials.type_4)'
+      type_5: Тип материала '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
@@ -564,6 +562,7 @@ tab:
       name: Имя
       type: Тип
       cut_options: Параметры раскроя
+      attributes: Attributs  # TODO
       thickness: Толщина
       length_increase: Припуск к длине
       length_increase_help: Припуск под подгонку применяется к фактической длине для расчета **пильной длины**.
@@ -604,6 +603,7 @@ tab:
       edge_decremented_help: Настройка изменения линейных размеров детали с учетом толщины кромки.
       edge_decremented_0: Не учитывать
       edge_decremented_1: Вычесть толщину кромок
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Управление параметрами по умолчанию *Параметры раскроя*
         save_success: |

@@ -31,8 +31,8 @@ default:
   good: Bom
   bad: Ruim
   by: por
-  date_format: m/d/Y g:ia
-  date_format_short: m/d/Y
+  date_format: d/m/Y g:ia
+  date_format_short: d/m/Y
   unit_0: Polegadas
   unit_1: Pés
   unit_2: Milímetro
@@ -210,6 +210,8 @@ tab:
       cumulable_0: Não somam
       cumulable_1: Somável ao longo do comprimento
       cumulable_2: Somável em largura
+      unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Tamanho grande
       size_increase_help: |
         Os sobredimensionamentos permitem-lhe aumentar as dimensões de uma única parte.
@@ -280,8 +282,6 @@ tab:
       hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das partes serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
       hide_bbox_dimensions_help: Se esta opção for selecionada, as dimensões **acabadas** das partes serão ocultadas.
-      hide_untyped_material_dimensions: Oculte as dimensões para partes com tipo de material indefinido
-      hide_untyped_material_dimensions_help: Se esta opção for selecionada, as dimensões das partes com um tipo de material indefinido (não ** Madeira maciça **, ** Chapa boa ** ou ** Dimensional **) serão ocultadas.
       hide_final_areas: Oculte a área real das partes do tipo *Chapa boa*
       hide_final_areas_help: Se esta opção for selecionada, as **áreas reais** das partes do tipo *Chapa boa* serão ocultadas.
       hide_edges: Esconda a coluna de bandas de borda
@@ -398,30 +398,26 @@ tab:
       option_hide_part_list_2d_help: Exiba ou mascare a lista de partes de cada painel.
       option_wrap_length: Comprimento da placa de embrulho
       option_wrap_length_help: Comprimento máximo após o qual uma placa será quebrada em várias linhas.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Espessura da lâmina
       option_saw_kerf_help: A largura do material removido pelo corte da serra.
       option_trimming: Tamanho de corte
       option_trimming_help_1d: A quantidade de material em cada extremidade da placa a ser tratada como resíduo.
       option_trimming_help_2d: A quantidade de material ao redor do painel bruto a ser tratada como resíduo.
-      option_presort: Pré-encomenda de partes
-      option_presort_help: A ordem em que as partes serão consideradas para colocação.
-      option_presort_0: Nenhum
-      option_presort_1: Largura Descendente
-      option_presort_2: Comprimento Descendente
-      option_presort_3: Área Descendente
-      option_presort_4: Perímetro Descendente
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Empilhar partes idênticas
       option_stacking_help: A maneira como as partes com largura ou comprimento comum são provisoriamente colocadas juntas.
       option_stacking_0: Nenhum
       option_stacking_1: Longitudinalmente
       option_stacking_2: Largura
-      option_bbox_optimization: Otimização de caixa delimitadora
-      option_bbox_optimization_help: |
-        Otimização para remover painéis desnecessários através de cortes, a fim de evitar pequenos restos.
-        Esta opção pode ser aplicada toda vez que um novo painel é adicionado, somente no final da otimização ou nunca.
-      option_bbox_optimization_0: Nunca
-      option_bbox_optimization_1: Apenas final
-      option_bbox_optimization_2: Sempre
+      option_stacking_3: Todas as possibilidades # TODO
       option_std_bar: Quadro Padrão
       option_std_bar_help: |
         Selecione a placa padrão, que será duplicada para conter todas as partes.
@@ -532,12 +528,14 @@ tab:
     type_2: Painel
     type_3: Dimensional
     type_4: Edge Banding
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
       type_2: Tipo de material '$t(tab.materials.type_2)'
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
+      type_5: Tipo de material '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção de grãos
@@ -564,6 +562,7 @@ tab:
       name: Nome
       type: Tipo
       cut_options: Parâmetros de corte
+      attributes: Attributs  # TODO
       thickness: Espessura
       length_increase: Sobredimensionamento de comprimento
       length_increase_help: Sobredimensionamento aplicado ao comprimento para definir o **comprimento bruto**.
@@ -604,6 +603,7 @@ tab:
       edge_decremented_help: Indica se as dimensões das partes devem ser reduzidas pela espessura da faixa da borda.
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir por Espessura de Faixa de Borda
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Administração dos *parâmetros de corte* padrão
         save_success: |

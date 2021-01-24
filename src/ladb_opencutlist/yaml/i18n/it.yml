@@ -210,6 +210,8 @@ tab:
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
+      unit_price: Prix unitaire # TODO
+      unit_mass: Masse unitaire # TODO
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.
@@ -280,8 +282,6 @@ tab:
       hide_cutting_dimensions_help: Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
       hide_bbox_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni **finite** delle parti.
-      hide_untyped_material_dimensions: Nascondi le dimensioni delle parti senza definizione del materiale
-      hide_untyped_material_dimensions_help: Se questa opzione è attivata, verranno nascoste le dimensioni delle parti senza definizione del materiale (che non siano cioè **Tavole**, **Pannelli** o **Barre**).
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
       hide_final_areas_help: Se questa opzione è attivata, verrà nascosta **l'area** delle parti di tipo *Pannelli*.
       hide_edges: Nascondi la colonna "Bordature"
@@ -398,30 +398,26 @@ tab:
       option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
       option_wrap_length: Lunghezza massima della tavola
       option_wrap_length_help: Lunghezza massima dopo la quale una tavola viene definita su linee multiple.
+      option_hide_cross: Chutes # TODO
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme. # TODO
+      option_hide_cross_0: Dimensions et Croix # TODO
+      option_hide_cross_1: Dimensions seules # TODO
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
       option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_presort: Pre-ordinamento delle parti
-      option_presort_help: L'ordine con cui le parti verranno trattate nel posizionamento.
-      option_presort_0: Nessuno
-      option_presort_1: Larghezza Decresente
-      option_presort_2: Lunghezza Decresente
-      option_presort_3: Area Decresente
-      option_presort_4: Perimetro Decresente
+      option_optimization: Niveau d'optimisation
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_0: Léger
+      option_optimization_1: Moyen
+      option_optimization_2: Avancé
       option_stacking: Raggruppa parti identiche
       option_stacking_help: Il criterio con cui le parti di eguale lunghezza o larghezza verranno disposte insieme.
       option_stacking_0: Nessuna
       option_stacking_1: Per lunghezza
       option_stacking_2: Per larghezza
-      option_bbox_optimization: Ottimizzazione del rettangolo di selezione
-      option_bbox_optimization_help: |
-        Ottimizzazione atta a rimuovere tagli non necessari e diminuire avanzi di piccole dimensioni.
-        Questa opzione può essere applicata ad ogni nuovo pannello aggiunto, solo alla fine dell'ottimizzazione oppure mai.
-      option_bbox_optimization_0: Mai
-      option_bbox_optimization_1: Solo ultimo
-      option_bbox_optimization_2: Sempre
       option_std_bar: Tavola Standard
       option_std_bar_help: |
         Seleziona una tavola standard, che sarà duplicata in modo da contenere tutte le parti.
@@ -532,12 +528,14 @@ tab:
     type_2: Pannello
     type_3: Barre
     type_4: Bordatura
+    type_5: Accessoire  # TODO
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
       type_1: Tipo di materiale '$t(tab.materials.type_1)'
       type_2: Tipo di materiale '$t(tab.materials.type_2)'
       type_3: Tipo di materiale '$t(tab.materials.type_3)'
       type_4: Tipo di materiale '$t(tab.materials.type_4)'
+      type_5: Tipo di materiale '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
@@ -564,6 +562,7 @@ tab:
       name: Nome
       type: Tipo
       cut_options: Impostazioni del taglio
+      attributes: Attributs  # TODO
       thickness: Spessore
       length_increase: Incremento lunghezza
       length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**.
@@ -604,6 +603,7 @@ tab:
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
+      volumic_mass: Masse volumique # TODO
       cut_options_defaults:
         manage_help: Gestione delle *impostazioni di taglio* predefinite
         save_success: |

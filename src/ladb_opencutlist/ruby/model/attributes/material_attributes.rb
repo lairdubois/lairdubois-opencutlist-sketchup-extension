@@ -12,10 +12,11 @@
     TYPE_SHEET_GOOD = 2
     TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
+    TYPE_ACCESSORY = 5
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
-    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented
+    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass
     attr_reader :material
 
     @@cached_uuids = {}
@@ -55,7 +56,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOWN or i_type > TYPE_EDGE
+        if i_type < TYPE_UNKNOWN || i_type > TYPE_ACCESSORY
           return TYPE_UNKNOWN
         end
         i_type
@@ -110,6 +111,8 @@
           3
         when TYPE_EDGE
           4
+        when TYPE_ACCESSORY
+          5
         else
           99
       end
@@ -346,6 +349,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.instance.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
       end
     end
 

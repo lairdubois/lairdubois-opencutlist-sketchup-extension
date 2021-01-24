@@ -34,6 +34,10 @@
     border-left: 3px solid @ladb-material-type-4;
   }
 
+  &.ladb-material-type-5 {
+    border-left: 3px solid @ladb-material-type-5;
+  }
+
   &.table-danger {
 
     thead tr {
@@ -263,10 +267,35 @@
       font-size: 80%;
     }
 
-    a {
+    .ladb-minitools > a {
       float: right;
       color: #000;
       cursor: pointer;
+      margin-left: 5px;
+
+      &:focus {
+        color: inherit;
+      }
+
+      &.ladb-active {
+        background-color: #333;
+        color: #fff;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: lighten(#333, 30%);
+        }
+
+      }
+
+    }
+
+    &.ladb-inactive {
+      opacity: 0.5;
+    }
+
+    .ladb-cutlist-export-col-formula {
+      margin: 10px 0 5px 10px;
     }
 
   }

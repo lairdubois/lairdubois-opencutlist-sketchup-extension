@@ -15,6 +15,8 @@ module Ladb::OpenCutList
         :is_dynamic_attributes_name,
         :material_name,
         :cumulable,
+        :unit_price,
+        :unit_mass,
         :length_increase,
         :width_increase,
         :thickness_increase,
@@ -38,6 +40,8 @@ module Ladb::OpenCutList
             part_data['is_dynamic_attributes_name'],
             part_data['material_name'],
             DefinitionAttributes.valid_cumulable(part_data['cumulable']),
+            part_data['unit_price'],
+            part_data['unit_mass'],
             part_data['length_increase'],
             part_data['width_increase'],
             part_data['thickness_increase'],
@@ -75,19 +79,23 @@ module Ladb::OpenCutList
         if definition
 
           # Update definition's name
-          if definition.name != part_data.name and !part_data.is_dynamic_attributes_name
+          if definition.name != part_data.name && !part_data.is_dynamic_attributes_name
             definition.name = part_data.name
           end
 
           # Update definition's attributes
           definition_attributes = DefinitionAttributes.new(definition)
           if part_data.cumulable != definition_attributes.cumulable ||
+              part_data.unit_price != definition_attributes.unit_price ||
+              part_data.unit_mass != definition_attributes.unit_mass ||
               part_data.length_increase != definition_attributes.length_increase ||
               part_data.width_increase != definition_attributes.width_increase ||
               part_data.thickness_increase != definition_attributes.thickness_increase ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
               part_data.tags != definition_attributes.tags
             definition_attributes.cumulable = part_data.cumulable
+            definition_attributes.unit_price = part_data.unit_price
+            definition_attributes.unit_mass = part_data.unit_mass
             definition_attributes.length_increase = part_data.length_increase
             definition_attributes.width_increase = part_data.width_increase
             definition_attributes.thickness_increase = part_data.thickness_increase
@@ -104,7 +112,7 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
 
           # Transform part axes if axes order exist
-          if part_data.axes_order.is_a?(Array) and part_data.axes_order.length == 3
+          if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3
 
             axes_convertor = {
                 'x' => X_AXIS,
@@ -183,12 +191,12 @@ module Ladb::OpenCutList
     def _apply_material(material_name, entity_ids, model)
       unless entity_ids.nil?
         material = nil
-        if material_name.nil? or material_name.empty? or (material = model.materials[material_name])
+        if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
 
           entity_ids.each { |entity_id|
             entity = ModelUtils::find_entity_by_id(model, entity_id)
             if entity
-              if material_name.nil? or material_name.empty?
+              if material_name.nil? || material_name.empty?
                 entity.material = nil
               elsif entity.material != material
                 entity.material = material
