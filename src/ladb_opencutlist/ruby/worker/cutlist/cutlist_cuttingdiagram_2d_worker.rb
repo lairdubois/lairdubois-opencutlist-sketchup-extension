@@ -91,7 +91,7 @@ module Ladb::OpenCutList
               :sheet_folding => @sheet_folding,
               :hide_cross => @hide_cross,
               :hide_part_list => @hide_part_list,
-              :px_saw_kerf => _to_px(options.saw_kerf),
+              :px_saw_kerf => [_to_px(options.saw_kerf), 1].max,    # Saw kerf not null in pixels
               :saw_kerf => options.saw_kerf.to_l.to_s,
               :trimming => options.trimsize.to_l.to_s,
               :optimization => @optimization,
