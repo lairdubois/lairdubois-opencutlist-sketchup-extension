@@ -2,8 +2,15 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 1.x and 0.x versions.
+in 2.x, 1.x and 0.x versions.
 
+* 2.0.0 (WIP)
+
+  * Added Accessory material type
+  * Added part unit price field for accessories
+  * Added bars and sheets scrap's cross display / hide in cutting diagram options
+  * Added cutting diagram 2D option to select origin position on each sheet
+  
 * 1.9.10 (2020-12-17)
 
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
