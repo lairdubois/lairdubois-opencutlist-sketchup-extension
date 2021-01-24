@@ -15,7 +15,14 @@
             </div>
             <div class="ladb-news-update-body">{{ update.html|sanitize_links }}</div>
             <div class="ladb-news-update-footer">
-                <button class="btn btn-default ladb-news-comment-btn"><i class="ladb-opencutlist-icon-comment"></i> {{ 'tab.news.comment'|i18next }}...</button>
+                <div class="ladb-news-update-comments">
+                    {% for comment in update.comments.nodes %}
+                        {% include 'core/_comment.twig' %}
+                    {% endfor %}
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-default ladb-news-comment-btn"><i class="ladb-opencutlist-icon-comment"></i> {{ 'tab.news.comment'|i18next }}...</button>
+                </div>
             </div>
         </div>
     </div>

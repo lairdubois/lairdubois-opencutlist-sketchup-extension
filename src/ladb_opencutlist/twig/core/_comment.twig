@@ -1,0 +1,15 @@
+<div class="media ladb-comment">
+    <div class="media-left"><img src="{{ comment.fromAccount.imageUrl }}" alt="{{ comment.fromAccount.name }}" class="ladb-comment-author-avatar"></div>
+    <div class="media-body">
+        <div class="ladb-comment-header">
+            <div class="ladb-comment-author"><a href="https://opencollective.com/{{ comment.fromAccount.slug }}" target="_blank">{{ comment.fromAccount.name }}</a></div>
+            <div class="ladb-comment-age">{{ comment.createdAt|date(('default.date_format'|i18next())) }}</div>
+        </div>
+        <div class="ladb-comment-body">{{ comment.html|sanitize_links }}</div>
+        <ul class="ladb-comment-reactions">
+            {% for reaction, count in comment.reactions %}
+                <li>{{ reaction }} {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

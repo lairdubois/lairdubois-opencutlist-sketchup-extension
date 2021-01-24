@@ -52,6 +52,18 @@
                                         "name " +
                                         "imageUrl " +
                                     "}" +
+                                    "comments { " +
+                                        "nodes { " +
+                                            "createdAt " +
+                                            "fromAccount { " +
+                                                "slug " +
+                                                "name " +
+                                                "imageUrl " +
+                                            "}" +
+                                            "html " +
+                                            "reactions " +
+                                        "}" +
+                                    "}" +
                                 "}" +
                             "}" +
                         "}" +
@@ -88,7 +100,8 @@
                         $(this).remove();
                     });
                     $('.ladb-news-comment-btn', $list).on('click', function () {
-                        that.dialog.executeCommandOnTab('forum', 'load_conversations');
+                        var slug = $(this).closest('.ladb-news-update-box').data('update-slug');
+                        rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/updates/' + slug });
                         return false;
                     });
 
