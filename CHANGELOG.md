@@ -11,7 +11,7 @@ in 2.x, 1.x and 0.x versions.
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin position on each sheet
   
-* 1.9.10 (WIP)
+* 1.9.10 (2020-12-17)
 
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher
   * Added **Spanish** language (thanks to Leonardo Romero Giménez for joining the translators team)
