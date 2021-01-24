@@ -48,7 +48,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING = 'cutlist.cuttingdiagram1d.option.sheet_folding';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS = 'cutlist.cuttingdiagram2d.option.hide_cross';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION = 'cutlist.cuttingdiagram2d.option.origin_position';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER = 'cutlist.cuttingdiagram2d.option.origin_corner';
 
     var EXPORT_DEFAULT_COLUMNS = {
         0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
@@ -1159,7 +1159,7 @@
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
-                var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+                var $selectPartAxesOriginCorner = $('#ladb_cutlist_part_select_axes_origin_corner', $modal);
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
@@ -1292,7 +1292,7 @@
                     });
                 $selectCumulable.val(editedPart.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartAxesOriginPosition
+                $selectPartAxesOriginCorner
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnComputeAxesOrder();
@@ -1367,7 +1367,7 @@
                         fnDisplayAxisDimensions();
 
                         // By default set origin position to 'min'
-                        $selectPartAxesOriginPosition.selectpicker('val', 'min');
+                        $selectPartAxesOriginCorner.selectpicker('val', 'min');
 
                     }
                 });
@@ -1405,7 +1405,7 @@
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                            editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
+                            editedParts[i].axes_origin_corner = $selectPartAxesOriginCorner.val();
 
                         }
 
@@ -2023,7 +2023,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
-                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER,
 
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId,
@@ -2034,7 +2034,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId,
-                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId,
 
             ],
             2 /* SETTINGS_RW_STRATEGY_MODEL */,
@@ -2063,7 +2063,7 @@
                             sheet_folding: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding)),
                             hide_cross: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)),
                             hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)),
-                            origin_position: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION, appDefaults.origin_position)),
+                            origin_corner: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, appDefaults.origin_corner)),
                         };
 
                         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -2088,7 +2088,7 @@
                             var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
                             var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                            var $selectOriginPosition = $('#ladb_select_origin_position', $modal);
+                            var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
                             var $btnCuttingdiagramOptionsDefaultsResetNative = $('#ladb_btn_cuttingdiagram_options_defaults_reset_native', $modal);
@@ -2123,8 +2123,8 @@
                             $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectHidePartList.val(cuttingdiagram2dOptions.hide_part_list ? '1' : '0');
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                            $selectOriginPosition.val(cuttingdiagram2dOptions.origin_position);
-                            $selectOriginPosition.selectpicker(SELECT_PICKER_OPTIONS);
+                            $selectOriginCorner.val(cuttingdiagram2dOptions.origin_corner);
+                            $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
 
                             var fnEditMaterial = function (callback) {
 
@@ -2163,7 +2163,7 @@
                                 $selectSheetFolding.selectpicker('val', (isAppDefaults ? appDefaults.sheet_folding : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, appDefaults.sheet_folding)) ? '1' : '0');
                                 $selectHideCross.selectpicker('val', (isAppDefaults ? appDefaults.hide_cross : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)) ? '1' : '0');
                                 $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
-                                $selectOriginPosition.selectpicker('val', isAppDefaults ? appDefaults.origin_position : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION, appDefaults.origin_position));
+                                $selectOriginCorner.selectpicker('val', isAppDefaults ? appDefaults.origin_corner : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, appDefaults.origin_corner));
                             };
 
                             $inputStdSheet.on('changed.bs.select', function (e) {
@@ -2192,7 +2192,7 @@
                                 var sheet_folding = $selectSheetFolding.val();
                                 var hide_cross = $selectHideCross.val();
                                 var hide_part_list = $selectHidePartList.val();
-                                var origin_position = $selectOriginPosition.val();
+                                var origin_corner = $selectOriginCorner.val();
 
                                 // Update default cut options for specific type to last used
                                 that.dialog.setSettings([
@@ -2203,7 +2203,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING, value:sheet_folding },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, value:hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
-                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION, value:origin_position },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, value:origin_corner },
                                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                                 that.dialog.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
@@ -2238,7 +2238,7 @@
                                 cuttingdiagram2dOptions.sheet_folding = $selectSheetFolding.val() === '1';
                                 cuttingdiagram2dOptions.hide_cross = $selectHideCross.val() === '1';
                                 cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
-                                cuttingdiagram2dOptions.origin_position = $selectOriginPosition.val();
+                                cuttingdiagram2dOptions.origin_corner = $selectOriginCorner.val();
 
                                 // Store options
                                 that.dialog.setSettings([
@@ -2251,7 +2251,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SHEET_FOLDING + '_' + groupId, value:cuttingdiagram2dOptions.sheet_folding },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, value:cuttingdiagram2dOptions.hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
-                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_POSITION + '_' + groupId, value:cuttingdiagram2dOptions.origin_position },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId, value:cuttingdiagram2dOptions.origin_corner },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
                                 rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: that.selectionGroupId === groupId ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {

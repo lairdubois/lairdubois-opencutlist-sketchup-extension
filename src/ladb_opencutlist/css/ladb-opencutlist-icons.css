@@ -163,8 +163,11 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-vertical-cut:before {
   content: "\e91f";
 }
-.ladb-opencutlist-icon-horizontal-cut:before {
+.ladb-opencutlist-icon-horizontal-cut-top:before {
   content: "\e920";
+}
+.ladb-opencutlist-icon-horizontal-cut-bottom:before {
+  content: "\e97e";
 }
 .ladb-opencutlist-icon-grained-0:before {
   content: "\e921";

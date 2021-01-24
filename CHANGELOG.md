@@ -9,7 +9,7 @@ in 2.x, 1.x and 0.x versions.
   * Added Accessory material type
   * Added part unit price field for accessories
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
-  * Added cutting diagram 2D option to select origin position on each sheet
+  * Added cutting diagram 2D option to select origin corner - top left or bottom left
   
 * 1.9.10 (2020-12-17)
 

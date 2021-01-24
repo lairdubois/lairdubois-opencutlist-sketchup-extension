@@ -244,10 +244,10 @@ tab:
          - La **longueur** est lue sur l'axe <strong style='color:red'>Rouge</strong>
          - La **largeur** est lue sur l'axe <strong style='color:green'>Vert</strong>
          - L'**épaisseur** est lue sur l'axe <strong style='color:blue'>Bleu</strong>
-      axes_origin_position_none: Ne pas changer l'origine
-      axes_origin_position_min: Placer l'origine à l'extrémité
-      axes_origin_position_center: Placer l'origine au centre
-      axes_origin_position_min_center: Placer l'origine au centre d'une face
+      axes_origin_corner_none: Ne pas changer l'origine
+      axes_origin_corner_min: Placer l'origine à l'extrémité
+      axes_origin_corner_center: Placer l'origine au centre
+      axes_origin_corner_min_center: Placer l'origine au centre d'une face
       over_length: Sur la longueur
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
@@ -396,10 +396,10 @@ tab:
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre.
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
-      option_origin_position: Position de l'origine
-      option_origin_position_0: En haut à gauche
-      option_origin_position_1: En bas à gauche
-      option_origin_position_help: Permet de choisir la position de l'origine de placement des pièces dans chaque panneau.
+      option_origin_corner: Position de l'origine
+      option_origin_corner_0: En haut à gauche
+      option_origin_corner_1: En bas à gauche
+      option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_hide_cross: Chutes
