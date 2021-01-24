@@ -6,6 +6,9 @@ module Ladb::OpenCutList
 
   class CutlistCuttingdiagram2dWorker
 
+    ORIGIN_POSITION_TOP_LEFT = 0
+    ORIGIN_POSITION_BOTTOM_LEFT = 1
+
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
@@ -20,6 +23,7 @@ module Ladb::OpenCutList
       @sheet_folding = settings['sheet_folding']
       @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
+      @origin_position = settings['origin_position'].to_i
 
       @cutlist = cutlist
 
@@ -224,7 +228,7 @@ module Ladb::OpenCutList
                 :number => box.data.number,
                 :name => box.data.name,
                 :px_x => _to_px(box.x),
-                :px_y => _to_px(box.y),
+                :px_y => _to_px(_compute_y_with_origin_position(@origin_position, box.y, box.width, bin.width)),
                 :px_length => _to_px(box.length),
                 :px_width => _to_px(box.width),
                 :length => box.data.cutting_length,
@@ -263,7 +267,7 @@ module Ladb::OpenCutList
             sheet[:leftovers].push(
                 {
                     :px_x => _to_px(box.x),
-                    :px_y => _to_px(box.y),
+                    :px_y => _to_px(_compute_y_with_origin_position(@origin_position, box.y, box.width, bin.width)),
                     :px_length => _to_px(box.length),
                     :px_width => _to_px(box.width),
                     :length => box.length.to_l.to_s,
@@ -277,7 +281,7 @@ module Ladb::OpenCutList
             sheet[:cuts].push(
                 {
                     :px_x => _to_px(cut.x),
-                    :px_y => _to_px(cut.y),
+                    :px_y => _to_px(_compute_y_with_origin_position(@origin_position, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width)),
                     :px_length => _to_px(cut.length),
                     :x => cut.x.to_l.to_s,
                     :y => cut.y.to_l.to_s,
@@ -334,6 +338,15 @@ module Ladb::OpenCutList
       end
       sheet[:count] += 1
       sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+    end
+
+    def _compute_y_with_origin_position(origin_position, y, y_size, y_translation)
+      case origin_position
+      when ORIGIN_POSITION_TOP_LEFT
+        y
+      when ORIGIN_POSITION_BOTTOM_LEFT
+        y_translation - y - y_size
+      end
     end
 
     # Convert inch float value to pixel

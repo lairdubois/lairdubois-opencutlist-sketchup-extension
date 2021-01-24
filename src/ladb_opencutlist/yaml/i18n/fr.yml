@@ -396,6 +396,10 @@ tab:
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre.
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
+      option_origin_position: Position de l'origine
+      option_origin_position_0: En haut à gauche
+      option_origin_position_1: En bas à gauche
+      option_origin_position_help: Permet de choisir la position de l'origine de placement des pièces dans chaque panneau.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_hide_cross: Chutes
