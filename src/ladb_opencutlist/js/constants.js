@@ -19,6 +19,11 @@ var TOKENFIELD_OPTIONS = {
     minWidth: 250
 };
 
+var SORTABLE_OPTIONS = {
+    cursor: 'ns-resize',
+    handle: '.ladb-handle'
+};
+
 // GraphQL /////
 
 var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';

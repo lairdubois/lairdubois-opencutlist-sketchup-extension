@@ -1159,7 +1159,7 @@
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
-                var $selectPartAxesOriginCorner = $('#ladb_cutlist_part_select_axes_origin_corner', $modal);
+                var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
@@ -1292,7 +1292,7 @@
                     });
                 $selectCumulable.val(editedPart.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartAxesOriginCorner
+                $selectPartAxesOriginPosition
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnComputeAxesOrder();
@@ -1367,7 +1367,7 @@
                         fnDisplayAxisDimensions();
 
                         // By default set origin position to 'min'
-                        $selectPartAxesOriginCorner.selectpicker('val', 'min');
+                        $selectPartAxesOriginPosition.selectpicker('val', 'min');
 
                     }
                 });
@@ -1405,7 +1405,7 @@
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                            editedParts[i].axes_origin_corner = $selectPartAxesOriginCorner.val();
+                            editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
 
                         }
 
