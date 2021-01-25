@@ -27,10 +27,12 @@ module Ladb::OpenCutList
       height = settings['height']
       top = settings['top']
       left = settings['left']
+      zoom = settings['zoom']
 
       Plugin.instance.set_language(language, true)
       Plugin.instance.dialog_set_size(width, height, true)
       Plugin.instance.dialog_set_position(left, top, true)
+      Plugin.instance.dialog_set_zoom(zoom, true)
 
     end
 

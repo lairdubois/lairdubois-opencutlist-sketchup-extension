@@ -42,6 +42,7 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
+    SETTINGS_KEY_DIALOG_ZOOM = 'settings.dialog_zoom'
 
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
     DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
@@ -49,6 +50,7 @@ module Ladb::OpenCutList
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
+    DIALOG_DEFAULT_ZOOM = '100%'
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     # -----
@@ -78,6 +80,7 @@ module Ladb::OpenCutList
       @dialog_maximized_height = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_DEFAULT_MAXIMIZED_HEIGHT)
       @dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, DIALOG_DEFAULT_LEFT)
       @dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, DIALOG_DEFAULT_TOP)
+      @dialog_zoom = read_default(SETTINGS_KEY_DIALOG_ZOOM, DIALOG_DEFAULT_ZOOM)
 
     end
 
@@ -592,7 +595,7 @@ module Ladb::OpenCutList
     def dialog_set_position(left, top, persist = false)
       if @dialog
         if current_os == :MAC && !html_dialog_compatible
-          @dialog.execute_script("window.moveTo(#{left},#{top})")
+          @dialog.execute_script("window.moveTo(#{left},#{top});")
         else
           @dialog.set_position(left, top)
         end
@@ -601,6 +604,16 @@ module Ladb::OpenCutList
           @dialog_top = top
           write_default(SETTINGS_KEY_DIALOG_LEFT, left)
           write_default(SETTINGS_KEY_DIALOG_TOP, top)
+        end
+      end
+    end
+
+    def dialog_set_zoom(zoom, persist = false)
+      if @dialog
+        @dialog.execute_script("$('body').css('zoom', '#{zoom}');")
+        if persist
+          @dialog_zoom = zoom
+          write_default(SETTINGS_KEY_DIALOG_ZOOM, zoom)
         end
       end
     end
@@ -837,6 +850,7 @@ module Ladb::OpenCutList
     end
 
     def dialog_loaded_command
+      dialog_set_zoom(@dialog_zoom)
       {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
@@ -859,6 +873,7 @@ module Ladb::OpenCutList
           :dialog_maximized_height => @dialog_maximized_height,
           :dialog_left => @dialog_left,
           :dialog_top => @dialog_top,
+          :dialog_zoom => @dialog_zoom,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
     end

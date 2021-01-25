@@ -796,6 +796,10 @@ tab:
     label: Préférences
     title: Préférences
     language: Langue
+    zoom: Taille de texte
+    zoom_normal: Normale
+    zoom_small: Petite
+    zoom_tiny: Très petite
     size_and_position: Taille et position de la fenêtre
   about:
     label: A propos

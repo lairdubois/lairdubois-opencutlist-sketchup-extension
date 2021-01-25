@@ -12,6 +12,7 @@
         this.$btnReset = $('#ladb_btn_reset', this.$element);
 
         this.$selectLanguage = $('#ladb_select_language', this.$element);
+        this.$selectZoom = $('#ladb_select_zoom', this.$element);
         this.$btnWidthUp = $('#ladb_btn_width_up', this.$element);
         this.$btnWidthDown = $('#ladb_btn_width_down', this.$element);
         this.$btnHeightUp = $('#ladb_btn_height_up', this.$element);
@@ -55,18 +56,25 @@
                 width: that.dialog.capabilities.dialogMaximizedWidth,
                 height: that.dialog.capabilities.dialogMaximizedHeight,
                 left: that.dialog.capabilities.dialogLeft,
-                top: that.dialog.capabilities.dialogTop
+                top: that.dialog.capabilities.dialogTop,
+                zoom: that.dialog.capabilities.dialogZoom
             });
 
         };
 
         this.$selectLanguage.val(this.dialog.capabilities.language);
         this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
+        this.$selectZoom.val(this.dialog.capabilities.dialogZoom);
+        this.$selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
 
         this.$selectLanguage.on('change', function () {
             that.dialog.capabilities.language = that.$selectLanguage.val();
             fnUpdate();
             that.showReloadAlert();
+        });
+        this.$selectZoom.on('change', function () {
+            that.dialog.capabilities.dialogZoom = that.$selectZoom.val();
+            fnUpdate();
         });
         this.$btnReset.on('click', function () {
             $(this).blur();

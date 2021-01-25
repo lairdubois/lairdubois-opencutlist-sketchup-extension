@@ -43,6 +43,7 @@
             dialogMaximizedHeight: options.dialog_maximized_height,
             dialogLeft: options.dialog_left,
             dialogTop: options.dialog_top,
+            dialogZoom: options.dialog_zoom,
         };
 
         this.settings = {};
