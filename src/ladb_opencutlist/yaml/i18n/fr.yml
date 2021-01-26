@@ -766,23 +766,23 @@ tab:
     backers_plural: "{{ count }} contributeurs financiers"
     ad: Vous aimez OpenCutList ?
     objective: Objectif
-    objective_slogan: Gravissons ensemble le Mont Blanc !
+    objective_slogan: OpenCutList, c'est nous tous
     objective_title:
       default: Objectifs
       report: Générer un rapport
       labels: Imprimer des étiquettes
     objective_details:
       default: |
-        *La création de **rapports** et l'impression d'**étiquettes** pourraient être disponible dans la prochaine mise à jour majeure.*
+        *La création de **rapports** et l'impression d'**étiquettes** seront disponible dans la prochaine mise à jour 2.0.*
       report: |
-        *La création de **rapports** pourrait être disponible dans la prochaine mise à jour majeure.*
+        *La création de **rapports** sera disponible dans la prochaine mise à jour 2.0.*
 
         Cette fonctionnalité a pour but de :
         - calculer le **coût** estimé du projet avec détails par matière,
         - calculer le **poids** estimé des matières nécessaires,
         - synthétiser les informations de tout le projet en un même document accessible par une seule action.
       labels: |
-        *L'impression d'**étiquettes** pourrait être disponible dans la prochaine mise à jour majeure.*
+        *L'impression d'**étiquettes** sera disponible dans la prochaine mise à jour 2.0.*
 
         Cette fonctionnalité a pour but de :
         - permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adnésives,

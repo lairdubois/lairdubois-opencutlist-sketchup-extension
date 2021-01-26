@@ -64,6 +64,8 @@
 
         this.$selectLanguage.val(this.dialog.capabilities.language);
         this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
+
+        this.$selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
         this.$selectZoom.val(this.dialog.capabilities.dialogZoom);
         this.$selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
 
@@ -83,6 +85,7 @@
             that.dialog.capabilities.dialogMaximizedHeight = 640;
             that.dialog.capabilities.dialogLeft = 60;
             that.dialog.capabilities.dialogTop = 100;
+            that.dialog.capabilities.dialogZoom = '100%';
             fnUpdate();
             that.showReloadAlert();
             return false;
