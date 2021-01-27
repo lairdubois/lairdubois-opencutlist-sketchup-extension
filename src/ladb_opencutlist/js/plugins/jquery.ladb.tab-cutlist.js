@@ -2048,8 +2048,6 @@
 
                         var appDefaults = response.defaults;
 
-                        console.log(appDefaults);
-
                         var cuttingdiagram2dOptions = {
                             std_sheet: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId, ''),
                             std_sheet_length: '',
