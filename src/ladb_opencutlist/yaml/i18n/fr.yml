@@ -187,11 +187,11 @@ tab:
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
-      numbers_save: Mémoriser les numéros de pièce
-      numbers_reset: Réinitialiser les numéros de pièce
+      numbers_save: Mémoriser les numéros de pièces
+      numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_numbers_save: Mémoriser les numéros de pièce du groupe
-      group_numbers_reset: Réinitialiser les numéros de pièce du groupe
+      group_numbers_save: Mémoriser les numéros de pièces du groupe
+      group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       edit_material: Éditer la matière '{{ material }}'...
       expand_all: Déplier toutes les pièces identiques
