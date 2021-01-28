@@ -145,7 +145,7 @@ tab:
         Section réelle : *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: Adaptez la précision dans les *Infos du modèle* ou vérifiez les dimensions des pièces de ce groupe.
+      rounded_std_footer: Adaptez la précision dans les *Infos sur le modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -270,7 +270,7 @@ tab:
         <i class='ladb-opencutlist-icon-warning'></i> Les instances de pièces avec la même définition de composant seront séparées si l'attribut *Name* n'a pas la même valeur.
       part_number_with_letters: Utiliser des lettres pour la numérotation de pièce
       part_number_with_letters_help: Si cette option est activée, les pièces sont numérotées avec des lettres (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Réinitialiser les numéros de pièce par groupe
+      part_number_sequence_by_group: Réinitialiser les numéros de pièces par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       part_folding: Regrouper les pièces identiques
       part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
@@ -715,8 +715,8 @@ tab:
       invalid_material: Pas de matière valide
     success:
       imported_title: Importation terminée
-      imported_body: "{{ count }} pièce importée avec succes !"
-      imported_body_plural: "{{ count }} pièces importées avec succes !"
+      imported_body: "{{ count }} pièce importée avec succès !"
+      imported_body_plural: "{{ count }} pièces importées avec succès !"
     obsolete_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   tutorials:
     label: Tutoriels
@@ -785,10 +785,10 @@ tab:
         *L'impression d'**étiquettes** sera disponible dans la prochaine mise à jour 2.0.*
 
         Cette fonctionnalité a pour but de :
-        - permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adnésives,
+        - permettre d'imprimer les informations utiles de chaque pièces sur des étiquettes adhésives,
         - simplifier le travail en équipe.
     objective_crowdfunding: |
-      Le développement des nouvelles fonctionnalités se fera grace au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
+      Le développement des nouvelles fonctionnalités se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
       Merci pour votre contribution !
     objective_funded_progress: financé à {{ progress }}%
@@ -815,6 +815,7 @@ tab:
       - Pierluigi Colombo (*italien*)
       - Nayton Sanches Barbosa (*portugais*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espagnol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*tchèque*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
