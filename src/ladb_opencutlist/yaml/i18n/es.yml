@@ -539,7 +539,7 @@ tab:
       type_2: Tipo de material '$t(tab.materials.type_2)'
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
-      type_5: Type de matière '$t(tab.materials.type_5)'
+      type_5: Tipo de material '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
@@ -815,6 +815,7 @@ tab:
       - Pierluigi Colombo (*italiano*)
       - Nayton Sanches Barbosa (*portugués*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
