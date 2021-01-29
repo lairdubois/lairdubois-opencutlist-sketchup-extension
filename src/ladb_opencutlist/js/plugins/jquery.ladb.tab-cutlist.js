@@ -2446,19 +2446,33 @@
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
+                            // Merge all parts
+                            var parts = [];
+                            $.each(cuttingdiagram.sheets, function (sheetIndex) {
+                                $.each(this.parts, function (partIndex) {
+                                    parts.push(this);
+                                });
+                            });
+                            parts.sort(function (a, b) {
+                                if (a.number < b.number) {
+                                    return -1;
+                                } else if (a.number > b.number) {
+                                    return 1
+                                }
+                                return 0;
+                            });
+
                             // Split parts into pages
                             var pages = []
                             var page;
-                            $.each(cuttingdiagram.sheets, function (sheetIndex) {
-                                $.each(this.parts, function (partIndex) {
-                                    if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                        page = {
-                                            parts: []
-                                        }
-                                        pages.push(page);
+                            $.each(parts, function (partIndex) {
+                                if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                    page = {
+                                        parts: []
                                     }
-                                    page.parts.push(this);
-                                });
+                                    pages.push(page);
+                                }
+                                page.parts.push(this);
                             });
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d_labels', 'tabs/cutlist/_slide-cuttingdiagram-2d-labels.twig', $.extend({
