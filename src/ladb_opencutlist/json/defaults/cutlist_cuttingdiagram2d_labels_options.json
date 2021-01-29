@@ -1,0 +1,8 @@
+{
+  "0": {
+    "page_width": { "metric" : "210", "imperial" : "8.5" },
+    "page_height": { "metric" : "297", "imperial" : "11" },
+    "col_count": "2",
+    "row_count": "8"
+  }
+}

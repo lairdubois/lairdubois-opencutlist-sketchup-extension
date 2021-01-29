@@ -16,6 +16,8 @@ module Ladb
       case Sketchup.get_locale.split('-')[0].downcase
       ## /!\ Auto-generated lines, do not edit ##
       ## DESCRIPTION_START ##
+      when 'cs'
+        ex.description = 'Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)'
       when 'de'
         ex.description = 'Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)'
       when 'es'
@@ -25,9 +27,9 @@ module Ladb
       when 'it'
         ex.description = 'Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)'
       when 'pt'
-        ex.description = 'Cutlist e gerador de diagrama de corte para marceneiros. Código aberto, crowdfunded e fácil de usar;)'
+        ex.description = 'Ficha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar;)'
       when 'ru'
-        ex.description = 'Плагин расчета карт раскроя для деревообработчиков. Открытый исходный код, краундфандинг и простота использования.'
+        ex.description = 'Плагин расчета карт раскроя для деревообработчиков. Открытый исходный код, краундфандинг и простота использования ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##

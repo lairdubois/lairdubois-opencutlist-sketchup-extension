@@ -1,0 +1,83 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_cuttingdiagram_2d_labels' %}
+{% set out = true %}
+{% set noPrintHeader = true %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs">
+        {% include 'tabs/cutlist/_file-tab.twig' with { 'generatedAt':'000' } %}
+    </ul>
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.labels.label'|i18next}} <small>| {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension}}</strong></small>
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_labels" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.labels.label'|i18next }}...</button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+        {% for page in pages %}
+            <table id="ladb_cuttingdiagram_group_label_page_{{ loop.index }}" data-page-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-labels-group">
+                <thead class="no-print">
+                <tr>
+                    <td>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ pages|length }}</strong></div>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="text-center">
+
+                        {% set partCount = page.parts|length %}
+                        {% set labelWidth = page_width / col_count %}
+                        {% set labelHeight = page_height / row_count %}
+                        {% set xUnit = labelWidth / 12 %}
+                        {% set yUnit = labelHeight / 12 %}
+                        {% set fontSize = yUnit %}
+                        {% set strokeWidth = min(xUnit, yUnit) / 12 %}
+
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
+                            {% for row in 0..row_count-1 %}
+                                {% set labelY = row * labelHeight %}
+                                {% if row > 0 %}<line x1="0" y1="{{ labelY }}" x2="{{ page_width }}" y2="{{ labelY }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
+                                {% for col in 0..col_count-1 %}
+                                    {% set labelX = col * labelWidth %}
+                                    {% if col > 0 %}<line x1="{{ labelX }}" y1="0" x2="{{ labelX }}" y2="{{ page_height }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
+                                    {% set partIndex = row + col %}
+                                    {% if partIndex == 0 %}
+                                        {% for gy in 1..11 %}
+                                            <line x1="{{ labelX }}" y1="{{ labelY + yUnit * gy }}" x2="{{ labelWidth }}" y2="{{ labelY + yUnit * gy }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
+                                        {% endfor %}
+                                        {% for gx in 1..11 %}
+                                            <line x1="{{ labelX + xUnit * gx }}" y1="{{ labelY }}" x2="{{ labelX + xUnit * gx }}" y2="{{ labelHeight }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if partIndex < partCount %}
+                                        {% set part = page.parts[row + col] %}
+                                        <g>
+                                            <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 - yUnit}}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.number }}</text>
+                                            <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 0.5 * yUnit }}" font-size="{{ fontSize }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.name }}</text>
+                                            <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 3 * yUnit }}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.length }} x {{ part.width }}</text>
+                                        </g>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </svg>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
+{% endblock %}

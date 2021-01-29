@@ -50,6 +50,11 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER = 'cutlist.cuttingdiagram2d.option.origin_corner';
 
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH = 'cutlist.cuttingdiagram2d.labels.option.page_width';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT = 'cutlist.cuttingdiagram2d.labels.option.page_height';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT = 'cutlist.cuttingdiagram2d.labels.option.col_count';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT = 'cutlist.cuttingdiagram2d.labels.option.row_count';
+
     var EXPORT_DEFAULT_COLUMNS = {
         0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
         1 /* EXPORT_OPTION_SOURCE_CUTLIST */        : [ 'number', 'name', 'count', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'entity_names', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
@@ -1606,7 +1611,7 @@
         this.dialog.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
     };
 
-    LadbTabCutlist.prototype.showGroup = function ($group, doNotFlushSettings) {
+    LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings) {
         var groupId = $group.data('group-id');
         var $btn = $('.ladb-btn-toggle-no-print', $group);
         var $i = $('i', $btn);
@@ -1617,17 +1622,19 @@
         $i.removeClass('ladb-opencutlist-icon-eye-open');
         $summaryRow.removeClass('ladb-mute');
 
-        var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
-        if (idx !== -1) {
-            this.generateOptions.hidden_group_ids.splice(idx, 1);
-            if (doNotFlushSettings === undefined || !doNotFlushSettings) {
-                this.saveUIOptionsHiddenGroupIds();
+        if (doNotSaveState === undefined || !doNotSaveState) {
+            var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            if (idx !== -1) {
+                this.generateOptions.hidden_group_ids.splice(idx, 1);
+                if (doNotFlushSettings === undefined || !doNotFlushSettings) {
+                    this.saveUIOptionsHiddenGroupIds();
+                }
             }
         }
 
     };
 
-    LadbTabCutlist.prototype.hideGroup = function ($group, doNotFlushSettings) {
+    LadbTabCutlist.prototype.hideGroup = function ($group, doNotSaveState, doNotFlushSettings) {
         var groupId = $group.data('group-id');
         var $btn = $('.ladb-btn-toggle-no-print', $group);
         var $i = $('i', $btn);
@@ -1638,11 +1645,13 @@
         $i.addClass('ladb-opencutlist-icon-eye-open');
         $summaryRow.addClass('ladb-mute');
 
-        var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
-        if (idx === -1) {
-            this.generateOptions.hidden_group_ids.push(groupId);
-            if (doNotFlushSettings === undefined || !doNotFlushSettings) {
-                this.saveUIOptionsHiddenGroupIds();
+        if (doNotSaveState === undefined || !doNotSaveState) {
+            var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            if (idx === -1) {
+                this.generateOptions.hidden_group_ids.push(groupId);
+                if (doNotFlushSettings === undefined || !doNotFlushSettings) {
+                    this.saveUIOptionsHiddenGroupIds();
+                }
             }
         }
 
@@ -1651,7 +1660,7 @@
     LadbTabCutlist.prototype.showAllGroups = function () {
         var that = this;
         $('.ladb-cutlist-group', this.$page).each(function () {
-            that.showGroup($(this), true);
+            that.showGroup($(this), false,true);
         }).promise().done( function (){
             that.saveUIOptionsHiddenGroupIds();
         });
@@ -1662,7 +1671,7 @@
         $('.ladb-cutlist-group', this.$page).each(function () {
             var groupId = $(this).data('group-id');
             if (exceptedGroupId && groupId !== exceptedGroupId) {
-                that.hideGroup($(this), true);
+                that.hideGroup($(this), false,true);
             }
         }).promise().done( function (){
             that.saveUIOptionsHiddenGroupIds();
@@ -1924,9 +1933,9 @@
                                     $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                         var $group = $(this).parents('.ladb-cutlist-group');
                                         if ($group.hasClass('no-print')) {
-                                            that.showGroup($group);
+                                            that.showGroup($group, false);
                                         } else {
-                                            that.hideGroup($group);
+                                            that.hideGroup($group, false);
                                         }
                                         $(this).blur();
                                     });
@@ -1960,7 +1969,7 @@
                                     $('a.ladb-btn-scrollto', $slide).on('click', function () {
                                         var $target = $($(this).attr('href'));
                                         if ($target.data('group-id')) {
-                                            that.showGroup($target);
+                                            that.showGroup($target, false);
                                         }
                                         $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
                                             $target.effect('highlight', {}, 1500);
@@ -2280,8 +2289,9 @@
                                         window.print();
                                     });
                                     $btnLabels.on('click', function () {
+                                        that.cuttingdiagram2dGroupLabels(group, response);
                                         // Show Objective modal
-                                        that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
+                                        //that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
                                     });
                                     $btnClose.on('click', function () {
                                         that.popSlide();
@@ -2296,9 +2306,9 @@
                                     $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                         var $group = $(this).parents('.ladb-cutlist-group');
                                         if ($group.hasClass('no-print')) {
-                                            that.showGroup($group);
+                                            that.showGroup($group, false);
                                         } else {
-                                            that.hideGroup($group);
+                                            that.hideGroup($group, false);
                                         }
                                         $(this).blur();
                                     });
@@ -2328,7 +2338,7 @@
                                     $('a.ladb-btn-scrollto', $slide).on('click', function () {
                                         var $target = $($(this).attr('href'));
                                         if ($target.data('group-id')) {
-                                            that.showGroup($target);
+                                            that.showGroup($target, false);
                                         }
                                         that.scrollSlideToTarget($slide, $target, true, true);
                                         $(this).blur();
@@ -2368,6 +2378,143 @@
                 });
 
             });
+
+    };
+
+    LadbTabCutlist.prototype.cuttingdiagram2dGroupLabels = function (group, cuttingdiagram) {
+        var that = this;
+
+        // Retrieve cutting diagram options
+        this.dialog.pullSettings([
+
+                // Defaults
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT,
+
+            ],
+            0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
+            function () {
+
+                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_cuttingdiagram2d_labels_options' }, function (response) {
+
+                    if (response.errors && response.errors.length > 0) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
+
+                        var appDefaults = response.defaults;
+
+                        var labelsOptions = {
+                            page_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, appDefaults.page_width),
+                            page_height: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, appDefaults.page_height),
+                            col_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
+                            row_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
+                        };
+
+                        var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_labels', 'tabs/cutlist/_modal-cuttingdiagram-2d-labels.twig', {
+                            group: group,
+                        }, true);
+
+                        // Fetch UI elements
+                        var $btnLabels = $('#ladb_btn_labels', $modal);
+                        var $inputPageWidth = $('#ladb_input_page_width', $modal);
+                        var $inputPageHeight = $('#ladb_input_page_height', $modal);
+                        var $inputColCount = $('#ladb_input_col_count', $modal);
+                        var $inputRowCount = $('#ladb_input_row_count', $modal);
+
+                        $inputPageWidth.val(labelsOptions.page_width);
+                        $inputPageHeight.val(labelsOptions.page_height);
+                        $inputColCount.val(labelsOptions.col_count);
+                        $inputRowCount.val(labelsOptions.row_count);
+
+                        // Bind buttons
+                        $btnLabels.on('click', function () {
+
+                            // Fetch options
+
+                            labelsOptions.page_width = $inputPageWidth.val();
+                            labelsOptions.page_height = $inputPageHeight.val();
+                            labelsOptions.col_count = $inputColCount.val();
+                            labelsOptions.row_count = $inputRowCount.val();
+
+                            // Store options
+                            that.dialog.setSettings([
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
+                            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
+
+                            // Split parts into pages
+                            var pages = []
+                            var page;
+                            $.each(cuttingdiagram.sheets, function (sheetIndex) {
+                                $.each(this.parts.reverse(), function (partIndex) {
+                                    if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                        page = {
+                                            parts: []
+                                        }
+                                        pages.push(page);
+                                    }
+                                    page.parts.push(this);
+                                });
+                            });
+
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d_labels', 'tabs/cutlist/_slide-cuttingdiagram-2d-labels.twig', $.extend({
+                                filename: that.filename,
+                                pageLabel: that.pageLabel,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: group,
+                                pages: pages
+                            }, labelsOptions), function () {
+                                that.dialog.setupTooltips();
+                            });
+
+                            // Fetch UI elements
+                            var $btnLabels = $('#ladb_btn_labels', $slide);
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnLabels.on('click', function () {
+                                that.cuttingdiagram2dGroupLabels(group, cuttingdiagram);
+                            });
+                            $btnPrint.on('click', function () {
+                                window.print();
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                var $page = $(this).parents('.ladb-cutlist-group');
+                                if ($page.hasClass('no-print')) {
+                                    that.showGroup($page, true);
+                                } else {
+                                    that.hideGroup($page, true);
+                                }
+                                $(this).blur();
+                            });
+
+                            // Hide modal
+                            $modal.modal('hide');
+
+                        });
+
+                        // Show modal
+                        $modal.modal('show');
+
+                        // Setup popovers
+                        that.dialog.setupPopovers();
+
+                    }
+
+                });
+
+            }
+
+        );
 
     };
 

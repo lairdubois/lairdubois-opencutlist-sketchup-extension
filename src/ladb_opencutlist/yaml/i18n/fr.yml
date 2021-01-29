@@ -501,6 +501,10 @@ tab:
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       label: Etiquettes
+      option_page_width: Largeur de page
+      option_page_height: Hauteur de page
+      option_col_count: Nombre de colonnes
+      option_row_count: Nombre de lignes
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
