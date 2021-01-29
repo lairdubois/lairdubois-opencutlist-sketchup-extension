@@ -2450,7 +2450,7 @@
                             var pages = []
                             var page;
                             $.each(cuttingdiagram.sheets, function (sheetIndex) {
-                                $.each(this.parts.reverse(), function (partIndex) {
+                                $.each(this.parts, function (partIndex) {
                                     if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                         page = {
                                             parts: []

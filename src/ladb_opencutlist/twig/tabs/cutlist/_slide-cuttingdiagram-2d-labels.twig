@@ -47,24 +47,35 @@
                         {% set strokeWidth = min(xUnit, yUnit) / 12 %}
 
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
+
+                            {# label grid #}
+                            {% for gy in 1..11 %}
+                                <line x1="0" y1="{{ yUnit * gy }}" x2="{{ labelWidth }}" y2="{{ yUnit * gy }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
+                            {% endfor %}
+                            {% for gx in 1..11 %}
+                                <line x1="{{ xUnit * gx }}" y1="0" x2="{{ xUnit * gx }}" y2="{{ labelHeight }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
+                            {% endfor %}
+
+                            {# page grid #}
+                            {% for row in 0..row_count-1 %}
+                                {% if row > 0 %}<line x1="0" y1="{{ row * labelHeight }}" x2="{{ page_width }}" y2="{{ row * labelHeight }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
+                            {% endfor %}
+                            {% for col in 0..col_count-1 %}
+                                {% if col > 0 %}<line x1="{{ col * labelWidth }}" y1="0" x2="{{ col * labelWidth }}" y2="{{ page_height }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
+                            {% endfor %}
+
                             {% for row in 0..row_count-1 %}
                                 {% set labelY = row * labelHeight %}
-                                {% if row > 0 %}<line x1="0" y1="{{ labelY }}" x2="{{ page_width }}" y2="{{ labelY }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
                                 {% for col in 0..col_count-1 %}
                                     {% set labelX = col * labelWidth %}
-                                    {% if col > 0 %}<line x1="{{ labelX }}" y1="0" x2="{{ labelX }}" y2="{{ page_height }}" style="stroke:#000; stroke-width:{{ strokeWidth }}; stroke-dasharray:2,2;" />{% endif %}
-                                    {% set partIndex = row + col %}
-                                    {% if partIndex == 0 %}
-                                        {% for gy in 1..11 %}
-                                            <line x1="{{ labelX }}" y1="{{ labelY + yUnit * gy }}" x2="{{ labelWidth }}" y2="{{ labelY + yUnit * gy }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
-                                        {% endfor %}
-                                        {% for gx in 1..11 %}
-                                            <line x1="{{ labelX + xUnit * gx }}" y1="{{ labelY }}" x2="{{ labelX + xUnit * gx }}" y2="{{ labelHeight }}" style="stroke:#eee; stroke-width:{{ strokeWidth }};" />
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% set partIndex = row * col_count + col %}
                                     {% if partIndex < partCount %}
-                                        {% set part = page.parts[row + col] %}
+                                        {% set part = page.parts[partIndex] %}
                                         <g>
+{#                                            <text x="{{ labelX + xUnit / 2 }}" y="{{ labelY + fontSize + xUnit / 2 }}" font-size="{{ fontSize * 2 }}" text-anchor="start" dominant-baseline="alphabetic">{{ part.number }}</text>#}
+{#                                            <text x="{{ labelX + labelWidth - xUnit / 2 }}" y="{{ labelY + fontSize + xUnit / 2 }}" font-size="{{ fontSize }}" text-anchor="end" dominant-baseline="alphabetic">{{ part.name }}</text>#}
+{#                                            <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 }}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="middle">{{ part.length }} x {{ part.width }}</text>#}
+
                                             <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 - yUnit}}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.number }}</text>
                                             <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 0.5 * yUnit }}" font-size="{{ fontSize }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.name }}</text>
                                             <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 3 * yUnit }}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.length }} x {{ part.width }}</text>
@@ -72,6 +83,7 @@
                                     {% endif %}
                                 {% endfor %}
                             {% endfor %}
+
                         </svg>
 
                     </td>
