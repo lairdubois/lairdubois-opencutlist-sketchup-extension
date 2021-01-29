@@ -807,7 +807,7 @@ tab:
     version: Verze
     credits: Technické kredity
     credits_authors: |
-      *OpenCutList* vyvíjejí [Boris Beaulant] (https://www.lairdubois.fr/@borisbeaulant) a [Martin Müller] (https://www.lairdubois.fr/@mobilarte). *Seznam všech [přispěvatelů] (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* vyvíjejí [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) a [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Seznam všech [přispěvatelů](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Překlady:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglicky*, *německy*)
@@ -817,14 +817,14 @@ tab:
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*španělsky*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
     credits_description: |
-      Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois] (https://www.lairdubois.fr).
+      Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Spustit
     credits_development: Vývoj
     credits_vendors: |
       Dobrodružství by nebylo možné bez práce autorů následujících komponent Open Source:
     credits_thanks: |
-      Zvláštní poděkování patří společnosti [JetBrains] (https://www.jetbrains.com) za podporu tohoto projektu prostřednictvím [Free Open Source License] (https://www.jetbrains.com/buy/opensource/).
+      Zvláštní poděkování patří společnosti [JetBrains](https://www.jetbrains.com) za podporu tohoto projektu prostřednictvím [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
 tool:
   highlight:
     transparency: Průhlednost

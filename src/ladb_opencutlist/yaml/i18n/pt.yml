@@ -335,7 +335,7 @@ tab:
     export:
       title: Exportar no formato CSV
       info: |
-        Com esta função você pode exportar a lista *peças* para um arquivo [CSV] (https://pt.wikipedia.org/wiki/Comma-separated_values) file.
+        Com esta função você pode exportar a lista *peças* para um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values) file.
 
         <i class="ladb-opencutlist-icon-warning"></i> *As peças dentro de grupos ocultos de sua Ficha de Produção não serão exportadas*.
       options: Opções de exportação
@@ -645,7 +645,7 @@ tab:
     label: Importar
     title: Importar peças
     help: |
-      Esta página permite importar uma série de peças compatíveis (definidas por uma caixa de delimitação retangular) para seu modelo a partir de um arquivo [CSV] (https://pt.wikipedia.org/wiki/Comma-separated_values).
+      Esta página permite importar uma série de peças compatíveis (definidas por uma caixa de delimitação retangular) para seu modelo a partir de um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       Você poderá então usar o poder da Ficha de Produção do *OpenCutList* gerando plano de corte com um software diferente de *SketchUp*.
       Clique no botão **Abrir arquivo CSV** para carregar.
     open_csv: Abrir arquivo CSV
@@ -817,7 +817,7 @@ tab:
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espanhol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
     credits_description: |
-      O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois] (https://www.lairdubois.fr).
+      O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Ambiente de execução
     credits_development: Desenvolvimento
