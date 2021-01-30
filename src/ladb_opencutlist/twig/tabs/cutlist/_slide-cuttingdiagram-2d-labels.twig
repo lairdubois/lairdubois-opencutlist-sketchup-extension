@@ -65,12 +65,16 @@
                                 {% endif %}
 
                                 {# page grid #}
-                                {% for row in (margin_top > 0 ? 0 : 1)..(margin_bottom > 0 ? row_count : row_count - 1) %}
-                                    <line class="grid-line grid-line-dashed" x1="0" y1="{{ row * labelHeight }}" x2="{{ gridWidth }}" y2="{{ row * labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                {% endfor %}
-                                {% for col in (margin_left > 0 ? 0 : 1)..(margin_right > 0 ? col_count : col_count - 1) %}
-                                    <line class="grid-line grid-line-dashed" x1="{{ col * labelWidth }}" y1="0" x2="{{ col * labelWidth }}" y2="{{ gridHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                {% endfor %}
+                                {% if row_count > 1 %}
+                                    {% for row in (margin_top > 0 ? 0 : 1)..(margin_bottom > 0 ? row_count : row_count - 1) %}
+                                        <line class="grid-line grid-line-dashed" x1="0" y1="{{ row * labelHeight }}" x2="{{ gridWidth }}" y2="{{ row * labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
+                                    {% endfor %}
+                                {% endif %}
+                                {% if col_count > 1 %}
+                                    {% for col in (margin_left > 0 ? 0 : 1)..(margin_right > 0 ? col_count : col_count - 1) %}
+                                        <line class="grid-line grid-line-dashed" x1="{{ col * labelWidth }}" y1="0" x2="{{ col * labelWidth }}" y2="{{ gridHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
+                                    {% endfor %}
+                                {% endif %}
 
                                 {% for row in 0..row_count-1 %}
                                     {% set labelY = row * labelHeight %}
