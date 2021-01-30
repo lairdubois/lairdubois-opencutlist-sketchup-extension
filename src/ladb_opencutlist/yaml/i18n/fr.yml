@@ -503,6 +503,10 @@ tab:
       label: Etiquettes
       option_page_width: Largeur de page
       option_page_height: Hauteur de page
+      option_margin_top: Marge haut
+      option_margin_right: Marge droit
+      option_margin_bottom: Marge bas
+      option_margin_left: Marge gauche
       option_col_count: Nombre de colonnes
       option_row_count: Nombre de lignes
     error:

@@ -434,6 +434,9 @@ module Ladb::OpenCutList
         register_command('core_send_action') do |params|
           send_action_command(params)
         end
+        register_command('core_convert_to_inch_float') do |params|
+          convert_to_inch_float_command(params)
+        end
         register_command('core_compute_size_aspect_ratio') do |params|
           compute_size_aspect_ratio_command(params)
         end
@@ -937,6 +940,14 @@ module Ladb::OpenCutList
       {
           :success => success,
       }
+    end
+
+    def convert_to_inch_float_command(params)    # Waiting params = { key_1: 'STRING_DIMENSION', key_2: 'STRING_DIMENSION',  }
+      float_dimensions = {}
+      params.each do |key, string_dimension|
+        float_dimensions[key] = DimensionUtils.instance.d_to_ifloats(string_dimension).to_l.to_f
+      end
+      float_dimensions
     end
 
     def compute_size_aspect_ratio_command(params)    # Waiting params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }

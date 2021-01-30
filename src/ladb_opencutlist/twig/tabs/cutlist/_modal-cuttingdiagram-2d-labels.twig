@@ -18,6 +18,30 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="ladb_input_margin_top" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_top'|i18next }}</label>
+            <div class="col-xs-7">
+                <input type="text" class="form-control" id="ladb_input_margin_top">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_input_margin_right" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_right'|i18next }}</label>
+            <div class="col-xs-7">
+                <input type="text" class="form-control" id="ladb_input_margin_right">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_input_margin_bottom" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_bottom'|i18next }}</label>
+            <div class="col-xs-7">
+                <input type="text" class="form-control" id="ladb_input_margin_bottom">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ladb_input_margin_left" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_left'|i18next }}</label>
+            <div class="col-xs-7">
+                <input type="text" class="form-control" id="ladb_input_margin_left">
+            </div>
+        </div>
+        <div class="form-group">
             <label for="ladb_input_col_count" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_col_count'|i18next }}</label>
             <div class="col-xs-7">
                 <input type="text" class="form-control" id="ladb_input_col_count">
@@ -33,6 +57,7 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" id="ladb_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_labels">{{ 'tab.cutlist.labels.label'|i18next }}</button>
 {% endblock %}

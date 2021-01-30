@@ -52,6 +52,10 @@
 
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH = 'cutlist.cuttingdiagram2d.labels.option.page_width';
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT = 'cutlist.cuttingdiagram2d.labels.option.page_height';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP = 'cutlist.cuttingdiagram2d.labels.option.margin_top';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT = 'cutlist.cuttingdiagram2d.labels.option.margin_right';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM = 'cutlist.cuttingdiagram2d.labels.option.margin_bottom';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT = 'cutlist.cuttingdiagram2d.labels.option.margin_left';
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT = 'cutlist.cuttingdiagram2d.labels.option.col_count';
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT = 'cutlist.cuttingdiagram2d.labels.option.row_count';
 
@@ -2390,6 +2394,10 @@
                 // Defaults
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH,
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT,
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT,
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT,
 
@@ -2408,6 +2416,10 @@
                         var labelsOptions = {
                             page_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, appDefaults.page_width),
                             page_height: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, appDefaults.page_height),
+                            margin_top: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP, appDefaults.margin_top),
+                            margin_right: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT, appDefaults.margin_right),
+                            margin_bottom: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM, appDefaults.margin_bottom),
+                            margin_left: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, appDefaults.margin_left),
                             col_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
                             row_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
                         };
@@ -2417,102 +2429,154 @@
                         }, true);
 
                         // Fetch UI elements
+                        var $btnDefaultsReset = $('#ladb_btn_defaults_reset', $modal);
                         var $btnLabels = $('#ladb_btn_labels', $modal);
                         var $inputPageWidth = $('#ladb_input_page_width', $modal);
                         var $inputPageHeight = $('#ladb_input_page_height', $modal);
+                        var $inputMarginTop = $('#ladb_input_margin_top', $modal);
+                        var $inputMarginRight = $('#ladb_input_margin_right', $modal);
+                        var $inputMarginBottom = $('#ladb_input_margin_bottom', $modal);
+                        var $inputMarginLeft = $('#ladb_input_margin_left', $modal);
                         var $inputColCount = $('#ladb_input_col_count', $modal);
                         var $inputRowCount = $('#ladb_input_row_count', $modal);
 
                         $inputPageWidth.val(labelsOptions.page_width);
+                        $inputPageWidth.ladbTextinputDimension();
                         $inputPageHeight.val(labelsOptions.page_height);
+                        $inputPageHeight.ladbTextinputDimension();
+                        $inputMarginTop.val(labelsOptions.margin_top);
+                        $inputMarginTop.ladbTextinputDimension();
+                        $inputMarginRight.val(labelsOptions.margin_right);
+                        $inputMarginRight.ladbTextinputDimension();
+                        $inputMarginBottom.val(labelsOptions.margin_bottom);
+                        $inputMarginBottom.ladbTextinputDimension();
+                        $inputMarginLeft.val(labelsOptions.margin_left);
+                        $inputMarginLeft.ladbTextinputDimension();
                         $inputColCount.val(labelsOptions.col_count);
                         $inputRowCount.val(labelsOptions.row_count);
 
                         // Bind buttons
+                        $btnDefaultsReset.on('click', function () {
+                            $inputPageWidth.val(appDefaults.page_width);
+                            $inputPageHeight.val(appDefaults.page_height);
+                            $inputMarginTop.val(appDefaults.margin_top);
+                            $inputMarginRight.val(appDefaults.margin_right);
+                            $inputMarginBottom.val(appDefaults.margin_bottom);
+                            $inputMarginLeft.val(appDefaults.margin_left);
+                            $inputColCount.val(appDefaults.col_count);
+                            $inputRowCount.val(appDefaults.row_count);
+                            $(this).blur();
+                        });
                         $btnLabels.on('click', function () {
 
                             // Fetch options
 
                             labelsOptions.page_width = $inputPageWidth.val();
                             labelsOptions.page_height = $inputPageHeight.val();
+                            labelsOptions.margin_top = $inputMarginTop.val();
+                            labelsOptions.margin_right = $inputMarginRight.val();
+                            labelsOptions.margin_bottom = $inputMarginBottom.val();
+                            labelsOptions.margin_left = $inputMarginLeft.val();
                             labelsOptions.col_count = $inputColCount.val();
                             labelsOptions.row_count = $inputRowCount.val();
 
                             // Store options
                             that.dialog.setSettings([
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP, value:labelsOptions.margin_top, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
-                            // Merge all parts
-                            var parts = [];
-                            $.each(cuttingdiagram.sheets, function (sheetIndex) {
-                                $.each(this.parts, function (partIndex) {
-                                    parts.push(this);
+                            rubyCallCommand('core_convert_to_inch_float', {
+                                page_width: labelsOptions.page_width,
+                                page_height: labelsOptions.page_height,
+                                margin_top: labelsOptions.margin_top,
+                                margin_right: labelsOptions.margin_right,
+                                margin_bottom: labelsOptions.margin_bottom,
+                                margin_left: labelsOptions.margin_left
+                            }, function (response) {
+
+                                labelsOptions.page_width = response.page_width;
+                                labelsOptions.page_height = response.page_height;
+                                labelsOptions.margin_top = response.margin_top;
+                                labelsOptions.margin_right = response.margin_right;
+                                labelsOptions.margin_bottom = response.margin_bottom;
+                                labelsOptions.margin_left = response.margin_left;
+
+                                // Merge all parts
+                                var parts = [];
+                                $.each(cuttingdiagram.sheets, function (sheetIndex) {
+                                    $.each(this.parts, function (partIndex) {
+                                        parts.push(this);
+                                    });
                                 });
-                            });
-                            parts.sort(function (a, b) {
-                                if (a.number < b.number) {
-                                    return -1;
-                                } else if (a.number > b.number) {
-                                    return 1
-                                }
-                                return 0;
-                            });
-
-                            // Split parts into pages
-                            var pages = []
-                            var page;
-                            $.each(parts, function (partIndex) {
-                                if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                    page = {
-                                        parts: []
+                                parts.sort(function (a, b) {
+                                    if (a.number < b.number) {
+                                        return -1;
+                                    } else if (a.number > b.number) {
+                                        return 1
                                     }
-                                    pages.push(page);
-                                }
-                                page.parts.push(this);
-                            });
+                                    return 0;
+                                });
 
-                            var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d_labels', 'tabs/cutlist/_slide-cuttingdiagram-2d-labels.twig', $.extend({
-                                filename: that.filename,
-                                pageLabel: that.pageLabel,
-                                lengthUnit: that.lengthUnit,
-                                generatedAt: new Date().getTime() / 1000,
-                                group: group,
-                                pages: pages
-                            }, labelsOptions), function () {
-                                that.dialog.setupTooltips();
-                            });
+                                // Split parts into pages
+                                var pages = []
+                                var page;
+                                $.each(parts, function (partIndex) {
+                                    if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                        page = {
+                                            parts: []
+                                        }
+                                        pages.push(page);
+                                    }
+                                    page.parts.push(this);
+                                });
 
-                            // Fetch UI elements
-                            var $btnLabels = $('#ladb_btn_labels', $slide);
-                            var $btnPrint = $('#ladb_btn_print', $slide);
-                            var $btnClose = $('#ladb_btn_close', $slide);
+                                var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d_labels', 'tabs/cutlist/_slide-cuttingdiagram-2d-labels.twig', $.extend({
+                                    filename: that.filename,
+                                    pageLabel: that.pageLabel,
+                                    lengthUnit: that.lengthUnit,
+                                    generatedAt: new Date().getTime() / 1000,
+                                    group: group,
+                                    pages: pages
+                                }, labelsOptions), function () {
+                                    that.dialog.setupTooltips();
+                                });
 
-                            // Bind buttons
-                            $btnLabels.on('click', function () {
-                                that.cuttingdiagram2dGroupLabels(group, cuttingdiagram);
-                            });
-                            $btnPrint.on('click', function () {
-                                window.print();
-                            });
-                            $btnClose.on('click', function () {
-                                that.popSlide();
-                            });
-                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                var $page = $(this).parents('.ladb-cutlist-group');
-                                if ($page.hasClass('no-print')) {
-                                    that.showGroup($page, true);
-                                } else {
-                                    that.hideGroup($page, true);
-                                }
-                                $(this).blur();
-                            });
+                                // Fetch UI elements
+                                var $btnLabels = $('#ladb_btn_labels', $slide);
+                                var $btnPrint = $('#ladb_btn_print', $slide);
+                                var $btnClose = $('#ladb_btn_close', $slide);
 
-                            // Hide modal
-                            $modal.modal('hide');
+                                // Bind buttons
+                                $btnLabels.on('click', function () {
+                                    that.cuttingdiagram2dGroupLabels(group, cuttingdiagram);
+                                });
+                                $btnPrint.on('click', function () {
+                                    window.print();
+                                });
+                                $btnClose.on('click', function () {
+                                    that.popSlide();
+                                });
+                                $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                    var $page = $(this).parents('.ladb-cutlist-group');
+                                    if ($page.hasClass('no-print')) {
+                                        that.showGroup($page, true);
+                                    } else {
+                                        that.hideGroup($page, true);
+                                    }
+                                    $(this).blur();
+                                });
+
+                                // Hide modal
+                                $modal.modal('hide');
+
+                            });
 
                         });
 
