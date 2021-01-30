@@ -4,53 +4,73 @@
 {% set title = ('tab.cutlist.labels.label'|i18next())~' '~group.material_name|escape('html')~' / '~group.std_dimension %}
 
 {% block bodyInner %}
-    <div class="form form-horizontal">
-        <div class="form-group">
-            <label for="ladb_input_page_width" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_page_width'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_page_width">
+    <div class="row">
+        <div class="col-xs-6 form form-horizontal">
+            <h4>{{ 'tab.cutlist.labels.option_page'|i18next }}</h4>
+            <div class="form-group">
+                <label for="ladb_select_page_format" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_page_format'|i18next }}</label>
+                <div class="col-xs-7">
+                    <select class="form-control" id="ladb_select_page_format">
+                        <option value="210mmx297mm" data-content="A4 - {{ 'tab.cutlist.labels.option_page_format_portrait'|i18next }}"></option>
+                        <option value="297mmx210mm" data-content="A4 - {{ 'tab.cutlist.labels.option_page_format_landscape'|i18next }}"></option>
+                        <option value='8.5"x11"' data-content="Letter - {{ 'tab.cutlist.labels.option_page_format_portrait'|i18next }}"></option>
+                        <option value='11"x8.5"' data-content="Letter - {{ 'tab.cutlist.labels.option_page_format_landscape'|i18next }}"></option>
+                        <option data-divider="true"></option>
+                        <option value="0" data-content="{{ 'tab.cutlist.labels.option_page_format_custom'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ladb_input_page_width" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_page_width'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_page_width">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ladb_input_page_height" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_page_height'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_page_height">
+                </div>
+            </div>
+            <h4>{{ 'tab.cutlist.labels.option_grid'|i18next }}</h4>
+            <div class="form-group">
+                <label for="ladb_input_col_count" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_col_count'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_col_count">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ladb_input_row_count" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_row_count'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_row_count">
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="ladb_input_page_height" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_page_height'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_page_height">
+        <div class="col-xs-6 form form-horizontal">
+            <h4>{{ 'tab.cutlist.labels.option_margin'|i18next }}</h4>
+            <div class="form-group">
+                <label for="ladb_input_margin_top" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_top'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_margin_top">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_margin_top" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_top'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_margin_top">
+            <div class="form-group">
+                <label for="ladb_input_margin_bottom" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_bottom'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_margin_bottom">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_margin_right" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_right'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_margin_right">
+            <div class="form-group">
+                <label for="ladb_input_margin_right" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_right'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_margin_right">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_margin_bottom" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_bottom'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_margin_bottom">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_margin_left" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_left'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_margin_left">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_col_count" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_col_count'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_col_count">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ladb_input_row_count" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_row_count'|i18next }}</label>
-            <div class="col-xs-7">
-                <input type="text" class="form-control" id="ladb_input_row_count">
+            <div class="form-group">
+                <label for="ladb_input_margin_left" class="control-label col-xs-4">{{ 'tab.cutlist.labels.option_margin_left'|i18next }}</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_margin_left">
+                </div>
             </div>
         </div>
     </div>

@@ -2431,6 +2431,7 @@
                         // Fetch UI elements
                         var $btnDefaultsReset = $('#ladb_btn_defaults_reset', $modal);
                         var $btnLabels = $('#ladb_btn_labels', $modal);
+                        var $selectPageFormat = $('#ladb_select_page_format', $modal);
                         var $inputPageWidth = $('#ladb_input_page_width', $modal);
                         var $inputPageHeight = $('#ladb_input_page_height', $modal);
                         var $inputMarginTop = $('#ladb_input_margin_top', $modal);
@@ -2440,6 +2441,16 @@
                         var $inputColCount = $('#ladb_input_col_count', $modal);
                         var $inputRowCount = $('#ladb_input_row_count', $modal);
 
+                        $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
+                        $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
+                        if ($selectPageFormat.val() == null) {
+                            $selectPageFormat.selectpicker('val', '0');
+                            $inputPageWidth.prop('disabled', false);
+                            $inputPageHeight.prop('disabled', false);
+                        } else {
+                            $inputPageWidth.prop('disabled', true);
+                            $inputPageHeight.prop('disabled', true);
+                        }
                         $inputPageWidth.val(labelsOptions.page_width);
                         $inputPageWidth.ladbTextinputDimension();
                         $inputPageHeight.val(labelsOptions.page_height);
@@ -2454,6 +2465,21 @@
                         $inputMarginLeft.ladbTextinputDimension();
                         $inputColCount.val(labelsOptions.col_count);
                         $inputRowCount.val(labelsOptions.row_count);
+
+                        // Bind select
+                        $selectPageFormat.on('change', function () {
+                            var format = $(this).val();
+                            if (format !== '0') {
+                                $inputPageWidth.prop('disabled', true);
+                                $inputPageHeight.prop('disabled', true);
+                                var dimensions = format.split('x');
+                                $inputPageWidth.val(dimensions[0]);
+                                $inputPageHeight.val(dimensions[1]);
+                            } else {
+                                $inputPageWidth.prop('disabled', false);
+                                $inputPageHeight.prop('disabled', false);
+                            }
+                        });
 
                         // Bind buttons
                         $btnDefaultsReset.on('click', function () {

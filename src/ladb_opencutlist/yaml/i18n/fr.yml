@@ -501,14 +501,21 @@ tab:
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       label: Etiquettes
-      option_page_width: Largeur de page
-      option_page_height: Hauteur de page
-      option_margin_top: Marge haut
-      option_margin_right: Marge droit
-      option_margin_bottom: Marge bas
-      option_margin_left: Marge gauche
-      option_col_count: Nombre de colonnes
-      option_row_count: Nombre de lignes
+      option_page: Page
+      option_page_format: Format
+      option_page_format_portrait: Portrait
+      option_page_format_landscape: Paysage
+      option_page_format_custom: Personnalisé
+      option_page_width: Largeur
+      option_page_height: Hauteur
+      option_margin: Marge
+      option_margin_top: Haut
+      option_margin_right: Droite
+      option_margin_bottom: Bas
+      option_margin_left: Gauche
+      option_grid: Grille
+      option_col_count: Colonnes
+      option_row_count: Lignes
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
