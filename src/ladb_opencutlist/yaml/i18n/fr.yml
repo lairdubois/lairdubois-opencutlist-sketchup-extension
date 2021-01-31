@@ -516,6 +516,9 @@ tab:
       option_grid: Grille
       option_col_count: Colonnes
       option_row_count: Lignes
+      option_cutting_marks: Repères
+      option_cutting_marks_0: Non imprimés
+      option_cutting_marks_1: Imprimés
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

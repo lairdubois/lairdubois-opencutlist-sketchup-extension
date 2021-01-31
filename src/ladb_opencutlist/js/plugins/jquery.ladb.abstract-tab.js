@@ -128,6 +128,17 @@ LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
     return $slide;
 };
 
+LadbAbstractTab.prototype.popToRootSlide = function () {
+    if (this._$slides.length > 2) {
+        // Remove hidden slides
+        var $removedSlides = this._$slides.splice(1, this._$slides.length - 2);
+        for (var i = 0; i < $removedSlides.length; i++) {
+            $removedSlides[i].remove(); // Remove from DOM
+        }
+    }
+    this.popSlide();
+};
+
 LadbAbstractTab.prototype.popSlide = function () {
     if (this._$slides.length > 1) {
         var $poppedSlide = this._$slides.pop();

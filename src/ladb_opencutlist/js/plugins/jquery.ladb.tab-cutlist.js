@@ -58,6 +58,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT = 'cutlist.cuttingdiagram2d.labels.option.margin_left';
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT = 'cutlist.cuttingdiagram2d.labels.option.col_count';
     var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT = 'cutlist.cuttingdiagram2d.labels.option.row_count';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS = 'cutlist.cuttingdiagram2d.labels.option.cutting_marks';
 
     var EXPORT_DEFAULT_COLUMNS = {
         0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
@@ -125,7 +126,7 @@
         this.groups = [];
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
-        this.popSlide();
+        this.popToRootSlide();
 
         rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
@@ -2400,6 +2401,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT,
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT,
                 SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT,
+                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS,
 
             ],
             0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
@@ -2422,6 +2424,7 @@
                             margin_left: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, appDefaults.margin_left),
                             col_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
                             row_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
+                            cutting_marks: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS, appDefaults.cutting_marks),
                         };
 
                         var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_labels', 'tabs/cutlist/_modal-cuttingdiagram-2d-labels.twig', {
@@ -2440,17 +2443,10 @@
                         var $inputMarginLeft = $('#ladb_input_margin_left', $modal);
                         var $inputColCount = $('#ladb_input_col_count', $modal);
                         var $inputRowCount = $('#ladb_input_row_count', $modal);
+                        var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
 
                         $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
                         $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
-                        if ($selectPageFormat.val() == null) {
-                            $selectPageFormat.selectpicker('val', '0');
-                            $inputPageWidth.prop('disabled', false);
-                            $inputPageHeight.prop('disabled', false);
-                        } else {
-                            $inputPageWidth.prop('disabled', true);
-                            $inputPageHeight.prop('disabled', true);
-                        }
                         $inputPageWidth.val(labelsOptions.page_width);
                         $inputPageWidth.ladbTextinputDimension();
                         $inputPageHeight.val(labelsOptions.page_height);
@@ -2465,19 +2461,30 @@
                         $inputMarginLeft.ladbTextinputDimension();
                         $inputColCount.val(labelsOptions.col_count);
                         $inputRowCount.val(labelsOptions.row_count);
+                        $selectCuttingMarks.val(labelsOptions.cutting_marks ? '1' : '0');
+                        $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
+
+                        if ($selectPageFormat.val() == null) {
+                            $selectPageFormat.selectpicker('val', '0');
+                            $inputPageWidth.ladbTextinputDimension('enable');
+                            $inputPageHeight.ladbTextinputDimension('enable');
+                        } else {
+                            $inputPageWidth.ladbTextinputDimension('disable');
+                            $inputPageHeight.ladbTextinputDimension('disable');
+                        }
 
                         // Bind select
                         $selectPageFormat.on('change', function () {
                             var format = $(this).val();
                             if (format !== '0') {
-                                $inputPageWidth.prop('disabled', true);
-                                $inputPageHeight.prop('disabled', true);
+                                $inputPageWidth.ladbTextinputDimension('disable');
+                                $inputPageHeight.ladbTextinputDimension('disable');
                                 var dimensions = format.split('x');
                                 $inputPageWidth.val(dimensions[0]);
                                 $inputPageHeight.val(dimensions[1]);
                             } else {
-                                $inputPageWidth.prop('disabled', false);
-                                $inputPageHeight.prop('disabled', false);
+                                $inputPageWidth.ladbTextinputDimension('enable');
+                                $inputPageHeight.ladbTextinputDimension('enable');
                             }
                         });
 
@@ -2491,6 +2498,7 @@
                             $inputMarginLeft.val(appDefaults.margin_left);
                             $inputColCount.val(appDefaults.col_count);
                             $inputRowCount.val(appDefaults.row_count);
+                            $selectCuttingMarks.selectpicker('val', appDefaults.cutting_marks ? '1' : '0');
                             $(this).blur();
                         });
                         $btnLabels.on('click', function () {
@@ -2505,6 +2513,7 @@
                             labelsOptions.margin_left = $inputMarginLeft.val();
                             labelsOptions.col_count = $inputColCount.val();
                             labelsOptions.row_count = $inputRowCount.val();
+                            labelsOptions.cutting_marks = $selectCuttingMarks.val() === '1';
 
                             // Store options
                             that.dialog.setSettings([
@@ -2516,6 +2525,7 @@
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
                                 { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
+                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS, value:labelsOptions.cutting_marks },
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                             rubyCallCommand('core_convert_to_inch_float', {
@@ -2588,6 +2598,12 @@
                                 });
                                 $btnClose.on('click', function () {
                                     that.popSlide();
+                                });
+                                $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                                    $(this).blur();
+                                    rubyCallCommand('core_open_model_info_page', {
+                                        page: i18next.t('core.model_info_page.units')
+                                    });
                                 });
                                 $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                     var $page = $(this).parents('.ladb-cutlist-group');

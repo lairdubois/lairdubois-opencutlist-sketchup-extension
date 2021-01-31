@@ -69,7 +69,7 @@ module Ladb::OpenCutList
           end
 
           File.open(export_path, "wb+:#{encoding}") do |f|
-            options = { :col_sep => col_sep }
+            options = { :col_sep => col_sep, :force_quotes => true }
             csv_file = CSV.generate(**options) do |csv|
 
               # Create the formula calculator

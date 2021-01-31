@@ -446,7 +446,12 @@ body.no-ie, body.ie-gt10 {
     box-shadow: 3px 3px 10px #999;
 
     .grid-line {
-      stroke: #ddd;
+      stroke: #000;
+
+      &.no-print {
+        stroke: #ddd;
+      }
+
     }
 
   }
@@ -683,11 +688,6 @@ body.no-ie, body.ie-gt10 {
       margin-left: -50vw;
       border: none;
       box-shadow: none;
-
-      .grid-line {
-        display: none;
-      }
-
     }
 
   }
