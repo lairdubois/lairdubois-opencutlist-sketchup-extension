@@ -8,6 +8,36 @@
     "margin_left": { "metric" : "0", "imperial" : "0" },
     "col_count": "2",
     "row_count": "8",
-    "cutting_marks": false
+    "cutting_marks": false,
+    "layout": [
+      {
+        "formula": "number",
+        "x": 6,
+        "y": 3,
+        "fontSize": 3,
+        "textAnchor": "middle"
+      },
+      {
+        "formula": "name",
+        "x": 6,
+        "y": 6,
+        "fontSize": 1,
+        "textAnchor": "middle"
+      },
+      {
+        "formula": "length",
+        "x": 5,
+        "y": 10,
+        "fontSize": 2,
+        "textAnchor": "end"
+      },
+      {
+        "formula": "width",
+        "x": 7,
+        "y": 10,
+        "fontSize": 2,
+        "textAnchor": "start"
+      }
+    ]
   }
 }

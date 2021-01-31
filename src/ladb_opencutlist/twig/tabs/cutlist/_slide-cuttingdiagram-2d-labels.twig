@@ -43,26 +43,15 @@
                         {% set gridHeight = page_height - margin_top - margin_bottom %}
                         {% set labelWidth = gridWidth / col_count %}
                         {% set labelHeight = gridHeight / row_count %}
+                        {% set minDimension = min(labelWidth, labelHeight) %}
                         {% set xUnit = labelWidth / 12 %}
                         {% set yUnit = labelHeight / 12 %}
                         {% set minUnit = min(xUnit, yUnit) %}
-                        {% set maxUnit = max(xUnit, yUnit) %}
-                        {% set fontSize = minUnit %}
                         {% set strokeWidth = 0.01 %}
 
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
 
                             <g transform="translate({{ margin_left }} {{ margin_top }})">
-
-                                {# label grid #}
-                                {% if loop.index == 1 %}
-                                    {% for gy in 1..11 %}
-                                        <line class="grid-line no-print" x1="0" y1="{{ yUnit * gy }}" x2="{{ labelWidth }}" y2="{{ yUnit * gy }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                    {% endfor %}
-                                    {% for gx in 1..11 %}
-                                        <line class="grid-line no-print" x1="{{ xUnit * gx }}" y1="0" x2="{{ xUnit * gx }}" y2="{{ labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                    {% endfor %}
-                                {% endif %}
 
                                 {# page grid #}
                                 {% if margin_top > 0 or margin_bottom > 0 or row_count > 1 %}
@@ -83,14 +72,10 @@
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
                                             {% set part = page.parts[partIndex] %}
-                                            <g>
-{#                                                <text x="{{ labelX + minUnit }}" y="{{ labelY + fontSize + minUnit }}" font-size="{{ fontSize * 2 }}" text-anchor="start" dominant-baseline="alphabetic">{{ part.number }}</text>#}
-{#                                                <text x="{{ labelX + labelWidth - xUnit / 2 }}" y="{{ labelY + fontSize + xUnit / 2 }}" font-size="{{ fontSize }}" text-anchor="end" dominant-baseline="alphabetic">{{ part.name }}</text>#}
-{#                                                <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 }}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="middle">{{ part.length }} x {{ part.width }}</text>#}
-
-                                                <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 - yUnit}}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.number }}</text>
-                                                <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 0.5 * yUnit }}" font-size="{{ fontSize }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.name }}</text>
-                                                <text x="{{ labelX + labelWidth / 2 }}" y="{{ labelY + labelHeight / 2 + 3 * yUnit }}" font-size="{{ fontSize * 2 }}" text-anchor="middle" dominant-baseline="alphabetic">{{ part.length }} x {{ part.width }}</text>
+                                            <g transform="translate({{ labelX }} {{ labelY }})">
+                                                {% for elementDef in layout %}
+                                                    <text x="{{ xUnit * elementDef.x }}" y="{{ yUnit * elementDef.y }}" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}">{{ part[elementDef.formula] }}</text>
+                                                {% endfor %}
                                             </g>
                                         {% endif %}
 

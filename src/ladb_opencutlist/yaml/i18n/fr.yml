@@ -501,6 +501,8 @@ tab:
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       label: Etiquettes
+      options_settings: Configuration
+      options_layout: Disposition
       option_page: Page
       option_page_format: Format
       option_page_format_portrait: Portrait
