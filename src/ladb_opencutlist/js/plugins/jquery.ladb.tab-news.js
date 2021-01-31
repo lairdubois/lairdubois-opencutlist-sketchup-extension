@@ -97,7 +97,7 @@
                     // Bind button
                     $('.ladb-news-next-page-btn', $list).on('click', function () {
                         that.loadUpdates(nextPage);
-                        $(this).remove();
+                        $(this).parent().remove();
                     });
                     $('.ladb-news-comment-btn', $list).on('click', function () {
                         var slug = $(this).closest('.ladb-news-update-box').data('update-slug');
@@ -105,7 +105,7 @@
                         return false;
                     });
 
-                    // Bind
+                    // Bind box
                     $('.ladb-news-update-box', $list).on('click', function(e) {
                         var $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {

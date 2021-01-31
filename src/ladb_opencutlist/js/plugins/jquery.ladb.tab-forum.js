@@ -126,7 +126,7 @@
                     // Bind button
                     $('.ladb-forum-next-page-btn', $list).on('click', function () {
                         that.loadConversations(tagFilter, nextPage);
-                        $(this).remove();
+                        $(this).parent().remove();
                     });
                     $('.ladb-forum-tag', $list).on('click', function () {
                         that.loadConversations($(this).hasClass('ladb-active') ? null : $(this).data('tag'));

@@ -157,10 +157,10 @@
                     // Bind button
                     $('.ladb-sponsor-next-page-btn', $list).on('click', function () {
                         that.loadBackers(nextPage);
-                        $(this).remove();
+                        $(this).parent().remove();
                     });
 
-                    // Bind
+                    // Bind box
                     $('.ladb-sponsor-member-box', $list).on('click', function(e) {
                         var $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
