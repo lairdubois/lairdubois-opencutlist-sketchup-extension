@@ -74,7 +74,7 @@ core:
     material_change: Alespoň jeden materiál byl změněn.
     selection_change: Výběr v aktivním modelu byl změněn.
   model_info_page:
-    units: Units
+    units: Jednotky
   upgrade:
     unavailable: Nelze najít nejnovější verzi *OpenCutList*.
     available: |

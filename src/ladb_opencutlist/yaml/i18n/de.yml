@@ -228,9 +228,9 @@ tab:
         Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
 
         Es gilt somit,
-        - die *Länge* ist auf der  <span style='color:red'>roten</span> Achse
-        - die *Breite* ist auf der  <span style='color:green'>grünen</span> Achse
-        - die *Dicke* ist auf der  <span style='color:blue'>blauen</span> Achse
+        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
+        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
+        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
       tags: Tags
       tags_help: |
         Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
@@ -273,7 +273,7 @@ tab:
       part_number_sequence_by_group: Teilenummerierung für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
       part_folding: Gleiche Teile zusammenfassen
-      part_folding_help: "Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Tags**  auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist)."
+      part_folding_help: "Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Tags** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist)."
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
       hide_tags: Tags ausblenden
@@ -496,7 +496,7 @@ tab:
         cutting_dimensions_increase_1d: |
           *Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: ein Längenzumaß von (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
-          *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert:  ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
+          *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert: ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
         cutting_dimensions_edge_decrement: |
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
@@ -791,7 +791,7 @@ tab:
       Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!
-    objective_funded_progress: "zu {{ progress }} %  finanziert"
+    objective_funded_progress: "zu {{ progress }} % finanziert"
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen

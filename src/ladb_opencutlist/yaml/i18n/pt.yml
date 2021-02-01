@@ -271,7 +271,7 @@ tab:
       part_number_with_letters: Use letras para enumerar as peças
       part_number_with_letters_help: "Se esta opção for selecionada, as peças são enumeradas usando letras (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Reinicie a enumeração de peças para cada grupo
-      part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1  (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
+      part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
       part_folding: Grupo de partes idênticas
       part_folding_help: "Se esta opção estiver ativada, as peças com **mesmo tamanho**, com as mesmas tags, e a \"mesma superfície final\" (se o display naquela superfície não estiver oculto) serão agrupadas na mesma linha."
       hide_entity_names: Ocultar nomes de instâncias
@@ -399,7 +399,7 @@ tab:
       option_origin_corner: Posição da origem
       option_origin_corner_0: Canto superior esquerdo
       option_origin_corner_1: Canto inferior esquerdo
-      option_origin_corner_help: Determina a posição da origem da coordenada para exibir as peças nos painéis.
+      option_origin_corner_help: Permite que você escolha o canto de origem para colocar as peças nos painéis.
       option_wrap_length: Comprimento do corte
       option_wrap_length_help: Comprimento máximo após o qual uma prancha será exibida em várias linhas.
       option_hide_cross: Sobra
@@ -494,7 +494,7 @@ tab:
         cutting_dimensions: |
           Este layout mostra as peças em suas dimensões de **comprimento bruto**.
         cutting_dimensions_increase_1d: |
-          *Dimensões aumentadas pelo superdimensionamento  '{{ material_name }}': configurado no material (**{{ length_increase }}**).*
+          *Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': configurado no material (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
           *Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': do comprimento (**{{ length_increase }}**) e da largura (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |

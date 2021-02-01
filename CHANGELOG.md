@@ -6,13 +6,14 @@ in 2.x, 1.x and 0.x versions.
 
 * 2.0.0 (WIP)
 
+  * Added **Czech** language (thanks to Radek Rýznar for joining the translators team)
   * Added Accessory material type
   * Added part unit price field for accessories
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - top left or bottom left
   * Added comments display on news
   * Added settings option to choose dialog global zoom
-  
+
 * 1.9.10 (2020-12-17)
 
   * Changed OCL length dimension precision from 0.000000 to 0.000 and adapt it if model length precision is higher

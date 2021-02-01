@@ -775,12 +775,12 @@ tab:
       default: |
         *La generación de **informes** y la impresión de **etiquetas** estarán disponibles en la próxima actualización 2.0.*
       report: |
-        ***Los informes** estarán disponibles en la próxima actualización  2.0.*
+        ***Los informes** estarán disponibles en la próxima actualización 2.0.*
 
         El propósito de esta función es:
-          - calcular el **costo estimado** del proyecto con detalles por material,
-          - calcular el **peso** estimado de los materiales requeridos,
-          - sintetizar la información de todo el proyecto en un solo documento accesible mediante una sola acción.
+        - calcular el **costo estimado** del proyecto con detalles por material,
+        - calcular el **peso** estimado de los materiales requeridos,
+        - sintetizar la información de todo el proyecto en un solo documento accesible mediante una sola acción.
       labels: |
         *La impresión de **etiquetas** estará disponible en la próxima actualización 2.0.*
 
