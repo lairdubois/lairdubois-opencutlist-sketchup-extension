@@ -18,7 +18,7 @@
 {% elseif terms[0] == 'length_unit' %}
     {% set value = ('default.unit_'~lengthUnit)|i18next %}
 {% endif %}
-{% if value is empty %}
-    {% set value = elementDef.formula %}
+{% if value is empty and noEmptyValue|default(false) %}
+    {% set value = '['~elementDef.formula~']' %}
 {% endif %}
 <text x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}">{{ value }}</text>

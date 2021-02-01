@@ -99,6 +99,8 @@
                     offset.x -= transform.matrix.e;
                     offset.y -= transform.matrix.f;
 
+                } else {
+                    that.editElement(null);
                 }
             })
             .on('mousemove', function (e) {
@@ -152,7 +154,6 @@
                 that.elementDefs.splice(that.elementDefs.indexOf(that.$editingXGroup.data('def')), 1);
                 that.$editingXGroup.remove();
                 that.editElement(null);
-                $(this).hide();
             })
         ;
 
@@ -209,7 +210,8 @@
             part_info: {
                 position_in_batch: 1,
                 part: this.options.part
-            }
+            },
+            noEmptyValue: true
         }, this.options));
     }
 
@@ -225,6 +227,7 @@
             if (this.$editingForm) {
                 this.$editingForm.remove();
             }
+            this.$btnRemove.hide();
             return;
         }
         this.$editingXGroup = $(element)
