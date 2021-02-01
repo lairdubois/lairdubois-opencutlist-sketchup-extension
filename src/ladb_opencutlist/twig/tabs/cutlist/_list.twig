@@ -204,6 +204,10 @@
                             <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}
+                        {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_ACCESSORY #}
+                            <li><a class="ladb-item-labels" href="#"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.menu.group_labels'|i18next }}...</a></li>
+                            <li role="separator" class="divider"></li>
+                        {% endif %}
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         {% if group.material_type != 4 %}    {# 4 = TYPE_EDGE #}
                             <li role="separator" class="divider"></li>

@@ -11,32 +11,25 @@
     "cutting_marks": false,
     "layout": [
       {
-        "formula": "number",
+        "formula": "part.number",
         "x": 6,
         "y": 3,
         "fontSize": 3,
         "textAnchor": "middle"
       },
       {
-        "formula": "name",
+        "formula": "part.name",
         "x": 6,
         "y": 6,
         "fontSize": 1,
         "textAnchor": "middle"
       },
       {
-        "formula": "length",
-        "x": 5,
+        "formula": "part.size",
+        "x": 6,
         "y": 10,
         "fontSize": 2,
-        "textAnchor": "end"
-      },
-      {
-        "formula": "width",
-        "x": 7,
-        "y": 10,
-        "fontSize": 2,
-        "textAnchor": "start"
+        "textAnchor": "middle"
       }
     ]
   }

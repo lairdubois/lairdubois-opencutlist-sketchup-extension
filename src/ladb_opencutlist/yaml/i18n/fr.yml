@@ -193,6 +193,7 @@ tab:
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
+      group_labels: Imprimer des étiquettes
       edit_material: Éditer la matière '{{ material }}'...
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
@@ -502,7 +503,7 @@ tab:
     labels:
       label: Etiquettes
       options_settings: Configuration
-      options_layout: Disposition
+      options_layout: Rendu
       option_page: Page
       option_page_format: Format
       option_page_format_portrait: Portrait
@@ -521,6 +522,12 @@ tab:
       option_cutting_marks: Repères
       option_cutting_marks_0: Aucun
       option_cutting_marks_1: Imprimés
+      option_formula: Valeur
+      option_font_size: Taille
+      option_text_anchor: Ancrage
+      option_text_anchor_start: Gauche
+      option_text_anchor_middle: Milieu
+      option_text_anchor_end: Droite
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

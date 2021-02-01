@@ -10,7 +10,7 @@
         this.options = options;
         this.$element = $(element);
 
-        this.$editingElement = null;
+        this.$editingXGroup = null;
         this.$editingForm = null;
 
     };
@@ -133,7 +133,7 @@
             .on('click', function () {
 
                 var elementDef = {
-                    formula: 'name',
+                    formula: 'part.name',
                     x: 1,
                     y: 1,
                     fontSize: 1,
@@ -146,11 +146,11 @@
             })
         ;
 
-        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Supprimer le champ</button>');
+        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Retirer le champ</button>');
         $btnRemove
             .on('click', function () {
-                that.elementDefs.splice(that.elementDefs.indexOf(that.$editingElement.data('def')), 1);
-                that.$editingElement.remove();
+                that.elementDefs.splice(that.elementDefs.indexOf(that.$editingXGroup.data('def')), 1);
+                that.$editingXGroup.remove();
                 that.editElement(null);
                 $(this).hide();
             })
@@ -168,66 +168,74 @@
     };
 
     LadbLabelEditor.prototype.appendElementDef = function (elementDef) {
-        var group, text, crossLineV, crossLineH;
+        var xGroup, xLineV, xLineH, xTextGroup;
 
-        group = document.createElementNS(XMLNS, 'g');
-        group.setAttributeNS(null, 'class', 'draggable');
-        group.setAttributeNS(null, 'transform', 'translate(' + elementDef.x * this.options.xUnit + ' ' + elementDef.y * this.options.yUnit + ')');
-        this.svg.appendChild(group);
+        xGroup = document.createElementNS(XMLNS, 'g');
+        xGroup.setAttributeNS(null, 'class', 'draggable');
+        xGroup.setAttributeNS(null, 'transform', 'translate(' + elementDef.x * this.options.xUnit + ' ' + elementDef.y * this.options.yUnit + ')');
+        this.svg.appendChild(xGroup);
 
-        $(group).data('def', elementDef);
+        $(xGroup).data('def', elementDef);
 
-        crossLineH = document.createElementNS(XMLNS, 'line');
-        crossLineH.setAttributeNS(null, 'x1', -this.options.minUnit / 2);
-        crossLineH.setAttributeNS(null, 'y1', 0);
-        crossLineH.setAttributeNS(null, 'x2', this.options.minUnit / 2);
-        crossLineH.setAttributeNS(null, 'y2', 0);
-        crossLineH.setAttributeNS(null, 'stroke', '#f00');
-        crossLineH.setAttributeNS(null, 'stroke-width', 0.01);
-        group.appendChild(crossLineH);
+        xLineH = document.createElementNS(XMLNS, 'line');
+        xLineH.setAttributeNS(null, 'x1', -this.options.minUnit / 2);
+        xLineH.setAttributeNS(null, 'y1', 0);
+        xLineH.setAttributeNS(null, 'x2', this.options.minUnit / 2);
+        xLineH.setAttributeNS(null, 'y2', 0);
+        xLineH.setAttributeNS(null, 'stroke', '#f00');
+        xLineH.setAttributeNS(null, 'stroke-width', 0.01);
+        xGroup.appendChild(xLineH);
 
-        crossLineV = document.createElementNS(XMLNS, 'line');
-        crossLineV.setAttributeNS(null, 'x1', 0);
-        crossLineV.setAttributeNS(null, 'y1', -this.options.minUnit / 2);
-        crossLineV.setAttributeNS(null, 'x2', 0);
-        crossLineV.setAttributeNS(null, 'y2', this.options.minUnit / 2);
-        crossLineV.setAttributeNS(null, 'stroke', '#f00');
-        crossLineV.setAttributeNS(null, 'stroke-width', 0.01);
-        group.appendChild(crossLineV);
+        xLineV = document.createElementNS(XMLNS, 'line');
+        xLineV.setAttributeNS(null, 'x1', 0);
+        xLineV.setAttributeNS(null, 'y1', -this.options.minUnit / 2);
+        xLineV.setAttributeNS(null, 'x2', 0);
+        xLineV.setAttributeNS(null, 'y2', this.options.minUnit / 2);
+        xLineV.setAttributeNS(null, 'stroke', '#f00');
+        xLineV.setAttributeNS(null, 'stroke-width', 0.01);
+        xGroup.appendChild(xLineV);
 
-        text = document.createElementNS(XMLNS, 'text');
-        text.setAttributeNS(null, 'x', 0);
-        text.setAttributeNS(null, 'y', 0);
-        text.setAttributeNS(null, 'font-size', elementDef.fontSize * this.options.minUnit);
-        text.setAttributeNS(null, 'text-anchor', elementDef.textAnchor);
-        text.appendChild(document.createTextNode(this.options.part[elementDef.formula]));
-        group.appendChild(text);
+        xTextGroup = document.createElementNS(XMLNS, 'g');
+        xGroup.appendChild(xTextGroup);
 
-        return group;
+        this.appendFormula(xTextGroup, elementDef);
+
+        return xGroup;
+    }
+
+    LadbLabelEditor.prototype.appendFormula = function (xTextGroup, elementDef) {
+        xTextGroup.innerHTML = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
+            elementDef: elementDef,
+            part_info: {
+                position_in_batch: 1,
+                part: this.options.part
+            }
+        }, this.options));
     }
 
     LadbLabelEditor.prototype.editElement = function (element, elementDef) {
         var that = this;
 
         // Editing flag
-        if (this.$editingElement) {
-            this.$editingElement.removeClass('editing');
+        if (this.$editingXGroup) {
+            this.$editingXGroup.removeClass('active');
         }
         if (element == null) {
-            this.$editingElement = null;
+            this.$editingXGroup = null;
             if (this.$editingForm) {
                 this.$editingForm.remove();
             }
             return;
         }
-        this.$editingElement = $(element)
-        this.$editingElement.addClass('editing');
+        this.$editingXGroup = $(element)
+        this.$editingXGroup.addClass('active');
 
         if (this.$btnRemove) {
             this.$btnRemove.show();
         }
 
-        var editingText = this.$editingElement.children('text')[0];
+        var xTextGroup = this.$editingXGroup.children('g')[0];
+        var xText = $(xTextGroup).children('text')[0];
 
         // Form
         if (this.$editingForm) {
@@ -237,10 +245,20 @@
         this.$element.append(this.$editingForm);
 
         var $selectFormula = $('<select class="form-control">' +
-            '<option value="number">' + i18next.t('tab.cutlist.list.number') + '</option>' +
-            '<option value="name">' + i18next.t('tab.cutlist.list.name') + '</option>' +
-            '<option value="length">' + i18next.t('tab.cutlist.list.length') + '</option>' +
-            '<option value="width">' + i18next.t('tab.cutlist.list.width') + '</option>' +
+            '<option value="part.number">' + i18next.t('tab.cutlist.label.formula.part_number') + '</option>' +
+            '<option value="part.name">' + i18next.t('tab.cutlist.label.formula.part_name') + '</option>' +
+            '<option value="part.length">' + i18next.t('tab.cutlist.label.formula.part_length') + '</option>' +
+            '<option value="part.width">' + i18next.t('tab.cutlist.label.formula.part_width') + '</option>' +
+            '<option value="part.size">' + i18next.t('tab.cutlist.label.formula.part_size') + '</option>' +
+            '<option value="part.tags">' + i18next.t('tab.cutlist.label.formula.part_tags') + '</option>' +
+            '<option value="batch">' + i18next.t('tab.cutlist.label.formula.batch') + '</option>' +
+            '<option data-divider="true"></option>' +
+            '<option value="group.material_name">' + i18next.t('tab.cutlist.label.formula.group_material_name') + '</option>' +
+            '<option value="group.std_dimension">' + i18next.t('tab.cutlist.label.formula.group_std_dimension') + '</option>' +
+            '<option data-divider="true"></option>' +
+            '<option value="filename">' + i18next.t('tab.cutlist.label.formula.filename') + '</option>' +
+            '<option value="page_label">' + i18next.t('tab.cutlist.label.formula.page_label') + '</option>' +
+            '<option value="length_unit">' + i18next.t('tab.cutlist.label.formula.length_unit') + '</option>' +
             '</select>');
         this.$editingForm.append(
             $('<div class="col-xs-4"></div>')
@@ -252,12 +270,12 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $selectFormula.val();
-                editingText.innerHTML = '';
-                editingText.appendChild(document.createTextNode(that.options.part[elementDef.formula]));
+                that.appendFormula(xTextGroup, elementDef);
             })
         ;
 
         var $selectFontSize = $('<select class="form-control ">' +
+                '<option value="0.5">0.5</option>' +
                 '<option value="1">1</option>' +
                 '<option value="1.5">1.5</option>' +
                 '<option value="2">2</option>' +
@@ -274,14 +292,14 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.fontSize = $selectFontSize.val();
-                editingText.setAttributeNS(null, 'font-size', elementDef.fontSize * that.options.minUnit);
+                xText.setAttributeNS(null, 'font-size', elementDef.fontSize * that.options.minUnit);
             })
         ;
 
         var $selectTextAnchor = $('<select class="form-control">' +
-                '<option value="start">START</option>' +
-                '<option value="middle">MIDDLE</option>' +
-                '<option value="end">END</option>' +
+                '<option value="start" data-content="<i class=\'ladb-opencutlist-icon-anchor-start\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_start') + '"></option>' +
+                '<option value="middle" data-content="<i class=\'ladb-opencutlist-icon-anchor-middle\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_middle') + '"></option>' +
+                '<option value="end" data-content="<i class=\'ladb-opencutlist-icon-anchor-end\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_end') + '"></option>' +
             '</select>');
         this.$editingForm.append(
             $('<div class="col-xs-4"></div>')
@@ -293,7 +311,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.textAnchor = $selectTextAnchor.val();
-                editingText.setAttributeNS(null, 'text-anchor', elementDef.textAnchor);
+                xText.setAttributeNS(null, 'text-anchor', elementDef.textAnchor);
             })
         ;
 

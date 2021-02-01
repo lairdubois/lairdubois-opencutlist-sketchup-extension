@@ -1,6 +1,6 @@
 {% extends 'tabs/base-slide.twig' %}
 
-{% set id = 'ladb_cutlist_slide_cuttingdiagram_2d_labels' %}
+{% set id = 'ladb_cutlist_slide_labels' %}
 {% set out = true %}
 {% set noPrintHeader = true %}
 
@@ -21,6 +21,16 @@
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
 
+{% set gridWidth = page_width - margin_left - margin_right %}
+{% set gridHeight = page_height - margin_top - margin_bottom %}
+{% set labelWidth = gridWidth / col_count %}
+{% set labelHeight = gridHeight / row_count %}
+{% set minDimension = min(labelWidth, labelHeight) %}
+{% set xUnit = labelWidth / 12 %}
+{% set yUnit = labelHeight / 12 %}
+{% set minUnit = min(xUnit, yUnit) %}
+{% set strokeWidth = 0.01 %}
+
 {% block containerInner %}
     {{ parent() }}
     <div class="ladb-page">
@@ -38,16 +48,7 @@
                 <tr>
                     <td class="text-center">
 
-                        {% set partCount = page.parts|length %}
-                        {% set gridWidth = page_width - margin_left - margin_right %}
-                        {% set gridHeight = page_height - margin_top - margin_bottom %}
-                        {% set labelWidth = gridWidth / col_count %}
-                        {% set labelHeight = gridHeight / row_count %}
-                        {% set minDimension = min(labelWidth, labelHeight) %}
-                        {% set xUnit = labelWidth / 12 %}
-                        {% set yUnit = labelHeight / 12 %}
-                        {% set minUnit = min(xUnit, yUnit) %}
-                        {% set strokeWidth = 0.01 %}
+                        {% set partCount = page.part_infos|length %}
 
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
 
@@ -71,10 +72,12 @@
                                         {% set labelX = col * labelWidth %}
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
-                                            {% set part = page.parts[partIndex] %}
+                                            {% set part_info = page.part_infos[partIndex] %}
                                             <g transform="translate({{ labelX }} {{ labelY }})">
                                                 {% for elementDef in layout %}
-                                                    <text x="{{ xUnit * elementDef.x }}" y="{{ yUnit * elementDef.y }}" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}">{{ part[elementDef.formula] }}</text>
+                                                    <g transform="translate({{ xUnit * elementDef.x }} {{ yUnit * elementDef.y }})">
+                                                        {% include 'tabs/cutlist/_label-element.twig' %}
+                                                    </g>
                                                 {% endfor %}
                                             </g>
                                         {% endif %}

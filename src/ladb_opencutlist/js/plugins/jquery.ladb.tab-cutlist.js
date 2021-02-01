@@ -50,16 +50,16 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER = 'cutlist.cuttingdiagram2d.option.origin_corner';
 
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH = 'cutlist.cuttingdiagram2d.labels.option.page_width';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT = 'cutlist.cuttingdiagram2d.labels.option.page_height';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP = 'cutlist.cuttingdiagram2d.labels.option.margin_top';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT = 'cutlist.cuttingdiagram2d.labels.option.margin_right';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM = 'cutlist.cuttingdiagram2d.labels.option.margin_bottom';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT = 'cutlist.cuttingdiagram2d.labels.option.margin_left';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT = 'cutlist.cuttingdiagram2d.labels.option.col_count';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT = 'cutlist.cuttingdiagram2d.labels.option.row_count';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS = 'cutlist.cuttingdiagram2d.labels.option.cutting_marks';
-    var SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_LAYOUT = 'cutlist.cuttingdiagram2d.labels.option.layout';
+    var SETTING_KEY_LABELS_OPTION_PAGE_WIDTH = 'cutlist.labels.option.page_width';
+    var SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT = 'cutlist.labels.option.page_height';
+    var SETTING_KEY_LABELS_OPTION_MARGIN_TOP = 'cutlist.labels.option.margin_top';
+    var SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT = 'cutlist.labels.option.margin_right';
+    var SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM = 'cutlist.labels.option.margin_bottom';
+    var SETTING_KEY_LABELS_OPTION_MARGIN_LEFT = 'cutlist.labels.option.margin_left';
+    var SETTING_KEY_LABELS_OPTION_COL_COUNT = 'cutlist.labels.option.col_count';
+    var SETTING_KEY_LABELS_OPTION_ROW_COUNT = 'cutlist.labels.option.row_count';
+    var SETTING_KEY_LABELS_OPTION_CUTTING_MARKS = 'cutlist.labels.option.cutting_marks';
+    var SETTING_KEY_LABELS_OPTION_LAYOUT = 'cutlist.labels.option.layout';
 
     var EXPORT_DEFAULT_COLUMNS = {
         0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
@@ -421,17 +421,17 @@
                     });
                 }
             });
-            $('a.ladb-item-edit-group', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.editGroup(groupId);
-            });
             $('a.ladb-item-highlight-group-parts', that.$page).on('click', function () {
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.highlightGroupParts(groupId);
                 $(this).blur();
+            });
+            $('a.ladb-item-labels', that.$page).on('click', function () {
+                $(this).blur();
+                var $group = $(this).parents('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.labelsGroup(groupId);
             });
             $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                 $(this).blur();
@@ -2296,7 +2296,7 @@
                                         window.print();
                                     });
                                     $btnLabels.on('click', function () {
-                                        that.cuttingdiagram2dGroupLabels(group, response);
+                                        that.labelsGroup(groupId);
                                         // Show Objective modal
                                         //that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
                                     });
@@ -2388,29 +2388,32 @@
 
     };
 
-    LadbTabCutlist.prototype.cuttingdiagram2dGroupLabels = function (group, cuttingdiagram, forceDefaultTab) {
+    LadbTabCutlist.prototype.labelsGroup = function (groupId, forceDefaultTab) {
         var that = this;
+
+        var group = this.findGroupById(groupId);
+        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         this.dialog.pullSettings([
 
                 // Defaults
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS,
-                SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_LAYOUT,
+                SETTING_KEY_LABELS_OPTION_PAGE_WIDTH,
+                SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT,
+                SETTING_KEY_LABELS_OPTION_MARGIN_TOP,
+                SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT,
+                SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM,
+                SETTING_KEY_LABELS_OPTION_MARGIN_LEFT,
+                SETTING_KEY_LABELS_OPTION_COL_COUNT,
+                SETTING_KEY_LABELS_OPTION_ROW_COUNT,
+                SETTING_KEY_LABELS_OPTION_CUTTING_MARKS,
+                SETTING_KEY_LABELS_OPTION_LAYOUT,
 
             ],
             0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
             function () {
 
-                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_cuttingdiagram2d_labels_options' }, function (response) {
+                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_labels_options' }, function (response) {
 
                     if (response.errors && response.errors.length > 0) {
                         that.dialog.notifyErrors(response.errors);
@@ -2419,26 +2422,27 @@
                         var appDefaults = response.defaults;
 
                         var labelsOptions = {
-                            page_width: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, appDefaults.page_width),
-                            page_height: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, appDefaults.page_height),
-                            margin_top: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP, appDefaults.margin_top),
-                            margin_right: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT, appDefaults.margin_right),
-                            margin_bottom: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM, appDefaults.margin_bottom),
-                            margin_left: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, appDefaults.margin_left),
-                            col_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
-                            row_count: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
-                            cutting_marks: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS, appDefaults.cutting_marks),
-                            layout: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_LAYOUT, appDefaults.layout),
+                            page_width: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_WIDTH, appDefaults.page_width),
+                            page_height: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT, appDefaults.page_height),
+                            margin_top: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_TOP, appDefaults.margin_top),
+                            margin_right: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT, appDefaults.margin_right),
+                            margin_bottom: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM, appDefaults.margin_bottom),
+                            margin_left: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_LEFT, appDefaults.margin_left),
+                            col_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
+                            row_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
+                            cutting_marks: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_CUTTING_MARKS, appDefaults.cutting_marks),
+                            layout: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_LAYOUT, appDefaults.layout),
                         };
 
-                        var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_labels', 'tabs/cutlist/_modal-cuttingdiagram-2d-labels.twig', {
+                        var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                             group: group,
-                            tab: forceDefaultTab || that.lastCuttingdiagram2dLabelsOptionsTab == null ? 'settings' : that.lastCuttingdiagram2dLabelsOptionsTab
+                            tab: forceDefaultTab || that.lastCuttingdiagram2dLabelsOptionsTab == null ? 'layout' : that.lastCuttingdiagram2dLabelsOptionsTab
                         }, true);
 
                         // Fetch UI elements
                         var $btnDefaultsReset = $('#ladb_btn_defaults_reset', $modal);
                         var $btnLabels = $('#ladb_btn_labels', $modal);
+                        var $labelEditor = $('#ladb_label_editor', $modal);
                         var $selectPageFormat = $('#ladb_select_page_format', $modal);
                         var $inputPageWidth = $('#ladb_input_page_width', $modal);
                         var $inputPageHeight = $('#ladb_input_page_height', $modal);
@@ -2449,8 +2453,34 @@
                         var $inputColCount = $('#ladb_input_col_count', $modal);
                         var $inputRowCount = $('#ladb_input_row_count', $modal);
                         var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
-                        var $labelEditor = $('#ladb_label_editor', $modal);
 
+                        var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, colCount, rowCount, callback) {
+
+                            rubyCallCommand('core_convert_to_inch_float', {
+                                page_width: pageWidth,
+                                page_height: pageHeight,
+                                margin_top: marginTop,
+                                margin_right: marginRight,
+                                margin_bottom: marginBottom,
+                                margin_left: marginLeft
+                            }, function (response) {
+                                var labelWidth = (response.page_width - response.margin_left - response.margin_right) / parseInt(colCount);
+                                var labelHeight = (response.page_height - response.margin_top - response.margin_bottom) / parseInt(rowCount);
+                                callback(labelWidth, labelHeight);
+                            })
+
+                        }
+
+                        $labelEditor.ladbLabelEditor({
+                            filename: that.filename,
+                            pageLabel: that.pageLabel,
+                            lengthUnit: that.lengthUnit,
+                            group: group,
+                            part: group.parts[0],
+                        }, labelsOptions.layout);
+                        fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
+                            $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
+                        });
                         $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
                         $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
                         $inputPageWidth.val(labelsOptions.page_width);
@@ -2469,9 +2499,6 @@
                         $inputRowCount.val(labelsOptions.row_count);
                         $selectCuttingMarks.val(labelsOptions.cutting_marks ? '1' : '0');
                         $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
-                        $labelEditor.ladbLabelEditor({
-                            part: cuttingdiagram.sheets[0].parts[0]
-                        }, labelsOptions.layout);
 
                         if ($selectPageFormat.val() == null) {
                             $selectPageFormat.selectpicker('val', '0');
@@ -2480,23 +2507,6 @@
                         } else {
                             $inputPageWidth.ladbTextinputDimension('disable');
                             $inputPageHeight.ladbTextinputDimension('disable');
-                        }
-
-                        var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, colCount, rowCount, callback) {
-
-                            rubyCallCommand('core_convert_to_inch_float', {
-                                page_width: pageWidth,
-                                page_height: pageHeight,
-                                margin_top: marginTop,
-                                margin_right: marginRight,
-                                margin_bottom: marginBottom,
-                                margin_left: marginLeft
-                            }, function (response) {
-                                var labelWidth = (response.page_width - response.margin_left - response.margin_right) / parseInt(colCount);
-                                var labelHeight = (response.page_height - response.margin_top - response.margin_bottom) / parseInt(rowCount);
-                                callback(labelWidth, labelHeight);
-                            })
-
                         }
 
                         // Bind tabs
@@ -2560,16 +2570,16 @@
 
                             // Store options
                             that.dialog.setSettings([
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_TOP, value:labelsOptions.margin_top, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_RIGHT, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_BOTTOM, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_MARGIN_LEFT, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_CUTTING_MARKS, value:labelsOptions.cutting_marks },
-                                { key:SETTING_KEY_CUTTINGDIAGRAM2D_LABELS_OPTION_LAYOUT, value:labelsOptions.layout },
+                                { key:SETTING_KEY_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_TOP, value:labelsOptions.margin_top, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_LEFT, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
+                                { key:SETTING_KEY_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
+                                { key:SETTING_KEY_LABELS_OPTION_CUTTING_MARKS, value:labelsOptions.cutting_marks },
+                                { key:SETTING_KEY_LABELS_OPTION_LAYOUT, value:labelsOptions.layout },
                             ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                             rubyCallCommand('core_convert_to_inch_float', {
@@ -2588,36 +2598,27 @@
                                 labelsOptions.margin_bottom = response.margin_bottom;
                                 labelsOptions.margin_left = response.margin_left;
 
-                                // Merge all parts
-                                var parts = [];
-                                $.each(cuttingdiagram.sheets, function (sheetIndex) {
-                                    $.each(this.parts, function (partIndex) {
-                                        parts.push(this);
-                                    });
-                                });
-                                parts.sort(function (a, b) {
-                                    if (a.number < b.number) {
-                                        return -1;
-                                    } else if (a.number > b.number) {
-                                        return 1
-                                    }
-                                    return 0;
-                                });
-
                                 // Split parts into pages
                                 var pages = []
                                 var page;
-                                $.each(parts, function (partIndex) {
-                                    if (partIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                        page = {
-                                            parts: []
+                                var gIndex = 0;
+                                $.each(group.parts, function (index) {
+                                    for (var i = 1; i <= this.count; i++) {
+                                        if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                            page = {
+                                                part_infos: []
+                                            }
+                                            pages.push(page);
                                         }
-                                        pages.push(page);
+                                        page.part_infos.push({
+                                            position_in_batch: i,
+                                            part: this
+                                        });
+                                        gIndex++;
                                     }
-                                    page.parts.push(this);
                                 });
 
-                                var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d_labels', 'tabs/cutlist/_slide-cuttingdiagram-2d-labels.twig', $.extend({
+                                var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
                                     filename: that.filename,
                                     pageLabel: that.pageLabel,
                                     lengthUnit: that.lengthUnit,
@@ -2635,7 +2636,7 @@
 
                                 // Bind buttons
                                 $btnLabels.on('click', function () {
-                                    that.cuttingdiagram2dGroupLabels(group, cuttingdiagram);
+                                    that.labelsGroup(groupId);
                                 });
                                 $btnPrint.on('click', function () {
                                     window.print();

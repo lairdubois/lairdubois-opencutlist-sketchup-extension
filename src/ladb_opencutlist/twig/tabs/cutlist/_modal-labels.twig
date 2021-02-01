@@ -1,18 +1,21 @@
 {% extends 'core/_modal.twig' %}
 
-{% set id = 'ladb_cutlist_modal_cuttingdiagram_2d_labels' %}
+{% set id = 'ladb_cutlist_modal_labels' %}
 {% set title = ('tab.cutlist.labels.label'|i18next())~' '~group.material_name|escape('html')~' / '~group.std_dimension %}
 
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
 {% block bodyInner %}
     <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{% if tab == 'layout' %} active{% endif %}" id="tab_labels_options_layout">
+            <div id="ladb_label_editor"></div>
+        </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'settings' %} active{% endif %}" id="tab_labels_options_settings">
             <div class="row">
                 <div class="col-xs-6 form form-horizontal">
@@ -93,9 +96,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'layout' %} active{% endif %}" id="tab_labels_options_layout">
-            <div id="ladb_label_editor"></div>
         </div>
     </div>
 {% endblock %}

@@ -43,6 +43,138 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-anchor-end:before {
+  content: "\e97f";
+}
+.ladb-opencutlist-icon-anchor-middle:before {
+  content: "\e980";
+}
+.ladb-opencutlist-icon-anchor-start:before {
+  content: "\e981";
+}
+.ladb-opencutlist-icon-labels:before {
+  content: "\e979";
+}
+.ladb-opencutlist-icon-zzz:before {
+  content: "\e977";
+}
+.ladb-opencutlist-icon-update:before {
+  content: "\e943";
+}
+.ladb-opencutlist-icon-cuttingdiagram-1d:before {
+  content: "\e944";
+}
+.ladb-opencutlist-icon-cuttingdiagram-1d-selection:before {
+  content: "\e945";
+}
+.ladb-opencutlist-icon-cuttingdiagram-2d:before {
+  content: "\e946";
+}
+.ladb-opencutlist-icon-cuttingdiagram-2d-selection:before {
+  content: "\e947";
+}
+.ladb-opencutlist-icon-asterisk:before {
+  content: "\e948";
+}
+.ladb-opencutlist-icon-edge-1111:before {
+  content: "\e949";
+}
+.ladb-opencutlist-icon-edge-1010:before {
+  content: "\e94a";
+}
+.ladb-opencutlist-icon-edge-0101:before {
+  content: "\e94b";
+}
+.ladb-opencutlist-icon-edge-1110:before {
+  content: "\e94c";
+}
+.ladb-opencutlist-icon-edge-1101:before {
+  content: "\e94d";
+}
+.ladb-opencutlist-icon-edge-1011:before {
+  content: "\e94e";
+}
+.ladb-opencutlist-icon-edge-0111:before {
+  content: "\e94f";
+}
+.ladb-opencutlist-icon-edge-1001:before {
+  content: "\e950";
+}
+.ladb-opencutlist-icon-edge-0011:before {
+  content: "\e951";
+}
+.ladb-opencutlist-icon-edge-0110:before {
+  content: "\e952";
+}
+.ladb-opencutlist-icon-edge-1100:before {
+  content: "\e953";
+}
+.ladb-opencutlist-icon-edge-0001:before {
+  content: "\e954";
+}
+.ladb-opencutlist-icon-edge-0010:before {
+  content: "\e955";
+}
+.ladb-opencutlist-icon-edge-0100:before {
+  content: "\e956";
+}
+.ladb-opencutlist-icon-edge-1000:before {
+  content: "\e957";
+}
+.ladb-opencutlist-icon-edge-0000:before {
+  content: "\e958";
+}
+.ladb-opencutlist-icon-dynamic-component:before {
+  content: "\e95a";
+}
+.ladb-opencutlist-icon-dimensions-help:before {
+  content: "\e95b";
+}
+.ladb-opencutlist-icon-tag:before {
+  content: "\e95c";
+}
+.ladb-opencutlist-icon-minus:before {
+  content: "\e95d";
+}
+.ladb-opencutlist-icon-plus:before {
+  content: "\e95e";
+}
+.ladb-opencutlist-icon-size-length-width:before {
+  content: "\e95f";
+}
+.ladb-opencutlist-icon-close:before {
+  content: "\e960";
+}
+.ladb-opencutlist-icon-save:before {
+  content: "\e961";
+}
+.ladb-opencutlist-icon-refresh:before {
+  content: "\e962";
+}
+.ladb-opencutlist-icon-tick:before {
+  content: "\e963";
+}
+.ladb-opencutlist-icon-link:before {
+  content: "\e964";
+}
+.ladb-opencutlist-icon-eye-close:before {
+  content: "\e965";
+}
+.ladb-opencutlist-icon-eye-open:before {
+  content: "\e966";
+}
+.ladb-opencutlist-icon-tip:before {
+  content: "\e967";
+}
+.ladb-opencutlist-icon-report:before {
+  content: "\e972";
+}
+.ladb-opencutlist-icon-edge:before {
+  content: "\e959";
+}
+.ladb-opencutlist-icon-solid-wood:before {
+  content: "\e968";
+}
 .ladb-opencutlist-icon-reset:before {
   content: "\e97d";
 }
@@ -273,129 +405,6 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e942";
-}
-.ladb-opencutlist-icon-labels:before {
-  content: "\e979";
-}
-.ladb-opencutlist-icon-zzz:before {
-  content: "\e977";
-}
-.ladb-opencutlist-icon-update:before {
-  content: "\e943";
-}
-.ladb-opencutlist-icon-cuttingdiagram-1d:before {
-  content: "\e944";
-}
-.ladb-opencutlist-icon-cuttingdiagram-1d-selection:before {
-  content: "\e945";
-}
-.ladb-opencutlist-icon-cuttingdiagram-2d:before {
-  content: "\e946";
-}
-.ladb-opencutlist-icon-cuttingdiagram-2d-selection:before {
-  content: "\e947";
-}
-.ladb-opencutlist-icon-asterisk:before {
-  content: "\e948";
-}
-.ladb-opencutlist-icon-edge-1111:before {
-  content: "\e949";
-}
-.ladb-opencutlist-icon-edge-1010:before {
-  content: "\e94a";
-}
-.ladb-opencutlist-icon-edge-0101:before {
-  content: "\e94b";
-}
-.ladb-opencutlist-icon-edge-1110:before {
-  content: "\e94c";
-}
-.ladb-opencutlist-icon-edge-1101:before {
-  content: "\e94d";
-}
-.ladb-opencutlist-icon-edge-1011:before {
-  content: "\e94e";
-}
-.ladb-opencutlist-icon-edge-0111:before {
-  content: "\e94f";
-}
-.ladb-opencutlist-icon-edge-1001:before {
-  content: "\e950";
-}
-.ladb-opencutlist-icon-edge-0011:before {
-  content: "\e951";
-}
-.ladb-opencutlist-icon-edge-0110:before {
-  content: "\e952";
-}
-.ladb-opencutlist-icon-edge-1100:before {
-  content: "\e953";
-}
-.ladb-opencutlist-icon-edge-0001:before {
-  content: "\e954";
-}
-.ladb-opencutlist-icon-edge-0010:before {
-  content: "\e955";
-}
-.ladb-opencutlist-icon-edge-0100:before {
-  content: "\e956";
-}
-.ladb-opencutlist-icon-edge-1000:before {
-  content: "\e957";
-}
-.ladb-opencutlist-icon-edge-0000:before {
-  content: "\e958";
-}
-.ladb-opencutlist-icon-dynamic-component:before {
-  content: "\e95a";
-}
-.ladb-opencutlist-icon-dimensions-help:before {
-  content: "\e95b";
-}
-.ladb-opencutlist-icon-tag:before {
-  content: "\e95c";
-}
-.ladb-opencutlist-icon-minus:before {
-  content: "\e95d";
-}
-.ladb-opencutlist-icon-plus:before {
-  content: "\e95e";
-}
-.ladb-opencutlist-icon-size-length-width:before {
-  content: "\e95f";
-}
-.ladb-opencutlist-icon-close:before {
-  content: "\e960";
-}
-.ladb-opencutlist-icon-save:before {
-  content: "\e961";
-}
-.ladb-opencutlist-icon-refresh:before {
-  content: "\e962";
-}
-.ladb-opencutlist-icon-tick:before {
-  content: "\e963";
-}
-.ladb-opencutlist-icon-link:before {
-  content: "\e964";
-}
-.ladb-opencutlist-icon-eye-close:before {
-  content: "\e965";
-}
-.ladb-opencutlist-icon-eye-open:before {
-  content: "\e966";
-}
-.ladb-opencutlist-icon-tip:before {
-  content: "\e967";
-}
-.ladb-opencutlist-icon-report:before {
-  content: "\e972";
-}
-.ladb-opencutlist-icon-edge:before {
-  content: "\e959";
-}
-.ladb-opencutlist-icon-solid-wood:before {
-  content: "\e968";
 }
 .ladb-opencutlist-icon-sheet-good:before {
   content: "\e96f";
