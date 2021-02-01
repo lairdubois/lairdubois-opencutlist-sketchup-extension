@@ -2,13 +2,17 @@
 {% if terms[0] == 'part' %}
     {% set key = terms[1] %}
     {% if key == 'size' %}
-        {% set value = part_info.part['length']~' x '~part_info.part['width'] %}
+        {% set value = part_info.part.length~' x '~part_info.part.width %}
     {% else %}
         {% set value = part_info.part[key] %}
     {% endif %}
 {% elseif terms[0] == 'group' %}
     {% set key = terms[1] %}
-    {% set value = group[key] %}
+    {% if key == 'material' %}
+        {% set value = group.material_name~' / '~group.std_dimension %}
+    {% else %}
+        {% set value = group[key] %}
+    {% endif %}
 {% elseif terms[0] == 'batch' %}
     {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
 {% elseif terms[0] == 'filename' %}

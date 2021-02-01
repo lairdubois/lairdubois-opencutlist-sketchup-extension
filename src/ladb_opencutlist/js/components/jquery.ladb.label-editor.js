@@ -256,6 +256,7 @@
             '<option value="part.tags">' + i18next.t('tab.cutlist.label.formula.part_tags') + '</option>' +
             '<option value="batch">' + i18next.t('tab.cutlist.label.formula.batch') + '</option>' +
             '<option data-divider="true"></option>' +
+            '<option value="group.material">' + i18next.t('tab.cutlist.label.formula.group_material') + '</option>' +
             '<option value="group.material_name">' + i18next.t('tab.cutlist.label.formula.group_material_name') + '</option>' +
             '<option value="group.std_dimension">' + i18next.t('tab.cutlist.label.formula.group_std_dimension') + '</option>' +
             '<option data-divider="true"></option>' +
