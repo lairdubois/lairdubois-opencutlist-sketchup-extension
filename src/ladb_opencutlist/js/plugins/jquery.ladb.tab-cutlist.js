@@ -427,12 +427,6 @@
                 that.highlightGroupParts(groupId);
                 $(this).blur();
             });
-            $('a.ladb-item-labels', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.labelsGroup(groupId);
-            });
             $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                 $(this).blur();
                 var $group = $(this).parents('.ladb-cutlist-group');
@@ -469,6 +463,12 @@
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 that.cuttingdiagram2dGroup(groupId, true);
+            });
+            $('button.ladb-btn-group-labels', that.$page).on('click', function () {
+                $(this).blur();
+                var $group = $(this).parents('.ladb-cutlist-group');
+                var groupId = $group.data('group-id');
+                that.labelsGroup(groupId);
             });
             $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
                 $(this).blur();

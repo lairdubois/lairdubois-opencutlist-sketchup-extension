@@ -130,7 +130,7 @@
             this.appendElementDef(this.elementDefs[i]);
         }
 
-        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> Ajouter un champ</button>');
+        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> Ajouter un élément</button>');
         $btnAdd
             .on('click', function () {
 
@@ -149,7 +149,7 @@
             })
         ;
 
-        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Retirer le champ</button>');
+        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Retirer</button>');
         $btnRemove
             .on('click', function () {
                 that.elementDefs.splice(that.elementDefs.indexOf(that.$editingXGroup.data('def')), 1);
@@ -216,18 +216,20 @@
         }, this.options));
 
         var xText = $(xTextGroup).children('text')[0];
-        var bbox = xText.getBBox();
-        var xActiveRect = document.createElementNS(XMLNS, 'rect');
-        xActiveRect.setAttributeNS(null, 'class', 'selection');
-        xActiveRect.setAttributeNS(null, 'x', bbox.x - 0.02);
-        xActiveRect.setAttributeNS(null, 'y', bbox.y - 0.02);
-        xActiveRect.setAttributeNS(null, 'width', bbox.width + 0.04);
-        xActiveRect.setAttributeNS(null, 'height', bbox.height + 0.04);
-        xActiveRect.setAttributeNS(null, 'fill', 'none');
-        xActiveRect.setAttributeNS(null, 'stroke-width', 0.01);
-        xActiveRect.setAttributeNS(null, 'rx', 0.02);
-        xActiveRect.setAttributeNS(null, 'ry', 0.02);
-        xTextGroup.appendChild(xActiveRect);
+        if (xText) {
+            var bbox = xText.getBBox();
+            var xActiveRect = document.createElementNS(XMLNS, 'rect');
+            xActiveRect.setAttributeNS(null, 'class', 'selection');
+            xActiveRect.setAttributeNS(null, 'x', bbox.x - 0.02);
+            xActiveRect.setAttributeNS(null, 'y', bbox.y - 0.02);
+            xActiveRect.setAttributeNS(null, 'width', bbox.width + 0.04);
+            xActiveRect.setAttributeNS(null, 'height', bbox.height + 0.04);
+            xActiveRect.setAttributeNS(null, 'fill', 'none');
+            xActiveRect.setAttributeNS(null, 'stroke-width', 0.01);
+            xActiveRect.setAttributeNS(null, 'rx', 0.02);
+            xActiveRect.setAttributeNS(null, 'ry', 0.02);
+            xTextGroup.insertBefore(xActiveRect, xText);
+        }
 
     }
 
