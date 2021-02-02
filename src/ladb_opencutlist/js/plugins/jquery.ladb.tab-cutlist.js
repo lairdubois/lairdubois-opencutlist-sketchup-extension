@@ -2475,6 +2475,7 @@
                             filename: that.filename,
                             pageLabel: that.pageLabel,
                             lengthUnit: that.lengthUnit,
+                            generatedAt: new Date().getTime() / 1000,
                             group: group,
                             part: group.parts[0],
                         }, labelsOptions.layout);

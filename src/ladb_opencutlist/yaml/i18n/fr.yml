@@ -530,22 +530,23 @@ tab:
       option_text_anchor_end: Droite
       option_color: Couleur
       formula:
-        part_number: part_number
-        part_name: part_name
-        part_cutting_length: part_cutting_length
-        part_cutting_width: part_cutting_width
-        part_cutting_size: part_cutting_size
-        part_length: part_length
-        part_width: part_width
-        part_size: part_size
-        part_tags: part_tags
-        part_batch: part_batch
-        group_material: group_material
-        group_material_name: group_material_name
-        group_std_dimension: group_std_dimension
-        filename: filename
-        page_label: page_label
-        length_unit: length_unit
+        part_number: Numéro
+        part_name: Désignation
+        part_cutting_size: Taille de débit
+        part_cutting_length: Longueur de débit
+        part_cutting_width: largeur de débit
+        part_size: Taille capable
+        part_length: Longueur capable
+        part_width: Largeur capable
+        part_tags: Tags
+        part_batch: Lot
+        group_material: Matière / Dimension
+        group_material_name: Nom de matière
+        group_std_dimension: Dimension standard
+        filename: Nom du fichier
+        page_label: Nom de la scène
+        length_unit: Unité
+        generated_at: Date et heure
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
