@@ -1,0 +1,52 @@
+<div id="ladb_cutlist_form_label_element" class="form row">
+    <div class="col-xs-10 col-xs-push-1">
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label>{{ 'tab.cutlist.labels.option_formula'|i18next }}</label>
+                <select id="ladb_select_formula" class="form-control">
+                    <option value="part.number">{{ 'tab.cutlist.labels.formula.part_number'|i18next }}</option>
+                    <option value="part.name">{{ 'tab.cutlist.labels.formula.part_name'|i18next }}</option>
+                    <option value="part.cutting_size">{{ 'tab.cutlist.labels.formula.part_cutting_size'|i18next }}</option>
+                    <option value="part.cutting_length">{{ 'tab.cutlist.labels.formula.part_cutting_length'|i18next }}</option>
+                    <option value="part.cutting_width">{{ 'tab.cutlist.labels.formula.part_cutting_width'|i18next }}</option>
+                    <option value="part.size">{{ 'tab.cutlist.labels.formula.part_size'|i18next }}</option>
+                    <option value="part.length">{{ 'tab.cutlist.labels.formula.part_length'|i18next }}</option>
+                    <option value="part.width">{{ 'tab.cutlist.labels.formula.part_width'|i18next }}</option>
+                    <option value="part.tags">{{ 'tab.cutlist.labels.formula.part_tags'|i18next }}</option>
+                    <option value="part.batch">{{ 'tab.cutlist.labels.formula.part_batch'|i18next }}</option>
+                    <option data-divider="true"></option>
+                    <option value="group.material">{{ 'tab.cutlist.labels.formula.group_material'|i18next }}</option>
+                    <option value="group.material_name">{{ 'tab.cutlist.labels.formula.group_material_name'|i18next }}</option>
+                    <option value="group.std_dimension">{{ 'tab.cutlist.labels.formula.group_std_dimension'|i18next }}</option>
+                    <option data-divider="true"></option>
+                    <option value="filename">{{ 'tab.cutlist.labels.formula.filename'|i18next }}</option>
+                    <option value="page_label">{{ 'tab.cutlist.labels.formula.page_label'|i18next }}</option>
+                    <option value="length_unit">{{ 'tab.cutlist.labels.formula.length_unit'|i18next }}</option>
+                </select>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>{{ 'tab.cutlist.labels.option_font_size'|i18next }}</label>
+                <select id="ladb_select_font_size" class="form-control">
+                    <option value="0.5">0.5</option>
+                    <option value="1">1</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>{{ 'tab.cutlist.labels.option_text_anchor'|i18next }}</label>
+                <select id="ladb_select_text_anchor" class="form-control">
+                    <option value="start" data-content="<i class='ladb-opencutlist-icon-anchor-start'></i> {{ 'tab.cutlist.labels.option_text_anchor_start'|i18next }}"></option>
+                    <option value="middle" data-content="<i class='ladb-opencutlist-icon-anchor-middle'></i> {{ 'tab.cutlist.labels.option_text_anchor_middle'|i18next }}"></option>
+                    <option value="end" data-content="<i class='ladb-opencutlist-icon-anchor-end'></i> {{ 'tab.cutlist.labels.option_text_anchor_end'|i18next }}"></option>
+                </select>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>{{ 'tab.cutlist.labels.option_color'|i18next }}</label>
+                <input id="ladb_input_color" class="form-control"/>
+            </div>
+        </div>
+    </div>
+</div>

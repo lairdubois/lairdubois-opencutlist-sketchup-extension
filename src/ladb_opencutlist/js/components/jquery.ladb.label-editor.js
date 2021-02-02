@@ -139,7 +139,8 @@
                     x: 1,
                     y: 1,
                     fontSize: 1,
-                    textAnchor: 'start'
+                    textAnchor: 'start',
+                    color: '#000'
                 }
 
                 that.elementDefs.push(elementDef);
@@ -213,6 +214,21 @@
             },
             noEmptyValue: true
         }, this.options));
+
+        var xText = $(xTextGroup).children('text')[0];
+        var bbox = xText.getBBox();
+        var xActiveRect = document.createElementNS(XMLNS, 'rect');
+        xActiveRect.setAttributeNS(null, 'class', 'selection');
+        xActiveRect.setAttributeNS(null, 'x', bbox.x - 0.02);
+        xActiveRect.setAttributeNS(null, 'y', bbox.y - 0.02);
+        xActiveRect.setAttributeNS(null, 'width', bbox.width + 0.04);
+        xActiveRect.setAttributeNS(null, 'height', bbox.height + 0.04);
+        xActiveRect.setAttributeNS(null, 'fill', 'none');
+        xActiveRect.setAttributeNS(null, 'stroke-width', 0.01);
+        xActiveRect.setAttributeNS(null, 'rx', 0.02);
+        xActiveRect.setAttributeNS(null, 'ry', 0.02);
+        xTextGroup.appendChild(xActiveRect);
+
     }
 
     LadbLabelEditor.prototype.editElement = function (element, elementDef) {
@@ -244,80 +260,61 @@
         if (this.$editingForm) {
             this.$editingForm.remove();
         }
-        this.$editingForm = $('<div class="form-horizontal row"></div>');
-        this.$element.append(this.$editingForm);
+        this.$element.append(Twig.twig({ref: "tabs/cutlist/_label-element-form.twig"}).render());
+        this.$editingForm = $('#ladb_cutlist_form_label_element');
 
-        var $selectFormula = $('<select class="form-control">' +
-            '<option value="part.number">' + i18next.t('tab.cutlist.label.formula.part_number') + '</option>' +
-            '<option value="part.name">' + i18next.t('tab.cutlist.label.formula.part_name') + '</option>' +
-            '<option value="part.length">' + i18next.t('tab.cutlist.label.formula.part_length') + '</option>' +
-            '<option value="part.width">' + i18next.t('tab.cutlist.label.formula.part_width') + '</option>' +
-            '<option value="part.size">' + i18next.t('tab.cutlist.label.formula.part_size') + '</option>' +
-            '<option value="part.tags">' + i18next.t('tab.cutlist.label.formula.part_tags') + '</option>' +
-            '<option value="batch">' + i18next.t('tab.cutlist.label.formula.batch') + '</option>' +
-            '<option data-divider="true"></option>' +
-            '<option value="group.material">' + i18next.t('tab.cutlist.label.formula.group_material') + '</option>' +
-            '<option value="group.material_name">' + i18next.t('tab.cutlist.label.formula.group_material_name') + '</option>' +
-            '<option value="group.std_dimension">' + i18next.t('tab.cutlist.label.formula.group_std_dimension') + '</option>' +
-            '<option data-divider="true"></option>' +
-            '<option value="filename">' + i18next.t('tab.cutlist.label.formula.filename') + '</option>' +
-            '<option value="page_label">' + i18next.t('tab.cutlist.label.formula.page_label') + '</option>' +
-            '<option value="length_unit">' + i18next.t('tab.cutlist.label.formula.length_unit') + '</option>' +
-            '</select>');
-        this.$editingForm.append(
-            $('<div class="col-xs-4"></div>')
-                .append($('<label>Valeur</label>'))
-                .append($selectFormula)
-        );
+        // UI
+        var $selectFormula = $('#ladb_select_formula', this.$editingForm);
+        var $selectFontSize = $('#ladb_select_font_size', this.$editingForm);
+        var $selectTextAnchor = $('#ladb_select_text_anchor', this.$editingForm);
+        var $inputColor = $('#ladb_input_color', this.$editingForm);
+
+        console.log($selectFormula);
+
+        // Bind
         $selectFormula
             .val(elementDef.formula)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
-                elementDef.formula = $selectFormula.val();
+                elementDef.formula = $(this).val();
                 that.appendFormula(xTextGroup, elementDef);
             })
         ;
-
-        var $selectFontSize = $('<select class="form-control ">' +
-                '<option value="0.5">0.5</option>' +
-                '<option value="1">1</option>' +
-                '<option value="1.5">1.5</option>' +
-                '<option value="2">2</option>' +
-                '<option value="3">3</option>' +
-                '<option value="4">4</option>' +
-            '</select>');
-        this.$editingForm.append(
-            $('<div class="col-xs-4"></div>')
-                .append($('<label>Taille</label>'))
-                .append($selectFontSize)
-        );
         $selectFontSize
             .val(elementDef.fontSize)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
-                elementDef.fontSize = $selectFontSize.val();
-                xText.setAttributeNS(null, 'font-size', elementDef.fontSize * that.options.minUnit);
+                elementDef.fontSize = $(this).val();
+                that.appendFormula(xTextGroup, elementDef);
             })
         ;
-
-        var $selectTextAnchor = $('<select class="form-control">' +
-                '<option value="start" data-content="<i class=\'ladb-opencutlist-icon-anchor-start\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_start') + '"></option>' +
-                '<option value="middle" data-content="<i class=\'ladb-opencutlist-icon-anchor-middle\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_middle') + '"></option>' +
-                '<option value="end" data-content="<i class=\'ladb-opencutlist-icon-anchor-end\'></i> ' + i18next.t('tab.cutlist.labels.option_text_anchor_end') + '"></option>' +
-            '</select>');
-        this.$editingForm.append(
-            $('<div class="col-xs-4"></div>')
-                .append($('<label>Ancrage</label>'))
-                .append($selectTextAnchor)
-        );
         $selectTextAnchor
             .val(elementDef.textAnchor)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
-                elementDef.textAnchor = $selectTextAnchor.val();
-                xText.setAttributeNS(null, 'text-anchor', elementDef.textAnchor);
+                elementDef.textAnchor = $(this).val();
+                that.appendFormula(xTextGroup, elementDef);
             })
         ;
+        $inputColor
+            .val(elementDef.color)
+            .on('change', function () {
+                elementDef.color = $(this).val();
+                that.appendFormula(xTextGroup, elementDef);
+            })
+        ;
+
+        // Create color picker
+        var hueb = new Huebee($inputColor.get(0) , {
+            notation: 'hex',
+            saturations: 2,
+            shades: 7,
+            customColors: [ '#4F78A7', '#EF8E2C', '#DE545A', '#79B8B2', '#5CA34D', '#ECCA48', '#AE78A2', '#FC9CA8', '#9B755F', '#BAB0AC' ]
+        });
+        hueb.on('change', function() {
+            hueb.close();
+            $inputColor.trigger('change');
+        });
 
     };
 

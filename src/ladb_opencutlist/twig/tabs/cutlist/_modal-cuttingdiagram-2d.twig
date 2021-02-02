@@ -17,7 +17,7 @@
         {% if selection_only %}
             <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.selection_only'|i18next }}</div>
         {% endif %}
-        <div class="tab-content" style="margin-top: 10px;">
+        <div class="tab-content">
             <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_cuttingdiagram_options_material">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>

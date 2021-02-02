@@ -501,7 +501,7 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquettes
+      title: Etiquettes
       options_settings: Configuration
       options_layout: Rendu
       option_page: Page
@@ -528,6 +528,24 @@ tab:
       option_text_anchor_start: Gauche
       option_text_anchor_middle: Milieu
       option_text_anchor_end: Droite
+      option_color: Couleur
+      formula:
+        part_number: part_number
+        part_name: part_name
+        part_cutting_length: part_cutting_length
+        part_cutting_width: part_cutting_width
+        part_cutting_size: part_cutting_size
+        part_length: part_length
+        part_width: part_width
+        part_size: part_size
+        part_tags: part_tags
+        part_batch: part_batch
+        group_material: group_material
+        group_material_name: group_material_name
+        group_std_dimension: group_std_dimension
+        filename: filename
+        page_label: page_label
+        length_unit: length_unit
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

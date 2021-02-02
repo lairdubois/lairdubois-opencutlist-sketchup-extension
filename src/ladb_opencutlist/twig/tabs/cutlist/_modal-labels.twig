@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_labels' %}
-{% set title = ('tab.cutlist.labels.label'|i18next())~' '~group.material_name|escape('html')~' / '~group.std_dimension %}
+{% set title = ('tab.cutlist.labels.title'|i18next())~' '~group.material_name|escape('html')~' / '~group.std_dimension %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -103,5 +103,5 @@
 {% block footerInner %}
     <button type="button" class="btn btn-default pull-left" id="ladb_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_labels">{{ 'tab.cutlist.labels.label'|i18next }}</button>
+    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_labels">{{ 'tab.cutlist.labels.title'|i18next }}</button>
 {% endblock %}

@@ -15,21 +15,32 @@
         "x": 6,
         "y": 3,
         "fontSize": 3,
-        "textAnchor": "middle"
+        "textAnchor": "middle",
+        "color": "#000"
       },
       {
         "formula": "part.name",
         "x": 6,
         "y": 6,
         "fontSize": 1,
-        "textAnchor": "middle"
+        "textAnchor": "middle",
+        "color": "#000"
       },
       {
         "formula": "part.size",
         "x": 6,
         "y": 10,
         "fontSize": 2,
-        "textAnchor": "middle"
+        "textAnchor": "middle",
+        "color": "#000"
+      },
+      {
+        "formula": "part.cutting_size",
+        "x": 6,
+        "y": 11,
+        "fontSize": 1,
+        "textAnchor": "middle",
+        "color": "#f00"
       }
     ]
   }
