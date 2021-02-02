@@ -66,7 +66,7 @@ core:
   warning:
     old_su: |
       Stai utilizzando una vecchia versione di SketchUp ({{ sketchupVersion }}). Questo plugin puo' funzionare, ma con qualche problema.
-      Per utilizzare al meglio OpenCutList, si raccomanda di aggiornare almeno alla versione di **SketchUp 2017**.
+      Per utilizzare al meglio OpenCutList, si raccomanda di aggiornare alla versione **SketchUp 2017** o superiore.
     feature_locked: "*Impossibile disattivare in questa versione di SketchUp*"
   event:
     model_change: Il modello attivo è stato cambiato.
@@ -95,7 +95,7 @@ core:
 
       RIAVVIA SKETCHUP per utilizzare la nuova versione.
     error:
-      download: Si è verificato un errore durante il download.
+      download: Si è verificato un errore durante il trasferimento dell'aggiornamento.
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.
 tab:
   cutlist:
@@ -292,7 +292,7 @@ tab:
       part_order_strategy: Ordinamento parti
       part_order_strategy_help: |
         Modifica le seguenti proprietà per cambiare i criteri di ordinamenti all'interno dei singoli gruppi.
-        Le proprietà  possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
+        Le proprietà possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
       dimension_column_order_strategy: Ordinamento delle dimensioni
       dimension_column_order_strategy_help: |
         Modifica le seguenti proprietà per cambiare i criteri di ordinamento delle colonne.
@@ -440,7 +440,7 @@ tab:
       option_std_sheet_help: |
         Seleziona il pannello predefinito che verrà duplicato per contenere tutte le parti nel miglior modo possibile.
         Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
-        Modifica il materiale  '{{ material_name }}' per aggiornare questa lista.
+        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
       option_std_sheet_add: Aggiungi una misura di pannello ...
       option_std_sheet_none: Nessuna
       option_scrap_sheet_sizes: Ritagli di pannelli
@@ -796,7 +796,7 @@ tab:
     label: Preferenze
     title: Preferenze
     language: Lingua
-    zoom: Dimensione del font
+    zoom: Dimensione del carattere
     zoom_normal: Normale
     zoom_small: Piccolo
     zoom_tiny: Minuscolo
@@ -817,7 +817,7 @@ tab:
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spagnolo*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*ceco*)
     credits_description: |
-      Lo sviluppo di questa estensione è agganciata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
+      Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Runtime
     credits_development: Sviluppo
