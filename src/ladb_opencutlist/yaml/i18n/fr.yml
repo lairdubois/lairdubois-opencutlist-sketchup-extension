@@ -503,7 +503,7 @@ tab:
     labels:
       title: Etiquettes
       options_settings: Configuration
-      options_layout: Rendu
+      options_layout: Composition
       option_page: Page
       option_page_format: Format
       option_page_format_portrait: Portrait
