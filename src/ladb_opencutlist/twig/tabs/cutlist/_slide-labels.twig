@@ -73,9 +73,9 @@
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
                                             {% set part_info = page.part_infos[partIndex] %}
-                                            <g transform="translate({{ labelX }} {{ labelY }})">
+                                            <g transform="translate({{ labelX + labelWidth / 2 }} {{ labelY + labelHeight / 2 }})">
                                                 {% for elementDef in layout %}
-                                                    <g transform="translate({{ xUnit * elementDef.x }} {{ yUnit * elementDef.y }})">
+                                                    <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }})">
                                                         {% include 'tabs/cutlist/_label-element.twig' %}
                                                     </g>
                                                 {% endfor %}

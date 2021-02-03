@@ -2,6 +2,9 @@
     'use strict';
 
     var XMLNS = "http://www.w3.org/2000/svg";
+    var GRID_DIVISION = 12;
+    var LABEL_MAX_WIDTH = 400;
+    var LABEL_MAX_HEIGHT = 300;
 
     // CLASS DEFINITION
     // ======================
@@ -10,12 +13,13 @@
         this.options = options;
         this.$element = $(element);
 
-        this.$editingXGroup = null;
+        this.$editingSvgGroup = null;
         this.$editingForm = null;
 
     };
 
     LadbLabelEditor.DEFAULTS = {
+        group: null,
         part: null,
         labelWidth: 100,
         labelHeight: 100,
@@ -30,34 +34,55 @@
         var svg = document.createElementNS(XMLNS, 'svg');
         $svgContaner.append(svg);
         svg.setAttributeNS(null, 'viewBox', '0 0 ' + this.options.labelWidth + ' ' + this.options.labelHeight);
-        svg.setAttributeNS(null, 'width', '80%');
+        if (this.options.labelHeight > this.options.labelWidth) {
+            svg.setAttributeNS(null, 'width',  (LABEL_MAX_HEIGHT / this.options.labelHeight) * this.options.labelWidth + 'px');
+            svg.setAttributeNS(null, 'height', LABEL_MAX_HEIGHT + 'px');
+        } else {
+            svg.setAttributeNS(null, 'width',   LABEL_MAX_WIDTH + 'px');
+            svg.setAttributeNS(null, 'height', (LABEL_MAX_WIDTH / this.options.labelWidth) * this.options.labelHeight + 'px');
+        }
 
         this.svg = svg;
 
+        var svgLabel = document.createElementNS(XMLNS, 'g');
+        svg.appendChild(svgLabel);
+        svgLabel.setAttributeNS(null, 'transform', 'translate(' + this.options.labelWidth / 2 + ' ' + this.options.labelHeight / 2 + ')');
+
+        this.svgLabel = svgLabel;
+
         // Grid lines
-        var lines = document.createElementNS(XMLNS, 'g');
-        var line;
-        for (var row = 1; row < 12; row++) {
-            line = document.createElementNS(XMLNS, 'line');
-            line.setAttributeNS(null, 'x1', 0);
-            line.setAttributeNS(null, 'y1', row * this.options.yUnit);
-            line.setAttributeNS(null, 'x2', this.options.labelWidth);
-            line.setAttributeNS(null, 'y2', row * this.options.yUnit);
-            line.setAttributeNS(null, 'stroke', '#ddd');
-            line.setAttributeNS(null, 'stroke-width', 0.01);
-            lines.appendChild(line);
+
+        var svgGrid = document.createElementNS(XMLNS, 'g');
+        svgLabel.appendChild(svgGrid);
+
+        var fnDrawLine = function (x1, y1, x2, y2, stroke) {
+            var svgLine = document.createElementNS(XMLNS, 'line');
+            svgGrid.appendChild(svgLine);
+            svgLine.setAttributeNS(null, 'x1', x1);
+            svgLine.setAttributeNS(null, 'y1', y1);
+            svgLine.setAttributeNS(null, 'x2', x2);
+            svgLine.setAttributeNS(null, 'y2', y2);
+            svgLine.setAttributeNS(null, 'stroke', stroke ? stroke : '#ddd');
+            svgLine.setAttributeNS(null, 'stroke-width', 0.01 );
+            svgLine.setAttributeNS(null, 'stroke-dasharray', that.options.minUnit / 10);
         }
-        for (var col = 1; col < 12; col++) {
-            line = document.createElementNS(XMLNS, 'line');
-            line.setAttributeNS(null, 'x1', col * this.options.xUnit);
-            line.setAttributeNS(null, 'y1', 0);
-            line.setAttributeNS(null, 'x2', col * this.options.xUnit);
-            line.setAttributeNS(null, 'y2', this.options.labelHeight);
-            line.setAttributeNS(null, 'stroke', '#ddd');
-            line.setAttributeNS(null, 'stroke-width', 0.01);
-            lines.appendChild(line);
+
+        var y = 0;
+        while (y < this.options.labelHeight / 2) {
+            if (y > 0) {
+                fnDrawLine(-this.options.labelWidth / 2, -y, this.options.labelWidth / 2, -y);
+            }
+            fnDrawLine(-this.options.labelWidth / 2, y, this.options.labelWidth / 2, y, y === 0 ? '#999' : null);
+            y = y + this.options.minUnit;
         }
-        svg.appendChild(lines);
+        var x = 0;
+        while (x < this.options.labelWidth / 2) {
+            if (x > 0) {
+                fnDrawLine(-x, -this.options.labelHeight / 2, -x, this.options.labelHeight / 2);
+            }
+            fnDrawLine(x, -this.options.labelHeight / 2, x, this.options.labelHeight / 2, x === 0 ? '#999' : null);
+            x = x + this.options.minUnit;
+        }
 
         var fnGetMousePosition = function (e) {
             var CTM = svg.getScreenCTM();
@@ -107,16 +132,15 @@
                 if (draggingElement) {
                     e.preventDefault();
                     var coord = fnGetMousePosition(e);
-                    var newX = Math.round((coord.x - offset.x) / that.options.xUnit);
-                    var newY = Math.round((coord.y - offset.y) / that.options.yUnit);
+                    var gridX = Math.round((coord.x - offset.x) / that.options.minUnit);
+                    var gridY = Math.round((coord.y - offset.y) / that.options.minUnit);
 
                     // Update def
-                    draggingElementDef.x = newX;
-                    draggingElementDef.y = newY;
+                    draggingElementDef.x = gridX * that.options.minUnit / that.options.labelWidth;
+                    draggingElementDef.y = gridY * that.options.minUnit / that.options.labelHeight;
 
                     // Update element translation
-                    transform.setTranslate(newX * that.options.xUnit, newY * that.options.yUnit);
-
+                    transform.setTranslate(draggingElementDef.x * that.options.labelWidth, draggingElementDef.y * that.options.labelHeight);
 
                 }
             })
@@ -136,10 +160,10 @@
 
                 var elementDef = {
                     formula: 'part.name',
-                    x: 1,
-                    y: 1,
+                    x: 0,
+                    y: 0,
                     fontSize: 1,
-                    textAnchor: 'start',
+                    textAnchor: 'middle',
                     color: '#000'
                 }
 
@@ -152,8 +176,8 @@
         var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Retirer</button>');
         $btnRemove
             .on('click', function () {
-                that.elementDefs.splice(that.elementDefs.indexOf(that.$editingXGroup.data('def')), 1);
-                that.$editingXGroup.remove();
+                that.elementDefs.splice(that.elementDefs.indexOf(that.$editingSvgGroup.data('def')), 1);
+                that.$editingSvgGroup.remove();
                 that.editElement(null);
             })
         ;
@@ -170,43 +194,43 @@
     };
 
     LadbLabelEditor.prototype.appendElementDef = function (elementDef) {
-        var xGroup, xLineV, xLineH, xTextGroup;
+        var svgGroup, svgCrossLineV, svgCrossLineH, svgTextGroup;
 
-        xGroup = document.createElementNS(XMLNS, 'g');
-        xGroup.setAttributeNS(null, 'class', 'draggable');
-        xGroup.setAttributeNS(null, 'transform', 'translate(' + elementDef.x * this.options.xUnit + ' ' + elementDef.y * this.options.yUnit + ')');
-        this.svg.appendChild(xGroup);
+        svgGroup = document.createElementNS(XMLNS, 'g');
+        svgGroup.setAttributeNS(null, 'class', 'draggable');
+        svgGroup.setAttributeNS(null, 'transform', 'translate(' + elementDef.x * this.options.labelWidth + ' ' + elementDef.y * this.options.labelHeight + ')');
+        this.svgLabel.appendChild(svgGroup);
 
-        $(xGroup).data('def', elementDef);
+        $(svgGroup).data('def', elementDef);
 
-        xLineH = document.createElementNS(XMLNS, 'line');
-        xLineH.setAttributeNS(null, 'x1', -this.options.minUnit / 2);
-        xLineH.setAttributeNS(null, 'y1', 0);
-        xLineH.setAttributeNS(null, 'x2', this.options.minUnit / 2);
-        xLineH.setAttributeNS(null, 'y2', 0);
-        xLineH.setAttributeNS(null, 'stroke', '#f00');
-        xLineH.setAttributeNS(null, 'stroke-width', 0.01);
-        xGroup.appendChild(xLineH);
+        svgCrossLineH = document.createElementNS(XMLNS, 'line');
+        svgCrossLineH.setAttributeNS(null, 'x1', -this.options.minUnit / 3);
+        svgCrossLineH.setAttributeNS(null, 'y1', 0);
+        svgCrossLineH.setAttributeNS(null, 'x2', this.options.minUnit / 3);
+        svgCrossLineH.setAttributeNS(null, 'y2', 0);
+        svgCrossLineH.setAttributeNS(null, 'stroke', '#f00');
+        svgCrossLineH.setAttributeNS(null, 'stroke-width', 0.01);
+        svgGroup.appendChild(svgCrossLineH);
 
-        xLineV = document.createElementNS(XMLNS, 'line');
-        xLineV.setAttributeNS(null, 'x1', 0);
-        xLineV.setAttributeNS(null, 'y1', -this.options.minUnit / 2);
-        xLineV.setAttributeNS(null, 'x2', 0);
-        xLineV.setAttributeNS(null, 'y2', this.options.minUnit / 2);
-        xLineV.setAttributeNS(null, 'stroke', '#f00');
-        xLineV.setAttributeNS(null, 'stroke-width', 0.01);
-        xGroup.appendChild(xLineV);
+        svgCrossLineV = document.createElementNS(XMLNS, 'line');
+        svgCrossLineV.setAttributeNS(null, 'x1', 0);
+        svgCrossLineV.setAttributeNS(null, 'y1', -this.options.minUnit / 3);
+        svgCrossLineV.setAttributeNS(null, 'x2', 0);
+        svgCrossLineV.setAttributeNS(null, 'y2', this.options.minUnit / 3);
+        svgCrossLineV.setAttributeNS(null, 'stroke', '#f00');
+        svgCrossLineV.setAttributeNS(null, 'stroke-width', 0.01);
+        svgGroup.appendChild(svgCrossLineV);
 
-        xTextGroup = document.createElementNS(XMLNS, 'g');
-        xGroup.appendChild(xTextGroup);
+        svgTextGroup = document.createElementNS(XMLNS, 'g');
+        svgGroup.appendChild(svgTextGroup);
 
-        this.appendFormula(xTextGroup, elementDef);
+        this.appendFormula(svgTextGroup, elementDef);
 
-        return xGroup;
+        return svgGroup;
     }
 
-    LadbLabelEditor.prototype.appendFormula = function (xTextGroup, elementDef) {
-        xTextGroup.innerHTML = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
+    LadbLabelEditor.prototype.appendFormula = function (svgTextGroup, elementDef) {
+        svgTextGroup.innerHTML = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             elementDef: elementDef,
             part_info: {
                 position_in_batch: 1,
@@ -215,48 +239,49 @@
             noEmptyValue: true
         }, this.options));
 
-        var xText = $(xTextGroup).children('text')[0];
-        if (xText) {
-            var bbox = xText.getBBox();
-            var xActiveRect = document.createElementNS(XMLNS, 'rect');
-            xActiveRect.setAttributeNS(null, 'class', 'selection');
-            xActiveRect.setAttributeNS(null, 'x', bbox.x - 0.02);
-            xActiveRect.setAttributeNS(null, 'y', bbox.y - 0.02);
-            xActiveRect.setAttributeNS(null, 'width', bbox.width + 0.04);
-            xActiveRect.setAttributeNS(null, 'height', bbox.height + 0.04);
-            xActiveRect.setAttributeNS(null, 'fill', 'none');
-            xActiveRect.setAttributeNS(null, 'stroke-width', 0.01);
-            xActiveRect.setAttributeNS(null, 'rx', 0.02);
-            xActiveRect.setAttributeNS(null, 'ry', 0.02);
-            xTextGroup.insertBefore(xActiveRect, xText);
+        var svgText = $(svgTextGroup).children('text')[0];
+        if (svgText) {
+            var bbox = svgText.getBBox();
+            var svgSelectionRect = document.createElementNS(XMLNS, 'rect');
+            svgSelectionRect.setAttributeNS(null, 'class', 'selection');
+            svgSelectionRect.setAttributeNS(null, 'x', bbox.x - 0.02);
+            svgSelectionRect.setAttributeNS(null, 'y', bbox.y - 0.02);
+            svgSelectionRect.setAttributeNS(null, 'width', bbox.width + 0.04);
+            svgSelectionRect.setAttributeNS(null, 'height', bbox.height + 0.04);
+            svgSelectionRect.setAttributeNS(null, 'fill', 'none');
+            svgSelectionRect.setAttributeNS(null, 'stroke-width', 0.01);
+            svgSelectionRect.setAttributeNS(null, 'stroke-dasharray', this.options.minUnit / 5);
+            svgSelectionRect.setAttributeNS(null, 'rx', 0.02);
+            svgSelectionRect.setAttributeNS(null, 'ry', 0.02);
+            svgTextGroup.insertBefore(svgSelectionRect, svgText);
         }
 
     }
 
-    LadbLabelEditor.prototype.editElement = function (element, elementDef) {
+    LadbLabelEditor.prototype.editElement = function (svgElement, elementDef) {
         var that = this;
 
         // Editing flag
-        if (this.$editingXGroup) {
-            this.$editingXGroup.removeClass('active');
+        if (this.$editingSvgGroup) {
+            this.$editingSvgGroup.removeClass('active');
         }
-        if (element == null) {
-            this.$editingXGroup = null;
+        if (svgElement == null) {
+            this.$editingSvgGroup = null;
             if (this.$editingForm) {
                 this.$editingForm.remove();
             }
             this.$btnRemove.hide();
             return;
         }
-        this.$editingXGroup = $(element)
-        this.$editingXGroup.addClass('active');
+        this.$editingSvgGroup = $(svgElement)
+        this.$editingSvgGroup.addClass('active');
 
         if (this.$btnRemove) {
             this.$btnRemove.show();
         }
 
-        var xTextGroup = this.$editingXGroup.children('g')[0];
-        var xText = $(xTextGroup).children('text')[0];
+        var svgTextGroup = this.$editingSvgGroup.children('g')[0];
+        var svgText = $(svgTextGroup).children('text')[0];
 
         // Form
         if (this.$editingForm) {
@@ -271,15 +296,13 @@
         var $selectTextAnchor = $('#ladb_select_text_anchor', this.$editingForm);
         var $inputColor = $('#ladb_input_color', this.$editingForm);
 
-        console.log($selectFormula);
-
         // Bind
         $selectFormula
             .val(elementDef.formula)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
-                that.appendFormula(xTextGroup, elementDef);
+                that.appendFormula(svgTextGroup, elementDef);
             })
         ;
         $selectFontSize
@@ -287,7 +310,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.fontSize = $(this).val();
-                that.appendFormula(xTextGroup, elementDef);
+                that.appendFormula(svgTextGroup, elementDef);
             })
         ;
         $selectTextAnchor
@@ -295,14 +318,14 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.textAnchor = $(this).val();
-                that.appendFormula(xTextGroup, elementDef);
+                that.appendFormula(svgTextGroup, elementDef);
             })
         ;
         $inputColor
             .val(elementDef.color)
             .on('change', function () {
                 elementDef.color = $(this).val();
-                that.appendFormula(xTextGroup, elementDef);
+                that.appendFormula(svgTextGroup, elementDef);
             })
         ;
 
@@ -324,8 +347,8 @@
 
         this.options.labelWidth = labelWidth;
         this.options.labelHeight = labelHeight;
-        this.options.xUnit = labelWidth / 12;
-        this.options.yUnit = labelHeight / 12;
+        this.options.xUnit = labelWidth / GRID_DIVISION;
+        this.options.yUnit = labelHeight / GRID_DIVISION;
         this.options.minUnit = Math.min(this.options.xUnit, this.options.yUnit);
 
         // Empty the container
