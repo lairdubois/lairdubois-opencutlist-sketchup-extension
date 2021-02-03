@@ -504,19 +504,19 @@ tab:
       title: Etiquettes
       options_settings: Configuration
       options_layout: Composition
-      option_page: Page
+      option_page: Papier
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Paysage
       option_page_format_custom: Personnalisé
       option_page_width: Largeur
       option_page_height: Hauteur
-      option_margin: Marge
+      option_margin: Marges
       option_margin_top: Haut
       option_margin_right: Droite
       option_margin_bottom: Bas
       option_margin_left: Gauche
-      option_grid: Grille
+      option_grid: Etiquettes par page
       option_col_count: Colonnes
       option_row_count: Lignes
       option_cutting_marks: Repères
