@@ -504,7 +504,7 @@ tab:
       title: Etiquettes
       options_layout: Composition
       options_settings: Configuration
-      size: Taille de l'étiquette
+      size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
       remove_element: Retirer
       option_page: Papier
