@@ -28,7 +28,17 @@
     LadbLabelEditor.prototype.createSvg = function () {
         var that = this;
 
-        var $svgContaner = $('<div class="text-center"></div>');
+        rubyCallCommand('core_float_to_length', {
+            width: this.options.labelWidth,
+            height: this.options.labelHeight,
+        }, function (response) {
+
+            var $sizeContaner = $('<div class="ladb-label-editor-size">' + i18next.t('tab.cutlist.labels.size') + ' : ' + response.width.replace('~', '') + ' x ' + response.height.replace('~', '') + '</div>');
+            that.$element.prepend($sizeContaner);
+
+        })
+
+        var $svgContaner = $('<div class="ladb-label-editor-preview"></div>');
         this.$element.append($svgContaner);
 
         var svg = document.createElementNS(XMLNS, 'svg');
@@ -154,7 +164,7 @@
             this.appendElementDef(this.elementDefs[i]);
         }
 
-        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> Ajouter un élément</button>');
+        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.labels.add_element') + '</button>');
         $btnAdd
             .on('click', function () {
 
@@ -173,7 +183,7 @@
             })
         ;
 
-        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> Retirer</button>');
+        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
         $btnRemove
             .on('click', function () {
                 that.elementDefs.splice(that.elementDefs.indexOf(that.$editingSvgGroup.data('def')), 1);
@@ -183,7 +193,7 @@
         ;
 
         this.$element.append(
-            $('<div class="text-center" style="margin: 10px;"></div>')
+            $('<div class="ladb-label-editor-buttons" style="margin: 10px;"></div>')
                 .append($btnAdd)
                 .append('&nbsp;')
                 .append($btnRemove)
@@ -359,7 +369,7 @@
 
     };
 
-    LadbLabelEditor.prototype.updateSizeAndLayout = function (labelWidth, labelHeight, elementDefs) {
+    LadbLabelEditor.prototype.updateSizeAndElementDefs = function (labelWidth, labelHeight, elementDefs) {
         this.elementDefs = elementDefs;
 
         // Empty the container
@@ -386,7 +396,7 @@
             var options = $.extend({}, LadbLabelEditor.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.labelEditor', (data = new LadbLabelEditor(this, options, options.dialog)));
+                $this.data('ladb.labelEditor', (data = new LadbLabelEditor(this, options)));
             }
             if (typeof option == 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

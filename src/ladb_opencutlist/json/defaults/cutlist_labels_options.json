@@ -6,8 +6,8 @@
     "margin_right": { "metric" : "0", "imperial" : "0" },
     "margin_bottom": { "metric" : "10mm", "imperial" : "0" },
     "margin_left": { "metric" : "0", "imperial" : "0" },
-    "col_count": "2",
-    "row_count": "8",
+    "col_count": 2,
+    "row_count": 4,
     "cutting_marks": false,
     "layout": [
       {

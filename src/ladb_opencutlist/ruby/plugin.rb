@@ -434,8 +434,11 @@ module Ladb::OpenCutList
         register_command('core_send_action') do |params|
           send_action_command(params)
         end
-        register_command('core_convert_to_inch_float') do |params|
-          convert_to_inch_float_command(params)
+        register_command('core_length_to_float') do |params|
+          length_to_float_command(params)
+        end
+        register_command('core_float_to_length') do |params|
+          float_to_length_command(params)
         end
         register_command('core_compute_size_aspect_ratio') do |params|
           compute_size_aspect_ratio_command(params)
@@ -790,7 +793,13 @@ module Ladb::OpenCutList
         end
 
         if value.is_a? String
-          value = value.gsub(/[\\]/, '')        # unescape double quote
+          if value[/^{(?:.)*}$|^\[(?:.)*\]$/]   # Try to detect and convert json
+            begin
+              value = JSON.parse(value)
+            end
+          else
+            value = value.gsub(/[\\]/, '')      # unescape double quote
+          end
         end
 
         values.push(
@@ -804,7 +813,7 @@ module Ladb::OpenCutList
       { :values => values }
     end
 
-    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1] }, ... ], strategy: [0|1|2|3] }
+    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1|2|3] }, ... ], strategy: [0|1|2|3] }
       settings = params['settings']
       strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
 
@@ -836,6 +845,9 @@ module Ladb::OpenCutList
 
         if value.is_a? String
           value = value.gsub(/["]/, '\"')        # escape double quote in string
+        end
+        if value.is_a?(Hash) || value.is_a?(Array)
+          value = value.to_json                  # Encode hash or array to json
         end
 
         if is_strategy_global
@@ -942,12 +954,22 @@ module Ladb::OpenCutList
       }
     end
 
-    def convert_to_inch_float_command(params)    # Waiting params = { key_1: 'STRING_DIMENSION', key_2: 'STRING_DIMENSION',  }
-      float_dimensions = {}
-      params.each do |key, string_dimension|
-        float_dimensions[key] = DimensionUtils.instance.d_to_ifloats(string_dimension).to_l.to_f
+    def length_to_float_command(params)    # Waiting params = { key_1: 'STRING_LENGTH', key_2: 'STRING_LENGTH',  }
+      float_lengths = {}
+      params.each do |key, string_length|
+        # Convert string length to inch float
+        float_lengths[key] = DimensionUtils.instance.d_to_ifloats(string_length).to_l.to_f
       end
-      float_dimensions
+      float_lengths
+    end
+
+    def float_to_length_command(params)    # Waiting params = { key_1: FLOAT_DIMENSION, key_2: FLOAT_DIMENSION,  }
+      string_lengths = {}
+      params.each do |key, float_length|
+        # Convert float inch length to string length with model unit
+        string_lengths[key] = float_length.to_l.to_s
+      end
+      string_lengths
     end
 
     def compute_size_aspect_ratio_command(params)    # Waiting params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
