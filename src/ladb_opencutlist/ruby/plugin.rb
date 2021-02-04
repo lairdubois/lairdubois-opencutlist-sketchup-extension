@@ -232,11 +232,22 @@ module Ladb::OpenCutList
     # -----
 
     def set_attribute(entity, key, value, dictionary = ATTRIBUTE_DICTIONARY)
+      if value.is_a?(Hash) || value.is_a?(Array)
+        # Encode hash or array to json (because attribute don't support hashs)
+        value = value.to_json
+      end
       entity.set_attribute(dictionary, key, value)
     end
 
     def get_attribute(entity, key, default_value = nil, dictionary = ATTRIBUTE_DICTIONARY)
-      entity.get_attribute(dictionary, key, default_value)
+      value = entity.get_attribute(dictionary, key, default_value)
+      # Try to detect and convert json from String values
+      if value != default_value && value.is_a?(String) && value[/^{(?:.)*}$|^\[(?:.)*\]$/]
+        begin
+          return JSON.parse(value)
+        end
+      end
+      value
     end
 
     def write_default(key, value, section = DEFAULT_SECTION)
@@ -793,13 +804,7 @@ module Ladb::OpenCutList
         end
 
         if value.is_a? String
-          if value[/^{(?:.)*}$|^\[(?:.)*\]$/]   # Try to detect and convert json
-            begin
-              value = JSON.parse(value)
-            end
-          else
-            value = value.gsub(/[\\]/, '')      # unescape double quote
-          end
+          value = value.gsub(/[\\]/, '')      # unescape double quote
         end
 
         values.push(
@@ -845,9 +850,6 @@ module Ladb::OpenCutList
 
         if value.is_a? String
           value = value.gsub(/["]/, '\"')        # escape double quote in string
-        end
-        if value.is_a?(Hash) || value.is_a?(Array)
-          value = value.to_json                  # Encode hash or array to json
         end
 
         if is_strategy_global
