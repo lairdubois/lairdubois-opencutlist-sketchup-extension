@@ -1,0 +1,152 @@
++function ($) {
+    'use strict';
+
+    // CLASS DEFINITION
+    // ======================
+
+    var LadbTextinputColor = function(element, options) {
+        this.options = options;
+        this.$element = $(element);
+
+        this.$previewAddOn = null;
+        this.$preview = null;
+    };
+
+    LadbTextinputColor.DEFAULTS = {
+        colors: ['#61BD4F', '#F2D600', '#FFAB4A', '#EB5A46', '#C377E0', '#0079BF', '#00C2E0', '#51E898', '#FF80CE', '#4D4D4D'],
+        colorsPerLine: 5,
+        includeMargins: false
+    };
+
+    LadbTextinputColor.prototype.updatePreview = function() {
+        var color = this.$element.val();
+        if (color) {
+            this.$preview.css('background', color);
+        }
+    };
+
+    LadbTextinputColor.prototype.init = function() {
+        var that = this;
+
+        var $body = $('body');
+
+        // Decorate input
+
+        var $inputGroup = this.$element.wrap('<div class="ladb-textinput-color input-group"></div>').parent();
+
+        this.$previewAddOn = $('<div class="ladb-textinput-color-preview-addon input-group-addon"></div>');
+        this.$preview = $('<div class="ladb-textinput-color-preview"></div>');
+
+        this.$previewAddOn.append(this.$preview);
+        $inputGroup.prepend(this.$previewAddOn);
+
+        // Create the color box
+
+        var colorsMarkup = '';
+
+        for (var i = 0; i < this.options.colors.length; i++) {
+
+            var color = this.options.colors[i];
+
+            var breakLine = '';
+            if ((i % this.options.colorsPerLine) === 0) {
+                breakLine = 'clear: both; ';
+            }
+
+            if (i > 0 && breakLine && $.browser && $.browser.msie && $.browser.version <= 7) {
+                breakLine = '';
+                colorsMarkup += '<li style="float: none; clear: both; overflow: hidden; background-color: #fff; display: block; height: 1px; line-height: 1px; font-size: 1px; margin-bottom: -2px;"></li>';
+            }
+
+            colorsMarkup += '<li data-ladb-color-index="' + i + '" class="ladb-color-box" style="' + breakLine + 'background-color: ' + color + '" title="' + color + '"></li>';
+        }
+
+        var $box = $('<div class="ladb-textinput-color-picker" style="position: absolute; left: 0; top: 0;"><ul>' + colorsMarkup + '</ul><div style="clear: both;"></div></div>');
+        $body.append($box);
+        $box.hide();
+
+        $('li.ladb-color-box', $box).click(function() {
+            if (that.$element.is('input')) {
+                that.$element
+                    .val(that.options.colors[$(this).data('ladb-color-index')])
+                    .trigger('change')
+                    .blur()
+                ;
+            }
+            that.updatePreview();
+            $box.hide();
+        });
+
+        $body.on('click', function() {
+            $box.hide();
+        });
+
+        $box.click(function (event) {
+            event.stopPropagation();
+        });
+
+        var fnPositionAndShowBox = function(box) {
+            var pos = that.$previewAddOn.offset();
+            box.css({ left: pos.left, top: (pos.top + that.$element.outerHeight(that.options.includeMargins)) });
+            box.show();
+        };
+
+        this.$previewAddOn.on('click', function(event) {
+            event.stopPropagation();
+            fnPositionAndShowBox($box);
+        });
+
+        this.$element
+            .on('click', function (event) {
+                event.stopPropagation();
+            })
+            .on('focus', function () {
+                fnPositionAndShowBox($box);
+            })
+            .on('change', function () {
+                that.updatePreview();
+            })
+            .on('keyup', function () {
+                that.updatePreview();
+            })
+        ;
+
+        this.updatePreview();
+    };
+
+
+    // PLUGIN DEFINITION
+    // =======================
+
+    function Plugin(option, _parameter) {
+        return this.each(function () {
+            var $this   = $(this);
+            var data    = $this.data('ladb.textinputColor');
+            var options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option == 'object' && option);
+
+            if (!data) {
+                $this.data('ladb.textinputColor', (data = new LadbTextinputColor(this, options)));
+            }
+            if (typeof option == 'string') {
+                data[option](_parameter);
+            } else {
+                data.init();
+            }
+        })
+    }
+
+    var old = $.fn.LadbTextinputColor;
+
+    $.fn.ladbTextinputColor             = Plugin;
+    $.fn.ladbTextinputColor.Constructor = LadbTextinputColor;
+
+
+    // NO CONFLICT
+    // =================
+
+    $.fn.ladbTextinputColor.noConflict = function () {
+        $.fn.ladbTextinputColor = old;
+        return this;
+    }
+
+}(jQuery);

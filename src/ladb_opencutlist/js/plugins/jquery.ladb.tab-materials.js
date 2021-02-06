@@ -167,11 +167,6 @@
         $inputs.inputName.on('keyup change', fnUpdateBtnCreateStatus);
         $inputs.inputColor.on('keyup change', fnUpdateBtnCreateStatus);
 
-        // Create color picker
-        $inputs.hueb.on('change', function() {
-            fnUpdateBtnCreateStatus();
-        });
-
         // Bind buttons
         $btnCreate.on('click', function () {
 
@@ -942,21 +937,10 @@
         $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
         $selectEdgeDecremented.selectpicker(SELECT_PICKER_OPTIONS);
 
-        // Create color picker
-        var hueb = new Huebee($inputColor.get(0) , {
-            notation: 'hex',
-            saturations: 2,
-            shades: 7,
-            customColors: [ '#4F78A7', '#EF8E2C', '#DE545A', '#79B8B2', '#5CA34D', '#ECCA48', '#AE78A2', '#FC9CA8', '#9B755F', '#BAB0AC' ]
-        });
-        hueb.on('change', function() {
-            hueb.close();
-            $inputColor.trigger('change');
-        });
-
         // Bind inputs
         $inputName.on('keyup change', function() { fnCheckInputNameValue(true); });
         $inputColor.on('keyup change', function() { fnCheckInputColorValue(true); });
+        $inputColor.ladbTextinputColor();
 
         // Initial input checks
         fnCheckInputNameValue(false);
@@ -1048,7 +1032,6 @@
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
             inputVolumicMass: $inputVolumicMass,
-            hueb: hueb
         }
     };
 

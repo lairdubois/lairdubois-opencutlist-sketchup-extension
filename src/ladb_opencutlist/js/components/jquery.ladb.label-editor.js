@@ -333,23 +333,12 @@
         ;
         $inputColor
             .val(elementDef.color)
+            .ladbTextinputColor()
             .on('change', function () {
                 elementDef.color = $(this).val();
                 that.appendFormula(svgTextGroup, elementDef);
             })
         ;
-
-        // Create color picker
-        var hueb = new Huebee($inputColor.get(0) , {
-            notation: 'hex',
-            saturations: 2,
-            shades: 7,
-            customColors: [ '#4F78A7', '#EF8E2C', '#DE545A', '#79B8B2', '#5CA34D', '#ECCA48', '#AE78A2', '#FC9CA8', '#9B755F', '#BAB0AC' ]
-        });
-        hueb.on('change', function() {
-            hueb.close();
-            $inputColor.trigger('change');
-        });
 
     };
 
