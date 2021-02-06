@@ -2398,6 +2398,19 @@
         var group = this.findGroupById(groupId);
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
+        // Retrieve parts to use
+        var parts;
+        if (selectionOnly) {
+            parts = [];
+            $.each(group.parts, function (index) {
+                if (that.selectionPartIds.includes(this.id)) {
+                    parts.push(this);
+                }
+            });
+        } else {
+            parts = group.parts;
+        }
+
         // Retrieve cutting diagram options
         this.dialog.pullSettings([
 
@@ -2482,7 +2495,7 @@
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
                             group: group,
-                            part: group.parts[0],
+                            part: parts[0],
                         }, labelsOptions.layout);
                         fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
                             $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
@@ -2605,14 +2618,10 @@
                                 labelsOptions.margin_left = response.margin_left;
 
                                 // Split parts into pages
-                                var partIds = selectionOnly ? that.selectionPartIds : null
                                 var pages = []
                                 var page;
                                 var gIndex = 0;
-                                $.each(group.parts, function (index) {
-                                    if (partIds && !partIds.includes(this.id)) {
-                                        return;   // Exclude unselected parts
-                                    }
+                                $.each(parts, function (index) {
                                     for (var i = 1; i <= this.count; i++) {
                                         if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                             page = {
