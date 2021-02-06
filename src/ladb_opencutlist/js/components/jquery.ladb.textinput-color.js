@@ -5,12 +5,11 @@
     // ======================
 
     var LadbTextinputColor = function(element, options) {
-        this.options = options;
-        this.$element = $(element);
-
+        LadbAbstractSimpleTextinput.call(this, element, options, '#000000');
         this.$previewAddOn = null;
         this.$preview = null;
     };
+    LadbTextinputColor.prototype = new LadbAbstractSimpleTextinput;
 
     LadbTextinputColor.DEFAULTS = {
         colors: ['#61BD4F', '#F2D600', '#FFAB4A', '#EB5A46', '#C377E0', '#0079BF', '#00C2E0', '#51E898', '#FF80CE', '#4D4D4D'],
@@ -26,18 +25,21 @@
     };
 
     LadbTextinputColor.prototype.init = function() {
+        LadbAbstractSimpleTextinput.prototype.init.call(this);
+
         var that = this;
 
         var $body = $('body');
 
         // Decorate input
 
-        var $inputGroup = this.$element.wrap('<div class="ladb-textinput-color input-group"></div>').parent();
-
         this.$previewAddOn = $('<div class="ladb-textinput-color-preview-addon input-group-addon"></div>');
         this.$preview = $('<div class="ladb-textinput-color-preview"></div>');
 
         this.$previewAddOn.append(this.$preview);
+
+        var $inputGroup = this.$element.parent();
+        $inputGroup.addClass('ladb-textinput-color')
         $inputGroup.prepend(this.$previewAddOn);
 
         // Create the color box
@@ -51,11 +53,6 @@
             var breakLine = '';
             if ((i % this.options.colorsPerLine) === 0) {
                 breakLine = 'clear: both; ';
-            }
-
-            if (i > 0 && breakLine && $.browser && $.browser.msie && $.browser.version <= 7) {
-                breakLine = '';
-                colorsMarkup += '<li style="float: none; clear: both; overflow: hidden; background-color: #fff; display: block; height: 1px; line-height: 1px; font-size: 1px; margin-bottom: -2px;"></li>';
             }
 
             colorsMarkup += '<li data-ladb-color-index="' + i + '" class="ladb-color-box" style="' + breakLine + 'background-color: ' + color + '" title="' + color + '"></li>';
