@@ -3,10 +3,10 @@
 
     var SETTING_KEY_LOAD_OPTION_COL_SEP = 'importer.load.option.col_sep';
     var SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS = 'importer.load.option.first_line_headers';
-    var SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING = 'importer.load.option.column_mapping';
+    var SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING = 'importer.load.option.column_mapping';
 
     var SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS = 'importer.import.option.keep_definitions_settings';
-    var SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS = 'importer.import.option.keep_materials_settings';
+    var SETTING_KEY_IMPORT_OPTION_KEEP_MATERIALS_SETTINGS = 'importer.import.option.keep_materials_settings';
 
     // CLASS DEFINITION
     // ======================
@@ -70,7 +70,7 @@
 
                         SETTING_KEY_LOAD_OPTION_COL_SEP,
                         SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS,
-                        SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING
+                        SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING
 
                     ],
                     0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
@@ -92,7 +92,7 @@
                                     filename: filename,
                                     col_sep: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, appDefaults.col_sep),
                                     first_line_headers: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, appDefaults.first_line_headers),
-                                    column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, {})
+                                    column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING, {})
                                 };
 
                                 var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
@@ -157,7 +157,7 @@
 
         // Store options
         that.dialog.setSettings([
-            { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPGING, value:loadOptions.column_mapping }
+            { key:SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING, value:loadOptions.column_mapping }
         ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
         rubyCallCommand('importer_load', loadOptions, function (response) {
@@ -261,7 +261,7 @@
         that.dialog.pullSettings([
 
                 SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS,
-                SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS
+                SETTING_KEY_IMPORT_OPTION_KEEP_MATERIALS_SETTINGS
 
             ],
             3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
@@ -278,7 +278,7 @@
                         var importOptions = {
                             remove_all: false,      // This option is not stored to force user to know the option status
                             keep_definitions_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, appDefaults.keep_definitions_settings),
-                            keep_materials_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, appDefaults.keep_materials_settings)
+                            keep_materials_settings: that.dialog.getSetting(SETTING_KEY_IMPORT_OPTION_KEEP_MATERIALS_SETTINGS, appDefaults.keep_materials_settings)
                         };
 
                         var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
@@ -319,7 +319,7 @@
                             // Store options
                             that.dialog.setSettings([
                                 { key:SETTING_KEY_IMPORT_OPTION_KEEP_DEFINITIONS_SETTINGS, value:importOptions.keep_definitions_settings },
-                                { key:SETTING_KEY_IMPORT_OPTION_KEEP_METARIALS_SETTINGS, value:importOptions.keep_materials_settings }
+                                { key:SETTING_KEY_IMPORT_OPTION_KEEP_MATERIALS_SETTINGS, value:importOptions.keep_materials_settings }
                             ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
                             rubyCallCommand('importer_import', importOptions, function (response) {
