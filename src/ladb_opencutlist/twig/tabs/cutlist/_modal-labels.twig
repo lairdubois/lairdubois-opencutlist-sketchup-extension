@@ -12,6 +12,9 @@
 {% endblock %}
 
 {% block bodyInner %}
+    {% if selection_only %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.labels.warning.selection_only'|i18next }}</div>
+    {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'layout' %} active{% endif %}" id="tab_labels_options_layout">
             <div id="ladb_label_editor" class="ladb-label-editor"></div>

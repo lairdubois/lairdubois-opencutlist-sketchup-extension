@@ -926,15 +926,19 @@
         var $group = $('#ladb_group_' + id, this.$page);
         var $cuttingdiagram1dBtn = $('button.ladb-btn-group-cuttingdiagram1d', $group);
         var $cuttingdiagram2dBtn = $('button.ladb-btn-group-cuttingdiagram2d', $group);
+        var $labelsBtn = $('button.ladb-btn-group-labels', $group);
         if (this.selectionPartIds.length > 0) {
             $('i', $cuttingdiagram1dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
             $('i', $cuttingdiagram2dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
+            $('i', $labelsBtn).addClass('ladb-opencutlist-icon-labels-selection');
         } else {
             $('i', $cuttingdiagram1dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
             $('i', $cuttingdiagram2dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
+            $('i', $labelsBtn).removeClass('ladb-opencutlist-icon-labels-selection');
         }
         $cuttingdiagram1dBtn.effect('highlight', {}, 1500);
         $cuttingdiagram2dBtn.effect('highlight', {}, 1500);
+        $labelsBtn.effect('highlight', {}, 1500);
     };
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
@@ -1901,7 +1905,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                                rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId, part_ids: that.selectionGroupId === groupId ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
                                     var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                         generateOptions: that.generateOptions,
@@ -2268,7 +2272,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId, value:cuttingdiagram2dOptions.origin_corner },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
-                                rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: that.selectionGroupId === groupId ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                                     var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                         generateOptions: that.generateOptions,
@@ -2436,6 +2440,7 @@
 
                         var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                             group: group,
+                            selection_only: selectionOnly,
                             tab: forceDefaultTab || that.lastCuttingdiagram2dLabelsOptionsTab == null ? 'layout' : that.lastCuttingdiagram2dLabelsOptionsTab
                         }, true);
 
@@ -2600,10 +2605,14 @@
                                 labelsOptions.margin_left = response.margin_left;
 
                                 // Split parts into pages
+                                var partIds = selectionOnly ? that.selectionPartIds : null
                                 var pages = []
                                 var page;
                                 var gIndex = 0;
                                 $.each(group.parts, function (index) {
+                                    if (partIds && !partIds.includes(this.id)) {
+                                        return;   // Exclude unselected parts
+                                    }
                                     for (var i = 1; i <= this.count; i++) {
                                         if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                             page = {

@@ -153,7 +153,6 @@
                         $handleBadge.html($handleBadge.data('count'));
 
                         // Check if muted
-                        console.log($handleBadge.data('count'), $handleBadge.data('count-muted'));
                         if ($handleBadge.data('count') === $handleBadge.data('count-muted')) {
                             $handleBadge.addClass('badge-notification-muted');
                         }
