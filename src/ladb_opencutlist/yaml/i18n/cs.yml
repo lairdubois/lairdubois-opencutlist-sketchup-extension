@@ -228,9 +228,9 @@ tab:
         Pokud je vybrána tato možnost *Automatická orientace pro dílce* nebude mít na tyto dílce žádný vliv,
 
         místní souřadnicový systém:
-        -  *Délka* je na <span style='color:red'>červené</span> ose
-        -  *Šířka* je na <span style='color:green'>zelené</span> ose
-        -  *Tloušťka* je na <span style='color:blue'>modré</span> ose
+        - *Délka* je na <span style='color:red'>červené</span> ose
+        - *Šířka* je na <span style='color:green'>zelené</span> ose
+        - *Tloušťka* je na <span style='color:blue'>modré</span> ose
       tags: Štítky
       tags_help: |
         *Dílcům* můžete přidávat štítky pro lepší definici dílců.
@@ -242,7 +242,7 @@ tab:
       axes_tip: |
         Všimněte si, že pokud není tato možnost *Automatická orientace dílců* aktivní nebo je součást *zamknutá na svých osách* pak:
         - **Délka** se čte na <strong style='color:red'>červené</strong> ose,
-        - **Šířka** se čte na <strong style='color:green'>zelené</strong> ose a 
+        - **Šířka** se čte na <strong style='color:green'>zelené</strong> ose a
         - **Tloušťka* se čte na <strong style='color:blue'>modré</strong> ose.
       axes_origin_position_none: Neměňte původ
       axes_origin_position_min: Umístěte počátek do rohu
@@ -305,7 +305,7 @@ tab:
     list:
       filters: Filtr
       filters_warning_0: "Tento filtr maskuje všechny dílce!"
-      filters_warning: "Tento filtr zobrazí pouze **{{ count }}** dílce  z celkového počtu {{ total }}."
+      filters_warning: "Tento filtr zobrazí pouze **{{ count }}** dílce z celkového počtu {{ total }}."
       filters_warning_plural: "Tento filtr zobrazí pouze **{{ count }}** skupiny z celkového počtu {{ total }}."
       edge_material_names_filter: Filtrujte podle hran
       tags_filter: Filtrovat podle štítků
@@ -506,7 +506,7 @@ tab:
       no_entities: Váš model je prázdný. Potřebujeme více informací ;)
       no_component_in_selection: Ve vašem výběru nebyla zjištěna žádná viditelná komponenty.
       no_component_in_model: Ve vaší scéně nebyla zjištěna žádná viditelná komponenty.
-      failed_to_write_export_file: "Nepodařilo se vytvořit exportní soubor. ** {{ error }} **"
+      failed_to_write_export_file: "Nepodařilo se vytvořit exportní soubor. **{{ error }}**"
       unknow_part: Vybraný dílec neexistuje v kusovníku.
       obsolete_cutlist: "Je možné, že kusovník je zastaralý. Vygenerujte ho znovu."
     warning:
@@ -629,7 +629,7 @@ tab:
       property_name: Jméno
     remove:
       message: |
-        Chystáte se odebrat materiál **{{ material_name }}** ze svého modelu. 
+        Chystáte se odebrat materiál **{{ material_name }}** ze svého modelu.
         Pokračujte potvrzením.
     error:
       no_model: Model není otevřen. Potřebujeme více informací ;)
@@ -671,7 +671,7 @@ tab:
         Chystáte se importovat **{{ count }} dílce** do modelu.
         Tyto dílce budou umístěny na počátek hlavní scény.
       info_0_plural: |
-        Chystáte se importovat **{{ count }} součást** do modelu. 
+        Chystáte se importovat **{{ count }} součást** do modelu.
         Tato součást budou umístěna na počátek hlavní scény.
       info_1: Kliknutím na **Importovat** akci potvrďte.
       options: |
@@ -722,7 +722,7 @@ tab:
     label: Návody
     title: Návody
     help: |
-      Zde najdete neúplný seznam videí vytvořených komunitou, která používá  plugin *OpenCutList*.
+      Zde najdete neúplný seznam videí vytvořených komunitou, která používá plugin *OpenCutList*.
     submit: Odeslat video
     submit_info: |
       Natočili jste video představující použití **OpenCutList** a chtěli byste, aby se zde zobrazilo?
