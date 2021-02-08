@@ -26,6 +26,8 @@ module Ladb
         ex.description = 'Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'it'
         ex.description = 'Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)'
+      when 'pl'
+        ex.description = 'Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu;) '
       when 'pt'
         ex.description = 'Ficha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar;)'
       when 'ru'
