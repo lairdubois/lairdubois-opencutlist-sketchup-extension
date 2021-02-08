@@ -519,6 +519,9 @@ tab:
       option_margin_right: Droite
       option_margin_bottom: Bas
       option_margin_left: Gauche
+      option_spacing: Espacements
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertical
       option_grid: Etiquettes par page
       option_col_count: Colonnes
       option_row_count: Lignes

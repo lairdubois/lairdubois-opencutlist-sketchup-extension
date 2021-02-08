@@ -21,15 +21,14 @@
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
 
-{% set gridWidth = page_width - margin_left - margin_right %}
-{% set gridHeight = page_height - margin_top - margin_bottom %}
-{% set labelWidth = gridWidth / col_count %}
-{% set labelHeight = gridHeight / row_count %}
+{% set labelWidth = (page_width - margin_left - margin_right - spacing_v * (col_count - 1)) / col_count %}
+{% set labelHeight = (page_height - margin_top - margin_bottom - spacing_h * (row_count - 1)) / row_count %}
 {% set minDimension = min(labelWidth, labelHeight) %}
 {% set xUnit = labelWidth / 12 %}
 {% set yUnit = labelHeight / 12 %}
 {% set minUnit = min(xUnit, yUnit) %}
 {% set strokeWidth = 0.01 %}
+{% set cuttingMarkSize = strokeWidth * 10 %}
 
 {% block containerInner %}
     {{ parent() }}
@@ -54,22 +53,10 @@
 
                             <g transform="translate({{ margin_left }} {{ margin_top }})">
 
-                                {# page grid #}
-                                {% if margin_top > 0 or margin_bottom > 0 or row_count > 1 %}
-                                    {% for row in (margin_top > 0 ? 0 : 1)..(margin_bottom > 0 ? row_count : row_count - 1) %}
-                                        <line class="grid-line no-print" x1="0" y1="{{ row * labelHeight }}" x2="{{ gridWidth }}" y2="{{ row * labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                    {% endfor %}
-                                {% endif %}
-                                {% if margin_left > 0 or margin_right > 0 or col_count > 1 %}
-                                    {% for col in (margin_left > 0 ? 0 : 1)..(margin_right > 0 ? col_count : col_count - 1) %}
-                                        <line class="grid-line no-print" x1="{{ col * labelWidth }}" y1="0" x2="{{ col * labelWidth }}" y2="{{ gridHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }} {{ strokeWidth }}" />
-                                    {% endfor %}
-                                {% endif %}
-
                                 {% for row in 0..row_count-1 %}
-                                    {% set labelY = row * labelHeight %}
+                                    {% set labelY = row * (labelHeight + spacing_h) %}
                                     {% for col in 0..col_count-1 %}
-                                        {% set labelX = col * labelWidth %}
+                                        {% set labelX = col * (labelWidth + spacing_v) %}
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
                                             {% set part_info = page.part_infos[partIndex] %}
@@ -82,22 +69,28 @@
                                             </g>
                                         {% endif %}
 
-                                        {% if cutting_marks %}
-                                            {% if margin_top > 0 or row > 0 %}
-                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY }}" x2="{{ labelX + minUnit }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" />
-                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth - minUnit }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" />
+                                        {% if margin_top > 0 or row > 0 %}
+                                            <line class="grid-line no-print" x1="{{ labelX }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }}" />
+                                            {% if cutting_marks %}
+                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ cuttingMarkSize }},{{ labelWidth - 2 * cuttingMarkSize }}" />
                                             {% endif %}
-                                            {% if margin_bottom > 0 and row == row_count - 1 %}
-                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX + minUnit }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" />
-                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX + labelWidth - minUnit }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" />
+                                        {% endif %}
+                                        {% if margin_bottom > 0 and row == row_count - 1 or spacing_h > 0 and row < row_count - 1 %}
+                                            <line class="grid-line no-print" x1="{{ labelX + labelWidth }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }}" />
+                                            {% if cutting_marks %}
+                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ cuttingMarkSize }},{{ labelWidth - 2 * cuttingMarkSize }}" />
                                             {% endif %}
-                                            {% if margin_left > 0 or col > 0 %}
-                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY }}" x2="{{ labelX }}" y2="{{ labelY + minUnit }}" stroke-width="{{ strokeWidth }}" />
-                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX }}" y2="{{ labelY + labelHeight - minUnit }}" stroke-width="{{ strokeWidth }}" />
+                                        {% endif %}
+                                        {% if margin_left > 0 or col > 0 %}
+                                            <line class="grid-line no-print" x1="{{ labelX }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }}" />
+                                            {% if cutting_marks %}
+                                                <line class="grid-line" x1="{{ labelX }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX }}" y2="{{ labelY }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ cuttingMarkSize }},{{ labelHeight - 2 * cuttingMarkSize }}" />
                                             {% endif %}
-                                            {% if margin_right > 0 and col == col_count - 1 %}
-                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY + minUnit }}" stroke-width="{{ strokeWidth }}" />
-                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY + labelHeight }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY + labelHeight - minUnit }}" stroke-width="{{ strokeWidth }}" />
+                                        {% endif %}
+                                        {% if margin_right > 0 and col == col_count - 1 or spacing_v > 0 and col < col_count - 1 %}
+                                            <line class="grid-line no-print" x1="{{ labelX + labelWidth }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ strokeWidth }}" />
+                                            {% if cutting_marks %}
+                                                <line class="grid-line" x1="{{ labelX + labelWidth }}" y1="{{ labelY }}" x2="{{ labelX + labelWidth }}" y2="{{ labelY + labelHeight }}" stroke-width="{{ strokeWidth }}" stroke-dasharray="{{ cuttingMarkSize }},{{ labelHeight - 2 * cuttingMarkSize }}" />
                                             {% endif %}
                                         {% endif %}
 

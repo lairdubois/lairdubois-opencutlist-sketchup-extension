@@ -78,8 +78,8 @@
             $box.hide();
         });
 
-        $box.click(function (event) {
-            event.stopPropagation();
+        $box.click(function (e) {
+            e.stopPropagation();
         });
 
         var fnPositionAndShowBox = function(box) {
@@ -88,14 +88,14 @@
             box.show();
         };
 
-        this.$previewAddOn.on('click', function(event) {
-            event.stopPropagation();
+        this.$previewAddOn.on('click', function(e) {
+            e.stopPropagation();
             fnPositionAndShowBox($box);
         });
 
         this.$element
-            .on('click', function (event) {
-                event.stopPropagation();
+            .on('click', function (e) {
+                e.stopPropagation();
             })
             .on('focus', function () {
                 fnPositionAndShowBox($box);

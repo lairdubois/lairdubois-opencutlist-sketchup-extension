@@ -56,6 +56,8 @@
     var SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT = 'cutlist.labels.option.margin_right';
     var SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM = 'cutlist.labels.option.margin_bottom';
     var SETTING_KEY_LABELS_OPTION_MARGIN_LEFT = 'cutlist.labels.option.margin_left';
+    var SETTING_KEY_LABELS_OPTION_SPACING_H = 'cutlist.labels.option.spacing_h';
+    var SETTING_KEY_LABELS_OPTION_SPACING_V = 'cutlist.labels.option.spacing_v';
     var SETTING_KEY_LABELS_OPTION_COL_COUNT = 'cutlist.labels.option.col_count';
     var SETTING_KEY_LABELS_OPTION_ROW_COUNT = 'cutlist.labels.option.row_count';
     var SETTING_KEY_LABELS_OPTION_CUTTING_MARKS = 'cutlist.labels.option.cutting_marks';
@@ -2421,6 +2423,8 @@
                 SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId,
                 SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId,
                 SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId,
+                SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId,
+                SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId,
                 SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId,
                 SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId,
                 SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId,
@@ -2445,6 +2449,8 @@
                             margin_right: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId, appDefaults.margin_right),
                             margin_bottom: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId, appDefaults.margin_bottom),
                             margin_left: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId, appDefaults.margin_left),
+                            spacing_h: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId, appDefaults.spacing_h),
+                            spacing_v: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId, appDefaults.spacing_v),
                             col_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId, appDefaults.col_count),
                             row_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId, appDefaults.row_count),
                             cutting_marks: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId, appDefaults.cutting_marks),
@@ -2468,11 +2474,13 @@
                         var $inputMarginRight = $('#ladb_input_margin_right', $modal);
                         var $inputMarginBottom = $('#ladb_input_margin_bottom', $modal);
                         var $inputMarginLeft = $('#ladb_input_margin_left', $modal);
+                        var $inputSpacingH = $('#ladb_input_spacing_h', $modal);
+                        var $inputSpacingV = $('#ladb_input_spacing_v', $modal);
                         var $inputColCount = $('#ladb_input_col_count', $modal);
                         var $inputRowCount = $('#ladb_input_row_count', $modal);
                         var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
 
-                        var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, colCount, rowCount, callback) {
+                        var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
 
                             rubyCallCommand('core_length_to_float', {
                                 page_width: pageWidth,
@@ -2480,10 +2488,14 @@
                                 margin_top: marginTop,
                                 margin_right: marginRight,
                                 margin_bottom: marginBottom,
-                                margin_left: marginLeft
+                                margin_left: marginLeft,
+                                spacing_h: spacingH,
+                                spacing_v: spacingV
                             }, function (response) {
-                                var labelWidth = (response.page_width - response.margin_left - response.margin_right) / parseInt(colCount);
-                                var labelHeight = (response.page_height - response.margin_top - response.margin_bottom) / parseInt(rowCount);
+                                colCount = parseInt(colCount);
+                                rowCount = parseInt(rowCount);
+                                var labelWidth = (response.page_width - response.margin_left - response.margin_right - response.spacing_v * (colCount - 1)) / colCount;
+                                var labelHeight = (response.page_height - response.margin_top - response.margin_bottom - response.spacing_h * (rowCount - 1)) / rowCount;
                                 callback(labelWidth, labelHeight);
                             });
 
@@ -2497,7 +2509,7 @@
                             group: group,
                             part: parts[0],
                         }, labelsOptions.layout);
-                        fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
+                        fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.spacing_h, labelsOptions.spacing_v, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
                             $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
                         });
                         $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
@@ -2514,6 +2526,10 @@
                         $inputMarginBottom.ladbTextinputDimension();
                         $inputMarginLeft.val(labelsOptions.margin_left);
                         $inputMarginLeft.ladbTextinputDimension();
+                        $inputSpacingH.val(labelsOptions.spacing_h);
+                        $inputSpacingH.ladbTextinputDimension();
+                        $inputSpacingV.val(labelsOptions.spacing_v);
+                        $inputSpacingV.ladbTextinputDimension();
                         $inputColCount.val(labelsOptions.col_count);
                         $inputRowCount.val(labelsOptions.row_count);
                         $selectCuttingMarks.val(labelsOptions.cutting_marks ? '1' : '0');
@@ -2534,7 +2550,7 @@
                             that.lastCuttingdiagram2dLabelsOptionsTab = tabId.substring('#tab_labels_options_'.length);
                             if (that.lastCuttingdiagram2dLabelsOptionsTab === 'layout') {
 
-                                fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
+                                fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
                                     $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
                                 });
 
@@ -2564,10 +2580,12 @@
                             $inputMarginRight.val(appDefaults.margin_right);
                             $inputMarginBottom.val(appDefaults.margin_bottom);
                             $inputMarginLeft.val(appDefaults.margin_left);
+                            $inputSpacingH.val(appDefaults.spacing_h);
+                            $inputSpacingV.val(appDefaults.spacing_v);
                             $inputColCount.val(appDefaults.col_count);
                             $inputRowCount.val(appDefaults.row_count);
                             $selectCuttingMarks.selectpicker('val', appDefaults.cutting_marks ? '1' : '0');
-                            fnComputeLabelSize(appDefaults.page_width, appDefaults.page_height, appDefaults.margin_top, appDefaults.margin_right, appDefaults.margin_bottom, appDefaults.margin_left, appDefaults.col_count, appDefaults.row_count, function (labelWidth, labelHeight) {
+                            fnComputeLabelSize(appDefaults.page_width, appDefaults.page_height, appDefaults.margin_top, appDefaults.margin_right, appDefaults.margin_bottom, appDefaults.margin_left, appDefaults.spacing_h, appDefaults.spacing_v, appDefaults.col_count, appDefaults.row_count, function (labelWidth, labelHeight) {
                                 $labelEditor.ladbLabelEditor('updateSizeAndElementDefs', [ labelWidth, labelHeight, appDefaults.layout ]);
                             });
                             $(this).blur();
@@ -2582,6 +2600,8 @@
                             labelsOptions.margin_right = $inputMarginRight.val();
                             labelsOptions.margin_bottom = $inputMarginBottom.val();
                             labelsOptions.margin_left = $inputMarginLeft.val();
+                            labelsOptions.spacing_h = $inputSpacingH.val();
+                            labelsOptions.spacing_v = $inputSpacingV.val();
                             labelsOptions.col_count = $inputColCount.val();
                             labelsOptions.row_count = $inputRowCount.val();
                             labelsOptions.cutting_marks = $selectCuttingMarks.val() === '1';
@@ -2595,6 +2615,8 @@
                                 { key:SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 { key:SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 { key:SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId, value:labelsOptions.spacing_h, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId, value:labelsOptions.spacing_v, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
                                 { key:SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId, value:labelsOptions.col_count },
                                 { key:SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId, value:labelsOptions.row_count },
                                 { key:SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId, value:labelsOptions.cutting_marks },
@@ -2607,7 +2629,9 @@
                                 margin_top: labelsOptions.margin_top,
                                 margin_right: labelsOptions.margin_right,
                                 margin_bottom: labelsOptions.margin_bottom,
-                                margin_left: labelsOptions.margin_left
+                                margin_left: labelsOptions.margin_left,
+                                spacing_h: labelsOptions.spacing_h,
+                                spacing_v: labelsOptions.spacing_v
                             }, function (response) {
 
                                 labelsOptions.page_width = response.page_width;
@@ -2616,6 +2640,8 @@
                                 labelsOptions.margin_right = response.margin_right;
                                 labelsOptions.margin_bottom = response.margin_bottom;
                                 labelsOptions.margin_left = response.margin_left;
+                                labelsOptions.spacing_h = response.spacing_h;
+                                labelsOptions.spacing_v = response.spacing_v;
 
                                 // Split parts into pages
                                 var pages = []

@@ -6,6 +6,8 @@
     "margin_right": { "metric" : "0", "imperial" : "0" },
     "margin_bottom": { "metric" : "10mm", "imperial" : "0" },
     "margin_left": { "metric" : "0", "imperial" : "0" },
+    "spacing_h": { "metric" : "0", "imperial" : "0" },
+    "spacing_v": { "metric" : "0", "imperial" : "0" },
     "col_count": 2,
     "row_count": 4,
     "cutting_marks": false,
@@ -16,7 +18,7 @@
         "y": -0.083,
         "fontSize": 3,
         "textAnchor": "middle",
-        "color": "#000"
+        "color": "#000000"
       },
       {
         "formula": "part.name",
@@ -24,7 +26,7 @@
         "y": 0.083,
         "fontSize": 1,
         "textAnchor": "middle",
-        "color": "#000"
+        "color": "#000000"
       },
       {
         "formula": "part.size",
@@ -32,7 +34,7 @@
         "y": 0.25,
         "fontSize": 2,
         "textAnchor": "middle",
-        "color": "#000"
+        "color": "#000000"
       }
     ]
   }
