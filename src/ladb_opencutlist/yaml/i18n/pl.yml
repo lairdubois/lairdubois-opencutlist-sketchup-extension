@@ -1,0 +1,830 @@
+_label: Polski
+_reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć** to okno."
+_description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu;) "
+default:
+  minimize: Minimalizuj
+  maximize: Maksymalizuj
+  cancel: Anuluj
+  validate: Zastosuj
+  open: Otwórz
+  see: Zobacz
+  close: Zamknij
+  clear: Wyczyść
+  refresh: Odśwież
+  generate: Generuj
+  print: Wydrukuj
+  export: Eksportuj
+  import: Importuj
+  load: Załaduj
+  options: Opcje
+  caution: Uwaga
+  remove: Usuń
+  create: Stwórz
+  ignore: Ignoruj
+  download: Pobierz
+  upgrade: Aktualizuj
+  empty_filename: BezTytulu.skp
+  help: Pomoc
+  error: Ceruj!
+  warning: Uwaga
+  tip: Wskazówka
+  good: Dobry
+  bad: Zły
+  by: przez
+  date_format: "d.m.Y G:i"
+  date_format_short: d.m.Y
+  unit_0: Cale
+  unit_1: Stopy
+  unit_2: Milimetr
+  unit_3: Centymetr
+  unit_4: Metr
+  part_single: część
+  part_plural: części
+  setup_model_units: Skonfiguruj jednostki modelu
+  load_more: "Załaduj więcej ..."
+  save_to_defaults: Zapisz jako wartości domyślne
+  reset_to_defaults: Przywróć zapisane wartości
+  reset_to_app_defaults: Przywróć oryginalne wartości
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+  toolbar:
+    name: OpenCutList
+    command: OpenCutList
+  dialog:
+    title: OpenCutList by L'Air du Bois
+  leftbar:
+    more: Więcej
+    more_docs: Dokumenty
+    more_reviews: Recenzje
+    more_plans: Plany
+    more_extensions: Rozszerzenia
+    more_update: Aktualizacja
+  warning:
+    old_su: |
+      Używasz starszej wersji SketchUp ({{ sketchupVersion }}). Plugin może częściowo działać, ale generować również błędy.
+      Aby wykożystać w pełni OpenCutList zalecamy przynajmniej **SketchUp 2017**.
+    feature_locked: "*Nie można dezaktywować w tej wersji programu SketchUp*"
+  event:
+    model_change: Aktywny model został zmieniony.
+    options_change: Opcje w modelu zostały zmienione.
+    material_change: Co najmniej jeden materiał został zmieniony.
+    selection_change: Wybór/zaznaczenie w aktywnym modelu zostało zmienione.
+  model_info_page:
+    units: Jednostki
+  upgrade:
+    unavailable: Nie można znaleźć najnowszej wersji *OpenCutList*.
+    available: |
+      Dostępna jest nowa wersja *OpenCutList*.
+      Zaktualizuj, aby uzyskać najnowsze funkcje!
+    up_to_date: |
+      Używasz najnowszą wersję *OpenCutList*.
+
+      *Rozważ wsparcie tego projektu, aby pomóc nam dodać jeszcze więcej funkcji!*
+    downloading: Pobieranie w toku...
+    changelog: "Co nowego?"
+    ignore_update: Pomiń tą aktualizację
+    download_rescue: "Problem z pobraniem?"
+    manual_download: Pobieranie ręczne
+    zzz: "Obecnie odpoczywam po aktualizacji. Aby mnie obudzić, musisz ponownie uruchomić SketchUp."
+    success: |
+      Aktualizacja OpenCutList zakończona !
+
+      Uruchom ponownie SketchUp aby aktywowań zmiany.
+    error:
+      download: Błąd podczas pobierania archiwum.
+      unzip: Błąd podczas dekompresji archiwum.
+tab:
+  cutlist:
+    label: Części
+    title: Lista części
+    help: |
+      Wybierz części z listy w bieżącej scenie i kliknij klawisz **Wygeneruj**.
+      Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części
+    selection_only: Wybór
+    material_undefined: Brak zdefiniowanego materiału
+    not_available_std_width: Niezdefiniowana szerokość
+    not_available_std_thickness: Niezdefiniowana grubość
+    not_available_std_section: Przekrój niezdefiniowany
+    highlight_part: Zaznacz część w modelu
+    highlight_parts: Zaznacz części w modelu
+    edit_part_properties: Edytuj właściwości części
+    edit_part_axes_properties: Edytuj właściwości (osie) części
+    edit_part_size_increase_properties: Edytuj właściwości (nadwymiary) części
+    edit_part_edges_properties: Edytuj właściwości (obrzeża) części
+    tooltip:
+      show_hide_block: Pokaż / ukryj grupę
+      scroll_to_block: Przewiń do grupy
+      not_available_std_width: "Szerokość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych szerokkościach materiału '{{ material_name }}'"
+      not_available_std_thickness: "Grubość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych grubościach materiału '{{ material_name }}'"
+      not_available_std_section: "Przekrój *{{ std_dimension_real }}* nie jest zdefiniowany w standardowych przekrojach materiału '{{ material_name }}'"
+      add_std_width_to_material: |
+        Dodaj szerokość *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Dodaj grubość *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      add_std_section_to_material: |
+        Dodaj przekrój *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      rounded_std_width: |
+        Szerokość *{{ std_dimension }}* jest zaokrąglona przez precyzję jednostek modelu.
+        Rzeczywista szerokość : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Grubość *{{ std_dimension }}* jest zaokrąglana przez precyzję jednostek modelu.
+        Rzeczywista grubość : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Przekrój *{{ std_dimension }}* jest zaokrąglony przez dokładność jednostek modelu.
+        Rzeczywisty przekrój : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Dostosuj precyzję w *Informacje o modelu* lub sprawdź wymiary części w tej grupie.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Edytuj właściwości grupy części
+      folding_part: Rozwiń / Zwiń
+      material_origin_1: Materiał tej części jest zdefiniowany w jej instancjach
+      material_origin_2: Materiał tej części jest dziedziczony z jednego z jej elementów nadrzędnych
+      material_origin_3: Materiał tej części jest wyodrębniany z jednego z jego elementów potomnych
+      orientation_locked_on_axis: Orientacja tej części jest zablokowana w jej układzie współrzędnych
+      number_saved: Numer tej części został zapisany
+      number_hidden: "Numer '{{ number }}' zapisany w tej części nie może być użyty, ponieważ jest już przypisany"
+      number_generated: Numer tej części został wygenerowany automatycznie
+      resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
+      flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
+      auto_oriented: Ta część została automatycznie obrócona
+      add_label_filter: "Filtrowanie według '{{ label }}'"
+      remove_label_filter: "Usuń filtrowanie '{{ label }}'"
+      add_edge_material_name_filter: "Filtruj według '{{ material_name }}'"
+      remove_edge_material_name_filter: "Nie filtruj według '{{ material_name }}'"
+      not_aligned_on_axes: "Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi"
+      multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
+      children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
+      children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
+      children_size_increase: "Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części"
+      invalid_final_area: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar"
+      invalid_final_area_plural: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar"
+      is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
+      size_increased: "Wymiar zwiększony o {{ value }}"
+      has_edges: "Ten kawałek zawiera {{ count }} fornirowaną krawędź"
+      has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
+      edge_decremented: "Zmniejszona o grubość obrzeża ({{ decrement }})"
+      edge_ymin: Długość krawędzi 1
+      edge_ymax: Długość krawędzi 2
+      edge_xmin: Szerokość krawędzi 1
+      edge_xmax: Szerokość krawędzi 2
+      dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
+      part_axes: Osie wewnętrzne części
+      select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
+    menu:
+      show_all_groups: Pokaż wszystkie grupy
+      hide_all_other_groups: Ukryj wszystkie inne grupy
+      numbers_save: Zachowaj numery części
+      numbers_reset: Zresetuj numery części
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_numbers_save: Zachowaj numery części grupy
+      group_numbers_reset: Zresetuj numery części grupy
+      group_cuttingdiagram: Schemat cięcia
+      edit_material: "Edytuj materiał '{{ material }}'..."
+      expand_all: Rozłóż podobne części
+      collapse_all: Złóż podobne części
+    edit_part:
+      title: "Właściwości części '{{ name }}'"
+      title_multiple: Właściwości grupy części
+      multiple_alert: "Wspólne właściwości grupy {{ part_count }} części."
+      general: Główne
+      edges: Obrzeża
+      name: Opis
+      material: Materiał
+      cumulable: Podsumowanie
+      cumulable_help: |
+        Jeśli ta opcja jest wybrana **długość** lub **szerokość** będą uwględnione **jednostki długości** lub **jednostki szerokości** pomnożone przez liczbę podczas sortowania listy części.
+      cumulable_0: Nie da się podsumować
+      cumulable_1: Zsumowane po długości
+      cumulable_2: Zsumowane po szerokości
+      unit_price: Cena jednostkowa
+      unit_mass: Masa jednostkowa
+      size_increase: Ponadwymiarowe
+      size_increase_help: |
+        Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
+        (* Przykład: naddatek na listwę przypodłogową lub listwę rysunkową, którą należy wyregulować podczas montażu. *)
+      length_increase: Długość ponadwymiarowa
+      length_increase_help: Nadmiar jest stosowany do końcowej długości w celu określenia **długości wstępnej**.
+      width_increase: Szerokość ponadwymiarowa
+      width_increase_help: "Nadmiar jest stosowany do ostatecznej szerokości, aby zdefiniować **szerokość wstępną**."
+      thickness_increase: Grubość ponadwymiarowa
+      thickness_increase_help: "Nadmiar nakłada się na ostateczną grubość, aby określić **grubość wstępną**."
+      orientation: Orientacja
+      orientation_locked_on_axis: Zablokuj orientację na osiach części
+      orientation_locked_on_axis_help: |
+        Jeśli ta opcja jest wybrana, opcja *Automatyczna orientacja części* nie będzie miała wpływu na tę część.
+
+        Stąd w lokalnym układzie współrzędnych:
+        - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
+        - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
+        - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
+      tags: Oznaczenia
+      tags_help: |
+        *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
+        Możesz dodać dowolną liczbę oznaczeń.
+        Widoczne części listy cięć mogą być następnie filtrowane na podstawie tych oznaczeń.
+      tags_multiple_info: Wyświetlane są tylko popularne oznaczenia
+      axes: Osie
+      axes_help: "Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części."
+      axes_tip: |
+        Zwróć uwagę, że jeśli opcja *Automatyczna orientacja części* nie jest aktywna lub część jest *zablokowana na swoich osiach*, to: :
+         - **długość** jest odczytywana na osi <strong style='color:red'>czerwonej</strong>
+         - **szerokość** jest odczytywana na osi <strong style='color:green'>zielonej</strong>
+         - **grubość** jest odczytywana na osi <strong style='color:blue'>niebieskiej</strong>
+      axes_origin_position_none: Nie zmieniaj pochodzenia
+      axes_origin_position_min: Umieść początek na narożniku
+      axes_origin_position_center: Umieść początek w środku
+      axes_origin_position_min_center: Umieść początek na środku płaszczyzny
+      over_length: Na całej długości
+      over_width: Na całej szerokości
+      edge_disabled_help: "To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni nośnej materiału."
+      multiple_values: Wiele wartości
+    option:
+      auto_orient: Automatyczna orientacja części
+      auto_orient_help: |
+        Jeśli ta opcja jest wybrana, 3 wymiary części są sortowane tak, aby największy reprezentował *długość*, a najmniejszy *grubość*.
+
+        W przeciwnym razie,
+        - *długość* jest odczytywana na osi <span style='color:red'>czerwonej</span>
+        - *szerokość* jest odczytywana na osi <span style='color:green'>zielonej</span>
+        - *grubość* jest odczytywana na osi <span style='color:blue'>niebieskiej</span>
+      smart_material: "*Inteligentne* przypisanie materiału"
+      smart_material_help: "Jeśli ta opcja jest zaznaczona, do części bez zdefiniowanego materiału można przypisać materiał przypisany do jednego z ich rodziców lub dzieci."
+      dynamic_attributes_name: Użyj atrybutu *Nazwa* komponentów dynamicznych
+      dynamic_attributes_name_help: |
+        Jeśli ta opcja jest wybrana, oznaczenie części zostanie wyodrębnione z atrybutu *Nazwa*, jeśli została zdefiniowana.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Wystąpienia części o tej samej definicji zostaną oddzielone, jeśli atrybut *Nazwa* nie ma tej samej wartości.
+      part_number_with_letters: Użyj liter do numerowania części
+      part_number_with_letters_help: "Jeśli ta opcja jest zaznaczona, części są numerowane za pomocą liter (A, B, C, ... Z, AA, AB, ...)."
+      part_number_sequence_by_group: Ponownie zainicjuj numerowanie części dla każdej grupy
+      part_number_sequence_by_group_help: "Jeśli ta opcja jest wybrana, numeracja części jest ponownie inicjowana do 1 (lub A) dla każdej grupy (lista części o tym samym typie materiału i grubości)."
+      part_folding: Grupuj identyczne części
+      part_folding_help: "Jeśli ta opcja jest wybrana, części z **identycznym rozmiarem** oraz z **identycznymi oznakowaniem** będą grupowane (o ile wyświetlanie tego obszaru nie jest ukryte)."
+      hide_entity_names: Ukryj nazwy instancji
+      hide_entity_names_help: "Jeśli ta opcja jest zaznaczona, **nazwy instancji** części nie będą wyświetlane."
+      hide_tags: Ukryj oznakowania
+      hide_tags_help: "Jeśli ta opcja jest zaznaczona, **oznakowania** zostaną ukryte."
+      hide_cutting_dimensions: Ukryj przybliżone wymiary
+      hide_cutting_dimensions_help: "Jeśli ta opcja jest wybrana, **przybliżone** wymiary części zostaną ukryte."
+      hide_bbox_dimensions: Ukryj gotowe wymiary
+      hide_bbox_dimensions_help: "Jeśli ta opcja jest wybrana, wymiary **gotowych** części zostaną ukryte."
+      hide_final_areas: Ukryj rzeczywisty obszar części typu *Dobry arkusz*
+      hide_final_areas_help: "Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Dobry arkusz* zostaną ukryte."
+      hide_edges: Ukryj kolumny obrzeży
+      hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Dobry arkusz* będą ukryte."
+      minimize_on_highlight: Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*."
+      general: Główne
+      part_order_strategy: Sortowanie części
+      part_order_strategy_help: |
+        Przeorganizuj następujące właściwości, aby zdefiniować porządek sortowania w każdej grupie.
+        Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
+      dimension_column_order_strategy: Kolejność kolumn
+      dimension_column_order_strategy_help: |
+        Przeorganizuj następujące właściwości wymiarów, aby zdefiniować kolejność wyświetlania kolumn.
+      property_thickness: Grubość
+      property_length: Długość
+      property_width: Szerokość
+      property_name: Opis
+      property_count: Ilość
+      property_edge_pattern: Liczba obrzeży
+    list:
+      filters: Filtry
+      filters_warning_0: "Ten filtr ukrywa wszystkie części!"
+      filters_warning: "Ten filtr pokazuje tylko **{{ count }}** części z łącznej liczby {{ total }}."
+      filters_warning_plural: "Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}."
+      edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
+      tags_filter: Filtruj według oznakowań
+      dimensions_help: Zrozumienie wymiarów ...
+      summary: "Podsumowanie "
+      material_type: Rodzaj
+      material_thickness: Materiał / Grubość
+      part_count: Ilość
+      area: Powierzchnia
+      area_short: Pow.
+      volume: Obiętość
+      number: Ob.
+      name: Opis
+      count: Opis
+      cutting: Wstępny
+      bbox: Zakończony
+      final: Rzeczywisty
+      total_cutting: Σ Wstępny
+      total_final: Σ Rzeczywisty
+      length: Długość
+      length_short: dł.
+      width: Szerokość
+      width_short: szer.
+      thickness: Grubość
+      thickness_short: gr.
+      edges: Obrzeża
+    export:
+      title: Eksportuj w formacie CSV
+      info: |
+        Dzięki tej funkcji możesz wyeksportować *listę części* do pliku [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
+
+        <i class="ladb-opencutlist-icon-warning"></i> *Części wewnątrz ukrytych grup listy części nie zostaną wyeksportowane*.
+      options: Opcje eksportu
+      option_source: Źródło
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: Lista instancji
+      option_col_sep: Separator
+      option_col_sep_tab: Tabulator
+      option_col_sep_comma: Przecinek
+      option_col_sep_semicolon: Średnik
+      option_encoding: Kodowanie
+      number: No.
+      path: Ścieżka
+      instance_name: Instancja
+      definition_name: Definicja
+      name: Opis
+      total_cutting_length: Długość - wstępna
+      total_cutting_area: Powierzchnia - wstępna
+      total_cutting_volume: Obiętość - wstępna
+      total_final_area: Powierzchnia - finalna
+      cutting_length: Długość - wstępna
+      cutting_width: Szerokość - wstępna
+      cutting_thickness: Grubość - wstępna
+      bbox_length: Długość - finalna
+      bbox_width: Szerokość - finalna
+      bbox_thickness: Grubość - finalna
+      final_area: Powierzchnia - finalna
+      count: Ilość
+      part_count: Ilość części
+      material_type: Rodzaj
+      material_thickness: Materiał / Grubość
+      material_name: Materiał
+      entity_names: Nazwy instancji
+      tags: Oznaczenia
+      edge_ymin: Długość krawędzi 1
+      edge_ymax: Długość krawędzi 2
+      edge_xmin: Szerokość krawędzi 1
+      edge_xmax: Szerokość krawędzi 2
+    report:
+      label: Raport
+    cuttingdiagram:
+      title: Schemat cięcia
+      options_material: Materiał
+      options_config: Konfiguracja
+      options_display: Pokaz
+      option_bar_folding: Grupuj podobne płyty
+      option_bar_folding_0: Nie
+      option_bar_folding_1: Tak
+      option_bar_folding_help: "Grupuj płyty mające te same części lub cięcia. "
+      option_sheet_folding: Grupuj podobne arkusze
+      option_sheet_folding_0: Nie
+      option_sheet_folding_1: Tak
+      option_sheet_folding_help: Grupuj arkusze zawierające te same części i cięcia.
+      option_hide_part_list: Lista części
+      option_hide_part_list_1d_0: Wyświetlane dla każdej płyty
+      option_hide_part_list_2d_0: Wyświetlane dla każdego arkusza
+      option_hide_part_list_1: Zamaskowany
+      option_hide_part_list_1d_help: Wyświetl lub zamaskuj listę części dla każdej płyty.
+      option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
+      option_origin_corner: Pozycja pochodzenia
+      option_origin_corner_0: Górny lewy narożnik
+      option_origin_corner_1: Dolny lewy narożnik
+      option_origin_corner_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
+      option_wrap_length: Długość dzieląca deskę
+      option_wrap_length_help: Maksymalna długość powyżej której deska będzie rozdzielona na wiele linii.
+      option_hide_cross: Ścinki
+      option_hide_cross_help: Wyświetl lub ukryj przekreślenie na częściach traktowanych jako ścinki.
+      option_hide_cross_0: Wymiary i Przekrój
+      option_hide_cross_1: Tylko wymiary
+      option_saw_kerf: Grubość linii cięcia
+      option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
+      option_trimming: Wielkość marginesu
+      option_trimming_help_1d: Ilość materiału na każdym końcu płyty potraktowana jako odpad.
+      option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.
+      option_optimization: Poziom optymalizacji
+      option_optimization_help: Poziom optymalizacji definiuje ilość obliczonych możliwości.
+      option_optimization_0: Lekki
+      option_optimization_1: Średni
+      option_optimization_2: Zaawansowany
+      option_stacking: Ułóż identyczne części
+      option_stacking_help: Kierunek układania w stos części o wspólnej długości lub szerokości.
+      option_stacking_0: Nie układaj w stos
+      option_stacking_1: Na całej długości
+      option_stacking_2: Na całej szerokości
+      option_stacking_3: Wszystkie możliwości
+      option_std_bar: Płyta standardowa
+      option_std_bar_help: |
+        Wybierz deskę standardową, która zostanie powielona w celu obliczenia najlepszego rozłożenia części.
+        Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
+        Edytuj materiał '{{ material_name }}' aby uzupełnić listę standardowych desek.
+      option_std_bar_add: Dodaj długość ...
+      option_std_bar_none: Żaden
+      option_scrap_bar_lengths: Odpady do wykorzystania
+      option_scrap_bar_lengths_placeholder: długość x ilość ; ...
+      option_scrap_bar_lengths_help: |
+        Podaj wszystkie odpady które chcesz uwzględnić jako pierwsze w rozkroju.
+        Oczekiwany format: **Dług**x**Licz**, gdzie **Dług** reprezentuje *długość* odpadu, a **Licz** ilość.
+        Ilość jest opcjonalna
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      option_std_sheet: Arkusz standardowy
+      option_std_sheet_help: |
+        Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
+        Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
+        Edytuj materiał '{{ material_name }}' aby uzupełnić listę arkuszy standardowych.
+      option_std_sheet_add: Dodaj rozmiar arkusza ...
+      option_std_sheet_none: Żaden
+      option_scrap_sheet_sizes: Odpad arkuszy
+      option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
+      option_scrap_sheet_sizes_help: |
+        Pokaż wszystkie odpady arkuszy które chcesz uwzględnić w rozkroju.
+        Oczekiwany format: **Dług**x**Szer**x**Licz**, gdzie **Dług** i **Szer** reprezentują *długość* i *szerokość* arkusza, a **Licz** ilość.
+        Ilość jest opcjonalna
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      options_defaults:
+        manage_help: Administrowanie domyślnymi *parametrami schematu cięcia*
+        save_success: "Zapisano *domyślne parametry schematu* cięcia"
+      tooltip:
+        scroll_to_block_1d: Przewiń do pierwszej deski
+        scroll_to_block_2d: Przewiń do pierwszego arkusza
+      list:
+        unplaced_parts: Elementy nie rozmieszczone na rozkroju
+        summary: "Podsumowanie "
+        count: Ilość
+        bar: Płyta
+        sheet: Arkusz
+        length: Długość
+        width: Szerokość
+        total_length: Σ Długości
+        total_area: Σ Powierzchni
+        total_used: Razem wykorzystane
+        trimming: Margines
+        total_length_cuts: Długość cięć
+        efficiency: Efektywność
+        leftover: Pozostałość
+        cut: Cięcie
+        bar_type_0: Płyta o standardowych wymiarach
+        bar_type_1: Odpad
+        sheet_type_0: Arkusz o standardowych wymiarach
+        sheet_type_1: Odpad
+        unused: Nieużywane
+        parts: "{{ count }} część"
+        parts_plural: "{{ count }} części"
+        settings: Ustawienia
+      error:
+        no_bar: Rozmiary desek standardowych nie są skonfigurowane i brak odpadów do wykorzystania.
+        parameters: Parametry są błędne. Margines jest większy niż 25% najdłuższej deski.
+        no_parts: Brak części
+        no_sheet: Rozmiary arkuszy standardowych nie są skonfigurowane i brak odpadów do wykorzystania.
+        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, brzeszczot za duży, ...). "
+        bad_error: "Panika algorytmiczna, proszę o kontakt z programistami, masz ciekawy przypadek."
+        unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
+        unplaced_parts_plural: "Istnieją **{{count}} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
+      warning:
+        selection_only: Ten schemat cięcia jest ograniczony do **wybranych części**.
+        cutting_dimensions: |
+          Ten rozkrój używa **wstępnych** wymiarów części.
+        cutting_dimensions_increase_1d: |
+          *Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**).*
+        cutting_dimensions_increase_2d: |
+          *Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**) i nadmiar szerokości. (**{{ width_increase }}**).*
+        cutting_dimensions_edge_decrement: |
+    labels:
+      label: Etykiety
+    error:
+      no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
+      no_component_in_selection: W zaznaczeniu nie znaleziono instancji widocznego komponentu.
+      no_component_in_model: W twojej scenie nie znaleziono instancji widocznego komponentu.
+      failed_to_write_export_file: "Nie udało się zapisać pliku eksportu. **{{error}}**"
+      unknow_part: Wybrana część nie istnieje na liście części.
+      obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
+    warning:
+      partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
+      no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
+      no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
+      export_empty: Twój eksport nie zawiera żadnych części.
+    success:
+      exported_to: "Pomyślny eksport do {{ export_path }}."
+    tip:
+      no_component: |
+        Części które mają być na *liście części* muszą być **komponentem**.
+        Jeżeli używasz tylko grup, przekształć je w komponenty.
+        Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
+      no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**Lite drewno**, **W arkuszach** lub **Deski**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
+    obsolete_base: "Aby zachować synchronizację, należy wygenerować listę części."
+  materials:
+    label: Materiały
+    title: Materiały
+    new: Nowy materiał
+    type_0: Niezdefiniowany
+    type_1: Lite drewno
+    type_2: W arkuszach
+    type_3: Wymiarowy
+    type_4: Oklejanie krawędzi
+    type_5: Dopasowywanie
+    tooltip:
+      type_0: Typ materiału '$t(tab.materials.type_0)'
+      type_1: Typ materiału '$t(tab.materials.type_1)'
+      type_2: Typ materiału '$t(tab.materials.type_2)'
+      type_3: Typ materiału '$t(tab.materials.type_3)'
+      type_4: Typ materiału '$t(tab.materials.type_4)'
+      type_5: Typ materiału '$t(tab.materials.type_5)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Kierunek wzoru
+      colorized: Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
+      texture_colorized: Zdecydowanie połącz ten odcień w obrazie tekstury
+      edit: "Edytuj właściwości '{{ name }}'"
+      set_current: |
+        Wybierz '{{ name }}'
+        *Kliknij dwukrotnie aby użyć*
+    menu:
+      import_from_skm: Importuj materiał (.skm)
+      purge_unused: Usuń nieużywane materiały
+    new_material:
+      title: Utwórz materiał
+      name: Nazwa
+      name_warning: Błędna nazwa
+      color: Kolor
+      color_warning: Niewłaściwy kolor
+      type: Rodzaj
+    edit_material:
+      title: "Właściwości materiału '{{ name }}'"
+      general: Główne
+      texture: Tekstura
+      name: Nazwa
+      type: Rodzaj
+      cut_options: Parametry cięcia
+      attributes: Atrybuty
+      thickness: Grubość
+      length_increase: Długość ponadwymiarowa
+      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**.
+      width_increase: Szerokość ponadwymiarowa
+      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
+      thickness_increase: Grubość ponadwymiarowa
+      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**.
+      std_lengths: Standardowe długości
+      std_lengths_placeholder: długość ; ...
+      std_lengths_help: |
+        Standardowe długości płyt.
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      std_widths: Standardowe szerokości
+      std_widths_placeholder: szerokość ; ...
+      std_widths_help: |
+        Standardowe szerokości obrzeży.
+        *Uznaje się, że szerokości bez jednostek są podane w jednostkach modelu.*
+      std_thicknesses: Standardowe grubości
+      std_thicknesses_placeholder: grubość ; ...
+      std_thicknesses_help: |
+        Dostępne **aktualne** przybliżone grubości.
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      std_sections: Standardowe Przekroje
+      std_sections_placeholder: szerokość x grubość ; ...
+      std_sections_help: |
+        Oczekiwany format: **Szer**x**Grub**, gdzie **Szer** i **Grub** reprezentują **aktualną** *szerokość* i *grubość* wymiarowanej części.
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      std_sizes: Standardowe rozmiary arkuszy
+      std_sizes_placeholder: długość x szerokość ; ...
+      std_sizes_help: |
+        Oczekiwany format: **Dług**x**Szer**, gdzie **Dług** i **Szer** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      grained: Kierunek wzoru/tekstury
+      grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale
+      grained_0: Bez wzoru/tekstury
+      grained_1: Wzór/tekstura wzdłuż Długości
+      edge_decremented: ""
+      edge_decremented_help: ""
+      edge_decremented_0: ""
+      edge_decremented_1: ""
+      volumic_mass: Gęstość
+      cut_options_defaults:
+        manage_help: Zarządzanie domyślnymi *Parametrami Cięcia*
+        save_success: |
+          **{{ type_name }}**
+          domyślne *Parametry Cięcia* zostały zapisane
+      texture_width: Szerokość
+      texture_height: Wysokość
+      export_to_skm: Eksport (.skm)
+    import_from_skm:
+      title: Zaimportuj plik .skm
+    export_to_skm:
+      title: Eksportuj plik .skm
+    option:
+      material_order_strategy: Sortowanie materiałów
+      material_order_strategy_help: |
+        Aby zdefiniować sortowanie materiałow na liście zmień kolejność następujących właściwości
+        Każda właściwość może być sortowana <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnąco* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejąco*.
+      property_type: Rodzaj
+      property_name: Nazwa
+    remove:
+      message: |
+        Czy usunąć materiał **{{ material_name }}** z modelu?
+        Potwierdź aby kontynuować.
+    error:
+      no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_materials: Twój model nie zawiera żadnych materiałów.
+      material_not_found: Nie znaleziono materiałów.
+      failed_import_skm_file: "Błąd podczas importu z pliku skm **{{ error }}**"
+      failed_export_skm_file: "Błąd podczas eksportu do pliku skm **{{ error }}**"
+      failed_removing_material: "Błąd podczas usuwania materiału **{{ error }}**"
+    success:
+      exported_to: "Pomyślny eksport do {{ export_path }}."
+    obsolete_base: "Aby zachować synchronizację, musisz zaktualizować listę materiałów."
+  importer:
+    label: Import
+    title: Importuj części
+    help: |
+      Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+      Dzięki temu można użyć *OpenCutList* do części które zostały utworzone w programach innych niż *SketchUp*.
+      Naciśnij przycisk **Otwórz plik CSV** aby rozpocząć.
+    open_csv: Otwórz plik CSV
+    import_to_model: Importuj do modelu
+    load:
+      title: Ładowanie pliku CSV
+      info: |
+        Wybierz odpowiednie opcje aby poprawnie załadować plik **{{ filename }}**.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *Jednostki ustawione dla modelu: **{{ unit }}**.
+        Te jednostki będą przypisywane do wymiarów dla których nie określono jednostek*.
+      options: Opcje ładowania
+      option_col_sep: Separator
+      option_col_sep_tab: Tabulacja
+      option_col_sep_comma: Przecinek
+      option_col_sep_semicolon: Średnik
+      option_first_line_headers: Linia nagłówka
+      option_first_line_headers_0: Data
+      option_first_line_headers_1: Nagłówki kolumn
+    import:
+      title: Importowanie części do modelu
+      info_0: |
+        Importujesz **{{ count }} części** do modelu.
+        Ta część zostanie umieszczona w scenie głównej, w zerowych współrzędnych.
+      info_0_plural: |
+        Importujesz **{{ count }} części** do modelu.
+        Te części zostaną umieszczone w scenie głównej, w zerowych współrzędnych.
+      info_1: Naciśnij **Import** aby potwierdzić operację.
+      options: |
+        Model zawiera już *części*, *definicje* lub *materiały*.
+        Wybierz odpowiednie opcje importu.
+      option_remove_all_?: "Co dalej?"
+      option_remove_all_false: Dodaj części do istniejącego
+      option_remove_all_true: Zresetuj wszystko!
+      option_keep_definitions_settings: Zachowaj ustawienia definicji
+      option_keep_materials_settings: Zachowaj ustawienia materiałów
+    column:
+      unused: Nieużywane
+      mandatory: Pola obowiązkowe
+      optional: Pola opcjonalne
+      name: Opis
+      count: Ilość
+      bbox_length: Długość
+      bbox_width: Szerokość
+      bbox_thickness: Grubość
+      material: Materiał
+      tags: Oznaczenia
+    tooltip:
+      errors: Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
+      warnings: Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
+    error:
+      no_model: "Brak otwartego modelu. Nie da się zaimportować części do próżni ;) "
+      file_not_found: "Nie znaleziono pliku: **{{ filename }}**"
+      bad_extension: "Plik *{{ filename }}* nie ma rozszerzenia **.CSV** lub **.TSV**."
+      failed_to_load_csv_file: |
+        Nie można załadować pliku CSV: **{{ error }}**
+        *Sprawdź, czy wybrałeś prawidłowy znak oddzielający pola.*
+      empty_file: Plik jest pusty lub nie można go poprawnie odczytać.
+      no_importable_part: Nie można zaimportować żadnych części. Przypisz wymagane pola do odpowiednich kolumn.
+      invalid_name: Błędny opis
+      invalid_length: Błędna długość
+      invalid_width: Błędna szerokość
+      invalid_thickness: Błędna grubość
+      failed_to_import: Import nieudany.
+    warning:
+      invalid_count: Nieprawidłowa ilość
+      invalid_material: Niewłaściwy materiał
+    success:
+      imported_title: Import zakończony
+      imported_body: "{{ count }} pomyślnie zaimportowana część!"
+      imported_body_plural: "{{ count }} pomyślnie zaimportowane części!"
+    obsolete_base: "Aby zachować synchronizację, musisz ponownie załadować plik CSV."
+  tutorials:
+    label: Instrukcje
+    title: Instrukcje
+    help: |
+      Tutaj znajdziesz długą listę filmów stworzonych przez społeczność na temat korzystania z * OpenCutList *.
+    submit: Prześlij film
+    submit_info: |
+      Nagrałeś film przedstawiający korzystanie z **OpenCutList** i chciałbyś aby pojawił się tutaj?
+      Napisz do nas **opencutlist@lairdubois.fr**!
+
+      *Film musi być publiczny i znajdować się na YouTube*.
+    error:
+      fail_to_load_list: Nie można załadować listy filmów.
+  news:
+    label: Wiadomości
+    title: Wiadomości
+    help: |
+      Najnowsze wiadomości od *OpenCutList*.
+    comment: Komentarz
+    error:
+      fail_to_load_list: Nie można załadować listy wiadomości.
+  forum:
+    label: Forum
+    title: Forum
+    help: |
+      To forum dyskusyjne pozwala wymieniać wiadomości ze społecznością użytkowników i zespołem *OpenCutList*.
+    create_conversation: Nowy temat
+    reply: Odpowiedz
+    tags: Oznaczenia
+    redirection: |
+      Zostaniesz przekierowany do platformy **Open Collective** na której znajduje się to forum dyskusyjne.
+      Aby *rozpocząć konwersacje* lub *odpowiedzieć* musisz utworzyć konto i zalogować się.
+      *To nic nie kosztuje, bez zobowiązań, wystarczy zwykły adres email.*
+
+      Zatwierdź, aby kontynuować.
+    error:
+      fail_to_load_list: Nie można załadować listy tematów.
+  sponsor:
+    label: Sponsor
+    title: Sponsor
+    description: |
+      **OpenCutList** to oprogramowanie *Open Source* które jest finansowane przez użytkowników za pośrednictwem platformy <a href="https://opencollective.com/" target="_blank">Open Collective</a> .
+      Wesprzyj ten projekt finansowo!
+    contribute: Wspomóż nas
+    backers: "{{ count }} darczyńca"
+    backers_plural: "{{ count }} darczyńców"
+    ad: "Czy lubisz OpenCutList?"
+    objective: Cel
+    objective_slogan: OpenCutList to my wszyscy
+    objective_title:
+      default: Cele
+      report: Generuj Raport
+      labels: Drukuj etykiety
+    objective_details:
+      default: |
+        *Generowanie **raportów** i drukowanie **etykiet** będzie dostępne w wersji 2.0.*
+      report: |
+        ***Raporty** będą dostępne w wersji 2.0.*
+
+        Celem tej funkcji jest:
+          - obliczyć **szacunkowy koszt** projektu z wyszczególnieniem według materiałów,
+          - obliczyć szacunkową **wagę** potrzebnych materiałów,
+          - zebrać informacje o całym projekcie w jednym dokumencie dostępnym za pomocą jednego kliknięcia.
+      labels: |
+        *Drukowanie **Etykiet** będzie dostępne w wersji 2.0.*
+
+        Celem tej funkcji jest:
+        - umożliwić drukowanie na etykietach samoprzylepnych opisu każdej części rozkroju,
+        - uniknąć błędów przez wyraźne oznaczenie każdej części po cięciu.
+    objective_crowdfunding: |
+      Rozwój nowych funkcjonalności będzie się odbywał dzięki **crowdfundingowi** i może się rozpocząć po osiągnięciu jego **Celu Finansowego**.
+    objective_thanks: |
+      Dziękujemy za Twój wkład!
+    objective_funded_progress: "sfinansowany w {{ progress }}%"
+  settings:
+    label: Preferencje
+    title: Preferencje
+    language: Język
+    zoom: Rozmiar czcionki
+    zoom_normal: Normalny
+    zoom_small: Mały
+    zoom_tiny: Bardzo mały
+    size_and_position: Rozmiar i Położenie Okna
+  about:
+    label: O programie
+    title: O programie
+    version: Wersja
+    credits: Zasługi techniczne
+    credits_authors: |
+      *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Wszyscy [współautorzy] - lista (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translators: |
+      Tłumaczenia:
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angielski*, *niemiecki*)
+      - Vladimir Badulya (*rosyjski*)
+      - Pierluigi Colombo (*włoski*)
+      - Nayton Sanches Barbosa (*portugalski*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*hiszpański*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*czeski*)
+    credits_description: |
+      Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
+      To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Czas działania
+    credits_development: Rozwój
+    credits_vendors: |
+      Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów Open Source:
+    credits_thanks: |
+      Specjalne podziękowania kierujemy do [JetBrains](https://www.jetbrains.com) za wsparcie tego projektu poprzez ich [Licencję wolnego oprogramowania typu open source](https://www.jetbrains.com/buy/opensource/).
+tool:
+  highlight:
+    transparency: Przezroczystość
+    zoom_extents: Zakres powiększenia

@@ -6,6 +6,7 @@ in 2.x, 1.x and 0.x versions.
 
 * 2.0.0 (WIP)
 
+  * Added **Polish** language (thanks to Jarek Ostaszewski, Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz)
   * Added **Czech** language (thanks to Radek Rýznar for joining the translators team)
   * Added Accessory material type
   * Added part unit price field for accessories
