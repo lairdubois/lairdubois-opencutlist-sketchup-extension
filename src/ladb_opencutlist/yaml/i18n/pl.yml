@@ -498,6 +498,7 @@ tab:
         cutting_dimensions_increase_2d: |
           *Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**) i nadmiar szerokości. (**{{ width_increase }}**).*
         cutting_dimensions_edge_decrement: |
+          *Wymiary pomniejszone o grubość obrzeża.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       label: Etykiety
     error:
@@ -602,10 +603,10 @@ tab:
       grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale
       grained_0: Bez wzoru/tekstury
       grained_1: Wzór/tekstura wzdłuż Długości
-      edge_decremented: ""
-      edge_decremented_help: ""
-      edge_decremented_0: ""
-      edge_decremented_1: ""
+      edge_decremented: Zmniejszenie
+      edge_decremented_help: Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
+      edge_decremented_0: Brak zmniejszenia
+      edge_decremented_1: Zmniejsz o grubość obrzeża
       volumic_mass: Gęstość
       cut_options_defaults:
         manage_help: Zarządzanie domyślnymi *Parametrami Cięcia*
