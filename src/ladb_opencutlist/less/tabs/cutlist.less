@@ -315,6 +315,19 @@
 
 }
 
+#ladb_cutlist_modal_labels {
+
+  section {
+
+    h4 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+  }
+
+}
+
 // SVG
 
 // Workaround for IE bug on height auto with SVG
@@ -439,19 +452,15 @@ body.no-ie, body.ie-gt10 {
 
 }
 
-.ladb-cuttingdiagram-labels-group {
+.ladb-cuttingdiagram-labels-group svg {
+  border: 1px solid #ddd;
+  box-shadow: 3px 3px 10px #999;
 
-  svg {
-    border: 1px solid #ddd;
-    box-shadow: 3px 3px 10px #999;
+  .grid-line {
+    stroke: #000;
 
-    .grid-line {
-      stroke: #000;
-
-      &.no-print {
-        stroke: #ddd;
-      }
-
+    &.no-print {
+      stroke: #ddd;
     }
 
   }
