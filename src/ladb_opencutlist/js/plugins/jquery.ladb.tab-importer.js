@@ -92,7 +92,7 @@
                                     filename: filename,
                                     col_sep: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COL_SEP, appDefaults.col_sep),
                                     first_line_headers: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_FIRST_LINE_HEADERS, appDefaults.first_line_headers),
-                                    column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING, {})
+                                    column_mapping: that.dialog.getSetting(SETTING_KEY_LOAD_OPTION_COLUMN_MAPPING, appDefaults.column_mapping)
                                 };
 
                                 var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
@@ -102,6 +102,7 @@
                                 // Fetch UI elements
                                 var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
                                 var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
+                                var $btnDefaultsReset = $('#ladb_importer_btn_defaults_reset', $modal);
                                 var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
                                 var $btnLoad = $('#ladb_importer_load', $modal);
 
@@ -112,6 +113,12 @@
                                 $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
 
                                 // Bind buttons
+                                $btnDefaultsReset.on('click', function () {
+                                    $selectColSep.selectpicker('val', appDefaults.col_sep);
+                                    $selectFirstLineHeaders.selectpicker('val', appDefaults.first_line_headers ? '1' : '0');
+                                    loadOptions.column_mapping = appDefaults.column_mapping;
+                                    $(this).blur();
+                                });
                                 $btnLoad.on('click', function () {
 
                                     // Fetch options

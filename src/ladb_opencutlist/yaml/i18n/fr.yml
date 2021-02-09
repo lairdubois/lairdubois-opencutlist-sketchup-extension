@@ -337,8 +337,8 @@ tab:
       title: Exporter au format CSV
       info: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
+      info_2: |
+        *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -707,9 +707,10 @@ tab:
     load:
       title: Chargement d'un fichier CSV
       info: |
-        Choisissez les options nécessaires à la bonne lecture du fichier **{{ filename }}**.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *L'unité configurée dans le modèle est : **{{ unit }}**.
+        Choisissez les options nécessaires à la bonne lecture du fichier :
+        **{{ filename }}**.
+      info_2: |
+        *L'unité configurée dans le modèle est : **{{ unit }}**.
         Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
       options: Options de chargement
       option_col_sep: Séparateur
