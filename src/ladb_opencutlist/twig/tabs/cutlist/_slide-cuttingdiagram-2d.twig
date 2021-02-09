@@ -111,7 +111,7 @@
             <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
                 <thead>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
                     </td>
@@ -119,7 +119,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <small>
                             <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
                             <div class="row">
@@ -145,6 +145,7 @@
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.width'|i18next }}</td>
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.total_area'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.total_part_count'|i18next }}</td>
                 </tr>
                 {% set isFirstUsed = summary.sheets|length > 0 and summary.sheets[0].is_used %}
                 {% for sheet in summary.sheets  %}
@@ -169,6 +170,9 @@
                         <td class="ladb-cutlist-dimension-value">
                             {{ sheet.total_area }}
                         </td>
+                        <td class="ladb-cutlist-dimension-value">
+                            {{ sheet.total_part_count ? sheet.total_part_count : '-' }}
+                        </td>
                     </tr>
                 {% endfor %}
                 {% if summary.sheets|length > 1 %}
@@ -178,6 +182,7 @@
                         <td></td>
                         <td></td>
                         <td class="ladb-cutlist-dimension-value">{{ summary.total_used_area }}</td>
+                        <td class="text-right">{{ summary.total_used_part_count }}</td>
                     </tr>
                 {% endif %}
                 </tbody>

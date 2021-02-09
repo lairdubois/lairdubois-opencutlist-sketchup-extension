@@ -34,6 +34,7 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
     <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_labels" class="btn btn-default"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
 
@@ -103,7 +104,7 @@
             <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
                 <thead>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
                     </td>
@@ -111,7 +112,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <small>
                             <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
                             <div class="row">
@@ -130,6 +131,7 @@
                     <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.cuttingdiagram.list.count'|i18next }}</td>
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.length'|i18next }}</td>
                     <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.total_length'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.cuttingdiagram.list.total_part_count'|i18next }}</td>
                 </tr>
                 {% set isFirstUsed = summary.bars|length > 0 and summary.bars[0].is_used %}
                 {% for bar in summary.bars  %}
@@ -151,6 +153,9 @@
                         <td class="ladb-cutlist-dimension-value">
                             {{ bar.total_length }}
                         </td>
+                        <td class="ladb-cutlist-dimension-value">
+                            {{ bar.total_part_count ? bar.total_part_count : '-' }}
+                        </td>
                     </tr>
                 {% endfor %}
                 {% if summary.bars|length > 1 %}
@@ -159,6 +164,7 @@
                         <td class="text-center">{{ summary.total_used_count }}</td>
                         <td></td>
                         <td class="ladb-cutlist-dimension-value">{{ summary.total_used_length }}</td>
+                        <td class="text-right">{{ summary.total_used_part_count }}</td>
                     </tr>
                 {% endif %}
                 </tbody>

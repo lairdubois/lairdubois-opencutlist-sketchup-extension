@@ -104,6 +104,7 @@ module Ladb::OpenCutList
               :sheets => [],
               :total_used_count => 0,
               :total_used_area => 0,
+              :total_used_part_count => 0,
           },
           :sheets => [],
       }
@@ -181,6 +182,7 @@ module Ladb::OpenCutList
           _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
           response[:summary][:total_used_count] += 1
           response[:summary][:total_used_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          response[:summary][:total_used_part_count] += bin.boxes.count
         }
         summary_sheets.each { |type_id, sheet|
           sheet[:total_area] = DimensionUtils.instance.format_to_readable_area(sheet[:total_area])
@@ -334,12 +336,14 @@ module Ladb::OpenCutList
             :length => bin.length.to_l.to_s,
             :width => bin.width.to_l.to_s,
             :total_area => 0, # Will be converted to string representation after sum
+            :total_part_count => 0,
             :is_used => used,
         }
         summary_sheets[type_id] = sheet
       end
       sheet[:count] += 1
       sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
+      sheet[:total_part_count] += bin.boxes.count
     end
 
     def _compute_y_with_origin_corner(origin_corner, y, y_size, y_translation)

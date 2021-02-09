@@ -29,4 +29,4 @@
 {% if value is empty and noEmptyValue|default(false) %}
     {% set value = '['~elementDef.formula~']' %}
 {% endif %}
-<text x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}" fill="{{ elementDef.color }}">{{ value }}</text>
+<text x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>

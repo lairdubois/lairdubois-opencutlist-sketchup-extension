@@ -1924,6 +1924,7 @@
                                     // Fetch UI elements
                                     var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                                     var $btnPrint = $('#ladb_btn_print', $slide);
+                                    var $btnLabels = $('#ladb_btn_labels', $slide);
                                     var $btnClose = $('#ladb_btn_close', $slide);
 
                                     // Bind buttons
@@ -1932,6 +1933,9 @@
                                     });
                                     $btnPrint.on('click', function () {
                                         window.print();
+                                    });
+                                    $btnLabels.on('click', function () {
+                                        that.labelsGroup(groupId);
                                     });
                                     $btnClose.on('click', function () {
                                         that.popSlide();
@@ -2303,8 +2307,6 @@
                                     });
                                     $btnLabels.on('click', function () {
                                         that.labelsGroup(groupId);
-                                        // Show Objective modal
-                                        //that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'labels' }, null, true);
                                     });
                                     $btnClose.on('click', function () {
                                         that.popSlide();

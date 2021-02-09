@@ -467,6 +467,7 @@ tab:
         width: Largeur
         total_length: Σ Longueurs
         total_area: Σ Surfaces
+        total_part_count: Σ Pièces
         total_used: Total utilisé
         trimming: Marge
         total_length_cuts: Longueur de coupe

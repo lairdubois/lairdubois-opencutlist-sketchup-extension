@@ -83,6 +83,7 @@ module Ladb::OpenCutList
               :bars => [],
               :total_used_count => 0,
               :total_used_length => 0,
+              :total_used_part_count => 0,
           },
           :bars => [],
       }
@@ -155,6 +156,7 @@ module Ladb::OpenCutList
           _append_bin_to_summary_bars(bin, group, true, summary_bars)
           response[:summary][:total_used_count] += 1
           response[:summary][:total_used_length] += bin.length
+          response[:summary][:total_used_part_count] += bin.boxes.count
         }
         summary_bars.each { |type_id, bar|
           bar[:total_length] = DimensionUtils.instance.format_to_readable_length(bar[:total_length])
@@ -296,12 +298,14 @@ module Ladb::OpenCutList
             :count => 0,
             :length => bin.length.to_l.to_s,
             :total_length => 0, # Will be converted to string representation after sum
+            :total_part_count => 0,
             :is_used => used,
         }
         summary_bars[type_id] = bar
       end
       bar[:count] += 1
       bar[:total_length] += bin.length
+      bar[:total_part_count] += bin.boxes.count
     end
 
     # Convert inch float value to pixel
