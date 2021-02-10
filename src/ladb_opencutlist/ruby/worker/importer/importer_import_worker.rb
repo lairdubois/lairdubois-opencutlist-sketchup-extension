@@ -46,6 +46,10 @@ module Ladb::OpenCutList
       imported_part_count = 0
       imported_definition_names = {}
       material_palette_index = 0
+
+      # Add a new group of entities to keep imported objects together
+      imported_group = active_entities.add_group
+
       @parts.each do |part|
 
         next unless part[:errors].empty?
@@ -100,7 +104,7 @@ module Ladb::OpenCutList
         # Create definition instance(s)
         count = part[:count].nil? ? 1 : part[:count]
         for i in 0..count-1
-          instance = active_entities.add_instance(definition, Geom::Transformation.new(Geom::Point3d.new(0, offset_y, i * part[:thickness])))
+          instance = imported_group.entities.add_instance(definition, Geom::Transformation.new(Geom::Point3d.new(0, offset_y, i * part[:thickness])))
           instance.material = material if material
           imported_part_count += 1
         end
