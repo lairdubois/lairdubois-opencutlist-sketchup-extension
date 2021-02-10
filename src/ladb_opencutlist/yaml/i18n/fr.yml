@@ -335,9 +335,9 @@ tab:
       edges: Chants
     export:
       title: Exporter au format CSV
-      info: |
+      info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      info_2: |
+      info_1: |
         *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
       option_source: Source
@@ -707,10 +707,10 @@ tab:
     import_to_model: Importer dans le modèle
     load:
       title: Chargement d'un fichier CSV
-      info: |
+      info_0: |
         Choisissez les options nécessaires à la bonne lecture du fichier :
         **{{ filename }}**.
-      info_2: |
+      info_1: |
         *L'unité configurée dans le modèle est : **{{ unit }}**.
         Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
       options: Options de chargement
