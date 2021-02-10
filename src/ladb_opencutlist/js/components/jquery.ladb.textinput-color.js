@@ -58,8 +58,8 @@
             colorsMarkup += '<li data-ladb-color-index="' + i + '" class="ladb-color-box" style="' + breakLine + 'background-color: ' + color + '" title="' + color + '"></li>';
         }
 
-        var $box = $('<div class="ladb-textinput-color-picker" style="position: absolute; left: 0; top: 0;"><ul>' + colorsMarkup + '</ul><div style="clear: both;"></div></div>');
-        $body.append($box);
+        var $box = $('<div class="ladb-textinput-color-picker"><ul>' + colorsMarkup + '</ul><div style="clear: both;"></div></div>');
+        $inputGroup.append($box);
         $box.hide();
 
         $('li.ladb-color-box', $box).click(function() {
@@ -82,10 +82,10 @@
             e.stopPropagation();
         });
 
-        var fnPositionAndShowBox = function(box) {
-            var pos = that.$previewAddOn.offset();
-            box.css({ left: pos.left, top: (pos.top + that.$element.outerHeight(that.options.includeMargins)) });
-            box.show();
+        var fnPositionAndShowBox = function($box) {
+            var pos = that.$previewAddOn.position();
+            $box.css({ left: pos.left, top: (pos.top + that.$element.outerHeight(that.options.includeMargins)) });
+            $box.show();
         };
 
         this.$previewAddOn.on('click', function(e) {
