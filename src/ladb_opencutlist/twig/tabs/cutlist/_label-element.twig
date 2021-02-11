@@ -12,8 +12,8 @@
     <rect class="ladb-label-content" x="{{ transX }}" y="{{ transY }}" width="{{ rectSize }}" height="{{ rectSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     {% set dashedStrokeWidth = minUnit / 10 %}
     {% set plainStrokeWidth = minUnit / 5 %}
-    {% set rectPartWidth = rectSize * (proportional ? part_info.part.l_ratio : 1) %}
-    {% set rectPartHeight = rectSize * (proportional ? part_info.part.w_ratio : 1) %}
+    {% set rectPartWidth = rectSize * (proportional ? part_info.part.l_ratio : 1) - plainStrokeWidth %}
+    {% set rectPartHeight = rectSize * (proportional ? part_info.part.w_ratio : 1) - plainStrokeWidth %}
     <g transform="translate({{ transX + (rectSize - rectPartWidth) / 2 }} {{ transY + (rectSize - rectPartHeight) / 2 }})">
         <rect x="0" y="0" width="{{ rectPartWidth }}" height="{{ rectPartHeight }}" fill="#ffffff" stroke="none" />
         <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.ymin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
