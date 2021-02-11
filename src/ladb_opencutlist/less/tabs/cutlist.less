@@ -333,7 +333,7 @@
 // Workaround for IE bug on height auto with SVG
 body.no-ie, body.ie-gt10 {
 
-  .ladb-cuttingdiagram-group svg {
+  .ladb-cuttingdiagram-group svg, .ladb-cuttingdiagram-labels-group svg {
     height: auto;
   }
 
@@ -387,7 +387,7 @@ body.no-ie, body.ie-gt10 {
       }
 
       .part-outer {
-        fill: #555;
+        fill: #fff;
       }
       .part-inner {
         fill: #eee;
@@ -443,7 +443,8 @@ body.no-ie, body.ie-gt10 {
         fill: rgba(0, 0, 0, 0.01);
       }
       .cut-inner {
-        fill: #5fc0dd;
+        //fill: #5fc0dd;
+        fill: #555;
       }
 
     }
