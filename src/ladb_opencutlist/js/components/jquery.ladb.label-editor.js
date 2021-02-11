@@ -244,7 +244,7 @@
             noEmptyValue: true
         }, this.options));
 
-        var svgContent = $(svgTextGroup).children('.ladb-label-content')[0];
+        var svgContent = $(svgTextGroup).children('.ladb-label-element')[0];
         if (svgContent) {
             var bbox = svgContent.getBBox();
             var svgSelectionRect = document.createElementNS(XMLNS, 'rect');
