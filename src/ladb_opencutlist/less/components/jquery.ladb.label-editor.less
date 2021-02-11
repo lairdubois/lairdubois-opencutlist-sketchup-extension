@@ -24,4 +24,29 @@
     text-align: center;
   }
 
+  svg {
+    border: 1px solid #ddd;
+    box-shadow: 3px 3px 10px #999;
+
+    .ladb-label-element {
+      cursor: move;
+      user-select: none;
+    }
+
+    rect.selection {
+      stroke: none;
+    }
+
+    g.active {
+
+      rect.selection {
+        stroke: #4688F1;
+        fill: #4688F1;
+        fill-opacity: 0.1;
+      }
+
+    }
+
+  }
+
 }
