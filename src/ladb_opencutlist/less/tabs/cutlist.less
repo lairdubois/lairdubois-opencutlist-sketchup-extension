@@ -443,7 +443,6 @@ body.no-ie, body.ie-gt10 {
         fill: rgba(0, 0, 0, 0.01);
       }
       .cut-inner {
-        //fill: #5fc0dd;
         fill: #555;
       }
 
@@ -665,6 +664,10 @@ body.no-ie, body.ie-gt10 {
   }
 
   .ladb-cuttingdiagram-group svg {
+
+    &.bigger-than-900-px {
+      max-height: 900px !important;
+    }
 
     .part {
       .part-outer {
