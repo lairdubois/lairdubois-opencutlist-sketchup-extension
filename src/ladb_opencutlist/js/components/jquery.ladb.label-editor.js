@@ -304,7 +304,7 @@
                 if (elementDef.rotation === undefined) {
                     elementDef.rotation = 0;
                 }
-                elementDef.rotation -= 90;
+                elementDef.rotation = (elementDef.rotation - 90) % 360;
                 svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
                 this.blur();
             })
@@ -316,7 +316,7 @@
                 if (elementDef.rotation === undefined) {
                     elementDef.rotation = 0;
                 }
-                elementDef.rotation += 90;
+                elementDef.rotation = (elementDef.rotation + 90) % 360;
                 svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
                 this.blur();
             })
