@@ -6,8 +6,9 @@
     "optimization": 0,        /* OPT_LIGHT */
     "stacking": 1,            /* STACKING_LENGTH */
     "sheet_folding": true,
-    "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */
     "hide_cross": false,
-    "hide_part_list": false
+    "hide_part_list": false,
+    "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */
+    "full_width_diagram": false
   }
 }

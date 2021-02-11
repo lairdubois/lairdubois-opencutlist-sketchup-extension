@@ -6,6 +6,7 @@
     "bar_folding": true,
     "hide_cross": false,
     "hide_part_list": false,
-    "wrap_length": { "metric": "3000mm", "imperial": "12'" }
+    "wrap_length": { "metric": "3000mm", "imperial": "12'" },
+    "full_width_diagram": false
   }
 }

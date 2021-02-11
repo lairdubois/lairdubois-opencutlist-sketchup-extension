@@ -401,6 +401,10 @@ tab:
       option_origin_corner_0: En haut à gauche
       option_origin_corner_1: En bas à gauche
       option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
+      option_full_width_diagram: Affichage pleine largeur
+      option_full_width_diagram_0: Désactivée
+      option_full_width_diagram_1: Activée
+      option_full_width_diagram_help: Si cette option est activée les schémas sont affichés avec toute la largeur disponible. Sinon, leur largeur est définie par un facteur d'échelle fixe de leur taille réelle.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_hide_cross: Chutes

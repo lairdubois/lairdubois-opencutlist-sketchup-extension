@@ -16,6 +16,7 @@ module Ladb::OpenCutList
       @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings['wrap_length']).to_l.to_f
+      @full_width_diagram = settings['full_width_diagram']
 
       @cutlist = cutlist
 
@@ -76,6 +77,7 @@ module Ladb::OpenCutList
               :hide_cross => @hide_cross,
               :hide_part_list => @hide_part_list,
               :wrap_length => @wrap_length,
+              :full_width_diagram => @full_width_diagram,
           },
 
           :unplaced_parts => [],

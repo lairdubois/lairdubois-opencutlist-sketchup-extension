@@ -24,6 +24,7 @@ module Ladb::OpenCutList
       @hide_cross = settings['hide_cross']
       @hide_part_list = settings['hide_part_list']
       @origin_corner = settings['origin_corner'].to_i
+      @full_width_diagram = settings['full_width_diagram']
 
       @cutlist = cutlist
 
@@ -97,6 +98,7 @@ module Ladb::OpenCutList
               :optimization => @optimization,
               :stacking => @stacking,
               :origin_corner => @origin_corner,
+              :full_width_diagram => @full_width_diagram,
           },
 
           :unplaced_parts => [],

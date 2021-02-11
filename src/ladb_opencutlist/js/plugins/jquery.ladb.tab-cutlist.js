@@ -38,6 +38,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS = 'cutlist.cuttingdiagram1d.option.hide_cross';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram1d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH = 'cutlist.cuttingdiagram1d.option.wrap_length';
+    var SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM = 'cutlist.cuttingdiagram1d.option.full_width_diagram';
 
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET = 'cutlist.cuttingdiagram2d.option.std_sheet';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES = 'cutlist.cuttingdiagram2d.option.scrap_sheet_sizes';
@@ -49,6 +50,7 @@
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS = 'cutlist.cuttingdiagram2d.option.hide_cross';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST = 'cutlist.cuttingdiagram2d.option.hide_part_list';
     var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER = 'cutlist.cuttingdiagram2d.option.origin_corner';
+    var SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM = 'cutlist.cuttingdiagram2d.option.full_width_diagram';
 
     var SETTING_KEY_LABELS_OPTION_PAGE_WIDTH = 'cutlist.labels.option.page_width';
     var SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT = 'cutlist.labels.option.page_height';
@@ -1713,6 +1715,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH,
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM,
 
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_STD_BAR + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_SCRAP_BAR_LENGTHS + '_' + groupId,
@@ -1722,6 +1725,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId,
 
             ],
             2 /* SETTINGS_RW_STRATEGY_MODEL */,
@@ -1744,6 +1748,7 @@
                             hide_cross: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, appDefaults.hide_cross)),
                             hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)),
                             wrap_length: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length)),
+                            full_width_diagram: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM, appDefaults.full_width_diagram)),
                         };
 
                         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -1765,6 +1770,7 @@
                             var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                             var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
+                            var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
                             var $btnCuttingdiagramOptionsDefaultsResetNative = $('#ladb_btn_cuttingdiagram_options_defaults_reset_native', $modal);
@@ -1797,6 +1803,8 @@
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                             $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
                             $inputWrapLength.ladbTextinputDimension();
+                            $selectFullWidthDiagram.val(cuttingdiagram1dOptions.full_width_diagram ? '1' : '0');
+                            $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
 
                             var fnEditMaterial = function (callback) {
 
@@ -1827,6 +1835,7 @@
                                 $selectHideCross.selectpicker('val', (isAppDefaults ? appDefaults.hide_cross : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, appDefaults.hide_cross)) ? '1' : '0');
                                 $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
                                 $inputWrapLength.val(isAppDefaults ? appDefaults.wrap_length : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, appDefaults.wrap_length));
+                                $selectFullWidthDiagram.selectpicker('val', (isAppDefaults ? appDefaults.full_width_diagram : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM, appDefaults.full_width_diagram)) ? '1' : '0');
                             };
 
                             $inputStdBar.on('changed.bs.select', function (e) {
@@ -1854,6 +1863,7 @@
                                 var hide_cross = $selectHideCross.val();
                                 var hide_part_list = $selectHidePartList.val();
                                 var wrap_length = $inputWrapLength.val();
+                                var full_width_diagram = $selectFullWidthDiagram.val();
 
                                 // Update default cut options for specific type to last used
                                 that.dialog.setSettings([
@@ -1863,6 +1873,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS, value:hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH, value:wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM, value:full_width_diagram },
                                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                                 that.dialog.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
@@ -1894,6 +1905,7 @@
                                 cuttingdiagram1dOptions.hide_cross = $selectHideCross.val() === '1';
                                 cuttingdiagram1dOptions.hide_part_list = $selectHidePartList.val() === '1';
                                 cuttingdiagram1dOptions.wrap_length = $inputWrapLength.val();
+                                cuttingdiagram1dOptions.full_width_diagram = $selectFullWidthDiagram.val() === '1';
 
                                 // Store options
                                 that.dialog.setSettings([
@@ -1905,6 +1917,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_CROSS + '_' + groupId, value:cuttingdiagram1dOptions.hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram1dOptions.hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_WRAP_LENGTH + '_' + groupId, value:cuttingdiagram1dOptions.wrap_length, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM1D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId, value:cuttingdiagram1dOptions.full_width_diagram },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
                                 rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
@@ -2050,6 +2063,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM,
 
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_STD_SHEET + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_SCRAP_SHEET_SIZES + '_' + groupId,
@@ -2061,6 +2075,7 @@
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId,
                 SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId,
+                SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId,
 
             ],
             2 /* SETTINGS_RW_STRATEGY_MODEL */,
@@ -2088,6 +2103,7 @@
                             hide_cross: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)),
                             hide_part_list: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)),
                             origin_corner: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, appDefaults.origin_corner)),
+                            full_width_diagram: that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId, that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM, appDefaults.full_width_diagram)),
                         };
 
                         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
@@ -2113,6 +2129,7 @@
                             var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                             var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                             var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                            var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
                             var $btnCuttingdiagramOptionsDefaultsSave = $('#ladb_btn_cuttingdiagram_options_defaults_save', $modal);
                             var $btnCuttingdiagramOptionsDefaultsReset = $('#ladb_btn_cuttingdiagram_options_defaults_reset', $modal);
                             var $btnCuttingdiagramOptionsDefaultsResetNative = $('#ladb_btn_cuttingdiagram_options_defaults_reset_native', $modal);
@@ -2149,6 +2166,8 @@
                             $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                             $selectOriginCorner.val(cuttingdiagram2dOptions.origin_corner);
                             $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
+                            $selectFullWidthDiagram.val(cuttingdiagram2dOptions.full_width_diagram ? '1' : '0');
+                            $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
 
                             var fnEditMaterial = function (callback) {
 
@@ -2188,6 +2207,7 @@
                                 $selectHideCross.selectpicker('val', (isAppDefaults ? appDefaults.hide_cross : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, appDefaults.hide_cross)) ? '1' : '0');
                                 $selectHidePartList.selectpicker('val', (isAppDefaults ? appDefaults.hide_part_list : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, appDefaults.hide_part_list)) ? '1' : '0');
                                 $selectOriginCorner.selectpicker('val', isAppDefaults ? appDefaults.origin_corner : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, appDefaults.origin_corner));
+                                $selectFullWidthDiagram.selectpicker('val', (isAppDefaults ? appDefaults.full_width_diagram : that.dialog.getSetting(SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM, appDefaults.full_width_diagram)) ? '1' : '0');
                             };
 
                             $inputStdSheet.on('changed.bs.select', function (e) {
@@ -2217,6 +2237,7 @@
                                 var hide_cross = $selectHideCross.val();
                                 var hide_part_list = $selectHidePartList.val();
                                 var origin_corner = $selectOriginCorner.val();
+                                var full_width_diagram = $selectFullWidthDiagram.val();
 
                                 // Update default cut options for specific type to last used
                                 that.dialog.setSettings([
@@ -2228,6 +2249,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS, value:hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST, value:hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER, value:origin_corner },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM, value:full_width_diagram },
                                 ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
 
                                 that.dialog.notify(i18next.t('tab.cutlist.cuttingdiagram.options_defaults.save_success'), 'success');
@@ -2263,6 +2285,7 @@
                                 cuttingdiagram2dOptions.hide_cross = $selectHideCross.val() === '1';
                                 cuttingdiagram2dOptions.hide_part_list = $selectHidePartList.val() === '1';
                                 cuttingdiagram2dOptions.origin_corner = $selectOriginCorner.val();
+                                cuttingdiagram2dOptions.full_width_diagram = $selectFullWidthDiagram.val() === '1';
 
                                 // Store options
                                 that.dialog.setSettings([
@@ -2276,6 +2299,7 @@
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_CROSS + '_' + groupId, value:cuttingdiagram2dOptions.hide_cross },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_HIDE_PART_LIST + '_' + groupId, value:cuttingdiagram2dOptions.hide_part_list },
                                     { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_ORIGIN_CORNER + '_' + groupId, value:cuttingdiagram2dOptions.origin_corner },
+                                    { key:SETTING_KEY_CUTTINGDIAGRAM2D_OPTION_FULL_WIDTH_DIAGRAM + '_' + groupId, value:cuttingdiagram2dOptions.full_width_diagram },
                                 ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
 
                                 rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {

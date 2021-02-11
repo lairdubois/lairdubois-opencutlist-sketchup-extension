@@ -178,6 +178,10 @@
                 {% set colspan = colspan - 1 %}
             {% endif %}
         {% endif %}
+        {% set maxBarLength = 0 %}
+        {% for bar in bars %}
+            {% set maxBarLength = max(maxBarLength, bar.slices[0].px_length) %}
+        {% endfor %}
         {% for bar in bars %}
             <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
                 <thead>
@@ -205,10 +209,11 @@
                     <td colspan="{{ colspan }}">
 
                         {% set sliceHeight = bar.px_width + dimensionOffset + dimensionFontSize + barSliceGutter %}
-                        {% set viewportWidth = bar.slices[0].px_length + (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * 2 %}
-                        {% set viewportHeight = barDimensionOffset + barDimensionFontSize + sliceHeight * bar.slices|length %}
+                        {% set viewBoxOffsetX = (maxBarLength - bar.px_length) / 2 %}
+                        {% set viewBoxWidth = bar.slices[0].px_length + (barOutlineWidth + barDimensionOffset + barDimensionFontSize + viewBoxOffsetX) * 2 %}
+                        {% set viewBoxHeight = barDimensionOffset + barDimensionFontSize + sliceHeight * bar.slices|length %}
 
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} -{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} {{ viewportWidth }} {{ viewportHeight }}" style="max-height: {{ viewportHeight }}px">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize + viewBoxOffsetX }} -{{ barOutlineWidth + barDimensionOffset + barDimensionFontSize }} {{ viewBoxWidth }} {{ viewBoxHeight }}"{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ viewBoxHeight }}px"{% endif %}>
                             <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}{% if bar.slices|length > 1 %}&hellip;{% endif %}</text>
                             <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ barOutlineWidth + barDimensionOffset }},{{ bar.px_width / 2 }})">{{ bar.width }}</text>
                             <g class="bar" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">

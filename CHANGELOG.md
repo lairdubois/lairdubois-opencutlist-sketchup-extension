@@ -6,12 +6,14 @@ in 2.x, 1.x and 0.x versions.
 
 * 2.0.0 (WIP)
 
+  * Added printable **Labels** feature
   * Added **Polish** language (thanks to Jarek Ostaszewski, Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz)
   * Added **Czech** language (thanks to Radek Rýznar for joining the translators team)
   * Added Accessory material type
   * Added part unit price field for accessories
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - top left or bottom left
+  * Added cutting diagram 1D/2D option to render full width diagrams
   * Added comments display on news
   * Added settings option to choose dialog global zoom
 

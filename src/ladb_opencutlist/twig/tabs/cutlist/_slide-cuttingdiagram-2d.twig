@@ -197,6 +197,10 @@
                 {% set colspan = colspan - 2 %}
             {% endif %}
         {% endif %}
+        {% set maxSheetLength = 0 %}
+        {% for sheet in sheets %}
+            {% set maxSheetLength = max(maxSheetLength, sheet.px_length) %}
+        {% endfor %}
         {% for sheet in sheets %}
             <table id="ladb_cuttingdiagram_group_{{ sheet.type_id }}" data-group-id="{{ group.id }}_{{ sheet.type_id }}" data-sheet-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
                 <thead>
@@ -223,9 +227,9 @@
                 <tr>
                     <td colspan="{{ colspan }}">
 
-                        {% set sheetHeight = sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 %}
+                        {% set viewBoxOffsetX = (maxSheetLength - sheet.px_length) / 2 %}
 
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ sheet.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }} {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}" style="max-height: {{ sheetHeight }}px"{% if sheetHeight > 900 %} class="bigger-than-900-px"{% endif %}>
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ sheet.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX) * 2 }} {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}"{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}px"{% endif %}>
                             <text class="sheet-dimension" x="{{ sheet.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ sheet.length }}</text>
                             <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ sheet.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ sheet.px_width / 2 }})">{{ sheet.width }}</text>
                             <g class="sheet" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
