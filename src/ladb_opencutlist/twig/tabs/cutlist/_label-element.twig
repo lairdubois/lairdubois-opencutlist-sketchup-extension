@@ -1,11 +1,11 @@
 {% set terms = (elementDef.formula)|split('.') %}
 {% if terms[0] == 'thumbnail' %}
     {% set proportional = terms[1] == 'proportional' %}
-    {% set rectSize = elementDef.fontSize * minUnit %}
+    {% set rectSize = elementDef.size * minUnit %}
     {% set transX = 0 %}
-    {% if elementDef.textAnchor == 'middle' %}
+    {% if elementDef.anchor == 'middle' %}
         {% set transX = rectSize * -0.5 %}
-    {% elseif elementDef.textAnchor == 'end' %}
+    {% elseif elementDef.anchor == 'end' %}
         {% set transX = rectSize * -1 %}
     {% endif %}
     {% set transY = rectSize * -1 %}
@@ -52,5 +52,5 @@
     {% if value is empty and noEmptyValue|default(false) %}
         {% set value = '['~elementDef.formula~']' %}
     {% endif %}
-    <text class="ladb-label-content" x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
+    <text class="ladb-label-content" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
 {% endif %}

@@ -530,11 +530,11 @@ tab:
       option_cutting_marks_0: Aucun
       option_cutting_marks_1: Imprimés
       option_formula: Valeur
-      option_font_size: Taille
-      option_text_anchor: Ancrage
-      option_text_anchor_start: Gauche
-      option_text_anchor_middle: Milieu
-      option_text_anchor_end: Droite
+      option_size: Taille
+      option_anchor: Ancrage
+      option_anchor_start: Gauche
+      option_anchor_middle: Milieu
+      option_anchor_end: Droite
       option_color: Couleur
       formula:
         part_number: Numéro

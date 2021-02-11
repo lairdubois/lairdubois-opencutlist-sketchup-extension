@@ -172,9 +172,9 @@
                     formula: 'part.name',
                     x: 0,
                     y: 0,
-                    fontSize: 1,
-                    textAnchor: 'middle',
-                    color: '#000'
+                    size: 1,
+                    anchor: 'middle',
+                    color: '#000000'
                 }
 
                 that.elementDefs.push(elementDef);
@@ -301,8 +301,8 @@
 
         // UI
         var $selectFormula = $('#ladb_select_formula', this.$editingForm);
-        var $selectFontSize = $('#ladb_select_font_size', this.$editingForm);
-        var $selectTextAnchor = $('#ladb_select_text_anchor', this.$editingForm);
+        var $selectSize = $('#ladb_select_size', this.$editingForm);
+        var $selectAnchor = $('#ladb_select_anchor', this.$editingForm);
         var $inputColor = $('#ladb_input_color', this.$editingForm);
 
         // Bind
@@ -314,19 +314,19 @@
                 that.appendFormula(svgTextGroup, elementDef);
             })
         ;
-        $selectFontSize
-            .val(elementDef.fontSize)
+        $selectSize
+            .val(elementDef.size)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
-                elementDef.fontSize = $(this).val();
+                elementDef.size = $(this).val();
                 that.appendFormula(svgTextGroup, elementDef);
             })
         ;
-        $selectTextAnchor
-            .val(elementDef.textAnchor)
+        $selectAnchor
+            .val(elementDef.anchor)
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
-                elementDef.textAnchor = $(this).val();
+                elementDef.anchor = $(this).val();
                 that.appendFormula(svgTextGroup, elementDef);
             })
         ;

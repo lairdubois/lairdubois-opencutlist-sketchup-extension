@@ -16,24 +16,24 @@
         "formula": "part.number",
         "x": 0,
         "y": -0.083,
-        "fontSize": 3,
-        "textAnchor": "middle",
+        "size": 3,
+        "anchor": "middle",
         "color": "#000000"
       },
       {
         "formula": "part.name",
         "x": 0,
         "y": 0.083,
-        "fontSize": 1,
-        "textAnchor": "middle",
+        "size": 1,
+        "anchor": "middle",
         "color": "#000000"
       },
       {
         "formula": "part.size",
         "x": 0,
         "y": 0.25,
-        "fontSize": 2,
-        "textAnchor": "middle",
+        "size": 2,
+        "anchor": "middle",
         "color": "#000000"
       }
     ]
