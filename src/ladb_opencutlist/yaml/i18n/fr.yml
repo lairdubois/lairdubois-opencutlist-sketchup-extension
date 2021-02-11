@@ -547,6 +547,8 @@ tab:
         part_width: Largeur capable
         part_tags: Tags
         part_batch: Lot
+        thumbnail_proportional: Vignette proprotionnelle
+        thumbnail_square: Vignette carrée
         group_material: Matière / Dimension
         group_material_name: Nom de matière
         group_std_dimension: Dimension standard

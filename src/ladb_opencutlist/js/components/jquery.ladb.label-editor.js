@@ -249,9 +249,9 @@
             noEmptyValue: true
         }, this.options));
 
-        var svgText = $(svgTextGroup).children('text')[0];
-        if (svgText) {
-            var bbox = svgText.getBBox();
+        var svgContent = $(svgTextGroup).children('.ladb-label-content')[0];
+        if (svgContent) {
+            var bbox = svgContent.getBBox();
             var svgSelectionRect = document.createElementNS(XMLNS, 'rect');
             svgSelectionRect.setAttributeNS(null, 'class', 'selection');
             svgSelectionRect.setAttributeNS(null, 'x', bbox.x - 0.02);
@@ -263,7 +263,7 @@
             svgSelectionRect.setAttributeNS(null, 'stroke-dasharray', this.options.minUnit / 5);
             svgSelectionRect.setAttributeNS(null, 'rx', 0.02);
             svgSelectionRect.setAttributeNS(null, 'ry', 0.02);
-            svgTextGroup.insertBefore(svgSelectionRect, svgText);
+            svgTextGroup.insertBefore(svgSelectionRect, svgContent);
         }
 
     }
@@ -291,7 +291,6 @@
         }
 
         var svgTextGroup = this.$editingSvgGroup.children('g')[0];
-        var svgText = $(svgTextGroup).children('text')[0];
 
         // Form
         if (this.$editingForm) {

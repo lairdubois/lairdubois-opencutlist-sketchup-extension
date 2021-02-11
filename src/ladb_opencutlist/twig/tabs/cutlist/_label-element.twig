@@ -1,32 +1,56 @@
 {% set terms = (elementDef.formula)|split('.') %}
-{% if terms[0] == 'part' %}
-    {% set key = terms[1] %}
-    {% if key == 'cutting_size' %}
-        {% set value = part_info.part.cutting_length~' x '~part_info.part.cutting_width %}
-    {% elseif key == 'size' %}
-        {% set value = part_info.part.length~' x '~part_info.part.width %}
-    {% elseif key == 'batch' %}
-        {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
-    {% else %}
-        {% set value = part_info.part[key] %}
+{% if terms[0] == 'thumbnail' %}
+    {% set proportional = terms[1] == 'proportional' %}
+    {% set rectSize = elementDef.fontSize * minUnit %}
+    {% set transX = 0 %}
+    {% if elementDef.textAnchor == 'middle' %}
+        {% set transX = rectSize * -0.5 %}
+    {% elseif elementDef.textAnchor == 'end' %}
+        {% set transX = rectSize * -1 %}
     {% endif %}
-{% elseif terms[0] == 'group' %}
-    {% set key = terms[1] %}
-    {% if key == 'material' %}
-        {% set value = group.material_name~' / '~group.std_dimension %}
-    {% else %}
-        {% set value = group[key] %}
+    {% set transY = rectSize * -1 %}
+    <rect class="ladb-label-content" x="{{ transX }}" y="{{ transY }}" width="{{ rectSize }}" height="{{ rectSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
+    {% set dashedStrokeWidth = minUnit / 10 %}
+    {% set plainStrokeWidth = minUnit / 5 %}
+    {% set rectPartWidth = rectSize * (proportional ? part_info.part.l_ratio : 1) %}
+    {% set rectPartHeight = rectSize * (proportional ? part_info.part.w_ratio : 1) %}
+    <g transform="translate({{ transX + (rectSize - rectPartWidth) / 2 }} {{ transY + (rectSize - rectPartHeight) / 2 }})">
+        <rect x="0" y="0" width="{{ rectPartWidth }}" height="{{ rectPartHeight }}" fill="#ffffff" stroke="none" />
+        <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.ymin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+        <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if part_info.part.edge_material_names.xmax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+        <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if part_info.part.edge_material_names.ymax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+        <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.xmin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="#000"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+    </g>
+{% else %}
+    {% if terms[0] == 'part' %}
+        {% set key = terms[1] %}
+        {% if key == 'cutting_size' %}
+            {% set value = part_info.part.cutting_length~' x '~part_info.part.cutting_width %}
+        {% elseif key == 'size' %}
+            {% set value = part_info.part.length~' x '~part_info.part.width %}
+        {% elseif key == 'batch' %}
+            {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
+        {% else %}
+            {% set value = part_info.part[key] %}
+        {% endif %}
+    {% elseif terms[0] == 'group' %}
+        {% set key = terms[1] %}
+        {% if key == 'material' %}
+            {% set value = group.material_name~' / '~group.std_dimension %}
+        {% else %}
+            {% set value = group[key] %}
+        {% endif %}
+    {% elseif terms[0] == 'filename' %}
+        {% set value = filename %}
+    {% elseif terms[0] == 'page_label' %}
+        {% set value = pageLabel %}
+    {% elseif terms[0] == 'length_unit' %}
+        {% set value = ('default.unit_'~lengthUnit)|i18next %}
+    {% elseif terms[0] == 'generated_at' %}
+        {% set value = generatedAt|date(('default.date_format'|i18next())) %}
     {% endif %}
-{% elseif terms[0] == 'filename' %}
-    {% set value = filename %}
-{% elseif terms[0] == 'page_label' %}
-    {% set value = pageLabel %}
-{% elseif terms[0] == 'length_unit' %}
-    {% set value = ('default.unit_'~lengthUnit)|i18next %}
-{% elseif terms[0] == 'generated_at' %}
-    {% set value = generatedAt|date(('default.date_format'|i18next())) %}
+    {% if value is empty and noEmptyValue|default(false) %}
+        {% set value = '['~elementDef.formula~']' %}
+    {% endif %}
+    <text class="ladb-label-content" x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
 {% endif %}
-{% if value is empty and noEmptyValue|default(false) %}
-    {% set value = '['~elementDef.formula~']' %}
-{% endif %}
-<text x="0" y="0" font-size="{{ elementDef.fontSize * minUnit }}" text-anchor="{{ elementDef.textAnchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
