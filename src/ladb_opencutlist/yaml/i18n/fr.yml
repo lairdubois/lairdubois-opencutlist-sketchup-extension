@@ -532,9 +532,9 @@ tab:
       option_formula: Valeur
       option_size: Taille
       option_anchor: Ancrage
-      option_anchor_start: Gauche
+      option_anchor_start: Début
       option_anchor_middle: Milieu
-      option_anchor_end: Droite
+      option_anchor_end: Fin
       option_color: Couleur
       formula:
         part_number: Numéro

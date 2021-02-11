@@ -62,7 +62,7 @@
                                             {% set part_info = page.part_infos[partIndex] %}
                                             <g transform="translate({{ labelX + labelWidth / 2 }} {{ labelY + labelHeight / 2 }})">
                                                 {% for elementDef in layout %}
-                                                    <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }})">
+                                                    <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }}){% if elementDef.rotation %} rotate({{ elementDef.rotation }}){% endif %}">
                                                         {% include 'tabs/cutlist/_label-element.twig' %}
                                                     </g>
                                                 {% endfor %}

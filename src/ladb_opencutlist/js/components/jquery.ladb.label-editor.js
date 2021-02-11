@@ -172,6 +172,7 @@
                     formula: 'part.name',
                     x: 0,
                     y: 0,
+                    rotation: 0,
                     size: 1,
                     anchor: 'middle',
                     color: '#000000'
@@ -183,28 +184,21 @@
             })
         ;
 
-        var $btnRemove = $('<button class="btn btn-danger" style="display: none;"><i class="ladb-opencutlist-icon-minus"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
-        $btnRemove
-            .on('click', function () {
-                that.elementDefs.splice(that.elementDefs.indexOf(that.$editingSvgGroup.data('def')), 1);
-                that.$editingSvgGroup.remove();
-                that.editElement(null);
-            })
-        ;
+        var $btnContainer = $('<div style="display: inline-block" />')
 
         this.$element.append(
             $('<div class="ladb-label-editor-buttons" style="margin: 10px;"></div>')
                 .append($btnAdd)
                 .append('&nbsp;')
-                .append($btnRemove)
+                .append($btnContainer)
         );
 
-        this.$btnRemove = $btnRemove;
+        this.$btnContainer = $btnContainer;
 
     };
 
     LadbLabelEditor.prototype.appendElementDef = function (elementDef) {
-        var svgGroup, svgCrossLineV, svgCrossLineH, svgTextGroup;
+        var svgGroup, svgCrossLineV, svgCrossLineH, svgContentGroup;
 
         svgGroup = document.createElementNS(XMLNS, 'g');
         svgGroup.setAttributeNS(null, 'class', 'draggable');
@@ -231,10 +225,11 @@
         svgCrossLineV.setAttributeNS(null, 'stroke-width', 0.01);
         svgGroup.appendChild(svgCrossLineV);
 
-        svgTextGroup = document.createElementNS(XMLNS, 'g');
-        svgGroup.appendChild(svgTextGroup);
+        svgContentGroup = document.createElementNS(XMLNS, 'g');
+        svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
+        svgGroup.appendChild(svgContentGroup);
 
-        this.appendFormula(svgTextGroup, elementDef);
+        this.appendFormula(svgContentGroup, elementDef);
 
         return svgGroup;
     }
@@ -271,31 +266,71 @@
     LadbLabelEditor.prototype.editElement = function (svgElement, elementDef) {
         var that = this;
 
+        // Cleanup
+        if (this.$editingForm) {
+            this.$editingForm.remove();
+        }
+        if (this.$btnContainer) {
+            this.$btnContainer.empty();
+        }
+
         // Editing flag
         if (this.$editingSvgGroup) {
             this.$editingSvgGroup.removeClass('active');
         }
         if (svgElement == null) {
             this.$editingSvgGroup = null;
-            if (this.$editingForm) {
-                this.$editingForm.remove();
-            }
-            this.$btnRemove.hide();
             return;
         }
         this.$editingSvgGroup = $(svgElement)
         this.$editingSvgGroup.addClass('active');
 
-        if (this.$btnRemove) {
-            this.$btnRemove.show();
-        }
+        var svgContentGroup = this.$editingSvgGroup.children('g')[0];
 
-        var svgTextGroup = this.$editingSvgGroup.children('g')[0];
+        // Buttons
+
+        var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-minus"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
+        $btnRemove
+            .on('click', function () {
+                that.elementDefs.splice(that.elementDefs.indexOf(elementDef), 1);
+                that.$editingSvgGroup.remove();
+                that.editElement(null);
+            })
+        ;
+
+        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left"></i></button>');
+        $btnRotateLeft
+            .on('click', function () {
+                if (elementDef.rotation === undefined) {
+                    elementDef.rotation = 0;
+                }
+                elementDef.rotation -= 90;
+                svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
+                this.blur();
+            })
+        ;
+
+        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right"></i></button>');
+        $btnRotateRight
+            .on('click', function () {
+                if (elementDef.rotation === undefined) {
+                    elementDef.rotation = 0;
+                }
+                elementDef.rotation += 90;
+                svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
+                this.blur();
+            })
+        ;
+
+        this.$btnContainer
+            .append($btnRemove)
+            .append('<div style="display: inline-block; width: 20px;" />')
+            .append($btnRotateLeft)
+            .append('&nbsp;')
+            .append($btnRotateRight)
+        ;
 
         // Form
-        if (this.$editingForm) {
-            this.$editingForm.remove();
-        }
         this.$element.append(Twig.twig({ref: "tabs/cutlist/_label-element-form.twig"}).render());
         this.$editingForm = $('#ladb_cutlist_form_label_element');
 
@@ -311,7 +346,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
-                that.appendFormula(svgTextGroup, elementDef);
+                that.appendFormula(svgContentGroup, elementDef);
             })
         ;
         $selectSize
@@ -319,7 +354,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.size = $(this).val();
-                that.appendFormula(svgTextGroup, elementDef);
+                that.appendFormula(svgContentGroup, elementDef);
             })
         ;
         $selectAnchor
@@ -327,7 +362,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.anchor = $(this).val();
-                that.appendFormula(svgTextGroup, elementDef);
+                that.appendFormula(svgContentGroup, elementDef);
             })
         ;
         $inputColor
@@ -335,7 +370,7 @@
             .ladbTextinputColor()
             .on('change', function () {
                 elementDef.color = $(this).val();
-                that.appendFormula(svgTextGroup, elementDef);
+                that.appendFormula(svgContentGroup, elementDef);
             })
         ;
 
