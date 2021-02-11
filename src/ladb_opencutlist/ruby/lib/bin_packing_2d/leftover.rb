@@ -7,14 +7,14 @@
   #
   class Leftover < Packing2D
 
-    # Position and size of the leftover.
+    # Position and size of this Leftover.
     attr_reader :x, :y, :length, :width
 
-    # Level of the leftover.
+    # Level of this Leftover.
     attr_reader :level
 
     #
-    # Initializes a new leftover.
+    # Initializes a new Leftover.
     #
     def initialize(x, y, length, width, level, options)
       super(options)
@@ -27,8 +27,8 @@
     end
 
     #
-    # Trims the top level leftover of a bin.
-    # These cuts are NOT recorded/counted.
+    # Trims the top level Leftover of a Bin.
+    # These Cut s are NOT recorded/counted.
     #
     def trim()
       @x += @options.trimsize
@@ -39,7 +39,7 @@
     end
 
     #
-    # Resizes the leftover such that the lower right
+    # Resizes the Leftover such that the lower right
     # corner is at max_x, max_y.
     #
     def resize_to(max_x, max_y)
@@ -49,24 +49,24 @@
     end
 
     #
-    # Sets the length of a leftover.
+    # Sets the length of this Leftover.
     #
     def set_length(length)
       @length = length
     end
 
     #
-    # Sets the width of a leftover.
+    # Sets the width of this Leftover.
     #
     def set_width(width)
       @width = width
     end
 
     #
-    # Returns true if this leftover has a valid size, i.e
+    # Returns true if this Leftover has a valid size, i.e
     # slightly larger than nothing in both dimensions.
     #
-    def valid?
+    def valid?()
       if @length <= 0 && @length >= -@options.saw_kerf - EPS
         @length = 0
       end
@@ -74,29 +74,17 @@
         @width = 0
       end
       return (@length > 0 && @width > 0)
-      #if !valid
-      # puts("#{@length}, #{@width}")
-      # raise(Packing2DError, "Invalid leftovers with possibly negative size!")
-      #end
-      # return useable?
     end
 
     #
-    # Returns true if this leftover is useable.
-    #
-    def UNUSED_useable?
-      return (@length > 0 && @width > 0)
-    end
-
-    #
-    # Returns the area.
+    # Returns the area of this Leftover.
     #
     def area()
       return @length * @width
     end
 
     #
-    # Returns the heuristic score for placing a box inside this leftover
+    # Returns the heuristic score for placing a Nox inside this Leftover
     # or MAX_INT if it does not fit.
     #
     def heuristic_score(box_length, box_width)
@@ -134,15 +122,15 @@
       if s1 < MAX_INT
         # Make score lower if one of the dimensions matches with a preference to length.
         # TODO leftover.score: check if matching should be aligned with shape of bin.
-        s1 = EPS if (@length - box.length).abs <= EPS
-        s1 = EPS if (@width - box.width).abs <= EPS
+        s1 = -MAX_INT if (@length - box.length).abs <= EPS
+        s1 = -MAX_INT if (@width - box.width).abs <= EPS
         s << [leftover_index, s1, NOT_ROTATED, @level]
       end
       if box.rotatable
         s2 = heuristic_score(box.width, box.length)
         if s2 < MAX_INT
-          s2 = EPS if (@length - box.width).abs <= EPS
-          s2 = EPS if (@width - box.length).abs <= EPS
+          s2 = -MAX_INT if (@length - box.width).abs <= EPS
+          s2 = -MAX_INT if (@width - box.length).abs <= EPS
           s << [leftover_index, s2, ROTATED, @level]
         end
       end
@@ -150,7 +138,7 @@
     end
 
     #
-    # Returns true if order of guillotine cut is horizontal, then vertical,
+    # Returns true if order of guillotine Cut is horizontal, then vertical,
     # false otherwise.
     #
     def split_horizontally_first?(box, min_length, min_width)
@@ -159,7 +147,7 @@
       # in the direction of stacking, always!
       # Does not work well in practice!
 
-      # there is no need to make right leftover longer than necessary
+      # there is no need to make right Leftover longer than necessary
       lo_right_length = @length - box.length
       lo_bottom_width = @width - box.width
       m = [min_length, min_width].min
@@ -194,11 +182,9 @@
     end
 
     #
-    # Splits this leftover at position x, y by a vertical, then a horizontal cut.
+    # Splits this Leftover at position x, y by a vertical, then a horizontal cut.
     # x, y represents a position in absolute coordinates.
-    # Returns the leftovers and the cuts.
-    #
-    # Positions the box inside the leftover and splits it horizontally first.
+    # Returns the Leftover s and the Cut s.
     #
     def split_horizontal_first(x, y, box=nil)
       # Trying to split outside of this leftover!
@@ -229,7 +215,7 @@
       lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level+1, @options)
       new_leftovers << lr
 
-      # If the box is a superbox, unmake it!
+      # If the Box is a Superbox, unmake it!
       new_boxes, more_cuts = unmake_superbox(box)
       new_cuts += more_cuts
 
@@ -237,19 +223,11 @@
     end
 
     #
-    # Splits this leftover at position x, y by a vertical, then a horizontal cut.
+    # Splits this Leftover at position x, y by a vertical, then a horizontal cut.
     # Returns the leftovers, the cuts and the unpacked boxes.
     #
     def split_vertical_first(x, y, box=nil)
 
-=begin
-      # Without box, splits the leftover at position x and y.
-      if !box.nil?
-        box.set_position(@x, @y)
-        x = box.x + box.length
-        y = box.y + box.width
-      end
-=end
       if x > @x + @length + EPS || y > @y + @width + EPS
         puts("x = #{x}, bin x = #{@x}, length = #{@length}, y = #{y}, bin y = #{@y} width = #{@width}")
         raise(Packing2DError, "Splitting outside of this leftover in split_vertical_first! #{@options.signature}")
@@ -280,7 +258,7 @@
       lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level+1, @options)
       new_leftovers << lb
 
-      # Unmake it if a superbox, does nothing if box.nil?
+      # Unmake it if a Superbox, does nothing if box.nil?
       new_boxes, more_cuts = unmake_superbox(box)
       new_cuts += more_cuts
 
@@ -288,7 +266,7 @@
     end
 
     #
-    # Unmakes a superbox, adding the necessary cuts.
+    # Unmakes a Superbox, adding the necessary Cut s.
     #
     def unmake_superbox(sbox)
       return [[], []] if sbox.nil?
@@ -347,10 +325,16 @@
       return s
     end
 
+    #
+    # Debugging!
+    #
     def to_term()
       dbg("    leftover " + to_str())
     end
 
+    #
+    # Debugging!
+    #
     def to_octave()
       return "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", grey); # empty leftover\n"
     end

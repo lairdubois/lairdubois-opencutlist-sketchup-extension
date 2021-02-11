@@ -1,7 +1,7 @@
 module Ladb::OpenCutList::BinPacking2D
 
   #
-  # Implements a Box that can contain stacked boxes.
+  # Implements a SuperBox that can contain stacked Boxe s.
   #
   class SuperBox < Box
 
@@ -10,16 +10,16 @@ module Ladb::OpenCutList::BinPacking2D
     # Shape of stacking, widthwise.
     SW = 1
 
-    # The list of subboxes.
+    # The list of Boxe s in a SuperBox.
     attr_reader :sboxes
 
-    # The maximal length for packing in a superbox.
+    # The maximal length for packing in a SuperBox.
     attr_reader :maxlength
 
-    # The maximal width for packing in a superbox.
+    # The maximal width for packing in a SuperBox.
     attr_reader :maxwidth
 
-    # The shape of this superbox.
+    # The shape of this Superbox.
     attr_reader :shape
 
     #
@@ -45,16 +45,17 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Adds a first box to the superbox
+    # Adds a first Box to the SuperBox.
     #
     def add_first_box(box)
       @sboxes << box
       # Check if box fits into @maxlength, @maxwidth!
+      # This is done in packer.
       @length = box.length
       @width = box.width
       @rotatable = box.rotatable
       @rotated = false
-      # Superbox has no shape yet, we could stack either way!
+      # Superbox has no shape yet, we could still stack either way!
     end
 
     #
@@ -100,7 +101,6 @@ module Ladb::OpenCutList::BinPacking2D
         @shape = SW
         until boxes.empty?
           box = boxes.shift
-          #puts("next box to consider" + box.to_str)
           # Reject boxes than do not have the same rotatable
           if box.rotatable != @rotatable
             surplus_boxes << box
@@ -111,7 +111,6 @@ module Ladb::OpenCutList::BinPacking2D
           elsif (box.rotatable && (@length - box.width).abs <= EPS && @width + @saw_kerf + box.length <= @maxwidth)
             box.rotate
             @width =  @width + @saw_kerf + box.width
-            #puts("adding r " + box.to_str)
             @sboxes << box
           else
             surplus_boxes << box
@@ -124,41 +123,10 @@ module Ladb::OpenCutList::BinPacking2D
       return surplus_boxes
     end
 
-=begin
     #
-    # Reduces this superbox by one element, the last
-    # and smallest.
+    # Reduces this SuperBox by one element, the first and largest.
     #
-    def _reduce
-      if @shape == SL
-        if @sboxes.size > 1
-          # Splat operator
-          *@sboxes, last = @sboxes
-          @length = @length - last.length - @saw_kerf
-          return last, self
-        else
-          return @sboxes[0], nil
-        end
-      elsif @shape == SW
-        if @sboxes.size > 1
-          # Splat operator
-          *@sboxes, last = @sboxes
-          @width = @width - last.width - @saw_kerf
-          return last, self
-        else
-          return @sboxes[0], nil
-        end
-      else
-        raise(Packing2DError, "Trying to reduce a superbox with an unknown shape!")
-      end
-    end
-=end
-
-    #
-    # Reduces this superbox by one element, the
-    # first and largest.
-    #
-    def reduce
+    def reduce()
       if @shape == SL
         if @sboxes.size > 1
           # Splat operator
@@ -182,48 +150,18 @@ module Ladb::OpenCutList::BinPacking2D
       end
     end
 
-    def UNUSED_reduce
-      if @shape == SL
-        slice_size = (@sboxes.size/2.0).ceil
-        groups = @sboxes.each_slice(slice_size).to_a
-        first = groups[0]
-        @sboxes = groups[1]
-        if !@sboxes.nil? && @sboxes.size > 0
-          @length = @sboxes.inject(0) { |sum, box| sum + box.length } + (@sboxes.size - 1)*@saw_kerf
-          return first, self
-        else
-          return first, nil
-        end
-      elsif @shape == SW
-        slice_size = (@sboxes.size/2.0).ceil
-        groups = @sboxes.each_slice(slice_size).to_a
-        first = groups[0]
-        @sboxes = groups[1]
-        if !@sboxes.nil? && @sboxes.size > 0
-         @length = @sboxes.inject(0) { |sum, box| sum + box.length } + (@sboxes.size - 1)*@saw_kerf
-         return first, self
-        else
-          return first, nil
-        end
-      else
-        raise(Packing2DError, "Trying to reduce a superbox with an unknown shape!")
-      end
-    end
-
     #
-    # Rotates the superbox by 90deg degree if option permits
+    # Rotates the SuperBox by 90deg degree if option permits
     # and shape is still valid. Also rotates all contained boxes.
     #
-    def rotate
+    def rotate()
       if @rotatable
-        # TODO do we need to check for valid shape?
-        #if (@width <= @maxlength && @length <= @maxwidth)
-          @width, @length = [@length, @width]
-          @rotated = !@rotated
-          @sboxes.each(&:rotate)
-          @shape = SL ? SW : SL
-          return true
-        #end
+        # Checking for valid shape is done in leftover.score()
+        @width, @length = [@length, @width]
+        @rotated = !@rotated
+        @sboxes.each(&:rotate)
+        @shape = SL ? SW : SL
+        return true
       end
       # on anything else!
       return false
@@ -232,10 +170,11 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging!
     #
-    def to_str
+    def to_str()
       s = "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}, width=#{@width}, "
       s += "count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
       return s
     end
   end
+
 end

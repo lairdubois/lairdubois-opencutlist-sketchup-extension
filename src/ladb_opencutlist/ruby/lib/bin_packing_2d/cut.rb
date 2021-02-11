@@ -1,19 +1,23 @@
 module Ladb::OpenCutList::BinPacking2D
 
   #
-  # Implements a guillotine cut.
+  # Implements storage for guillotine cuts.
   #
   class Cut < Packing2D
 
-    # Starting position of the cut and its length.
+    # Starting position of this Cut and its length.
     attr_reader :x, :y, :length
 
-    # Direction of the guillotine cut (see Packing2D).
+    # Direction of this guillotine Cut (see Packing2D).
     attr_reader :is_horizontal
 
-    # Is this a top level through cut?
+    # Is this a top level through Cut?
     attr_reader :is_through
+
+    # Level of the Cut.
     attr_reader :level
+
+    # True if this Cut is the final bounding box Cut.
     attr_reader :is_final
 
     #
@@ -38,55 +42,32 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets the index of this cut. The index cannot be set
-    # at creation of the cut, because it is not set by
-    # leftover, but by the bin.
+    # Returns true if this Cut is valid.
     #
-    def UNUSED_set_index(index)
-      @index = index
-    end
-
-    #
-    # Returns true if this cut is valid.
-    #
-    def valid?
+    def valid?()
       return @length > 0
     end
 
     #
-    # Marks this cut as a through cut (top level).
+    # Marks this Cut as a through Cut (top level).
     #
-    def mark_through
+    def mark_through()
       @is_through = true
     end
 
     #
-    # Marks this cut as a final bounding box cut.
+    # Marks this Cut as the final bounding box Cut (outermost two cuts).
     #
-    def mark_final
+    def mark_final()
       @is_through = true
       @is_final = true
     end
 
-    def UNUSED_includes?(other)
-      if is_horizontal
-        if (@y - other.y).abs <= EPS && other.x <= @x && @length >= other.length
-          return true
-        end
-      else
-        if (@x - other.x).abs <= EPS && other.y <= @y && @length >= other.length
-          return true
-        end
-      end
-      return false
-    end
-
     #
-    # Resizes this cut to the bounding box and
-    # returns true if the cut is inside of it.
+    # Resizes this Cut to the bounding box and
+    # returns true if the Cut is inside of it.
     #
     def resize_to(max_x, max_y)
-      # TODO rewrite this, must be a better way to resize_to!
       # Starting point of the cut is well inside of the bounding box
       if @x < max_x && @y < max_y
         if @is_horizontal && @x + @length > max_x
@@ -95,23 +76,24 @@ module Ladb::OpenCutList::BinPacking2D
           set_length(max_y - @y)
         end
         return valid?
-      elsif @is_horizontal && (@y - max_y).abs <= EPS
-        return false
-      elsif !@is_horizontal && (@x - max_x).abs <= EPS
+      # Starting point is outside of the bounding box, nothing to resize
+      else
         return false
       end
-      return false
     end
 
     #
     # Debugging!
     #
-    def to_str
+    def to_str()
       @is_horizontal ? dir = "H": dir = "V"
       return "cut : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}], #{dir}, #{'%3d' % @level}, #{@is_through}, #{@is_final}]"
     end
 
-    def to_octave
+    #
+    # Debugging!
+    #
+    def to_octave()
       linewidth = 2
       if @is_horizontal
         return "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", red, \"linewidth\", #{linewidth}) # horizontal cut"
@@ -120,4 +102,5 @@ module Ladb::OpenCutList::BinPacking2D
       end
     end
   end
+
 end

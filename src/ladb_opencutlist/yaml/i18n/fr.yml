@@ -414,9 +414,8 @@ tab:
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
       option_optimization: Niveau d'optimisation
       option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
-      option_optimization_0: Léger
-      option_optimization_1: Moyen
-      option_optimization_2: Avancé
+      option_optimization_0: Moyen
+      option_optimization_1: Avancé
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
       option_stacking_0: Aucune

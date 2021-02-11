@@ -5,19 +5,19 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Box
 
-    # Position of the box inside the enclosing bin.
+    # Position of this Box inside the enclosing Bin.
     attr_reader :x, :y
 
-    # Length this box.
+    # Length this Box.
     attr_reader :length
 
-    # Width of this box.
+    # Width of this Box.
     attr_reader :width
 
-    # True if this box can be rotated.
+    # True if this Box can be rotated.
     attr_reader :rotatable
 
-    # True if this box has been rotated by 90 deg. from its original orientation.
+    # True if this Box has been rotated by 90 deg. from its original orientation.
     attr_reader :rotated
 
     # Reference to an external object. This value is kept during optimization.
@@ -44,18 +44,18 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns true if the box was rotated.
+    # Returns true if the Box was rotated.
     #
-    def rotated?
+    def rotated?()
       return @rotated
     end
 
     #
-    # Rotates the box by 90 deg. if option permits.
+    # Rotates the Box by 90 deg. if option permits.
     #
-    def rotate
+    def rotate()
       if @rotatable
-        # TODO dangerous comparaison with float numbers
+        # May be dangerous: comparison of float numbers.
         if @length < @width || @length > @width
           @width, @length = [@length, @width]
           @rotated = !@rotated
@@ -64,7 +64,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets the position of this box inside a Bin when
+    # Sets the position of this Box inside a Bin when
     # placed into a Leftover by Packer.
     #
     def set_position(x, y)
@@ -73,8 +73,9 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Checks if this box would fit into the given leftover.
-    # The top level leftover of a bin has already been trimmed.
+    # Checks if this Box would fit into the given leftover.
+    # The top level leftover of a Bin has already been trimmed, if option is
+    # set.
     #
     def fits_into?(length, width)
       # EPS tolerance because of decimal inches!
@@ -87,24 +88,25 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns true if this box fits into given leftover.
+    # Returns true if this Box fits into given Leftover.
     #
     def fits_into_leftover?(leftover)
       if leftover.nil?
         return false
+      else
+        return fits_into?(leftover.length, leftover.width)
       end
-      return fits_into?(leftover.length, leftover.width)
     end
 
     #
-    # Returns the area of this box.
+    # Returns the area of this Box.
     #
-    def area
+    def area()
       return @length * @width
     end
 
     #
-    # Returns true if this box is equal to box.
+    # Returns true if this Box is equal to another Box.
     #
     def equal?(box)
       return true if box.nil?
@@ -118,7 +120,7 @@ module Ladb::OpenCutList::BinPacking2D
 
     #
     # Returns true if at least one of the dimensions of the two
-    # boxes are equal.
+    # Boxe s are equal.
     #
     def equal_one_dimension?(box)
       return true if box.nil?
@@ -133,14 +135,18 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging!
     #
-    def to_str
+    def to_str()
       s = "box : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}, #{'%9.2f' % @width}], "
-      s += "rotated = #{@rotated}/#{@rotatable}" #, data = #{@data}"
+      s += "rotated = #{@rotated}[rotatable=#{@rotatable}]"
       return s
     end
 
-    def to_octave
+    #
+    # Debugging!
+    #
+    def to_octave()
       return "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", blue); # box"
     end
   end
+
 end
