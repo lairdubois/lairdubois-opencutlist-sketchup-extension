@@ -5,25 +5,22 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Bin < Packing2D
 
-    # Length and width of this bin.
+    # Length and width of this Bin.
     attr_reader :length, :width
 
-    # Index of this bin, type (see packing2d).
+    # Index of this Bin, type (see packing2d).
     attr_reader :index, :type
 
     # List of leftovers.
     attr_reader :leftovers
 
-    # Placeholder for all boxes placed into this bin.
+    # Placeholder for all Boxes placed into this Bin.
     attr_reader :boxes
 
-    # Placeholder for all guillotine cuts.
-    #attr_reader :cuts
-
-    # Statistics about this bin's packing.
+    # Statistics about this Bin's packing.
     attr_reader :stat
 
-    # Max. points for the bounding box of all packed boxes.
+    # Max. points for the bounding box of all packed Boxes.
     # The lowest point is @options.trimsize, @options.trimsize.
     attr_reader :max_x, :max_y
 
@@ -40,7 +37,10 @@ module Ladb::OpenCutList::BinPacking2D
       @leftovers = nil
 
       @boxes = []
+
+      # Horizontal cuts
       @cuts_h = []
+      # Vertical cuts
       @cuts_v = []
 
       # Max. length and width of a box inside this bin.
@@ -56,22 +56,22 @@ module Ladb::OpenCutList::BinPacking2D
       @stat = {}
       @stat[:net_area] = 0
       @stat[:used_area] = 0
-      @stat[:bbox_area] = 0
-      @stat[:compactness] = 0
-      @stat[:nb_placed_boxes] = 0
-      @stat[:l_measure] = 0
-      @stat[:nb_cuts] = 0
-      @stat[:largest_leftover_area] = 0
       @stat[:longest_leftover] = 0
       @stat[:widest_leftover] = 0
+      @stat[:largest_leftover_area] = 0
+      @stat[:l_measure] = 0
+      @stat[:compactness] = 0
+      @stat[:signature] = "not packed"
+      @stat[:bbox_area] = 0
+      @stat[:nb_placed_boxes] = 0
+      @stat[:nb_cuts] = 0
       @stat[:total_length_cuts] = 0
       @stat[:efficiency] = 0
-      @stat[:signature] = "not packed"
       @stat[:rank] = 0
     end
 
     #
-    # Sets the index of this bin, increments and returns index.
+    # Sets the index of this Bin, increments and returns index.
     #
     def set_index(index)
       @index = index
@@ -85,7 +85,7 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:signature] = "[#{@length},#{@width}]-" + signature
     end
 
-    def signature_to_readable
+    def signature_to_readable()
       if matches = @stat[:signature].match(/^(\[.*\])-(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
         return "#{PRESORT[matches[2].to_i]} - #{SCORE[matches[3].to_i]} - #{SPLIT[matches[4].to_i]} - #{STACKING[matches[5].to_i]}"
       else
@@ -94,28 +94,28 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns the efficiency of this bin's packing in [0, 100].
+    # Returns the efficiency of this Bin's packing in [0, 100].
     #
-    def efficiency
+    def efficiency()
       return @stat[:efficiency]
     end
 
     #
-    # Returns the total length of all cuts, excluding trimming cuts.
+    # Returns the total length of all Cuts, excluding trimming cuts.
     #
-    def total_length_cuts
+    def total_length_cuts()
       return @stat[:total_length_cuts]
     end
 
     #
     # Returns all horizontal and vertical cuts.
     #
-    def cuts
+    def cuts()
       return @cuts_h + @cuts_v
     end
 
     #
-    # Computes the scores in free leftovers for a given box.
+    # Computes the scores in free leftovers for a given Box.
     #
     def best_ranked_score(box)
       # Create a first leftover if none exists.
@@ -130,9 +130,7 @@ module Ladb::OpenCutList::BinPacking2D
         @stat[:net_area] = l.area
       end
 
-      #dbg("   using bin id=#{@index}: length=#{@length}, width=#{@width}")
-
-      # Loop over all leftovers and compute score for placing box.
+      # Loop over all Leftovers and compute score for placing Box.
       score = []
       i = 0
       while i < @leftovers.size
@@ -142,18 +140,19 @@ module Ladb::OpenCutList::BinPacking2D
 
       # Sort by score, leftover_id ASC
       # scores have already been filtered in leftovers!
-      # [leftover_index, s2, ROTATED, @level]
+      # [leftover_index, score, ROTATED, @level]
       # put in lowest score, lowest level
       if @options.stacking == STACKING_LENGTH
-        return score.min_by { |s| [s[1], -s[2], s[3]]}
+        min_score = score.min_by { |s| [s[1], -s[2], s[3]]}
       else
-        return score.min_by { |s| [s[1], s[2], s[3]]}
+        min_score = score.min_by { |s| [s[1], s[2], s[3]]}
       end
+
+      return min_score
     end
 
     #
-    # Adds a cut to this bin.
-    # TODO should we really check here in add_cut if two cuts are identical?
+    # Adds a Cut to this Bin.
     #
     def add_cut(cut)
       if !cut.nil? && cut.valid?
@@ -166,7 +165,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Adds a leftover to this bin.
+    # Adds a Leftover to this Bin.
     #
     def add_leftover(leftover)
       @leftovers << leftover if !leftover.nil? && leftover.valid?
@@ -176,8 +175,6 @@ module Ladb::OpenCutList::BinPacking2D
     # Adds a box to this bin into leftover at position leftover_index.
     #
     def add_box(box, leftover_index, min_length, min_width)
-
-      #dbg("   best bin=#{@index}, leftover_id=#{leftover_index} <= box #{box.length}, #{box.width}", true)
 
       # Consume leftover.
       selected_leftover = @leftovers.delete_at(leftover_index)
@@ -211,11 +208,11 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Collects information about this box's packing.
+    # Collects information about this Bin's packing.
     #
-    def summarize
-      # Compute additional through cuts
+    def summarize()
 
+      # Compute additional through cuts.
       h_cuts = @cuts_h.select { |cut| (cut.x - @options.trimsize).abs <= EPS &&
         (@options.trimsize + cut.length - @max_x).abs <= EPS }
       h_cuts.map(&:mark_through)
@@ -224,7 +221,6 @@ module Ladb::OpenCutList::BinPacking2D
       v_cuts.map(&:mark_through)
 
       @stat[:nb_cuts] = @cuts_h.size + @cuts_v.size
-
       @stat[:nb_placed_boxes] = @boxes.size
       @stat[:total_length_cuts] = @cuts_h.inject(0) { |sum, cut| sum + cut.length } +
         @cuts_v.inject(0) { |sum, cut| sum + cut.length }
@@ -232,6 +228,9 @@ module Ladb::OpenCutList::BinPacking2D
 
       @stat[:bbox_area] = (@max_x - @options.trimsize)*(@max_y - @options.trimsize)
 
+      # Got the idea from here:
+      # https://repository.asu.edu/attachments/111230/content/Li_Goodchild_Church_CompactnessIndex.pdf
+      # In practice simple ratio between used_area and bounding box area.
       if @stat[:bbox_area].abs > EPS
         @stat[:compactness] = @stat[:used_area]*100/@stat[:bbox_area]
       else
@@ -239,19 +238,11 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       @leftovers.each do |leftover|
-        #@stat[:l_measure] += Math.sqrt((leftover.x + leftover.length/2.0)**2 + (leftover.y + leftover.width/2.0)**2)*leftover.area
-        # TODO check which measure is best
-        #@stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
-        #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_length + (leftover.y + leftover.width/2.0)/@max_width
-        #@stat[:l_measure] += (leftover.x + leftover.length/2.0)/@max_x + (leftover.y + leftover.width/2.0)/@max_y
         @stat[:longest_leftover] = [@stat[:longest_leftover], leftover.length].max
         @stat[:widest_leftover] = [@stat[:widest_leftover], leftover.width].max
         if leftover.x + leftover.length <= @max_x &&
           leftover.y + leftover.width <= @max_y
           @stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
-        #@stat[:l_measure] += (leftover.x)/@max_x + (leftover.y)/@max_y
-          #@stat[:l_measure] += leftover.area * ((leftover.x + leftover.length/2) + (leftover.y + leftover.width/2))
-
         end
         @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
       end
@@ -260,14 +251,14 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Runs bounding box to find a possible spot to place box.
+    # Runs bounding box to find a possible spot to place Box.
     # Returns true if a spot was found, false otherwise.
     #
     def bounding_box(box, finalbb)
       return if box.nil?
       return if @bounding_box_done
 
-      # Make a dummy leftovers.
+      # Make a dummy Leftover.
       lo = Leftover.new(0, 0, @length, @width, 1, @options)
       lo.trim
 
@@ -276,7 +267,7 @@ module Ladb::OpenCutList::BinPacking2D
       new_leftovers = []
       new_cuts = []
 
-      # If box fits into this, do it!
+      # If Box fits into this, do it!
       if box.fits_into_leftover?(leftovers_h[0]) || box.fits_into_leftover?(leftovers_h[1])
         new_leftovers = leftovers_h
         new_cuts = cuts_h
@@ -312,16 +303,13 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Computes the bounding box of this bin, shortens the cuts
-    # and the leftovers, adds new leftovers and new cuts.
-    # At the same time, measure compactness
-    # https://repository.asu.edu/attachments/111230/content/Li_Goodchild_Church_CompactnessIndex.pdf
+    # Computes the bounding box of this Bin, shortens the Cut s
+    # and the Leftover s, adds new Leftover s and new Cut s.
     #
-    def final_bounding_box
-      # If we are stacking length, then we want the leftover to
-      # be maximal in length first
-      #if @options.stacking == STACKING_LENGTH
+    def final_bounding_box()
       @bounding_box_done = false
+      # Make two dummy boxes that represent the leftovers after the bounding
+      # box has been done. Select the combination giving the largest leftover area.
       if @max_length*(@max_width - @max_y) >= (@max_length - @max_x)*@max_width
         dummy1 = Box.new(@max_length, EPS, false, nil)
         dummy2 = Box.new(EPS, @max_width, false, nil)
@@ -329,6 +317,7 @@ module Ladb::OpenCutList::BinPacking2D
         dummy1 = Box.new(EPS, @max_width, false, nil)
         dummy2 = Box.new(@max_length, EPS, false, nil)
       end
+
       if !bounding_box(dummy1, true)
         if !bounding_box(dummy2, true)
           # Not a problem!
@@ -337,14 +326,20 @@ module Ladb::OpenCutList::BinPacking2D
       end
     end
 
-    def to_str
+    #
+    # Debugging!
+    #
+    def to_str()
       s = "bin : #{'%5d' % object_id} id = #{'%3d' % @index} [#{'%9.2f' % @length}, #{'%9.2f' % @width}], "
       s += "type = #{'%2d' % @type}, signature=#{@stat[:signature]}"
       return s
     end
 
-    def to_term
-      # Cannot use dbg, since previous bins have a different options object.
+    #
+    # Debugging!
+    #
+    def to_term()
+      # Cannot use dbg, since previous Bins have a different Options object.
       puts("    " + to_str)
       @boxes.each do |box|
         puts("      " + box.to_str)
@@ -360,6 +355,9 @@ module Ladb::OpenCutList::BinPacking2D
       end
     end
 
+    #
+    # Debugging!
+    #
     def octave(f)
       f.puts("figure(#{@index+1});")
       f.puts("clf(#{@index+1});")

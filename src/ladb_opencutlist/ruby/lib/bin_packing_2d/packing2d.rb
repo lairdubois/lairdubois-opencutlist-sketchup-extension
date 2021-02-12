@@ -61,17 +61,10 @@
     # Sort by perimeter decreasing.
     PRESORT_PERIMETER_DECR = 6
     PRESORT_ALTERNATING_LENGTHS = 7
+    # Sort by alternating lengths.
     PRESORT_ALTERNATING_WIDTHS = 8
+    # Sort by alternating widths.
     PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest', 'perimeter', 'alt_length', 'alt_width']
-
-    # Do not try to stack boxes.
-    STACKING_NONE = 0
-    # Stack boxes lengthwise.
-    STACKING_LENGTH = 1
-    # Stack boxes widthwise.
-    STACKING_WIDTH = 2
-    STACKING_ALL = 3
-    STACKING = ['do not care', 'lengthwise', 'widthwise', 'all stackings']
 
     # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0
@@ -81,6 +74,16 @@
     SCORE_WORSTSHORTSIDE_FIT = 4
     SCORE_WORSTLONGSIDE_FIT = 5
     SCORE = [' best area', 'short side', 'long side', 'worst area', 'worst short side', 'worst long side']
+
+    # Do not try to stack boxes.
+    STACKING_NONE = 0
+    # Stack boxes lengthwise by grouping common widths.
+    STACKING_LENGTH = 1
+    # Stack boxes widthwise by grouping common lengths.
+    STACKING_WIDTH = 2
+    # Stack none, length and width.
+    STACKING_ALL = 3
+    STACKING = ['do not care', 'lengthwise', 'widthwise', 'stacking all']
 
     # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
@@ -97,8 +100,8 @@
     NOT_ROTATED = 0
     ROTATED = 1
 
-    # Optimization level.
-    OPT_LIGHT = 0
+    # Optimization levels.
+    OPT_MEDIUM = 0
     OPT_ADVANCED = 1
     OPTIMIZATION = ['light', 'advanced']
     #
@@ -127,7 +130,7 @@
       # debug = true.
       #
       def dbg(msg, debug=false)
-        # assuming @options exists
+        # Assuming @options exists.
         if debug
           puts(msg)
         elsif !@options.nil? && @options.debug
@@ -137,4 +140,5 @@
       end
     end
   end
+
 end
