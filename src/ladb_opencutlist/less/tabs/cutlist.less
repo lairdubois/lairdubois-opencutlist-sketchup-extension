@@ -439,6 +439,32 @@ body.no-ie, body.ie-gt10 {
         }
       }
 
+      &.cut-through {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: RGBA(45, 184, 77, 0.5);
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: RGBA(45, 184, 77, 1.0);
+          }
+        }
+      }
+
+      &.cut-final {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: RGBA(245, 72, 110, 0.5);
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: RGBA(245, 72, 110, 1.0);
+          }
+        }
+      }
+
       .cut-outer {
         fill: rgba(0, 0, 0, 0.01);
       }

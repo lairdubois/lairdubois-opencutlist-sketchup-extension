@@ -14,6 +14,7 @@ in 2.x, 1.x and 0.x versions.
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - top left or bottom left
   * Added cutting diagram 1D/2D option to render full width diagrams
+  * Added cutting diagram 2D primary cuts
   * Added comments display on news
   * Added settings option to choose dialog global zoom
 

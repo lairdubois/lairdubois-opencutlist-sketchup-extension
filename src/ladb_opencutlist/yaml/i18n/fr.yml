@@ -402,15 +402,19 @@ tab:
       option_origin_corner_1: En bas à gauche
       option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
       option_full_width_diagram: Affichage pleine largeur
-      option_full_width_diagram_0: Désactivée
-      option_full_width_diagram_1: Activée
+      option_full_width_diagram_0: Non
+      option_full_width_diagram_1: Oui
       option_full_width_diagram_help: Si cette option est activée les schémas sont affichés avec toute la largeur disponible. Sinon, leur largeur est définie par un facteur d'échelle fixe de leur taille réelle.
       option_wrap_length: Longueur de césure
       option_wrap_length_help: Longueur maximale à laquelle une barre sera affichée sur plusieurs lignes.
       option_hide_cross: Chutes
-      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
       option_hide_cross_0: Dimensions et Croix
       option_hide_cross_1: Dimensions seules
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_highlight_primary_cuts: Coupes primaires
+      option_highlight_primary_cuts_0: Survol uniquement
+      option_highlight_primary_cuts_1: Toujours visibles
+      option_highlight_primary_cuts_help: Permet de mettre en surbrillance toujours visible les coupes primaires.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge
@@ -477,6 +481,8 @@ tab:
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe
+        cut_final: Coupe primaire (niveau 1)
+        cut_through: Coupe primaire (niveau 2)
         bar_type_0: Barre standard
         bar_type_1: Reste de barre
         sheet_type_0: Panneau standard

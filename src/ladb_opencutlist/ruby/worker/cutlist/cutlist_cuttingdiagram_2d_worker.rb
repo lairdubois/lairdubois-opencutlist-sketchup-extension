@@ -21,10 +21,11 @@ module Ladb::OpenCutList
       @optimization = settings['optimization'].to_i
       @stacking = settings['stacking'].to_i
       @sheet_folding = settings['sheet_folding']
-      @hide_cross = settings['hide_cross']
-      @hide_part_list = settings['hide_part_list']
-      @origin_corner = settings['origin_corner'].to_i
       @full_width_diagram = settings['full_width_diagram']
+      @hide_part_list = settings['hide_part_list']
+      @hide_cross = settings['hide_cross']
+      @origin_corner = settings['origin_corner'].to_i
+      @highlight_primary_cuts = settings['highlight_primary_cuts']
 
       @cutlist = cutlist
 
@@ -89,16 +90,17 @@ module Ladb::OpenCutList
 
           :options => {
               :grained => @grained,
-              :sheet_folding => @sheet_folding,
-              :hide_cross => @hide_cross,
-              :hide_part_list => @hide_part_list,
               :px_saw_kerf => [_to_px(options.saw_kerf), 1].max,    # Saw kerf not null in pixels
               :saw_kerf => options.saw_kerf.to_l.to_s,
               :trimming => options.trimsize.to_l.to_s,
               :optimization => @optimization,
               :stacking => @stacking,
-              :origin_corner => @origin_corner,
+              :sheet_folding => @sheet_folding,
+              :hide_part_list => @hide_part_list,
               :full_width_diagram => @full_width_diagram,
+              :hide_cross => @hide_cross,
+              :origin_corner => @origin_corner,
+              :highlight_primary_cuts => @highlight_primary_cuts,
           },
 
           :unplaced_parts => [],
@@ -293,6 +295,8 @@ module Ladb::OpenCutList
                     :y => cut.y.to_l.to_s,
                     :length => cut.length.to_l.to_s,
                     :is_horizontal => cut.is_horizontal,
+                    :is_through => cut.is_through,
+                    :is_final => cut.is_final,
                 }
             )
           }

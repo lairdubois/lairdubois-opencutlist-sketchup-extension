@@ -4,9 +4,9 @@
     "saw_kerf": { "metric": "3mm", "imperial": "1/8\"" },
     "trimming": { "metric": "20mm", "imperial": "3/4\"" },
     "bar_folding": true,
-    "hide_cross": false,
     "hide_part_list": false,
-    "wrap_length": { "metric": "3000mm", "imperial": "12'" },
-    "full_width_diagram": false
+    "full_width_diagram": false,
+    "hide_cross": false,
+    "wrap_length": { "metric": "3000mm", "imperial": "12'" }
   }
 }
