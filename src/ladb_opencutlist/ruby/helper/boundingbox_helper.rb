@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'layer0_caching_helper'
+  require_relative 'layer_visibility_helper'
 
   module BoundingBoxHelper
 
@@ -10,7 +11,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       definition_or_group.entities.each { |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
-        if entity.visible? && (entity.layer.visible? || entity.layer.equal?(self.cached_layer0))
+        if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             face_bounds = entity.bounds
             if transformation

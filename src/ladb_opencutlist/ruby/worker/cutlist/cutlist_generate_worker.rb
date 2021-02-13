@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/boundingbox_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
@@ -699,7 +700,7 @@ module Ladb::OpenCutList
     def _fetch_useful_instance_infos(entity, path, auto_orient)
       return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       face_count = 0
-      if entity.visible? && (entity.layer.visible? || (entity.layer.equal?(self.cached_layer0) && !path.empty?))   # Layer0 hide entities only on root scene
+      if entity.visible? && _layer_visible?(entity.layer, path.empty?)
 
         if entity.is_a?(Sketchup::Group)
 
@@ -758,7 +759,7 @@ module Ladb::OpenCutList
     def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = Set[], transformation = nil)
       definition_or_group.entities.each { |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
-        if entity.visible? && (entity.layer.visible? || entity.layer.equal?(self.cached_layer0))
+        if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             transformed_normal = transformation.nil? ? entity.normal : entity.normal.transform(transformation)
             if transformed_normal.parallel?(X_AXIS)

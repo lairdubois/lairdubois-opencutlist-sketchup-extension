@@ -18,6 +18,7 @@ in 2.x, 1.x and 0.x versions.
   * Added cutting diagram 2D edge banding infos in part tooltips
   * Added comments display on news
   * Added settings option to choose dialog global zoom
+  * Added SketchUp 2021 Tag folders compatibility
 
 * 1.9.10 (2020-12-17)
 
