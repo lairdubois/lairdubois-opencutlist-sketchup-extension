@@ -241,6 +241,7 @@ module Ladb::OpenCutList
                 :length => box.data.cutting_length,
                 :width => box.data.cutting_width,
                 :rotated => box.rotated,
+                :edge_count => box.data.edge_count,
                 :edge_material_names => box.data.edge_material_names,
                 :edge_std_dimensions => box.data.edge_std_dimensions,
                 :tags => box.data.tags,

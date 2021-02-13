@@ -2931,7 +2931,7 @@
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
         // Define useful functions
-        var populateOptionsInputs = function (generateOptions) {
+        var fnPopulateOptionsInputs = function (generateOptions) {
 
             // Checkboxes
 
@@ -2991,10 +2991,7 @@
                     property: property
                 }));
             }
-            $sortableDimensionColumnOrderStrategy.sortable({
-                cursor: 'ns-resize',
-                handle: '.ladb-handle'
-            });
+            $sortableDimensionColumnOrderStrategy.sortable(SORTABLE_OPTIONS);
 
         };
 
@@ -3027,7 +3024,7 @@
                         part_order_strategy: appDefaults.part_order_strategy,
                         dimension_column_order_strategy: appDefaults.dimension_column_order_strategy
                     });
-                    populateOptionsInputs(generateOptions);
+                    fnPopulateOptionsInputs(generateOptions);
 
                 }
 
@@ -3094,7 +3091,7 @@
         });
 
         // Populate inputs
-        populateOptionsInputs(that.generateOptions);
+        fnPopulateOptionsInputs(that.generateOptions);
 
         // Show modal
         $modal.modal('show');

@@ -234,8 +234,9 @@
         return svgGroup;
     }
 
-    LadbLabelEditor.prototype.appendFormula = function (svgTextGroup, elementDef) {
-        svgTextGroup.innerHTML = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
+    LadbLabelEditor.prototype.appendFormula = function (svgContentGroup, elementDef) {
+
+        var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             elementDef: elementDef,
             part_info: {
                 position_in_batch: 1,
@@ -244,7 +245,17 @@
             noEmptyValue: true
         }, this.options));
 
-        var svgContent = $(svgTextGroup).children('.ladb-label-element')[0];
+        // Workaround to avoid use of innerHtml on an svg element (not implemented on IE and Safari)
+        svgContentGroup.innerHTML = ''; // doesn't work in IE but works on Chrome
+        svgContentGroup.textContent = ''; // works on IE
+        var tmpDiv = document.createElement('div');
+        var tmpSvg = '<svg>' + formula + '</svg>';
+        tmpDiv.innerHTML = '' + tmpSvg;
+        Array.prototype.slice.call(tmpDiv.childNodes[0].childNodes).forEach(function (el) {
+            svgContentGroup.appendChild(el)
+        })
+
+        var svgContent = $(svgContentGroup).children('.ladb-label-element')[0];
         if (svgContent) {
             var bbox = svgContent.getBBox();
             var svgSelectionRect = document.createElementNS(XMLNS, 'rect');
@@ -258,7 +269,7 @@
             svgSelectionRect.setAttributeNS(null, 'stroke-dasharray', this.options.minUnit / 5);
             svgSelectionRect.setAttributeNS(null, 'rx', 0.02);
             svgSelectionRect.setAttributeNS(null, 'ry', 0.02);
-            svgTextGroup.insertBefore(svgSelectionRect, svgContent);
+            svgContentGroup.insertBefore(svgSelectionRect, svgContent);
         }
 
     }
