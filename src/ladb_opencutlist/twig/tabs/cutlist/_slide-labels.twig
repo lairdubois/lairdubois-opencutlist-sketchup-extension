@@ -49,7 +49,7 @@
 
                         {% set partCount = page.part_infos|length %}
 
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
+                        <svg viewBox="0 0 {{ page_width }} {{ page_height }}" {% if compatible_with('svg.height-auto') %}width="80%"{% else %}width="{{ page_width * 72 }}" height="{{ page_height * 72 }}"{% endif %}>
 
                             <g transform="translate({{ margin_left }} {{ margin_top }})">
 

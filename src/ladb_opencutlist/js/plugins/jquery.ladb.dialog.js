@@ -752,6 +752,17 @@
                 that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
                 that.lastListedNewsTimestamp = that.getSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, null);
 
+                // Add compatible_with twig function
+                Twig.extendFunction('compatible_with', function(value) {
+                    switch (value) {
+                        case 'body.zoom':
+                            return !($('body').hasClass('ie') || $('body').hasClass('edge'));
+                        case 'svg.height-auto':
+                            return !($('body').hasClass('ie') || $('body').hasClass('edge'));
+                    }
+                    return true;
+                });
+
                 // Add i18next twig filter
                 Twig.extendFilter('i18next', function (value, options) {
                     return i18next.t(value, options ? options[0] : {});

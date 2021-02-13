@@ -20,6 +20,8 @@
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 
+{% set fullWidthCompatible = compatible_with('svg.height-auto') %}
+
 {% block headerInner %}
     {{ parent() }}
     <ul class="ladb-file-tabs nav nav-tabs">
@@ -228,8 +230,12 @@
                     <td colspan="{{ colspan }}">
 
                         {% set viewBoxOffsetX = (maxSheetLength - sheet.px_length) / 2 %}
+                        {% set viewBoxX = (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX) * -1 %}
+                        {% set viewBoxY = (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * -1 %}
+                        {% set viewBoxWidth = sheet.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX) * 2 %}
+                        {% set viewBoxHeight = sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 %}
 
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX }} -{{ sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize }} {{ sheet.px_length + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize + viewBoxOffsetX) * 2 }} {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}"{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ sheet.px_width + (sheetOutlineWidth + sheetDimensionOffset + sheetDimensionFontSize) * 2 }}px"{% endif %}>
+                        <svg viewBox="{{ viewBoxX }} {{ viewBoxY }} {{ viewBoxWidth }} {{ viewBoxHeight }}"{% if fullWidthCompatible %}{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ viewBoxHeight }}px"{% endif %}{% else %} height="{{ viewBoxHeight }}"{% endif %}>
                             <text class="sheet-dimension" x="{{ sheet.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ sheet.length }}</text>
                             <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ sheet.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ sheet.px_width / 2 }})">{{ sheet.width }}</text>
                             <g class="sheet" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
