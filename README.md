@@ -12,13 +12,13 @@
 
 ## Download and Install
 
-You can download and install the ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en) page :
+You can download and install the signed ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en) page:
 
 https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist
 
 ## Supported Languages
 
-OpenCutList is available in french, english, german, russian, italian, portuguese and spanish. The interface language of the extension can be selected independently of the language version of SketchUp.
+OpenCutList is available in french, english, german, russian, italian, portuguese, spanish, czech and polish. The interface language of the extension can be selected independently of the language version of SketchUp.
 
 ## Supported Units
 
