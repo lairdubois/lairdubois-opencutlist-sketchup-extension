@@ -42,7 +42,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets optimization level.
     #
     def set_optimization(optimization)
-      if (OPT_MEDIUM..OPT_ADVANCED).include?(optimization)
+      if (OPT_MEDIUM..OPT_ADVANCED).cover?(optimization)
         @optimization = optimization
       else
         @optimization = OPT_MEDIUM
@@ -53,7 +53,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets the stacking preference.
     #
     def set_stacking_pref(stacking_pref)
-      if (STACKING_NONE..STACKING_ALL).include?(stacking_pref)
+      if (STACKING_NONE..STACKING_ALL).cover?(stacking_pref)
         @stacking_pref = stacking_pref
       else
         @stacking_pref = STACKING_NONE

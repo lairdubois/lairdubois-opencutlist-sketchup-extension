@@ -72,6 +72,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_unused_bins] = 0
       @gstat[:nb_leftovers] = 0
       @gstat[:rank] = 0
+      @gstat[:overall_rank] = 0
       @gstat[:total_compactness] = 0
       @gstat[:longest_leftover] = 0
       @gstat[:largest_leftover] = 0
@@ -114,6 +115,8 @@ module Ladb::OpenCutList::BinPacking2D
         @gstat[:nb_leftovers] = @previous_packer.gstat[:nb_leftovers]
         @gstat[:nb_packed_boxes] = @previous_packer.gstat[:nb_packed_boxes]
         @gstat[:total_compactness] = @previous_packer.gstat[:total_compactness]
+        @gstat[:overall_rank] += @previous_packer.gstat[:overall_rank]
+
       end
     end
 
@@ -180,7 +183,7 @@ module Ladb::OpenCutList::BinPacking2D
       when PRESORT_PERIMETER_DECR
         @boxes.sort_by! { |box| [-box.length - box.width] }
       when PRESORT_ALTERNATING_WIDTHS
-        w_max = @boxes.max_by { |box| box.width}
+        w_max = @boxes.max_by(&:width)
         wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
         wl.sort_by! { |box| -box.width }
         ws.sort_by! { |box| -box.width }
@@ -193,7 +196,7 @@ module Ladb::OpenCutList::BinPacking2D
           @boxes = wl.zip(ws).flatten!.compact
         end
       when PRESORT_ALTERNATING_LENGTHS
-        l_max = @boxes.max_by { |box| box.length}
+        l_max = @boxes.max_by(&:length)
         ll, ls = @boxes.partition { |box| box.length >= (@stacking_maxlength - l_max.length) }
         ll.sort_by! { |box| -box.length }
         ls.sort_by! { |box| -box.length }
@@ -286,7 +289,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Preprocesses the list of boxes by
+    # Preprocesses the list of Box es by
     # . removing boxes that are too large and place them into @unplaced_boxes
     # . make sure that we have at least one bin
     # . stack bins if options is on
@@ -324,7 +327,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       return false if !clean_boxes
 
-      # TODO packer.superboxes stacked boxes maybe need their own sorting!
+      # TODO packer.superboxes: stacked boxes maybe need their own sorting!
       case @options.stacking
       when STACKING_LENGTH
         make_superboxes_length()
@@ -400,7 +403,7 @@ module Ladb::OpenCutList::BinPacking2D
           box = @boxes.shift
 
           # Recompute bounding box, while packing!
-          if current_bin.boxes.size() > 1 && !box.equal?(previous_box)
+          if current_bin.boxes.size() > 1 && !box.different?(previous_box)
             current_bin.bounding_box(box, false)
             # This would be a good place to make a rectangle merge, but
             # 26.txt shows that this is not possible!
@@ -482,7 +485,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # We do not yet make a difference between invalid and unplaceable box
+    # TODO: We do not yet make a distinction between invalid and unplaceable box
     # in the GUI.
     #
     def finish()

@@ -13,6 +13,8 @@ in 2.x, 1.x and 0.x versions.
   * Added part unit price field for accessories
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - top left or bottom left
+  * Added new 2D bin packing library
+  * Improved import by putting new instances into a group
   * Added cutting diagram 1D/2D option to render full width diagrams
   * Added cutting diagram 2D primary cuts
   * Added cutting diagram 2D edge banding infos in part tooltips
