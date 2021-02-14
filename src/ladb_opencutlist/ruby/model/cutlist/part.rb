@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :unit_price, :unit_mass, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :unit_price, :unit_mass, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -36,6 +36,8 @@ module Ladb::OpenCutList
       @edge_std_dimensions = part_def.edge_std_dimensions
       @edge_decrements = { :length => part_def.edge_length_decrement > 0 ? part_def.edge_length_decrement.to_s : nil, :width => part_def.edge_width_decrement > 0 ? part_def.edge_width_decrement.to_s : nil }
       @final_area = part_def.final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(part_def.final_area)
+      @l_ratio = part_def.size.length / [part_def.size.length, part_def.size.width].max
+      @w_ratio = part_def.size.width / [part_def.size.length, part_def.size.width].max
 
     end
 
@@ -89,7 +91,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals, :l_ratio, :w_ratio
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -119,8 +121,6 @@ module Ladb::OpenCutList
       @normals_to_values = part_def.size.normals_to_values
       @normals_to_dimensions = part_def.size.normals_to_dimensions
       @dimensions_to_normals = part_def.size.dimensions_to_normals
-      @l_ratio = part_def.size.length / [part_def.size.length, part_def.size.width].max
-      @w_ratio = part_def.size.width / [part_def.size.length, part_def.size.width].max
     end
 
     # -----
