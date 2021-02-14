@@ -1,6 +1,6 @@
 _label: Português
 _reload_msg: "Para levar em consideração todas as mudanças, você deve **fechar** e **reabrir** a janela OpenCutList."
-_description: "Ficha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar;)"
+_description: "Ficha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -813,9 +813,10 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglês*, *alemão*)
       - Vladimir Badulya (*russiano*)
       - Pierluigi Colombo (*italiano*)
-      - Nayton Sanches Barbosa (*português*)
+      - Nayton Sanches Barbosa, corrigido e revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*português*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espanhol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk e Dominik Szybisz (*polonês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

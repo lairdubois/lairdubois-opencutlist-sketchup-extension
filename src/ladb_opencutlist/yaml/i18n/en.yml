@@ -810,12 +810,13 @@ tab:
       *OpenCutList* is developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Translations:
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*english*, *german*)
-      - Vladimir Badulya (*russian*)
-      - Pierluigi Colombo (*italian*)
-      - Nayton Sanches Barbosa (*portuguese*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spanish*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*czech*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
+      - Vladimir Badulya (*Russian*)
+      - Pierluigi Colombo (*Italian*)
+      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polish*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

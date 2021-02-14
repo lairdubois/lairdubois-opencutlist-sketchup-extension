@@ -421,12 +421,12 @@ tab:
       option_trimming_help_1d: Marge à chaque extrémité de la barre à considérer comme chute.
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
       option_optimization: Niveau d'optimisation
-      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
+      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées, donc aussi le temps de calcul.
       option_optimization_0: Moyen
       option_optimization_1: Avancé
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
-      option_stacking_0: Aucune
+      option_stacking_0: Aucune préference
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
       option_stacking_3: Toutes les possibilités
@@ -880,9 +880,10 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo (*italien*)
-      - Nayton Sanches Barbosa (*portugais*)
+      - Nayton Sanches Barbosa, corrigé et revu par [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugais*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espagnol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*tchèque*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk et Dominik Szybisz (*polonais*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -891,7 +892,9 @@ tab:
     credits_vendors: |
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
-      Un remerciement particulier à [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
+      Un remerciement particulier à :
+        - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
+        - [Transifex](https://www.transifex.com/) pour leur soutien de projet Open Source.
 tool:
   highlight:
     transparency: Transparence
