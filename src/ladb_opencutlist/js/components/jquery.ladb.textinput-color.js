@@ -12,8 +12,8 @@
     LadbTextinputColor.prototype = new LadbAbstractSimpleTextinput;
 
     LadbTextinputColor.DEFAULTS = {
-        colors: ['#61BD4F', '#F2D600', '#FFAB4A', '#EB5A46', '#C377E0', '#0079BF', '#00C2E0', '#51E898', '#FF80CE', '#4D4D4D'],
-        colorsPerLine: 5,
+        colors: ['#61BD4F', '#F2D600', '#FFAB4A', '#EB5A46', '#C377E0', '#0079BF', '#00C2E0', '#51E898', '#FF80CE', '#CCCCCC', '#000000', '#FFFFFF'],
+        colorsPerLine: 6,
         includeMargins: false
     };
 
