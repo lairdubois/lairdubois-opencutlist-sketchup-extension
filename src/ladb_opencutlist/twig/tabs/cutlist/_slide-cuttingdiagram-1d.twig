@@ -22,6 +22,28 @@
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
 
+{% macro part_tooltip(part) %}
+{% spaceless %}
+    <div class='tt-header'><span class='tt-number'>{{ part.number }}</span><span class='tt-name'>{{ part.name|escape('html') }}</span></div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}</div>
+{% endspaceless %}
+{% endmacro %}
+{% macro leftover_tooltip(leftover) %}
+{% spaceless %}
+    <div class='tt-header'><span class='tt-name'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span></div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length'></i> {{ leftover.length|escape('html') }}</div>
+{% endspaceless %}
+{% endmacro %}
+{% macro cut_tooltip(cut, saw_kerf) %}
+{% spaceless %}
+    <div class='tt-header'><span class='tt-name'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span></div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ saw_kerf|escape('html') }}</div>
+{% endspaceless %}
+{% endmacro %}
+
+{% import _self as fn %}
+
 {% block headerInner %}
     {{ parent() }}
     <ul class="ladb-file-tabs nav nav-tabs">
@@ -233,7 +255,7 @@
                                     {% endif %}
                                 {% endfor %}
                             </g>
-                            <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ bar.leftover.length|escape('html') }}">
+                            <g class="leftover" data-toggle="tooltip" data-html="true" title="{{ fn.leftover_tooltip(bar.leftover) }}">
                                 {% set displayedDimensions = false %}
                                 {% for slice in bar.leftover.slices %}
                                     {% set yOffset = slice.index * sliceHeight %}
@@ -252,7 +274,7 @@
                             </g>
                             {% for part in bar.parts|reverse %}
                                 {% set numberTextLength = part.number|length %}
-                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>[{{ part.number }}]&nbsp;{{ part.name|escape('html') }}</span><br><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}">
+                                <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     {% set displayedDimensions = false %}
                                     {% for slice in part.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
@@ -272,7 +294,7 @@
                                 </g>
                             {% endfor %}
                             {% for cut in bar.cuts %}
-                                <g class="cut" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.cut'|i18next }}</span><br><i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}<br><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}">
+                                <g class="cut" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options.saw_kerf) }}">
                                     {% for slice in cut.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
                                         <rect class="cut-outer" x="{{ slice.px_x - cutOutlineWidth }}" y="{{ yOffset - cutOutlineWidth }}" width="{{ options.px_saw_kerf + cutOutlineWidth * 2 }}" height="{{ bar.px_width + cutOutlineWidth * 2 }}"></rect>

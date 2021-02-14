@@ -24,17 +24,29 @@
 
 {% macro part_tooltip(part) %}
 {% spaceless %}
-    <span style='font-size: 120%;'>[{{ part.number }}]&nbsp;{{ part.name|escape('html') }}</span>
-    <br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}
+    <div class='tt-header'><span class='tt-number'>{{ part.number }}</span><span class='tt-name'>{{ part.name|escape('html') }}</span></div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}</div>
     {% if part.edge_count > 0 %}
-        <hr>
-        <div class='text-left'>
-            {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymin }}&nbsp;{{ part.edge_std_dimensions.ymin }}</div>{% endif %}
-            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-0010'></i>&nbsp;{{ part.edge_material_names.ymax }}&nbsp;{{ part.edge_std_dimensions.ymax }}</div>{% endif %}
-            {% if part.edge_material_names.xmin %}<div><i class='ladb-opencutlist-icon-edge-0001'></i>&nbsp;{{ part.edge_material_names.xmin }}&nbsp;{{ part.edge_std_dimensions.xmin }}</div>{% endif %}
-            {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax }}&nbsp;{{ part.edge_std_dimensions.xmax }}</div>{% endif %}
+        <div class='tt-section'>
+            {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymin }}&nbsp;<small>{{ part.edge_std_dimensions.ymin }}</small></div>{% endif %}
+            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-0010'></i>&nbsp;{{ part.edge_material_names.ymax }}&nbsp;<small>{{ part.edge_std_dimensions.ymax }}</small></div>{% endif %}
+            {% if part.edge_material_names.xmin %}<div><i class='ladb-opencutlist-icon-edge-0001'></i>&nbsp;{{ part.edge_material_names.xmin }}&nbsp;<small>{{ part.edge_std_dimensions.xmin }}</small></div>{% endif %}
+            {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax }}&nbsp;<small>{{ part.edge_std_dimensions.xmax }}</small></div>{% endif %}
         </div>
     {% endif %}
+{% endspaceless %}
+{% endmacro %}
+{% macro leftover_tooltip(leftover) %}
+{% spaceless %}
+    <div class='tt-header'><span class='tt-name'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span></div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}</div>
+{% endspaceless %}
+{% endmacro %}
+{% macro cut_tooltip(cut, saw_kerf) %}
+{% spaceless %}
+    <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_final ? '_final' : (cut.is_through ? '_through' : '')))|i18next }}</span></div>
+    <div class='tt-data'>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}{% endif %}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ saw_kerf|escape('html') }}</div>
 {% endspaceless %}
 {% endmacro %}
 
@@ -261,7 +273,7 @@
                                 <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
                             </g>
                             {% for leftover in sheet.leftovers %}
-                                <g class="leftover" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.leftover'|i18next }}</span><br><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}">
+                                <g class="leftover" data-toggle="tooltip" data-html="true" title="{{ fn.leftover_tooltip(leftover) }}">
                                     <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
                                     {% set hideCross = options.hide_cross or leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                     {% if not hideCross %}
@@ -307,7 +319,7 @@
                                 </g>
                             {% endfor %}
                             {% for cut in sheet.cuts %}
-                                <g class="cut{% if cut.is_through %}{% if options.highlight_primary_cuts %} cut-highlighted{% endif%} cut-through{% endif %}{% if cut.is_final %} cut-final{% endif %}" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_final ? '_final' : (cut.is_through ? '_through' : '')))|i18next }}</span><br>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}{% endif %}<br><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}">
+                                <g class="cut{% if cut.is_through %}{% if options.highlight_primary_cuts %} cut-highlighted{% endif%} cut-through{% endif %}{% if cut.is_final %} cut-final{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options.saw_kerf) }}">
                                     <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                     <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
                                 </g>
