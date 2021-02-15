@@ -21,7 +21,17 @@
         <div class="form-group">
             <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.language'|i18next }}</div>
             <select id="ladb_select_language" class="form-control">
+                {% set preferedLanguage = null %}
                 {% for language in capabilities.availableLanguages %}
+                    {% if capabilities.locale starts with language %}
+                        {% set preferedLanguage = language %}
+                    {% endif %}
+                {% endfor %}
+                {% if preferedLanguage %}
+                    <option value="{{ preferedLanguage }}" data-content="<span class='ladb-language-prefix'>{{ preferedLanguage|upper }}</span>{{ ('language.'~preferedLanguage)|i18next }}"></option>
+                    <option data-divider="true"></option>
+                {% endif %}
+                {% for language in capabilities.availableLanguages if language != preferedLanguage %}
                     <option value="{{ language }}" data-content="<span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
                 {% endfor %}
             </select>
