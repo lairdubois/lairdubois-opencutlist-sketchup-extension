@@ -142,12 +142,12 @@ module Ladb::OpenCutList::BinPacking2D
       # scores have already been filtered in leftovers!
       # [leftover_index, score, ROTATED, @level]
       # put in lowest score, lowest level
+      #return score.min_by { |s| [s[1], s[3]]}
       if @options.stacking == STACKING_LENGTH
         min_score = score.min_by { |s| [s[1], -s[2], s[3]]}
       else
         min_score = score.min_by { |s| [s[1], s[2], s[3]]}
       end
-
       return min_score
     end
 
@@ -238,12 +238,14 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       @leftovers.each do |leftover|
+=begin
         @stat[:longest_leftover] = [@stat[:longest_leftover], leftover.length].max
         @stat[:widest_leftover] = [@stat[:widest_leftover], leftover.width].max
         if leftover.x + leftover.length <= @max_x &&
           leftover.y + leftover.width <= @max_y
           @stat[:l_measure] += (leftover.x + leftover.length + leftover.y + leftover.width)
         end
+=end
         @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
       end
 

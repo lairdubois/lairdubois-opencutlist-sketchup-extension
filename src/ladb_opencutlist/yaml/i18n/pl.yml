@@ -1,6 +1,6 @@
 _label: Polski
 _reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć** to okno."
-_description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu;) "
+_description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;) "
 default:
   minimize: Minimalizuj
   maximize: Maksymalizuj
@@ -400,7 +400,7 @@ tab:
       option_origin_corner_0: Górny lewy narożnik
       option_origin_corner_1: Dolny lewy narożnik
       option_origin_corner_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
-      option_wrap_length: Długość dzieląca deskę
+      option_wrap_length: Długość deski dzielącej
       option_wrap_length_help: Maksymalna długość powyżej której deska będzie rozdzielona na wiele linii.
       option_hide_cross: Ścinki
       option_hide_cross_help: Wyświetl lub ukryj przekreślenie na częściach traktowanych jako ścinki.
@@ -408,7 +408,7 @@ tab:
       option_hide_cross_1: Tylko wymiary
       option_saw_kerf: Grubość linii cięcia
       option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
-      option_trimming: Wielkość marginesu
+      option_trimming: Rozmiar przycinania
       option_trimming_help_1d: Ilość materiału na każdym końcu płyty potraktowana jako odpad.
       option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.
       option_optimization: Poziom optymalizacji
@@ -424,9 +424,9 @@ tab:
       option_stacking_3: Wszystkie możliwości
       option_std_bar: Płyta standardowa
       option_std_bar_help: |
-        Wybierz deskę standardową, która zostanie powielona w celu obliczenia najlepszego rozłożenia części.
+        Wybierz deskę standardową, która zostanie zduplikowana, aby zawierała wszystkie części.
         Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
-        Edytuj materiał '{{ material_name }}' aby uzupełnić listę standardowych desek.
+        Edytuj materiał '{{ material_name }}' aby uzupełnić tę listę.
       option_std_bar_add: Dodaj długość ...
       option_std_bar_none: Żaden
       option_scrap_bar_lengths: Odpady do wykorzystania
@@ -440,19 +440,19 @@ tab:
       option_std_sheet_help: |
         Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
         Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
-        Edytuj materiał '{{ material_name }}' aby uzupełnić listę arkuszy standardowych.
+        Edytuj materiał '{{ material_name }}' aby uzupełnić tę listę.
       option_std_sheet_add: Dodaj rozmiar arkusza ...
       option_std_sheet_none: Żaden
-      option_scrap_sheet_sizes: Odpad arkuszy
+      option_scrap_sheet_sizes: Arkusze odpadu
       option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
       option_scrap_sheet_sizes_help: |
-        Pokaż wszystkie odpady arkuszy które chcesz uwzględnić w rozkroju.
+        Pokaż wszystkie arkusze odpadu które chcesz uwzględnić w rozkroju.
         Oczekiwany format: **Dług**x**Szer**x**Licz**, gdzie **Dług** i **Szer** reprezentują *długość* i *szerokość* arkusza, a **Licz** ilość.
         Ilość jest opcjonalna
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       options_defaults:
         manage_help: Administrowanie domyślnymi *parametrami schematu cięcia*
-        save_success: "Zapisano *domyślne parametry schematu* cięcia"
+        save_success: "Domyślny *schemat parametrów cięcia* został zapisany"
       tooltip:
         scroll_to_block_1d: Przewiń do pierwszej deski
         scroll_to_block_2d: Przewiń do pierwszego arkusza
@@ -481,12 +481,12 @@ tab:
         parts_plural: "{{ count }} części"
         settings: Ustawienia
       error:
-        no_bar: Rozmiary desek standardowych nie są skonfigurowane i brak odpadów do wykorzystania.
-        parameters: Parametry są błędne. Margines jest większy niż 25% najdłuższej deski.
+        no_bar: Standardowa płyta nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
+        parameters: Parametry są błędne. Margines jest większy o 25% niż najdłuższa płyta.
         no_parts: Brak części
-        no_sheet: Rozmiary arkuszy standardowych nie są skonfigurowane i brak odpadów do wykorzystania.
-        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, brzeszczot za duży, ...). "
-        bad_error: "Panika algorytmiczna, proszę o kontakt z programistami, masz ciekawy przypadek."
+        no_sheet: Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
+        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...). "
+        bad_error: "Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek."
         unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
         unplaced_parts_plural: "Istnieją **{{count}} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
       warning:
@@ -513,12 +513,12 @@ tab:
       partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
       no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
       no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
-      export_empty: Twój eksport nie zawiera żadnych części.
+      export_empty: Twója selekcja do eksportu nie zawiera żadnych części.
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
     tip:
       no_component: |
-        Części które mają być na *liście części* muszą być **komponentem**.
+        Części które mają być na *liście części* muszą być instancjami **komponentu**.
         Jeżeli używasz tylko grup, przekształć je w komponenty.
         Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
       no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**Lite drewno**, **W arkuszach** lub **Deski**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
@@ -603,9 +603,9 @@ tab:
       grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale
       grained_0: Bez wzoru/tekstury
       grained_1: Wzór/tekstura wzdłuż Długości
-      edge_decremented: Zmniejszenie
+      edge_decremented: Zmniejszanie
       edge_decremented_help: Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
-      edge_decremented_0: Brak zmniejszenia
+      edge_decremented_0: Brak zmniejszania
       edge_decremented_1: Zmniejsz o grubość obrzeża
       volumic_mass: Gęstość
       cut_options_defaults:
@@ -642,10 +642,10 @@ tab:
       exported_to: "Pomyślny eksport do {{ export_path }}."
     obsolete_base: "Aby zachować synchronizację, musisz zaktualizować listę materiałów."
   importer:
-    label: Import
+    label: Importuj
     title: Importuj części
     help: |
-      Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+      Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       Dzięki temu można użyć *OpenCutList* do części które zostały utworzone w programach innych niż *SketchUp*.
       Naciśnij przycisk **Otwórz plik CSV** aby rozpocząć.
     open_csv: Otwórz plik CSV
@@ -668,7 +668,7 @@ tab:
     import:
       title: Importowanie części do modelu
       info_0: |
-        Importujesz **{{ count }} części** do modelu.
+        Importujesz **{{ count }} część** do modelu.
         Ta część zostanie umieszczona w scenie głównej, w zerowych współrzędnych.
       info_0_plural: |
         Importujesz **{{ count }} części** do modelu.
@@ -678,8 +678,8 @@ tab:
         Model zawiera już *części*, *definicje* lub *materiały*.
         Wybierz odpowiednie opcje importu.
       option_remove_all_?: "Co dalej?"
-      option_remove_all_false: Dodaj części do istniejącego
-      option_remove_all_true: Zresetuj wszystko!
+      option_remove_all_false: Dodaj części do już istniejących
+      option_remove_all_true: Usuń wszystko!
       option_keep_definitions_settings: Zachowaj ustawienia definicji
       option_keep_materials_settings: Zachowaj ustawienia materiałów
     column:
@@ -715,7 +715,7 @@ tab:
       invalid_material: Niewłaściwy materiał
     success:
       imported_title: Import zakończony
-      imported_body: "{{ count }} pomyślnie zaimportowana część!"
+      imported_body: "{{ count }} część została pomyślnie zaimportowana!"
       imported_body_plural: "{{ count }} pomyślnie zaimportowane części!"
     obsolete_base: "Aby zachować synchronizację, musisz ponownie załadować plik CSV."
   tutorials:
@@ -763,7 +763,7 @@ tab:
       Wesprzyj ten projekt finansowo!
     contribute: Wspomóż nas
     backers: "{{ count }} darczyńca"
-    backers_plural: "{{ count }} darczyńców"
+    backers_plural: "{{ count }} darczyńcy"
     ad: "Czy lubisz OpenCutList?"
     objective: Cel
     objective_slogan: OpenCutList to my wszyscy
@@ -786,7 +786,7 @@ tab:
 
         Celem tej funkcji jest:
         - umożliwić drukowanie na etykietach samoprzylepnych opisu każdej części rozkroju,
-        - uniknąć błędów przez wyraźne oznaczenie każdej części po cięciu.
+        - uniknięcie błędów przez wyraźne oznaczenie każdej części po cięciu.
     objective_crowdfunding: |
       Rozwój nowych funkcjonalności będzie się odbywał dzięki **crowdfundingowi** i może się rozpocząć po osiągnięciu jego **Celu Finansowego**.
     objective_thanks: |
@@ -807,15 +807,16 @@ tab:
     version: Wersja
     credits: Zasługi techniczne
     credits_authors: |
-      *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Wszyscy [współautorzy] - lista (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Tłumaczenia:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angielski*, *niemiecki*)
       - Vladimir Badulya (*rosyjski*)
       - Pierluigi Colombo (*włoski*)
-      - Nayton Sanches Barbosa (*portugalski*)
+      - Nayton Sanches Barbosa, poprawione i poprawione przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugalski*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*hiszpański*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*czeski*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk i Dominik Szybisz (*polski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

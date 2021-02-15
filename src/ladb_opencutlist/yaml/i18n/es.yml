@@ -1,6 +1,6 @@
 _label: Español
 _reload_msg: "Para poder tener en cuenta los cambios, debes **cerrar** y **reabrir** esta ventana."
-_description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding es fácil de usar;)"
+_description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding es fácil de usar ;)"
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -813,9 +813,10 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
       - Vladimir Badulya (*ruso*)
       - Pierluigi Colombo (*italiano*)
-      - Nayton Sanches Barbosa (*portugués*)
+      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk y Dominik Szybisz (*polaco*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

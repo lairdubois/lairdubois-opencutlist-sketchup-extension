@@ -85,27 +85,14 @@
       if (@options.base_length < EPS || @options.base_width < EPS) && @bins.empty?
         @errors << ERROR_NO_BIN
       end
-      problem_type
       return @errors.empty?
-    end
-
-    def problem_type()
-      total_area = @boxes.inject(0) { |sum, b| sum + b.area() }
-      if (@options.base_length >= EPS && @options.base_width >= EPS)
-        @estimated_nb_bins = total_area/(@options.base_length*@options.base_width)
-        if @estimated_nb_bins > 3
-          puts("   r = #{'%4.2f' % @estimated_nb_bins} => potentially problematic problem!")
-        else
-          puts("   r = #{'%4.2f' % @estimated_nb_bins} => common problem!")
-        end
-      end
     end
 
     #
     # Sets the global start time.
     #
     def start_timer(sigsize)
-      dbg("-> start of packing with #{@boxes.size} box(es), #{@bins.size} bin(s) with #{sigsize} signatures", true)
+      #dbg("-> start of packing with #{@boxes.size} box(es), #{@bins.size} bin(s) with #{sigsize} signatures", true)
       @start_time = Time.now
     end
 
@@ -113,7 +100,7 @@
     # Prints total time used since start_timer.
     #
     def stop_timer(signature_size, msg)
-      dbg("-> end of packing(s) nb = #{signature_size}, time = #{'%6.4f' % (Time.now - @start_time)} s, " + msg, true)
+      #dbg("-> end of packing(s) nb = #{signature_size}, time = #{'%6.4f' % (Time.now - @start_time)} s, " + msg, true)
     end
 
     #
@@ -122,7 +109,7 @@
     def get_signatures_large()
       # Signature size will be the product of all possibilities
       # 8 * 6 * 8 = 384 => 384 * 1 or 3, Max 1152 possibilities.
-      presort = (PRESORT_WIDTH_DECR..PRESORT_ALTERNATING_WIDTHS).to_a # 8
+      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # PRESORT_ALTERNATING_WIDTHS).to_a # 8
       score = (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a # 6
       split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 8
       if @options.stacking_pref <= STACKING_WIDTH
@@ -175,7 +162,7 @@
         s += "#{'%15.2f' % stat[:total_length_cuts]} "
         s += "#{'%6d' % stat[:nb_leftovers]}"
         s += "#{'%22s' % stat[:signature]}"
-        s += "#{'%4d' % gstat[:rank]}"
+        s += "#{'%4d' % gstat[:rank]}/#{'%4d' % gstat[:overall_rank]}"
         dbg(s, true)
       end
       if level == 0
@@ -213,7 +200,7 @@
     # criteria, the packing with the lowest sum of ranks is the
     # winner!
     #
-    def filter_best_packing(packings)
+    def filter_best_x_packings(packings, best_x)
 
       return nil if packings.empty?
       find_min = true
@@ -236,11 +223,8 @@
       # update_ranking_by(packings, :nb_leftovers, find_min)
       # update_ranking_by(packings, :efficiency, !find_min)
 
-      # if stacking is configured, the select based on compactness and nb_leftovers
-      # otherwise just compactness. This produces the "nicest" solutions.
-      # addendum,
+      # Just use compactness as criteria, all others did not yield better results!
       update_ranking_by(packings, :compactness, !find_min)
-      update_ranking_by(packings, :largest_leftover_area, !find_min)
 
       # This should never happen!
       if packings.empty?
@@ -251,9 +235,12 @@
         packings.sort_by! { |packing| packing.gstat[:rank] }
         p = packings.group_by { |packing| packing.gstat[:rank] }
         best_3 = []
-        p.keys[0..2].each do |key|
-          best_3 << p[key].sort_by! { |packing| packing.gstat[:largest_leftover_area]}.first
+        p.keys[0..best_x-1].each do |key|
+          ranked = p[key].sort_by! { |packing| packing.gstat[:largest_leftover_area]}.first
+          ranked.gstat[:overall_rank] += ranked.gstat[:rank]
+          best_3 << ranked
         end
+        best_3.sort_by! { |b| b.gstat[:overall_rank]}
         return best_3
       end
     end
@@ -326,6 +313,8 @@
     #
     def run()
 
+      best_x = 1
+
       if !valid_input? && @errors.size > 0
         return nil, @errors[0]
       end
@@ -338,16 +327,17 @@
       case @options.optimization
       when OPT_MEDIUM
         signatures = get_signatures_medium
+        best_x = BEST_X_SMALL
       when OPT_ADVANCED
         signatures = get_signatures_large
+        best_x = BEST_X_LARGE
       else
         return nil, ERROR_INVALID_INPUT
       end
 
       # Use this to run exactly one signature
       # Parameters are presort, score, split, stacking
-      #signatures = [[1,2,3,1]]
-      #signatures=[[0,2,5,1]]
+      # signatures = [[1,2,3,1]]
 
       # Not a super precise way of measuring compute time.
       start_timer(signatures.size)
@@ -356,11 +346,11 @@
         packings = pack_next(nil, signatures)
         return nil, ERROR_NO_PLACEMENT_POSSIBLE if packings.empty?
 
-        packings = filter_best_packing(packings)
+        packings = filter_best_x_packings(packings, best_x)
         while !packings_done(packings)
           last_packings = packings
           packings = pack_next(packings, signatures)
-          packings = filter_best_packing(packings)
+          packings = filter_best_x_packings(packings, best_x)
         end
         last_packings = packings if packings != nil
 
@@ -377,9 +367,11 @@
 
       @options.set_debug(true)
       stop_timer(signatures.size, "#{last_packings[0].packed_bins.size} bin(s)")
-      #last_packer.sort_bins_by_efficiency #=> deadly to check how algorithm works!
+      # last_packer.sort_bins_by_efficiency #=> deadly to check how algorithm works!
       last_packings.map(&:finish)
+      #print_packings(last_packings)
       # last_packings is an array of 1-3 packings!
+      # For now, just returning the best one.
       return last_packings[0], ERROR_NONE
     end
   end

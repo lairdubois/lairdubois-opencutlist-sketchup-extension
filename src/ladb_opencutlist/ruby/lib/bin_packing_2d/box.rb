@@ -119,6 +119,19 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Return true if this Box is "very" different from another Box, e.g. 10% difference in both directions.
+    #
+    def different?(box)
+      return true if box.nil?
+      if (@length - box.length).abs >= box.length*0.1 && (@width - box.width).abs >= box.width*0.1
+        return true
+      elsif @rotatable && (@length - box.width).abs >= box.length*0.1 && (@width - box.length).abs >= box.width*0.1
+        return true
+      end
+      return false
+    end
+
+    #
     # Returns true if at least one of the dimensions of the two
     # Boxe s are equal.
     #

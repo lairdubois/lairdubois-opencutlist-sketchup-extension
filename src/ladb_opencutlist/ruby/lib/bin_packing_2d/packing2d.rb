@@ -19,6 +19,10 @@
     # Maximum time for execution, beyond that interrupt.
     MAX_TIME = 30
 
+    # Number of best solution to carry for each bin.
+    BEST_X_SMALL = 3
+    BEST_X_LARGE = 2
+
     # Bin has illegal size <= 0, has been ignored.
     WARNING_ILLEGAL_SIZED_BIN = 0
     # Box has illegal size <= 0, has been ignored.
