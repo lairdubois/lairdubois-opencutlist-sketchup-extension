@@ -2454,21 +2454,21 @@
         this.dialog.pullSettings([
 
                 // Defaults
-                SETTING_KEY_LABELS_OPTION_PAGE_WIDTH + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_MARGIN_TOP + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId,
-                SETTING_KEY_LABELS_OPTION_LAYOUT + '_' + groupId,
+                SETTING_KEY_LABELS_OPTION_PAGE_WIDTH,
+                SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT,
+                SETTING_KEY_LABELS_OPTION_MARGIN_TOP,
+                SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT,
+                SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM,
+                SETTING_KEY_LABELS_OPTION_MARGIN_LEFT,
+                SETTING_KEY_LABELS_OPTION_SPACING_H,
+                SETTING_KEY_LABELS_OPTION_SPACING_V,
+                SETTING_KEY_LABELS_OPTION_COL_COUNT,
+                SETTING_KEY_LABELS_OPTION_ROW_COUNT,
+                SETTING_KEY_LABELS_OPTION_CUTTING_MARKS,
+                SETTING_KEY_LABELS_OPTION_LAYOUT,
 
             ],
-            2 /* SETTINGS_RW_STRATEGY_MODEL */,
+            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
             function () {
 
                 rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_labels_options' }, function (response) {
@@ -2480,18 +2480,18 @@
                         var appDefaults = response.defaults;
 
                         var labelsOptions = {
-                            page_width: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_WIDTH + '_' + groupId, appDefaults.page_width),
-                            page_height: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT + '_' + groupId, appDefaults.page_height),
-                            margin_top: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_TOP + '_' + groupId, appDefaults.margin_top),
-                            margin_right: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId, appDefaults.margin_right),
-                            margin_bottom: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId, appDefaults.margin_bottom),
-                            margin_left: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId, appDefaults.margin_left),
-                            spacing_h: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId, appDefaults.spacing_h),
-                            spacing_v: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId, appDefaults.spacing_v),
-                            col_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId, appDefaults.col_count),
-                            row_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId, appDefaults.row_count),
-                            cutting_marks: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId, appDefaults.cutting_marks),
-                            layout: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_LAYOUT + '_' + groupId, appDefaults.layout),
+                            page_width: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_WIDTH, appDefaults.page_width),
+                            page_height: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT, appDefaults.page_height),
+                            margin_top: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_TOP, appDefaults.margin_top),
+                            margin_right: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT, appDefaults.margin_right),
+                            margin_bottom: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM, appDefaults.margin_bottom),
+                            margin_left: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_MARGIN_LEFT, appDefaults.margin_left),
+                            spacing_h: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_H, appDefaults.spacing_h),
+                            spacing_v: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_SPACING_V, appDefaults.spacing_v),
+                            col_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_COL_COUNT, appDefaults.col_count),
+                            row_count: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_ROW_COUNT, appDefaults.row_count),
+                            cutting_marks: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_CUTTING_MARKS, appDefaults.cutting_marks),
+                            layout: that.dialog.getSetting(SETTING_KEY_LABELS_OPTION_LAYOUT, appDefaults.layout),
                         };
 
                         var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
@@ -2646,19 +2646,19 @@
 
                             // Store options
                             that.dialog.setSettings([
-                                { key:SETTING_KEY_LABELS_OPTION_PAGE_WIDTH + '_' + groupId, value:labelsOptions.page_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT + '_' + groupId, value:labelsOptions.page_height, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_TOP + '_' + groupId, value:labelsOptions.margin_top, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT + '_' + groupId, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM + '_' + groupId, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_LEFT + '_' + groupId, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_SPACING_H + '_' + groupId, value:labelsOptions.spacing_h, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_SPACING_V + '_' + groupId, value:labelsOptions.spacing_v, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                                { key:SETTING_KEY_LABELS_OPTION_COL_COUNT + '_' + groupId, value:labelsOptions.col_count },
-                                { key:SETTING_KEY_LABELS_OPTION_ROW_COUNT + '_' + groupId, value:labelsOptions.row_count },
-                                { key:SETTING_KEY_LABELS_OPTION_CUTTING_MARKS + '_' + groupId, value:labelsOptions.cutting_marks },
-                                { key:SETTING_KEY_LABELS_OPTION_LAYOUT + '_' + groupId, value:labelsOptions.layout },
-                            ], 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+                                { key:SETTING_KEY_LABELS_OPTION_PAGE_WIDTH, value:labelsOptions.page_width, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_PAGE_HEIGHT, value:labelsOptions.page_height, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_TOP, value:labelsOptions.margin_top, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_RIGHT, value:labelsOptions.margin_right, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_BOTTOM, value:labelsOptions.margin_bottom, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_MARGIN_LEFT, value:labelsOptions.margin_left, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_SPACING_H, value:labelsOptions.spacing_h, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_SPACING_V, value:labelsOptions.spacing_v, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
+                                { key:SETTING_KEY_LABELS_OPTION_COL_COUNT, value:labelsOptions.col_count },
+                                { key:SETTING_KEY_LABELS_OPTION_ROW_COUNT, value:labelsOptions.row_count },
+                                { key:SETTING_KEY_LABELS_OPTION_CUTTING_MARKS, value:labelsOptions.cutting_marks },
+                                { key:SETTING_KEY_LABELS_OPTION_LAYOUT, value:labelsOptions.layout },
+                            ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
 
                             rubyCallCommand('core_length_to_float', {
                                 page_width: labelsOptions.page_width,
