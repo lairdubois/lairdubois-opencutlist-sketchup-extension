@@ -9,8 +9,6 @@
     var SETTING_KEY_OPTION_PREFIX = 'materials.option.';
     var SETTING_KEY_OPTION_PREFIX_TYPE = SETTING_KEY_OPTION_PREFIX + 'type_';
 
-    var SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY = SETTING_KEY_OPTION_PREFIX + 'material_order_strategy';
-
     var SETTING_KEY_OPTION_SUFFIX_THICKNESS = '_thickness';
     var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
     var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
@@ -569,36 +567,16 @@
     LadbTabMaterials.prototype.loadOptions = function (callback) {
         var that = this;
 
-        this.dialog.pullSettings([
+        rubyCallCommand('core_get_model_preset', { dictionary: 'materials_options' }, function (response) {
 
-                SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY
+            that.generateOptions = response.preset;
 
-            ],
-            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
-            function () {
+            // Callback
+            if (callback && typeof(callback) === 'function') {
+                callback();
+            }
 
-                rubyCallCommand('core_get_app_defaults', { dictionary: 'materials_options' }, function (response) {
-
-                    if (response.errors && response.errors.length > 0) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
-
-                        var appDefaults = response.defaults;
-
-                        that.generateOptions = {
-                            material_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, appDefaults.material_order_strategy)
-                        };
-
-                        // Callback
-                        if (callback && typeof(callback) === 'function') {
-                            callback();
-                        }
-
-                    }
-
-                });
-
-            });
+        });
 
     };
 
@@ -685,9 +663,8 @@
             that.generateOptions.material_order_strategy = properties.join('>');
 
             // Store options
-            that.dialog.setSettings([
-                { key:SETTING_KEY_OPTION_MATERIAL_ORDER_STRATEGY, value:that.generateOptions.material_order_strategy },
-            ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
+            rubyCallCommand('core_set_model_preset', { dictionary: 'materials_options', values: that.generateOptions });
+            rubyCallCommand('core_set_global_preset', { dictionary: 'materials_options', values: that.generateOptions });
 
             // Hide modal
             $modal.modal('hide');

@@ -1,10 +1,15 @@
 {
+  "_storages": {
+    "std_sheet": 2, /* SETTINGS_STORAGE_MODEL_ONLY */
+    "scrap_sheet_sizes": 2 /* SETTINGS_STORAGE_MODEL_ONLY */
+  },
   "_preprocessors": {
-    "scrap_sheet_sizes": 4 /* SETTINGS_PREPROCESSOR_DXDXQ */,
-    "saw_kerf": 1 /* SETTINGS_PREPROCESSOR_D */,
-    "trimming": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "scrap_sheet_sizes": 4, /* SETTINGS_PREPROCESSOR_DXDXQ */
+    "saw_kerf": 1, /* SETTINGS_PREPROCESSOR_D */
+    "trimming": 1 /* SETTINGS_PREPROCESSOR_D */
   },
   "0": {
+    "std_sheet": "",
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "1/8\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
