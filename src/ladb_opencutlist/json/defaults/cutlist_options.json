@@ -1,4 +1,7 @@
 {
+  "_storages": {
+    "hidden_group_ids": 2 /* SETTINGS_STORAGE_MODEL_ONLY */
+  },
   "0": {
     "auto_orient": true,
     "smart_material": true,
@@ -15,6 +18,7 @@
     "hide_edges": true,
     "minimize_on_highlight": true,
     "part_order_strategy": "-thickness>-length>-width>-count>name>-edge_pattern",
-    "dimension_column_order_strategy": "length>width>thickness"
+    "dimension_column_order_strategy": "length>width>thickness",
+    "hidden_group_ids": []
   }
 }

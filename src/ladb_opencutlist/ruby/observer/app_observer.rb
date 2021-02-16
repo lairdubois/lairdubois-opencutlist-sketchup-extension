@@ -23,21 +23,39 @@ module Ladb::OpenCutList
     def onNewModel(model)
       # puts "onNewModel: #{model}"
       Plugin.instance.trigger_event(ON_NEW_MODEL, nil)
+
+      # Clear model presets cache
+      Plugin.instance.clear_model_presets_cache
+
+      # Fetch new length options
       DimensionUtils.instance.fetch_length_options
+
       add_model_observers(model)
     end
 
     def onOpenModel(model)
       # puts "onOpenModel: #{model}"
       Plugin.instance.trigger_event(ON_OPEN_MODEL, { :name => model.name })
+
+      # Clear model presets cache
+      Plugin.instance.clear_model_presets_cache
+
+      # Fetch new length options
       DimensionUtils.instance.fetch_length_options
+
       add_model_observers(model)
     end
 
     def onActivateModel(model)
       # puts "onActivateModel: #{model}"
       Plugin.instance.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
+
+      # Clear model presets cache
+      Plugin.instance.clear_model_presets_cache
+
+      # Fetch new length options
       DimensionUtils.instance.fetch_length_options
+
     end
 
     # -----

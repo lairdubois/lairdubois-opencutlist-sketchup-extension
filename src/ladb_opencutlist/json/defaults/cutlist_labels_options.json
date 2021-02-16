@@ -1,4 +1,14 @@
 {
+  "_preprocessors": {
+    "page_width": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "page_height": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "margin_top": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "margin_right": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "margin_bottom": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "margin_left": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "spacing_h": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "spacing_v": 1 /* SETTINGS_PREPROCESSOR_D */
+  },
   "0": {
     "page_width": { "metric" : "210mm", "imperial" : "8.5\"" },
     "page_height": { "metric" : "297mm", "imperial" : "11\"" },

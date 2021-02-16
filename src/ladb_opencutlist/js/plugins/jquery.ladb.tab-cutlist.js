@@ -236,7 +236,7 @@
                 }
             }
             if (hiddenGroupIdsLength > that.generateOptions.hidden_group_ids.length) {
-                that.dialog.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, that.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+                that.saveUIOptionsHiddenGroupIds();
             }
 
             // Bind inputs
@@ -1624,7 +1624,8 @@
     };
 
     LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function () {
-        this.dialog.setSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, this.generateOptions.hidden_group_ids, 2 /* SETTINGS_RW_STRATEGY_MODEL */);
+        // TODO find a best way to save hidden IDs without saving all options
+        rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_options', values: this.generateOptions });
     };
 
     LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings) {
@@ -1705,6 +1706,15 @@
 
         var group = this.findGroupById(groupId);
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+
+        // Retrieve cutting diagram options
+        // rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_options', section: groupId }, function (response) {
+        //
+        //     var cuttingdiagram1dOptions = response.preset;
+        //
+        //     console.log(cuttingdiagram1dOptions);
+        //
+        // });
 
         // Retrieve cutting diagram options
         this.dialog.pullSettings([
@@ -2843,66 +2853,22 @@
     LadbTabCutlist.prototype.loadOptions = function (callback) {
         var that = this;
 
-        this.dialog.pullSettings([
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_options' }, function (response) {
 
-                SETTING_KEY_OPTION_AUTO_ORIENT,
-                SETTING_KEY_OPTION_SMART_MATERIAL,
-                SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME,
-                SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS,
-                SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP,
-                SETTING_KEY_OPTION_PART_FOLDING,
-                SETTING_KEY_OPTION_HIDE_ENTITY_NAMES,
-                SETTING_KEY_OPTION_HIDE_TAGS,
-                SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS,
-                SETTING_KEY_OPTION_HIDE_FINAL_AREAS,
-                SETTING_KEY_OPTION_HIDE_EDGES,
-                SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT,
-                SETTING_KEY_OPTION_PART_ORDER_STRATEGY,
-                SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY,
-                SETTING_KEY_OPTION_HIDDEN_GROUP_IDS
+            if (response.errors && response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
+            } else {
 
-            ],
-            3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */,
-            function () {
+                that.generateOptions = response.preset;
 
-                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_options' }, function (response) {
+                // Callback
+                if (callback && typeof(callback) === 'function') {
+                    callback();
+                }
 
-                    if (response.errors && response.errors.length > 0) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
+            }
 
-                        var appDefaults = response.defaults;
-
-                        that.generateOptions = {
-                            auto_orient: that.dialog.getSetting(SETTING_KEY_OPTION_AUTO_ORIENT, appDefaults.auto_orient),
-                            smart_material: that.dialog.getSetting(SETTING_KEY_OPTION_SMART_MATERIAL, appDefaults.smart_material),
-                            dynamic_attributes_name: that.dialog.getSetting(SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, appDefaults.dynamic_attributes_name),
-                            part_number_with_letters: that.dialog.getSetting(SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, appDefaults.part_number_with_letters),
-                            part_number_sequence_by_group: that.dialog.getSetting(SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, appDefaults.part_number_sequence_by_group),
-                            part_folding: that.dialog.getSetting(SETTING_KEY_OPTION_PART_FOLDING, appDefaults.part_folding),
-                            hide_entity_names: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, appDefaults.hide_entity_names),
-                            hide_tags: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_TAGS, appDefaults.hide_tags),
-                            hide_cutting_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, appDefaults.hide_cutting_dimensions),
-                            hide_bbox_dimensions: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, appDefaults.hide_bbox_dimensions),
-                            hide_final_areas: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_FINAL_AREAS, appDefaults.hide_final_areas),
-                            hide_edges: that.dialog.getSetting(SETTING_KEY_OPTION_HIDE_EDGES, appDefaults.hide_edges),
-                            minimize_on_highlight: that.dialog.getSetting(SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, appDefaults.minimize_on_highlight),
-                            part_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_PART_ORDER_STRATEGY, appDefaults.part_order_strategy),
-                            dimension_column_order_strategy: that.dialog.getSetting(SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, appDefaults.dimension_column_order_strategy),
-                            hidden_group_ids: that.dialog.getSetting(SETTING_KEY_OPTION_HIDDEN_GROUP_IDS, [])
-                        };
-
-                        // Callback
-                        if (callback && typeof(callback) === 'function') {
-                            callback();
-                        }
-
-                    }
-
-                });
-
-            });
+        });
 
     };
 
@@ -3007,23 +2973,7 @@
 
                     var appDefaults = response.defaults;
 
-                    var generateOptions = $.extend($.extend({}, that.generateOptions), {
-                        auto_orient: appDefaults.auto_orient,
-                        smart_material: appDefaults.smart_material,
-                        dynamic_attributes_name: appDefaults.dynamic_attributes_name,
-                        part_number_with_letters: appDefaults.part_number_with_letters,
-                        part_number_sequence_by_group: appDefaults.part_number_sequence_by_group,
-                        part_folding: appDefaults.part_folding,
-                        hide_entity_names: appDefaults.hide_entity_names,
-                        hide_tags: appDefaults.hide_tags,
-                        hide_cutting_dimensions: appDefaults.hide_cutting_dimensions,
-                        hide_bbox_dimensions: appDefaults.hide_bbox_dimensions,
-                        hide_final_areas: appDefaults.hide_final_areas,
-                        hide_edges: appDefaults.hide_edges,
-                        minimize_on_highlight: appDefaults.minimize_on_highlight,
-                        part_order_strategy: appDefaults.part_order_strategy,
-                        dimension_column_order_strategy: appDefaults.dimension_column_order_strategy
-                    });
+                    var generateOptions = $.extend($.extend({}, that.generateOptions), appDefaults);
                     fnPopulateOptionsInputs(generateOptions);
 
                 }
@@ -3062,23 +3012,8 @@
             that.generateOptions.dimension_column_order_strategy = properties.join('>');
 
             // Store options
-            that.dialog.setSettings([
-                { key:SETTING_KEY_OPTION_AUTO_ORIENT, value:that.generateOptions.auto_orient },
-                { key:SETTING_KEY_OPTION_SMART_MATERIAL, value:that.generateOptions.smart_material },
-                { key:SETTING_KEY_OPTION_DYNAMIC_ATTRIBUTES_NAME, value:that.generateOptions.dynamic_attributes_name },
-                { key:SETTING_KEY_OPTION_PART_NUMBER_WITH_LETTERS, value:that.generateOptions.part_number_with_letters },
-                { key:SETTING_KEY_OPTION_PART_NUMBER_SEQUENCE_BY_GROUP, value:that.generateOptions.part_number_sequence_by_group },
-                { key:SETTING_KEY_OPTION_PART_FOLDING, value:that.generateOptions.part_folding },
-                { key:SETTING_KEY_OPTION_HIDE_ENTITY_NAMES, value:that.generateOptions.hide_entity_names },
-                { key:SETTING_KEY_OPTION_HIDE_TAGS, value:that.generateOptions.hide_tags },
-                { key:SETTING_KEY_OPTION_HIDE_CUTTING_DIMENSIONS, value:that.generateOptions.hide_cutting_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_BBOX_DIMENSIONS, value:that.generateOptions.hide_bbox_dimensions },
-                { key:SETTING_KEY_OPTION_HIDE_FINAL_AREAS, value:that.generateOptions.hide_final_areas },
-                { key:SETTING_KEY_OPTION_HIDE_EDGES, value:that.generateOptions.hide_edges },
-                { key:SETTING_KEY_OPTION_MINIMIZE_ON_HIGHLIGHT, value:that.generateOptions.minimize_on_highlight },
-                { key:SETTING_KEY_OPTION_PART_ORDER_STRATEGY, value:that.generateOptions.part_order_strategy },
-                { key:SETTING_KEY_OPTION_DIMENSION_COLUMN_ORDER_STRATEGY, value:that.generateOptions.dimension_column_order_strategy }
-            ], 3 /* SETTINGS_RW_STRATEGY_MODEL_GLOBAL */);
+            rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_options', values: that.generateOptions });
+            rubyCallCommand('core_set_global_preset', { dictionary: 'cutlist_options', values: that.generateOptions });
 
             // Hide modal
             $modal.modal('hide');

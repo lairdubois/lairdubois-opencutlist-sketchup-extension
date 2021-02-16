@@ -1,4 +1,9 @@
 {
+  "_preprocessors": {
+    "scrap_sheet_sizes": 4 /* SETTINGS_PREPROCESSOR_DXDXQ */,
+    "saw_kerf": 1 /* SETTINGS_PREPROCESSOR_D */,
+    "trimming": 1 /* SETTINGS_PREPROCESSOR_D */,
+  },
   "0": {
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "1/8\"" },

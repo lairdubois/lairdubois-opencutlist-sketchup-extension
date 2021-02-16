@@ -27,15 +27,23 @@ module Ladb::OpenCutList
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     SU_ATTRIBUTE_DICTIONARY = 'SU_DefinitionSet'.freeze
 
+    PRESETS_KEY = 'presets'.freeze
+    PRESETS_DEFAULT_NAME = '_default'.freeze
+
     SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults
     SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes
     SETTINGS_RW_STRATEGY_MODEL = 2                # Read/Write settings from/to active model attributes
     SETTINGS_RW_STRATEGY_MODEL_GLOBAL = 3         # Read/Write settings from/to active model attributes and (if undefined from)/to global Sketchup defaults
 
+    SETTINGS_PREPROCESSOR_NONE = 0
     SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
     SETTINGS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
     SETTINGS_PREPROCESSOR_DXD = 3                 # 2D dimension
     SETTINGS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
+
+    SETTINGS_STORAGE_ALL = 0
+    SETTINGS_STORAGE_GLOBAL_ONLY = 1              # Value stored in global presets only
+    SETTINGS_STORAGE_MODEL_ONLY = 2               # Value stored in model presets only
 
     SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
@@ -169,7 +177,7 @@ module Ladb::OpenCutList
       @app_defaults_cache = nil
     end
 
-    def get_app_defaults(dictionary, section = nil)
+    def get_app_defaults(dictionary, section = nil, raise_not_found = true)
 
       section = '0' if section.nil?
       section = section.to_s
@@ -181,6 +189,7 @@ module Ladb::OpenCutList
         begin
           file = File.open(file_path)
           data = JSON.load(file)
+          file.close
         rescue => e
           raise "Error loading defaults file (file='#{file_path}') : #{e.message}."
         end
@@ -201,10 +210,10 @@ module Ladb::OpenCutList
             defaults.store(key, value)
           end
         else
-          raise "Error loading defaults file (file='#{file_path}') : Section not found (section=#{section})."
+          if raise_not_found
+            raise "Error loading defaults file (file='#{file_path}') : Section not found (section=#{section})."
+          end
         end
-
-        file.close
 
         # Cache loaded defaults
         unless @app_defaults_cache
@@ -256,6 +265,248 @@ module Ladb::OpenCutList
 
     def read_default(key, default_value = nil, section = DEFAULT_SECTION)
       Sketchup.read_default(section, key, default_value)
+    end
+
+    # -----
+
+    @global_presets_cache = nil
+    @model_presets_cache = nil
+
+    def _process_preset_values_with_app_defaults(dictionary, section, values, is_global)
+
+      # Try to synchronize values with app defaults
+      begin
+        app_defaults = get_app_defaults(dictionary, section)
+        preprocessors = get_app_defaults(dictionary, '_preprocessors', false)
+        storages = get_app_defaults(dictionary, '_storages', false)
+        processed_values = {}
+        values.keys.each do |key|
+
+          storage = storages.has_key?(key) ? storages[key] : SETTINGS_STORAGE_ALL
+
+          if app_defaults.has_key?(key) && # Only if exists in app defaults
+              (storage == SETTINGS_STORAGE_ALL ||
+              (is_global && storage == SETTINGS_STORAGE_GLOBAL_ONLY) ||
+              (!is_global && storage == SETTINGS_STORAGE_MODEL_ONLY))
+
+            case preprocessors[key]
+              when SETTINGS_PREPROCESSOR_D
+                processed_values[key] = DimensionUtils.instance.d_add_units(values[key])
+              when SETTINGS_PREPROCESSOR_DXQ
+                processed_values[key] = DimensionUtils.instance.dxq_add_units(values[key])
+              when SETTINGS_PREPROCESSOR_DXD
+                processed_values[key] = DimensionUtils.instance.dxd_add_units(values[key])
+              when SETTINGS_PREPROCESSOR_DXDXQ
+                processed_values[key] = DimensionUtils.instance.dxdxq_add_units(values[key])
+            else
+              processed_values[key] = values[key]
+            end
+
+          end
+
+        end
+      rescue => e
+
+        raise e
+
+        # App defaults don't contain the given dictionary and/or section. Values stays unchanged.
+        processed_values = values
+
+      end
+      processed_values
+    end
+
+    def _merge_preset_values_with_defaults(values, default_values)
+      merged_values = {}
+      if default_values
+        default_values.keys.each do |key|
+          if values.has_key?(key)
+            merged_values[key] = values[key]
+          else
+            merged_values[key] = default_values[key]
+          end
+        end
+      else
+        merged_values = values
+      end
+      merged_values
+    end
+
+    def read_global_presets
+      @global_presets_cache = read_default(PRESETS_KEY, {})
+    end
+
+    def write_global_presets
+      write_default(PRESETS_KEY, @global_presets_cache)
+    end
+
+    def set_global_preset(dictionary, values, name = nil, section = nil)
+
+      name = PRESETS_DEFAULT_NAME if name.nil?
+      section = '0' if section.nil?
+
+      # Read global presets cache if not previouly cached
+      read_global_presets if @global_presets_cache.nil?
+
+      # Create preset tree if it desn't exists
+      unless @global_presets_cache.has_key?(dictionary)
+        @global_presets_cache[dictionary] = {}
+      end
+      unless @global_presets_cache[dictionary].has_key?(section)
+        @global_presets_cache[dictionary][section] = {}
+      end
+
+      if values.nil?
+
+        # Remove preset if values is nil
+        @global_presets_cache[dictionary][section].delete(name)
+        @global_presets_cache[dictionary].delete(section) if @global_presets_cache[dictionary][section].empty?
+        @global_presets_cache.delete(dictionary) if @global_presets_cache[dictionary].empty?
+
+      else
+
+        @global_presets_cache[dictionary][section][name] = _process_preset_values_with_app_defaults(dictionary, section, values, true)
+
+      end
+
+      # Store presets to SU defaults
+      write_global_presets
+    end
+
+    def get_global_preset(dictionary, name = nil, section = nil)
+
+      name = PRESETS_DEFAULT_NAME if name.nil?
+      section = '0' if section.nil?
+
+      # Read global presets cache if not previouly cached
+      read_global_presets if @global_presets_cache.nil?
+
+      if name == PRESETS_DEFAULT_NAME
+        begin
+          default_values = get_app_defaults(dictionary, section)
+        rescue => e
+          # App defaults don't contain the given dictionary and/or section. Returns nil.
+          return nil
+        end
+      else
+        default_values = get_global_preset(dictionary, nil, section)
+      end
+      if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section) && @global_presets_cache[dictionary][section].has_key?(name)
+
+        # Preset exists, synchronize returned values with default_values data and structure
+        values = _merge_preset_values_with_defaults(@global_presets_cache[dictionary][section][name], default_values)
+
+      else
+
+        # Preset doesn't exists, return default_values
+        values = default_values
+
+      end
+      values
+    end
+
+    def list_global_preset_dictionaries
+      read_global_presets if @global_presets_cache.nil?
+      @global_presets_cache.keys
+    end
+
+    def list_global_preset_sections(dictionary)
+      read_global_presets if @global_presets_cache.nil?
+      return @global_presets_cache[dictionary].keys if @global_presets_cache.has_key?(dictionary)
+      []
+    end
+
+    def list_global_preset_names(dictionary, section = nil)
+      section = '0' if section.nil?
+      read_global_presets if @global_presets_cache.nil?
+      return @global_presets_cache[dictionary][section].keys if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
+      []
+    end
+
+    # -----
+
+    def clear_model_presets_cache
+      @model_presets_cache = nil
+    end
+
+    def read_model_presets
+      @model_presets_cache = get_attribute(Sketchup.active_model, PRESETS_KEY, {})
+    end
+
+    def write_model_presets
+      # Start model modification operation
+      Sketchup.active_model.start_operation('write_model_presets', true, false, true)
+
+      set_attribute(Sketchup.active_model, PRESETS_KEY, @model_presets_cache)
+
+      # Commit model modification operation
+      Sketchup.active_model.commit_operation
+    end
+
+    def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil)
+
+      section = '0' if section.nil?
+      app_defaults_section = '0' if app_defaults_section.nil?
+
+      # Read model presets cache if not previouly cached
+      read_model_presets if @model_presets_cache.nil?
+
+      # Create preset tree if it desn't exists
+      unless @model_presets_cache.has_key?(dictionary)
+        @model_presets_cache[dictionary] = {}
+      end
+      unless @model_presets_cache[dictionary].has_key?(section)
+        @model_presets_cache[dictionary][section] = {}
+      end
+
+      if values.nil?
+
+        # Remove preset if values is nil
+        @model_presets_cache[dictionary].delete(section)
+        @model_presets_cache.delete(dictionary) if @model_presets_cache[dictionary].empty?
+
+      else
+
+        @model_presets_cache[dictionary][section] = _process_preset_values_with_app_defaults(dictionary, app_defaults_section, values, false)
+
+      end
+
+      # Store presets to SU defaults
+      write_model_presets
+    end
+
+    def get_model_preset(dictionary, section = nil, app_defaults_section = nil)
+
+      section = '0' if section.nil?
+      app_defaults_section = '0' if app_defaults_section.nil?
+
+      # Read model presets cache if not previouly cached
+      read_model_presets if @model_presets_cache.nil?
+
+      default_values = get_global_preset(dictionary, nil, app_defaults_section)
+      if @model_presets_cache.has_key?(dictionary) && @model_presets_cache[dictionary].has_key?(section)
+
+        # Preset exists, synchronize returned values with default_values data and structure
+        values = _merge_preset_values_with_defaults(@model_presets_cache[dictionary][section], default_values)
+
+      else
+
+        # Preset doesn't exists, return default_values
+        values = default_values
+
+      end
+      values
+    end
+
+    def list_model_preset_dictionaries
+      read_model_presets if @model_presets_cache.nil?
+      @model_presets_cache.keys
+    end
+
+    def list_model_preset_sections(dictionary)
+      read_model_presets if @model_presets_cache.nil?
+      return @model_presets_cache[dictionary].keys if @model_presets_cache.has_key?(dictionary)
+      []
     end
 
     # -----
@@ -408,6 +659,18 @@ module Ladb::OpenCutList
         end
         register_command('core_get_app_defaults') do |params|
           get_app_defaults_command(params)
+        end
+        register_command('core_set_global_preset') do |params|
+          set_global_preset_command(params)
+        end
+        register_command('core_get_global_preset') do |params|
+          get_global_preset_command(params)
+        end
+        register_command('core_set_model_preset') do |params|
+          set_model_preset_command(params)
+        end
+        register_command('core_get_model_preset') do |params|
+          get_model_preset_command(params)
         end
         register_command('core_read_settings') do |params|
           read_settings_command(params)
@@ -778,6 +1041,40 @@ module Ladb::OpenCutList
       section = params['section']
 
       { :defaults => get_app_defaults(dictionary, section) }
+    end
+
+    def set_global_preset_command(params) # Waiting params = { dictionary: DICTIONARY, values: VALUES, name: NAME, section: SECTION }
+      dictionary = params['dictionary']
+      values = params['values']
+      name = params['name']
+      section = params['section']
+
+      set_global_preset(dictionary, values, name, section)
+    end
+
+    def get_global_preset_command(params) # Waiting params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
+      dictionary = params['dictionary']
+      name = params['name']
+      section = params['section']
+
+      { :preset => get_global_preset(dictionary, name, section) }
+    end
+
+    def set_model_preset_command(params) # Waiting params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
+      dictionary = params['dictionary']
+      values = params['values']
+      section = params['section']
+      app_default_section = params['app_default_section']
+
+      set_model_preset(dictionary, values, section, app_default_section)
+    end
+
+    def get_model_preset_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
+      dictionary = params['dictionary']
+      section = params['section']
+      app_default_section = params['app_default_section']
+
+      { :preset => get_model_preset(dictionary, section, app_default_section) }
     end
 
     def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
