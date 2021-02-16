@@ -419,7 +419,7 @@ module Ladb::OpenCutList
     def list_global_preset_names(dictionary, section = nil)
       section = '0' if section.nil?
       read_global_presets if @global_presets_cache.nil?
-      return @global_presets_cache[dictionary][section].keys if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
+      return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME } if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
       []
     end
 
@@ -665,6 +665,9 @@ module Ladb::OpenCutList
         end
         register_command('core_get_global_preset') do |params|
           get_global_preset_command(params)
+        end
+        register_command('core_list_global_preset_names') do |params|
+          list_global_preset_names_command(params)
         end
         register_command('core_set_model_preset') do |params|
           set_model_preset_command(params)
@@ -1058,6 +1061,13 @@ module Ladb::OpenCutList
       section = params['section']
 
       { :preset => get_global_preset(dictionary, name, section) }
+    end
+
+    def list_global_preset_names_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION }
+      dictionary = params['dictionary']
+      section = params['section']
+
+      { :names => list_global_preset_names(dictionary, section) }
     end
 
     def set_model_preset_command(params) # Waiting params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }

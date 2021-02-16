@@ -2247,7 +2247,7 @@
         }
 
         // Retrieve label options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options' }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {
 
             var labelsOptions = response.preset;
 
@@ -2258,8 +2258,7 @@
             }, true);
 
             // Fetch UI elements
-            var $btnDefaultsReset = $('#ladb_btn_defaults_reset', $modal);
-            var $btnLabels = $('#ladb_btn_labels', $modal);
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $labelEditor = $('#ladb_label_editor', $modal);
             var $selectPageFormat = $('#ladb_select_page_format', $modal);
             var $inputPageWidth = $('#ladb_input_page_width', $modal);
@@ -2273,6 +2272,7 @@
             var $inputColCount = $('#ladb_input_col_count', $modal);
             var $inputRowCount = $('#ladb_input_row_count', $modal);
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
+            var $btnLabels = $('#ladb_btn_labels', $modal);
 
             var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
 
@@ -2295,6 +2295,44 @@
 
             }
 
+            $widgetPreset.ladbPresetWidget({
+                dictionary: 'cutlist_labels_options',
+                fnPopulateValues: function () {
+                    return {
+                        page_width: $inputPageWidth.val(),
+                        page_height: $inputPageHeight.val(),
+                        margin_top: $inputMarginTop.val(),
+                        margin_right: $inputMarginRight.val(),
+                        margin_bottom: $inputMarginBottom.val(),
+                        margin_left: $inputMarginLeft.val(),
+                        spacing_h: $inputSpacingH.val(),
+                        spacing_v: $inputSpacingV.val(),
+                        col_count: $inputColCount.val(),
+                        row_count: $inputRowCount.val(),
+                        cutting_marks: $selectCuttingMarks.val() === '1',
+                        layout: $labelEditor.ladbLabelEditor('getElementDefs'),
+                    };
+                },
+                fnPopulateInputs: function (preset) {
+                    $inputPageWidth.val(preset.page_width);
+                    $inputPageHeight.val(preset.page_height);
+                    $inputMarginTop.val(preset.margin_top);
+                    $inputMarginRight.val(preset.margin_right);
+                    $inputMarginBottom.val(preset.margin_bottom);
+                    $inputMarginLeft.val(preset.margin_left);
+                    $inputSpacingH.val(preset.spacing_h);
+                    $inputSpacingV.val(preset.spacing_v);
+                    $inputColCount.val(preset.col_count);
+                    $inputRowCount.val(preset.row_count);
+                    $selectCuttingMarks.selectpicker('val', preset.cutting_marks ? '1' : '0');
+                    fnComputeLabelSize(preset.page_width, preset.page_height, preset.margin_top, preset.margin_right, preset.margin_bottom, preset.margin_left, preset.spacing_h, preset.spacing_v, preset.col_count, preset.row_count, function (labelWidth, labelHeight) {
+                        $labelEditor.ladbLabelEditor('updateSizeAndElementDefs', [ labelWidth, labelHeight, preset.layout ]);
+                    });
+                },
+                fnOnSaved: function (name) {
+                    that.dialog.notify('Saved to ' + name, 'success');
+                }
+            })
             $labelEditor.ladbLabelEditor({
                 filename: that.filename,
                 pageLabel: that.pageLabel,
@@ -2367,25 +2405,6 @@
             });
 
             // Bind buttons
-            $btnDefaultsReset.on('click', function () {
-                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_labels_options' }, function (response) {
-                    $inputPageWidth.val(response.defaults.page_width);
-                    $inputPageHeight.val(response.defaults.page_height);
-                    $inputMarginTop.val(response.defaults.margin_top);
-                    $inputMarginRight.val(response.defaults.margin_right);
-                    $inputMarginBottom.val(response.defaults.margin_bottom);
-                    $inputMarginLeft.val(response.defaults.margin_left);
-                    $inputSpacingH.val(response.defaults.spacing_h);
-                    $inputSpacingV.val(response.defaults.spacing_v);
-                    $inputColCount.val(response.defaults.col_count);
-                    $inputRowCount.val(response.defaults.row_count);
-                    $selectCuttingMarks.selectpicker('val', response.defaults.cutting_marks ? '1' : '0');
-                    fnComputeLabelSize(response.defaults.page_width, response.defaults.page_height, response.defaults.margin_top, response.defaults.margin_right, response.defaults.margin_bottom, response.defaults.margin_left, response.defaults.spacing_h, response.defaults.spacing_v, response.defaults.col_count, response.defaults.row_count, function (labelWidth, labelHeight) {
-                        $labelEditor.ladbLabelEditor('updateSizeAndElementDefs', [ labelWidth, labelHeight, response.defaults.layout ]);
-                    });
-                });
-                $(this).blur();
-            });
             $btnLabels.on('click', function () {
 
                 // Fetch options
@@ -2404,8 +2423,7 @@
                 labelsOptions.layout = $labelEditor.ladbLabelEditor('getElementDefs');
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_labels_options', values: labelsOptions });
-                rubyCallCommand('core_set_global_preset', { dictionary: 'cutlist_labels_options', values: labelsOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_labels_options', values: labelsOptions, section: groupId });
 
                 rubyCallCommand('core_length_to_float', {
                     page_width: labelsOptions.page_width,
@@ -2603,6 +2621,7 @@
         var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
 
         // Fetch UI elements
+        var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
         var $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
         var $inputDynamicAttributesName = $('#ladb_input_dynamic_attributes_name', $modal);
@@ -2618,7 +2637,6 @@
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
-        var $btnReset = $('#ladb_cutlist_options_reset', $modal);
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
         // Define useful functions
@@ -2686,26 +2704,34 @@
 
         };
 
+        $widgetPreset.ladbPresetWidget({
+            dictionary: 'cutlist_options',
+            fnPopulateValues: function () {
+                return {
+                    auto_orient: $inputAutoOrient.is(':checked'),
+                    smart_material: $inputSmartMaterial.is(':checked'),
+                    dynamic_attributes_name: $inputDynamicAttributesName.is(':checked'),
+                    part_number_with_letters: $inputPartNumberWithLetters.is(':checked'),
+                    part_number_sequence_by_group: $inputPartNumberSequenceByGroup.is(':checked'),
+                    part_folding: $inputPartFolding.is(':checked'),
+                    hide_entity_names: $inputHideInstanceNames.is(':checked'),
+                    hide_tags: $inputHideTags.is(':checked'),
+                    hide_cutting_dimensions: $inputHideCuttingDimensions.is(':checked'),
+                    hide_bbox_dimensions: $inputHideBBoxDimensions.is(':checked'),
+                    hide_final_areas: $inputHideFinalAreas.is(':checked'),
+                    hide_edges: $inputHideEdges.is(':checked'),
+                    minimize_on_highlight: $inputMinimizeOnHighlight.is(':checked'),
+                };
+            },
+            fnPopulateInputs: function (preset) {
+                fnPopulateOptionsInputs(preset);
+            },
+            fnOnSaved: function (name) {
+                that.dialog.notify('Saved to ' + name, 'success');
+            }
+        })
+
         // Bind buttons
-        $btnReset.on('click', function () {
-            $(this).blur();
-
-            rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_options' }, function (response) {
-
-                if (response.errors && response.errors.length > 0) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    var appDefaults = response.defaults;
-
-                    var generateOptions = $.extend($.extend({}, that.generateOptions), appDefaults);
-                    fnPopulateOptionsInputs(generateOptions);
-
-                }
-
-            });
-
-        });
         $btnUpdate.on('click', function () {
 
             // Fetch options

@@ -5,6 +5,7 @@
 
 {% block headerInner %}
     {{ parent() }}
+    {% include 'core/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
@@ -125,7 +126,7 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
+{#    <button type="button" class="btn btn-default pull-left" id="ladb_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>#}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_labels">{{ 'tab.cutlist.labels.title'|i18next }}</button>
 {% endblock %}

@@ -5,7 +5,7 @@
   "0": {
     "auto_orient": true,
     "smart_material": true,
-    "dynamic_attribute_name": false,
+    "dynamic_attributes_name": false,
     "part_number_with_letters": true,
     "part_number_sequence_by_group": true,
     "part_folding": false,
