@@ -97,6 +97,17 @@ core:
     error:
       download: Erreur lors du téléchargement de l'archive.
       unzip: Erreur lors de la décompression de l'archive.
+  preset:
+    save_to: Enregistrer vers
+    restore_from: Restorer depuis
+    new: Nouvelle configuration
+    user_default: Configuration par défaut
+    app_default: Configuration d'origine
+    add_prompt: Nom de la configuration
+    delete_confirm: Confirmez la suppression de la configuration "{{ name }}" ?
+    override_confirm: Souhaitez-vous remplacer la configuration "{{ name }}" ?
+    save_success: Configuration **"{{ name }}"** enregistrée
+    delete_success: Configuration **"{{ name }}"** supprimée
 tab:
   cutlist:
     label: Débit

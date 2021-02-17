@@ -4,10 +4,10 @@
             <i class="ladb-opencutlist-icon-save"></i> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li class="dropdown-header dropdown-header-top"><i class="ladb-opencutlist-icon-save"></i> Enregistrer vers ...</li>
-            <li><a href="#" class="ladb-widget-preset-btn-user-default"><strong>Configuration par défaut</strong></a></li>
+            <li class="dropdown-header dropdown-header-top"><i class="ladb-opencutlist-icon-save"></i> {{ 'core.preset.save_to'|i18next }}...</li>
+            <li><a href="#" class="ladb-widget-preset-btn-add"><i class="ladb-opencutlist-icon-plus"></i> {{ 'core.preset.new'|i18next }}...</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#" class="ladb-widget-preset-btn-add"><i class="ladb-opencutlist-icon-plus"></i> Nouveau...</a></li>
+            <li><a href="#" class="ladb-widget-preset-btn-user-default"><em>{{ 'core.preset.user_default'|i18next }}</em></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </div>
@@ -16,9 +16,9 @@
             <i class="ladb-opencutlist-icon-reset"></i> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li class="dropdown-header dropdown-header-top"><i class="ladb-opencutlist-icon-reset"></i> Restaurer depuis ...</li>
-            <li><a href="#" class="ladb-widget-preset-btn-user-default"><strong>Configuration par défaut</strong></a></li>
-            <li><a href="#" class="ladb-widget-preset-btn-app-default"><strong>Configuration d'origine</strong></a></li>
+            <li class="dropdown-header dropdown-header-top"><i class="ladb-opencutlist-icon-reset"></i> {{ 'core.preset.restore_from'|i18next }}...</li>
+            <li><a href="#" class="ladb-widget-preset-btn-user-default"><em>{{ 'core.preset.user_default'|i18next }}</em></a></li>
+            <li><a href="#" class="ladb-widget-preset-btn-app-default"><em>{{ 'core.preset.app_default'|i18next }}</em></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </div>
