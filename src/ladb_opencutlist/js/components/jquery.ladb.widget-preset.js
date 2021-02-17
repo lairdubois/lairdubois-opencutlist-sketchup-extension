@@ -63,6 +63,7 @@
             name: name
         }, function (response) {
             that.options.fnFillInputs(response.preset);
+            that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_default') }), 'success');
         });
     };
 
@@ -166,6 +167,7 @@
                                     section: that.options.section,
                                 }, function (response) {
                                     that.options.fnFillInputs(response.defaults);
+                                    that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.app_default') }), 'success');
                                 });
                             })
                     )

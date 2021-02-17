@@ -106,6 +106,7 @@ core:
     delete_confirm: Confirmez-vous la suppression du préréglage "{{ name }}" ?
     override_confirm: Confirmez-vous la mise à jour du préréglage "{{ name }}" avec les paramètres actuels du formulaire ?
     save_success: Préréglage **"{{ name }}"** enregistré
+    restore_success: Le formulaire a été rempli avec le préréglage **"{{ name }}"**
     delete_success: Préréglage **"{{ name }}"** supprimé
     tooltip:
       save_to: Mettre à jour le préréglage '{{ name }}'
