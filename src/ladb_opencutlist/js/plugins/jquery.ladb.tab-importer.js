@@ -72,11 +72,29 @@
                     }));
 
                     // Fetch UI elements
+                    var $widgetPreset = $('.ladb-widget-preset', $modal);
                     var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
                     var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
-                    var $btnDefaultsReset = $('#ladb_importer_btn_defaults_reset', $modal);
                     var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
                     var $btnLoad = $('#ladb_importer_load', $modal);
+
+                    // Define useful functions
+                    var fnFetchOptions = function (options) {
+                        options.col_sep = $selectColSep.val();
+                        options.first_line_headers = $selectFirstLineHeaders.val() === '1';
+                    };
+                    var fnFillInputs = function (options) {
+                        $selectColSep.selectpicker('val', options.col_sep);
+                        $selectFirstLineHeaders.selectpicker('val', options.first_line_headers ? '1' : '0');
+                        loadOptions.column_mapping = options.column_mapping;
+                    };
+
+                    $widgetPreset.ladbWidgetPreset({
+                        dialog: that.dialog,
+                        dictionary: 'importer_load_options',
+                        fnFetchOptions: fnFetchOptions,
+                        fnFillInputs: fnFillInputs
+                    });
 
                     // Bind select
                     $selectColSep.val(loadOptions.col_sep);
@@ -85,18 +103,10 @@
                     $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
 
                     // Bind buttons
-                    $btnDefaultsReset.on('click', function () {
-                        $selectColSep.selectpicker('val', appDefaults.col_sep);
-                        $selectFirstLineHeaders.selectpicker('val', appDefaults.first_line_headers ? '1' : '0');
-                        loadOptions.column_mapping = appDefaults.column_mapping;
-                        $(this).blur();
-                    });
                     $btnLoad.on('click', function () {
 
                         // Fetch options
-
-                        loadOptions.col_sep = $selectColSep.val();
-                        loadOptions.first_line_headers = $selectFirstLineHeaders.val() === '1';
+                        fnFetchOptions(loadOptions);
 
                         that.loadCSV(loadOptions);
 
@@ -237,16 +247,36 @@
             }));
 
             // Fetch UI elements
-            var $SelectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $selectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
             var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
             var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
             var $btnImport = $('#ladb_importer_import', $modal);
+
+            // Define useful functions
+            var fnFetchOptions = function (options) {
+                options.remove_all = $selectRemoveAll.selectpicker('val') === '1';
+                options.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
+                options.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
+            };
+            var fnFillInputs = function (options) {
+                $selectRemoveAll.prop('val', options.remove_all ? '1' : '0');
+                $inputKeepDefinitionsSettings.prop('checked', options.keep_definitions_settings);
+                $inputKeepMaterialsSettings.prop('checked', options.keep_materials_settings);
+            };
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'importer_import_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
 
             $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
             $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
 
             // Bind select
-            $SelectRemoveAll
+            $selectRemoveAll
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     var removeAll = $(e.currentTarget).selectpicker('val');
                     if (removeAll === '1') {
@@ -261,14 +291,10 @@
             $btnImport.on('click', function () {
 
                 // Fetch options
-
-                importOptions.remove_all = $SelectRemoveAll.selectpicker('val') === '1';
-                importOptions.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
-                importOptions.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
+                fnFetchOptions(importOptions);
 
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'importer_import_options', values: importOptions });
-                rubyCallCommand('core_set_global_preset', { dictionary: 'importer_import_options', values: importOptions });
 
                 rubyCallCommand('importer_import', importOptions, function (response) {
 

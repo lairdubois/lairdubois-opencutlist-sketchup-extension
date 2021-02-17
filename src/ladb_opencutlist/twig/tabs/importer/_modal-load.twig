@@ -4,6 +4,11 @@
 {% set title = 'tab.importer.load.title'|i18next %}
 {% set unit = ('default.unit_'~lengthUnit)|i18next %}
 
+{% block headerInner %}
+    {{ parent() }}
+    {% include 'core/_widget-preset.twig' %}
+{% endblock %}
+
 {% block bodyInner %}
     <div class="row">
         <div class="col-xs-push-1 col-xs-10">
@@ -37,7 +42,6 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_importer_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_importer_load">{{ 'default.load'|i18next }}</button>
 {% endblock %}

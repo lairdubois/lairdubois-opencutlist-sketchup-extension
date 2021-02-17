@@ -2630,8 +2630,7 @@
             dictionary: 'cutlist_options',
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
-
-        })
+        });
 
         // Bind buttons
         $btnUpdate.on('click', function () {

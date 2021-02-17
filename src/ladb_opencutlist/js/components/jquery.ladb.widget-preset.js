@@ -91,6 +91,11 @@
                     );
             }
 
+            if (response.names.length > 0) {
+                that.$ulSave.append('<li role="separator" class="divider removable"></li>');
+                that.$ulRestore.append('<li role="separator" class="divider removable"></li>');
+            }
+
             $.each(response.names, function (index) {
 
                 var name = this;

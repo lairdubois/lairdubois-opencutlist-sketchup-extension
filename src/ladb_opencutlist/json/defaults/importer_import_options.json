@@ -1,6 +1,7 @@
 {
   "0": {
-    "keep_definitions_setting": true,
-    "keep_materials_setting": true
+    "remove_all": false,
+    "keep_definitions_settings": true,
+    "keep_materials_settings": true
   }
 }

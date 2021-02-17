@@ -99,7 +99,7 @@ core:
     save_to: Enregistrer vers
     restore_from: Restorer depuis
     new: Nouvelle configuration
-    user_default: Configuration par défaut
+    user_default: Ma configuration par défaut
     app_default: Configuration d'origine
     add_prompt: Nom de la configuration
     delete_confirm: Confirmez la suppression de la configuration "{{ name }}" ?
