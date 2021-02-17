@@ -26,7 +26,7 @@
     </div>
 </div>
 <section style="position: relative;{% if material.attributes.type == 0 %} display: none;{% endif %}">
-    {% include 'core/_widget-preset.twig' with { 'top': 0, 'right': 10} %}
+    {% include 'core/_widget-preset.twig' with { 'top': 8, 'right': 10} %}
     <ul class="nav nav-tabs nav-centred" role="tablist">
         <li role="presentation" class="active"><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>

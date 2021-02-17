@@ -9,28 +9,43 @@
     color: @ladb-global-color;
   }
 
-  & > .dropdown-header.dropdown-header-top {
+  & > .dropdown-header.dropdown-header-top, & > .dropdown-header.dropdown-header-middle {
     font-size: 1em;
+    font-weight: bold;
     background: #eee;
-    text-align: center;
     margin-bottom: 10px;
     border-bottom: 1px solid #ddd;
     padding-bottom: 8px;
-    margin-top: -5px;
     padding-top: 8px;
     color: #555;
+
+    &.dropdown-header-top {
+      margin-top: -5px;
+    }
+
+    &.dropdown-header-middle {
+      margin-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+
   }
 
   li.with-minitools {
     display: flex;
 
     & > .ladb-minitools {
-      padding: 3px;
+      padding: 3px 20px;
+      opacity: 0.01;
     }
 
     &:hover {
       background-color: #f5f5f5;
       color: @ladb-global-color;
+
+      & > .ladb-minitools {
+        opacity: 1;
+      }
+
     }
 
     & > a {

@@ -9,15 +9,8 @@
         this.$element = $(element);
         this.dialog = dialog;
 
-        this.$groupSave = $('.ladb-widget-preset-group-save', this.$element);
-        this.$ulSave = $('ul', this.$groupSave);
-        this.$btnUserDefaultSave = $('.ladb-widget-preset-btn-user-default', this.$ulSave);
-        this.$btnAdd = $('.ladb-widget-preset-btn-add', this.$ulSave);
-
-        this.$groupRestore = $('.ladb-widget-preset-group-restore', this.$element);
-        this.$ulRestore = $('ul', this.$groupRestore);
-        this.$btnUserDefaultRestore = $('.ladb-widget-preset-btn-user-default', this.$ulRestore);
-        this.$btnAppDefaultRestore = $('.ladb-widget-preset-btn-app-default', this.$ulRestore);
+        this.$dropdown = $('ul', this.$element);
+        this.$btn = $('button', this.$element);
 
     };
 
@@ -78,40 +71,17 @@
 
         rubyCallCommand('core_list_global_preset_names', { dictionary: this.options.dictionary, section: this.options.section }, function (response) {
 
-            $('.removable', that.$ulSave).remove();
-            $('.removable', that.$ulRestore).remove();
-
-            var fnCreateMinitools = function (name) {
-                return $('<div class="ladb-minitools" />')
-                    .append(
-                        $('<a href="#" class="ladb-tool-dark"><i class="ladb-opencutlist-icon-trash"></a>')
-                            .on('click', function () {
-                                that.deletePreset(name);
-                            })
-                    );
-            }
+            $('.removable', that.$dropdown).remove();
 
             if (response.names.length > 0) {
-                that.$ulSave.append('<li role="separator" class="divider removable"></li>');
-                that.$ulRestore.append('<li role="separator" class="divider removable"></li>');
+                that.$dropdown.append('<li role="separator" class="divider removable"></li>');
             }
 
             $.each(response.names, function (index) {
 
                 var name = this;
 
-                that.$ulSave.append(
-                    $('<li class="removable with-minitools" />')
-                        .append(
-                            $('<a href="#">' + name + '</a>')
-                                .on('click', function () {
-                                    that.saveToPreset(name, false);
-                                })
-                        )
-                        .append(fnCreateMinitools(name))
-                );
-
-                that.$ulRestore.append(
+                that.$dropdown.append(
                     $('<li class="removable with-minitools" />')
                         .append(
                             $('<a href="#">' + name + '</a>')
@@ -119,10 +89,41 @@
                                     that.restoreFromPreset(name);
                                 })
                         )
-                        .append(fnCreateMinitools(name))
+                        .append(
+                            $('<div class="ladb-minitools" />')
+                                .append(
+                                    $('<a href="#" class="ladb-tool-dark" data-toggle="tooltip" title="' + i18next.t('core.preset.tooltip.save_to', { name: name }) + '"><i class="ladb-opencutlist-icon-refresh"></i></a>')
+                                        .on('click', function () {
+                                            that.saveToPreset(name);
+                                        })
+                                )
+                                .append(
+                                    $('<a href="#" class="ladb-tool-dark" data-toggle="tooltip" title="' + i18next.t('core.preset.tooltip.delete', { name: name }) + '"><i class="ladb-opencutlist-icon-clear"></i></a>')
+                                        .on('click', function () {
+                                            that.deletePreset(name);
+                                        })
+                                )
+                        )
                 );
 
             });
+
+            that.$dropdown
+                .append('<li class="removable dropdown-header dropdown-header-middle"><i class="ladb-opencutlist-icon-save"></i> ' + i18next.t('core.preset.save_to') + '</li>')
+                .append(
+                    $('<li class="removable" />')
+                        .append(
+                            $('<a href="#" class="ladb-widget-preset-btn-add">' + i18next.t('core.preset.new') + '...</a>')
+                                .on('click', function () {
+                                    var name = prompt(i18next.t('core.preset.add_prompt'), '');
+                                    if (name) {
+                                        that.saveToPreset(name, true);
+                                    }
+                                })
+                        )
+                )
+
+            that.dialog.setupTooltips();
 
         });
 
@@ -136,27 +137,39 @@
     LadbWidgetPreset.prototype.bind = function () {
         var that = this;
 
-        // Bind buttons
-        this.$btnUserDefaultSave.on('click', function () {
-            that.saveToPreset(null);
-        });
-        this.$btnAdd.on('click', function () {
-            var name = prompt(i18next.t('core.preset.add_prompt'), '');
-            if (name) {
-                that.saveToPreset(name, true);
-            }
-        });
-        this.$btnUserDefaultRestore.on('click', function () {
-            that.restoreFromPreset(null);
-        });
-        this.$btnAppDefaultRestore.on('click', function () {
-            rubyCallCommand('core_get_app_defaults', {
-                dictionary: that.options.dictionary,
-                section: that.options.section,
-            }, function (response) {
-                that.options.fnFillInputs(response.defaults);
-            });
-        });
+        this.$dropdown
+            .append(
+                $('<li class="with-minitools" />')
+                    .append(
+                        $('<a href="#">' + i18next.t('core.preset.user_default') + '</a>')
+                            .on('click', function () {
+                                that.restoreFromPreset(null);
+                            })
+                    )
+                    .append(
+                        $('<div class="ladb-minitools" />')
+                            .append(
+                                $('<a href="#" class="ladb-tool-dark" data-toggle="tooltip" title="' + i18next.t('core.preset.tooltip.save_to', { name: i18next.t('core.preset.user_default') }) + '"><i class="ladb-opencutlist-icon-refresh"></i></a>')
+                                    .on('click', function () {
+                                        that.saveToPreset(null);
+                                    })
+                            )
+                    )
+            )
+            .append(
+                $('<li />')
+                    .append(
+                        $('<a href="#">' + i18next.t('core.preset.app_default') + '</a>')
+                            .on('click', function () {
+                                rubyCallCommand('core_get_app_defaults', {
+                                    dictionary: that.options.dictionary,
+                                    section: that.options.section,
+                                }, function (response) {
+                                    that.options.fnFillInputs(response.defaults);
+                                });
+                            })
+                    )
+            )
 
     };
 

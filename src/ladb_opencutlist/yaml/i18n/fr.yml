@@ -96,16 +96,20 @@ core:
       download: Erreur lors du téléchargement de l'archive.
       unzip: Erreur lors de la décompression de l'archive.
   preset:
+    label: Préréglages
     save_to: Enregistrer vers
-    restore_from: Restorer depuis
-    new: Nouvelle configuration
-    user_default: Ma configuration par défaut
-    app_default: Configuration d'origine
-    add_prompt: Nom de la configuration
-    delete_confirm: Confirmez la suppression de la configuration "{{ name }}" ?
-    override_confirm: Souhaitez-vous remplacer la configuration "{{ name }}" ?
-    save_success: Configuration **"{{ name }}"** enregistrée
-    delete_success: Configuration **"{{ name }}"** supprimée
+    restore_from: Restaurer depuis
+    new: Nouveau préréglage
+    user_default: Mes réglages par défaut
+    app_default: Réglages d'origine
+    add_prompt: Nom du préréglage
+    delete_confirm: Confirmez-vous la suppression du préréglage "{{ name }}" ?
+    override_confirm: Confirmez-vous la mise à jour du préréglage "{{ name }}" avec les paramètres actuels du formulaire ?
+    save_success: Préréglage **"{{ name }}"** enregistré
+    delete_success: Préréglage **"{{ name }}"** supprimé
+    tooltip:
+      save_to: Mettre à jour le préréglage '{{ name }}'
+      delete: Supprimer le préréglage '{{ name }}'
 tab:
   cutlist:
     label: Débit

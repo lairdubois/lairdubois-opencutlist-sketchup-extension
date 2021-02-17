@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-preset:before {
+  content: "\e983";
+}
 .ladb-opencutlist-icon-labels:before {
   content: "\e900";
 }
