@@ -76,7 +76,7 @@
     LadbWidgetPreset.prototype.refresh = function () {
         var that = this;
 
-        rubyCallCommand('core_list_global_preset_names', { dictionary: this.options.dictionary }, function (response) {
+        rubyCallCommand('core_list_global_preset_names', { dictionary: this.options.dictionary, section: this.options.section }, function (response) {
 
             $('.removable', that.$ulSave).remove();
             $('.removable', that.$ulRestore).remove();
@@ -84,7 +84,7 @@
             var fnCreateMinitools = function (name) {
                 return $('<div class="ladb-minitools" />')
                     .append(
-                        $('<a href="#" class="ladb-tool-dark" data-toggle="tooltip" title="DELETE"><i class="ladb-opencutlist-icon-trash"></a>')
+                        $('<a href="#" class="ladb-tool-dark"><i class="ladb-opencutlist-icon-trash"></a>')
                             .on('click', function () {
                                 that.deletePreset(name);
                             })
@@ -123,6 +123,11 @@
 
     };
 
+    LadbWidgetPreset.prototype.setSection = function (section) {
+        this.options.section = section;
+        this.refresh();
+    };
+
     LadbWidgetPreset.prototype.bind = function () {
         var that = this;
 
@@ -142,6 +147,7 @@
         this.$btnAppDefaultRestore.on('click', function () {
             rubyCallCommand('core_get_app_defaults', {
                 dictionary: that.options.dictionary,
+                section: that.options.section,
             }, function (response) {
                 that.options.fnFillInputs(response.defaults);
             });

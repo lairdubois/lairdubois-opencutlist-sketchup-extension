@@ -250,6 +250,24 @@
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Define usefull functions
+            var fnFetchAttributes = function (attributes) {
+                attributes.type = $inputs.selectType.val();
+                attributes.thickness = $inputs.inputThickness.val();
+                attributes.length_increase = $inputs.inputLengthIncrease.val();
+                attributes.width_increase = $inputs.inputWidthIncrease.val();
+                attributes.thickness_increase = $inputs.inputThicknessIncrease.val();
+                attributes.std_lengths = $inputs.inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
+                attributes.std_widths = $inputs.inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
+                attributes.std_thicknesses = $inputs.inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
+                attributes.std_sections = $inputs.inputStdSections.ladbTextinputTokenfield('getValidTokensList');
+                attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
+                attributes.grained = $inputs.selectGrained.val() === '1';
+                attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
+                attributes.volumic_mass = $inputs.inputVolumicMass.val();
+            };
+            var fnFillInputs = function (attributes) {
+
+            };
             var fnDisableBtnExport = function () {
                 $btnExportToSkm.prop('disabled', true);
             };
@@ -373,19 +391,7 @@
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
                 that.editedMaterial.texture_colorized = $btnTextureColorized.hasClass('active');
-                that.editedMaterial.attributes.type = $inputs.selectType.val();
-                that.editedMaterial.attributes.thickness = $inputs.inputThickness.val();
-                that.editedMaterial.attributes.length_increase = $inputs.inputLengthIncrease.val();
-                that.editedMaterial.attributes.width_increase = $inputs.inputWidthIncrease.val();
-                that.editedMaterial.attributes.thickness_increase = $inputs.inputThicknessIncrease.val();
-                that.editedMaterial.attributes.std_lengths = $inputs.inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
-                that.editedMaterial.attributes.std_widths = $inputs.inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
-                that.editedMaterial.attributes.std_thicknesses = $inputs.inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
-                that.editedMaterial.attributes.std_sections = $inputs.inputStdSections.ladbTextinputTokenfield('getValidTokensList');
-                that.editedMaterial.attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
-                that.editedMaterial.attributes.grained = $inputs.selectGrained.val() === '1';
-                that.editedMaterial.attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
-                that.editedMaterial.attributes.volumic_mass = $inputs.inputVolumicMass.val();
+                fnFetchAttributes(that.editedMaterial.attributes);
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialEvents = true;
@@ -586,12 +592,21 @@
         var $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig');
 
         // Fetch UI elements
+        var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $sortableMaterialOrderStrategy = $('#ladb_sortable_material_order_strategy', $modal);
-        var $btnReset = $('#ladb_materials_options_reset', $modal);
         var $btnUpdate = $('#ladb_materials_options_update', $modal);
 
         // Define useful functions
-        var populateOptionsInputs = function (options) {
+        var fnFetchOptions = function (options) {
+
+            var properties = [];
+            $sortableMaterialOrderStrategy.children('li').each(function () {
+                properties.push($(this).data('property'));
+            });
+            options.material_order_strategy = properties.join('>');
+
+        };
+        var fnFillInputs = function (options) {
 
             // Sortables
 
@@ -630,41 +645,22 @@
 
         };
 
-        // Bind buttons
-        $btnReset.on('click', function () {
-            $(this).blur();
-
-            rubyCallCommand('core_get_app_defaults', { dictionary: 'materials_options' }, function (response) {
-
-                if (response.errors && response.errors.length > 0) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    var appDefaults = response.defaults;
-
-                    var options = $.extend($.extend({}, that.generateOptions), {
-                        material_order_strategy: appDefaults.material_order_strategy,
-                    });
-                    populateOptionsInputs(options);
-
-                }
-
-            });
+        $widgetPreset.ladbWidgetPreset({
+            dialog: that.dialog,
+            dictionary: 'materials_options',
+            fnFetchOptions: fnFetchOptions,
+            fnFillInputs: fnFillInputs
 
         });
+
+        // Bind buttons
         $btnUpdate.on('click', function () {
 
             // Fetch options
-
-            var properties = [];
-            $sortableMaterialOrderStrategy.children('li').each(function () {
-                properties.push($(this).data('property'));
-            });
-            that.generateOptions.material_order_strategy = properties.join('>');
+            fnFetchOptions(that.generateOptions);
 
             // Store options
             rubyCallCommand('core_set_model_preset', { dictionary: 'materials_options', values: that.generateOptions });
-            rubyCallCommand('core_set_global_preset', { dictionary: 'materials_options', values: that.generateOptions });
 
             // Hide modal
             $modal.modal('hide');
@@ -675,7 +671,7 @@
         });
 
         // Populate inputs
-        populateOptionsInputs(that.generateOptions);
+        fnFillInputs(that.generateOptions);
 
         // Show modal
         $modal.modal('show');
@@ -729,6 +725,7 @@
         var that = this;
 
         // Fetch UI elements
+        var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $inputName = $('#ladb_materials_input_name', $modal);
         var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
         var $inputColor = $('#ladb_materials_input_color', $modal);
@@ -746,15 +743,43 @@
         var $selectGrained = $('#ladb_materials_select_grained', $modal);
         var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         var $inputVolumicMass = $('#ladb_materials_input_volumic_mass', $modal);
-        var $spanCutOptionsDefaultsType1 = $('#ladb_materials_span_cut_options_defaults_type_1', $modal);
-        var $spanCutOptionsDefaultsType2 = $('#ladb_materials_span_cut_options_defaults_type_2', $modal);
-        var $spanCutOptionsDefaultsType3 = $('#ladb_materials_span_cut_options_defaults_type_3', $modal);
-        var $spanCutOptionsDefaultsType4 = $('#ladb_materials_span_cut_options_defaults_type_4', $modal);
-        var $btnCutOptionsDefaultsSave = $('#ladb_materials_btn_cut_options_defaults_save', $modal);
-        var $btnCutOptionsDefaultsReset = $('#ladb_materials_btn_cut_options_defaults_reset', $modal);
-        var $btnCutOptionsDefaultsResetNative = $('#ladb_materials_btn_cut_options_defaults_reset_native', $modal);
 
         // Define usefull functions
+        var fnFetchOptions = function (options) {
+            options.type = $selectType.val();
+            options.thickness = $inputThickness.val();
+            options.length_increase = $inputLengthIncrease.val();
+            options.width_increase = $inputWidthIncrease.val();
+            options.thickness_increase = $inputThicknessIncrease.val();
+            options.std_lengths = $inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
+            options.std_widths = $inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
+            options.std_thicknesses = $inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
+            options.std_sections = $inputStdSections.ladbTextinputTokenfield('getValidTokensList');
+            options.std_sizes = $inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
+            options.grained = $selectGrained.val() === '1';
+            options.edge_decremented = $selectEdgeDecremented.val() === '1';
+            options.volumic_mass = $inputVolumicMass.val();
+        };
+        var fnFillInputs = function (options) {
+
+            var fnSetTokens = function ($input, tokens) {
+                // Workaround for empty string tokens
+                $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
+            };
+            $inputThickness.val(options.thickness);
+            $inputLengthIncrease.val(options.length_increase);
+            $inputWidthIncrease.val(options.width_increase);
+            $inputThicknessIncrease.val(options.thickness_increase);
+            fnSetTokens($inputStdLengths, options.std_lengths);
+            fnSetTokens($inputStdWidths, options.std_widths);
+            fnSetTokens($inputStdThicknesses, options.std_thicknesses);
+            fnSetTokens($inputStdSections, options.std_sections);
+            fnSetTokens($inputStdSizes, options.std_sizes);
+            $selectGrained.selectpicker('val', options.grained ? '1' : '0');
+            $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
+            $inputVolumicMass.val(options.volumic_mass);
+
+        };
         var fnComputeFieldsVisibility = function (type) {
             switch (type) {
                 case 0:   // TYPE_UNKNOWN
@@ -774,10 +799,6 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
-                    $spanCutOptionsDefaultsType1.show();
-                    $spanCutOptionsDefaultsType2.hide();
-                    $spanCutOptionsDefaultsType3.hide();
-                    $spanCutOptionsDefaultsType4.hide();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('.form-group').hide();
@@ -793,10 +814,6 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
-                    $spanCutOptionsDefaultsType1.hide();
-                    $spanCutOptionsDefaultsType2.show();
-                    $spanCutOptionsDefaultsType3.hide();
-                    $spanCutOptionsDefaultsType4.hide();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('.form-group').hide();
@@ -812,10 +829,6 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
-                    $spanCutOptionsDefaultsType1.hide();
-                    $spanCutOptionsDefaultsType2.hide();
-                    $spanCutOptionsDefaultsType3.show();
-                    $spanCutOptionsDefaultsType4.hide();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('.form-group').show();
@@ -831,10 +844,6 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
                     $inputVolumicMass.closest('.form-group').show();
-                    $spanCutOptionsDefaultsType1.hide();
-                    $spanCutOptionsDefaultsType2.hide();
-                    $spanCutOptionsDefaultsType3.hide();
-                    $spanCutOptionsDefaultsType4.show();
                     break;
                 case 5:   // TYPE_ACCESSORY
                     $inputLengthIncrease.closest('section').hide();
@@ -842,37 +851,6 @@
             }
         };
         fnComputeFieldsVisibility(material.attributes.type);
-
-        var fnSetFieldValuesToDefaults = function (type, isAppDefaults) {
-            rubyCallCommand('core_get_app_defaults', { dictionary: 'materials_material_attributes', section: type }, function (response) {
-
-                if (response.errors && response.errors.length > 0) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    var appDefaults = response.defaults;
-
-                    var setTokens = function ($input, tokens) {
-                        // Workaround for empty string tokens
-                        $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
-                    };
-                    $inputThickness.val(isAppDefaults ? appDefaults.thickness : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, appDefaults.thickness));
-                    $inputLengthIncrease.val(isAppDefaults ? appDefaults.length_increase : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, appDefaults.length_increase));
-                    $inputWidthIncrease.val(isAppDefaults ? appDefaults.width_increase : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, appDefaults.width_increase));
-                    $inputThicknessIncrease.val(isAppDefaults ? appDefaults.thickness_increase : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, appDefaults.thickness_increase));
-                    setTokens($inputStdLengths, isAppDefaults ? appDefaults.std_lengths : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, appDefaults.std_lengths));
-                    setTokens($inputStdWidths, isAppDefaults ? appDefaults.std_widths : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, appDefaults.std_widths));
-                    setTokens($inputStdThicknesses, isAppDefaults ? appDefaults.std_thicknesses : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, appDefaults.std_thicknesses));
-                    setTokens($inputStdSections, isAppDefaults ? appDefaults.std_sections : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, appDefaults.std_sections));
-                    setTokens($inputStdSizes, isAppDefaults ? appDefaults.std_sizes : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, appDefaults.std_sizes));
-                    $selectGrained.selectpicker('val', (isAppDefaults ? appDefaults.grained : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, appDefaults.grained)) ? '1' : '0');
-                    $selectEdgeDecremented.selectpicker('val', (isAppDefaults ? appDefaults.edge_decremented : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, appDefaults.edge_decremented)) ? '1' : '0');
-                    $inputVolumicMass.val(isAppDefaults ? appDefaults.volumic_mass : that.dialog.getSetting(SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, appDefaults.volumic_mass));
-
-                }
-
-            });
-        };
 
         var fnCheckInputNameValue = function(verbose) {
             if ($inputName.val().length > 0) {
@@ -901,13 +879,26 @@
             }
         };
 
+        $widgetPreset.ladbWidgetPreset({
+            dialog: that.dialog,
+            dictionary: 'materials_material_attributes',
+            section: material.attributes.type,
+            fnFetchOptions: fnFetchOptions,
+            fnFillInputs: fnFillInputs
+        });
+
         // Bind select
         $selectType.on('change', function () {
             var type = parseInt($(this).val());
 
             // fnDisableBtnExport();
             fnComputeFieldsVisibility(type);
-            fnSetFieldValuesToDefaults(type);
+
+            // Update section on preset widget
+            $widgetPreset.ladbWidgetPreset('setSection', type);
+
+            // Reset fields to defaults
+            $widgetPreset.ladbWidgetPreset('restoreFromPreset', null);
 
         });
         $selectType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -922,54 +913,6 @@
         // Initial input checks
         fnCheckInputNameValue(false);
         fnCheckInputColorValue(false);
-
-        // Bind buttons
-        $btnCutOptionsDefaultsSave.on('click', function () {
-
-            var type = parseInt($selectType.val());
-            var thickness = $inputThickness.val();
-            var length_increase = $inputLengthIncrease.val();
-            var width_increase = $inputWidthIncrease.val();
-            var thickness_increase = $inputThicknessIncrease.val();
-            var std_lengths = $inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
-            var std_widths = $inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
-            var std_thicknesses = $inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
-            var std_sections = $inputStdSections.ladbTextinputTokenfield('getValidTokensList');
-            var std_sizes = $inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
-            var grained = $selectGrained.val() === '1';
-            var edgeDecrement = $selectEdgeDecremented.val() === '1';
-            var volumicMass = $inputVolumicMass.val();
-
-            // Update default cut options for specific type to last used
-            that.dialog.setSettings([
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS, value:thickness, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE, value:length_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE, value:width_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE, value:thickness_increase, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS, value:std_lengths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS, value:std_widths, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES, value:std_thicknesses, preprocessor:1 /* SETTINGS_PREPROCESSOR_D */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS, value:std_sections, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_STD_SIZES, value:std_sizes, preprocessor:3 /* SETTINGS_PREPROCESSOR_DXD */ },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_GRAINED, value:grained },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED, value:edgeDecrement },
-                { key:SETTING_KEY_OPTION_PREFIX_TYPE + type + SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS, value:volumicMass }
-            ], 0 /* SETTINGS_RW_STRATEGY_GLOBAL */);
-
-            that.dialog.notify(i18next.t('tab.materials.edit_material.cut_options_defaults.save_success', { type_name: i18next.t('tab.materials.type_' + type) }), 'success');
-
-            this.blur();
-        });
-        $btnCutOptionsDefaultsReset.on('click', function () {
-            var type = parseInt($selectType.val());
-            fnSetFieldValuesToDefaults(type);
-            this.blur();
-        });
-        $btnCutOptionsDefaultsResetNative.on('click', function () {
-            var type = parseInt($selectType.val());
-            fnSetFieldValuesToDefaults(type, true);
-            this.blur();
-        });
 
         // Bind modal event
         $modal.on('shown.bs.modal', function() {
@@ -988,7 +931,7 @@
             $inputStdSizes.ladbTextinputTokenfield({ format: 'dxd' });
 
             if (setAttributeToDefaults) {
-                fnSetFieldValuesToDefaults(material.attributes.type);
+                $widgetPreset.ladbWidgetPreset('restoreFromPreset', null);
             }
 
         });

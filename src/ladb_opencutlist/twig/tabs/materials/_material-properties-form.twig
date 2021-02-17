@@ -25,7 +25,8 @@
         </select>
     </div>
 </div>
-<section{% if material.attributes.type == 0 %} style="display: none;"{% endif %}>
+<section style="position: relative;{% if material.attributes.type == 0 %} display: none;{% endif %}">
+    {% include 'core/_widget-preset.twig' with { 'top': 0, 'right': 10} %}
     <ul class="nav nav-tabs nav-centred" role="tablist">
         <li role="presentation" class="active"><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>
@@ -128,20 +129,6 @@
                     <input type="text" class="form-control" id="ladb_materials_input_volumic_mass" value="{{ material.attributes.volumic_mass|escape('html') }}">
                 </div>
             </div>
-        </div>
-    </div>
-    <hr>
-    <div class="text-center">
-        <p class="help-block">{{ 'tab.materials.edit_material.cut_options_defaults.manage_help'|i18next }} - <strong><span id="ladb_materials_span_cut_options_defaults_type_1">{{ 'tab.materials.type_1'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_2">{{ 'tab.materials.type_2'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_3">{{ 'tab.materials.type_3'|i18next }}</span><span id="ladb_materials_span_cut_options_defaults_type_4">{{ 'tab.materials.type_4'|i18next }}</span></strong></p>
-        <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_save">{{ 'default.save_to_defaults'|i18next() }}</button>
-        <div class="btn-group">
-            <button class="btn btn-default" id="ladb_materials_btn_cut_options_defaults_reset">{{ 'default.reset_to_defaults'|i18next() }}</button>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-                <li><a href="#" id="ladb_materials_btn_cut_options_defaults_reset_native"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next() }}</a></li>
-            </ul>
         </div>
     </div>
 </section>
