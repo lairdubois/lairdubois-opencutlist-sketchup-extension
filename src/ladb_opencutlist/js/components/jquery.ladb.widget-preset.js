@@ -159,6 +159,7 @@
     };
 
     LadbWidgetPreset.prototype.init = function () {
+        var that = this;
 
         this.$dropdown
             .append(
