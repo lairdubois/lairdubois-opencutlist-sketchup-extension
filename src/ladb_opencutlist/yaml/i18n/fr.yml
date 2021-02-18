@@ -583,6 +583,8 @@ tab:
         page_label: Nom de la scène
         length_unit: Unité
         generated_at: Date et heure
+      error:
+        invalid_size: Les paramètres configuration ne permettent pas de définir une taille de d'étiquette valide.
       warning:
         selection_only: Ces étiquettes se limitent aux **pièces sélectionnées**
     error:

@@ -28,6 +28,16 @@
     LadbLabelEditor.prototype.createSvg = function () {
         var that = this;
 
+        // Check invalid size
+        if (this.options.labelWidth <= 0 || this.options.labelHeight <= 0) {
+
+            this.$element.append(Twig.twig({ref: 'core/_alert-errors.twig'}).render({
+                errors: [ 'tab.cutlist.labels.error.invalid_size' ]
+            }));
+
+            return;
+        }
+
         rubyCallCommand('core_float_to_length', {
             width: this.options.labelWidth,
             height: this.options.labelHeight,
@@ -342,7 +352,7 @@
         ;
 
         // Form
-        this.$element.append(Twig.twig({ref: "tabs/cutlist/_label-element-form.twig"}).render());
+        this.$element.append(Twig.twig({ref: 'tabs/cutlist/_label-element-form.twig'}).render());
         this.$editingForm = $('#ladb_cutlist_form_label_element');
 
         // UI

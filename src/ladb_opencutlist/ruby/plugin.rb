@@ -27,7 +27,7 @@ module Ladb::OpenCutList
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     SU_ATTRIBUTE_DICTIONARY = 'SU_DefinitionSet'.freeze
 
-    PRESETS_KEY = 'presets'.freeze
+    PRESETS_KEY = 'core.presets'.freeze
     PRESETS_DEFAULT_NAME = '_default'.freeze
 
     SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults

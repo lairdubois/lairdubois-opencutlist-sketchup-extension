@@ -2183,6 +2183,16 @@
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
             var $btnLabels = $('#ladb_btn_labels', $modal);
 
+            var fnPageSizeVisibility = function () {
+                if ($selectPageFormat.selectpicker('val') == null) {
+                    $selectPageFormat.selectpicker('val', '0');
+                    $inputPageWidth.ladbTextinputDimension('enable');
+                    $inputPageHeight.ladbTextinputDimension('enable');
+                } else {
+                    $inputPageWidth.ladbTextinputDimension('disable');
+                    $inputPageHeight.ladbTextinputDimension('disable');
+                }
+            }
             var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
                 rubyCallCommand('core_length_to_float', {
                     page_width: pageWidth,
@@ -2216,7 +2226,7 @@
                 options.layout = $labelEditor.ladbLabelEditor('getElementDefs');
             }
             var fnFillInputs = function (options) {
-                $('[role="presentation"] a', $modal).effect('highlight', {}, 1500);
+                $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
                 $inputMarginTop.val(options.margin_top);
@@ -2231,6 +2241,7 @@
                 fnComputeLabelSize(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (labelWidth, labelHeight) {
                     $labelEditor.ladbLabelEditor('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
                 });
+                fnPageSizeVisibility();
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -2247,9 +2258,6 @@
                 group: group,
                 part: parts[0],
             }, labelsOptions.layout);
-            fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.spacing_h, labelsOptions.spacing_v, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
-                $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
-            });
             $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.val(labelsOptions.page_width);
@@ -2273,14 +2281,10 @@
             $selectCuttingMarks.val(labelsOptions.cutting_marks ? '1' : '0');
             $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
 
-            if ($selectPageFormat.val() == null) {
-                $selectPageFormat.selectpicker('val', '0');
-                $inputPageWidth.ladbTextinputDimension('enable');
-                $inputPageHeight.ladbTextinputDimension('enable');
-            } else {
-                $inputPageWidth.ladbTextinputDimension('disable');
-                $inputPageHeight.ladbTextinputDimension('disable');
-            }
+            fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.spacing_h, labelsOptions.spacing_v, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
+                $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
+            });
+            fnPageSizeVisibility();
 
             // Bind tabs
             $('a[data-toggle=tab]', $modal).on('shown.bs.tab', function (e) {
