@@ -100,8 +100,8 @@ core:
     label: Préréglages
     save_to: Enregistrer vers
     restore_from: Restaurer depuis
-    user_default: Mes préréglages par défaut
-    app_default: Préréglages d'origine
+    app_default: Préréglage d'origine
+    user_default: Mon préréglage par défaut
     new: Nouveau préréglage
     new_prompt: |
       *La création d'un préréglage personnalisé vous permet conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutilisés ensuite dans tous vos modèles.*
