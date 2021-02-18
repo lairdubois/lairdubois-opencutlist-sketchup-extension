@@ -100,10 +100,13 @@ core:
     label: Préréglages
     save_to: Enregistrer vers
     restore_from: Restaurer depuis
-    user_default: Mes réglages par défaut
-    app_default: Réglages d'origine
+    user_default: Mes préréglages par défaut
+    app_default: Préréglages d'origine
     new: Nouveau préréglage
-    new_prompt: Nom du préréglage
+    new_prompt: |
+      *La création d'un préréglage personnalisé vous permet conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutilisés ensuite dans tous vos modèles.*
+
+      Saisissez le nom du préréglage :
     delete_confirm_title: Suppression
     delete_confirm: Confirmez-vous la suppression du préréglage **"{{ name }}"** ?
     override_confirm_title: Actualisation
