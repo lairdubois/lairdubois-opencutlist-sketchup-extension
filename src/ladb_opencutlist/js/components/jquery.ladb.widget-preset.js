@@ -59,7 +59,7 @@
                     }
                 } else {
                     if (!noNotification) {
-                        that.dialog.notify(i18next.t('core.preset.override_success', {name: name ? name : i18next.t('core.preset.user_default')}), 'success');
+                        that.dialog.notify(i18next.t('core.preset.override_success', {name: name ? name : i18next.t('core.preset.user_defaults')}), 'success');
                     }
                 }
             });
@@ -68,7 +68,7 @@
         if (isNew) {
             fnDoSave();
         } else {
-            this.dialog.confirm(i18next.t('core.preset.override_confirm_title'), i18next.t('core.preset.override_confirm', { name: name ? name : i18next.t('core.preset.user_default') }), function () {
+            this.dialog.confirm(i18next.t('core.preset.override_confirm_title'), i18next.t('core.preset.override_confirm', { name: name ? name : i18next.t('core.preset.user_defaults') }), function () {
                 fnDoSave();
             });
         }
@@ -85,7 +85,7 @@
             that.options.fnFillInputs(response.preset);
             console.log(noNotification);
             if (!noNotification) {
-                that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_default') }), 'success');
+                that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_defaults') }), 'success');
             }
         });
     };
@@ -104,19 +104,19 @@
             ;
 
             // Bind buttons
-            $('.ladb-widget-preset-btn-restore-app-default', that.$dropdown).on('click', function () {
+            $('.ladb-widget-preset-btn-restore-app-defaults', that.$dropdown).on('click', function () {
                 rubyCallCommand('core_get_app_defaults', {
                     dictionary: that.options.dictionary,
                     section: that.options.section,
                 }, function (response) {
                     that.options.fnFillInputs(response.defaults);
-                    that.dialog.notify(i18next.t('core.preset.restore_success', {name: name ? name : i18next.t('core.preset.app_default')}), 'success');
+                    that.dialog.notify(i18next.t('core.preset.restore_success', {name: name ? name : i18next.t('core.preset.app_defaults')}), 'success');
                 });
             });
-            $('.ladb-widget-preset-btn-restore-user-default', that.$dropdown).on('click', function () {
+            $('.ladb-widget-preset-btn-restore-user-defaults', that.$dropdown).on('click', function () {
                 that.restoreFromPreset(null);
             });
-            $('.ladb-widget-preset-btn-save-user-default', that.$dropdown).on('click', function () {
+            $('.ladb-widget-preset-btn-save-user-defaults', that.$dropdown).on('click', function () {
                 that.saveToPreset(null);
             });
             $('.ladb-widget-preset-item', that.$dropdown).each(function (index) {

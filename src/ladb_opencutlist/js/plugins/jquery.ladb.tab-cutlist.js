@@ -2216,6 +2216,7 @@
                 options.layout = $labelEditor.ladbLabelEditor('getElementDefs');
             }
             var fnFillInputs = function (options) {
+                $('[role="presentation"] a', $modal).effect('highlight', {}, 1500);
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
                 $inputMarginTop.val(options.margin_top);
