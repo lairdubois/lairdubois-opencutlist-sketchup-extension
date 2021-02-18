@@ -21,24 +21,29 @@
         fnFillInputs: null
     };
 
-    LadbWidgetPreset.prototype.deletePreset = function (name) {
+    LadbWidgetPreset.prototype.deletePreset = function (name, noNotification) {
         var that = this;
-        if (confirm(i18next.t('core.preset.delete_confirm', { name: name }))) {
+
+        this.dialog.confirm(i18next.t('core.preset.delete_confirm_title'), i18next.t('core.preset.delete_confirm', { name: name }), function () {
             rubyCallCommand('core_set_global_preset', {
                 dictionary: that.options.dictionary,
                 section: that.options.section,
                 values: null,
                 name: name
             }, function () {
-                that.dialog.notify(i18next.t('core.preset.delete_success', { name: name }), 'success');
+                if (!noNotification) {
+                    that.dialog.notify(i18next.t('core.preset.delete_success', { name: name }), 'success');
+                }
                 that.refresh();
             });
-        }
+        });
+
     };
 
-    LadbWidgetPreset.prototype.saveToPreset = function (name, isNew) {
+    LadbWidgetPreset.prototype.saveToPreset = function (name, isNew, noNotification) {
         var that = this;
-        if (isNew || confirm(i18next.t('core.preset.override_confirm', { name: name ? name : i18next.t('core.preset.user_default') }))) {
+
+        var fnDoSave = function () {
             var values = {};
             that.options.fnFetchOptions(values);
             rubyCallCommand('core_set_global_preset', {
@@ -47,15 +52,30 @@
                 values: values,
                 name: name
             }, function () {
-                that.dialog.notify(i18next.t('core.preset.save_success', { name: name ? name : i18next.t('core.preset.user_default') }), 'success');
                 if (isNew) {
                     that.refresh();
+                    if (!noNotification) {
+                        that.dialog.notify(i18next.t('core.preset.new_success', { name: name }), 'success');
+                    }
+                } else {
+                    if (!noNotification) {
+                        that.dialog.notify(i18next.t('core.preset.override_success', {name: name ? name : i18next.t('core.preset.user_default')}), 'success');
+                    }
                 }
             });
+        };
+
+        if (isNew) {
+            fnDoSave();
+        } else {
+            this.dialog.confirm(i18next.t('core.preset.override_confirm_title'), i18next.t('core.preset.override_confirm', { name: name ? name : i18next.t('core.preset.user_default') }), function () {
+                fnDoSave();
+            });
         }
+
     };
 
-    LadbWidgetPreset.prototype.restoreFromPreset = function (name) {
+    LadbWidgetPreset.prototype.restoreFromPreset = function (name, noNotification) {
         var that = this;
         rubyCallCommand('core_get_global_preset', {
             dictionary: that.options.dictionary,
@@ -63,7 +83,10 @@
             name: name
         }, function (response) {
             that.options.fnFillInputs(response.preset);
-            that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_default') }), 'success');
+            console.log(noNotification);
+            if (!noNotification) {
+                that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_default') }), 'success');
+            }
         });
     };
 
@@ -116,14 +139,14 @@
                         .append(
                             $('<a href="#" class="ladb-widget-preset-btn-add">' + i18next.t('core.preset.new') + '...</a>')
                                 .on('click', function () {
-                                    var name = prompt(i18next.t('core.preset.add_prompt'), '');
-                                    if (name) {
+                                    that.dialog.prompt(i18next.t('core.preset.new'), i18next.t('core.preset.new_prompt'), function (name) {
                                         that.saveToPreset(name, true);
-                                    }
+                                    });
                                 })
                         )
-                )
+                );
 
+            // Setup tooltips
             that.dialog.setupTooltips();
 
         });
@@ -135,8 +158,7 @@
         this.refresh();
     };
 
-    LadbWidgetPreset.prototype.bind = function () {
-        var that = this;
+    LadbWidgetPreset.prototype.init = function () {
 
         this.$dropdown
             .append(
@@ -172,12 +194,9 @@
                             })
                     )
             )
+        ;
 
-    };
-
-    LadbWidgetPreset.prototype.init = function () {
         this.refresh();
-        this.bind();
     };
 
     // PLUGIN DEFINITION

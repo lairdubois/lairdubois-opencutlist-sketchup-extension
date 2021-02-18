@@ -1,0 +1,13 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_core_modal_confirm' %}
+{% set noDefaultClose = true %}
+
+{% block bodyInner %}
+    <p>{{ text }}</p>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button type="button" id="ladb_confirm_btn_confirm" class="btn btn-primary" data-dismiss="modal">{{ 'default.confirm'|i18next }}</button>
+{% endblock %}

@@ -898,7 +898,7 @@
             $widgetPreset.ladbWidgetPreset('setSection', type);
 
             // Reset fields to defaults
-            $widgetPreset.ladbWidgetPreset('restoreFromPreset', null);
+            $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
 
         });
         $selectType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -931,7 +931,7 @@
             $inputStdSizes.ladbTextinputTokenfield({ format: 'dxd' });
 
             if (setAttributeToDefaults) {
-                $widgetPreset.ladbWidgetPreset('restoreFromPreset', null);
+                $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
             }
 
         });

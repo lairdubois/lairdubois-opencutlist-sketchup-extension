@@ -530,6 +530,61 @@
         return this._$modal;
     };
 
+    LadbDialog.prototype.confirm = function (title, text, callback) {
+
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
+            title: title,
+            text: text
+        });
+
+        // Fetch UI elements
+        var $btnConfirm = $('#ladb_confirm_btn_confirm', $modal);
+
+        // Bind buttons
+        $btnConfirm.on('click', function() {
+            if (callback) {
+                callback();
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbDialog.prototype.prompt = function (title, text, callback) {
+
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
+            title: title,
+            text: text
+        });
+
+        // Fetch UI elements
+        var $input = $('#ladb_prompt_input', $modal);
+        var $btnValidate = $('#ladb_prompt_btn_validate', $modal);
+
+        // Bind input
+        $input.on('keyup change', function () {
+            $btnValidate.prop('disabled', $(this).val().trim().length === 0);
+        });
+
+        // Bind buttons
+        $btnValidate.on('click', function() {
+            if (callback) {
+                callback($input.val().trim());
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+        // Bring focus to input
+        $input.focus();
+
+    };
+
     LadbDialog.prototype.showUpgradeModal = function () {
         var that = this;
 

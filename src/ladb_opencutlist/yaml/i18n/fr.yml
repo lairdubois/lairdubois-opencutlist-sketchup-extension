@@ -6,6 +6,7 @@ default:
   maximize: Agrandir
   cancel: Annuler
   validate: Valider
+  confirm: Confirmer
   open: Ouvrir
   see: Voir
   close: Fermer
@@ -99,17 +100,20 @@ core:
     label: Préréglages
     save_to: Enregistrer vers
     restore_from: Restaurer depuis
-    new: Nouveau préréglage
     user_default: Mes réglages par défaut
     app_default: Réglages d'origine
-    add_prompt: Nom du préréglage
-    delete_confirm: Confirmez-vous la suppression du préréglage "{{ name }}" ?
-    override_confirm: Confirmez-vous la mise à jour du préréglage "{{ name }}" avec les paramètres actuels du formulaire ?
-    save_success: Préréglage **"{{ name }}"** enregistré
+    new: Nouveau préréglage
+    new_prompt: Nom du préréglage
+    delete_confirm_title: Suppression
+    delete_confirm: Confirmez-vous la suppression du préréglage **"{{ name }}"** ?
+    override_confirm_title: Actualisation
+    override_confirm: Confirmez-vous l'actualisation du préréglage **"{{ name }}"** avec les paramètres du formulaire ?
+    new_success: Préréglage **"{{ name }}"** créé
+    override_success: Préréglage **"{{ name }}"** actualisé
     restore_success: Le formulaire a été rempli avec le préréglage **"{{ name }}"**
     delete_success: Préréglage **"{{ name }}"** supprimé
     tooltip:
-      save_to: Mettre à jour le préréglage '{{ name }}'
+      save_to: Actualiser le préréglage '{{ name }}'
       delete: Supprimer le préréglage '{{ name }}'
 tab:
   cutlist:

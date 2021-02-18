@@ -1,0 +1,14 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_core_modal_prompt' %}
+{% set noDefaultClose = true %}
+
+{% block bodyInner %}
+    <p>{{ text }}</p>
+    <input type="text" id="ladb_prompt_input" class="form-control">
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button type="button" id="ladb_prompt_btn_validate" class="btn btn-primary" data-dismiss="modal" disabled>{{ 'default.validate'|i18next }}</button>
+{% endblock %}
