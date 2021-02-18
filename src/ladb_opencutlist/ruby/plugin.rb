@@ -430,10 +430,12 @@ module Ladb::OpenCutList
     end
 
     def read_model_presets
-      @model_presets_cache = get_attribute(Sketchup.active_model, PRESETS_KEY, {})
+      @model_presets_cache = Sketchup.active_model ? get_attribute(Sketchup.active_model, PRESETS_KEY, {}) : {}
     end
 
     def write_model_presets
+      return unless Sketchup.active_model
+
       # Start model modification operation
       Sketchup.active_model.start_operation('write_model_presets', true, false, true)
 
