@@ -1,6 +1,6 @@
 _label: Español
-_reload_msg: "Para poder tener en cuenta los cambios, debes **cerrar** y **reabrir** esta ventana."
-_description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding es fácil de usar ;)"
+_reload_msg: "Para tener en cuenta todos los cambios, debe ** cerrar ** y ** reabrir ** la ventana OpenCutList."
+_description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)"
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -25,7 +25,7 @@ default:
   upgrade: Actualizar
   empty_filename: Sin título.skp
   help: Ayuda
-  error: ¡Maldito!
+  error: ¡Upss!
   warning: Advertencia
   tip: Propina
   good: Bien
@@ -104,7 +104,7 @@ tab:
     help: |
       Seleccione las partes de la escena actual que le gustaría incluir en la lista de partes y luego haga clic en el botón **Generar**.
       Si la selección está vacía, todos los componentes visibles de la escena se incluirán en la lista de piezas.
-    selection_only: selección
+    selection_only: Selección
     material_undefined: Ningún material definido
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido
@@ -149,7 +149,7 @@ tab:
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: Edit properties of a group of parts
+      edit_parts_properties: Editar las propiedades del grupo de piezas
       folding_part: Desplegar / Plegar
       material_origin_1: El material de esta pieza se define en sus instancias
       material_origin_2: El material de esta pieza se hereda de uno de sus elementos principales
@@ -208,19 +208,19 @@ tab:
       cumulable_help: |
         Si seleccionas esta opción, el **largo** o el **ancho** se considerará **unidad de longitud** o * unidad de ancho** multiplicado por el recuento al ordenar la lista de piezas.
       cumulable_0: No sumable
-      cumulable_1: Sumable sobre la longitud
+      cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
       unit_price: Precio por unidad
-      unit_mass: Masa unitaria
+      unit_mass: Unidad de masa
       size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
         (*Ejemplo: tamaño extragrande para un rodapié o una moldura de trazado que deben ajustarse al instalar.*)
-      length_increase: Longitud de gran tamaño
-      length_increase_help: El tamaño extragrande se aplica a la longitud real para definir la **longitud bruta**.
-      width_increase: Ancho de gran tamaño
-      width_increase_help: El tamaño extragrande se aplica al ancho real para definir el **ancho bruto**.
-      thickness_increase: Espesor de gran tamaño
+      length_increase: Longitud sobremedida
+      length_increase_help: El tamaño sobremedida se aplica a la longitud real para definir la **longitud bruta**.
+      width_increase: Ancho sobremedida
+      width_increase_help: El tamaño sobremedida se aplica al ancho real para definir el **ancho bruto**.
+      thickness_increase: Espesor sobremedida
       thickness_increase_help: Se aplica sobredimensionado al espesor real para definir el **espesor bruto**.
       orientation: Orientaciónion
       orientation_locked_on_axis: Bloquear orientación en ejes
@@ -231,12 +231,12 @@ tab:
         - la *longitud* está en el eje <span style='color:red'>rojo</span>
         - el *ancho* está en el eje <span style='color:green'>verde</span>
         - el *espesor* está en el eje <span style='color:blue'>azul</span>.
-      tags: Tags
+      tags: Etiquetas
       tags_help: |
-        Con las *tags*, puede agregar palabras clave para personalizar las definiciones de las piezas.
-        Puede agregar tantas tags como desees.
-        Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de tags.
-      tags_multiple_info: Solo se muestran las tags comunes
+        Con las *etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
+        Puede agregar tantas etiquetas como desees.
+        Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
+      tags_multiple_info: Solo se muestran las etiquetas comunes
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -263,7 +263,7 @@ tab:
          - *espesor* está en el eje <span style='color:blue'>azul</span>.
       smart_material: "*Asignación inteligente* de material"
       smart_material_help: "Si seleccionas esta opción, a las partes sin material definido se les puede asignar el material asignado a uno de sus padres o hijos."
-      dynamic_attributes_name: Utilice el atributo *Name* de componentes dinámicos
+      dynamic_attributes_name: Utilice el atributo *Nombre* de componentes dinámicos
       dynamic_attributes_name_help: |
         Si se selecciona esta opción, la designación de las piezas se extraerá del atributo *Nombre*, si está definido.
 
@@ -271,13 +271,13 @@ tab:
       part_number_with_letters: Usa letras para enumerar las partes
       part_number_with_letters_help: "Si se selecciona esta opción, las partes se enumeran usando letras (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Reinicializar la enumeración de partes para cada grupo
-      part_number_sequence_by_group_help: "Si se selecciona esta opción, la enumeración de piezas se reinicializa a 1 (o A) para cada grupo del mismo tipo de material y espesor."
+      part_number_sequence_by_group_help: "Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y grosor bruto)."
       part_folding: Agrupar partes similares
-      part_folding_help: "Si se selecciona esta opción, las partes con **tamaño idéntico** y con **etiquetas idénticas** se agruparán."
+      part_folding_help: "Si esta opción está habilitada, las partes de ** mismo tamaño **, con ** las mismas etiquetas ** y ** la misma superficie terminada ** * (si la visualización de esta superficie no está oculta) * se agruparán en la misma línea."
       hide_entity_names: Ocultar nombres de instancias
       hide_entity_names_help: "Si se selecciona esta opción, no se mostrarán **nombres de instancia** de piezas."
       hide_tags: Ocultar etiquetas
-      hide_tags_help: "Si se selecciona esta opción, se ocultarán las **tags**."
+      hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
       hide_cutting_dimensions: Ocultar dimensiones aproximadas
       hide_cutting_dimensions_help: "Si se selecciona esta opción, se ocultarán las dimensiones **aproximadas** de las piezas."
       hide_bbox_dimensions: Ocultar dimensiones Finales
@@ -308,7 +308,7 @@ tab:
       filters_warning: "Este filtro solo muestra **{{ count }}** parte de un total de {{ total }}."
       filters_warning_plural: "Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}."
       edge_material_names_filter: Material de borde de cantos a filtrar
-      tags_filter: Filtrar por tags
+      tags_filter: Filtrar por etiquetas
       dimensions_help: Ilustración de las dimensiones...
       summary: Resumen
       material_type: Tipo
@@ -370,7 +370,7 @@ tab:
       material_thickness: Espesor / Material
       material_name: Material
       entity_names: Nombres de instancias
-      tags: Tags
+      tags: Etiquetas
       edge_ymin: Longitud de borde 1
       edge_ymax: Longitud de borde 2
       edge_xmin: Ancho del borde 1
@@ -404,18 +404,18 @@ tab:
       option_wrap_length_help: Longitud máxima después de la cual una tabla se envolverá en varias líneas.
       option_hide_cross: Desperdicios
       option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
-      option_hide_cross_0: Dimensions et Croix
-      option_hide_cross_1: Dimensions seules
+      option_hide_cross_0: Dimensiones y Cruz
+      option_hide_cross_1: Solo dimensiones
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Tamaño de recorte
       option_trimming_help_1d: La cantidad de material en cada extremo del tablero que se tratará como desecho.
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
-      option_optimization: Niveau d'optimisation
-      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
-      option_optimization_0: Léger
-      option_optimization_1: Moyen
-      option_optimization_2: Avancé
+      option_optimization: Nivel de optimización
+      option_optimization_help: El nivel de optimización define el número de posibilidades calculadas.
+      option_optimization_0: Ligero
+      option_optimization_1: Camino
+      option_optimization_2: Avanzado
       option_stacking: Apilar piezas idénticas
       option_stacking_help: La forma en que las partes con ancho o largo común se colocan provisionalmente juntas.
       option_stacking_0: Ninguno
@@ -442,7 +442,7 @@ tab:
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
       option_std_sheet_add: Agregar un tamaño de panel ...
-      option_std_sheet_none: None
+      option_std_sheet_none: No
       option_scrap_sheet_sizes: Productos en piezas cortadas
       option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...
       option_scrap_sheet_sizes_help: |
@@ -467,7 +467,7 @@ tab:
         total_length: Σ Longitudes
         total_area: Σ Areas
         total_used: Total utilizado
-        trimming: Guarnición
+        trimming: Margen
         total_length_cuts: Longitud de cortes
         efficiency: Eficiencia
         leftover: Sobrante
@@ -487,7 +487,7 @@ tab:
         no_sheet: Los tamaños de panel estándar están configurados incorrectamente y no hay cortes disponibles.
         no_placement_possible: "Todas sus piezas son demasiado grandes para caber en un panel (recorte demasiado grande, panel estándar demasiado pequeño, corte de sierra demasiado grande, ...)."
         bad_error: "Pánico algorítmico, póngase en contacto con los desarrolladores, tiene un caso interesante."
-        unplaced_parts: "**Una pieza** no se pudo colocar porque es demasiado grande para colocar."
+        unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."
       warning:
         selection_only: Este diagrama de corte está limitado a **piezas seleccionadas**.
@@ -532,7 +532,7 @@ tab:
     type_2: Tablero
     type_3: Liston
     type_4: Laminado
-    type_5: Accessoire
+    type_5: Accesorio
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -566,7 +566,7 @@ tab:
       name: Nombre
       type: Tipo
       cut_options: Parámetros de corte
-      attributes: Attributs
+      attributes: Atributos
       thickness: Espesor
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
@@ -607,7 +607,7 @@ tab:
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
-      volumic_mass: Masse volumique
+      volumic_mass: Densidad
       cut_options_defaults:
         manage_help: Administración de los *parámetros de corte* predeterminados
         save_success: |
@@ -817,10 +817,11 @@ tab:
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk y Dominik Szybisz (*polaco*)
+      - Sergey Isupov (*hebreo*), sin interfaz RTL
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: Runtime
+    credits_runtime: Tiempo de ejecución
     credits_development: Desarrollo
     credits_vendors: |
       La aventura no sería posible sin el trabajo de los autores de los siguientes componentes de código abierto:
