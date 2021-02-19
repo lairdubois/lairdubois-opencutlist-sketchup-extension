@@ -1,0 +1,832 @@
+_label: עברית
+_reload_msg: "על מנת לקבל את כל השינויים, עליך **לסגור** ו-**לפתח** מחדש את החלון OpenCutList."
+_description: "תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקלות שימוש ;)"
+default:
+  minimize: מזער
+  maximize: הגדל
+  cancel: ביטול
+  validate: לאשר
+  open: לפתוח
+  see: צפייה
+  close: לסגור
+  clear: לנקות
+  refresh: לרענן
+  generate: חשב
+  print: הדפסה
+  export: יצוא
+  import: ייבוא
+  load: טעינה
+  options: אפשרויות
+  caution: שים לב
+  remove: למחוק
+  create: ליצור
+  ignore: לדלג
+  download: להוריד
+  upgrade: עדכון
+  empty_filename: ללא שם.skp
+  help: עזרה
+  error: לתקן!
+  warning: שימו לב!
+  tip: סוג
+  good: טוב
+  bad: גרוע
+  by: רקע
+  date_format: "d/m/Y G:i"
+  date_format_short: d/m/Y
+  unit_0: אינצים
+  unit_1: רגליים
+  unit_2: מילימטרים
+  unit_3: סנטימטרים
+  unit_4: מטרים
+  part_single: חלק
+  part_plural: חלקים
+  setup_model_units: הגדרת יחידות
+  load_more: "טען עוד ..."
+  save_to_defaults: לשמור כברירת מחדל
+  reset_to_defaults: לשחזר את ברירות מחדל
+  reset_to_app_defaults: לשחזר ערכים מקוריים
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      edit_part_properties: $(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+  toolbar:
+    name: OpenCutList
+    command: OpenCutList
+  dialog:
+    title: OpenCutList מאת L'Air du Bois
+  leftbar:
+    more: עוד
+    more_docs: מסמכים
+    more_reviews: הודעה
+    more_plans: תוכניות
+    more_extensions: תוספים
+    more_update: עדכונים
+  warning:
+    old_su: |
+      אתם משתמשים בגרסה ישנה של SketchUp ({{sketchupVersion}}). תוסף זה יעבוד, אך יתכן שיש באגים.
+      כדי לנצל את מלוא היתרונות של OpenCutList, אנו ממליצים לשדרג לפחות ל- **SketchUp 2017**.
+    feature_locked: "*לא ניתן להשבית בגרסה זו של SketchUp*"
+  event:
+    model_change: המודל הפעיל השתנה.
+    options_change: אפשרויות המודל שונו.
+    material_change: לפחות חומר אחד שונה.
+    selection_change: הבחירה במודל הפעיל שונתה.
+  model_info_page:
+    units: יחידות
+  upgrade:
+    unavailable: לא ניתן למצוא גרסה אחרונה של *OpenCutList*.
+    available: |
+      גרסה חדשה של *OpenCutList* זמינה.
+      הורידו אותה כדי לקבל את התכונות העדכניות ביותר!
+    up_to_date: |
+      כבר יש לך את הגרסה האחרונה של *OpenCutList*.
+
+      *תשקלו לתת חסות לפרויקט זה כדי לתמוך בנו כלכלית ולעזור לנו לשפר את הפונקציונליות שלו!*
+    downloading: טוען ...
+    changelog: "מה חדש?"
+    ignore_update: להתעלם מעדכון זה
+    download_rescue: "בעיות בהורדה?"
+    manual_download: הורדה ידנית
+    zzz: "כרגע אני נח לאחר העדכון. כדי להעיר אותי, עליכם להפעיל מחדש את SketchUp."
+    success: |
+      עדכון OpenCutList הושלם!
+
+      הפעל מחדש את SketchUp להפעלת השינויים.
+    error:
+      download: שגיאה בטעינת הארכיון.
+      unzip: שגיאה בפתיחת הארכיון.
+tab:
+  cutlist:
+    label: תוכנית חיתוך
+    title: רשימת חיתוך
+    help: |
+      בחרו את החלקים הדרושים לתוכנית חיתוך ולחצו על כפתור **חשב**.
+      אם לא נעשתה בחירה, כל החלקים הגלויים ייכללו ברשימת החלקים.
+    selection_only: בחירה
+    material_undefined: חומר לא מוגדר
+    not_available_std_width: רוחב לא מוגדר
+    not_available_std_thickness: עובי לא מוגדר
+    not_available_std_section: חתך לא מוגדר
+    highlight_part: ראה את החלק במודל
+    highlight_parts: ראה את החלקים במודל
+    edit_part_properties: לערוך מאפייני חלקים
+    edit_part_axes_properties: ערוך את המאפיינים (צירים) של החלק
+    edit_part_size_increase_properties: ערוך את המאפיינים (מידות) של החלק
+    edit_part_edges_properties: ערוך את המאפיינים (קאנט) של החלק
+    tooltip:
+      show_hide_block: הצג / הסתר קבוצה
+      scroll_to_block: גלול לקבוצה
+      not_available_std_width: "הרוחב *{{std_dimension_real}}* אינו מוגדר ברוחב הסטנדרטי של החומר '{{material_name}}'"
+      not_available_std_thickness: "יהעובי *{{std_dimension_real}}* אינו מוגדר בעוב הסטנדרטי של החומר '{{material_name}}'"
+      not_available_std_section: "החתך *{{std_dimension_real}}* אינו מוגדר בחתך הסטנדרטי של החומר '{{material_name}}'"
+      add_std_width_to_material: |
+        להוסיף רוחב *{{std_dimension}}*
+        לחומר '{{material_name}}'
+      add_std_thickness_to_material: |
+        להוסיף עובי *{{std_dimension}}*
+        לחומר '{{material_name}}'
+      add_std_section_to_material: |
+        להוסיף חתך *{{std_dimension}}*
+        לחומר '{{material_name}}'
+      rounded_std_width: |
+        רוחב *{{std_dimension}}* מעוגל בדיוק של יחידות המודל.
+        רוחב בפועל: *{{std_dimension_real}}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        עובי *{{std_dimension}}* מעוגל בדיוק של יחידות המודל.
+        עובי בפועל: *{{std_dimension_real}}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        חתך *{{std_dimension}}* מעוגל בדיוק של יחידות המודל.
+        חתך בפועל: *{{std_dimension_real}}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: התאימו את הדיוק ב- *Model Info* או בדקו את מידות החלקים בקבוצה זו.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: עריכת מאפיינים של קבוצת חלקים
+      folding_part: הגדל / מזער
+      material_origin_1: חומר של החלק נקבע לפי עותקיו
+      material_origin_2: חומר של החלק עבר בירושה מאחת האלמנטיים המקוריים.
+      material_origin_3: חומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים.
+      orientation_locked_on_axis: אוריינטציה של החלק קשורה לציריו
+      number_saved: מספר החלק נרשם
+      number_hidden: "לא ניתן להשתמש במספר '{{number}}' של החלק מכיוון שהוא כבר מוקצה"
+      number_generated: מספר החלק נוצר באופן אוטומטי
+      resized: החלק שונה על פי הגדרת מרכיביו.
+      flipped: החלק משתקף מהגדרתיו
+      auto_oriented: החלק עבר הכוונה אוטומטית
+      add_label_filter: "לסנן לפי '{{ label }}'"
+      remove_label_filter: "הסר סינון לפי '{{ label }}'"
+      add_edge_material_name_filter: "לסנן לפי '{{ material_name }}'"
+      remove_edge_material_name_filter: "לא לסנן לפי '{{ material_name }}'"
+      not_aligned_on_axes: " שימו לב, החלק עשוי להיות מכוון בצורה לא נכונה ביחס לצירים שלו."
+      multiple_layers: "שימו לב, החלק מורכב מקבוצות משנה הקיימות ב-{{ count }} שכבות שונות: <br> {{ layers }}"
+      children_warnings: "שימו לב, קיימת התראה בחלקים המקובצים {{ count }}"
+      children_warnings_plural: "שימו לב, קיימות התראות בחלקים המקובצים {{ count }}"
+      children_size_increase: "המידה עולה במידה {{ count }} של חלקים מקובצים"
+      invalid_final_area: "שימו לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי"
+      invalid_final_area_plural: "שימו לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים המרכיבים (מתוך {{ total }}) יש שטח שגוי"
+      is_dynamic_attributes_name: ייעוד החלק נלקח מהתכונה 'Name' של הרכיב הדינמי
+      size_increased: "המידה עלתה ב-{{ value }}"
+      has_edges: "החלק מכיל {{ count }} קאנטים"
+      has_edges_plural: "החלקים מכילים {{ count }} קאנטים"
+      edge_decremented: "עובי קאנט מופחת ({{ decrement }})"
+      edge_ymin: קאנט לאורך 1
+      edge_ymax: קאנט לאורך 2
+      edge_xmin: קאנט לרוחב 1
+      edge_xmax: קאנט לרוחב 2
+      dblclick_to_copy_all_edges: לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
+      part_axes: צירים פנימיים של החלק
+      select_unselect_all_parts: בחר / בטל את הבחירה בכל החלקים בקבוצה
+    menu:
+      show_all_groups: הצג את כל הקבוצות
+      hide_all_other_groups: הסתר את כל שאר הקבוצות
+      numbers_save: שמור מספרי החלקים
+      numbers_reset: עדכן את מספור החלקים
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_numbers_save: שמור מספרי החלקים בקבוצה
+      group_numbers_reset: עדכן מספרי החלקים בקבוצה
+      group_cuttingdiagram: תוכנית חיתוך
+      edit_material: "ערוך חומר '{{ material }}'..."
+      expand_all: פתח חלקים זהים
+      collapse_all: קפל חלקים זהים
+    edit_part:
+      title: "מאפייני חלק '{{ name }}'"
+      title_multiple: מאפייני קבוצת חלקים
+      multiple_alert: "מאפייני קבוצה של {{ part_count }} חלקים."
+      general: כללי
+      edges: קאנטים
+      name: תיאור
+      material: חומר
+      cumulable: לצבור
+      cumulable_help: |
+        אם האפשרות מופעלת, **אורך** או **רוחב** ייחשב בתוכנית חיתוך כ-**אורך** או **רוחב** כפול הכמות.
+      cumulable_0: לא לצבור
+      cumulable_1: לצבור לאורך
+      cumulable_2: לצבור לרוחב
+      unit_price: מחיר ליחידה
+      unit_mass: משקל יחידה
+      size_increase: תוספות
+      size_increase_help: |
+        תוספות מאפשרות להגדיל מידות מחושבות של החלק.
+        (*דוגמה: תוספת חייבת לקחת בחשבון את גודל פאנל, כרכוב או עקמומיות הקיר.*)
+      length_increase: תוספת לאורך
+      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      width_increase: תוספת לרוחב
+      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      thickness_increase: תוספת לעובי
+      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      orientation: אורינטציה
+      orientation_locked_on_axis: נעילת אורינטציה של צירי החלק
+      orientation_locked_on_axis_help: |
+        אם אפשרות זו מופעלת, אז *אורינטציה אוטומטית של חלקים* לא ישפיע על החלק,
+
+        מכאן, במערכת הקואורדינטות המקומית:
+        - *אורך* תואם את הציר <span style='color:red'>אדום</span>
+        - *רוחב* תואם את הציר <span style='color:green'>ירוק</span>
+        - *עובי* תואם את הציר <span style='color:blue'>כחול</span>
+      tags: תגים
+      tags_help: |
+        בעזרת האפשרות *תגים*, תוכלו להוסיף מילות מפתח לאינדקס כדי לזהות טוב יותר חלקים בתוכנית חיתוך.
+        ניתן להוסיף כמות תגים כפי שנדרש
+        לאחר מכן ניתן לסנן את החלקים הגלויים בתוכנית חיתוך באמצעות תגים.
+      tags_multiple_info: מוצגים רק תגים נפוצים
+      axes: צירים
+      axes_help: הגדר את המידות כך שיתאימו לצבעי הציר של החלק.
+      axes_tip: |
+        שים לב, אם האפשרות *אורינטציה אוטומטית של חלקים* אינה פעילה או שהחלק *נעול לאורך ציריו*, אז:
+        - **אורך** תואם את הציר <strong style='color:red'>אדום</strong>
+        - **רוחב** תואם את הציר <strong style='color:green'>ירוק</strong>
+        - **עובי** תואם את הציר <strong style='color:blue'>כחול</strong>
+      axes_origin_position_none: לא לשנות ראשית הצירים
+      axes_origin_position_min: מיקום ראשית הצירים לפי זווית
+      axes_origin_position_center: מיקום ראשית הצירים במרכז
+      axes_origin_position_min_center: מיקום ראשית הצירים במרכז הצלע
+      over_length: לכל האורך
+      over_width: לכל הרוחב
+      edge_disabled_help: לא ניתן להגדיר את הקאנט מכיוון שבמודל לא נמצא משטח שכולל חומר הקאנט.
+      multiple_values: ערכים מרובים
+    option:
+      auto_orient: אורינטציה אוטומטית של חלקים
+      auto_orient_help: |
+        אם נבחרה אפשרות זו, מידות החלקים ממוינים כך שהגדול ביותר הוא *אורך* והקטן ביותר הוא *עובי*.
+
+        אם האופציה אינה פעילה, צירי החלק יכוונו באופן הבא
+        - *אורך* יהיה על הציר <span style='color:red'>אדום</span>
+        - *רוחב* יהיה על הציר <span style='color:green'>ירוק</span>
+        - *עובי* יהיה על הציר <span style='color:blue'>כחול</span>
+      smart_material: הגדרת חומר *חכמה*
+      smart_material_help: "אם האפשרות מופעלת, ניתן להקצות לחלקים שאין להם חומר מוגדר את החומר העיקרי של אלמנטים צאצאים או את זה שעובר בירושה מאלמנטים האב שלהם."
+      dynamic_attributes_name: השתמש בתכונה *Name* של רכיבים דינמיים
+      dynamic_attributes_name_help: |
+        אם האפשרות מופעלת, ייעוד החלקים שהם רכיבים דינמיים יחולץ מהתכונה *Name* אם היא מוגדרת.
+
+        <i class='ladb-opencutlist-icon-warning'></i> חלקים עם אותה הגדרה יופרדו, אם לתכונה *Name* אין אותו ערך.
+      part_number_with_letters: השתמש באותיות כדי למספר חלקים
+      part_number_with_letters_help: "אם האפשרות מופעלת, חלקים בקבוצה ממוספרים באמצעות אותיות (A, B, C, ... Z, AA, AB, ...)."
+      part_number_sequence_by_group: מספור של כל קבוצה
+      part_number_sequence_by_group_help: "אם האפשרות מופעלת, מספור החלקים מאופס ל- 1 (או A) עבור כל קבוצה (רשימת חלקים בעלי אותו חומר ועובי)."
+      part_folding: לערוך מחדש חלקים זהים
+      part_folding_help: "אם האפשרות מופעלת, חלקים עם **מידה זהה**, **תגים זהים** ו-**אותו משטח מוגמר** *(אם התצוגה של משטח זה אינו מוסתר)* יקובצו על אותו קו."
+      hide_entity_names: הסתר שמות מופעים
+      hide_entity_names_help: "אם האפשרות מופעלת, **שמות מופעים** של החלקים אינם מוצגים."
+      hide_tags: הסתר תגים
+      hide_tags_help: "אם האפשרות מופעלת, **תגים** יוסתרו."
+      hide_cutting_dimensions: הסתר מידות חיתוך
+      hide_cutting_dimensions_help: "אם האפשרות מופעלת, מידות **חיתוך** של החלקים אינם מוצגים."
+      hide_bbox_dimensions: הסתר מידות סופיות
+      hide_bbox_dimensions_help: "אם האפשרות מופעלת, מידות **סופיות** של החלקים אינם מוצגים."
+      hide_final_areas: הסתר שטח בפועל של *מטר מרובע*
+      hide_final_areas_help: "אם האפשרות מופעלת, **שטח בפועל** של חלקים מסוג *מטר מרובע* אינו מוצג."
+      hide_edges: הסתר עמודות קאנטים
+      hide_edges_help: "אם האפשרות מופעלת, **עמודות קאנטים** של חלקים מסוג *מטר מרובע* אינן מוצגות."
+      minimize_on_highlight: כווץ אחרי *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: "אם האפשרות מופעלת, חלון OpenCutList ימוזער כאשר משתמשים בפונקציה *'$t(tab.cutlist.highlight_part)'*"
+      general: כללי
+      part_order_strategy: מיון חלקים
+      part_order_strategy_help: |
+        סדר מחדש את המאפיינים הבאים כדי להגדיר מיון לחלקים בכל קבוצה.
+        ניתן למיין מאפיינים לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i> *עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i> *יורד*.
+      dimension_column_order_strategy: סדר עמודות
+      dimension_column_order_strategy_help: |
+        סדר מחדש את המאפיינים הבאים כדי להגדיר את סדר התצוגה של עמודות המידות.
+      property_thickness: עובי
+      property_length: אורך
+      property_width: רוחב
+      property_name: תיאור
+      property_count: כמות
+      property_edge_pattern: כמות קאנטים
+    list:
+      filters: סינון
+      filters_warning_0: "סינון הזה מסתיר את כל החלקים!"
+      filters_warning: "הסינון מציג רק חלק **{{ count }}** מתוך {{ total }}."
+      filters_warning_plural: "הסינון מציג רק חלקים **{{ count }}** מתוך {{ total }}."
+      edge_material_names_filter: סינון לפי חומר קאנט
+      tags_filter: סינון לפי תגים
+      dimensions_help: איור מידות...
+      summary: חישוב
+      material_type: סוג
+      material_thickness: חומר / עובי
+      part_count: כמות חלקים
+      area: שטח
+      area_short: משטח
+      volume: נפח
+      number: מס'
+      name: תיאור
+      count: כמות
+      cutting: מידת חיתוך
+      bbox: מידה כללית
+      final: בפועל
+      total_cutting: סה"כ בחיתוך
+      total_final: סה"כ בפועל
+      length: אורך
+      length_short: "א:"
+      width: רוחב
+      width_short: "ר:"
+      thickness: עובי
+      thickness_short: "ע:"
+      edges: קאנטים
+    export:
+      title: ייצוא בפורמט CSV
+      info: |
+        הפונקציונליות מאפשרת לייצא *תוכנית חיתוך* כ-*רשימת חלקים* בפורמט [CSV](https://he.wikipedia.org/wiki/CSV)
+
+        <i class="ladb-opencutlist-icon-warning"></i>*החלקים הכלולים בקבוצות הנסתרות של התוכנית חיתוך לא ייצאו*.
+      options: אפשרויות ייצוא
+      option_source: מקור
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_instances_list: רשימת עותקים
+      option_col_sep: מפריד
+      option_col_sep_tab: טבלר
+      option_col_sep_comma: פסיק
+      option_col_sep_semicolon: נקודה פסיק
+      option_encoding: קדוד
+      number: מס'
+      path: מסלול
+      instance_name: עותק
+      definition_name: הגדרה
+      name: תיאור
+      total_cutting_length: אורך - חיתוך מצטבר
+      total_cutting_area: שטח - חיתוך מצטבר
+      total_cutting_volume: נפח - חיתוך מצטבר
+      total_final_area: שטח - נטו מצטבר
+      cutting_length: אורך - חיתוך
+      cutting_width: רוחב - חיתוך
+      cutting_thickness: עובי - חיתוך
+      bbox_length: אורך - אפשרי
+      bbox_width: רוחב - אפשרי
+      bbox_thickness: עובי - אפשרי
+      final_area: שטח - אפשרי
+      count: כמות
+      part_count: מספר חלקים
+      material_type: סוג
+      material_thickness: חומר / עובי
+      material_name: חומר
+      entity_names: שמות עותקים
+      tags: תגים
+      edge_ymin: קאנט לאורך 1
+      edge_ymax: קאנט לאורך 2
+      edge_xmin: קאנט לרוחב 1
+      edge_xmax: קאנט לרוחב 2
+    report:
+      label: דו"ח
+    cuttingdiagram:
+      title: תוכנית חיתוך
+      options_material: חומר
+      options_config: תצורה
+      options_display: להציג
+      option_bar_folding: לערוך מחדש קרשים זהים
+      option_bar_folding_0: לא
+      option_bar_folding_1: כן
+      option_bar_folding_help: מאפשר לערוך מחדש קרשים שמכילים את אותם חלקים וחתכים.
+      option_sheet_folding: לערוך מחדש לוחות זהים
+      option_sheet_folding_0: לא
+      option_sheet_folding_1: כן
+      option_sheet_folding_help: מאפשר לערוך מחדש לוחות שמכילות את אותם חלקים וחתכים.
+      option_hide_part_list: רשימת חלקים
+      option_hide_part_list_1d_0: הצג לכל קרש
+      option_hide_part_list_2d_0: הצג לכל פאנל
+      option_hide_part_list_1: הסתר
+      option_hide_part_list_1d_help: הצג או הסתר רשימת חלקים לכל קרש.
+      option_hide_part_list_2d_help: הצג או הסתר רשימת חלקים לכל פאנל.
+      option_origin_corner: עמדת התחלה
+      option_origin_corner_0: עליון שמאל
+      option_origin_corner_1: תחתון שמאל
+      option_origin_corner_help: מאפשר לבחור זווית התחלתית למיקום חלקים על הלוח.
+      option_wrap_length: אורך היקף
+      option_wrap_length_help: אורך מרבי בו יוצג לוח במספר שורות.
+      option_hide_cross: שאריות
+      option_hide_cross_help: הצג או הסתר את הצלב המציין את החלקים המוגדרים כשאריות.
+      option_hide_cross_0: מידות וצלב
+      option_hide_cross_1: רק מידות
+      option_saw_kerf: עובי להב המסור
+      option_saw_kerf_help: רוחב החומר שיורד על ידי המסור.
+      option_trimming: שוליים
+      option_trimming_help_1d: גודל שוליים לחיתוך פגמים בלוח ויישור מלבני.
+      option_trimming_help_2d: גודל שוליים בהיקף לחיתוך פגמים ויישור מלבני.
+      option_optimization: רמת אופטימיזציה
+      option_optimization_help: רמת האופטימיזציה מגדירה את מספר האפשרויות המחושבות.
+      option_optimization_0: קל
+      option_optimization_1: בינוני
+      option_optimization_2: מתקדם
+      option_stacking: לערום חלקים זהים
+      option_stacking_help: כיוון הערימה של חלקים בעלי אורך או רוחב משותפים.
+      option_stacking_0: אין
+      option_stacking_1: לכל האורך
+      option_stacking_2: לכל הרוחב
+      option_stacking_3: כל האפשרויות
+      option_std_bar: לוח סטנדרטי
+      option_std_bar_help: |
+        בחר לוח סטנדרטי שישוכפל בכדי להכיל בצורה הטובה ביותר את כל החלקים.
+        הרשימה מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_lengths)** של החומר.
+        ערוך את החומר '{{ material_name }}' כדי לעדכן רשימה זו.
+      option_std_bar_add: הוסף אורך...
+      option_std_bar_none: אין
+      option_scrap_bar_lengths: פחת הקרש
+      option_scrap_bar_lengths_placeholder: אורך x כמות ; ...
+      option_scrap_bar_lengths_help: |
+        ציינו פחת הקרש שנותרו כדי להיחשב כעדיפות לפריסה.
+        פורמט צפוי: **א**x**כ**. כאשר **א** הוא *אורך* של הפחת ו **כ** הכמות.
+        הכמות אופציונלית.
+        *אם לא צוינו שום יחידות מדידה, יחידות המודל ילקחו בחשבון.*
+      option_std_sheet: לוח סטנדרטי
+      option_std_sheet_help: |
+        בחר לוח סטנדרטי שישוכפל בכדי להכיל בצורה הטובה ביותר את כל החלקים.
+        הרשימה מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_sizes)** של החומר.
+        ערוך את החומר '{{ material_name }}' כדי לעדכן רשימה.
+      option_std_sheet_add: הוסף אורך...
+      option_std_sheet_none: לא
+      option_scrap_sheet_sizes: פחת מטר מרובע
+      option_scrap_sheet_sizes_placeholder: אורך x רוחב x כמות ; ...
+      option_scrap_sheet_sizes_help: |
+        ציינו פחת הלוח שצריך להוסיף בעדיפות לפריסה.
+        פורמט צפוי: **א**x**ר**x**כ**. כאשר **א** ו- **ר** הם בהתאם *אורך* ו-*רוחב* של הפחת ו-**כ** הכמות.
+        הכמות אופציונלית.
+        *אם לא צוינו שום יחידות מדידה, יחידות המודל ילקחו בחשבון.*
+      options_defaults:
+        manage_help: ניהול של *אפשרויות תוכנית חיתוך* כברירת מחדל
+        save_success: "*אפשרויות תוכנית חיתוך* כברירת מחדל שמורות"
+      tooltip:
+        scroll_to_block_1d: גלול לפריט הראשון
+        scroll_to_block_2d: גלול ללוח הראשונה
+      list:
+        unplaced_parts: חלקים לא ממוקמים
+        summary: חישוב
+        count: כמות
+        bar: קרש
+        sheet: לוח
+        length: אורך
+        width: רוחב
+        total_length: סכום אורכים
+        total_area: שטח כללי
+        total_used: סה"כ בשימוש
+        trimming: שוליים
+        total_length_cuts: אורך חיתוך
+        efficiency: יעילות
+        leftover: פחת
+        cut: חיתוך
+        bar_type_0: לוח סטנדרטי
+        bar_type_1: פחת הקרש
+        sheet_type_0: לוח סטנדרטי
+        sheet_type_1: פחת הלוח
+        unused: לא בשימוש
+        parts: "חלק {{ count }}"
+        parts_plural: "{{ count }} חלקים"
+        settings: הגדרות
+      error:
+        no_bar: הקרש הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
+        parameters: ההגדרות אינן נכונות. שארית עולה על 25% מהלוח הגדול ביותר.
+        no_parts: אין חלק
+        no_sheet: הלוח הסטנדרטי אינו מוגדר כהלכה ולא מוגדרת שום פחת.
+        no_placement_possible: "לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...)."
+        bad_error: "שגיאת חישוב. אנא צרו קשר עם המפתחים, מכיוון שיש לכם מקרה מעניין."
+        unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
+        unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
+      warning:
+        selection_only: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
+        cutting_dimensions: |
+          תוכנית חיתוך מציגה את החלקים במידות חיתוך שלהם.
+        cutting_dimensions_increase_1d: |
+          *המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'.*
+        cutting_dimensions_increase_2d: |
+          *המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'.*
+        cutting_dimensions_edge_decrement: |
+          *המידות מופחתות בעובי הקאנט.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      label: תוויות
+    error:
+      no_model: המודל לא נפתח. נצטרך לתת לי קצת יותר מידע ;)
+      no_entities: המודל ריק. נצטרך לתת לי קצת יותר מידע ;)
+      no_component_in_selection: בבחירתך לא נמצא רכיב גלוי.
+      no_component_in_model: לא התגלה שום רכיב גלוי על המסך.
+      failed_to_write_export_file: "כתיבת קובץ הייצוא נכשלה. **{{ error }}**"
+      unknow_part: החלק שנבחר אינו קיים בתוכנית חיתוך.
+      obsolete_cutlist: "לא ניתן, תוכנית חיתוך לא מעודכנת. ליצור מחדש."
+    warning:
+      partial_cutlist: תוכנית חיתוך כוללת רק מודל חלקי מכיוון שהוא נוצר מאלמנטים שנבחרו.
+      no_typed_materials_in_model: המודל אינו משתמש בשום חומר עם סוג מוגדר (**מטר קוב** או **מטר מרובע** או **מטר רץ**).
+      no_typed_materials_in_selection: בבחירתך אין שימוש בחומר עם סוג מוגדר (**מטר קוב** או **מטר מרובע** או **מטר רץ**).
+      export_empty: הייצוא אינו מכיל חלקים כלשהם.
+    success:
+      exported_to: "ייצוא בוצע אל {{ export_path }}."
+    tip:
+      no_component: |
+        החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
+        אם משתמשים רק בקבוצות, המירו אותן לרכיבים.
+        שימוש ברכיבים מאפשר לעתיק חלקים זהים מבלי לשכפל אותם.
+      no_typed_materials: החל חומר על החלקים שיכללו בתוכנית חיתוך והגדר את סוג החומר (**מטר קוב** או **מטר מרובע** או **מטר רץ**) בלשונית <i class="ladb-opencutlist-icon-materials"></i> **חומרים**.
+    obsolete_base: "כדי לסנכרן שינויים, עליך לחשב מחדש את התוכנית חיתוך."
+  materials:
+    label: חומרים
+    title: חומרים
+    new: חומר חדש
+    type_0: לא מוגדר
+    type_1: מטר קוב
+    type_2: מטר מרובע
+    type_3: מטר רץ
+    type_4: קאנט
+    type_5: אבזר
+    tooltip:
+      type_0: סוג החומר '$t(tab.materials.type_0)'
+      type_1: סוג החומר '$t(tab.materials.type_1)'
+      type_2: סוג החומר '$t(tab.materials.type_2)'
+      type_3: סוג החומר '$t(tab.materials.type_3)'
+      type_4: סוג החומר '$t(tab.materials.type_4)'
+      type_5: סוג החומר '$t(tab.materials.type_5)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: כיוון סיבים
+      colorized: ציור הצללה זה יוחל על המרקם של החומר שיופיע במודל
+      texture_colorized: שלבו דפוס מרקם כדי לשלוט בכיוון מרקם החומר
+      edit: "ערוך מאפיינים של '{{ name }}'"
+      set_current: |
+        בחר '{{ name }}'
+        *לחיצה כפולה ליישום*
+    menu:
+      import_from_skm: ייבוא חומר (skm.)
+      purge_unused: נקה חומרים שאינם בשימוש
+    new_material:
+      title: צור חומר חדש
+      name: תיאור
+      name_warning: שם לא חוקי
+      color: צבע
+      color_warning: צבע לא חוקי
+      type: סוג
+    edit_material:
+      title: "מאפייני חומר '{{ name }}'"
+      general: כללי
+      texture: מרקם
+      name: תיאור
+      type: סוג
+      cut_options: הגדרות חיתוך
+      attributes: תכונות
+      thickness: עובי
+      length_increase: תוספת לאורך
+      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      width_increase: תוספת לרוחב
+      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      thickness_increase: תוספת לעובי
+      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      std_lengths: אורכים סטנדרטיים
+      std_lengths_placeholder: אורך ; ...
+      std_lengths_help: |
+        אורכי לוחות סטנדרטיים.
+        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+      std_widths: רוחבים סטנדרטיים
+      std_widths_placeholder: רוחב ; ...
+      std_widths_help: |
+        רוחבי קאנטים סטנדרטיים.
+        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+      std_thicknesses: עוביים סטנדרטיים
+      std_thicknesses_placeholder: עובי ; ...
+      std_thicknesses_help: |
+        עוביי ניסור סטנדרטיים.
+        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+      std_sections: מידות חתך סטנדרטיות
+      std_sections_placeholder: רוחב x גובה ; ...
+      std_sections_help: |
+        פורמט צפוי: **ר**x**ג**. כאשר **ר** ו-**ג** הם *רוחב* ו-*גובה* של החתך בהתאם.
+        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+      std_sizes: גדלים סטנדרטיים
+      std_sizes_placeholder: אורך x רוחב ; ...
+      std_sizes_help: |
+        פורמט צפוי: **א**x**ר**. כאשר **א** ו-**ר** הם *אורך* ו-*רוחב * של הלוח בהתאם.
+        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+      grained: כיוון סיבים
+      grained_help: מגדיר את כיוון הסיבים של מרקם החומר.
+      grained_0: ללא מרקם
+      grained_1: סיבים לאורך
+      edge_decremented: הפחתה
+      edge_decremented_help: משמש כדי לציין אם יש להפחית את מידות חיתוך של החלקים בעובי הקאנט.
+      edge_decremented_0: ללא הפחתה
+      edge_decremented_1: הפחתת עובי הקאנט
+      volumic_mass: צפיפות
+      cut_options_defaults:
+        manage_help: ניהול של *אפשרויות חיתוך* כברירת מחדל
+        save_success: |
+          **{{ type_name }}**
+          *אפשרויות חיתוך* כברירת מחדל שמורות
+      texture_width: רוחב
+      texture_height: גובה
+      export_to_skm: ייצוא ​​(skm.)
+    import_from_skm:
+      title: ייבוא קובץ skm.
+    export_to_skm:
+      title: ייצוא לקובץ skm.
+    option:
+      material_order_strategy: מיון חומרים
+      material_order_strategy_help: |
+        סדר מחדש את המאפיינים הבאים כדי להגדיר את המיון של החומרים ברשימה.
+        ניתן למיין לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i>*עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i>*יורד*.
+      property_type: סוג
+      property_name: תיאור
+    remove:
+      message: |
+        אתם עומדים להסיר את החומר **{{ material_name }}** מהמודל.
+        אשרו להמשיך.
+    error:
+      no_model: המודל לא נפתח. נצטרך לתת לי קצת יותר מידע ;)
+      no_materials: המודל אינו מכיל שום חומר.
+      material_not_found: חומר לא נמצא.
+      failed_import_skm_file: "**{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm."
+      failed_export_skm_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skm. "
+      failed_removing_material: "אירעה שגיאה בעת מחיקת החומר. **{{ error }}**"
+    success:
+      exported_to: "ייצוא בוצע אל {{ export_path }}."
+    obsolete_base: "כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים."
+  importer:
+    label: ייבוא
+    title: ייבוא חלקים
+    help: |
+      הדף מאפשר לייבא סדרה של חלקים (בבחירה מלבנית) למודל מקובץ [CSV](https://he.wikipedia.org/wiki/CSV).
+      ניתן להשתמש ביכולות של *OpenCutList* לחלקים שנוצרו לא בעזרת *SketchUp*.
+      לחץ על הלחצן **פתח קובץ CSV** כדי להתחיל.
+    open_csv: פתח קובץ CSV
+    import_to_model: ייבוא למודל
+    load:
+      title: טען קובץ CSV
+      info: |
+        בחר באפשרויות הדרושות לקריאה נכונה של הקובץ **{{ filename }}**.
+
+        <i class="ladb-opencutlist-icon-warning"></i> *יחידות שהוגדרו במודל: **{{ unit }}**.
+        יחידות ישמשו למידות שלא מוגדרות עבורן יחידות כלל.*
+      options: אפשרויות טעינה
+      option_col_sep: חוצץ
+      option_col_sep_tab: טבלר
+      option_col_sep_comma: פסיק
+      option_col_sep_semicolon: נקודה פסיק
+      option_first_line_headers: כותרת שורה
+      option_first_line_headers_0: נתונים
+      option_first_line_headers_1: כותרות עמודות
+    import:
+      title: ייבוא ​​חלקים למודל
+      info_0: |
+        אתם עומדים לייבא **{{ count }}** חלק למודל.
+        החלק יוצב בראשית הצירים של הסצינה.
+      info_0_plural: |
+        אתם עומדים לייבא **{{ count }}** חלקים למודל.
+        החלקים יוצבו בראשית הצירים של הסצינה.
+      info_1: לחץ על **ייבוא** כדי לאשר את הפעולה.
+      options: |
+        המודל כבר מכיל *חלקים*, *הגדרות* או *חומרים*.
+        בחר באפשרויות ייבוא הנדרשות​​.
+      option_remove_all_?: "מה לעשות?"
+      option_remove_all_false: הוסף חלקים לקיימים
+      option_remove_all_true: לאפס הכל !
+      option_keep_definitions_settings: שמור פרמטרים בהגדרות
+      option_keep_materials_settings: שמור הגדרות החומרים
+    column:
+      unused: לא בשימוש
+      mandatory: שדות חובה
+      optional: שדות נוספים
+      name: תיאור
+      count: כמות
+      bbox_length: אורך סופי
+      bbox_width: רוחב סופי
+      bbox_thickness: עובי סופי
+      material: חומר
+      tags: תגים
+    tooltip:
+      errors: החלק לא יובא מכיוון שהוא מכיל את השגיאות הבאות
+      warnings: החלק יובא אך הוא מכיל את האזהרות הבאות
+    error:
+      no_model: שום מודל לא פתוח. לא ניתן לייבא חלקים מן הריק ;)
+      file_not_found: "הקובץ לא נמצא : **{{ filename }}**"
+      bad_extension: "לקובץ *{{ filename }}* אין סיומת **CSV.** או **TSV.**."
+      failed_to_load_csv_file: |
+        טעינת קובץ CSV נכשלה: **{{ error }}**
+        *בדוק שבחרת במפריד הנתונים הנכון.*
+      empty_file: נראה שהקובץ ריק או בפורמט לא קריא.
+      no_importable_part: לא ניתן לייבא חלקים. הקצה את השדות הנדרשים בעמודות המתאימות.
+      invalid_name: תיאור לא תקין
+      invalid_length: אורך לא תקין
+      invalid_width: רוחב לא תקין
+      invalid_thickness: עובי לא תקין
+      failed_to_import: הייבוא ​​נכשל.
+    warning:
+      invalid_count: כמות לא תקינה
+      invalid_material: חומר לא תקין
+    success:
+      imported_title: הייבוא ​​הושלם
+      imported_body: "{{ count }} חלק מיובא בהצלחה!"
+      imported_body_plural: "{{ count }} חלקים מיובאים בהצלחה!"
+    obsolete_base: "כדי לתמוך בסנכרון, עליך לטעון מחדש את הקובץ CSV."
+  tutorials:
+    label: הוראות
+    title: הוראות
+    help: |
+      מצא כאן רשימת סרטונים שנעשו על ידי הקהילה סביב השימוש ב-*OpenCutList*.
+    submit: שלח סרטון
+    submit_info: |
+      ערכתם סרטון על השימוש ב-**OpenCutList** ואתם רוצים לראות את זה מופיע כאן?
+      נא לידע לכתובת **opencutlist@lairdubois.fr**!
+
+      *על הסרטון להיות משותף ונמצא ב- YouTube*.
+    error:
+      fail_to_load_list: לא ניתן לטעון את רשימת הסרטונים.
+  news:
+    label: חדשות
+    title: חדשות
+    help: |
+      חדשות אחרונות מ-*OpenCutList*.
+    comment: תגובה
+    error:
+      fail_to_load_list: לא ניתן לטעון את רשימת החדשות.
+  forum:
+    label: פורום
+    title: פורום
+    help: |
+      הפלטפורמה מאפשרת להחליף מידע בין קהילת המשתמשים והצוות *OpenCutList*.
+    create_conversation: התחל שיחה
+    reply: השב
+    tags: תגים
+    redirection: |
+      תועבר לפלטפורמת **Open Collective** המארחת פורום הדיונים.
+      כדי *להתחיל שיחה* או *לענות* תצטרכו ליצור חשבון ולהיכנס.
+      *זה בחינם, אין התחייבות ופשוט מספיקה כתובת דוא"ל. *
+
+      אשר כדי להמשיך.
+    error:
+      fail_to_load_list: לא ניתן לטעון את רשימת השיחות.
+  sponsor:
+    label: תמיכה
+    title: תמיכה
+    description: |
+      **OpenCutList** היא *תוכנת קוד פתוח* שממומנת על ידי המשתמשים באמצעות פלטפורמת <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      תמכו בפרויקט על ידי תרומה !
+    contribute: לתרום
+    backers: "{{ count }} תורם כספי"
+    backers_plural: "{{ count }} תורמים כספיים"
+    ad: "אוהבים Open CutList ?"
+    objective: יעד
+    objective_slogan: OpenCutList - זה כולנו
+    objective_title:
+      default: מטרות
+      report: צור דו"ח
+      labels: הדפסת תוויות
+    objective_details:
+      default: |
+        *יצירת **דוחות** והדפס **תוויות * יהיו זמינים בעדכון הבא 2.0.*
+      report: |
+        *יצירת **דוחות** תהיה זמינה בעדכון הבא 2.0.*
+
+        הפונקציונליות נועדה:
+        - לחשב את **עלות** המשוערת של הפרויקט עם פירוט לפי חומרים,
+        - לחשב את **כמות** המשוער של החומרים המשמשים,
+        - לשלב את המידע של הפרויקט כולו במסמך אחד ע"י פעולה אחת.
+      labels: |
+        *הדפסת **תוויות** תהיה זמינה בעדכון הבא 2.0.*
+
+        הפונקציונליות נועדה:
+        - לאפשר הדפסת מידע שימושי של כל חלק על גבי תוויות דבק,
+        - לפשט את עבודת הצוות.
+    objective_crowdfunding: |
+      פיתוח פונקציות חדשות יתבצע הודות ל-**מימון המונים** ויכול להתחיל כאשר הושג **היעד הכספי**.
+    objective_thanks: |
+      תודה על תרומתך !
+    objective_funded_progress: "ממומן ב-{{ progress }}%"
+  settings:
+    label: הגדרות
+    title: הגדרות
+    language: שפה
+    zoom: גודל טקסט
+    zoom_normal: רגיל
+    zoom_small: קטן
+    zoom_tiny: קטן מאוד
+    size_and_position: גודל ומיקום חלון
+  about:
+    label: אודות
+    title: אודות
+    version: גרסה
+    credits: מפרט טכני
+    credits_authors: |
+      *OpenCutList* פותח על ידי [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant)et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translators: |
+      תרגומים:
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*אנגלית*, *גרמנית*)
+      - Vladimir Badulya (*רוסית*)
+      - Pierluigi Colombo (*איטלקית*)
+      - Nayton Sanches Barbosa (*פורטוגזית*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*ספרדית*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*צ'כית*)
+      - Sergey Isupov (*עברית*)
+    credits_description: |
+      פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
+      ובנוסף, הוא גם *קוד פתוח* וזמין ברישיון [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: ביצוע
+    credits_development: פיתוח
+    credits_vendors: |
+      ההרפתקה לא תתאפשר ללא עבודתם של מחברי התוכנה *קוד פתוח* הבאים:
+    credits_thanks: |
+      תודה מיוחדת ל-[JetBrains](https://www.jetbrains.com) על תמיכתם בפרויקט באמצעות [רישיון מיוחד לפרויקטים קוד פתוח](https://www.jetbrains.com/buy/opensource/)
+tool:
+  highlight:
+    transparency: שקיפות
+    zoom_extents: זום מורחב
