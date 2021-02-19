@@ -568,13 +568,13 @@ tab:
         part_name: Désignation
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
-        part_cutting_width: largeur de débit
+        part_cutting_width: Largeur de débit
         part_size: Taille capable
         part_length: Longueur capable
         part_width: Largeur capable
         part_tags: Tags
         part_batch: Lot
-        thumbnail_proportional: Vignette proprotionnelle
+        thumbnail_proportional: Vignette proportionnelle
         thumbnail_square: Vignette carrée
         group_material: Matière / Dimension
         group_material_name: Nom de matière
@@ -909,8 +909,8 @@ tab:
       Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
       Un remerciement particulier à :
-        - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
-        - [Transifex](https://www.transifex.com/) pour leur soutien de projet Open Source.
+      - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com/) pour leur soutien de projet Open Source.
 tool:
   highlight:
     transparency: Transparence

@@ -6,6 +6,7 @@ default:
   maximize: Maximize
   cancel: Cancel
   validate: Apply
+  confirm: Validate
   open: Open
   see: See
   close: Close
@@ -42,8 +43,6 @@ default:
   part_plural: parts
   setup_model_units: Setup the model units
   load_more: "Load more ..."
-  save_to_defaults: Save as default values
-  reset_to_defaults: Restore to saved values
   reset_to_app_defaults: Restore to original values
 core:
   menu:
@@ -97,6 +96,28 @@ core:
     error:
       download: Error while downloading the archive.
       unzip: Error while decompressing the archive.
+  preset:
+    label: Presets
+    save_to: Save as
+    restore_from: Restore from
+    app_defaults: Factory preset
+    user_defaults: My default preset
+    new: New preset
+    new_prompt: |
+      *Creating a custom preset allows you to keep the current form settings globally so you can reuse them in all your models.*
+
+      Enter the name of the preset:
+    delete_confirm_title: Removal
+    delete_confirm: "Are you sure you want to delete the preset **\"{{ name }}\"**?"
+    override_confirm_title: Update
+    override_confirm: "Do you confirm updating the preset **\"{{name}}\"** with the form parameters?"
+    new_success: "Preset **\"{{ name }}\"** created"
+    override_success: "Preset **\"{{ name }}\"** updated"
+    restore_success: "The form has been filled with the preset **\"{{ name }}\"**"
+    delete_success: "Preset **\"{{ name }}\"** deleted"
+    tooltip:
+      save_to: "Update preset '{{ name }}'"
+      delete: "Delete preset '{{name}}'"
 tab:
   cutlist:
     label: Parts
@@ -193,6 +214,7 @@ tab:
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
+      group_labels: Print labels
       edit_material: "Edit material '{{ material }}'..."
       expand_all: Unfold similar parts
       collapse_all: Fold similar parts
@@ -334,10 +356,10 @@ tab:
       edges: Edge Bandings
     export:
       title: Export to CSV format
-      info: |
+      info_0: |
         With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Parts inside hidden groups of your parts list will not be exported*.
+      info_1: |
+        *Parts inside hidden groups of your parts list will not be exported*.
       options: Export Options
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -400,25 +422,32 @@ tab:
       option_origin_corner_0: Top left corner
       option_origin_corner_1: Bottom left corner
       option_origin_corner_help: "Determines the position of the coordinate origin for displaying the parts on the panels. "
+      option_full_width_diagram: Full width display
+      option_full_width_diagram_0: No
+      option_full_width_diagram_1: Yes
+      option_full_width_diagram_help: "If this option is activated, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board will be wrapped over multiple lines.
       option_hide_cross: Offcuts
-      option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
       option_hide_cross_0: Dimensions and Cross
       option_hide_cross_1: Dimensions only
+      option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
+      option_highlight_primary_cuts: Primary cuts
+      option_highlight_primary_cuts_0: Flyover only
+      option_highlight_primary_cuts_1: Always visible
+      option_highlight_primary_cuts_help: Allows you to highlight primary cuts.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
       option_trimming_help_1d: The amount of material at each end of the board to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
       option_optimization: Optimisation level
-      option_optimization_help: The optimization level defines the number of computed possibilities.
-      option_optimization_0: Light
-      option_optimization_1: Medium
-      option_optimization_2: Advanced
+      option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
+      option_optimization_0: Medium
+      option_optimization_1: Advanced
       option_stacking: Stack Identical Parts
       option_stacking_help: Stacking direction of parts that have a common length or width.
-      option_stacking_0: No Stacking
+      option_stacking_0: No preference
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All Possibilities
@@ -450,9 +479,6 @@ tab:
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
-      options_defaults:
-        manage_help: Administration of the default *Cutting Diagram Parameters*
-        save_success: "Default *Cutting Diagram Parameters* saved"
       tooltip:
         scroll_to_block_1d: Scroll to first board
         scroll_to_block_2d: Scroll to first panel
@@ -466,12 +492,15 @@ tab:
         width: Width
         total_length: Σ Lengths
         total_area: Σ Areas
+        total_part_count: Σ Parts
         total_used: Total used
         trimming: Trimming
         total_length_cuts: Length of cuts
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
+        cut_final: Primary cut (level 1)
+        cut_through: Primary cut (level 2)
         bar_type_0: Standard Sized Dimensional
         bar_type_1: Offcut
         sheet_type_0: Standard Sized Panel
@@ -500,7 +529,64 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensions reduced by the thickness of the edge banding.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Labels
+      title: Labels
+      options_layout: Layout
+      options_settings: Configuration
+      size: Real size of label
+      add_element: Add an element
+      remove_element: Remove
+      option_page: Paper Size
+      option_page_format: Format
+      option_page_format_portrait: Portrait
+      option_page_format_landscape: Landscape
+      option_page_format_custom: Custom
+      option_page_width: Width
+      option_page_height: Height
+      option_margin: Margins
+      option_margin_top: Top
+      option_margin_right: Right
+      option_margin_bottom: Bottom
+      option_margin_left: Left
+      option_spacing: Gap Size
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertical
+      option_grid: Labels per Page
+      option_col_count: Columns
+      option_row_count: Rows
+      option_cutting_marks: Cut marks
+      option_cutting_marks_0: None
+      option_cutting_marks_1: Printed
+      option_formula: Fieldname
+      option_size: Dimension
+      option_anchor: Anchor
+      option_anchor_start: Start
+      option_anchor_middle: Middle
+      option_anchor_end: End
+      option_color: Color
+      formula:
+        part_number: Number
+        part_name: Description
+        part_cutting_size: Rough dimensions
+        part_cutting_length: Length - rough
+        part_cutting_width: Width - rough
+        part_size: Dimension
+        part_length: Length
+        part_width: Width
+        part_tags: Tags
+        part_batch: Batch
+        thumbnail_proportional: Proportional thumbnail
+        thumbnail_square: Square thumbnail
+        group_material: Material / Thickness
+        group_material_name: Material name
+        group_std_dimension: Standard dimensions
+        filename: Filename
+        page_label: Scene name
+        length_unit: Unit
+        generated_at: Date and time
+      error:
+        invalid_size: The configuration parameters entered do not allow a valid label size to be set.
+      warning:
+        selection_only: These labels are limited to **selected parts** only
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -608,11 +694,6 @@ tab:
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
       volumic_mass: Density
-      cut_options_defaults:
-        manage_help: Administration of the default *Cutting Parameters*
-        save_success: |
-          **{{ type_name }}**
-          default *Cutting Parameters* saved
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -652,10 +733,11 @@ tab:
     import_to_model: Import into the model
     load:
       title: Loading of a CSV File
-      info: |
-        Choose the options necessary for the file **{{ filename }}** to be read correctly.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *The unit configured in the model is: **{{ unit }}**.
+      info_0: |
+        Choose the options necessary for the correct reading of the file:
+        **{{ filename }}**.
+      info_1: |
+        *The unit configured in the model is: **{{ unit }}**.
         This unit will be used for dimensions for which the unit is not specified*.
       options: Loading Options
       option_col_sep: Separator
@@ -826,7 +908,9 @@ tab:
     credits_vendors: |
       The adventure would not be possible without the work of the authors of the following Open Source components:
     credits_thanks: |
-      A special thank goes to [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      A special thank goes to:
+      - [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com/) for their support of Open Source projects.
 tool:
   highlight:
     transparency: Transparency
