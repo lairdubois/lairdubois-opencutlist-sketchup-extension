@@ -1,6 +1,6 @@
 {
   "_storages": {
-    "hidden_group_ids": 2 /* SETTINGS_STORAGE_MODEL_ONLY */
+    "hidden_group_ids": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "0": {
     "auto_orient": true,

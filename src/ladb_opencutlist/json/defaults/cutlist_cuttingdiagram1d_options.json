@@ -1,13 +1,13 @@
 {
   "_storages": {
-    "std_bar": 2, /* SETTINGS_STORAGE_MODEL_ONLY */
-    "scrap_bar_lengths": 2 /* SETTINGS_STORAGE_MODEL_ONLY */
+    "std_bar": 2, /* PRESETS_STORAGE_MODEL_ONLY */
+    "scrap_bar_lengths": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "_preprocessors": {
-    "scrap_bar_lengths": 2 /* SETTINGS_PREPROCESSOR_DXQ */,
-    "saw_kerf": 1 /* SETTINGS_PREPROCESSOR_D */,
-    "trimming": 1 /* SETTINGS_PREPROCESSOR_D */,
-    "wrap_length": 1 /* SETTINGS_PREPROCESSOR_D */
+    "scrap_bar_lengths": 2 /* PRESETS_PREPROCESSOR_DXQ */,
+    "saw_kerf": 1 /* PRESETS_PREPROCESSOR_D */,
+    "trimming": 1 /* PRESETS_PREPROCESSOR_D */,
+    "wrap_length": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "0": {
     "std_bar": "",

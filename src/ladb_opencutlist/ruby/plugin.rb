@@ -30,20 +30,15 @@ module Ladb::OpenCutList
     PRESETS_KEY = 'core.presets'.freeze
     PRESETS_DEFAULT_NAME = '_default'.freeze
 
-    SETTINGS_RW_STRATEGY_GLOBAL = 0               # Read/Write settings from/to global Sketchup defaults
-    SETTINGS_RW_STRATEGY_GLOBAL_MODEL = 1         # Read/Write settings from/to global Sketchup defaults and (if undefined from)/to active model attributes
-    SETTINGS_RW_STRATEGY_MODEL = 2                # Read/Write settings from/to active model attributes
-    SETTINGS_RW_STRATEGY_MODEL_GLOBAL = 3         # Read/Write settings from/to active model attributes and (if undefined from)/to global Sketchup defaults
+    PRESETS_PREPROCESSOR_NONE = 0
+    PRESETS_PREPROCESSOR_D = 1                   # 1D dimension
+    PRESETS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
+    PRESETS_PREPROCESSOR_DXD = 3                 # 2D dimension
+    PRESETS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
 
-    SETTINGS_PREPROCESSOR_NONE = 0
-    SETTINGS_PREPROCESSOR_D = 1                   # 1D dimension
-    SETTINGS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
-    SETTINGS_PREPROCESSOR_DXD = 3                 # 2D dimension
-    SETTINGS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
-
-    SETTINGS_STORAGE_ALL = 0
-    SETTINGS_STORAGE_GLOBAL_ONLY = 1              # Value stored in global presets only
-    SETTINGS_STORAGE_MODEL_ONLY = 2               # Value stored in model presets only
+    PRESETS_STORAGE_ALL = 0
+    PRESETS_STORAGE_GLOBAL_ONLY = 1              # Value stored in global presets only
+    PRESETS_STORAGE_MODEL_ONLY = 2               # Value stored in model presets only
 
     SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
@@ -282,21 +277,21 @@ module Ladb::OpenCutList
         processed_values = {}
         values.keys.each do |key|
 
-          storage = storages.has_key?(key) ? storages[key] : SETTINGS_STORAGE_ALL
+          storage = storages.has_key?(key) ? storages[key] : PRESETS_STORAGE_ALL
 
           if app_defaults.has_key?(key) && # Only if exists in app defaults
-              (storage == SETTINGS_STORAGE_ALL ||
-              (is_global && storage == SETTINGS_STORAGE_GLOBAL_ONLY) ||
-              (!is_global && storage == SETTINGS_STORAGE_MODEL_ONLY))
+              (storage == PRESETS_STORAGE_ALL ||
+              (is_global && storage == PRESETS_STORAGE_GLOBAL_ONLY) ||
+              (!is_global && storage == PRESETS_STORAGE_MODEL_ONLY))
 
             case preprocessors[key]
-              when SETTINGS_PREPROCESSOR_D
+              when PRESETS_PREPROCESSOR_D
                 processed_values[key] = DimensionUtils.instance.d_add_units(values[key])
-              when SETTINGS_PREPROCESSOR_DXQ
+              when PRESETS_PREPROCESSOR_DXQ
                 processed_values[key] = DimensionUtils.instance.dxq_add_units(values[key])
-              when SETTINGS_PREPROCESSOR_DXD
+              when PRESETS_PREPROCESSOR_DXD
                 processed_values[key] = DimensionUtils.instance.dxd_add_units(values[key])
-              when SETTINGS_PREPROCESSOR_DXDXQ
+              when PRESETS_PREPROCESSOR_DXDXQ
                 processed_values[key] = DimensionUtils.instance.dxdxq_add_units(values[key])
             else
               processed_values[key] = values[key]
@@ -1089,28 +1084,12 @@ module Ladb::OpenCutList
       { :preset => get_model_preset(dictionary, section, app_default_section) }
     end
 
-    def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ], strategy: [0|1|2|3] }
+    def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ] }
       keys = params['keys']
-      strategy = params['strategy']   # Strategy used to read settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
       values = []
       keys.each { |key|
 
-        value = nil
-        if strategy && Sketchup.active_model
-
-          if strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL
-              value = read_default(key)
-              if value.nil?
-                value = get_attribute(Sketchup.active_model, key)
-              end
-          elsif strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
-              value = get_attribute(Sketchup.active_model, key)
-          end
-
-        end
-        if value.nil?
-          value = read_default(key)
-        end
+        value = read_default(key)
 
         if value.is_a? String
           value = value.gsub(/[\\]/, '')      # unescape double quote
@@ -1127,51 +1106,21 @@ module Ladb::OpenCutList
       { :values => values }
     end
 
-    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1', preprocessor => [0|1|2|3] }, ... ], strategy: [0|1|2|3] }
+    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
       settings = params['settings']
-      strategy = params['strategy']   # Strategy used to write settings SETTINGS_RW_STRATEGY_GLOBAL or SETTINGS_RW_STRATEGY_GLOBAL_MODEL or SETTINGS_RW_STRATEGY_MODEL or SETTINGS_RW_STRATEGY_MODEL_GLOBAL
-
-      is_strategy_global = strategy.nil? || strategy == SETTINGS_RW_STRATEGY_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL
-      is_strategy_model = Sketchup.active_model && (strategy == SETTINGS_RW_STRATEGY_MODEL || strategy == SETTINGS_RW_STRATEGY_MODEL_GLOBAL || strategy == SETTINGS_RW_STRATEGY_GLOBAL_MODEL)
-
-      # Start model modification operation
-      Sketchup.active_model.start_operation('write_settings', true, false, true) if is_strategy_model
 
       settings.each { |setting|
 
         key = setting['key']
         value = setting['value']
-        preprocessor = setting['preprocessor']    # Preprocessor used to reformat value SETTINGS_PREPROCESSOR_D, SETTINGS_PREPROCESSOR_DXQ, SETTINGS_PREPROCESSOR_DXD or SETTINGS_PREPROCESSOR_DXDXQ
-
-        # Value Preprocessor
-        unless value.nil?
-          case preprocessor
-            when SETTINGS_PREPROCESSOR_D
-              value = DimensionUtils.instance.d_add_units(value)
-            when SETTINGS_PREPROCESSOR_DXQ
-              value = DimensionUtils.instance.dxq_add_units(value)
-            when SETTINGS_PREPROCESSOR_DXD
-              value = DimensionUtils.instance.dxd_add_units(value)
-            when SETTINGS_PREPROCESSOR_DXDXQ
-              value = DimensionUtils.instance.dxdxq_add_units(value)
-          end
-        end
 
         if value.is_a? String
           value = value.gsub(/["]/, '\"')        # escape double quote in string
         end
 
-        if is_strategy_global
-          write_default(key, value)
-        end
-        if is_strategy_model
-          set_attribute(Sketchup.active_model, key, value)
-        end
+        write_default(key, value)
 
       }
-
-      # Commit model modification operation
-      Sketchup.active_model.commit_operation if is_strategy_model
 
     end
 

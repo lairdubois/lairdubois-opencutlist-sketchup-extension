@@ -251,11 +251,11 @@
 
     // Settings /////
 
-    LadbDialog.prototype.pullSettings = function (keys, strategy, callback) {
+    LadbDialog.prototype.pullSettings = function (keys, callback) {
         var that = this;
 
         // Read settings values from SU default or Model attributes according to the strategy
-        rubyCallCommand('core_read_settings', { keys: keys, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ }, function (data) {
+        rubyCallCommand('core_read_settings', { keys: keys }, function (data) {
             var values = data.values;
             for (var i = 0; i < values.length; i++) {
                 var value = values[i];
@@ -267,17 +267,17 @@
         });
     };
 
-    LadbDialog.prototype.setSettings = function (settings, strategy) {
+    LadbDialog.prototype.setSettings = function (settings) {
         for (var i = 0; i < settings.length; i++) {
             var setting = settings[i];
             this.settings[setting.key] = setting.value;
         }
         // Write settings values to SU default or Model attributes according to the strategy
-        rubyCallCommand('core_write_settings', { settings: settings, strategy: strategy ? strategy : 0 /* SETTINGS_RW_STRATEGY_GLOBAL */ });
+        rubyCallCommand('core_write_settings', { settings: settings });
     };
 
-    LadbDialog.prototype.setSetting = function (key, value, strategy) {
-        this.setSettings([ { key: key, value: value } ], strategy);
+    LadbDialog.prototype.setSetting = function (key, value) {
+        this.setSettings([ { key: key, value: value } ]);
     };
 
     LadbDialog.prototype.getSetting = function (key, defaultValue) {
@@ -530,61 +530,6 @@
         return this._$modal;
     };
 
-    LadbDialog.prototype.confirm = function (title, text, callback) {
-
-        // Append modal
-        var $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
-            title: title,
-            text: text
-        });
-
-        // Fetch UI elements
-        var $btnConfirm = $('#ladb_confirm_btn_confirm', $modal);
-
-        // Bind buttons
-        $btnConfirm.on('click', function() {
-            if (callback) {
-                callback();
-            }
-        });
-
-        // Show modal
-        $modal.modal('show');
-
-    };
-
-    LadbDialog.prototype.prompt = function (title, text, callback) {
-
-        // Append modal
-        var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
-            title: title,
-            text: text
-        });
-
-        // Fetch UI elements
-        var $input = $('#ladb_prompt_input', $modal);
-        var $btnValidate = $('#ladb_prompt_btn_validate', $modal);
-
-        // Bind input
-        $input.on('keyup change', function () {
-            $btnValidate.prop('disabled', $(this).val().trim().length === 0);
-        });
-
-        // Bind buttons
-        $btnValidate.on('click', function() {
-            if (callback) {
-                callback($input.val().trim());
-            }
-        });
-
-        // Show modal
-        $modal.modal('show');
-
-        // Bring focus to input
-        $input.focus();
-
-    };
-
     LadbDialog.prototype.showUpgradeModal = function () {
         var that = this;
 
@@ -689,6 +634,61 @@
 
         // Show modal
         $modal.modal('show');
+
+    };
+
+    LadbDialog.prototype.confirm = function (title, text, callback) {
+
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
+            title: title,
+            text: text
+        });
+
+        // Fetch UI elements
+        var $btnConfirm = $('#ladb_confirm_btn_confirm', $modal);
+
+        // Bind buttons
+        $btnConfirm.on('click', function() {
+            if (callback) {
+                callback();
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbDialog.prototype.prompt = function (title, text, callback) {
+
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
+            title: title,
+            text: text
+        });
+
+        // Fetch UI elements
+        var $input = $('#ladb_prompt_input', $modal);
+        var $btnValidate = $('#ladb_prompt_btn_validate', $modal);
+
+        // Bind input
+        $input.on('keyup change', function () {
+            $btnValidate.prop('disabled', $(this).val().trim().length === 0);
+        });
+
+        // Bind buttons
+        $btnValidate.on('click', function() {
+            if (callback) {
+                callback($input.val().trim());
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+        // Bring focus to input
+        $input.focus();
 
     };
 
@@ -800,7 +800,6 @@
                 SETTING_KEY_MUTED_UPDATE_BUILD,
                 SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP
             ],
-            0 /* SETTINGS_RW_STRATEGY_GLOBAL */,
             function () {
 
                 that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
