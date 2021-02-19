@@ -2208,7 +2208,7 @@
                     rowCount = parseInt(rowCount);
                     var labelWidth = (response.page_width - response.margin_left - response.margin_right - response.spacing_v * (colCount - 1)) / colCount;
                     var labelHeight = (response.page_height - response.margin_top - response.margin_bottom - response.spacing_h * (rowCount - 1)) / rowCount;
-                    callback(labelWidth, labelHeight);
+                    callback(labelWidth, labelHeight, response);
                 });
             }
             var fnFetchOptions = function (options) {
@@ -2258,33 +2258,18 @@
                 group: group,
                 part: parts[0],
             }, labelsOptions.layout);
-            $selectPageFormat.val(labelsOptions.page_width.replace(',', '.') + 'x' + labelsOptions.page_height.replace(',', '.'));
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
-            $inputPageWidth.val(labelsOptions.page_width);
             $inputPageWidth.ladbTextinputDimension();
-            $inputPageHeight.val(labelsOptions.page_height);
             $inputPageHeight.ladbTextinputDimension();
-            $inputMarginTop.val(labelsOptions.margin_top);
             $inputMarginTop.ladbTextinputDimension();
-            $inputMarginRight.val(labelsOptions.margin_right);
             $inputMarginRight.ladbTextinputDimension();
-            $inputMarginBottom.val(labelsOptions.margin_bottom);
             $inputMarginBottom.ladbTextinputDimension();
-            $inputMarginLeft.val(labelsOptions.margin_left);
             $inputMarginLeft.ladbTextinputDimension();
-            $inputSpacingH.val(labelsOptions.spacing_h);
             $inputSpacingH.ladbTextinputDimension();
-            $inputSpacingV.val(labelsOptions.spacing_v);
             $inputSpacingV.ladbTextinputDimension();
-            $inputColCount.val(labelsOptions.col_count);
-            $inputRowCount.val(labelsOptions.row_count);
-            $selectCuttingMarks.val(labelsOptions.cutting_marks ? '1' : '0');
             $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
 
-            fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.spacing_h, labelsOptions.spacing_v, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight) {
-                $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
-            });
-            fnPageSizeVisibility();
+            fnFillInputs(labelsOptions);
 
             // Bind tabs
             $('a[data-toggle=tab]', $modal).on('shown.bs.tab', function (e) {
@@ -2323,16 +2308,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_labels_options', values: labelsOptions, section: groupId });
 
-                rubyCallCommand('core_length_to_float', {
-                    page_width: labelsOptions.page_width,
-                    page_height: labelsOptions.page_height,
-                    margin_top: labelsOptions.margin_top,
-                    margin_right: labelsOptions.margin_right,
-                    margin_bottom: labelsOptions.margin_bottom,
-                    margin_left: labelsOptions.margin_left,
-                    spacing_h: labelsOptions.spacing_h,
-                    spacing_v: labelsOptions.spacing_v
-                }, function (response) {
+                fnComputeLabelSize(labelsOptions.page_width, labelsOptions.page_height, labelsOptions.margin_top, labelsOptions.margin_right, labelsOptions.margin_bottom, labelsOptions.margin_left, labelsOptions.spacing_h, labelsOptions.spacing_v, labelsOptions.col_count, labelsOptions.row_count, function (labelWidth, labelHeight, response) {
 
                     labelsOptions.page_width = response.page_width;
                     labelsOptions.page_height = response.page_height;
@@ -2343,27 +2319,39 @@
                     labelsOptions.spacing_h = response.spacing_h;
                     labelsOptions.spacing_v = response.spacing_v;
 
-                    // Split parts into pages
-                    var pages = []
-                    var page;
-                    var gIndex = 0;
-                    $.each(parts, function (index) {
-                        for (var i = 1; i <= this.count; i++) {
-                            if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                page = {
-                                    part_infos: []
+                    var errors = [];
+                    var pages = [];
+
+                    if (labelWidth <= 0 || isNaN(labelWidth) || labelHeight <= 0 || isNaN(labelHeight)) {
+
+                        // Invalid size push an error
+                        errors.push('tab.cutlist.labels.error.invalid_size');
+
+                    } else {
+
+                        // Split parts into pages
+                        var page;
+                        var gIndex = 0;
+                        $.each(parts, function (index) {
+                            for (var i = 1; i <= this.count; i++) {
+                                if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                    page = {
+                                        part_infos: []
+                                    }
+                                    pages.push(page);
                                 }
-                                pages.push(page);
+                                page.part_infos.push({
+                                    position_in_batch: i,
+                                    part: this
+                                });
+                                gIndex++;
                             }
-                            page.part_infos.push({
-                                position_in_batch: i,
-                                part: this
-                            });
-                            gIndex++;
-                        }
-                    });
+                        });
+
+                    }
 
                     var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
+                        errors: errors,
                         filename: that.filename,
                         pageLabel: that.pageLabel,
                         lengthUnit: that.lengthUnit,

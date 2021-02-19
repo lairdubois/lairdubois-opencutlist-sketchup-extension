@@ -33,6 +33,9 @@
 {% block containerInner %}
     {{ parent() }}
     <div class="ladb-page">
+
+        {% include 'core/_alert-errors.twig' %}
+
         {% for page in pages %}
             <table id="ladb_cuttingdiagram_group_label_page_{{ loop.index }}" data-page-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-labels-group">
                 <thead class="no-print">

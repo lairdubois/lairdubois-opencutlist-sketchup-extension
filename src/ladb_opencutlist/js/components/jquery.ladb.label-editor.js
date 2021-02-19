@@ -29,7 +29,7 @@
         var that = this;
 
         // Check invalid size
-        if (this.options.labelWidth <= 0 || this.options.labelHeight <= 0) {
+        if (this.options.labelWidth <= 0 || isNaN(this.options.labelWidth) || this.options.labelHeight <= 0 || isNaN(this.options.labelHeight)) {
 
             this.$element.append(Twig.twig({ref: 'core/_alert-errors.twig'}).render({
                 errors: [ 'tab.cutlist.labels.error.invalid_size' ]
@@ -310,7 +310,7 @@
 
         // Buttons
 
-        var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-minus"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
+        var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
         $btnRemove
             .on('click', function () {
                 that.elementDefs.splice(that.elementDefs.indexOf(elementDef), 1);
