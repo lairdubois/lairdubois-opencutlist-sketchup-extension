@@ -6,6 +6,7 @@ default:
   maximize: Maximieren
   cancel: Abbrechen
   validate: Bestätigen
+  confirm: Bestätigen
   open: Öffnen
   see: Sehen
   close: Schließen
@@ -16,7 +17,7 @@ default:
   export: Exportieren
   import: Importieren
   load: Laden
-  options: Einstellungen
+  options: Optionen
   caution: Vorsicht
   remove: Löschen
   create: Anlegen
@@ -42,8 +43,6 @@ default:
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
   load_more: "Weitere laden ..."
-  save_to_defaults: Als Standardwerte speichern
-  reset_to_defaults: Standardwerte wiederherstellen
   reset_to_app_defaults: Originalwerte wiederherstellen
 core:
   menu:
@@ -97,6 +96,28 @@ core:
     error:
       download: Fehler beim Herunterladen des Archivs.
       unzip: Fehler bei der Dekomprimierung des Archivs.
+  preset:
+    label: Voreinstellungen
+    save_to: Speichern als
+    restore_from: Wiederherstellen aus
+    app_defaults: ursprüngliche Voreinstellung
+    user_defaults: Meine Voreinstellung
+    new: Neue Voreinstellung
+    new_prompt: |
+      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Formulareinstellungen global beibehalten, damit Sie sie in allen Ihren Modellen wiederverwenden können.*
+
+      Geben Sie den Namen der Voreinstellung ein:
+    delete_confirm_title: Löschen
+    delete_confirm: "Möchten Sie die Voreinstellung **\"{{ name }}\"** wirklich löschen?"
+    override_confirm_title: Aktualisierung
+    override_confirm: "Bestätigen Sie die Aktualisierung der Voreinstellung **\"{{ name }}\"** mit den Formularparametern?"
+    new_success: "Voreinstellung **\"{{ name }}\"** erstellt"
+    override_success: "Voreinstellung **\"{{ name }}\"** aktualisiert"
+    restore_success: "Das Formular wurde mit der Voreinstellung **\"{{ name }}\"** ausgefüllt"
+    delete_success: "Voreinstellung **\"{{ name }}\"** gelöscht"
+    tooltip:
+      save_to: "Voreinstellung '{{name}}' aktualisieren"
+      delete: "Voreinstellung '{{ name }}' löschen"
 tab:
   cutlist:
     label: Holzliste
@@ -193,6 +214,7 @@ tab:
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
+      group_labels: Etiketten drucken
       edit_material: "Bearbeiten des Materials '{{ material }}'..."
       expand_all: Identische Teile aufklappen
       collapse_all: Identische Teile zuklappen
@@ -334,10 +356,10 @@ tab:
       edges: Kantenbänder
     export:
       title: Exportieren im CSV-Format
-      info: |
+      info_0: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Die in maskierten Gruppen enthaltenen Teile werden nicht exportiert*.
+      info_1: |
+        *Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*.
       options: Export-Optionen
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -400,25 +422,32 @@ tab:
       option_origin_corner_0: Obere linke Ecke
       option_origin_corner_1: Untere linke Ecke
       option_origin_corner_help: "Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf den Platten. "
+      option_full_width_diagram: Anzeige in voller Breite
+      option_full_width_diagram_0: Nein
+      option_full_width_diagram_1: Ja
+      option_full_width_diagram_help: "Wenn diese Option aktiviert ist, werden die Schnittdiagramme über die gesamte verfügbare Breite angezeigt. Andernfalls wird ihre Breite durch einen festen Skalierungsfaktor der von den anderen Diagrammen abhängt definiert."
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: "Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt."
       option_hide_cross: Verschnitt
-      option_hide_cross_help: "Blendet das Kreuz ein oder aus, das die Teile kennzeichnet, die im Diagramm als Verschnitt definiert sind."
       option_hide_cross_0: Dimensionen und Kreuz
       option_hide_cross_1: Nur Dimensionen
+      option_hide_cross_help: "Blendet das Kreuz ein oder aus, das die Teile kennzeichnet, die im Diagramm als Verschnitt definiert sind."
+      option_highlight_primary_cuts: Primärschnitte
+      option_highlight_primary_cuts_0: Nur bei Übersicht
+      option_highlight_primary_cuts_1: Immer sichtbar
+      option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte immer hervorzuheben."
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_optimization: Optimierungsgrad
-      option_optimization_help: Der Optimierungsgrad definiert die Anzahl der berechneten Möglichkeiten.
-      option_optimization_0: Leicht
-      option_optimization_1: Mittel
-      option_optimization_2: Fortgeschritten
+      option_optimization_help: Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit.
+      option_optimization_0: Mittel
+      option_optimization_1: Fortgeschritten
       option_stacking: Gleiche Teile stapeln
       option_stacking_help: "Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben."
-      option_stacking_0: kein Stapeln
+      option_stacking_0: Keine Präferenz
       option_stacking_1: Der Länge nach
       option_stacking_2: Der Breite nach
       option_stacking_3: Alle Möglichkeiten
@@ -450,9 +479,6 @@ tab:
         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      options_defaults:
-        manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
-        save_success: "*Schnittparameter* als vorgegebene Werte gespeichert"
       tooltip:
         scroll_to_block_1d: Zur ersten Stange blättern
         scroll_to_block_2d: Zur ersten Platte blättern
@@ -466,12 +492,15 @@ tab:
         width: Breite
         total_length: Σ Längen
         total_area: Σ Flächen
+        total_part_count: Σ Teile
         total_used: Insgesamt verwendet
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
         efficiency: Effizienz
         leftover: Verschnitt
         cut: Schnitt
+        cut_final: Primärschnitt (Stufe 1)
+        cut_through: Primärschnitt (Stufe 2)
         bar_type_0: Standard-Stange
         bar_type_1: Stangenrest
         sheet_type_0: Standard-Platte
@@ -500,7 +529,64 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiketten
+      title: Etiketten
+      options_layout: Gestaltung
+      options_settings: Konfiguration
+      size: Tatsächliche Etikettengröße
+      add_element: Element hinzufügen
+      remove_element: Entfernen
+      option_page: Papierformat
+      option_page_format: Format
+      option_page_format_portrait: Hochformat
+      option_page_format_landscape: Querformat
+      option_page_format_custom: Benutzerdefiniert
+      option_page_width: Breite
+      option_page_height: Höhe
+      option_margin: Randabstände
+      option_margin_top: Oben
+      option_margin_right: Rechts
+      option_margin_bottom: Unten
+      option_margin_left: Links
+      option_spacing: Abstände
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertikal
+      option_grid: Etiketten pro Seite
+      option_col_count: Spalten
+      option_row_count: Zeilen
+      option_cutting_marks: Schnittmarken
+      option_cutting_marks_0: Keine
+      option_cutting_marks_1: Sichtbar
+      option_formula: Feld
+      option_size: Grösse
+      option_anchor: Anker
+      option_anchor_start: Anfang
+      option_anchor_middle: Mitte
+      option_anchor_end: Ende
+      option_color: Farbe
+      formula:
+        part_number: Nummer
+        part_name: Bezeichnung
+        part_cutting_size: Rohmaße
+        part_cutting_length: Länge - roh
+        part_cutting_width: Breite - roh
+        part_size: Fertigmaße
+        part_length: Länge
+        part_width: Breite
+        part_tags: Tags
+        part_batch: Los
+        thumbnail_proportional: Proportionale Vignette
+        thumbnail_square: Quadratische Vignette
+        group_material: Material / Dicke
+        group_material_name: Materialname
+        group_std_dimension: Standarddimensionen
+        filename: Dateiname
+        page_label: Szenenname
+        length_unit: Einheit
+        generated_at: Datum und Uhrzeit
+      error:
+        invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
+      warning:
+        selection_only: "Diese Etiketten beschränken sich auf **ausgewählte Teile** "
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -608,11 +694,6 @@ tab:
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
       volumic_mass: Rohdichte
-      cut_options_defaults:
-        manage_help: Verwaltung der vorgegebenen Werte *Schnittparameter*
-        save_success: |
-          **{{ type_name }}**
-          *Schnittparameter* als vorgegebene Werte gespeichert
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -652,10 +733,11 @@ tab:
     import_to_model: Importieren ins Modell
     load:
       title: Laden einer CSV-Datei
-      info: |
-        Wählen Sie die notwendigen Optionen zum Einlesen der Datei **{{ filename }}**.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Die Einheit des Modells ist : **{{ unit }}**.
+      info_0: |
+        Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
+        **{{ Dateinamen }}**.
+      info_1: |
+        *Die Einheit des Modells ist : **{{ unit }}**.
         Diese Einheit wird für Dimensionen verwendet, für die die Einheit nicht angegeben ist*.
       options: Optionen zum Laden
       option_col_sep: Trennzeichen
@@ -826,7 +908,9 @@ tab:
     credits_vendors: |
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
-      Ein spezieller Dank geht an [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch eine [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
+      Ein spezieller Dank geht an:
+      - [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch eine [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com/) für die Unterstützung von Open Source Projekten.
 tool:
   highlight:
     transparency: Transparenz
