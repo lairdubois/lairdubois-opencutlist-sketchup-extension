@@ -115,7 +115,7 @@
                         "collective(slug: $slug) { " +
                             "name " +
                             "slug " +
-                            "members(offset: " + page * BACKERS_PAGE_SIZE + ", limit: " + BACKERS_PAGE_SIZE + ", role: BACKER) { " +
+                            "members(offset: " + page * BACKERS_PAGE_SIZE + ", limit: " + BACKERS_PAGE_SIZE + ", role: BACKER, orderBy: { field: CREATED_AT, direction:DESC }) { " +
                                 "totalCount " +
                                 "nodes { " +
                                     "account { " +
