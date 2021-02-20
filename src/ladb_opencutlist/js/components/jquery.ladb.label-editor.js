@@ -38,13 +38,15 @@
             return;
         }
 
+        var $sizeContaner = $('<div class="ladb-label-editor-size">');
+        that.$element.prepend($sizeContaner);
+
         rubyCallCommand('core_float_to_length', {
             width: this.options.labelWidth,
             height: this.options.labelHeight,
         }, function (response) {
 
-            var $sizeContaner = $('<div class="ladb-label-editor-size">' + i18next.t('tab.cutlist.labels.size') + ' : ' + response.width.replace('~', '') + ' x ' + response.height.replace('~', '') + '</div>');
-            that.$element.prepend($sizeContaner);
+            $sizeContaner.append(i18next.t('tab.cutlist.labels.size') + ' : ' + response.width.replace('~', '') + ' x ' + response.height.replace('~', ''));
 
         })
 
