@@ -9,7 +9,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbLabelEditor = function (element, options) {
+    var LadbEditorLabel = function (element, options) {
         this.options = options;
         this.$element = $(element);
 
@@ -18,14 +18,14 @@
 
     };
 
-    LadbLabelEditor.DEFAULTS = {
+    LadbEditorLabel.DEFAULTS = {
         group: null,
         part: null,
         labelWidth: 100,
         labelHeight: 100,
     };
 
-    LadbLabelEditor.prototype.createSvg = function () {
+    LadbEditorLabel.prototype.createSvg = function () {
         var that = this;
 
         // Check invalid size
@@ -38,7 +38,7 @@
             return;
         }
 
-        var $sizeContaner = $('<div class="ladb-label-editor-size">');
+        var $sizeContaner = $('<div class="ladb-editor-label-size">');
         that.$element.prepend($sizeContaner);
 
         rubyCallCommand('core_float_to_length', {
@@ -50,7 +50,7 @@
 
         })
 
-        var $svgContaner = $('<div class="ladb-label-editor-preview"></div>');
+        var $svgContaner = $('<div class="ladb-editor-label-preview"></div>');
         this.$element.append($svgContaner);
 
         var svg = document.createElementNS(XMLNS, 'svg');
@@ -199,7 +199,7 @@
         var $btnContainer = $('<div style="display: inline-block" />')
 
         this.$element.append(
-            $('<div class="ladb-label-editor-buttons" style="margin: 10px;"></div>')
+            $('<div class="ladb-editor-label-buttons" style="margin: 10px;"></div>')
                 .append($btnAdd)
                 .append('&nbsp;')
                 .append($btnContainer)
@@ -209,7 +209,7 @@
 
     };
 
-    LadbLabelEditor.prototype.appendElementDef = function (elementDef) {
+    LadbEditorLabel.prototype.appendElementDef = function (elementDef) {
         var svgGroup, svgCrossLineV, svgCrossLineH, svgContentGroup;
 
         svgGroup = document.createElementNS(XMLNS, 'g');
@@ -246,7 +246,7 @@
         return svgGroup;
     }
 
-    LadbLabelEditor.prototype.appendFormula = function (svgContentGroup, elementDef) {
+    LadbEditorLabel.prototype.appendFormula = function (svgContentGroup, elementDef) {
 
         var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             elementDef: elementDef,
@@ -286,7 +286,7 @@
 
     }
 
-    LadbLabelEditor.prototype.editElement = function (svgElement, elementDef) {
+    LadbEditorLabel.prototype.editElement = function (svgElement, elementDef) {
         var that = this;
 
         // Cleanup
@@ -399,7 +399,7 @@
 
     };
 
-    LadbLabelEditor.prototype.updateSize = function (labelWidth, labelHeight) {
+    LadbEditorLabel.prototype.updateSize = function (labelWidth, labelHeight) {
 
         this.options.labelWidth = labelWidth;
         this.options.labelHeight = labelHeight;
@@ -415,7 +415,7 @@
 
     };
 
-    LadbLabelEditor.prototype.updateSizeAndElementDefs = function (labelWidth, labelHeight, elementDefs) {
+    LadbEditorLabel.prototype.updateSizeAndElementDefs = function (labelWidth, labelHeight, elementDefs) {
         this.elementDefs = elementDefs;
 
         // Empty the container
@@ -423,12 +423,11 @@
 
     };
 
-    LadbLabelEditor.prototype.getElementDefs = function () {
+    LadbEditorLabel.prototype.getElementDefs = function () {
         return this.elementDefs;
     };
 
-    LadbLabelEditor.prototype.init = function (elementDefs) {
-        this.elementDefs = elementDefs;
+    LadbEditorLabel.prototype.init = function () {
     };
 
     // PLUGIN DEFINITION
@@ -438,11 +437,11 @@
         var value;
         var elements = this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.labelEditor');
-            var options = $.extend({}, LadbLabelEditor.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var data = $this.data('ladb.editorLabel');
+            var options = $.extend({}, LadbEditorLabel.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.labelEditor', (data = new LadbLabelEditor(this, options)));
+                $this.data('ladb.editorLabel', (data = new LadbEditorLabel(this, options)));
             }
             if (typeof option == 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -453,17 +452,17 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbLabelEditor;
+    var old = $.fn.ladbEditorLabel;
 
-    $.fn.ladbLabelEditor = Plugin;
-    $.fn.ladbLabelEditor.Constructor = LadbLabelEditor;
+    $.fn.ladbEditorLabel = Plugin;
+    $.fn.ladbEditorLabel.Constructor = LadbEditorLabel;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbLabelEditor.noConflict = function () {
-        $.fn.ladbLabelEditor = old;
+    $.fn.ladbEditorLabel.noConflict = function () {
+        $.fn.ladbEditorLabel = old;
         return this;
     }
 

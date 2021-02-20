@@ -4,21 +4,21 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbFormulaEditor = function (element, options) {
+    var LadbEditorFormula = function (element, options) {
         this.options = options;
         this.$element = $(element);
 
     };
 
-    LadbFormulaEditor.DEFAULTS = {
+    LadbEditorFormula.DEFAULTS = {
         wordDefs: []
     };
 
-    LadbFormulaEditor.prototype.tagFromWordDef = function (wordDef) {
+    LadbEditorFormula.prototype.tagFromWordDef = function (wordDef) {
         return "<div class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'><span>" + wordDef.label + "</span></div>";
     }
 
-    LadbFormulaEditor.prototype.setFormula = function (formula) {
+    LadbEditorFormula.prototype.setFormula = function (formula) {
         if (formula.length > 0) {
             for (var i = 0; i < this.options.wordDefs.length; i++) {
                 var wordDef = this.options.wordDefs[i];
@@ -33,7 +33,7 @@
         ;
     };
 
-    LadbFormulaEditor.prototype.getFormula = function () {
+    LadbEditorFormula.prototype.getFormula = function () {
 
         var fnExplore = function(element, words) {
             if (element.nodeType === 1 /* ELEMENT_NODE */) {
@@ -55,7 +55,7 @@
         return words.join(' ').trim();
     };
 
-    LadbFormulaEditor.prototype.bind = function () {
+    LadbEditorFormula.prototype.bind = function () {
         var that = this;
 
         var tribute = new Tribute({
@@ -80,7 +80,7 @@
 
     };
 
-    LadbFormulaEditor.prototype.init = function () {
+    LadbEditorFormula.prototype.init = function () {
         this.bind();
     };
 
@@ -92,10 +92,10 @@
         var elements = this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.formulaeditor');
-            var options = $.extend({}, LadbFormulaEditor.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbEditorFormula.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.formulaeditor', (data = new LadbFormulaEditor(this, options, options.dialog)));
+                $this.data('ladb.formulaeditor', (data = new LadbEditorFormula(this, options, options.dialog)));
             }
             if (typeof option == 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -106,17 +106,17 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbFormulaEditor;
+    var old = $.fn.ladbEditorFormula;
 
-    $.fn.ladbFormulaEditor = Plugin;
-    $.fn.ladbFormulaEditor.Constructor = LadbFormulaEditor;
+    $.fn.ladbEditorFormula = Plugin;
+    $.fn.ladbEditorFormula.Constructor = LadbEditorFormula;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbFormulaEditor.noConflict = function () {
-        $.fn.ladbFormulaEditor = old;
+    $.fn.ladbEditorFormula.noConflict = function () {
+        $.fn.ladbEditorFormula = old;
         return this;
     }
 

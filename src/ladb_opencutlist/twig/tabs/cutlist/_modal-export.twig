@@ -5,6 +5,7 @@
 
 {% block headerInner %}
     {{ parent() }}
+    {% include 'core/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#tab_export_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_export_customize" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> Personnalisation</a></li>
@@ -71,7 +72,6 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_export_btn_defaults_reset"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}</button>
 {% endblock %}

@@ -4,14 +4,6 @@
     // CONSTANTS
     // ======================
 
-    // Options keys
-
-    var EXPORT_DEFAULT_COLUMNS = {
-        0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : [ 'material_type', 'material_thickness', 'part_count', 'total_cutting_length', 'total_cutting_area', 'total_cutting_volume', 'total_final_area' ],
-        1 /* EXPORT_OPTION_SOURCE_CUTLIST */        : [ 'number', 'name', 'count', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'entity_names', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
-        2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */ : [ 'number', 'path', 'instance_name', 'definition_name', 'cutting_length', 'cutting_width', 'cutting_thickness', 'bbox_length', 'bbox_width', 'bbox_thickness', 'final_area', 'material_name', 'tags', 'edge_ymin', 'edge_ymax', 'edge_xmin', 'edge_xmax' ],
-    };
-
     // Various Consts
 
     var MULTIPLE_VALUE = '-1';
@@ -518,44 +510,21 @@
 
             var exportOptions = response.preset;
 
-            if (exportOptions.coldefs == null) {
-
-                var fnDefaultColDefs = function (source) {
-                    var cols = EXPORT_DEFAULT_COLUMNS[source];
-                    var colDefs = [];
-                    for (var i = 0; i < cols.length; i++) {
-                        colDefs.push({
-                            name: cols[i],
-                            hidden: false,
-                            formula: '',
-                        });
-                    }
-                    return colDefs;
-                }
-
-                exportOptions.coldefs = {
-                    0 /* EXPORT_OPTION_SOURCE_SUMMARY */        : fnDefaultColDefs(0 /* EXPORT_OPTION_SOURCE_SUMMARY */),
-                    1 /* EXPORT_OPTION_SOURCE_CUTLIST */        : fnDefaultColDefs(1 /* EXPORT_OPTION_SOURCE_CUTLIST */),
-                    2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */ : fnDefaultColDefs(2 /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */)
-                };
-
-            }
-
             var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
 
             // Fetch UI elements
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
             var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
             var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
             var $sortableColumnOrderSummary = $('#ladb_sortable_column_order_summary', $modal);
             var $sortableColumnOrderCutlist = $('#ladb_sortable_column_order_cutlist', $modal);
             var $sortableColumnOrderInstancesList = $('#ladb_sortable_column_order_instances_list', $modal);
-            var $btnDefaultsReset = $('#ladb_cutlist_export_btn_defaults_reset', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
             // Define useful functions
 
-            var fnPopulateAndBindSorter = function ($sorter, colDefs) {
+            var fnFillAndBindSorter = function ($sorter, colDefs) {
 
                 // Generate wordDefs
                 var wordDefs = [];
@@ -577,11 +546,11 @@
                     }));
 
                     // Setup formula editor
-                    $('li:last-child .ladb-formula-editor', $sorter)
-                        .ladbFormulaEditor({
+                    $('li:last-child .ladb-editor-formula', $sorter)
+                        .ladbEditorFormula({
                             wordDefs: wordDefs
                         })
-                        .ladbFormulaEditor('setFormula', [ colDefs[i].formula ])
+                        .ladbEditorFormula('setFormula', [ colDefs[i].formula ])
                     ;
 
                 }
@@ -615,10 +584,6 @@
                 $sorter.sortable(SORTABLE_OPTIONS);
 
             }
-            fnPopulateAndBindSorter($sortableColumnOrderSummary, exportOptions.coldefs[0]);
-            fnPopulateAndBindSorter($sortableColumnOrderCutlist, exportOptions.coldefs[1]);
-            fnPopulateAndBindSorter($sortableColumnOrderInstancesList, exportOptions.coldefs[2]);
-
             var fnComputeSorterVisibility = function (source) {
                 switch (parseInt(source)) {
                     case 0: // EXPORT_OPTION_SOURCE_SUMMARY
@@ -638,35 +603,10 @@
                         break;
                 }
             };
-
-            // Bind select
-            $selectSource.val(exportOptions.source);
-            $selectSource.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectSource.on('change', function () {
-                fnComputeSorterVisibility($(this).val());
-            });
-            fnComputeSorterVisibility(exportOptions.source);
-            $selectColSep.val(exportOptions.col_sep);
-            $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectEncoding.val(exportOptions.encoding);
-            $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
-
-            // Bind buttons
-            $btnDefaultsReset.on('click', function () {
-                rubyCallCommand('core_get_app_defaults', { dictionary: 'cutlist_export_options' }, function (response) {
-                    $selectSource.selectpicker('val', response.defaults.source);
-                    $selectColSep.selectpicker('val', response.defaults.col_sep);
-                    $selectEncoding.selectpicker('val', response.defaults.encoding);
-                });
-                $(this).blur();
-            });
-            $btnExport.on('click', function () {
-
-                // Fetch options
-
-                exportOptions.source = $selectSource.val();
-                exportOptions.col_sep = $selectColSep.val();
-                exportOptions.encoding = $selectEncoding.val();
+            var fnFetchOptions = function (options) {
+                options.source = $selectSource.val();
+                options.col_sep = $selectColSep.val();
+                options.encoding = $selectEncoding.val();
 
                 var fnFetchColumnDefs = function ($sorter) {
                     var columnDefs = [];
@@ -674,18 +614,54 @@
                         columnDefs.push({
                             name: $(this).data('name'),
                             hidden: $(this).data('hidden'),
-                            formula: $('.ladb-formula-editor', $(this)).ladbFormulaEditor('getFormula'),
+                            formula: $('.ladb-editor-formula', $(this)).ladbEditorFormula('getFormula'),
                         });
                     });
                     return columnDefs;
                 }
-                exportOptions.coldefs[0] = fnFetchColumnDefs($sortableColumnOrderSummary);
-                exportOptions.coldefs[1] = fnFetchColumnDefs($sortableColumnOrderCutlist);
-                exportOptions.coldefs[2] = fnFetchColumnDefs($sortableColumnOrderInstancesList);
+                if (options.coldefs == null) {
+                    options.coldefs = [];
+                }
+                options.coldefs[0] = fnFetchColumnDefs($sortableColumnOrderSummary);
+                options.coldefs[1] = fnFetchColumnDefs($sortableColumnOrderCutlist);
+                options.coldefs[2] = fnFetchColumnDefs($sortableColumnOrderInstancesList);
+
+            }
+            var fnFillInputs = function (options) {
+                $selectSource.selectpicker('val', options.source);
+                $selectColSep.selectpicker('val', options.col_sep);
+                $selectEncoding.selectpicker('val', options.encoding);
+                fnFillAndBindSorter($sortableColumnOrderSummary, options.coldefs[0]);
+                fnFillAndBindSorter($sortableColumnOrderCutlist, options.coldefs[1]);
+                fnFillAndBindSorter($sortableColumnOrderInstancesList, options.coldefs[2]);
+                fnComputeSorterVisibility(options.source);
+            }
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'cutlist_export_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
+            $selectSource.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+
+            fnFillInputs(exportOptions);
+
+            // Bind select
+            $selectSource.on('change', function () {
+                fnComputeSorterVisibility($(this).val());
+            });
+
+            // Bind buttons
+            $btnExport.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(exportOptions);
 
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
-                rubyCallCommand('core_set_global_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
                 rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.coldefs[exportOptions.source] }, that.generateOptions), function (response) {
 
@@ -2223,7 +2199,7 @@
                 options.col_count = $inputColCount.val();
                 options.row_count = $inputRowCount.val();
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
-                options.layout = $labelEditor.ladbLabelEditor('getElementDefs');
+                options.layout = $labelEditor.ladbEditorLabel('getElementDefs');
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -2239,7 +2215,7 @@
                 $inputRowCount.val(options.row_count);
                 $selectCuttingMarks.selectpicker('val', options.cutting_marks ? '1' : '0');
                 fnComputeLabelSize(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (labelWidth, labelHeight) {
-                    $labelEditor.ladbLabelEditor('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
+                    $labelEditor.ladbEditorLabel('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
                 });
                 fnPageSizeVisibility();
             }
@@ -2250,14 +2226,14 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $labelEditor.ladbLabelEditor({
+            $labelEditor.ladbEditorLabel({
                 filename: that.filename,
                 pageLabel: that.pageLabel,
                 lengthUnit: that.lengthUnit,
                 generatedAt: new Date().getTime() / 1000,
                 group: group,
                 part: parts[0],
-            }, labelsOptions.layout);
+            });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
             $inputPageHeight.ladbTextinputDimension();
@@ -2278,7 +2254,7 @@
                 if (that.lastCuttingdiagram2dLabelsOptionsTab === 'layout') {
 
                     fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
-                        $labelEditor.ladbLabelEditor('updateSize', [ labelWidth, labelHeight ]);
+                        $labelEditor.ladbEditorLabel('updateSize', [ labelWidth, labelHeight ]);
                     });
 
                 }
