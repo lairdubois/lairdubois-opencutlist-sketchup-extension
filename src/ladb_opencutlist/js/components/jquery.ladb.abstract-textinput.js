@@ -3,7 +3,7 @@
 // CLASS DEFINITION
 // ======================
 
-var LadbAbstractSimpleTextinput = function (element, options, resetValue) {
+var LadbTextinputAbstract = function (element, options, resetValue) {
     this.options = options;
     this.$element = $(element);
 
@@ -12,23 +12,23 @@ var LadbAbstractSimpleTextinput = function (element, options, resetValue) {
     this.$resetBtn = null;
 };
 
-LadbAbstractSimpleTextinput.DEFAULTS = {};
+LadbTextinputAbstract.DEFAULTS = {};
 
-LadbAbstractSimpleTextinput.prototype.disable = function () {
+LadbTextinputAbstract.prototype.disable = function () {
     this.$element.prop('disabled', true);
     this.$resetBtn.hide();
 };
 
-LadbAbstractSimpleTextinput.prototype.enable = function () {
+LadbTextinputAbstract.prototype.enable = function () {
     this.$element.prop('disabled', false);
     this.$resetBtn.show();
 };
 
-LadbAbstractSimpleTextinput.prototype.reset = function () {
+LadbTextinputAbstract.prototype.reset = function () {
     this.$element.val(this.resetValue);
 };
 
-LadbAbstractSimpleTextinput.prototype.init = function () {
+LadbTextinputAbstract.prototype.init = function () {
     var that = this;
 
     var $resetBtn = $('<div class="ladb-btn-reset"><i class="ladb-opencutlist-icon-clear"></i></div>');
@@ -37,7 +37,7 @@ LadbAbstractSimpleTextinput.prototype.init = function () {
         that.$element.trigger('change');
     });
     this.$element
-        .wrap('<div class="input-group ladb-simple-textinput" />')
+        .wrap('<div class="input-group ladb-textinput" />')
         .after($resetBtn)
     ;
     this.$resetBtn = $resetBtn;

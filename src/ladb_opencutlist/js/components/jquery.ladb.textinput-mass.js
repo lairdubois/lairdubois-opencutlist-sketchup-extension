@@ -5,16 +5,16 @@
     // ======================
 
     var LadbTextinputMass = function (element, options) {
-        LadbAbstractSimpleTextinput.call(this, element, options, '');
+        LadbTextinputAbstract.call(this, element, options, '');
     };
-    LadbTextinputMass.prototype = new LadbAbstractSimpleTextinput;
+    LadbTextinputMass.prototype = new LadbTextinputAbstract;
 
     LadbTextinputMass.DEFAULTS = {
         unit: 'kg'
     };
 
     LadbTextinputMass.prototype.init = function () {
-        LadbAbstractSimpleTextinput.prototype.init.call(this);
+        LadbTextinputAbstract.prototype.init.call(this);
 
         this.$element.before('<span class="input-group-addon">' + this.options.unit + '</span>');
 

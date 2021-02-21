@@ -97,7 +97,7 @@
             // Replace dropdown content
             that.$dropdown
                 .empty()
-                .append(Twig.twig({ref: 'core/_widget-preset-dropdown-content.twig'}).render({
+                .append(Twig.twig({ref: 'components/_widget-preset-dropdown-content.twig'}).render({
                     names: response.names
                 }))
             ;

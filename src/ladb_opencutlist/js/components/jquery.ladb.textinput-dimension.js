@@ -5,9 +5,9 @@
     // ======================
 
     var LadbTextinputDimension = function (element, options) {
-        LadbAbstractSimpleTextinput.call(this, element, options, '0');
+        LadbTextinputAbstract.call(this, element, options, '0');
     };
-    LadbTextinputDimension.prototype = new LadbAbstractSimpleTextinput;
+    LadbTextinputDimension.prototype = new LadbTextinputAbstract;
 
     LadbTextinputDimension.DEFAULTS = {};
 

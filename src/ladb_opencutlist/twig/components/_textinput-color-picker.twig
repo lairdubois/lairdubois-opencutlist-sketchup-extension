@@ -1,0 +1,8 @@
+<div class="ladb-textinput-color-picker">
+    <ul>
+        {% for color in colors %}
+            <li data-ladb-color-index="{{ loop.index0 }}" class="ladb-color-box" style="{% if (loop.index0 % colorsPerLine) == 0 %}clear: both; {% endif %}background-color: {{ color }}" title="{{ color }}"></li>
+        {% endfor %}
+    </ul>
+    <div style="clear: both;"></div>
+</div>
