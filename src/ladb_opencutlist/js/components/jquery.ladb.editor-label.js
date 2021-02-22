@@ -150,6 +150,9 @@
                     offset.y -= transform.matrix.f;
 
                     dragging = true;
+
+                } else {
+                    that.editElement(null);
                 }
             })
             .on('mousemove', function (e) {
