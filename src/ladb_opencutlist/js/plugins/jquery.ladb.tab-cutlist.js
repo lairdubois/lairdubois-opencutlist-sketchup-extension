@@ -2499,6 +2499,7 @@
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
+        var $btnSetupModelUnits = $('#ladb_cutlist_options_setup_model_units', $modal);
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
         // Define useful functions
@@ -2602,6 +2603,12 @@
         });
 
         // Bind buttons
+        $btnSetupModelUnits.on('click', function () {
+            $(this).blur();
+            rubyCallCommand('core_open_model_info_page', {
+                page: i18next.t('core.model_info_page.units')
+            });
+        });
         $btnUpdate.on('click', function () {
 
             // Fetch options

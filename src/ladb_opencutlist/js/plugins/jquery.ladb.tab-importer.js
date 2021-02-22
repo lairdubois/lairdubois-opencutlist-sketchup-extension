@@ -75,7 +75,6 @@
                     var $widgetPreset = $('.ladb-widget-preset', $modal);
                     var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
                     var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
-                    var $btnSetupModelUnits = $('#ladb_setup_model_units', $modal);
                     var $btnLoad = $('#ladb_importer_load', $modal);
 
                     // Define useful functions
@@ -113,12 +112,6 @@
                         // Hide modal
                         $modal.modal('hide');
 
-                    });
-                    $btnSetupModelUnits.on('click', function () {
-                        $(this).blur();
-                        rubyCallCommand('core_open_model_info_page', {
-                            page: i18next.t('core.model_info_page.units')
-                        });
                     });
 
                     // Show modal

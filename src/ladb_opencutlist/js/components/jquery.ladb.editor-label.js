@@ -55,6 +55,8 @@
 
         var svg = document.createElementNS(XMLNS, 'svg');
         $svgContaner.append(svg);
+        svg.setAttributeNS(null, 'focusable', 'true');
+        svg.setAttributeNS(null, 'tabindex', '-1');
         svg.setAttributeNS(null, 'viewBox', '0 0 ' + this.options.labelWidth + ' ' + this.options.labelHeight);
         if (this.options.labelHeight > this.options.labelWidth) {
             svg.setAttributeNS(null, 'width',  (LABEL_MAX_HEIGHT / this.options.labelHeight) * this.options.labelWidth + 'px');
@@ -114,20 +116,21 @@
             };
         }
 
-        var draggingElement, draggingElementDef, offset, transform;
+        var selectedElement, selectedElementDef, offset, transform;
+        var dragging = false;
         $(svg)
             .on('mousedown', function (e) {
                 var $draggable = $(e.target).closest('.draggable');
                 if ($draggable.length > 0) {
 
-                    draggingElement = $draggable[0];
-                    draggingElementDef = $draggable.data('def');
+                    selectedElement = $draggable[0];
+                    selectedElementDef = $draggable.data('def');
                     offset = fnGetMousePosition(e);
 
-                    that.editElement(draggingElement, draggingElementDef);
+                    that.editElement(selectedElement, selectedElementDef);
 
                     // Get all the transforms currently on this element
-                    var transforms = draggingElement.transform.baseVal;
+                    var transforms = selectedElement.transform.baseVal;
 
                     // Ensure the first transform is a translate transform
                     if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
@@ -137,7 +140,7 @@
                         translate.setTranslate(0, 0);
 
                         // Add the translation to the front of the transforms list
-                        draggingElement.transform.baseVal.insertItemBefore(translate, 0);
+                        selectedElement.transform.baseVal.insertItemBefore(translate, 0);
 
                     }
 
@@ -146,28 +149,65 @@
                     offset.x -= transform.matrix.e;
                     offset.y -= transform.matrix.f;
 
-                } else {
-                    that.editElement(null);
+                    dragging = true;
                 }
             })
             .on('mousemove', function (e) {
-                if (draggingElement) {
+                if (dragging && selectedElement) {
                     e.preventDefault();
                     var coord = fnGetMousePosition(e);
                     var gridX = Math.round((coord.x - offset.x) / that.options.minUnit);
                     var gridY = Math.round((coord.y - offset.y) / that.options.minUnit);
 
                     // Update def
-                    draggingElementDef.x = gridX * that.options.minUnit / that.options.labelWidth;
-                    draggingElementDef.y = gridY * that.options.minUnit / that.options.labelHeight;
+                    selectedElementDef.x = Math.min(Math.max(gridX * that.options.minUnit / that.options.labelWidth, -0.5), 0.5);
+                    selectedElementDef.y = Math.min(Math.max(gridY * that.options.minUnit / that.options.labelHeight, -0.5), 0.5);
 
                     // Update element translation
-                    transform.setTranslate(draggingElementDef.x * that.options.labelWidth, draggingElementDef.y * that.options.labelHeight);
+                    transform.setTranslate(selectedElementDef.x * that.options.labelWidth, selectedElementDef.y * that.options.labelHeight);
 
                 }
             })
-            .on('mouseup mouseleave', function (e) {
-                draggingElement = null;
+            .on('mouseup', function (e) {
+                dragging = false;
+            })
+            .on('keydown', function (e) {
+                if (selectedElement) {
+                    var dx = 0;
+                    var dy = 0;
+                    switch (e.key) {
+                        case "Down": // IE/Edge specific value
+                        case "ArrowDown":
+                            dy = 1;
+                            break;
+                        case "Up": // IE/Edge specific value
+                        case "ArrowUp":
+                            dy = -1;
+                            break;
+                        case "Left": // IE/Edge specific value
+                        case "ArrowLeft":
+                            dx = -1;
+                            break;
+                        case "Right": // IE/Edge specific value
+                        case "ArrowRight":
+                            dx = 1;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    // Snap to grid
+                    var gridX = Math.round(selectedElementDef.x * that.options.labelWidth / that.options.minUnit + dx);
+                    var gridY = Math.round(selectedElementDef.y * that.options.labelHeight / that.options.minUnit + dy);
+
+                    // Update def
+                    selectedElementDef.x = Math.min(Math.max(gridX * that.options.minUnit / that.options.labelWidth, -0.5), 0.5);
+                    selectedElementDef.y = Math.min(Math.max(gridY * that.options.minUnit / that.options.labelHeight, -0.5), 0.5);
+
+                    // Update element translation
+                    transform.setTranslate(selectedElementDef.x * that.options.labelWidth, selectedElementDef.y * that.options.labelHeight);
+
+                }
             })
         ;
 

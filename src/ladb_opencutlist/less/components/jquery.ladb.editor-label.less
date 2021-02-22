@@ -29,6 +29,11 @@
     border: 1px solid #ddd;
     box-shadow: 3px 3px 10px #999;
 
+    &:focus {
+      outline: none;
+      border-color: @ladb-global-color-focus;
+    }
+
     .ladb-label-element {
       cursor: move;
       user-select: none;
@@ -41,8 +46,8 @@
     g.active {
 
       rect.selection {
-        stroke: #4688F1;
-        fill: #4688F1;
+        stroke: @ladb-global-color-focus;
+        fill: @ladb-global-color-focus;
         fill-opacity: 0.1;
       }
 

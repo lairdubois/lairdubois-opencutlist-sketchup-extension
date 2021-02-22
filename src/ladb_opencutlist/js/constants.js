@@ -1,7 +1,7 @@
 // CONSTANTS
 // ======================
 
-var EXTENSION_BUILD = '202102211148';   // /!\ Auto-generated line, do not edit //
+var EXTENSION_BUILD = '202102220517';   // /!\ Auto-generated line, do not edit //
 
 // UI /////
 
@@ -9,7 +9,8 @@ var SELECT_PICKER_OPTIONS = {
     size: 10,
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
-    showTick: true
+    showTick: true,
+    dropupAuto: false
 };
 
 var TOKENFIELD_OPTIONS = {
