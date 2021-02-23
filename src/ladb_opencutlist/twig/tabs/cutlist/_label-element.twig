@@ -50,6 +50,8 @@
             {% set value = part_info.part.length~' x '~part_info.part.width %}
         {% elseif key == 'batch' %}
             {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
+        {% elseif key == 'tags' %}
+            {% set value = part_info.part.tags|join(' | ') %}
         {% else %}
             {% set value = part_info.part[key] %}
         {% endif %}
