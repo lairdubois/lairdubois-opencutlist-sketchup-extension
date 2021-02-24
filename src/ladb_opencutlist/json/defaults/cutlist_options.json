@@ -19,6 +19,7 @@
     "minimize_on_highlight": true,
     "part_order_strategy": "-thickness>-length>-width>-count>name>-edge_pattern",
     "dimension_column_order_strategy": "length>width>thickness",
+    "tags": [],
     "hidden_group_ids": []
   }
 }

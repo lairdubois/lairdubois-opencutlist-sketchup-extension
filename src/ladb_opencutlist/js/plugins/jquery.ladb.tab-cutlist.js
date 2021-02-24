@@ -1407,7 +1407,7 @@
                 $inputTags
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                         autocomplete: {
-                            source: that.usedTags,
+                            source: that.usedTags.concat(that.generateOptions.tags).unique(),
                             delay: 100
                         }
                     }))
@@ -2498,6 +2498,7 @@
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
+        var $inputTags = $('#ladb_input_tags', $modal);
         var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
         var $btnSetupModelUnits = $('#ladb_cutlist_options_setup_model_units', $modal);
         var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
@@ -2517,6 +2518,7 @@
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
+            options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
             var properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {
@@ -2548,6 +2550,7 @@
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
+            $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 
             // Sortables
 
@@ -2627,11 +2630,28 @@
 
         });
 
-        // Populate inputs
-        fnFillInputs(that.generateOptions);
-
         // Show modal
         $modal.modal('show');
+
+        // Init tokenfields (this must done after modal shown for correct token tag max width measurement)
+        $inputTags
+            .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                autocomplete: {
+                    source: that.usedTags,
+                    delay: 100
+                }
+            }))
+            .on('tokenfield:createtoken', function (e) {
+                var existingTokens = $(this).tokenfield('getTokens');
+                $.each(existingTokens, function (index, token) {
+                    if (token.value === e.attrs.value) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+        // Populate inputs
+        fnFillInputs(that.generateOptions);
 
         // Setup popovers
         this.dialog.setupPopovers();

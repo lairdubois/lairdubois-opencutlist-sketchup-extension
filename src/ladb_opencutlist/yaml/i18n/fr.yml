@@ -324,6 +324,9 @@ tab:
       property_name: Désignation
       property_count: Quantité
       property_edge_pattern: Nombre de chant
+      tags: Tags
+      tags_help: Liste personnalisée des tags proposés dans la fenêtre de propriétés des pièces.
+      tags_placeholder: Ajouter un tag
     list:
       filters: Filtres
       filters_warning_0: "Ce filtrage masque toutes les pièces !"

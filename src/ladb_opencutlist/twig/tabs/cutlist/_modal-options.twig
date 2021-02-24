@@ -10,6 +10,7 @@
         <li role="presentation" class="active"><a href="#tab_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.general'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
         <li role="presentation"><a href="#tab_options_dimension_column_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-col"></i> {{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
+        <li role="presentation"><a href="#tab_options_tags" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-tag"></i> {{ 'tab.cutlist.option.tags'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -138,6 +139,16 @@
                 <div class="row">
                     <div  class="col-xs-offset-2 col-xs-8">
                         <ul id="ladb_sortable_dimension_column_order_strategy" class="ladb-sortable-list"></ul>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab_options_tags">
+                <div class="form-group">
+                    <p class="help-block text-center"><small>{{ 'tab.cutlist.option.tags_help'|i18next }}</small></p>
+                    <div class="row">
+                        <div  class="col-xs-offset-2 col-xs-8">
+                            <input type="text" class="form-control" id="ladb_input_tags" placeholder="{{ 'tab.cutlist.option.tags_placeholder'|i18next }}">
+                        </div>
                     </div>
                 </div>
             </div>
