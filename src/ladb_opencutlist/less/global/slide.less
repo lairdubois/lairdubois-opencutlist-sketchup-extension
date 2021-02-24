@@ -82,6 +82,17 @@
     right: 0;
     height: auto;
     overflow: hidden;
+    margin: 10px;
+
+    &.print-full-page {
+      margin: 0;
+    }
+
+    &.print-no-header {
+      .ladb-header-wrapper {
+        display: none !important;
+      }
+    }
 
     .ladb-header-wrapper {
       height: auto !important;

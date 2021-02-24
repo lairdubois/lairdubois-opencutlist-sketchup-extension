@@ -747,6 +747,11 @@ body.no-ie, body.ie-gt11 {
   .ladb-cuttingdiagram-labels-group {
     border: none !important;
     page-break-after: always;
+    position: relative;
+
+    &:before {
+      content: ' '; // Here to be able to use SVG absolute position and maintain page break
+    }
 
     & > tbody > tr > td {
       border: none !important;
@@ -755,6 +760,8 @@ body.no-ie, body.ie-gt11 {
     svg {
       position: absolute;
       width: 100vw;
+      top: 50vh;
+      margin-top: -50vh;
       left: 50vw;
       margin-left: -50vw;
       border: none;
