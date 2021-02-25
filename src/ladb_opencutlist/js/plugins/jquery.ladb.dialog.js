@@ -773,6 +773,9 @@
                 that.selectTab(tabName);
             });
         });
+        $('#ladb_btn_close_dev_alert', that.$element).on('click', function () {
+            $('#ladb_dev_alert').hide();
+        });
         $('#ladb_btn_close_compatibility_alert', that.$element).on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
