@@ -1110,8 +1110,6 @@
                         });
                     }
                 };
-                fnDisplayAxisDimensions();
-
                 var fnUpdateEdgesPreview = function() {
                     if ($selectEdgeYmaxMaterialName.val() === '') {
                         $rectEdgeYmax.removeClass('ladb-active');
@@ -1146,8 +1144,6 @@
                         $rectIncreaseWidth.addClass('ladb-active');
                     }
                 };
-                fnUpdateIncreasesPreview();
-
                 var fnNewCheck = function($select, type) {
                     if ($select.val() === 'new') {
                         that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
@@ -1156,7 +1152,6 @@
                     }
                     return false;
                 };
-
                 var fnMaterialNameCopyToAllEdges = function(materialName) {
                     if (materialName !== MULTIPLE_VALUE) {
                         if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
@@ -1175,6 +1170,9 @@
                     }
                 };
 
+                fnDisplayAxisDimensions();
+                fnUpdateIncreasesPreview();
+
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
@@ -1191,6 +1189,7 @@
                     fnUpdateIncreasesPreview();
                 });
                 $inputWidthIncrease.ladbTextinputDimension();
+                $inputThicknessIncrease.ladbTextinputDimension();
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);
@@ -1324,23 +1323,23 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
-                        if ($inputUnitPrice.val() !== MULTIPLE_VALUE) {
+                        if ($inputUnitPrice.val() !== '') {
                             editedParts[i].unit_price = $inputUnitPrice.val();
                         }
-                        if ($inputUnitMass.val() !== MULTIPLE_VALUE) {
+                        if ($inputUnitMass.val() !== '') {
                             editedParts[i].unit_mass = $inputUnitMass.val();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
-                        if ($inputLengthIncrease.val() !== MULTIPLE_VALUE) {
+                        if ($inputLengthIncrease.val() !== '') {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
                         }
-                        if ($inputWidthIncrease.val() !== MULTIPLE_VALUE) {
+                        if ($inputWidthIncrease.val() !== '') {
                             editedParts[i].width_increase = $inputWidthIncrease.val();
                         }
-                        if ($inputThicknessIncrease.val() !== MULTIPLE_VALUE) {
+                        if ($inputThicknessIncrease.val() !== '') {
                             editedParts[i].thickness_increase = $inputThicknessIncrease.val();
                         }
 

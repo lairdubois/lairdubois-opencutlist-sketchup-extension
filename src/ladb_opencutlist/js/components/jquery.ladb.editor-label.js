@@ -176,6 +176,7 @@
             })
             .on('keydown', function (e) {
                 if (selectedElement) {
+
                     var dx = 0;
                     var dy = 0;
                     switch (e.key) {
@@ -198,6 +199,9 @@
                         default:
                             return;
                     }
+
+                    // Prevent default event behavior
+                    e.preventDefault();
 
                     // Snap to grid
                     var gridX = Math.round(selectedElementDef.x * that.options.labelWidth / that.options.minUnit + dx);
