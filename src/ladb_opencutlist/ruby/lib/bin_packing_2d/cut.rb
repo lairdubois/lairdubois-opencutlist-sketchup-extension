@@ -35,7 +35,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets a new length for this cut. Used by bounding box.
+    # Sets a new length for this Cut. Used by bounding box.
     #
     def set_length(length)
       @length = length
@@ -44,21 +44,21 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Returns true if this Cut is valid.
     #
-    def valid?()
-      return @length > 0
+    def valid?
+      @length > 0
     end
 
     #
     # Marks this Cut as a through Cut (top level).
     #
-    def mark_through()
+    def mark_through
       @is_through = true
     end
 
     #
     # Marks this Cut as the final bounding box Cut (outermost two cuts).
     #
-    def mark_final()
+    def mark_final
       @is_through = true
       @is_final = true
     end
@@ -69,38 +69,38 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def resize_to(max_x, max_y)
       # Starting point of the cut is well inside of the bounding box
-      if @x < max_x && @y < max_y
-        if @is_horizontal && @x + @length > max_x
-          set_length(max_x - @x)
-        elsif !@is_horizontal && @y + @length > max_y
-          set_length(max_y - @y)
-        end
-        return valid?
-      # Starting point is outside of the bounding box, nothing to resize
-      else
-        return false
+      return false unless @x < max_x && @y < max_y
+
+      if @is_horizontal && @x + @length > max_x
+        set_length(max_x - @x)
+      elsif !@is_horizontal && @y + @length > max_y
+        set_length(max_y - @y)
       end
+      valid?
     end
 
     #
     # Debugging!
     #
-    def to_str()
-      @is_horizontal ? dir = "H": dir = "V"
-      return "cut : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}], #{dir}, #{'%3d' % @level}, #{@is_through}, #{@is_final}]"
+    def to_str
+      dir = @is_horizontal ? "H" : "V"
+      "cut : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, "\
+      "#{"%9.2f" % @length}], #{dir}, #{"%3d" % @level}, #{@is_through}, "\
+      " #{@is_final}]"
     end
 
     #
     # Debugging!
     #
-    def to_octave()
+    def to_octave
       linewidth = 2
       if @is_horizontal
-        return "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", red, \"linewidth\", #{linewidth}) # horizontal cut"
+        "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", "\
+        "red, \"linewidth\", #{linewidth}) # horizontal cut"
       else
-        return "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", red,  \"linewidth\", #{linewidth}) # vertical cut"
+        "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", "\
+        "red,  \"linewidth\", #{linewidth}) # vertical cut"
       end
     end
   end
-
 end

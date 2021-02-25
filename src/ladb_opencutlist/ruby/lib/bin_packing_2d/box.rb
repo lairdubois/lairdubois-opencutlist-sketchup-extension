@@ -29,34 +29,31 @@ module Ladb::OpenCutList::BinPacking2D
     def initialize(length, width, rotatable, data)
       @x = 0
       @y = 0
+      @length = length * 1.0
+      @width = width * 1.0
 
-      @length = length*1.0
-      @width = width*1.0
+      raise(Packing2DError, 'Trying to initialize a box with zero or negative length/width!') if @length <= 0.0 || @width <= 0.0
 
       @rotatable = rotatable
       @rotated = false
-
-      if @length <= 0.0 || @width <= 0.0
-        raise(Packing2DError, "Trying to initialize a box with zero or negative length/width!")
-      end
-
       @data = data
     end
 
     #
     # Returns true if the Box was rotated.
     #
-    def rotated?()
+    def rotated?
       return @rotated
     end
 
     #
     # Rotates the Box by 90 deg. if option permits.
     #
-    def rotate()
+    def rotate
       if @rotatable
-        # May be dangerous: comparison of float numbers.
-        if @length < @width || @length > @width
+        # Only rotate if length and width are different, otherwise does not
+        # make sense.
+        if (@length - @width).abs > EPS
           @width, @length = [@length, @width]
           @rotated = !@rotated
         end
@@ -64,102 +61,84 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets the position of this Box inside a Bin when
-    # placed into a Leftover by Packer.
+    # Sets the position of this Box inside a Bin when placed into a Leftover by Packer.
     #
     def set_position(x, y)
       @x = x
       @y = y
+      raise(Packing2DError, 'Trying to initialize a box with negative x or y!')  if @x < 0.0 || @y < 0.0
+
     end
 
     #
-    # Checks if this Box would fit into the given leftover.
-    # The top level leftover of a Bin has already been trimmed, if option is
-    # set.
+    # Checks if this Box would fit into a rectangle given by length and width.
     #
     def fits_into?(length, width)
-      # EPS tolerance because of decimal inches!
-      if length - @length >= -EPS && width - @width >= -EPS
-        return true
-      elsif @rotatable && width - @length >= -EPS && length - @width >= -EPS
-        return true
-      end
-      return false
+      # EPS tolerance because of conversion from mm to decimal inches!
+      return true if length - @length >= -EPS && width - @width >= -EPS
+      return true if @rotatable && width - @length >= -EPS && length - @width >= -EPS
+      false
     end
 
     #
-    # Returns true if this Box fits into given Leftover.
+    # Returns true if this Box fits into given Leftover. The top level
+    # Leftover of a Bin has already been trimmed, if trimming option is set.
     #
     def fits_into_leftover?(leftover)
-      if leftover.nil?
-        return false
-      else
-        return fits_into?(leftover.length, leftover.width)
-      end
+      return false if leftover.nil?
+
+      fits_into?(leftover.length, leftover.width)
     end
 
     #
     # Returns the area of this Box.
     #
-    def area()
-      return @length * @width
+    def area
+      @length * @width
     end
 
     #
     # Returns true if this Box is equal to another Box.
     #
-    def equal?(box)
-      return true if box.nil?
-      if (@length - box.length).abs <= EPS && (@width - box.width).abs <= EPS
-        return true
-      elsif @rotatable && (@length - box.width).abs <= EPS && (@width - box.length).abs <= EPS
-        return true
-      end
-      return false
+    def equal?(other)
+      return true if other.nil?
+
+      return true if (@length - other.length).abs <= EPS && (@width - other.width).abs <= EPS
+
+      return true if @rotatable && (@length - other.width).abs <= EPS && (@width - other.length).abs <= EPS
+
+      false
     end
 
     #
     # Return true if this Box is "very" different from another Box, e.g. 10% difference in both directions.
     #
     def different?(box)
+      diff_measure = 0.1
       return true if box.nil?
-      if (@length - box.length).abs >= box.length*0.1 && (@width - box.width).abs >= box.width*0.1
-        return true
-      elsif @rotatable && (@length - box.width).abs >= box.length*0.1 && (@width - box.length).abs >= box.width*0.1
-        return true
-      end
-      return false
-    end
 
-    #
-    # Returns true if at least one of the dimensions of the two
-    # Boxe s are equal.
-    #
-    def equal_one_dimension?(box)
-      return true if box.nil?
-      if (@length - box.length).abs <= EPS || (@width - box.width).abs <= EPS
-        return true
-      elsif @rotatable && ((@length - box.width).abs < EPS || (@width - box.length).abs <= EPS)
-        return true
-      end
-      return false
+      return true if (@length - box.length).abs > box.length * diff_measure && (@width - box.width).abs > box.width * diff_measure
+
+      return true if @rotatable && ((@length - box.width).abs >= box.length * diff_measure && (@width - box.length).abs >= box.width * diff_measure)
+
+      false
     end
 
     #
     # Debugging!
     #
-    def to_str()
-      s = "box : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}, #{'%9.2f' % @width}], "
-      s += "rotated = #{@rotated}[rotatable=#{@rotatable}]"
-      return s
+    def to_str
+      "box : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, "\
+      "#{"%9.2f" % @length}, #{"%9.2f" % @width}], "\
+      "rotated = #{@rotated}[rotatable=#{@rotatable}]"
     end
 
     #
     # Debugging!
     #
-    def to_octave()
-      return "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", blue); # box"
+    def to_octave
+      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], "\
+      "\"Facecolor\", blue); # box"
     end
   end
-
 end

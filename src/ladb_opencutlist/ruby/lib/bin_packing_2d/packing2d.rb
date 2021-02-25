@@ -13,14 +13,15 @@
     # large number.
     MAX_INT = 2**(N_BITS - 2) - 1
 
-    # Working precision to compare decimal inches (max. SketchUp precision)
-    EPS = 0.00001
+    # Working precision to compare decimal inches (this represents around
+    # 0.00254 mm)
+    EPS = 0.0001
 
     # Maximum time for execution, beyond that interrupt.
     MAX_TIME = 30
 
-    # Number of best solution to carry for each bin.
-    BEST_X_SMALL = 3
+    # Number of best solution to carry over for each bin.
+    BEST_X_SMALL = 2
     BEST_X_LARGE = 2
 
     # Bin has illegal size <= 0, has been ignored.
@@ -50,7 +51,8 @@
     # Type of leftover bin.
     BIN_TYPE_USER_DEFINED = 1
 
-    # Do not presort input.
+    # Do not presort input. Should NOT be used since results
+    # are random!
     PRESORT_INPUT_ORDER = 0
     # Sort by width decreasing.
     PRESORT_WIDTH_DECR = 1
@@ -58,16 +60,16 @@
     PRESORT_LENGTH_DECR = 2
     # Sort by area decreasing.
     PRESORT_AREA_DECR = 3
-    # Sort by shortest side increasing.
+    # Sort by perimeter decreasing.
     PRESORT_LONGEST_SIDE_DECR = 4
     # Sort by longest side increasing.
     PRESORT_SHORTEST_SIDE_DECR = 5
-    # Sort by perimeter decreasing.
-    PRESORT_PERIMETER_DECR = 6
-    PRESORT_ALTERNATING_LENGTHS = 7
     # Sort by alternating lengths.
-    PRESORT_ALTERNATING_WIDTHS = 8
+    PRESORT_PERIMETER_DECR = 6
+    # Sort by shortest side increasing.
+    PRESORT_ALTERNATING_LENGTHS = 7
     # Sort by alternating widths.
+    PRESORT_ALTERNATING_WIDTHS = 8
     PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest', 'perimeter', 'alt_length', 'alt_width']
 
     # Score heuristics for fitting boxes into bins.
@@ -79,16 +81,6 @@
     SCORE_WORSTLONGSIDE_FIT = 5
     SCORE = [' best area', 'short side', 'long side', 'worst area', 'worst short side', 'worst long side']
 
-    # Do not try to stack boxes.
-    STACKING_NONE = 0
-    # Stack boxes lengthwise by grouping common widths.
-    STACKING_LENGTH = 1
-    # Stack boxes widthwise by grouping common lengths.
-    STACKING_WIDTH = 2
-    # Stack none, length and width.
-    STACKING_ALL = 3
-    STACKING = ['do not care', 'lengthwise', 'widthwise', 'stacking all']
-
     # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
     SPLIT_LONGERLEFTOVER_AXIS = 1
@@ -99,6 +91,16 @@
     SPLIT_SHORTER_AXIS = 6
     SPLIT_LONGER_AXIS = 7
     SPLIT = ['shorter leftover', 'longer leftover', 'min. area', 'max. area', 'horizontal_first', 'vertical_first', 'shorter axis', 'longer axis']
+
+    # Do not try to stack boxes.
+    STACKING_NONE = 0
+    # Stack boxes lengthwise by grouping common widths.
+    STACKING_LENGTH = 1
+    # Stack boxes widthwise by grouping common lengths.
+    STACKING_WIDTH = 2
+    # Stack none, length and width.
+    STACKING_ALL = 3
+    STACKING = ['do not care', 'lengthwise', 'widthwise', 'stacking all']
 
     # Orientation of a box. Better for sorting than boolean value.
     NOT_ROTATED = 0
@@ -144,5 +146,4 @@
       end
     end
   end
-
 end

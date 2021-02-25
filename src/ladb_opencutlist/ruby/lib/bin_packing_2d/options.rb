@@ -4,14 +4,11 @@ module Ladb::OpenCutList::BinPacking2D
   # Implements configuration options.
   #
   class Options
-
-    attr_reader :debug
-    attr_reader :optimization, :stacking_pref
-    attr_reader :base_length, :base_width
-    attr_reader :saw_kerf, :trimsize, :rotatable
+    attr_reader :debug, :optimization, :stacking_pref, :base_length, :base_width,
+                :saw_kerf, :trimsize, :rotatable
     attr_accessor :presort, :stacking, :score, :split
 
-    def initialize()
+    def initialize
       @debug = debug
 
       # General algorithm options.
@@ -23,7 +20,6 @@ module Ladb::OpenCutList::BinPacking2D
       @rotatable = false
       @saw_kerf = 0
       @trimsize = 0
-
       # Used internally by algorithm.
       @presort = 0
       @score = 0
@@ -42,22 +38,22 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets optimization level.
     #
     def set_optimization(optimization)
-      if (OPT_MEDIUM..OPT_ADVANCED).cover?(optimization)
-        @optimization = optimization
-      else
-        @optimization = OPT_MEDIUM
-      end
+      @optimization = if (OPT_MEDIUM..OPT_ADVANCED).cover?(optimization)
+          optimization
+        else
+          OPT_MEDIUM
+        end
     end
 
     #
     # Sets the stacking preference.
     #
     def set_stacking_pref(stacking_pref)
-      if (STACKING_NONE..STACKING_ALL).cover?(stacking_pref)
-        @stacking_pref = stacking_pref
-      else
-        @stacking_pref = STACKING_NONE
-      end
+      @stacking_pref = if (STACKING_NONE..STACKING_ALL).cover?(stacking_pref)
+          stacking_pref
+        else
+          STACKING_NONE
+        end
     end
 
     #
@@ -98,47 +94,23 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Makes a signature string of the options.
     #
-    def signature()
-      return "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{'%5.3f' % @saw_kerf}/#{'%5.3f' % @trimsize}"
-    end
-
-    #
-    # Gets number of packings for this option setup.
-    #
-    def get_computations(optimization, stacking_pref)
-      case optimization
-      when OPT_MEDIUM
-        if stacking_pref <= STACKING_WIDTH
-          return 64
-        else
-          return 192
-        end
-      when OPT_ADVANCED
-        if stacking_pref <= STACKING_WIDTH
-          return 384
-        else
-          return 1152
-        end
-      else
-        return 0
-      end
+    def signature
+      "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{"%5.3f" % @saw_kerf}/#{"%5.3f" % @trimsize}"
     end
 
     #
     # Debugging!
     #
-    def to_str()
-      s = "-> options\n"
-      s += "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n"
-      s += "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n"
-      s += "   computations     = #{get_computations(@optimization, @stacking_pref)}\n"
-      s += "   base_length      = #{@base_length}\n"
-      s += "   base_width       = #{@base_width}\n"
-      s += "   trimsize         = #{@trimsize}\n"
-      s += "   saw_kerf         = #{@saw_kerf}\n"
-      s += "   global rotatable = #{@rotatable}\n"
-      return s
+    def to_str
+      "-> options\n" \
+      "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n" \
+      "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n" \
+      "   computations     = #{get_computations(@optimization, @stacking_pref)}\n" \
+      "   base_length      = #{@base_length}\n" \
+      "   base_width       = #{@base_width}\n" \
+      "   trimsize         = #{@trimsize}\n" \
+      "   saw_kerf         = #{@saw_kerf}\n" \
+      "   global rotatable = #{@rotatable}\n"
     end
   end
-
 end
