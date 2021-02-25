@@ -36,6 +36,9 @@
                 }
                 that.refresh();
             });
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('default.remove')
         });
 
     };

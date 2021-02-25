@@ -637,12 +637,13 @@
 
     };
 
-    LadbDialog.prototype.confirm = function (title, text, callback) {
+    LadbDialog.prototype.confirm = function (title, text, callback, options) {
 
         // Append modal
         var $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
             title: title,
-            text: text
+            text: text,
+            options: options
         });
 
         // Fetch UI elements

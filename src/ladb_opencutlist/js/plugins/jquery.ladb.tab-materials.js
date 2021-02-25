@@ -376,6 +376,7 @@
                 this.blur();
             });
             $btnRemove.on('click', function () {
+                $modal.modal('hide');   // Hide modal
                 that.removeMaterial(that.editedMaterial);
                 this.blur();
             });
@@ -454,15 +455,7 @@
     LadbTabMaterials.prototype.removeMaterial = function (material) {
         var that = this;
 
-        var $modal = this.appendModalInside('ladb_materials_modal_remove', 'tabs/materials/_modal-remove.twig', {
-            material: material
-        });
-
-        // Fetch UI elements
-        var $btnRemove = $('#ladb_materials_remove', $modal);
-
-        // Bind buttons
-        $btnRemove.on('click', function () {
+        this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.remove.message', { material_name: material.display_name }), function () {
 
             // Flag to ignore next material change event
             that.ignoreNextMaterialEvents = true;
@@ -482,17 +475,14 @@
                     // Reload the list
                     that.loadList();
 
-                    // Hide modal
-                    $modal.modal('hide');
-
                 }
 
             });
 
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('default.remove')
         });
-
-        // Show modal
-        $modal.modal('show');
 
     };
 
