@@ -61,10 +61,16 @@ core:
     more_reviews: Meinungen
     more_plans: Pläne
     more_extensions: Plugins
-    more_update: Aktualisierung
+    more_update: Update
   warning:
+    dev: |
+      Sie verwenden eine **in Entwicklung befindliche** Version von *OpenCutList*.
+      Diese Version steht nur zum Testen zur Verfügung.
+      Es wird nicht empfohlen, diese in der Produktion zu verwenden.
+
+      Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Sie verwenden eine ältere Version von SketchUp ({{ sketchupVersion }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
+      Sie verwenden eine ältere Version von SketchUp ({{ sketchup_version }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
       Um OpenCutList besser zu nutzen, empfehlen wir mindestens die Version **SketchUp 2017** zu installieren.
     feature_locked: "*In dieser Version von SketchUp nicht deaktivierbar*"
   event:
@@ -324,6 +330,9 @@ tab:
       property_name: Bezeichnung
       property_count: Anzahl
       property_edge_pattern: Anzahl Kantenbänder
+      tags: Tags
+      tags_help: "Benutzerdefinierte Liste von Tags, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
+      tags_placeholder: Tag hinzufügen
     list:
       filters: Filter
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
@@ -360,7 +369,7 @@ tab:
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
       info_1: |
         *Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*.
-      options: Export-Optionen
+      options: Exportoptionen
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -464,7 +473,7 @@ tab:
         Geben Sie hier die Stangenreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
         Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
         Die Mengenangabe ist optional.
-        *Masse ohne Einheit beziehen sich auf die Modellmasseinheit.*
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_std_sheet: Standard-Platte
       option_std_sheet_help: |
         Wählen Sie hier die Standard-Platte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
@@ -657,7 +666,7 @@ tab:
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Übermass welches das **Breitenrohmaß** vergrössert.
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
       thickness_increase: Dickenzumaß
       thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
       std_lengths: Standard-Längen
@@ -769,7 +778,7 @@ tab:
       mandatory: Pflichtspalten
       optional: Optionale Spalten
       name: Bezeichnung
-      count: Menge
+      count: Stückzahl
       bbox_length: Länge
       bbox_width: Breite
       bbox_thickness: Dicke
@@ -793,7 +802,7 @@ tab:
       invalid_thickness: Ungültige Dicke
       failed_to_import: Der Import ist fehlgeschlagen.
     warning:
-      invalid_count: Ungültige Menge
+      invalid_count: Ungültige Stückzahl
       invalid_material: Ungültiges Material
     success:
       imported_title: Importieren abgeschlossen

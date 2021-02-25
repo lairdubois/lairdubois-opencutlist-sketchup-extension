@@ -63,8 +63,14 @@ core:
     more_extensions: Extensions
     more_update: Update
   warning:
+    dev: |
+      You are using a **development** version of *OpenCutList*.
+      This version is available for testing only.
+      It is not recommended to use it in production.
+
+      To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      You are running an older version of SketchUp ({{ sketchupVersion }}). This plugin will work, but may exhibit certain bugs.
+      You are using an older version of SketchUp ({{ sketchup_version }}). This plugin will work, but may exhibit certain bugs.
       To take full advantage of OpenCutList, we recommend to upgrade to at least **SketchUp 2017**.
     feature_locked: "*Not deactivable in this version of SketchUp*"
   event:
@@ -324,6 +330,9 @@ tab:
       property_name: Description
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
+      tags: Tags
+      tags_help: Custom list of tags offered in the part properties window.
+      tags_placeholder: Add a tag
     list:
       filters: Filter
       filters_warning_0: "This filter masks all parts!"

@@ -6,6 +6,7 @@ default:
   maximize: Espandi
   cancel: Annulla
   validate: Applica
+  confirm: Convalidare
   open: Apri
   see: Visualizza
   close: Chiudi
@@ -42,8 +43,6 @@ default:
   part_plural: pezzi
   setup_model_units: Impostare l'unita di misura del modello
   load_more: "Carica di più ..."
-  save_to_defaults: Salva come impostazione predefinita
-  reset_to_defaults: Ripristina i valori predefiniti
   reset_to_app_defaults: Ripristina i valori originali
 core:
   menu:
@@ -64,8 +63,14 @@ core:
     more_extensions: Estensioni
     more_update: Aggiorna
   warning:
+    dev: |
+      Stai utilizzando una versione **in fase di sviluppo** di *OpenCutList*.
+      Questa versione è disponibile solo per il test.
+      Si sconsiglia di utilizzarlo in produzione.
+
+      Per segnalare un bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Stai utilizzando una vecchia versione di SketchUp ({{ sketchupVersion }}). Questo plugin puo' funzionare, ma con qualche problema.
+      Stai utilizzando una vecchia versione di SketchUp ({{ sketchup_version }}). Questo plugin puo' funzionare, ma con qualche problema.
       Per utilizzare al meglio OpenCutList, si raccomanda di aggiornare alla versione **SketchUp 2017** o superiore.
     feature_locked: "*Impossibile disattivare in questa versione di SketchUp*"
   event:
@@ -97,6 +102,28 @@ core:
     error:
       download: Si è verificato un errore durante il trasferimento dell'aggiornamento.
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.
+  preset:
+    label: Impostazioni
+    save_to: Salva con nome
+    restore_from: Ricarica da
+    app_defaults: Impostazione originale
+    user_defaults: Impostazioni predefinite da me
+    new: Nuova impostazione
+    new_prompt: |
+      La creazione di una regola personalizzata consente di mantenere le attuali impostazioni del modulo in modo da poterle riutilizzare in altri modelli
+
+      Salva le impostazioni con nome
+    delete_confirm_title: Elimina
+    delete_confirm: "Sei sicuro di voler eliminare l'impostazione **\"{{ name }}\"**"
+    override_confirm_title: Aggiorna
+    override_confirm: "Sei sicuro di voler aggiornare le impostazioni **\"{{ name }}\"** con quelle contenute nel modulo ?"
+    new_success: "Impostazioni **\"{{ name }}\"** create"
+    override_success: "Impostazioni **\"{{ name }}\"** aggiornate"
+    restore_success: "Il modulo è stato compilato con le impostazioni **\"{{ name }}\"**"
+    delete_success: "Impostazioni **\"{{ name }}\"** eliminate"
+    tooltip:
+      save_to: "Impostazioni **\"{{ name }}\"** aggiornate"
+      delete: "Elimina le impostazioni **\"{{ name }}\"**"
 tab:
   cutlist:
     label: Parti
@@ -193,6 +220,7 @@ tab:
       group_numbers_save: Salva la numerazione delle parti di questo gruppo
       group_numbers_reset: Ricomincia la numerazione delle parti di questo gruppo
       group_cuttingdiagram: Schema di taglio
+      group_labels: Stampa etichette
       edit_material: "Modifica materiale '{{ material }}'..."
       expand_all: Espandi le parti identiche
       collapse_all: Collassa le parti identiche
@@ -273,7 +301,7 @@ tab:
       part_number_sequence_by_group: Fai ripartire la numerazione ad ogni gruppo
       part_number_sequence_by_group_help: "Se questa opzione è attivata, la classificazione delle parti viene fatta ripartire (1 o A) per ogni gruppo con lo stesso materiale e spessore."
       part_folding: Raggruppa parti uguali
-      part_folding_help: "Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche**."
+      part_folding_help: "Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche** *(se la visualizzazione di quest'area non è nascosta)*."
       hide_entity_names: Nascondi i nomi delle occorrenze
       hide_entity_names_help: "Se questa opzione è attivata, il **nome occorrenza** delle parti non verrà mostrata."
       hide_tags: Nascondi Tags
@@ -302,6 +330,9 @@ tab:
       property_name: Descrizione
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
+      tags: Tags
+      tags_help: Elenco personalizzato di tag offerto nella finestra delle proprietà della parte.
+      tags_placeholder: Aggiungi un tag
     list:
       filters: Filtri
       filters_warning_0: "Questo filtro esclude tutte le parti!"
@@ -334,10 +365,10 @@ tab:
       edges: Bordature
     export:
       title: Esporta in formato CSV
-      info: |
-        Usa questo comando per esportare la *distinta materiali* in formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) .
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Le parti contenute in gruppi nascosti non saranno esportate*.
+      info_0: |
+        Con questa funzione si può esportare il *resoconto* in un file formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
+      info_1: |
+        *Le parti contenute nei gruppi nascosti non saranno esportate*
       options: Opzioni di esportazione
       option_source: Sorgente
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -400,25 +431,32 @@ tab:
       option_origin_corner_0: In alto a sinistra
       option_origin_corner_1: In basso a sinistra
       option_origin_corner_help: Determina la posizione dell'origine delle coordinate per la visualizzazione dei pezzi sulle pannelli.
+      option_full_width_diagram: Modalità schermo intero
+      option_full_width_diagram_0: No
+      option_full_width_diagram_1: Si
+      option_full_width_diagram_help: "Se questa opzione viene attivata, i diagrammi di taglio verranno mostrati utilizzando le larghezze disponibili. Altrimenti, la loro larghezza viene definita da un fattore di scala calcolata su tutti i diagrammi."
       option_wrap_length: Lunghezza massima della tavola
       option_wrap_length_help: Lunghezza massima dopo la quale una tavola viene definita su linee multiple.
       option_hide_cross: Rimanente
-      option_hide_cross_help: Mostra o nascondi la croce che indica le parti definite come ritagli nel diagramma.
       option_hide_cross_0: Dimensioni e croce
       option_hide_cross_1: Solo dimensioni
+      option_hide_cross_help: Mostra o nascondi la croce che indica le parti definite come ritagli nel diagramma.
+      option_highlight_primary_cuts: Tagli principali
+      option_highlight_primary_cuts_0: "Solo scavalchi / Solo panoramica ?"
+      option_highlight_primary_cuts_1: Sempre visibile
+      option_highlight_primary_cuts_help: Consente di evidenziare i tagli principali
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
       option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_optimization: Niveau d'optimisation
-      option_optimization_help: Le niveau d'optimisation définit le nombre de possibilités calculées.
-      option_optimization_0: Léger
-      option_optimization_1: Moyen
-      option_optimization_2: Avancé
+      option_optimization_help: Il livello di ottimizzazione stabilisce il numero di possibilità calcolate e quindi anche il tempo necessario.
+      option_optimization_0: Medio
+      option_optimization_1: Avanzato
       option_stacking: Raggruppa parti identiche
       option_stacking_help: Il criterio con cui le parti di eguale lunghezza o larghezza verranno disposte insieme.
-      option_stacking_0: Nessuna
+      option_stacking_0: Nessuna preferenza
       option_stacking_1: Per lunghezza
       option_stacking_2: Per larghezza
       option_stacking_3: Tutte le possibilità
@@ -450,9 +488,6 @@ tab:
         Formato: **L**x**W**x**Q**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello e **Q** la quantità.
         La quantità è facoltativa.
         *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
-      options_defaults:
-        manage_help: Gestione dei valori predefiniti dello *Schema di Taglio*
-        save_success: "Salvataggio dei valori predefiniti per lo *Schema di Taglio* completato"
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola
         scroll_to_block_2d: Scorri al primo pannello
@@ -466,12 +501,15 @@ tab:
         width: Larghezza
         total_length: Σ Lunghezze
         total_area: Σ Aree
+        total_part_count: Σ Parti
         total_used: Totale utilizzato
         trimming: Ritaglio
         total_length_cuts: Lunghezza dei tagli
         efficiency: Efficienza
         leftover: Rimanente
         cut: Taglio
+        cut_final: Taglio principale (livello 1)
+        cut_through: Taglio principale (livello 2)
         bar_type_0: Dimensioni Standard Barre
         bar_type_1: Ritagli
         sheet_type_0: Dimensioni Standard dei Pannelli
@@ -500,7 +538,64 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Le dimensioni sono state ridotte dello spessore della bordatura.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etichette
+      title: Etichette
+      options_layout: Schema
+      options_settings: Configurazione
+      size: Dimensioni reali etichetta
+      add_element: Aggiungi elemento
+      remove_element: Elimina
+      option_page: Formato del foglio
+      option_page_format: Formato
+      option_page_format_portrait: Verticale
+      option_page_format_landscape: Orizzontale
+      option_page_format_custom: Personalizzato
+      option_page_width: Larghezza
+      option_page_height: Altezza
+      option_margin: Margini
+      option_margin_top: Alto
+      option_margin_right: Destro
+      option_margin_bottom: Basso
+      option_margin_left: Sinistro
+      option_spacing: Spaziatura
+      option_spacing_h: Orizzontale
+      option_spacing_v: Vericale
+      option_grid: Etichette per pagina
+      option_col_count: Colonne
+      option_row_count: Righe
+      option_cutting_marks: Indicatori di taglio
+      option_cutting_marks_0: Nessuna
+      option_cutting_marks_1: Stampato
+      option_formula: Campo
+      option_size: Dimensione
+      option_anchor: Ancoraggio
+      option_anchor_start: "Inizio / Avvia ?"
+      option_anchor_middle: Mediano
+      option_anchor_end: Fine
+      option_color: Colore
+      formula:
+        part_number: Numero
+        part_name: Descrizione
+        part_cutting_size: Dimensioni grezze
+        part_cutting_length: Lunghezza grezza
+        part_cutting_width: Larghezza grezza
+        part_size: Dimensione
+        part_length: Lunghezza
+        part_width: Larghezza
+        part_tags: Tags
+        part_batch: "Gruppo / lotto ?"
+        thumbnail_proportional: Miniatura proporzionale
+        thumbnail_square: Miniatura quadrata
+        group_material: Materiale / Spessore
+        group_material_name: Nome del materiale
+        group_std_dimension: Dimensioni standard
+        filename: Nome del file
+        page_label: Nome della scena
+        length_unit: Unità
+        generated_at: Data e ora
+      error:
+        invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
+      warning:
+        selection_only: Queste etichette sono limitate solo alle **parti selezionate**
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -608,11 +703,6 @@ tab:
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
       volumic_mass: Massa volumica
-      cut_options_defaults:
-        manage_help: Gestione delle *impostazioni di taglio* predefinite
-        save_success: |
-          **{{ type_name }}**
-          *Impostazioni di taglio* predefinite salvate correttamente
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)
@@ -652,11 +742,12 @@ tab:
     import_to_model: Importa nel modello
     load:
       title: Caricamento del file CSV
-      info: |
-        Scegli le opzioni necessarie per caricare **{{ filename }}**.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *L'unità di misura configurata nel modello è : **{{ unit }}**.
-        Questa unità di misura sarà utilizzata per importare dimensioni senza unità di misura*.
+      info_0: |
+        Scegliere le opzioni necessarie per la lettura corretta del file:
+        **{{ filename }}**.
+      info_1: |
+        L' unità di misura configurata nel modello è: **{{ unit }}**.
+        Questa verrà utilizzata per le dimensioni senza unità di misura.
       options: Opzioni di caricamento
       option_col_sep: Separatore
       option_col_sep_tab: Tabulatore
@@ -810,14 +901,14 @@ tab:
       *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributori](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translators: |
       Traduzioni:
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
-      - Vladimir Badulya (*russo*)
-      - Pierluigi Colombo (*italiano*)
-      - Nayton Sanches Barbosa, corretto e rivisto da [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portoghese*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spagnolo*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*ceco*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk e Dominik Szybisz (*polacco*)
-      - Sergey Isupov (*ebraico*), senza interfaccia RTL
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
+      - Vladimir Badulya (*Russian*)
+      - Pierluigi Colombo (*Italian*)
+      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polish*)
+      - Sergey Isupov (*Hebrew*), interfaccia RTL non ancora implementata
     credits_description: |
       Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -826,7 +917,9 @@ tab:
     credits_vendors: |
       Il conseguimento di questo risultato non sarebbe stato possibile senza il lavoro degli autori dei componenti Open Source elencati di seguito:
     credits_thanks: |
-      Uno speciale ringraziamento va a [JetBrains](https://www.jetbrains.com) per il supporto a questo progetto mediante la loro [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      Un ringraziamento speciale va a:
+      - [JetBrains](https://www.jetbrains.com) per il supporto al progetto [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com/) per il supporto al progetto Open Source.
 tool:
   highlight:
     transparency: Transparenza
