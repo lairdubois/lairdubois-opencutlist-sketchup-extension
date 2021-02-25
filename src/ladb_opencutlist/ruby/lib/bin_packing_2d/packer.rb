@@ -100,7 +100,7 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       @previous_packer.unused_bins.each do |bin|
-        new_bin = Bin.new(bin.length, bin.width, bin.type, 0, @options)
+        new_bin = Bin.new(bin.length, bin.width, bin.type, @options, 0)
         @next_bin_index = new_bin.set_index(bin.index)
         @bins << new_bin
       end
@@ -353,6 +353,7 @@ module Ladb::OpenCutList::BinPacking2D
           nb_packed_boxes = pack_single(current_bin)
           # @boxes contains all Boxes that have NOT been placed, they may be
           # Superboxes. This packer is now done!
+
           if nb_packed_boxes > 0
             current_bin.final_bounding_box
             current_bin.keep_signature(@options.signature)
