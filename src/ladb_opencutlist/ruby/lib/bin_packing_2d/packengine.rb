@@ -216,11 +216,11 @@
       # update_ranking_by(packers, :nb_leftovers, find_min)
       # update_ranking_by(packers, :efficiency, !find_min)
 
-      # Just use compactness, through_cut as criteria, all others did not yield better results!
+      # Just use compactness as criteria, all others did not yield better results!
       update_ranking_by(packers, :compactness, !find_min)
 
-      print_packers(packers)
-      # Determine the overall winner.
+      # Determine the overall winner, using the sum of all compactnesses.
+      # For a single bin, compactness and total_compactness are equal.
       p = packers.group_by { |packer| packer.gstat[:total_compactness] }
 
       best_packers = []
