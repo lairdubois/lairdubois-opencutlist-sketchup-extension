@@ -39,7 +39,7 @@
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
-                    <p>{{ 'core.warning.dev'|i18next }}</p>
+                    <p>{{ 'core.warning.dev'|i18next({ 'version':capabilities.version, 'build':capabilities.build }) }}</p>
                 </div>
             </div>
         </div>
