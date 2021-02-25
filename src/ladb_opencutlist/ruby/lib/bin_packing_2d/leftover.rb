@@ -27,60 +27,39 @@
     end
 
     #
-    # Trims the top level Leftover of a Bin.
-    # These Cut s are NOT recorded/counted.
+    # Trims the top level Leftover of a Bin. These Cut s are NOT recorded/counted.
     #
-    def trim()
+    def trim
       @x += @options.trimsize
       @y += @options.trimsize
-      @length -= 2*@options.trimsize
-      @width -= 2*@options.trimsize
-      return valid?
+      @length -= 2 * @options.trimsize
+      @width -= 2 * @options.trimsize
+      useable?
     end
 
     #
-    # Resizes the Leftover such that the lower right
-    # corner is at max_x, max_y.
+    # Resizes the Leftover such that the lower right corner is at most at
+    # position max_x, max_y, may be smaller!
     #
     def resize_to(max_x, max_y)
-      @length = [max_x - @x, 0].max if @x + @length > max_x
-      @width = [max_y - @y, 0].max if @y + @width > max_y
-      return valid?
-    end
-
-    #
-    # Sets the length of this Leftover.
-    #
-    def set_length(length)
-      @length = length
-    end
-
-    #
-    # Sets the width of this Leftover.
-    #
-    def set_width(width)
-      @width = width
+      @length = [max_x - @x, @length].min
+      @width = [max_y - @y, @width].min
+      useable?
     end
 
     #
     # Returns true if this Leftover has a valid size, i.e
     # slightly larger than nothing in both dimensions.
     #
-    def valid?()
-      if @length <= 0 && @length >= -@options.saw_kerf - EPS
-        @length = 0
-      end
-      if @width <= 0 && @width >= -@options.saw_kerf - EPS
-        @width = 0
-      end
-      return (@length > 0 && @width > 0)
+    def useable?
+      @length > @options.saw_kerf && @width > @options.saw_kerf
     end
 
     #
     # Returns the area of this Leftover.
     #
-    def area()
-      return @length * @width
+    def area
+      @length * @width
     end
 
     #
@@ -91,93 +70,79 @@
       # First test ensures that box will fit into leftover.
       if @length - box_length >= -EPS && @width - box_width >= -EPS
         case @options.score
-          when SCORE_BESTAREA_FIT
-            # Returns the amount of waste produced, smaller is better
-            return @length * @width - box_length * box_width
-          when SCORE_BESTSHORTSIDE_FIT
-            # Returns the smallest difference in one dimension.
-            return [@length - box_length, @width - box_width].min
-          when SCORE_BESTLONGSIDE_FIT
-            # Returns the largest difference in one dimension.
-            return [@length - box_length, @width - box_width].max
-          when SCORE_WORSTAREA_FIT
-            return -(@length * @width - box_length * box_width)
-          when SCORE_WORSTSHORTSIDE_FIT
-            return [@length - box_length, @width - box_width].max
-          when SCORE_WORSTLONGSIDE_FIT
-            return [@length - box_length, @width - box_width].min
+        when SCORE_BESTAREA_FIT
+          # Returns the amount of waste produced, smaller is better
+          box_length * box_width - @length * @width
+        when SCORE_BESTSHORTSIDE_FIT
+          # Returns the smallest difference in one dimension.
+          [(box_length - @length).abs, (box_width - @width).abs].min
+        when SCORE_BESTLONGSIDE_FIT
+          # Returns the largest difference in one dimension.
+          [(box_length - @length).abs, (box_width - @width).abs].max
+        when SCORE_WORSTAREA_FIT
+          -(box_length * box_width - @length * @width)
+        when SCORE_WORSTSHORTSIDE_FIT
+          -[(box_length - @length).abs, (box_width - @width).abs].min
+        when SCORE_WORSTLONGSIDE_FIT
+          -[(box_length - @length).abs, (box_width - @width).abs].max
         end
       else
-        return MAX_INT
+        MAX_INT
       end
     end
 
     #
     # Adapted score for box using selected heuristic.
     #
-    def score(bin_index, leftover_index, box)
+    def score(leftover_index, box)
 
       s = []
       s1 = heuristic_score(box.length, box.width)
       if s1 < MAX_INT
         # Make score lower if one of the dimensions matches with a preference to length.
-        # TODO leftover.score: check if matching should be aligned with shape of bin.
-        s1 = -MAX_INT if (@length - box.length).abs <= EPS
-        s1 = -MAX_INT if (@width - box.width).abs <= EPS
+        # TODO: leftover.score: check if matching should be aligned with shape of bin.
+        s1 = -MAX_INT if (@length - box.length).abs <= EPS || (@width - box.width).abs <= EPS
         s << [leftover_index, s1, NOT_ROTATED, @level]
       end
       if box.rotatable
         s2 = heuristic_score(box.width, box.length)
         if s2 < MAX_INT
-          s2 = -MAX_INT if (@length - box.width).abs <= EPS
-          s2 = -MAX_INT if (@width - box.length).abs <= EPS
+          s2 = -MAX_INT if (@length - box.width).abs <= EPS || (@width - box.length).abs <= EPS
           s << [leftover_index, s2, ROTATED, @level]
         end
       end
-      return s
+      s
     end
 
     #
     # Returns true if order of guillotine Cut is horizontal, then vertical,
     # false otherwise.
     #
-    def split_horizontally_first?(box, min_length, min_width)
+    def split_horizontally_first?(box)
       #
       # When stacking is on, one would be tempted to always do the first cut
       # in the direction of stacking, always!
       # Does not work well in practice!
 
-      # there is no need to make right Leftover longer than necessary
-      lo_right_length = @length - box.length
-      lo_bottom_width = @width - box.width
-      m = [min_length, min_width].min
-
-      if lo_right_length < m
-        return true
-      end
-      if lo_bottom_width < m
-        return false
-      end
-
       case @options.split
       when SPLIT_SHORTERLEFTOVER_AXIS
-        return (@length - box.length < @width - box.width)
+        @length - box.length < @width - box.width
       when SPLIT_LONGERLEFTOVER_AXIS
-        return (@length - box.length >= @width - box.width)
+        @length - box.length >= @width - box.width
       when SPLIT_MINIMIZE_AREA
-        return (@length * (@width - box.width) < @width * (@length - box.length))
+        @length * (@width - box.width) < @width * (@length - box.length)
       when SPLIT_MAXIMIZE_AREA
-        return (@length * (@width - box.width) >= @width * (@length - box.length))
+        @length * (@width - box.width) >= @width * (@length - box.length)
       when SPLIT_SHORTER_AXIS
-        return (box.length < box.width)
+        box.length < box.width
       when SPLIT_LONGER_AXIS
-        return (box.length >= box.width)
+        box.length >= box.width
       when SPLIT_HORIZONTAL_FIRST
-        return true
+        true
       when SPLIT_VERTICAL_FIRST
-        return false
+        false
       else
-        raise(Packing2DError, "Split heuristic not implemented in bin.select_horizontal_first!")
+        raise(Packing2DError, 'Split heuristic not implemented in bin.select_horizontal_first!')
       end
     end
 
@@ -186,7 +151,7 @@
     # x, y represents a position in absolute coordinates.
     # Returns the Leftover s and the Cut s.
     #
-    def split_horizontal_first(x, y, box=nil)
+    def split_horizontal_first(x, y, box = nil)
       # Trying to split outside of this leftover!
       if x > @x + @length + EPS || y > @y + @width + EPS
         raise(Packing2DError, "Splitting outside of this leftover in split_horizontal_first! #{@options.signature}")
@@ -219,14 +184,14 @@
       new_boxes, more_cuts = unmake_superbox(box)
       new_cuts += more_cuts
 
-      return [new_leftovers, new_cuts, new_boxes]
+      [new_leftovers, new_cuts, new_boxes]
     end
 
     #
     # Splits this Leftover at position x, y by a vertical, then a horizontal cut.
     # Returns the leftovers, the cuts and the unpacked boxes.
     #
-    def split_vertical_first(x, y, box=nil)
+    def split_vertical_first(x, y, box = nil)
 
       if x > @x + @length + EPS || y > @y + @width + EPS
         puts("x = #{x}, bin x = #{@x}, length = #{@length}, y = #{y}, bin y = #{@y} width = #{@width}")
@@ -239,7 +204,6 @@
       # Vertical cut.
       if (@x + @length - x).abs >= EPS
         cf = Cut.new(x, @y, @width, false, @level)
-        #dbg("    " + cf.to_str())
         new_cuts << cf
       end
 
@@ -250,7 +214,6 @@
       # Horizontal cut.
       if (@y + @width - y).abs >= EPS
         cs = Cut.new(@x, y, x - @x, true, @level)
-        #dbg("    " + cs.to_str())
         new_cuts << cs
       end
 
@@ -279,64 +242,61 @@
           single_box = sbox.sboxes.shift()
           single_box.set_position(sbox.x, sbox.y)
           unpacked_boxes << single_box
-        else
-          if (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
-            (@options.stacking == STACKING_WIDTH && sbox.rotated)
-            top_box = sbox.sboxes.shift()
-            top_box.set_position(sbox.x, sbox.y)
-            offset = sbox.x + top_box.length
-            unpacked_boxes << top_box
-            sbox.sboxes.each do |box|
-              new_cuts << Cut.new(offset, sbox.y, sbox.width, false, @level)
-              offset += @options.saw_kerf
-              box.set_position(offset, sbox.y)
-              unpacked_boxes << box
-              offset += box.length
-            end
-          elsif (@options.stacking == STACKING_LENGTH && sbox.rotated) ||
-            (@options.stacking == STACKING_WIDTH && !sbox.rotated)
-            top_box = sbox.sboxes.shift()
-            top_box.set_position(sbox.x, sbox.y)
-            offset = sbox.y + top_box.width
-            unpacked_boxes << top_box
-            sbox.sboxes.each do |box|
-              new_cuts << Cut.new(sbox.x, offset, sbox.length, true, @level)
-              offset += @options.saw_kerf
-              box.set_position(sbox.x, offset)
-              unpacked_boxes << box
-              offset += box.width
-            end
+        elsif (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
+             (@options.stacking == STACKING_WIDTH && sbox.rotated)
+          top_box = sbox.sboxes.shift
+          top_box.set_position(sbox.x, sbox.y)
+          offset = sbox.x + top_box.length
+          unpacked_boxes << top_box
+          sbox.sboxes.each do |box|
+            new_cuts << Cut.new(offset, sbox.y, sbox.width, false, @level)
+            offset += @options.saw_kerf
+            box.set_position(offset, sbox.y)
+            unpacked_boxes << box
+            offset += box.length
+          end
+        elsif (@options.stacking == STACKING_LENGTH && sbox.rotated) ||
+              (@options.stacking == STACKING_WIDTH && !sbox.rotated)
+          top_box = sbox.sboxes.shift
+          top_box.set_position(sbox.x, sbox.y)
+          offset = sbox.y + top_box.width
+          unpacked_boxes << top_box
+          sbox.sboxes.each do |box|
+            new_cuts << Cut.new(sbox.x, offset, sbox.length, true, @level)
+            offset += @options.saw_kerf
+            box.set_position(sbox.x, offset)
+            unpacked_boxes << box
+            offset += box.width
           end
         end
       elsif sbox.is_a?(Box)
         unpacked_boxes << sbox
       else
-        raise(Packing2DError, "Unpacking weird stuff in bin.unmake_superbox!")
+        raise(Packing2DError, 'Unpacking weird stuff in bin.unmake_superbox!')
       end
-      return [unpacked_boxes, new_cuts]
+      [unpacked_boxes, new_cuts]
     end
 
     #
     # Debugging!
     #
-    def to_str()
+    def to_str
       s = "lft : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}, #{'%9.2f' % @width}], "
-      s += "lvl = #{'%3d' % @level}, area = #{'%12.2f' % area()}"
-      return s
+      s + "lvl = #{'%3d' % @level}, area = #{'%12.2f' % area()}"
     end
 
     #
     # Debugging!
     #
-    def to_term()
-      dbg("    leftover " + to_str())
+    def to_term
+      dbg("    leftover #{to_str}")
     end
 
     #
     # Debugging!
     #
-    def to_octave()
-      return "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", grey); # empty leftover\n"
+    def to_octave
+      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", grey); # empty leftover\n"
     end
   end
 end
