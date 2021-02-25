@@ -14,10 +14,10 @@ module Ladb::OpenCutList::BinPacking2D
     # List of Leftover s.
     attr_reader :leftovers
 
-    # Placeholder for all Box es placed into this Bin.
+    # Placeholder for all Boxes placed into this Bin.
     attr_reader :boxes
 
-    # Statistics about this Bin 's packing.
+    # Statistics about this Bin's packing.
     attr_reader :stat
 
     # Max. points for the bounding box of all packed Box es.
@@ -141,6 +141,7 @@ module Ladb::OpenCutList::BinPacking2D
       # [leftover_index, score, ROTATED, @level]
       # put in lowest score, lowest level
       # return score.min_by { |s| [s[1], s[3]]}
+      # TODO: check sorting order!
       if @options.stacking == STACKING_LENGTH
         min_score = score.min_by { |s| [s[1], -s[2], s[3]] }
       else
