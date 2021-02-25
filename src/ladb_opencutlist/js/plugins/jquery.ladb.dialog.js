@@ -23,27 +23,28 @@
         this.capabilities = {
             version: options.version,
             build: options.build,
-            debug: options.debug,
-            sketchupIsPro: options.sketchup_is_pro,
-            sketchupVersion: options.sketchup_version,
-            sketchupVersionNumber: options.sketchup_version_number,
-            rubyVersion: options.ruby_version,
-            currentOS: options.current_os,
-            is64bit: options.is_64bit,
-            userAgent: window.navigator.userAgent,
+            is_rbz: options.is_rbz,
+            is_dev: options.is_dev,
+            sketchup_is_pro: options.sketchup_is_pro,
+            sketchup_version: options.sketchup_version,
+            sketchup_version_number: options.sketchup_version_number,
+            ruby_version: options.ruby_version,
+            current_os: options.current_os,
+            is_64bit: options.is_64bit,
+            user_agent: window.navigator.userAgent,
             locale: options.locale,
             language: options.language,
-            availableLanguages: options.available_languages,
-            htmlDialogCompatible: options.html_dialog_compatible,
+            available_languages: options.available_languages,
+            html_dialog_compatible: options.html_dialog_compatible,
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,
             last_news_timestamp: options.last_news_timestamp,
-            dialogMaximizedWidth: options.dialog_maximized_width,
-            dialogMaximizedHeight: options.dialog_maximized_height,
-            dialogLeft: options.dialog_left,
-            dialogTop: options.dialog_top,
-            dialogZoom: options.dialog_zoom,
+            dialog_maximized_width: options.dialog_maximized_width,
+            dialog_maximized_height: options.dialog_maximized_height,
+            dialog_left: options.dialog_left,
+            dialog_top: options.dialog_top,
+            dialog_zoom: options.dialog_zoom,
         };
 
         this.settings = {};
@@ -63,7 +64,6 @@
         this.$wrapper = null;
         this.$wrapperSlides = null;
         this.$leftbar = null;
-        this.$btnCloseCompatibilityAlert = null;
 
     };
 
@@ -134,7 +134,7 @@
         var that = this;
 
         if (this.capabilities.manifest == null && this.capabilities.update_available == null) {
-            $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.debug ? MANIFEST_DEV_URL : MANIFEST_URL), function (data) {
+            $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.is_dev ? MANIFEST_DEV_URL : MANIFEST_URL), function (data) {
 
                 // Keep manifest data
                 that.capabilities.manifest = data;
@@ -772,7 +772,7 @@
                 that.selectTab(tabName);
             });
         });
-        this.$btnCloseCompatibilityAlert.on('click', function () {
+        $('#ladb_btn_close_compatibility_alert', that.$element).on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
@@ -874,7 +874,6 @@
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
-                    that.$btnCloseCompatibilityAlert = $('#ladb_btn_close_compatibility_alert', that.$element);
                     for (var i = 0; i < that.options.tabDefs.length; i++) {
                         var tabDef = that.options.tabDefs[i];
                         that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);

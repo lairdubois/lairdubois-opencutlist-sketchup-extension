@@ -27,7 +27,7 @@
     LadbTabTutorials.prototype.loadTutorials = function () {
         var that = this;
 
-        $.getJSON(this.dialog.appendOclMetasToUrlQueryParams(this.dialog.capabilities.debug ? TUTORIALS_DEV_URL : TUTORIALS_URL), function (data) {
+        $.getJSON(this.dialog.appendOclMetasToUrlQueryParams(this.dialog.capabilities.is_dev ? TUTORIALS_DEV_URL : TUTORIALS_URL), function (data) {
 
             that.tutorials = data.tutorials;
 

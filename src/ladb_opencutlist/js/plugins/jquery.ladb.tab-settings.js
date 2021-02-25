@@ -45,19 +45,19 @@
         var fnUpdate = function () {
 
             // Adjust min limits
-            that.dialog.capabilities.dialogMaximizedWidth = Math.max(580, that.dialog.capabilities.dialogMaximizedWidth);
-            that.dialog.capabilities.dialogMaximizedHeight = Math.max(480, that.dialog.capabilities.dialogMaximizedHeight);
-            that.dialog.capabilities.dialogLeft = Math.max(0, that.dialog.capabilities.dialogLeft);
-            that.dialog.capabilities.dialogTop = Math.max(0, that.dialog.capabilities.dialogTop);
+            that.dialog.capabilities.dialog_maximized_width = Math.max(580, that.dialog.capabilities.dialog_maximized_width);
+            that.dialog.capabilities.dialog_maximized_height = Math.max(480, that.dialog.capabilities.dialog_maximized_height);
+            that.dialog.capabilities.dialog_left = Math.max(0, that.dialog.capabilities.dialog_left);
+            that.dialog.capabilities.dialog_top = Math.max(0, that.dialog.capabilities.dialog_top);
 
             // Send to ruby
             rubyCallCommand('settings_dialog_settings', {
                 language: that.dialog.capabilities.language,
-                width: that.dialog.capabilities.dialogMaximizedWidth,
-                height: that.dialog.capabilities.dialogMaximizedHeight,
-                left: that.dialog.capabilities.dialogLeft,
-                top: that.dialog.capabilities.dialogTop,
-                zoom: that.dialog.capabilities.dialogZoom
+                width: that.dialog.capabilities.dialog_maximized_width,
+                height: that.dialog.capabilities.dialog_maximized_height,
+                left: that.dialog.capabilities.dialog_left,
+                top: that.dialog.capabilities.dialog_top,
+                zoom: that.dialog.capabilities.dialog_zoom
             });
 
         };
@@ -66,7 +66,7 @@
         this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
 
         this.$selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
-        this.$selectZoom.val(this.dialog.capabilities.dialogZoom);
+        this.$selectZoom.val(this.dialog.capabilities.dialog_zoom);
         this.$selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
 
         this.$selectLanguage.on('change', function () {
@@ -75,66 +75,66 @@
             that.showReloadAlert();
         });
         this.$selectZoom.on('change', function () {
-            that.dialog.capabilities.dialogZoom = that.$selectZoom.val();
+            that.dialog.capabilities.dialog_zoom = that.$selectZoom.val();
             fnUpdate();
         });
         this.$btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
-            that.dialog.capabilities.dialogMaximizedWidth = 1100;
-            that.dialog.capabilities.dialogMaximizedHeight = 640;
-            that.dialog.capabilities.dialogLeft = 60;
-            that.dialog.capabilities.dialogTop = 100;
-            that.dialog.capabilities.dialogZoom = '100%';
+            that.dialog.capabilities.dialog_maximized_width = 1100;
+            that.dialog.capabilities.dialog_maximized_height = 640;
+            that.dialog.capabilities.dialog_left = 60;
+            that.dialog.capabilities.dialog_top = 100;
+            that.dialog.capabilities.dialog_zoom = '100%';
             fnUpdate();
             that.showReloadAlert();
             return false;
         });
         this.$btnWidthUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogMaximizedWidth += 20;
+            that.dialog.capabilities.dialog_maximized_width += 20;
             fnUpdate();
             return false;
         });
         this.$btnWidthDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogMaximizedWidth -= 20;
+            that.dialog.capabilities.dialog_maximized_width -= 20;
             fnUpdate();
             return false;
         });
         this.$btnHeightUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogMaximizedHeight += 20;
+            that.dialog.capabilities.dialog_maximized_height += 20;
             fnUpdate();
             return false;
         });
         this.$btnHeightDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogMaximizedHeight -= 20;
+            that.dialog.capabilities.dialog_maximized_height -= 20;
             fnUpdate();
             return false;
         });
         this.$btnLeftUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogLeft += 20;
+            that.dialog.capabilities.dialog_left += 20;
             fnUpdate();
             return false;
         });
         this.$btnLeftDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogLeft -= 20;
+            that.dialog.capabilities.dialog_left -= 20;
             fnUpdate();
             return false;
         });
         this.$btnTopUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogTop += 20;
+            that.dialog.capabilities.dialog_top += 20;
             fnUpdate();
             return false;
         });
         this.$btnTopDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialogTop -= 20;
+            that.dialog.capabilities.dialog_top -= 20;
             fnUpdate();
             return false;
         });

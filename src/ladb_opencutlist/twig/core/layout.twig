@@ -30,16 +30,29 @@
 </nav>
 <div id="ladb_wrapper" style="display: none;">
     <div id="ladb_wrapper_slides"></div>
-    {% if not capabilities.htmlDialogCompatible and not compatibilityAlertHidden %}
-        <div id="ladb_compatibility_alert" class="no-print alert alert-warning">
+    {% if capabilities.is_rbz and capabilities.is_dev and capabilities.manifest == null %} {# "capabilities.manifest == null" --> to display only on session first opening #}
+        <div id="ladb_dev_alert" class="no-print alert alert-warning">
             <div class="media">
-                <button id="ladb_btn_close_compatibility_alert" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button id="ladb_btn_close_dev_alert" type="button" class="close"><span>&times;</span></button>
                 <div class="media-left">
                     <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
-                    <p>{{ 'core.warning.old_su'|i18next({ 'sketchupVersion':capabilities.sketchupVersion }) }}</p>
+                    <p>{{ 'core.warning.dev'|i18next }}</p>
+                </div>
+            </div>
+        </div>
+    {% elseif not capabilities.html_dialog_compatible and not compatibilityAlertHidden %}
+        <div id="ladb_compatibility_alert" class="no-print alert alert-warning">
+            <div class="media">
+                <button id="ladb_btn_close_compatibility_alert" type="button" class="close"><span>&times;</span></button>
+                <div class="media-left">
+                    <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
+                    <p>{{ 'core.warning.old_su'|i18next({ 'sketchup_version':capabilities.sketchup_version }) }}</p>
                 </div>
             </div>
         </div>

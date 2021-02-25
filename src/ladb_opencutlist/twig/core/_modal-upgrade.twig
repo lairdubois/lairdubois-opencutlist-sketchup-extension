@@ -11,9 +11,9 @@
         {% elseif capabilities.update_available %}
             <p class="text-center">{{ 'core.upgrade.available'|i18next }}</p>
             <div class="row" style="margin: 20px 0;">
-                <div class="col-xs-5 text-right"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.version }}</span>{% if capabilities.debug %}<br><small>( build: {{ capabilities.build }} )</small>{% endif %}</div>
+                <div class="col-xs-5 text-right"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.version }}</span>{% if capabilities.is_dev %}<br><small>( build: {{ capabilities.build }} )</small>{% endif %}</div>
                 <div class="col-xs-2 text-center"><i class="ladb-opencutlist-icon-arrow-right"></i></div>
-                <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.manifest.version }}</span>{% if capabilities.debug %}<br><small>( build: {{ capabilities.manifest.build }} )</small>{% endif %}</div>
+                <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.manifest.version }}</span>{% if capabilities.is_dev %}<br><small>( build: {{ capabilities.manifest.build }} )</small>{% endif %}</div>
             </div>
             <p class="text-center">
                 <a href="https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/CHANGELOG.md" target="_blank">{{ 'core.upgrade.changelog'|i18next }}</a>

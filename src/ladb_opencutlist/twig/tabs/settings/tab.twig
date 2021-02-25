@@ -12,7 +12,7 @@
             <div class="media">
                 <div class="media-left"><i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i></div>
                 <div class="media-body">
-                    {% for language in capabilities.availableLanguages %}
+                    {% for language in capabilities.available_languages %}
                         <div class="ladb-reaload-msg ladb-reaload-msg-{{ language }}">{{ ('language_reload_msg.'~language)|i18next }}</div>
                     {% endfor %}
                 </div>
@@ -22,7 +22,7 @@
             <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.language'|i18next }}</div>
             <select id="ladb_select_language" class="form-control">
                 {% set preferedLanguage = null %}
-                {% for language in capabilities.availableLanguages %}
+                {% for language in capabilities.available_languages %}
                     {% if capabilities.locale starts with language %}
                         {% set preferedLanguage = language %}
                     {% endif %}
@@ -31,7 +31,7 @@
                     <option value="{{ preferedLanguage }}" data-content="<span class='ladb-language-prefix'>{{ preferedLanguage|upper }}</span>{{ ('language.'~preferedLanguage)|i18next }}"></option>
                     <option data-divider="true"></option>
                 {% endif %}
-                {% for language in capabilities.availableLanguages if language != preferedLanguage %}
+                {% for language in capabilities.available_languages if language != preferedLanguage %}
                     <option value="{{ language }}" data-content="<span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
                 {% endfor %}
             </select>

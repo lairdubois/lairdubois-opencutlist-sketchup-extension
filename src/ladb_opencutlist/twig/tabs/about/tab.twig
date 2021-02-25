@@ -3,7 +3,7 @@
 {% block headerToolsInner %}
     <div class="ladb-capabilities-host-infos pull-right">
         <ul>
-            <li><strong>Sketchup {{ capabilities.sketchupIsPro ? 'Pro' : 'Make' }}</strong> {{ capabilities.sketchupVersion }}</li>{% if capabilities.is64bit %}<li>64 bits</li>{% endif %}<li><strong>Ruby</strong> {{ capabilities.rubyVersion }}</li><li>{{ capabilities.currentOS }}</li><li>{{ capabilities.locale }}</li>
+            <li><strong>Sketchup {{ capabilities.sketchup_is_pro ? 'Pro' : 'Make' }}</strong> {{ capabilities.sketchup_version }}</li>{% if capabilities.is_64bit %}<li>64 bits</li>{% endif %}<li><strong>Ruby</strong> {{ capabilities.ruby_version }}</li><li>{{ capabilities.current_os }}</li><li>{{ capabilities.locale }}</li>
         </ul>
     </div>
 {% endblock %}
