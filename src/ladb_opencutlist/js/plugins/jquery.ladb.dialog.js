@@ -505,6 +505,35 @@
 
     };
 
+    // Progress /////
+
+    LadbDialog.prototype.startProgress = function (maxSteps) {
+
+        this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render());
+        this.$progressBar = $('.progress-bar', this.$progress);
+        this.progressMaxSteps = Math.max(1, maxSteps);
+        this.progressStep = 0;
+
+        $('body').append(this.$progress);
+
+    };
+
+    LadbDialog.prototype.advanceProgress = function (step) {
+        if (this.$progress) {
+            this.progressStep = Math.min(this.progressMaxSteps, this.progressStep + step);
+            this.$progressBar.css('width', ((this.progressStep / this.progressMaxSteps) * 100) + '%');
+        }
+    };
+
+    LadbDialog.prototype.finishProgress = function () {
+        if (this.$progress) {
+            this.$progressBar = null;
+            this.progressMaxSteps = 0;
+            this.progressStep = 0;
+            this.$progress.remove();
+        }
+    };
+
     // Modal /////
 
     LadbDialog.prototype.appendModal = function (id, twigFile, renderParams) {

@@ -407,7 +407,7 @@ tab:
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
     report:
-      label: Rapport
+      title: Rapport
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
