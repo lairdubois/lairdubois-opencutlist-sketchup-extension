@@ -26,7 +26,87 @@
 
         {% include 'core/_alert-errors.twig' %}
 
-        HELLO REPORT !
+        {% if report.solid_woods|length > 0 %}
+            <table id="ladb_group_solid_wood" class="table table-bordered ladb-cutlist-group ladb-material-type-1">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="2">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        {% include 'tabs/materials/_material-type-icon.twig' with { 'type':1, 'filled':true, 'classes':'pull-left' } %}
+                        <div class="ladb-heading">{{ 'tab.materials.type_1'|i18next }}</div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td class="text-center">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for solid_wood in report.solid_woods %}
+                        <tr class="ladb-cutlist-row">
+                            <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':solid_wood } %}</td>
+                            <td>{{ solid_wood.total_cutting_volume }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if report.sheet_goods|length > 0 %}
+            <table id="ladb_group_sheet_goods" class="table table-bordered ladb-cutlist-group ladb-material-type-2">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="3">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        {% include 'tabs/materials/_material-type-icon.twig' with { 'type':2, 'filled':true, 'classes':'pull-left' } %}
+                        <div class="ladb-heading">{{ 'tab.materials.type_2'|i18next }}</div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td class="text-center">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for sheet_good in report.sheet_goods %}
+                        <tr class="ladb-cutlist-row">
+                            <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':sheet_good } %}</td>
+                            <td>{{ sheet_good.total_used_count }}</td>
+                            <td>{{ sheet_good.total_used_area }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if report.dimensionals|length > 0 %}
+            <table id="ladb_group_dimensionals" class="table table-bordered ladb-cutlist-group ladb-material-type-3">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="3">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        {% include 'tabs/materials/_material-type-icon.twig' with { 'type':3, 'filled':true, 'classes':'pull-left' } %}
+                        <div class="ladb-heading">{{ 'tab.materials.type_3'|i18next }}</div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td class="text-center">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    <td class="text-center" width="12%">{{ 'tab.cutlist.list.length'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for dimensional in report.dimensionals %}
+                        <tr class="ladb-cutlist-row">
+                            <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':dimensional } %}</td>
+                            <td>{{ dimensional.total_used_count }}</td>
+                            <td>{{ dimensional.total_used_length }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
 
     </div>
 {% endblock %}

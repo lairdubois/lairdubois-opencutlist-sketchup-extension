@@ -751,6 +751,7 @@
                                         pageLabel: that.pageLabel,
                                         lengthUnit: that.lengthUnit,
                                         generatedAt: new Date().getTime() / 1000,
+                                        report: response
                                     }, reportOptions), function () {
                                         that.dialog.setupTooltips();
                                     });
