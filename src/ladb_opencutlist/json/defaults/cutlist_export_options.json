@@ -140,11 +140,6 @@
           "formula": ""
         },
         {
-          "name": "XX",
-          "hidden": false,
-          "formula": ""
-        },
-        {
           "name": "instance_name",
           "hidden": false,
           "formula": ""
@@ -176,6 +171,11 @@
         },
         {
           "name": "bbox_length",
+          "hidden": false,
+          "formula": ""
+        },
+        {
+          "name": "bbox_width",
           "hidden": false,
           "formula": ""
         },
