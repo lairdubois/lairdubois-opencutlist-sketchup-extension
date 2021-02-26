@@ -45,7 +45,7 @@
                     {% for solid_wood in report.solid_woods %}
                         <tr class="ladb-cutlist-row">
                             <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':solid_wood } %}</td>
-                            <td>{{ solid_wood.total_cutting_volume }}</td>
+                            <td class="ladb-cutlist-dimension-value">{{ solid_wood.total_cutting_volume }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -72,8 +72,8 @@
                     {% for sheet_good in report.sheet_goods %}
                         <tr class="ladb-cutlist-row">
                             <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':sheet_good } %}</td>
-                            <td>{{ sheet_good.total_used_count }}</td>
-                            <td>{{ sheet_good.total_used_area }}</td>
+                            <td class="text-center">{{ sheet_good.total_used_count }}</td>
+                            <td class="ladb-cutlist-dimension-value">{{ sheet_good.total_used_area }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -100,8 +100,8 @@
                     {% for dimensional in report.dimensionals %}
                         <tr class="ladb-cutlist-row">
                             <td>{% include 'tabs/cutlist/_group-label.twig' with { 'group':dimensional } %}</td>
-                            <td>{{ dimensional.total_used_count }}</td>
-                            <td>{{ dimensional.total_used_length }}</td>
+                            <td class="text-center">{{ dimensional.total_used_count }}</td>
+                            <td class="ladb-cutlist-dimension-value">{{ dimensional.total_used_length }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
