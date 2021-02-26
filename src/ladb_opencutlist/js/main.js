@@ -137,4 +137,3 @@ $(document).ready(function () {
         rubyCallCommand('core_dialog_ready');
     });
 });
-

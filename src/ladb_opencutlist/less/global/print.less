@@ -2,11 +2,8 @@
 // Print
 //
 
-@page {
-  margin: 0;
-}
-
 @media print {
+
   .no-print, .no-print * {
     display: none !important;
   }
@@ -19,12 +16,12 @@
   .ladb-header {
     padding: 0 !important;
 
-    .container {
+    .container-fluid {
       margin: 0 !important;
       padding: 0 !important;
 
       .ladb-heading {
-        margin: 10px 0 !important;
+        margin: 0 0 10px 0 !important;
       }
     }
 
@@ -33,7 +30,7 @@
   .ladb-container {
     padding: 0 !important;
 
-    .container {
+    .container-fluid, .container {
       margin: 0 !important;
       padding: 0 !important;
     }
@@ -44,7 +41,7 @@
     border: 1px solid #000 !important;
     font-size: 90%;
 
-    & tr {
+    thead, tr {
       page-break-inside: avoid !important;
     }
 
@@ -71,8 +68,8 @@
 
   .ladb-file-tabs {
     position: absolute;
-    right: 10px;
-    top: 15px;
+    right: 0;
+    top: 0;
     font-size: 80%;
 
     a, .ladb-fake-tab {

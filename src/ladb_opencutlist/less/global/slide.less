@@ -82,10 +82,14 @@
     right: 0;
     height: auto;
     overflow: hidden;
-    margin: 10px;
 
-    &.print-full-page {
-      margin: 0;
+    .ladb-container {
+      padding: 0;
+
+      > .container-fluid {
+        padding: 0;
+      }
+
     }
 
     &.print-no-header {

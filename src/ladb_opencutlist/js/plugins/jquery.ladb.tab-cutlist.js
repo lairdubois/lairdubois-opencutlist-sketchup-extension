@@ -2347,7 +2347,18 @@
                         that.labelsGroup(groupId);
                     });
                     $btnPrint.on('click', function () {
+
+                        // Retrieve an modifiy Page rule to set margin to 0
+                        var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
+                        var tmpMargin = cssPageRuleStyle.margin;
+                        cssPageRuleStyle.margin = '0';
+
+                        // Print
                         window.print();
+
+                        // Retore margin
+                        cssPageRuleStyle.margin = tmpMargin;
+
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
