@@ -63,8 +63,14 @@ core:
     more_extensions: Расширения
     more_update: Обновления
   warning:
+    dev: |
+      Вы используете **находящуюся в разработке** версию *OpenCutList*.
+      Эта версия доступна только для тестирования.
+      Не рекомендуется использовать в производстве.
+
+      Чтобы сообщить об ошибке:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Вы используете старую версию SketchUp ({{ sketchupVersion }}). Этот плагин будет работать, но возможны некоторые ошибки.
+      Вы используете старую версию SketchUp ({{ sketchup_version }}). Этот плагин будет работать, но возможны некоторые ошибки.
       Чтобы в полной мере воспользоваться преимуществами OpenCutList, рекомендуем обновить по крайней мере до **SketchUp 2017**.
     feature_locked: "*Не отключается в этой версии SketchUp*"
   event:
@@ -324,6 +330,9 @@ tab:
       property_name: Описание
       property_count: Количество
       property_edge_pattern: Количество кромок
+      tags: Теги
+      tags_help: "Настраиваемый список тегов, предлагаемый в окне свойств детали."
+      tags_placeholder: Добавить тег
     list:
       filters: Фильтры
       filters_warning_0: "Этот фильтр скрывает все детали!"
@@ -357,7 +366,7 @@ tab:
     export:
       title: Экспортировать в формате CSV
       info_0: |
-        Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV] (https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV](https://ru.wikipedia.org/wiki/CSV).
       info_1: |
         *Изображения, содержащиеся в скрытых группах вашего раскроя, не будут экспортированы*.
       options: Параметры экспорта
@@ -425,17 +434,17 @@ tab:
       option_full_width_diagram: Отображать по ширине экрана
       option_full_width_diagram_0: Нет
       option_full_width_diagram_1: Да
-      option_full_width_diagram_help: "Если эта опция активирована, схемы отображаются по всей доступной ширине экрана. В противном случае их ширина определяется фиксированным коэффициентом масштабирования от фактического размера."
+      option_full_width_diagram_help: "Если эта опция активирована, схемы раскроя отображаются по всей доступной ширине экрана. В противном случае их ширина определяется фиксированным коэффициентом масштабирования от фактического размера."
       option_wrap_length: Длина обёртки доски
       option_wrap_length_help: "Максимальная длина, после которой доска будет обернута в несколько слоёв."
-      option_hide_cross: Chutes
-      option_hide_cross_0: Габариты и крестик
-      option_hide_cross_1: Только габариты
-      option_hide_cross_help: "Показывает или скрывает крестик, указывающий на детали, обозначенные на схеме как обрезки."
-      option_highlight_primary_cuts: Первичные разрезы
-      option_highlight_primary_cuts_0: Общий вид
-      option_highlight_primary_cuts_1: Всегда на виду
-      option_highlight_primary_cuts_help: Позволяет всегда выделять первичные разрезы.
+      option_hide_cross: Обрезки
+      option_hide_cross_0: Размеры и перекрестие
+      option_hide_cross_1: Только размеры
+      option_hide_cross_help: "Настройка отражает или скрывает диагональное перекрестие на обрезках материала на карте раскроя. При необходимости, это поможет отличить детали проектируемой модели от деловых отходов материала."
+      option_highlight_primary_cuts: Очередность раскроя
+      option_highlight_primary_cuts_0: Свободная
+      option_highlight_primary_cuts_1: Выделить
+      option_highlight_primary_cuts_help: При выборе опции "Выделить" это позволит определить оптимальную очередность раскроя материала.
       option_saw_kerf: Ширина пропила
       option_saw_kerf_help: Зубья пильного диска при распиле удаляют часть материала по их ширине. Это необходимо учитывать в расчетах раскроя.
       option_trimming: Размер обрезки
@@ -516,7 +525,7 @@ tab:
         no_sheet: "Стандартные размеры панели неправильно введены, поэтому она не определена в раскрое."
         no_placement_possible: "Некоторые размеры слишком велики или малы, чтобы рассчитать раскрой (обрезка велика, стандартная панель мала, ширина пропила велика,...)."
         bad_error: "Сбой расчета, пожалуйста, свяжитесь с разработчиками, у вас интересный случай."
-        unplaced_parts: "** Одну деталь ** не возможно разместить, так как она слишком велика для размещения."
+        unplaced_parts: "**Одну деталь** не возможно разместить, так как она слишком велика для размещения."
         unplaced_parts_plural: "Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели."
       warning:
         selection_only: Данный отчет ограничен **выбранными деталями**
@@ -543,33 +552,33 @@ tab:
       option_page_width: Ширина
       option_page_height: Высота
       option_margin: Поля
-      option_margin_top: По высоте
+      option_margin_top: Сверху
       option_margin_right: Справа
-      option_margin_bottom: По низу
+      option_margin_bottom: Снизу
       option_margin_left: Слева
       option_spacing: Интервалы
       option_spacing_h: По горизонтали
       option_spacing_v: По вертикали
       option_grid: Этикеток на странице
-      option_col_count: Колонки
-      option_row_count: Строки
-      option_cutting_marks: Метки
+      option_col_count: Колонок
+      option_row_count: Строк
+      option_cutting_marks: Маркеры
       option_cutting_marks_0: Нет
       option_cutting_marks_1: Распечатать
-      option_formula: Цена
+      option_formula: Тип маркировки
       option_size: Размер
-      option_anchor: Крепеж
-      option_anchor_start: Начало
-      option_anchor_middle: Середина
-      option_anchor_end: Окончание
+      option_anchor: Позиция
+      option_anchor_start: От начала
+      option_anchor_middle: От середины
+      option_anchor_end: По окончанию
       option_color: Цвет
       formula:
         part_number: Номер
         part_name: Описание
-        part_cutting_size: Размер раскроя
-        part_cutting_length: Длина раскроя
-        part_cutting_width: Ширина раскроя
-        part_size: Возможный размер
+        part_cutting_size: Размеры элемента
+        part_cutting_length: Длина элемента
+        part_cutting_width: Ширина элемента
+        part_size: Доступный размер
         part_length: Длина
         part_width: Ширина
         part_tags: Теги
@@ -738,7 +747,7 @@ tab:
         **{{ filename }}**.
       info_1: |
         *Единицей измерения, заданной в шаблоне, является: **{{ unit }}**.
-        Данная единица будет использоваться для всех размеров, в которых единица измерения не указана*.
+        Данная единица будет применена для размеров, в которых единица измерения не указана*.
       options: Опции загрузки
       option_col_sep: Разделитель
       option_col_sep_tab: Табулятор
