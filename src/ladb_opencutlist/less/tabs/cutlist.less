@@ -12,7 +12,7 @@
       display: none;
     }
 
-    tbody {
+    thead tr.table-column-heading, tbody {
       display: none;
     }
 
@@ -40,25 +40,27 @@
 
   &.table-danger {
 
-    thead tr {
+    thead tr.table-heading {
       background-color: #f2dede;
     }
 
   }
 
   &.ladb-cutlist-group-dark {
-    thead tr {
+
+    thead tr.table-heading {
       background-color: #555;
       color: #fff;
     }
+
   }
 
-  thead tr {
-    background-color: #eee;
+  thead tr td {
+    border-bottom: 0;
+  }
 
-    td {
-      border-bottom: 0;
-    }
+  thead tr.table-heading {
+    background-color: #eee;
 
     .ladb-material-type-icon {
       margin: 2px 8px 2px 0;
@@ -81,10 +83,12 @@
 
   }
 
-  tbody tr.ladb-cutlist-heading-row {
+  thead tr.table-column-heading {
+
     .ladb-minitools a {
       font-size: 16px;
     }
+
   }
 
   tbody tr.ladb-cutlist-row {

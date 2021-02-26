@@ -12,7 +12,7 @@
 
     <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-filters">
         <thead>
-        <tr>
+        <tr class="table-heading">
             <td>
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupFiltersHidden %}open{% else %}close{% endif %}"></i></button>
                 <div>
@@ -89,7 +89,7 @@
 
     <table id="ladb_group_summary" data-group-id="summary" class="{% if groupSummaryHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
         <thead>
-        <tr>
+        <tr class="table-heading">
             <td colspan="{% if generateOptions.hide_final_areas %}6{% else %}7{% endif %}">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
@@ -101,9 +101,7 @@
                 <div class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</div>
             </td>
         </tr>
-        </thead>
-        <tbody>
-        <tr>
+        <tr class="table-column-heading">
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.material_type'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
@@ -112,7 +110,7 @@
                 <td class="text-center" colspan="3">{{ 'tab.cutlist.list.total_final'|i18next }}</td>
             {% endif %}
         </tr>
-        <tr>
+        <tr class="table-column-heading">
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.length'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             <td class="text-center" width="12%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
@@ -120,6 +118,8 @@
                 <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             {% endif %}
         </tr>
+        </thead>
+        <tbody>
         {% for group in groups %}
             <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row ladb-minitools-holder{% if group.id in generateOptions.hidden_group_ids %} ladb-mute{% endif %} text-middle">
                 <td class="text-center">{% if group.material_display_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
@@ -185,7 +185,7 @@
 
     <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
         <thead>
-        <tr>
+        <tr class="table-heading">
             <td colspan="{{ colspan }}" class="text-middle">
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
@@ -223,9 +223,7 @@
                 <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}{% if showGrain %}<span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}</div>
             </td>
         </tr>
-        </thead>
-        <tbody>
-        <tr class="ladb-cutlist-heading-row">
+        <tr class="table-column-heading">
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}{% if group.material_type != 4 %}{# 4 = TYPE_EDGE #}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span>{% endif %}</td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
@@ -242,7 +240,7 @@
                 <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
             {% endif %}
         </tr>
-        <tr class="ladb-cutlist-heading-row">
+        <tr class="table-column-heading">
             {% if showCuttingDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
                     <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
@@ -263,6 +261,8 @@
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
         </tr>
+        </thead>
+        <tbody>
         {% set thickness = 0 %}
         {% set width = 0 %}
         {% for part in group.parts %}

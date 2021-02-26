@@ -77,15 +77,13 @@
             {% endif %}
             <table id="ladb_cuttingdiagram_unplaced_parts" data-group-id="cuttingdiagram_unplaced_parts" class="{% if 'cuttingdiagram_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
                 <thead>
-                <tr>
+                <tr class="table-heading">
                     <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
                     </td>
                 </tr>
-                </thead>
-                <tbody>
-                <tr>
+                <tr class="table-column-heading">
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
                     <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
@@ -94,12 +92,14 @@
                     {% endif %}
                     <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
-                <tr>
+                <tr class="table-column-heading">
                     {% if showCuttingDimensions %}
                         <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     {% endif %}
                     <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                 </tr>
+                </thead>
+                <tbody>
                 {% for part in unplaced_parts  %}
                     <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                         <td class="text-center">
@@ -127,7 +127,7 @@
         {% if summary.bars is not empty  %}
             <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
                 <thead>
-                <tr>
+                <tr class="table-heading">
                     <td colspan="6">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
@@ -209,7 +209,7 @@
         {% for bar in bars %}
             <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
                 <thead>
-                <tr>
+                <tr class="table-heading">
                     <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         {% if bars|length > 1 %}
@@ -302,15 +302,12 @@
                                     {% endfor %}
                                 </g>
                             {% endfor %}
-                            {% if group.material_grained %}
-                                {% include 'core/_grain-direction-arrow.twig' with { 'centerX':bar.px_length / 2, 'centerY':bar.px_width + 20 } %}
-                            {% endif %}
                         </svg>
 
                     </td>
                 </tr>
                 {% if not options.hide_part_list %}
-                    <tr class="ladb-cutlist-heading-row">
+                    <tr class="table-column-heading">
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
                         <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
@@ -319,7 +316,7 @@
                         {% endif %}
                         <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                     </tr>
-                    <tr class="ladb-cutlist-heading-row">
+                    <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
                             <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                         {% endif %}

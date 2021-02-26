@@ -62,7 +62,7 @@
     "std_thicknesses": "",
     "std_sections": { "metric" : "30mm x 40mm;40mm x 50mm", "imperial" : "3/4\" x 1 1/2\";1 1/2\" x 5 1/2\";1 1/2\" x 7 1/4\"; 1 1/2\" x 9 1/4\"" },
     "std_sizes": "",
-    "grained": true,
+    "grained": false,
     "edge_decremented": false,
     "volumic_mass": ""
   },

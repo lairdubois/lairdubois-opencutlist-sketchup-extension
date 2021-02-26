@@ -39,7 +39,7 @@
         {% for page in pages %}
             <table id="ladb_cuttingdiagram_group_label_page_{{ loop.index }}" data-page-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-labels-group">
                 <thead class="no-print">
-                <tr>
+                <tr class="table-heading">
                     <td>
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ pages|length }}</strong></div>
