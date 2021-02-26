@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
-      @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar_length']).to_l.to_f
+      @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar']).to_l.to_f
       @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings['scrap_bar_lengths'])
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
