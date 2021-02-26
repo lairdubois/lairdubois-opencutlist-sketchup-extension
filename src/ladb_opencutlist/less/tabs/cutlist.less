@@ -436,18 +436,22 @@ body.no-ie, body.ie-gt11 {
       &:hover {
         .cut-outer, .cut-inner {
           fill: @ladb-brand-primary;
+          fill-opacity: 1.0;
         }
       }
 
       &.cut-through {
         &.cut-highlighted {
           .cut-outer, .cut-inner {
-            fill: RGBA(45, 184, 77, 0.5);
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
           }
         }
         &:hover {
           .cut-outer, .cut-inner {
-            fill: RGBA(45, 184, 77, 1.0);
+            fill: #2DB84D;
           }
         }
       }
@@ -455,18 +459,22 @@ body.no-ie, body.ie-gt11 {
       &.cut-final {
         &.cut-highlighted {
           .cut-outer, .cut-inner {
-            fill: RGBA(245, 72, 110, 0.5);
+            fill: #F5486E;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
           }
         }
         &:hover {
           .cut-outer, .cut-inner {
-            fill: RGBA(245, 72, 110, 1.0);
+            fill: #F5486E;
           }
         }
       }
 
       .cut-outer {
-        fill: rgba(0, 0, 0, 0.01);
+        fill: #ffffff;
+        fill-opacity: 0.01;
       }
       .cut-inner {
         fill: #555;
@@ -739,6 +747,9 @@ body.no-ie, body.ie-gt11 {
     .cut {
       .cut-inner {
         fill: #000;
+      }
+      .cut-outer {
+        fill: none !important;
       }
     }
 
