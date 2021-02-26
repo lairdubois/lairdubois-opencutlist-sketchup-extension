@@ -27,7 +27,7 @@
                         <select class="form-control" id="ladb_select_std_sheet">
                             {% if material_attributes.std_sizes|length > 0 %}
                                 {% for std_size in material_attributes.std_sizes|split(';') %}
-                                    <option value="{{ std_size|escape('html') }}|{{ material_attributes.grained }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size|escape('html') }}"></option>
+                                    <option value="{{ std_size|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size|escape('html') }}"></option>
                                 {% endfor %}
                                 <option data-divider="true"></option>
                             {% endif %}

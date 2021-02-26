@@ -34,7 +34,7 @@
         this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
-        this.lastCuttingdiagram2dLabelsOptionsTab = null;
+        this.lastLabelsOptionsTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -1718,7 +1718,6 @@
                 // Fetch UI elements
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdBar = $('#ladb_select_std_bar', $modal);
-                var $inputStdBarLength = $('#ladb_input_std_bar_length', $modal);
                 var $inputScrapBarLengths = $('#ladb_input_scrap_bar_lengths', $modal);
                 var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
@@ -1732,7 +1731,6 @@
 
                 var fnFetchOptions = function (options) {
                     options.std_bar = $inputStdBar.val();
-                    options.std_bar_length = $inputStdBarLength.val();
                     options.scrap_bar_lengths = $inputScrapBarLengths.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
                     options.trimming = $inputTrimming.val();
@@ -1763,16 +1761,6 @@
                     });
 
                 };
-                var fnSelectSize = function () {
-                    var value = $inputStdBar.val();
-                    if (value === 'add') {
-                        fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
-                        });
-                    } else if (value) {
-                        $inputStdBarLength.val(value);
-                    }
-                };
 
                 $widgetPreset.ladbWidgetPreset({
                     dialog: that.dialog,
@@ -1791,9 +1779,9 @@
                         }
                     }
                 }
+                $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapBarLengths.ladbTextinputTokenfield({ format: 'dxq' });
                 $inputScrapBarLengths.ladbTextinputTokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
-                $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
                 $inputSawKerf.ladbTextinputDimension();
                 $inputTrimming.val(cuttingdiagram1dOptions.trimming);
@@ -1809,10 +1797,14 @@
                 $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
                 $inputWrapLength.ladbTextinputDimension();
 
-                $inputStdBar.on('changed.bs.select', function (e) {
-                    fnSelectSize();
+                $inputStdBar.on('changed.bs.select', function () {
+                    var value = $inputStdBar.val();
+                    if (value === 'add') {
+                        fnEditMaterial(function ($editMaterialModal) {
+                            $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
+                        });
+                    }
                 });
-                fnSelectSize();
 
                 // Bind buttons
                 $btnEditMaterial.on('click', function () {
@@ -1970,9 +1962,6 @@
                 // Fetch UI elements
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
-                var $inputStdSheetLength = $('#ladb_input_std_sheet_length', $modal);
-                var $inputStdSheetWidth = $('#ladb_input_std_sheet_width', $modal);
-                var $inputGrained = $('#ladb_input_grained', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                 var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
@@ -1989,9 +1978,6 @@
 
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
-                    options.std_sheet_length = $inputStdSheetLength.val();
-                    options.std_sheet_width = $inputStdSheetWidth.val();
-                    options.grained = $inputGrained.val() === '1';
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
                     options.trimming = $inputTrimming.val();
@@ -2028,23 +2014,6 @@
                     });
 
                 };
-                var fnSelectSize = function () {
-                    var value = $inputStdSheet.val();
-                    if (value === 'add') {
-                        fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
-                        });
-                    } else if (value) {
-                        var sizeAndGrained = value.split('|');
-                        var size = sizeAndGrained[0].split('x');
-                        var stdSheetLength = size[0].trim();
-                        var stdSheetWidth = size[1].trim();
-                        var grained = sizeAndGrained[1] === 'true';
-                        $inputStdSheetLength.val(stdSheetLength);
-                        $inputStdSheetWidth.val(stdSheetWidth);
-                        $inputGrained.val(grained ? '1' : '0');
-                    }
-                };
 
                 $widgetPreset.ladbWidgetPreset({
                     dialog: that.dialog,
@@ -2052,12 +2021,13 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
+                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 if (cuttingdiagram2dOptions.std_sheet) {
                     var defaultValue = $inputStdSheet.val();
                     $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
                     if ($inputStdSheet.val() == null) {
                         if (response.std_sizes.length === 0) {
-                            $inputStdSheet.val('0x0|' + response.grained);  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                            $inputStdSheet.val('0x0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
                         } else {
                             $inputStdSheet.val(defaultValue);
                         }
@@ -2065,7 +2035,6 @@
                 }
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
-                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                 $inputSawKerf.ladbTextinputDimension();
                 $inputTrimming.val(cuttingdiagram2dOptions.trimming);
@@ -2087,10 +2056,15 @@
                 $selectHighlightPrimaryCuts.val(cuttingdiagram2dOptions.highlight_primary_cuts ? '1' : '0');
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
 
-                $inputStdSheet.on('changed.bs.select', function (e) {
-                    fnSelectSize();
+                // Bind select
+                $inputStdSheet.on('changed.bs.select', function () {
+                    var value = $inputStdSheet.val();
+                    if (value === 'add') {
+                        fnEditMaterial(function ($editMaterialModal) {
+                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                        });
+                    }
                 });
-                fnSelectSize();
 
                 // Bind buttons
                 $btnEditMaterial.on('click', function () {
@@ -2245,7 +2219,7 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: group,
                 selection_only: selectionOnly,
-                tab: forceDefaultTab || that.lastCuttingdiagram2dLabelsOptionsTab == null ? 'layout' : that.lastCuttingdiagram2dLabelsOptionsTab
+                tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
             }, true);
 
             // Fetch UI elements
@@ -2356,8 +2330,8 @@
             // Bind tabs
             $('a[data-toggle=tab]', $modal).on('shown.bs.tab', function (e) {
                 var tabId = $(e.target).attr('href');
-                that.lastCuttingdiagram2dLabelsOptionsTab = tabId.substring('#tab_labels_options_'.length);
-                if (that.lastCuttingdiagram2dLabelsOptionsTab === 'layout') {
+                that.lastLabelsOptionsTab = tabId.substring('#tab_labels_options_'.length);
+                if (that.lastLabelsOptionsTab === 'layout') {
 
                     fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
                         $labelEditor.ladbEditorLabel('updateSize', [ labelWidth, labelHeight ]);

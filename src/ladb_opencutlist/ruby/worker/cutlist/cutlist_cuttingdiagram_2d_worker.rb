@@ -12,8 +12,9 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
-      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_length']).to_l.to_f
-      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(settings['std_sheet_width']).to_l.to_f
+      s_length, s_width = StringUtils.split_dxd(settings['std_sheet'])
+      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
+      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
       @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
