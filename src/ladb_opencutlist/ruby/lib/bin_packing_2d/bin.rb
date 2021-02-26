@@ -235,7 +235,7 @@ module Ladb::OpenCutList::BinPacking2D
       # https://repository.asu.edu/attachments/111230/content/Li_Goodchild_Church_CompactnessIndex.pdf
       # In practice simple ratio between used_area and bounding box area.
       if @stat[:bbox_area] > EPS
-        @stat[:compactness] = @stat[:used_area] * 100 / @stat[:bbox_area]
+        @stat[:compactness] = (@stat[:used_area] * 100.0 / @stat[:bbox_area]).round(3)
       else
         @stat[:compactness] = MAX_INT
       end
@@ -244,7 +244,7 @@ module Ladb::OpenCutList::BinPacking2D
         @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
       end
 
-      @stat[:efficiency] = 100 * @stat[:used_area] / @stat[:net_area]
+      @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(3)
     end
 
     #
