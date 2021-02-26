@@ -24,6 +24,14 @@ module Ladb::OpenCutList
         export_command(settings)
       end
 
+      Plugin.instance.register_command("cutlist_report_start") do |settings|
+        report_start_command(settings)
+      end
+
+      Plugin.instance.register_command("cutlist_report_advance") do |settings|
+        report_advance_command
+      end
+
       Plugin.instance.register_command("cutlist_numbers_save") do |settings|
         numbers_command(settings, false)
       end
@@ -104,6 +112,21 @@ module Ladb::OpenCutList
 
       # Run !
       worker.run
+    end
+
+    def report_start_command(settings)
+      require_relative '../worker/cutlist/cutlist_report_worker'
+
+      # Setup worker
+      @report_worker = CutlistReportWorker.new(settings, @cutlist)
+
+      # Run !
+      @report_worker.run
+    end
+
+    def report_advance_command
+      # Run !
+      @report_worker.run
     end
 
     def numbers_command(settings, reset)

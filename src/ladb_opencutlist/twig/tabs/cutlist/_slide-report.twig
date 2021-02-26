@@ -1,0 +1,32 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_report' %}
+{% set out = true %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs">
+        {% include 'tabs/cutlist/_file-tab.twig' with { 'generatedAt':'000' } %}
+    </ul>
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.report.title'|i18next}}
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_report" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.report.title'|i18next }}...</button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+
+        {% include 'core/_alert-errors.twig' %}
+
+        HELLO REPORT !
+
+    </div>
+{% endblock %}

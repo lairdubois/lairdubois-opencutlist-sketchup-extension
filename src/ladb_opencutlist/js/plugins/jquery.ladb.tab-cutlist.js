@@ -31,6 +31,7 @@
         this.selectionGroupId = null;
         this.selectionPartIds = [];
         this.lastEditPartTab = null;
+        this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
         this.lastCuttingdiagram2dLabelsOptionsTab = null;
@@ -696,10 +697,116 @@
 
     };
 
-    LadbTabCutlist.prototype.reportCutlist = function () {
+    LadbTabCutlist.prototype.reportCutlist = function (forceDefaultTab) {
+        var that = this;
 
         // Show Objective modal
-        this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
+        // this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
+
+        // Retrieve label options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_report_options' }, function (response) {
+
+            var reportOptions = response.preset;
+
+            var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
+                tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab
+            }, true);
+
+            // Fetch UI elements
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $btnReport = $('#ladb_btn_report', $modal);
+
+            var fnFetchOptions = function (options) {
+            }
+            var fnFillInputs = function (options) {
+            }
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'cutlist_report_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
+
+            // Bind buttons
+            $btnReport.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(reportOptions);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', {dictionary: 'cutlist_report_options', values: reportOptions });
+
+                var fnAdvance = function () {
+                    window.requestAnimationFrame(function () {
+                        rubyCallCommand('cutlist_report_advance', null, function (response) {
+
+                            if (response.remaining_step === 0) {
+
+                                window.requestAnimationFrame(function () {
+
+                                    var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
+                                        errors: response.errors,
+                                        filename: that.filename,
+                                        pageLabel: that.pageLabel,
+                                        lengthUnit: that.lengthUnit,
+                                        generatedAt: new Date().getTime() / 1000,
+                                    }, reportOptions), function () {
+                                        that.dialog.setupTooltips();
+                                    });
+
+                                    // Fetch UI elements
+                                    var $btnReport = $('#ladb_btn_report', $slide);
+                                    var $btnPrint = $('#ladb_btn_print', $slide);
+                                    var $btnClose = $('#ladb_btn_close', $slide);
+
+                                    // Bind buttons
+                                    $btnReport.on('click', function () {
+                                        that.reportCutlist();
+                                    });
+                                    $btnPrint.on('click', function () {
+                                        window.print();
+                                    });
+                                    $btnClose.on('click', function () {
+                                        that.popSlide();
+                                    });
+
+                                    that.dialog.finishProgress();
+
+                                });
+
+                            } else {
+
+                                window.requestAnimationFrame(function () {
+                                    that.dialog.advanceProgress(1);
+                                });
+
+                                // that.dialog.advanceProgress(1);
+                                fnAdvance();
+                            }
+
+                        });
+                    });
+                }
+
+                window.requestAnimationFrame(function () {
+                    rubyCallCommand('cutlist_report_start', $.extend(reportOptions, that.generateOptions), function (response) {
+                        window.requestAnimationFrame(function () {
+                            that.dialog.startProgress(response.remaining_step);
+                            fnAdvance();
+                        });
+                    });
+                });
+
+                // Hide modal
+                $modal.modal('hide');
+
+            });
+
+            // Show modal
+            $modal.modal('show');
+
+        });
 
     };
 
