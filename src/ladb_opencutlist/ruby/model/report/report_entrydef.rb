@@ -16,6 +16,7 @@ module Ladb::OpenCutList
     # ---
 
     def create_entry
+      raise 'Abstract method : Override it'
     end
 
   end

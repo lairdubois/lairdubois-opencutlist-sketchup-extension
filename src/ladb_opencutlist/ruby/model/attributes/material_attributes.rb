@@ -324,6 +324,7 @@
         @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', defaults['std_sizes'])
         @grained = Plugin.instance.get_attribute(@material, 'grained', defaults['grained'])
         @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
+        @volumic_mass = Plugin.instance.get_attribute(@material, 'volumic_mass', defaults['volumic_mass'])
       else
         @type = TYPE_UNKNOWN
       end

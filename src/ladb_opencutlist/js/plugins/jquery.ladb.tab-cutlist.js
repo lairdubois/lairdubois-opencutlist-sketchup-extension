@@ -771,6 +771,15 @@
                                     $btnClose.on('click', function () {
                                         that.popSlide();
                                     });
+                                    $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                        var $group = $(this).parents('.ladb-cutlist-group');
+                                        if ($group.hasClass('no-print')) {
+                                            that.showGroup($group, false);
+                                        } else {
+                                            that.hideGroup($group, false);
+                                        }
+                                        $(this).blur();
+                                    });
 
                                     that.dialog.finishProgress();
 

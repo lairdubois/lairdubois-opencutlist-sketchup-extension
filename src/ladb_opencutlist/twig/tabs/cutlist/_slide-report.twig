@@ -35,14 +35,14 @@
                 </td>
             </tr>
             <tr class="table-column-heading">
-                <td class="text-center">{{ 'tab.cutlist.report.mass'|i18next }}</td>
-                <td class="text-center">{{ 'tab.cutlist.report.cost'|i18next }}</td>
+                <td class="text-center" width="50%">{{ 'tab.cutlist.report.mass'|i18next }}</td>
+                <td class="text-center" width="50%">{{ 'tab.cutlist.report.cost'|i18next }}</td>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td class="text-center" style="font-size: 200%;">{{ report.total_mass }}</td>
-                <td class="text-center" style="font-size: 200%;">{{ report.total_cost }}</td>
+                <td class="text-center" style="font-size: 200%;">{{ report.total_mass ? report.total_mass|format_mass : '-' }}</td>
+                <td class="text-center" style="font-size: 200%;">{{ report.total_cost ? report.total_cost|format_currency('EUR') : '-' }}</td>
             </tr>
             </tbody>
         </table>
@@ -93,8 +93,8 @@
                             {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                                 <td class="text-center" width="12%">{{ entry.total_count }}</td>
                             {% endif %}
-                            <td class="ladb-cutlist-dimension-value">{{ entry.total_mass }}</td>
-                            <td class="ladb-cutlist-dimension-value">{{ entry.total_cost }}</td>
+                            <td class="ladb-cutlist-dimension-value">{{ entry.total_mass ? entry.total_mass|format_mass : '-' }}</td>
+                            <td class="ladb-cutlist-dimension-value">{{ entry.total_cost ? entry.total_cost|format_currency('EUR') : '-' }}</td>
                         </tr>
                     {% endfor %}
                     <tr class="ladb-cutlist-row ladb-cutlist-row-total">
@@ -112,8 +112,8 @@
                         {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                             <td class="text-center" width="12%">{{ group.total_count }}</td>
                         {% endif %}
-                        <td class="ladb-cutlist-dimension-value">{{ group.total_mass }}</td>
-                        <td class="ladb-cutlist-dimension-value">{{ group.total_cost }}</td>
+                        <td class="ladb-cutlist-dimension-value">{{ group.total_mass ? group.total_mass|format_mass : '-' }}</td>
+                        <td class="ladb-cutlist-dimension-value">{{ group.total_cost ? group.total_cost|format_currency('EUR') : '-' }}</td>
                     </tr>
                 </tbody>
             </table>

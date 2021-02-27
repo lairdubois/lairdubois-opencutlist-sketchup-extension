@@ -25,7 +25,7 @@
                     <div class="ladb-sponsor-member-footer">
                         {% if member.totalDonations and member.totalDonations.value %}
                             <span class="ladb-sponsor-member-amount">
-                                {{ member.totalDonations.value|format_currency({ currency:member.totalDonations.currency }) }}
+                                {{ member.totalDonations.value|format_currency(member.totalDonations.currency) }}
                             </span>
                         {% endif %}
                     </div>

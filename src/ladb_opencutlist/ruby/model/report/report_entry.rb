@@ -20,11 +20,9 @@ module Ladb::OpenCutList
       @std_dimension = entry_def.cutlist_group.std_dimension
       @std_thickness = entry_def.cutlist_group.std_thickness
 
-      @total_mass = 0
-      @total_cost = 0
+      @total_mass = entry_def.total_mass
+      @total_cost = entry_def.total_cost
     end
-
-    # ---
 
   end
 
@@ -37,8 +35,6 @@ module Ladb::OpenCutList
 
       @total_volume = entry_def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(entry_def.total_volume, @material_type)
     end
-
-    # ---
 
   end
 
@@ -53,8 +49,6 @@ module Ladb::OpenCutList
       @total_area = entry_def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(entry_def.total_area)
     end
 
-    # ---
-
   end
 
   class DimensionalReportEntry < AstractReportEntry
@@ -68,8 +62,6 @@ module Ladb::OpenCutList
       @total_length = entry_def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(entry_def.total_length)
     end
 
-    # ---
-
   end
 
   class EdgeReportEntry < AstractReportEntry
@@ -82,8 +74,6 @@ module Ladb::OpenCutList
       @total_length = entry_def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(entry_def.total_length)
     end
 
-    # ---
-
   end
 
   class AccessoryReportEntry < AstractReportEntry
@@ -95,8 +85,6 @@ module Ladb::OpenCutList
 
       @total_count = entry_def.total_count
     end
-
-    # ---
 
   end
 
