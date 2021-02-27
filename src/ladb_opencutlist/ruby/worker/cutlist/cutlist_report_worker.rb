@@ -150,8 +150,8 @@ module Ladb::OpenCutList
           report_group_def.total_mass = report_group_def.total_mass + report_entry_def.total_mass
           report_group_def.total_cost = report_group_def.total_cost + report_entry_def.total_cost
 
-          @report_def.total_mass = @report_def.total_mass + report_group_def.total_mass
-          @report_def.total_cost = @report_def.total_cost + report_group_def.total_cost
+          @report_def.total_mass = @report_def.total_mass + report_entry_def.total_mass
+          @report_def.total_cost = @report_def.total_cost + report_entry_def.total_cost
 
         end
 
