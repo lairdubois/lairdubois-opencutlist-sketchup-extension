@@ -490,7 +490,7 @@ module Ladb::OpenCutList
       else
 
         # Preset doesn't exists, return default_values
-        values = default_values.clone
+        values = default_values.nil? ? default_values : default_values.clone
 
       end
       values

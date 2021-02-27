@@ -408,6 +408,7 @@ tab:
       edge_xmax: Chant Largeur 2
     report:
       title: Rapport
+      options_general: Générales
       total: Total
       mass: Masse
       cost: Coût

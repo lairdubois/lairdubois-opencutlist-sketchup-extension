@@ -8,7 +8,9 @@ module Ladb::OpenCutList
         key = var.to_s.delete('@')
         next if key.start_with? '_'   # Exclude "private" instance variables
         value = self.instance_variable_get(var)
-        if value.is_a?(Array)
+        if value.is_a?(HashableHelper)
+          value = value.to_hash
+        elsif value.is_a?(Array)
           value = value.collect{ |v| v.is_a?(HashableHelper) ? v.to_hash : v }
         end
         hash[key] = value

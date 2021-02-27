@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative 'cutlist_cuttingdiagram_1d_worker'
   require_relative 'cutlist_cuttingdiagram_2d_worker'
   require_relative '../../model/report/report_def'
-  require_relative '../../model/report/report_entrydef'
+  require_relative '../../model/report/report_entry_def'
 
   class CutlistReportWorker
 
@@ -99,8 +99,8 @@ module Ladb::OpenCutList
           cuttingdiagram1d = worker.run
 
           report_entry_def = DimensionalReportEntryDef.new(cutlist_group)
-          report_entry_def.total_count = cuttingdiagram1d[:summary][:total_used_count].to_i
-          report_entry_def.total_length = cuttingdiagram1d[:summary][:total_used_length].to_f
+          report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
+          report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
           report_entry_def.total_mass = report_entry_def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
 
           report_group_def.add_entry_def(report_entry_def)

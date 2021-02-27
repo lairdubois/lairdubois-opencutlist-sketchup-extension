@@ -1,9 +1,11 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
 
   class AbstractPart
 
+    include DefHelper
     include HashableHelper
 
     attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :unit_price, :unit_mass, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
@@ -42,10 +44,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def def
-      @_def
-    end
 
     def group
       @_group

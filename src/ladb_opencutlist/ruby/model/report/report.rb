@@ -6,14 +6,14 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :errors, :warnings, :tips
+    attr_reader :errors, :warnings, :tips, :total_mass, :total_cost, :groups
 
     def initialize(report_def)
       @_def = report_def
 
-      @errors = []
-      @warnings = []
-      @tips = []
+      @errors = report_def.errors
+      @warnings = report_def.warnings
+      @tips = report_def.tips
 
       @total_mass = report_def.total_mass
       @total_cost = report_def.total_cost
@@ -22,26 +22,6 @@ module Ladb::OpenCutList
       report_def.group_defs.each do |material_type, group_def|
         @groups.push(group_def.create_group)
       end
-    end
-
-    # ---
-
-    # Errors
-
-    def add_error(error)
-      @errors.push(error)
-    end
-
-    # Warnings
-
-    def add_warning(warning)
-      @warnings.push(warning)
-    end
-
-    # Tips
-
-    def add_tip(tip)
-      @tips.push(tip)
     end
 
   end

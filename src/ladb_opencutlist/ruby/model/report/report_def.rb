@@ -1,14 +1,18 @@
 module Ladb::OpenCutList
 
   require_relative 'report'
-  require_relative 'report_groupdef'
+  require_relative 'report_group_def'
 
   class ReportDef
 
     attr_accessor :total_mass, :total_cost
-    attr_reader :group_defs
+    attr_reader :errors, :warnings, :tips, :group_defs
 
     def initialize
+
+      @errors = []
+      @warnings = []
+      @tips = []
 
       @total_mass = 0
       @total_cost = 0
@@ -26,6 +30,26 @@ module Ladb::OpenCutList
 
     def create_report
       Report.new(self)
+    end
+
+    # ---
+
+    # Errors
+
+    def add_error(error)
+      @errors.push(error)
+    end
+
+    # Warnings
+
+    def add_warning(warning)
+      @warnings.push(warning)
+    end
+
+    # Tips
+
+    def add_tip(tip)
+      @tips.push(tip)
     end
 
     # Groups
