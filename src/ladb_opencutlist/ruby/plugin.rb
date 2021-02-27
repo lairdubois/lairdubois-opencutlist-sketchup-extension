@@ -381,8 +381,8 @@ module Ladb::OpenCutList
         begin
           default_values = get_app_defaults(dictionary, section)
         rescue => e
-          # App defaults don't contain the given dictionary and/or section. Returns nil.
-          return nil
+          # App defaults don't contain the given dictionary and/or section. Raise exception.
+          raise "App defaults not found (dictionary=#{dictionary}, section=#{section})"
         end
       else
         default_values = get_global_preset(dictionary, nil, section)
@@ -490,7 +490,7 @@ module Ladb::OpenCutList
       else
 
         # Preset doesn't exists, return default_values
-        values = default_values.nil? ? default_values : default_values.clone
+        values = default_values.clone
 
       end
       values

@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative '../../lib/bin_packing_2d/packengine'
   require_relative '../../model/geom/size2d'
   require_relative '../../utils/dimension_utils'
+  require_relative '../../model/cuttingdiagram/cuttingdiagram_2d_def'
 
   class CutlistCuttingdiagram2dWorker
 
@@ -84,35 +85,18 @@ module Ladb::OpenCutList
       # Response
       # --------
 
-      response = {
-          :errors => [],
-          :warnings => [],
-          :tips => [],
-
-          :options => {
-              :grained => @grained,
-              :px_saw_kerf => [_to_px(options.saw_kerf), 1].max,    # Saw kerf not null in pixels
-              :saw_kerf => options.saw_kerf.to_l.to_s,
-              :trimming => options.trimsize.to_l.to_s,
-              :optimization => @optimization,
-              :stacking => @stacking,
-              :sheet_folding => @sheet_folding,
-              :hide_part_list => @hide_part_list,
-              :full_width_diagram => @full_width_diagram,
-              :hide_cross => @hide_cross,
-              :origin_corner => @origin_corner,
-              :highlight_primary_cuts => @highlight_primary_cuts,
-          },
-
-          :unplaced_parts => [],
-          :summary => {
-              :sheets => [],
-              :total_used_count => 0,
-              :total_used_area => 0,
-              :total_used_part_count => 0,
-          },
-          :sheets => [],
-      }
+      cuttingdiagram2d_def = Cuttingdiagram2dDef.new
+      cuttingdiagram2d_def.options_def.px_saw_kerf = [_to_px(options.saw_kerf), 1].max
+      cuttingdiagram2d_def.options_def.saw_kerf = options.saw_kerf
+      cuttingdiagram2d_def.options_def.trimming = options.trimsize
+      cuttingdiagram2d_def.options_def.optimization = @optimization
+      cuttingdiagram2d_def.options_def.stacking = @stacking
+      cuttingdiagram2d_def.options_def.sheet_folding = @sheet_folding
+      cuttingdiagram2d_def.options_def.hide_part_list = @hide_part_list
+      cuttingdiagram2d_def.options_def.full_width_diagram = @full_width_diagram
+      cuttingdiagram2d_def.options_def.hide_cross = @hide_cross
+      cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
+      cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
 
       if err > BinPacking2D::ERROR_NONE
 
@@ -120,18 +104,18 @@ module Ladb::OpenCutList
 
         case err
           when BinPacking2D::ERROR_NO_BIN
-            response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_sheet'
+            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_sheet'
           when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
-            response[:errors] << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
           when BinPacking2D::ERROR_BAD_ERROR
-            response[:errors] << 'tab.cutlist.cuttingdiagram.error.bad_error'
+            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
         end
 
       else
 
         # Errors
         if result.unplaced_boxes.length > 0
-          response[:errors] << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
+          cuttingdiagram2d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
         end
 
         # Warnings
@@ -139,190 +123,130 @@ module Ladb::OpenCutList
         material = materials[group.material_name]
         material_attributes = MaterialAttributes.new(material)
         if @part_ids
-          response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.selection_only'
+          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.selection_only'
         end
         if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
-          response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
+          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
         end
         if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-          response[:warnings] << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+          cuttingdiagram2d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
         end
         if group.edge_decremented
-          response[:warnings] << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
+          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
         end
 
         # Unplaced boxes
-        unplaced_parts = {}
         result.unplaced_boxes.each { |box|
-          part = unplaced_parts[box.data.number]
-          unless part
-            part = {
-                :id => box.data.id,
-                :number => box.data.number,
-                :name => box.data.name,
-                :length => box.data.length,
-                :width => box.data.width,
-                :cutting_length => box.data.cutting_length,
-                :cutting_width => box.data.cutting_width,
-                :edge_count => box.data.edge_count,
-                :edge_pattern => box.data.edge_pattern,
-                :edge_decrements => box.data.edge_decrements,
-                :count => 0,
-            }
-            unplaced_parts[box.data.number] = part
+          part_def = cuttingdiagram2d_def.unplaced_part_defs[box.data.number]
+          unless part_def
+            part_def = Cuttingdiagram2dListedPartDef.new(box.data)
+            cuttingdiagram2d_def.unplaced_part_defs[box.data.number] = part_def
           end
-          part[:count] += 1
-        }
-        unplaced_parts.sort_by { |k, v| v[:number] }.each { |key, part|
-          response[:unplaced_parts].push(part)
+          part_def.count += 1
         }
 
         # Summary
-        summary_sheets = {}
         result.unused_bins.each { |bin|
-          _append_bin_to_summary_sheets(bin, group, false, summary_sheets)
+          _append_bin_to_summary_sheet_defs(bin, group, false, cuttingdiagram2d_def.summary_def.sheet_defs)
         }
-        # TODO moved to packed bin
         result.packed_bins.each { |bin|
-          _append_bin_to_summary_sheets(bin, group, true, summary_sheets)
-          response[:summary][:total_used_count] += 1
-          response[:summary][:total_used_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
-          response[:summary][:total_used_part_count] += bin.boxes.count
+          _append_bin_to_summary_sheet_defs(bin, group, true, cuttingdiagram2d_def.summary_def.sheet_defs)
+          cuttingdiagram2d_def.summary_def.total_used_count += 1
+          cuttingdiagram2d_def.summary_def.total_used_area += Size2d.new(bin.length.to_l, bin.width.to_l).area
+          cuttingdiagram2d_def.summary_def.total_used_part_count += bin.boxes.count
         }
-        summary_sheets.each { |type_id, sheet|
-          sheet[:total_area] = DimensionUtils.instance.format_to_readable_area(sheet[:total_area])
-        }
-        response[:summary][:sheets] += summary_sheets.values.sort_by { |sheet| -sheet[:type] }
-        response[:summary][:total_used_area] = DimensionUtils.instance.format_to_readable_area(response[:summary][:total_used_area])
 
         # Sheets
-        grouped_sheets = {}
+        grouped_sheet_key = 0
         result.packed_bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
+          grouped_sheet_key = @sheet_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (grouped_sheet_key += 1)
 
           # Check similarity
           if @sheet_folding
-            grouped_sheet_key = "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}"
-            grouped_sheet = grouped_sheets[grouped_sheet_key]
-            if grouped_sheet
-              grouped_sheet[:count] += 1
+            grouped_sheet_def = cuttingdiagram2d_def.sheet_defs[grouped_sheet_key]
+            if grouped_sheet_def
+              grouped_sheet_def.count += 1
               next
             end
           end
 
-          sheet = {
-              :type_id => type_id,
-              :count => 1,
-              :px_length => _to_px(bin.length),
-              :px_width => _to_px(bin.width),
-              :type => bin.type,
-              :length => bin.length.to_l.to_s,
-              :width => bin.width.to_l.to_s,
-              :efficiency => bin.efficiency,
-              :total_length_cuts => bin.total_length_cuts.to_l.to_s,
-
-              :parts => [],
-              :grouped_parts => [],
-              :leftovers => [],
-              :cuts => [],
-          }
+          sheet_def = Cuttingdiagram2dSheetDef.new
+          sheet_def.type_id = type_id
+          sheet_def.type = bin.type
+          sheet_def.count = 1
+          sheet_def.px_length = _to_px(bin.length)
+          sheet_def.px_width = _to_px(bin.width)
+          sheet_def.length = bin.length
+          sheet_def.width = bin.width
+          sheet_def.efficiency = bin.efficiency
+          sheet_def.total_length_cuts = bin.total_length_cuts
 
           # Parts
           grouped_parts = {}
           bin.boxes.each { |box|
-            sheet[:parts].push({
-                :id => box.data.id,
-                :number => box.data.number,
-                :name => box.data.name,
-                :px_x => _to_px(box.x),
-                :px_y => _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width)),
-                :px_length => _to_px(box.length),
-                :px_width => _to_px(box.width),
-                :length => box.data.cutting_length,
-                :width => box.data.cutting_width,
-                :rotated => box.rotated,
-                :edge_count => box.data.edge_count,
-                :edge_material_names => box.data.edge_material_names,
-                :edge_std_dimensions => box.data.edge_std_dimensions,
-                :tags => box.data.tags,
-            })
+
+            part_def = Cuttingdiagram2dPartDef.new(box.data)
+            part_def.px_x = _to_px(box.x)
+            part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+            part_def.px_length = _to_px(box.length)
+            part_def.px_width = _to_px(box.width)
+            part_def.rotated = box.rotated
+            sheet_def.part_defs.push(part_def)
+
             unless @hide_part_list
-              grouped_part = grouped_parts[box.data.id]
-              unless grouped_part
-                grouped_part = {
-                    :_sorter => (box.data.is_a?(FolderPart) && box.data.number.to_i > 0) ? box.data.number.to_i : box.data.number, # Use a special "_sorter" property because number could contains a "+" suffix
-                    :id => box.data.id,
-                    :number => box.data.number,
-                    :saved_number => box.data.saved_number,
-                    :name => box.data.name,
-                    :count => 0,
-                    :length => box.data.length,
-                    :width => box.data.width,
-                    :cutting_length => box.data.cutting_length,
-                    :cutting_width => box.data.cutting_width,
-                    :edge_count => box.data.edge_count,
-                    :edge_pattern => box.data.edge_pattern,
-                    :edge_decrements => box.data.edge_decrements,
-                }
-                grouped_parts.store(box.data.id, grouped_part)
+              # grouped_part = grouped_parts[box.data.id]
+              grouped_part_def = sheet_def.grouped_part_defs[box.data.id]
+              unless grouped_part_def
+
+                grouped_part_def = Cuttingdiagram2dListedPartDef.new(box.data)
+                sheet_def.grouped_part_defs[box.data.id] = grouped_part_def
+
               end
-              grouped_part[:count] += 1
+              # grouped_part[:count] += 1
+              grouped_part_def.count += 1
             end
           }
-          sheet[:grouped_parts] = grouped_parts.values.sort_by { |v| [ v[:_sorter] ] } unless @hide_part_list
 
           # Leftovers
           bin.leftovers.each { |box|
-            sheet[:leftovers].push(
-                {
-                    :px_x => _to_px(box.x),
-                    :px_y => _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width)),
-                    :px_length => _to_px(box.length),
-                    :px_width => _to_px(box.width),
-                    :length => box.length.to_l.to_s,
-                    :width => box.width.to_l.to_s,
-                }
-            )
+
+            leftover_def = Cuttingdiagram2dLeftoverDef.new
+            leftover_def.px_x = _to_px(box.x)
+            leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+            leftover_def.px_length = _to_px(box.length)
+            leftover_def.px_width = _to_px(box.width)
+            leftover_def.length = box.length
+            leftover_def.width = box.width
+            sheet_def.leftover_defs.push(leftover_def)
+
           }
 
           # Cuts
           bin.cuts.each { |cut|
-            sheet[:cuts].push(
-                {
-                    :px_x => _to_px(cut.x),
-                    :px_y => _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width)),
-                    :px_length => _to_px(cut.length),
-                    :x => cut.x.to_l.to_s,
-                    :y => cut.y.to_l.to_s,
-                    :length => cut.length.to_l.to_s,
-                    :is_horizontal => cut.is_horizontal,
-                    :is_through => cut.is_through,
-                    :is_final => cut.is_final,
-                }
-            )
+
+            cut_def = Cuttingdiagram2dCutDef.new
+            cut_def.px_x = _to_px(cut.x)
+            cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width))
+            cut_def.px_length = _to_px(cut.length)
+            cut_def.x = cut.x
+            cut_def.y = cut.y
+            cut_def.length = cut.length
+            cut_def.is_horizontal = cut.is_horizontal
+            cut_def.is_through = cut.is_through
+            cut_def.is_final = cut.is_final
+            sheet_def.cut_defs.push(cut_def)
+
           }
 
-          if @sheet_folding
-            # Add bar to temp grouped sheets hash
-            grouped_sheets.store(grouped_sheet_key, sheet)
-          else
-            # Add bar directly to response
-            response[:sheets] << sheet
-          end
+          cuttingdiagram2d_def.sheet_defs[grouped_sheet_key] = sheet_def
 
         }
 
-        if @sheet_folding
-          response[:sheets] = grouped_sheets.values
-        end
-
       end
 
-      # Sort sheets
-      response[:sheets].sort_by! { |sheet| [ -sheet[:type], -sheet[:efficiency], -sheet[:count]] }
-
-      response
+      cuttingdiagram2d_def.create_cuttingdiagram2d
     end
 
     # -----
@@ -333,25 +257,23 @@ module Ladb::OpenCutList
       Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{bin.width.to_l.to_s}_#{bin.type}_#{used ? 1 : 0}")
     end
 
-    def _append_bin_to_summary_sheets(bin, group, used, summary_sheets)
+    def _append_bin_to_summary_sheet_defs(bin, group, used, summary_sheet_defs)
       type_id = _compute_bin_type_id(bin, group, used)
-      sheet = summary_sheets[type_id]
-      unless sheet
-        sheet = {
-            :type_id => type_id,
-            :type => bin.type,
-            :count => 0,
-            :length => bin.length.to_l.to_s,
-            :width => bin.width.to_l.to_s,
-            :total_area => 0, # Will be converted to string representation after sum
-            :total_part_count => 0,
-            :is_used => used,
-        }
-        summary_sheets[type_id] = sheet
+      sheet_def = summary_sheet_defs[type_id]
+      unless sheet_def
+
+        sheet_def = Cuttingdiagram2dSummarySheetDef.new
+        sheet_def.type_id = type_id
+        sheet_def.type = bin.type
+        sheet_def.length = bin.length
+        sheet_def.width = bin.width
+        sheet_def.is_used = used
+
+        summary_sheet_defs[type_id] = sheet_def
       end
-      sheet[:count] += 1
-      sheet[:total_area] += Size2d.new(bin.length.to_l, bin.width.to_l).area
-      sheet[:total_part_count] += bin.boxes.count
+      sheet_def.count += 1
+      sheet_def.total_area += Size2d.new(bin.length.to_l, bin.width.to_l).area
+      sheet_def.total_part_count += bin.boxes.count
     end
 
     def _compute_y_with_origin_corner(origin_corner, y, y_size, y_translation)

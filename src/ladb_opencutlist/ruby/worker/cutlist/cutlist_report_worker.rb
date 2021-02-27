@@ -74,8 +74,8 @@ module Ladb::OpenCutList
           cuttingdiagram2d = worker.run
 
           report_entry_def = SheetGoodReportEntryDef.new(cutlist_group)
-          report_entry_def.total_count = cuttingdiagram2d[:summary][:total_used_count].to_i
-          report_entry_def.total_area = cuttingdiagram2d[:summary][:total_used_area].to_f
+          report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
+          report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
           report_entry_def.total_mass = report_entry_def.total_area * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
 
           report_group_def.add_entry_def(report_entry_def)

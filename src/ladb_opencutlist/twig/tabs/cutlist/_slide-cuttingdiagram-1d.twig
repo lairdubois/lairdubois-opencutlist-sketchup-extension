@@ -25,7 +25,7 @@
 {% macro part_tooltip(part) %}
 {% spaceless %}
     <div class='tt-header'><span class='tt-number'>{{ part.number }}</span><span class='tt-name'>{{ part.name|escape('html') }}</span></div>
-    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length'></i> {{ part.length|escape('html') }}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length'></i> {{ part.cutting_length|escape('html') }}</div>
 {% endspaceless %}
 {% endmacro %}
 {% macro leftover_tooltip(leftover) %}
@@ -285,9 +285,9 @@
                                         {% if not hideNumber %}
                                             <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2)) }}px" text-anchor="middle" dominant-baseline="central">{% if not loop.first %}&hellip;{% endif %}{{ part.number }}{% if not loop.last %}&hellip;{% endif %}</text>
                                         {% endif %}
-                                        {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * part.length|length * textFontWidthFactor) %}
+                                        {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * part.cutting_length|length * textFontWidthFactor) %}
                                         {% if not hideDimensions %}
-                                            <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.length }}</text>
+                                            <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.cutting_length }}</text>
                                             {% set displayedDimensions = true %}
                                         {% endif %}
                                     {% endfor %}

@@ -17,7 +17,7 @@ module Ladb::OpenCutList
       @warnings = _def.warnings
       @tips = _def.tips
 
-      @unplaced_parts = _def.unplaced_part_defs.values.map { |bar_def| bar_def.create_part }
+      @unplaced_parts = _def.unplaced_part_defs.values.map { |bar_def| bar_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
       @options = _def.options_def.create_options
       @summary = _def.summary_def.create_summary
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }.sort_by { |bar| [ -bar.type, -bar.efficiency, -bar.count ] }
@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       @_def = _def
 
       @total_used_count = _def.total_used_count
-      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_count)
+      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
       @total_used_part_count = _def.total_used_part_count
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_summary_bar }.sort_by { |bar| [ -bar.type ] }
@@ -102,7 +102,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :length, :width, :px_length, :px_width, :efficiency
+    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency
 
     def initialize(_def)
       @_def = _def
@@ -110,15 +110,15 @@ module Ladb::OpenCutList
       @type_id = _def.type_id
       @type = _def.type
       @count = _def.count
-      @length = _def.length.to_l.to_s
-      @width = _def.width.to_l.to_s
       @px_length = _def.px_length
       @px_width = _def.px_width
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
 
       @slices = _def.slice_defs.map { |slice_def| slice_def.create_slice }
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
-      @grouped_parts = _def.grouped_part_defs.values.map { |part_def| part_def.create_part }
+      @grouped_parts = _def.grouped_part_defs.values.map { |part_def| part_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
 
       @leftover = _def.leftover_def.create_leftover
@@ -154,7 +154,28 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :cutting_length, :count, :slices
+    attr_reader :id, :number, :saved_number, :name, :length, :slices
+
+    def initialize(_def)
+      @_def = _def
+
+      @id = _def.cutlist_part.id
+      @number = _def.cutlist_part.number
+      @name = _def.cutlist_part.name
+      @cutting_length = _def.cutlist_part.cutting_length
+
+      @slices = _def.slice_defs.map { |slide_def| slide_def.create_slice }
+
+    end
+
+  end
+
+  class Cuttingdiagram1dListedPart
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :id, :number, :saved_number, :name, :length, :cutting_length, :count
 
     def initialize(_def)
       @_def = _def
@@ -166,8 +187,6 @@ module Ladb::OpenCutList
       @length = _def.cutlist_part.length
       @cutting_length = _def.cutlist_part.cutting_length
       @count = _def.count
-
-      @slices = _def.slice_defs.map { |slide_def| slide_def.create_slice }
 
     end
 

@@ -25,7 +25,7 @@
 {% macro part_tooltip(part) %}
 {% spaceless %}
     <div class='tt-header'><span class='tt-number'>{{ part.number }}</span><span class='tt-name'>{{ part.name|escape('html') }}</span></div>
-    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.length|escape('html') }}&nbsp;x&nbsp;{{ part.width|escape('html') }}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.cutting_length|escape('html') }}&nbsp;x&nbsp;{{ part.cutting_width|escape('html') }}</div>
     {% if part.edge_count > 0 %}
         <div class='tt-section'>
             {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymin }}&nbsp;<small>{{ part.edge_std_dimensions.ymin }}</small></div>{% endif %}
@@ -308,13 +308,13 @@
                                     {% endif %}
                                     {% set numberTextLength = part.number|length %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ min(numberFontSize, (part.px_length - dimensionOffset * 2) / (part.rotated ? 1 : numberTextLength), (part.px_width - dimensionOffset * 2) / (part.rotated ? numberTextLength : 1))  }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
-                                    {% set hideLength = part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_length < part.length|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% set hideLength = part.px_width < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_length < part.cutting_length|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not hideLength %}
-                                        <text class="part-dimension" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.rotated ? part.width : part.length }}</text>
+                                        <text class="part-dimension" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + partOutlineWidth + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.rotated ? part.cutting_width : part.cutting_length }}</text>
                                     {% endif %}
-                                    {% set hideWidth = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < part.width|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% set hideWidth = part.px_length < ((dimensionFontSize + dimensionOffset) * 2 + numberFontSize) or part.px_width < part.cutting_width|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not hideWidth %}
-                                        <text class="part-dimension" x="{{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }},{{ part.px_y + part.px_width / 2 }})">{{ part.rotated ? part.length : part.width }}</text>
+                                        <text class="part-dimension" x="{{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ part.px_x + partOutlineWidth + dimensionOffset + dimensionFontSize }},{{ part.px_y + part.px_width / 2 }})">{{ part.rotated ? part.cutting_length : part.cutting_width }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}

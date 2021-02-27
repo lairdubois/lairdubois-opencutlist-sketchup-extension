@@ -75,32 +75,6 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram1d_def.options_def.wrap_length = @wrap_length
 
-      # response = {
-      #     :errors => [],
-      #     :warnings => [],
-      #     :tips => [],
-      #
-      #     :options => {
-      #         :px_saw_kerf => _to_px(options.saw_kerf),
-      #         :saw_kerf => @saw_kerf.to_l.to_s,
-      #         :trimming => @trimming.to_l.to_s,
-      #         :bar_folding => @bar_folding,
-      #         :hide_part_list => @hide_part_list,
-      #         :full_width_diagram => @full_width_diagram,
-      #         :hide_cross => @hide_cross,
-      #         :wrap_length => @wrap_length,
-      #     },
-      #
-      #     :unplaced_parts => [],
-      #     :summary => {
-      #         :bars => [],
-      #         :total_used_count => 0,
-      #         :total_used_length => 0,
-      #         :total_used_part_count => 0,
-      #     },
-      #     :bars => [],
-      # }
-
       if err > BinPacking1D::ERROR_SUBOPT
 
         # Engine error -> returns error only
@@ -143,7 +117,7 @@ module Ladb::OpenCutList
         result.unplaced_boxes.each { |box|
           part_def = cuttingdiagram1d_def.unplaced_part_defs[box.data.number]
           unless part_def
-            part_def = Cuttingdiagram1dPartDef.new(box.data)
+            part_def = Cuttingdiagram1dListedPartDef.new(box.data)
             cuttingdiagram1d_def.unplaced_part_defs[box.data.number] = part_def
           end
           part_def.count += 1
@@ -180,10 +154,11 @@ module Ladb::OpenCutList
           wrap_length = bin.length if wrap_length <= @trimming + @saw_kerf
 
           bar_def = Cuttingdiagram1dBarDef.new
+          bar_def.type_id = type_id
+          bar_def.type = bin.type
           bar_def.count = 1
           bar_def.px_length = _to_px(bin.length)
           bar_def.px_width = _to_px(group.def.std_width)
-          bar_def.type = bin.type
           bar_def.length = bin.length
           bar_def.width = group.def.std_width
           bar_def.efficiency = bin.efficiency
@@ -207,7 +182,7 @@ module Ladb::OpenCutList
             unless @hide_part_list
               grouped_part_def = bar_def.grouped_part_defs[box.data.id]
               unless grouped_part_def
-                grouped_part_def = Cuttingdiagram1dPartDef.new(box.data)
+                grouped_part_def = Cuttingdiagram1dListedPartDef.new(box.data)
                 bar_def.grouped_part_defs[box.data.id] = grouped_part_def
               end
               grouped_part_def.count += 1

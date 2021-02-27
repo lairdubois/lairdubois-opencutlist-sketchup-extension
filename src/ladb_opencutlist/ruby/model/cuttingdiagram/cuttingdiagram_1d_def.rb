@@ -162,15 +162,10 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dPartDef
 
-    attr_accessor :_sorter, :count
     attr_reader :cutlist_part, :slice_defs
 
     def initialize(cutlist_part)
-      @_sorter = (cutlist_part.is_a?(FolderPart) && cutlist_part.number.to_i > 0) ? cutlist_part.number.to_i : cutlist_part.number,  # Use a special "_sorter" property because number could contains a "+" suffix
-
       @cutlist_part = cutlist_part
-
-      @count = 0
 
       @slice_defs = []
 
@@ -180,6 +175,28 @@ module Ladb::OpenCutList
 
     def create_part
       Cuttingdiagram1dPart.new(self)
+    end
+
+  end
+
+  class Cuttingdiagram1dListedPartDef
+
+    attr_accessor :_sorter, :count
+    attr_reader :cutlist_part
+
+    def initialize(cutlist_part)
+      @cutlist_part = cutlist_part
+
+      @_sorter = (cutlist_part.is_a?(FolderPart) && cutlist_part.number.to_i > 0) ? cutlist_part.number.to_i : cutlist_part.number,  # Use a special "_sorter" property because number could contains a "+" suffix
+
+      @count = 0
+
+    end
+
+    # ---
+
+    def create_listed_part
+      Cuttingdiagram1dListedPart.new(self)
     end
 
   end

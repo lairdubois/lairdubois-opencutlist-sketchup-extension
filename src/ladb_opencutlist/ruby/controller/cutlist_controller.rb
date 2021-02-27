@@ -188,7 +188,9 @@ module Ladb::OpenCutList
       worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
 
       # Run !
-      worker.run
+      cuttingdiagram2d = worker.run
+
+      cuttingdiagram2d.to_hash
     end
 
   end
