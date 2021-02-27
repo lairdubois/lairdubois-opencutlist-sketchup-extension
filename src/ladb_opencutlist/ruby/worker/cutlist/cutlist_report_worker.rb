@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'pp'
   require_relative 'cutlist_cuttingdiagram_1d_worker'
   require_relative 'cutlist_cuttingdiagram_2d_worker'
 
@@ -56,7 +55,6 @@ module Ladb::OpenCutList
 
             settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', group.id)
             settings['group_id'] = group.id
-            settings['part_ids'] = group.parts.collect { |part| part.id }
 
             if settings['std_sheet'] == ''
               material_attributes = _get_material_attributes(group.material_name)
@@ -83,7 +81,6 @@ module Ladb::OpenCutList
 
             settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', group.id)
             settings['group_id'] = group.id
-            settings['part_ids'] = group.parts.collect { |part| part.id }
 
             if settings['std_bar'] == ''
               material_attributes = _get_material_attributes(group.material_name)

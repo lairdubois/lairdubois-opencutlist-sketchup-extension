@@ -25,6 +25,8 @@ module Ladb::OpenCutList
     IS_RBZ = __dir__.start_with? Sketchup.find_support_file('Plugins')
     IS_DEV = EXTENSION_VERSION.end_with? '-dev'
 
+    require 'pp' if IS_DEV
+
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
     SU_ATTRIBUTE_DICTIONARY = 'SU_DefinitionSet'.freeze
 
@@ -303,8 +305,6 @@ module Ladb::OpenCutList
         end
       rescue => e
 
-        raise e
-
         # App defaults don't contain the given dictionary and/or section. Values stays unchanged.
         processed_values = values
 
@@ -395,7 +395,7 @@ module Ladb::OpenCutList
       else
 
         # Preset doesn't exists, return default_values
-        values = default_values
+        values = default_values.clone
 
       end
       values
@@ -490,7 +490,7 @@ module Ladb::OpenCutList
       else
 
         # Preset doesn't exists, return default_values
-        values = default_values
+        values = default_values.clone
 
       end
       values
