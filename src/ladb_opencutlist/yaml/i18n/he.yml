@@ -64,6 +64,12 @@ core:
     more_extensions: תוספים
     more_update: עדכונים
   warning:
+    dev: |
+      You are using a **development** version of *OpenCutList*.
+      This version is available for testing only.
+      It is not recommended to use it in production.
+
+      To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
       אתם משתמשים בגרסה ישנה של SketchUp ({{sketchupVersion}}). תוסף זה יעבוד, אך יתכן שיש באגים.
       כדי לנצל את מלוא היתרונות של OpenCutList, אנו ממליצים לשדרג לפחות ל- **SketchUp 2017**.
