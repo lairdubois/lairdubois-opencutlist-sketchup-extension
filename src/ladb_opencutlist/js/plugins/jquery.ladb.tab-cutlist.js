@@ -741,7 +741,7 @@
                     window.requestAnimationFrame(function () {
                         rubyCallCommand('cutlist_report_advance', null, function (response) {
 
-                            if (response.remaining_step === 0) {
+                            if (response.remaining_step === 0 || response.remaining_step === undefined) {
 
                                 window.requestAnimationFrame(function () {
 

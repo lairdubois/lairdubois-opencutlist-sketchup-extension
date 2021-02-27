@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 
   require_relative 'cutlist_cuttingdiagram_1d_worker'
   require_relative 'cutlist_cuttingdiagram_2d_worker'
+  require_relative '../../model/report/report_def'
+  require_relative '../../model/report/report_entrydef'
 
   class CutlistReportWorker
 
@@ -19,8 +21,10 @@ module Ladb::OpenCutList
           :sheet_goods => [],
           :dimensionals => [],
           :edges => [],
-          :accesories => [],
+          :accessories => [],
       }
+
+      @report_def = ReportDef.new
 
       # Setup caches
       @material_attributes_cache = {}
@@ -34,98 +38,78 @@ module Ladb::OpenCutList
 
       unless @remaining_step == @cutlist.groups.count
 
-        group = @cutlist.groups[@cutlist.groups.count - @remaining_step - 1]
+        cutlist_group = @cutlist.groups[@cutlist.groups.count - @remaining_step - 1]
+        report_group_def = @report_def.get_group_def(cutlist_group.material_type)
 
-        case group.material_type
+        case cutlist_group.material_type
 
-          when MaterialAttributes::TYPE_SOLID_WOOD
+        when MaterialAttributes::TYPE_SOLID_WOOD
 
-            @report[:solid_woods].push({
-                :material_name => group.material_name,
-                :material_display_name => group.material_display_name,
-                :material_type => group.material_type,
-                :material_color => group.material_color,
-                :std_available => group.std_available,
-                :std_dimension_stipped_name => group.std_dimension_stipped_name,
-                :std_dimension => group.std_dimension,
-                :total_cutting_volume => group.total_cutting_volume,
-            })
+          report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
+          report_entry_def.total_volume = cutlist_group.def.total_cutting_volume
 
-           when MaterialAttributes::TYPE_SHEET_GOOD
+          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.total_volume = report_group_def.total_volume + report_entry_def.total_volume
 
-            settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', group.id)
-            settings['group_id'] = group.id
+        when MaterialAttributes::TYPE_SHEET_GOOD
 
-            if settings['std_sheet'] == ''
-              material_attributes = _get_material_attributes(group.material_name)
-              std_sizes = material_attributes.std_sizes.split(';')
-              settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
-            end
+          settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
+          settings['group_id'] = cutlist_group.id
 
-            worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
-            cuttingdiagram2d = worker.run
+          if settings['std_sheet'] == ''
+            material_attributes = _get_material_attributes(cutlist_group.material_name)
+            std_sizes = material_attributes.std_sizes.split(';')
+            settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
+          end
 
-            @report[:sheet_goods].push({
-                :material_name => group.material_name,
-                :material_display_name => group.material_display_name,
-                :material_type => group.material_type,
-                :material_color => group.material_color,
-                :std_available => group.std_available,
-                :std_dimension_stipped_name => group.std_dimension_stipped_name,
-                :std_dimension => group.std_dimension,
-                :total_used_count => cuttingdiagram2d[:summary][:total_used_count],
-                :total_used_area => cuttingdiagram2d[:summary][:total_used_area],
-            })
+          worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
+          cuttingdiagram2d = worker.run
 
-          when MaterialAttributes::TYPE_DIMENSIONAL
+          report_entry_def = SheetGoodReportEntryDef.new(cutlist_group)
+          report_entry_def.total_count = cuttingdiagram2d[:summary][:total_used_count].to_i
+          report_entry_def.total_area = cuttingdiagram2d[:summary][:total_used_area].to_f
 
-            settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', group.id)
-            settings['group_id'] = group.id
+          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
+          report_group_def.total_area = report_group_def.total_area + report_entry_def.total_area
 
-            if settings['std_bar'] == ''
-              material_attributes = _get_material_attributes(group.material_name)
-              std_sizes = material_attributes.std_lengths.split(';')
-              settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
-            end
+        when MaterialAttributes::TYPE_DIMENSIONAL
 
-            worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
-            cuttingdiagram1d = worker.run
+          settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
+          settings['group_id'] = cutlist_group.id
 
-            @report[:dimensionals].push({
-                :material_name => group.material_name,
-                :material_display_name => group.material_display_name,
-                :material_type => group.material_type,
-                :material_color => group.material_color,
-                :std_available => group.std_available,
-                :std_dimension_stipped_name => group.std_dimension_stipped_name,
-                :std_dimension => group.std_dimension,
-                :total_used_count => cuttingdiagram1d[:summary][:total_used_count],
-                :total_used_length => cuttingdiagram1d[:summary][:total_used_length],
-            })
+          if settings['std_bar'] == ''
+            material_attributes = _get_material_attributes(cutlist_group.material_name)
+            std_sizes = material_attributes.std_lengths.split(';')
+            settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
+          end
 
-          when MaterialAttributes::TYPE_EDGE
+          worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
+          cuttingdiagram1d = worker.run
 
-            @report[:edges].push({
-                :material_name => group.material_name,
-                :material_display_name => group.material_display_name,
-                :material_type => group.material_type,
-                :material_color => group.material_color,
-                :std_available => group.std_available,
-                :std_dimension_stipped_name => group.std_dimension_stipped_name,
-                :std_dimension => group.std_dimension,
-            })
+          report_entry_def = DimensionalReportEntryDef.new(cutlist_group)
+          report_entry_def.total_count = cuttingdiagram1d[:summary][:total_used_count].to_i
+          report_entry_def.total_length = cuttingdiagram1d[:summary][:total_used_length].to_f
 
-          when MaterialAttributes::TYPE_ACCESSORY
+          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
+          report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
 
-            @report[:accesories].push({
-                :material_name => group.material_name,
-                :material_display_name => group.material_display_name,
-                :material_type => group.material_type,
-                :material_color => group.material_color,
-                :std_available => group.std_available,
-                :std_dimension_stipped_name => group.std_dimension_stipped_name,
-                :std_dimension => group.std_dimension,
-            })
+        when MaterialAttributes::TYPE_EDGE
+
+          report_entry_def = EdgeReportEntryDef.new(cutlist_group)
+          report_entry_def.total_length = cutlist_group.def.total_cutting_length
+
+          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
+
+        when MaterialAttributes::TYPE_ACCESSORY
+
+          report_entry_def = AccessoryReportEntryDef.new(cutlist_group)
+          report_entry_def.total_count = cutlist_group.def.part_count
+
+          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
 
         end
 
@@ -137,7 +121,12 @@ module Ladb::OpenCutList
         }
         @remaining_step = @remaining_step - 1
       else
-        response = @report
+
+        # Create the report
+        report = @report_def.create_report
+
+        response = report.to_hash
+
       end
 
       response

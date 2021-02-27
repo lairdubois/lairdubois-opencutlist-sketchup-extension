@@ -408,6 +408,13 @@ tab:
       edge_xmax: Chant Largeur 2
     report:
       title: Rapport
+      total: Total
+      mass: Masse
+      cost: Coût
+      count: Qte
+      volume: Volume
+      area: Surface
+      length: Longueur
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
