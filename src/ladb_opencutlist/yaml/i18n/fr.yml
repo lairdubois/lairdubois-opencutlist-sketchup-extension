@@ -713,6 +713,7 @@ tab:
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
       volumic_mass: Masse volumique
+      std_prices: Prix
       texture_width: Largeur
       texture_height: Hauteur
       export_to_skm: Exporter (.skm)

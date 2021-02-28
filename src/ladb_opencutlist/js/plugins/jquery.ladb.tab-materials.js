@@ -1,27 +1,6 @@
 +function ($) {
     'use strict';
 
-    // CONSTANTS
-    // ======================
-
-    // Options keys
-
-    var SETTING_KEY_OPTION_PREFIX = 'materials.option.';
-    var SETTING_KEY_OPTION_PREFIX_TYPE = SETTING_KEY_OPTION_PREFIX + 'type_';
-
-    var SETTING_KEY_OPTION_SUFFIX_THICKNESS = '_thickness';
-    var SETTING_KEY_OPTION_SUFFIX_LENGTH_INCREASE = '_length_increase';
-    var SETTING_KEY_OPTION_SUFFIX_WIDTH_INCREASE = '_width_increase';
-    var SETTING_KEY_OPTION_SUFFIX_THICKNESS_INCREASE = '_thickness_increase';
-    var SETTING_KEY_OPTION_SUFFIX_STD_LENGTHS = '_std_lengths';
-    var SETTING_KEY_OPTION_SUFFIX_STD_WIDTHS = '_std_widths';
-    var SETTING_KEY_OPTION_SUFFIX_STD_THICKNESSES = '_std_thicknesses';
-    var SETTING_KEY_OPTION_SUFFIX_STD_SECTIONS = '_std_sections';
-    var SETTING_KEY_OPTION_SUFFIX_STD_SIZES = '_std_sizes';
-    var SETTING_KEY_OPTION_SUFFIX_GRAINED = '_grained';
-    var SETTING_KEY_OPTION_SUFFIX_EDGE_DECREMENTED = '_edge_decremented';
-    var SETTING_KEY_OPTION_SUFFIX_VOLUMIC_MASS = '_volumic_mass';
-
     // CLASS DEFINITION
     // ======================
 
@@ -187,7 +166,8 @@
                     std_sizes: $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList'),
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
-                    volumic_mass: $inputs.inputVolumicMass.val()
+                    volumic_mass: $inputs.inputVolumicMass.val(),
+                    std_prices: $inputs.inputVolumicMass.val()
                 }
             }, function (response) {
 
@@ -264,9 +244,7 @@
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
                 attributes.volumic_mass = $inputs.inputVolumicMass.val();
-            };
-            var fnFillInputs = function (attributes) {
-
+                attributes.std_prices = $inputs.inputStdPrices.val();
             };
             var fnDisableBtnExport = function () {
                 $btnExportToSkm.prop('disabled', true);
@@ -733,6 +711,7 @@
         var $selectGrained = $('#ladb_materials_select_grained', $modal);
         var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         var $inputVolumicMass = $('#ladb_materials_input_volumic_mass', $modal);
+        var $inputStdPrices = $('#ladb_materials_input_std_prices', $modal);
 
         // Define usefull functions
         var fnFetchOptions = function (options) {
@@ -749,6 +728,7 @@
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
             options.volumic_mass = $inputVolumicMass.val();
+            options.std_prices = $inputStdPrices.val();
         };
         var fnFillInputs = function (options) {
 
@@ -768,6 +748,7 @@
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $inputVolumicMass.val(options.volumic_mass);
+            $inputStdPrices.val(options.std_prices);
 
         };
         var fnComputeFieldsVisibility = function (type) {
@@ -789,6 +770,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
+                    $inputStdPrices.closest('.form-group').show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('.form-group').hide();
@@ -804,6 +786,7 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
+                    $inputStdPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('.form-group').hide();
@@ -819,6 +802,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
+                    $inputStdPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('.form-group').show();
@@ -834,6 +818,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
                     $inputVolumicMass.closest('.form-group').show();
+                    $inputStdPrices.closest('.form-group').show();
                     break;
                 case 5:   // TYPE_ACCESSORY
                     $inputLengthIncrease.closest('section').hide();
@@ -942,6 +927,7 @@
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
             inputVolumicMass: $inputVolumicMass,
+            inputStdPrices: $inputStdPrices,
         }
     };
 
