@@ -56,6 +56,8 @@ module Ladb::OpenCutList
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
+          settings['bar_folding'] = false     # Remove unneeded computations
+          settings['hide_part_list'] = true   # Remove unneeded computations
 
           if settings['std_sheet'] == ''
             std_sizes = material_attributes.std_sizes.split(';')
@@ -83,6 +85,8 @@ module Ladb::OpenCutList
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
+          settings['bar_folding'] = false     # Remove unneeded computations
+          settings['hide_part_list'] = true   # Remove unneeded computations
 
           if settings['std_bar'] == ''
             std_sizes = material_attributes.std_lengths.split(';')
