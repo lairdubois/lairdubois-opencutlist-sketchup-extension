@@ -18,10 +18,7 @@ module Ladb::OpenCutList
       @total_mass = report_def.total_mass
       @total_cost = report_def.total_cost
 
-      @groups = []
-      report_def.group_defs.each do |material_type, group_def|
-        @groups.push(group_def.create_group)
-      end
+      @groups = report_def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.map { |group_def| group_def.create_group }
     end
 
   end

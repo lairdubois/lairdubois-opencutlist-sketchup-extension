@@ -24,30 +24,32 @@
     {{ parent() }}
     <div class="ladb-page">
 
-        {% include 'core/_alert-errors.twig' %}
+        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %}
 
-        <table id="ladb_group_summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
-            <thead>
-            <tr class="table-heading">
-                <td colspan="2">
-                    <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
-                    <div class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</div>
-                </td>
-            </tr>
-            <tr class="table-column-heading">
-                <td class="text-center" width="50%">{{ 'tab.cutlist.report.mass'|i18next }}</td>
-                <td class="text-center" width="50%">{{ 'tab.cutlist.report.cost'|i18next }}</td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td class="text-center" style="font-size: 200%;">{{ report.total_mass ? report.total_mass|format_mass : '-' }}</td>
-                <td class="text-center" style="font-size: 200%;">{{ report.total_cost ? report.total_cost|format_currency('EUR') : '-' }}</td>
-            </tr>
-            </tbody>
-        </table>
+        {% if report.groups|length > 0 %}
+            <table id="ladb_group_summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="2">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        <div class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td class="text-center" width="50%">{{ 'tab.cutlist.report.mass'|i18next }}</td>
+                    <td class="text-center" width="50%">{{ 'tab.cutlist.report.cost'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="text-center" style="font-size: 200%;">{{ report.total_mass ? report.total_mass|format_mass : '-' }}</td>
+                    <td class="text-center" style="font-size: 200%;">{{ report.total_cost ? report.total_cost|format_currency('EUR') : '-' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        {% endif %}
 
-        {% for group in report.groups if group.entries|length > 0 %}
+        {% for group in report.groups %}
             <table class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
                 <thead>
                 <tr class="table-heading">

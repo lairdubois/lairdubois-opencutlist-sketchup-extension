@@ -416,6 +416,8 @@ tab:
       volume: Volume
       area: Surface
       length: Longueur
+      error:
+        no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
