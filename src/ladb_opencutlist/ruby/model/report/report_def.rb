@@ -32,32 +32,6 @@ module Ladb::OpenCutList
       Report.new(self)
     end
 
-    # ---
-
-    # Errors
-
-    def add_error(error)
-      @errors.push(error)
-    end
-
-    # Warnings
-
-    def add_warning(warning)
-      @warnings.push(warning)
-    end
-
-    # Tips
-
-    def add_tip(tip)
-      @tips.push(tip)
-    end
-
-    # Groups
-
-    def get_group_def(material_type)
-      @group_defs[material_type]
-    end
-
   end
 
 end

@@ -66,7 +66,7 @@ module Ladb::OpenCutList
       # --------
 
       cuttingdiagram1d_def = Cuttingdiagram1dDef.new
-      cuttingdiagram1d_def.options_def.px_saw_kerf = _to_px(options.saw_kerf)
+      cuttingdiagram1d_def.options_def.px_saw_kerf = [_to_px(@saw_kerf), 1].max
       cuttingdiagram1d_def.options_def.saw_kerf = @saw_kerf
       cuttingdiagram1d_def.options_def.trimming = @trimming
       cuttingdiagram1d_def.options_def.bar_folding = @bar_folding
@@ -135,15 +135,15 @@ module Ladb::OpenCutList
         }
 
         # Bars
-        grouped_bar_key = 0
+        bar_key = 0
         result.bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
-          grouped_bar_key = @bar_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (grouped_bar_key += 1)
+          bar_key = @bar_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (bar_key += 1)
 
           # Check similarity
           if @bar_folding
-            bar_def = cuttingdiagram1d_def.bar_defs[grouped_bar_key]
+            bar_def = cuttingdiagram1d_def.bar_defs[bar_key]
             if bar_def
               bar_def.count += 1
               next
@@ -188,8 +188,6 @@ module Ladb::OpenCutList
               grouped_part_def.count += 1
             end
           }
-          # bar[:grouped_part_defs] = grouped_parts.values.sort_by { |v| [v[:_sorter] ] } unless @hide_part_list
-          # bar_def.grouped_part_defs.sort_by { |v| [v[:_sorter] ] } unless @hide_part_list
 
           # Leftover
           lefover_def = Cuttingdiagram1dLeftoverDef.new
@@ -206,7 +204,7 @@ module Ladb::OpenCutList
             bar_def.cut_defs.push(cut_def)
           }
 
-          cuttingdiagram1d_def.bar_defs[grouped_bar_key] = bar_def
+          cuttingdiagram1d_def.bar_defs[bar_key] = bar_def
 
         }
 

@@ -12,17 +12,6 @@ module Ladb::OpenCutList
       @cutlist = cutlist
 
       @remaining_step = @cutlist.groups.count
-      @report = {
-          :errors => [],
-          :remaining_step => 0,
-          :warnings => [],
-          :tips => [],
-          :solid_woods => [],
-          :sheet_goods => [],
-          :dimensionals => [],
-          :edges => [],
-          :accessories => [],
-      }
 
       @report_def = ReportDef.new
 
@@ -40,7 +29,7 @@ module Ladb::OpenCutList
       unless @remaining_step == @cutlist.groups.count
 
         cutlist_group = @cutlist.groups[@cutlist.groups.count - @remaining_step - 1]
-        report_group_def = @report_def.get_group_def(cutlist_group.material_type)
+        report_group_def = @report_def.group_defs[cutlist_group.material_type]
         report_entry_def = nil
 
         case cutlist_group.material_type

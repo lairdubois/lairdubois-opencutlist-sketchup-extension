@@ -86,9 +86,9 @@ module Ladb::OpenCutList
       # --------
 
       cuttingdiagram2d_def = Cuttingdiagram2dDef.new
-      cuttingdiagram2d_def.options_def.px_saw_kerf = [_to_px(options.saw_kerf), 1].max
-      cuttingdiagram2d_def.options_def.saw_kerf = options.saw_kerf
-      cuttingdiagram2d_def.options_def.trimming = options.trimsize
+      cuttingdiagram2d_def.options_def.px_saw_kerf = [_to_px(@saw_kerf), 1].max
+      cuttingdiagram2d_def.options_def.saw_kerf = @saw_kerf
+      cuttingdiagram2d_def.options_def.trimming = @trimming
       cuttingdiagram2d_def.options_def.optimization = @optimization
       cuttingdiagram2d_def.options_def.stacking = @stacking
       cuttingdiagram2d_def.options_def.sheet_folding = @sheet_folding
@@ -157,15 +157,15 @@ module Ladb::OpenCutList
         }
 
         # Sheets
-        grouped_sheet_key = 0
+        sheet_key = 0
         result.packed_bins.each { |bin|
 
           type_id = _compute_bin_type_id(bin, group, true)
-          grouped_sheet_key = @sheet_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (grouped_sheet_key += 1)
+          sheet_key = @sheet_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (sheet_key += 1)
 
           # Check similarity
           if @sheet_folding
-            grouped_sheet_def = cuttingdiagram2d_def.sheet_defs[grouped_sheet_key]
+            grouped_sheet_def = cuttingdiagram2d_def.sheet_defs[sheet_key]
             if grouped_sheet_def
               grouped_sheet_def.count += 1
               next
@@ -184,7 +184,6 @@ module Ladb::OpenCutList
           sheet_def.total_length_cuts = bin.total_length_cuts
 
           # Parts
-          grouped_parts = {}
           bin.boxes.each { |box|
 
             part_def = Cuttingdiagram2dPartDef.new(box.data)
@@ -196,7 +195,6 @@ module Ladb::OpenCutList
             sheet_def.part_defs.push(part_def)
 
             unless @hide_part_list
-              # grouped_part = grouped_parts[box.data.id]
               grouped_part_def = sheet_def.grouped_part_defs[box.data.id]
               unless grouped_part_def
 
@@ -204,7 +202,6 @@ module Ladb::OpenCutList
                 sheet_def.grouped_part_defs[box.data.id] = grouped_part_def
 
               end
-              # grouped_part[:count] += 1
               grouped_part_def.count += 1
             end
           }
@@ -240,7 +237,7 @@ module Ladb::OpenCutList
 
           }
 
-          cuttingdiagram2d_def.sheet_defs[grouped_sheet_key] = sheet_def
+          cuttingdiagram2d_def.sheet_defs[sheet_key] = sheet_def
 
         }
 

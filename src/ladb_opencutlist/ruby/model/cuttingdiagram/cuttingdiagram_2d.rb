@@ -119,7 +119,7 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
-      @total_length_cuts = _def.total_length_cuts
+      @total_length_cuts = DimensionUtils.instance.format_to_readable_length(_def.total_length_cuts)
 
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
       @grouped_parts = _def.grouped_part_defs.values.map { |part_def| part_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
