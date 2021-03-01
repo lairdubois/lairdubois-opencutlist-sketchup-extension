@@ -74,7 +74,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets global property rotatable = no grain.
     #
     def set_rotatable(rotatable)
-      @rotatable = rotatable
+      if [true, false].include?(rotatable)
+        @rotatable = rotatable
+      else
+        @rotatable = false
+      end
     end
 
     #
@@ -95,7 +99,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Makes a signature string of the options.
     #
     def signature
-      "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{"%5.3f" % @saw_kerf}/#{"%5.3f" % @trimsize}"
+      "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{"%5.2f" % @saw_kerf}/#{"%5.2f" % @trimsize}"
     end
 
     #

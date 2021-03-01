@@ -32,7 +32,7 @@ module Ladb::OpenCutList::BinPacking2D
       @length = length * 1.0
       @width = width * 1.0
 
-      raise(Packing2DError, 'Trying to initialize a box with zero or negative length/width!') if @length <= 0.0 || @width <= 0.0
+      raise(Packing2DError, "Trying to initialize a box with zero or negative length/width!") if @length <= 0.0 || @width <= 0.0
 
       @rotatable = rotatable
       @rotated = false
@@ -66,8 +66,7 @@ module Ladb::OpenCutList::BinPacking2D
     def set_position(x, y)
       @x = x
       @y = y
-      raise(Packing2DError, 'Trying to initialize a box with negative x or y!')  if @x < 0.0 || @y < 0.0
-
+      raise(Packing2DError, "Trying to initialize a box with negative x or y!") if @x < 0.0 || @y < 0.0
     end
 
     #
@@ -128,8 +127,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      "box : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, "\
-      "#{"%9.2f" % @length}, #{"%9.2f" % @width}], "\
+      "box : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, " \
+      "#{"%9.2f" % @length}, #{"%9.2f" % @width}], " \
       "rotated = #{@rotated}[rotatable=#{@rotatable}]"
     end
 
@@ -137,7 +136,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_octave
-      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], "\
+      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], " \
       "\"Facecolor\", blue); # box"
     end
   end

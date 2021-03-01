@@ -1,9 +1,9 @@
-﻿module Ladb::OpenCutList
+module Ladb::OpenCutList
   module BinPacking2D
 
     # Number of bytes of computer running code
     # from https://gist.github.com/pithyless/9738125
-    N_BYTES = [42].pack('i').size
+    N_BYTES = [42].pack("i").size
 
     # Number of bits.
     N_BITS = N_BYTES * 16
@@ -11,7 +11,7 @@
     # Largest integer on this platform. This is actually wrong since
     # ruby merged Fixnum and Bignum into Integer. We just want a rather
     # large number.
-    MAX_INT = 2**(N_BITS - 2) - 1
+    MAX_INT = 2 ** (N_BITS - 2) - 1
 
     # Working precision to compare decimal inches (this represents around
     # 0.00254 mm)
@@ -21,7 +21,7 @@
     MAX_TIME = 30
 
     # Number of best solution to carry over for each bin.
-    BEST_X_SMALL = 2
+    BEST_X_SMALL = 4
     BEST_X_LARGE = 2
 
     # Bin has illegal size <= 0, has been ignored.
@@ -47,7 +47,7 @@
     ERROR_INVALID_INPUT = 7
 
     # Type of standard bin.
-    BIN_TYPE_AUTO_GENERATED  = 0
+    BIN_TYPE_AUTO_GENERATED = 0
     # Type of leftover bin.
     BIN_TYPE_USER_DEFINED = 1
 
@@ -61,16 +61,12 @@
     # Sort by area decreasing.
     PRESORT_AREA_DECR = 3
     # Sort by perimeter decreasing.
-    PRESORT_LONGEST_SIDE_DECR = 4
+    PRESORT_PERIMETER_DECR = 4
     # Sort by longest side increasing.
-    PRESORT_SHORTEST_SIDE_DECR = 5
-    # Sort by alternating lengths.
-    PRESORT_PERIMETER_DECR = 6
+    PRESORT_LONGEST_SIDE_DECR = 5
     # Sort by shortest side increasing.
-    PRESORT_ALTERNATING_LENGTHS = 7
-    # Sort by alternating widths.
-    PRESORT_ALTERNATING_WIDTHS = 8
-    PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest', 'perimeter', 'alt_length', 'alt_width']
+    PRESORT_SHORTEST_SIDE_DECR = 6
+    PRESORT = ["input", "width", "length", "area", "longest", "shortest", "perimeter"]
 
     # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0
@@ -79,7 +75,7 @@
     SCORE_WORSTAREA_FIT = 3
     SCORE_WORSTSHORTSIDE_FIT = 4
     SCORE_WORSTLONGSIDE_FIT = 5
-    SCORE = [' best area', 'short side', 'long side', 'worst area', 'worst short side', 'worst long side']
+    SCORE = [" best area", "short side", "long side", "worst area", "worst short side", "worst long side"]
 
     # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
@@ -90,7 +86,7 @@
     SPLIT_VERTICAL_FIRST = 5
     SPLIT_SHORTER_AXIS = 6
     SPLIT_LONGER_AXIS = 7
-    SPLIT = ['shorter leftover', 'longer leftover', 'min. area', 'max. area', 'horizontal_first', 'vertical_first', 'shorter axis', 'longer axis']
+    SPLIT = ["shorter leftover", "longer leftover", "min. area", "max. area", "horizontal_first", "vertical_first", "shorter axis", "longer axis"]
 
     # Do not try to stack boxes.
     STACKING_NONE = 0
@@ -100,7 +96,7 @@
     STACKING_WIDTH = 2
     # Stack none, length and width.
     STACKING_ALL = 3
-    STACKING = ['do not care', 'lengthwise', 'widthwise', 'stacking all']
+    STACKING = ["do not care", "lengthwise", "widthwise", "stacking all"]
 
     # Orientation of a box. Better for sorting than boolean value.
     NOT_ROTATED = 0
@@ -109,7 +105,7 @@
     # Optimization levels.
     OPT_MEDIUM = 0
     OPT_ADVANCED = 1
-    OPTIMIZATION = ['light', 'advanced']
+    OPTIMIZATION = ["light", "advanced"]
     #
     # Exception raised in this module.
     #
@@ -120,7 +116,6 @@
     # Top level class (abstract class)
     #
     class Packing2D
-
       attr_accessor :options
 
       #
@@ -135,7 +130,7 @@
       # option debug == true or when called with parameter
       # debug = true.
       #
-      def dbg(msg, debug=false)
+      def dbg(msg, debug = false)
         # Assuming @options exists.
         if debug
           puts(msg)

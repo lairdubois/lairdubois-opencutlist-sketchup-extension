@@ -84,7 +84,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
         end
       else
-        raise(Packing2DError, 'SuperBox length is empty, cannot stack!')
+        raise(Packing2DError, "SuperBox length is empty, cannot stack!")
       end
       surplus_boxes
     end
@@ -118,7 +118,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
         end
       else
-        raise(Packing2DError, 'Superbox width is empty, cannot stack!')
+        raise(Packing2DError, "Superbox width is empty, cannot stack!")
       end
       surplus_boxes
     end
@@ -147,7 +147,7 @@ module Ladb::OpenCutList::BinPacking2D
           return @sboxes[0], nil
         end
       else
-        raise(Packing2DError, 'Trying to reduce a superbox with an unknown shape!')
+        raise(Packing2DError, "Trying to reduce a superbox with an unknown shape!")
       end
     end
 
@@ -172,7 +172,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length},"\
+      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}," \
       " width=#{@width}, count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
     end
   end
