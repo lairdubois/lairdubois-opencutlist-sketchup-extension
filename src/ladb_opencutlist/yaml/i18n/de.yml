@@ -556,7 +556,7 @@ tab:
       option_margin_right: Rechts
       option_margin_bottom: Unten
       option_margin_left: Links
-      option_spacing: Abstände
+      option_spacing: Zwischenabstände
       option_spacing_h: Horizontal
       option_spacing_v: Vertikal
       option_grid: Etiketten pro Seite
