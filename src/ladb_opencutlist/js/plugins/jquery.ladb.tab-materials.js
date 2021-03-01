@@ -167,7 +167,7 @@
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
                     volumic_mass: $inputs.inputVolumicMass.val(),
-                    std_prices: $inputs.inputVolumicMass.val()
+                    std_prices: $inputs.inputStdPrices.val()
                 }
             }, function (response) {
 

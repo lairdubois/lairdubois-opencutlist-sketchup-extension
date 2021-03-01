@@ -11,6 +11,7 @@ module Ladb::OpenCutList
 
       @total_mass = 0
       @total_cost = 0
+
     end
 
     # ---
@@ -29,6 +30,7 @@ module Ladb::OpenCutList
       super(cutlist_group)
 
       @total_volume = 0
+
     end
 
     # ---
@@ -48,6 +50,7 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_area = 0
+
     end
 
     # ---
@@ -67,6 +70,7 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_length = 0
+
     end
 
     # ---
@@ -85,6 +89,7 @@ module Ladb::OpenCutList
       super(cutlist_group)
 
       @total_length = 0
+
     end
 
     # ---
@@ -103,6 +108,7 @@ module Ladb::OpenCutList
       super(cutlist_group)
 
       @total_count = 0
+
     end
 
     # ---
