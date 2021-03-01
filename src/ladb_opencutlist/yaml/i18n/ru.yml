@@ -66,9 +66,9 @@ core:
     dev: |
       Вы используете **находящуюся в разработке** версию *OpenCutList*.
       Эта версия доступна только для тестирования.
-      Не рекомендуется использовать в производстве.
+      Использовать в производстве НЕ РЕКОМЕНДУЕТСЯ.
 
-      Чтобы сообщить об ошибке:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Найдена ошибка - сообщите мне:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
       Вы используете старую версию SketchUp ({{ sketchup_version }}). Этот плагин будет работать, но возможны некоторые ошибки.
       Чтобы в полной мере воспользоваться преимуществами OpenCutList, рекомендуем обновить по крайней мере до **SketchUp 2017**.
@@ -413,10 +413,10 @@ tab:
       options_material: Материал
       options_config: Конфигурация
       options_display: Просмотр
-      option_bar_folding: Групповая идентификация досок
+      option_bar_folding: Группировать одинаковые
       option_bar_folding_0: Нет
       option_bar_folding_1: Да
-      option_bar_folding_help: "Группирование досок, имеющих одинаковые детали и разрезы."
+      option_bar_folding_help: "Группирование деталей, имеющих одинаковые размеры и разрезы."
       option_sheet_folding: Групповая идентификация панелей
       option_sheet_folding_0: Нет
       option_sheet_folding_1: Да
@@ -435,8 +435,8 @@ tab:
       option_full_width_diagram_0: Нет
       option_full_width_diagram_1: Да
       option_full_width_diagram_help: "Если эта опция активирована, схемы раскроя отображаются по всей доступной ширине экрана. В противном случае их ширина определяется фиксированным коэффициентом масштабирования от фактического размера."
-      option_wrap_length: Длина обёртки доски
-      option_wrap_length_help: "Максимальная длина, после которой доска будет обернута в несколько слоёв."
+      option_wrap_length: Длина разбивки
+      option_wrap_length_help: "Расчетная длина участков детали для их схематического отображения на карте раскроя, "
       option_hide_cross: Обрезки
       option_hide_cross_0: Размеры и перекрестие
       option_hide_cross_1: Только размеры
