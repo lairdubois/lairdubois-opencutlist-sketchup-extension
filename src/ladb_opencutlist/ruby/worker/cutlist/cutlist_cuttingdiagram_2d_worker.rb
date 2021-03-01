@@ -17,7 +17,6 @@ module Ladb::OpenCutList
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
-      @grained = settings['grained']
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @optimization = settings['optimization'].to_i
@@ -48,7 +47,7 @@ module Ladb::OpenCutList
       options = BinPacking2D::Options.new
       options.set_base_length(@std_sheet_length)
       options.set_base_width(@std_sheet_width)
-      options.set_rotatable(!@grained)
+      options.set_rotatable(!group.material_grained)
       options.set_saw_kerf(@saw_kerf)
       options.set_trimsize(@trimming)
       options.set_optimization(@optimization)
