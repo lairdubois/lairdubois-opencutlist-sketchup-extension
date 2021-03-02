@@ -75,7 +75,11 @@ module Ladb::OpenCutList
 
           cuttingdiagram2d.summary.sheets.each do |cuttingdiagram2d_summary_sheet|
 
+            next unless cuttingdiagram2d_summary_sheet.is_used
+
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
+            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
             report_entry_def.sheet_defs << report_entry_sheet_def
 
           end
@@ -111,7 +115,11 @@ module Ladb::OpenCutList
 
           cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
 
+            next unless cuttingdiagram1d_summary_bar.is_used
+
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
             report_entry_def.bar_defs << report_entry_bar_def
 
           end
