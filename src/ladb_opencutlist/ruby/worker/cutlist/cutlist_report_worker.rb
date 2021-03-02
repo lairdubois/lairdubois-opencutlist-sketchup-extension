@@ -31,7 +31,6 @@ module Ladb::OpenCutList
 
         cutlist_group = @cutlist_groups[@cutlist_groups.count - @remaining_step - 1]
         report_group_def = @report_def.group_defs[cutlist_group.material_type]
-        report_group_def.id = cutlist_group.id
         report_entry_def = nil
 
         case cutlist_group.material_type
