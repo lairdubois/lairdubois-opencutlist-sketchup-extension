@@ -1,4 +1,4 @@
-﻿module Ladb::OpenCutList::BinPacking2D
+module Ladb::OpenCutList::BinPacking2D
 
   #
   # Implements a subdivision of the bin by guillotine cuts.
@@ -95,7 +95,6 @@
     # Adapted score for box using selected heuristic.
     #
     def score(leftover_index, box)
-
       s = []
       s1 = heuristic_score(box.length, box.width)
       if s1 < MAX_INT
@@ -142,7 +141,7 @@
       when SPLIT_VERTICAL_FIRST
         false
       else
-        raise(Packing2DError, 'Split heuristic not implemented in bin.select_horizontal_first!')
+        raise(Packing2DError, "Split heuristic not implemented in bin.select_horizontal_first!")
       end
     end
 
@@ -177,7 +176,7 @@
       end
 
       # Right leftover.
-      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level+1, @options)
+      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level + 1, @options)
       new_leftovers << lr
 
       # If the Box is a Superbox, unmake it!
@@ -192,7 +191,6 @@
     # Returns the leftovers, the cuts and the unpacked boxes.
     #
     def split_vertical_first(x, y, box = nil)
-
       if x > @x + @length + EPS || y > @y + @width + EPS
         puts("x = #{x}, bin x = #{@x}, length = #{@length}, y = #{y}, bin y = #{@y} width = #{@width}")
         raise(Packing2DError, "Splitting outside of this leftover in split_vertical_first! #{@options.signature}")
@@ -218,7 +216,7 @@
       end
 
       # Bottom leftover.
-      lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level+1, @options)
+      lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level + 1, @options)
       new_leftovers << lb
 
       # Unmake it if a Superbox, does nothing if box.nil?
@@ -243,7 +241,7 @@
           single_box.set_position(sbox.x, sbox.y)
           unpacked_boxes << single_box
         elsif (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
-             (@options.stacking == STACKING_WIDTH && sbox.rotated)
+              (@options.stacking == STACKING_WIDTH && sbox.rotated)
           top_box = sbox.sboxes.shift
           top_box.set_position(sbox.x, sbox.y)
           offset = sbox.x + top_box.length
@@ -272,7 +270,7 @@
       elsif sbox.is_a?(Box)
         unpacked_boxes << sbox
       else
-        raise(Packing2DError, 'Unpacking weird stuff in bin.unmake_superbox!')
+        raise(Packing2DError, "Unpacking weird stuff in bin.unmake_superbox!")
       end
       [unpacked_boxes, new_cuts]
     end
@@ -281,8 +279,8 @@
     # Debugging!
     #
     def to_str
-      s = "lft : #{'%5d' % object_id} [#{'%9.2f' % @x}, #{'%9.2f' % @y}, #{'%9.2f' % @length}, #{'%9.2f' % @width}], "
-      s + "lvl = #{'%3d' % @level}, area = #{'%12.2f' % area()}"
+      s = "lft : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, #{"%9.2f" % @length}, #{"%9.2f" % @width}], "
+      s + "lvl = #{"%3d" % @level}, area = #{"%12.2f" % area()}"
     end
 
     #

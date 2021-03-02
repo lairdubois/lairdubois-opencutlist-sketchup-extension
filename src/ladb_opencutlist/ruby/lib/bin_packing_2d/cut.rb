@@ -84,8 +84,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def to_str
       dir = @is_horizontal ? "H" : "V"
-      "cut : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, "\
-      "#{"%9.2f" % @length}], #{dir}, #{"%3d" % @level}, #{@is_through}, "\
+      "cut : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, " \
+      "#{"%9.2f" % @length}], #{dir}, #{"%3d" % @level}, #{@is_through}, " \
       " #{@is_final}]"
     end
 
@@ -95,10 +95,10 @@ module Ladb::OpenCutList::BinPacking2D
     def to_octave
       linewidth = 2
       if @is_horizontal
-        "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", "\
+        "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", " \
         "red, \"linewidth\", #{linewidth}) # horizontal cut"
       else
-        "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", "\
+        "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", " \
         "red,  \"linewidth\", #{linewidth}) # vertical cut"
       end
     end

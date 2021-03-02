@@ -1,13 +1,12 @@
-﻿module Ladb::OpenCutList::BinPacking2D
-
-  require_relative 'packing2d'
-  require_relative 'options'
-  require_relative 'box'
-  require_relative 'superbox'
-  require_relative 'leftover'
-  require_relative 'bin'
-  require_relative 'cut'
-  require_relative 'packer'
+module Ladb::OpenCutList::BinPacking2D
+  require_relative "packing2d"
+  require_relative "options"
+  require_relative "box"
+  require_relative "superbox"
+  require_relative "leftover"
+  require_relative "bin"
+  require_relative "cut"
+  require_relative "packer"
 
   #
   # Error used by custom Timer when execution of algorithm
@@ -51,6 +50,8 @@
 
       @max_length_bin = 0
       @max_width_bin = 0
+
+      @nb_best_selection = BEST_X_LARGE
 
       @warnings = []
       @errors = []
@@ -99,7 +100,7 @@
     # Prints total time used since start_timer.
     #
     def stop_timer(signature_size, msg)
-      dbg("-> end of packing(s) nb = #{signature_size}, time = #{'%6.4f' % (Time.now - @start_time)} s, " + msg)
+      dbg("-> end of packing(s) nb = #{signature_size}, time = #{"%6.4f" % (Time.now - @start_time)} s, " + msg)
     end
 
     #
@@ -112,10 +113,10 @@
       score = (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a # 6
       split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 8
       stacking = if @options.stacking_pref <= STACKING_WIDTH
-                   [@options.stacking_pref]
-                 else
-                   (STACKING_NONE..STACKING_WIDTH).to_a
-                 end
+          [@options.stacking_pref]
+        else
+          (STACKING_NONE..STACKING_WIDTH).to_a
+        end
       presort.product(score, split, stacking)
     end
 
@@ -125,70 +126,85 @@
     def make_signatures_medium
       # Signature size will be the product of all possibilities
       # 4 * 4 * 4 = 64 => 64 * 1 or 3, Max 192 possibilities
-      presort = (PRESORT_WIDTH_DECR..PRESORT_PERIMETER_DECR).to_a # 3
+      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # 3
       score = (SCORE_BESTAREA_FIT..SCORE_WORSTAREA_FIT).to_a # 4
       split = (SPLIT_MINIMIZE_AREA..SPLIT_VERTICAL_FIRST).to_a # 4
       stacking = if @options.stacking_pref <= STACKING_WIDTH
-                   [@options.stacking_pref]
-                 else
-                   (STACKING_NONE..STACKING_WIDTH).to_a
-                 end
+          [@options.stacking_pref]
+        else
+          (STACKING_NONE..STACKING_WIDTH).to_a
+        end
       presort.product(score, split, stacking)
     end
 
     #
-    # Prints packings
+    # Prints intermediate packings.
     #
-    def print_packers(packers, level = 0)
+    def print_intermediate_packers(packers, level = 0)
       return unless @options.debug
       return if packers.nil?
 
-      packers.each do |packer|
-        print_packers([packer.previous_packer], level + 1) unless packer.previous_packer.nil?
+      packers.each_with_index do |packer, i|
+        print_intermediate_packers([packer.previous_packer], level + 1) unless packer.previous_packer.nil?
         stat = packer.stat
         gstat = packer.gstat
         next if stat.nil?
-        # "#{'%4.2f' % gstat[:total_compactness]} "\
 
-        s = "#{'%2d' % level}  "\
-            "#{'%3d' % gstat[:nb_packed_bins]} "\
-            "#{'%12.2f' % stat[:area_unplaced_boxes]} "\
-            "#{'%4.2f' % stat[:efficiency]}/"\
-            "#{'%4.2f' % stat[:compactness]}"\
-            "#{'%3d' % stat[:nb_cuts]} "\
-            "#{'%11.2f' % gstat[:all_largest_area]} "\
-            "#{'%11.2f' % stat[:length_cuts]} "\
-            "#{'%4d' % stat[:nb_through_cuts]} "\
-            "#{'%6d' % stat[:nb_leftovers]}"\
-            "#{'%22s' % stat[:signature]}"\
-            "#{'%4d' % gstat[:rank]}/#{'%4d' % gstat[:overall_rank]}"
+        s = "#{'%2d' % level}/#{'%4d' % i}  " \
+            "#{'%12.2f' % gstat[:area_unplaced_boxes]} " \
+            "#{'%4.2f' % stat[:efficiency]}" \
+            "#{'%5d' % stat[:nb_cuts]} " \
+            "#{'%4d' % stat[:nb_h_through_cuts]} " \
+            "#{'%4d' % stat[:nb_v_through_cuts]} " \
+            "#{'%11.2f' % stat[:outer_leftover_area]} " \
+            "#{'%11.2f' % stat[:length_cuts]} " \
+            "#{'%6d' % stat[:nb_leftovers]} " \
+            "#{'%7.2f' % stat[:l_measure]}" \
+            "#{'%22s' % stat[:signature]}"
         dbg(s, true)
       end
-      dbg('    bins  unplaced^2 eff/compact  #cuts   leftover    cutlength   #thru #leftovers '\
-        '         signature                rank/sum', true) if level == 0
+      dbg(" packer     unplacedA   eff  #cuts thru h/v      leftA        cutL  #left " \
+      "l_meas.             signature", true) if level == 0
     end
 
     #
-    # Finds the rank of a packing, given a criterion and whether
-    # min or max is requested.
+    # Prints final packings.
     #
-    def update_ranking_by(packings, criterion, find_min)
-      if find_min
-        packings.sort_by! { |p| p.stat[criterion] }
-      else
-        packings.sort_by! { |p| -p.stat[criterion] }
-      end
+    def print_final_packers(packers)
+      return unless @options.debug
+      return if packers.nil?
+      packers.each_with_index do |packer, i|
+        gstat = packer.gstat
+        next if gstat.nil?
 
-      rank = 1
-      last_n = nil
-      packings.each do |p|
-        last_n = p if last_n.nil?
-        if (p.stat[criterion] - last_n.stat[criterion]).abs > EPS
-          last_n = p
-          rank += 1
-        end
-        p.gstat[:rank] += rank
+        s = "final /#{'%2d' % i}  " \
+            "#{'%6d' % gstat[:nb_packed_bins]} " \
+            "#{'%6d' % gstat[:nb_unused_bins]} " \
+            "#{'%6d' % gstat[:nb_invalid_bins]} " \
+            "#{'%6d' % gstat[:nb_packed_boxes]} " \
+            "#{'%6d' % gstat[:nb_invalid_boxes]} " \
+            "#{'%6d' % gstat[:nb_unplaced_boxes]} " \
+            "#{'%6d' % gstat[:nb_leftovers]} " \
+            "#{'%12.2f' % gstat[:all_largest_area]} " \
+            "#{'%6d' % gstat[:total_nb_cuts]} " \
+            "#{'%6d' % gstat[:nb_through_cuts]}"
+        dbg(s, true)
       end
+      dbg("   packer    packed/unused/inv.   packed/unused/inv.  #left " \
+          "   leftoverA  #cuts  #thru")
+    end
+
+    #
+    # Selects the best packer among a list of potential packers.
+    # This step is done at the end of packing to select the best packing
+    # from a short list of packers. Only uses global statistics about the
+    # packers.
+    #
+    def select_best_packing(packers)
+      print_final_packers(packers)
+      return nil if packers.size == 0
+      # We have at least 1 packer, for now we don't select anything!
+      return packers.first if packers.size >= 1
     end
 
     #
@@ -196,42 +212,26 @@
     # criteria, the packing with the lowest sum of ranks is the
     # winner!
     #
-    def filter_best_x_packings(packers, best_x)
+    def select_best_x_packings(packers)
       packers = packers.compact
       return nil if packers.empty?
 
-      find_min = true
-      # If a packing can pack everything, then it is a potential winner!
-      # There may be more than one.
-      zero_left = packers.select { |p| p.stat[:area_unplaced_boxes] <= EPS }
+      zero_left = packers.select { |p| p.gstat[:area_unplaced_boxes] <= EPS }
       packers = zero_left unless zero_left.empty?
 
-      # All criteria are equal for now.
-      # Possible criteria
-      # update_ranking_by(packers, :l_measure, !find_min)
-      # update_ranking_by(packers, :nb_cuts, find_min)
-      # update_ranking_by(packers, :total_length_cuts, find_min)
-      # update_ranking_by(packers, :area_unplaced_boxes, find_min)
-      # update_ranking_by(packers, :all_largest_area, !find_min)
-      # update_ranking_by(packers, :nb_leftovers, find_min)
-      # update_ranking_by(packers, :efficiency, !find_min)
-
-      # Just use compactness as criteria, all others did not yield better results!
-      update_ranking_by(packers, :compactness, !find_min)
-
-      # Determine the overall winner, using the sum of all compactnesses.
-      # For a single bin, compactness and total_compactness are equal.
-      p = packers.group_by { |packer| packer.gstat[:total_compactness] }
-
+      # A Bin is well packed if it has a high efficiency, maybe not the highest.
+      # The l_measure is pretty much a signature of the packing.
+      p = packers.group_by { |packer| packer.stat[:l_measure] }
       best_packers = []
-      p.keys.sort.reverse[0..best_x-1].each do |key|
-        ranked = p[key].sort_by! { |packer| [-packer.gstat[:nb_through_cuts],
-          -packer.gstat[:all_largest_area], packer.gstat[:total_length_cuts]] }.first
-        ranked.gstat[:overall_rank] += ranked.gstat[:rank]
-        best_packers << ranked
+
+      # From each group, get the packing with the most horizontal and vertical
+      # through cuts and the largest.
+      p.keys.sort.each do |k|
+        p[k].sort_by! { |packer| [(packer.stat[:nb_h_through_cuts] + packer.stat[:nb_v_through_cuts]), packer.stat[:length_cuts]] }
+        best_packers << p[k].first
       end
-      best_packers.sort_by! { |b| b.gstat[:overall_rank] }
-      best_packers
+      print_intermediate_packers(best_packers)
+      best_packers[0...@nb_best_selection]
     end
 
     #
@@ -240,7 +240,7 @@
     # the attempted packings are given by the signatures.
     # Returns a list of packings.
     #
-    def pack_next(previous_packers, signatures)
+    def pack(previous_packers, signatures)
       packers = []
       if previous_packers.nil?
         packers = pack_next_bin(nil, signatures)
@@ -303,34 +303,35 @@
         @max_width_bin = @options.base_width - 2 * @options.trimsize
       end
 
-      if @bins.empty?
-          # If we have no Bins at all, add a Bin to start with.
-          new_bin = Bin.new(@options.base_length, @options.base_width, BIN_TYPE_AUTO_GENERATED, @options)
-          @next_bin_index = new_bin.set_index(@next_bin_index)
-          @bins << new_bin
-      else
-        # Offcuts (user defined bins) are used in increasing order of area.
-        @bins.sort_by! { |bin| [bin.length * bin.width] }
-        valid_bins = []
-        until @bins.empty?
-          bin = @bins.shift
-          valid = false
-          @boxes.each do |box|
-            if box.fits_into?(bin.length - 2 * @options.trimsize, bin.width - 2 * @options.trimsize)
-              valid = true
-              break
-            end
-          end
-          if valid
-            @max_length_bin = [@max_length_bin, bin.length - 2 * @options.trimsize].max
-            @max_width_bin = [@max_width_bin, bin.width - 2 * @options.trimsize].max
-            @next_bin_index = bin.set_index(@next_bin_index)
-            valid_bins << bin
-          else
-            @invalid_bins << bin
+      # Offcuts (user defined bins) are used in increasing order of area.
+      @bins.sort_by! { |bin| [bin.length * bin.width] }
+      valid_bins = []
+      until @bins.empty?
+        bin = @bins.shift
+        valid = false
+        @boxes.each do |box|
+          if box.fits_into?(bin.length - 2 * @options.trimsize, bin.width - 2 * @options.trimsize)
+            valid = true
+            break
           end
         end
-        @bins = valid_bins
+        if valid
+          @max_length_bin = [@max_length_bin, bin.length - 2 * @options.trimsize].max
+          @max_width_bin = [@max_width_bin, bin.width - 2 * @options.trimsize].max
+          @next_bin_index = bin.set_index(@next_bin_index)
+          valid_bins << bin
+        else
+          @invalid_bins << bin
+        end
+      end
+      @bins = valid_bins
+      if @bins.empty? && @options.base_length - 2 * @options.trimsize > EPS && @options.base_width - 2 * @options.trimsize > EPS
+        # If we have no Bins at all, add a Bin to start with.
+        new_bin = Bin.new(@options.base_length, @options.base_width, BIN_TYPE_AUTO_GENERATED, @options)
+        @next_bin_index = new_bin.set_index(@next_bin_index)
+        @max_length_bin = @options.base_length - 2 * @options.trimsize
+        @max_width_bin = @options.base_width - 2 * @options.trimsize
+        @bins << new_bin
       end
       @boxes, @invalid_boxes = @boxes.partition { |box| box.fits_into?(@max_length_bin, @max_width_bin) }
       !@bins.empty? && !@boxes.empty?
@@ -341,8 +342,6 @@
     # Returns best packing by selecting best packing at each stage.
     #
     def run
-      best_x = nil
-
       return nil, @errors[0] if !valid_input? && @errors.size > 0
 
       if !bins_available?
@@ -350,13 +349,14 @@
         return nil, ERROR_NO_BIN
       end
 
+      @options.set_debug(false)
+      
       case @options.optimization
       when OPT_MEDIUM
         signatures = make_signatures_medium
-        best_x = BEST_X_SMALL
+        @nb_best_selection = BEST_X_SMALL if @boxes.size < 50
       when OPT_ADVANCED
         signatures = make_signatures_large
-        best_x = BEST_X_LARGE
       else
         @errors << ERROR_INVALID_INPUT
         return [nil, ERROR_INVALID_INPUT]
@@ -364,29 +364,27 @@
 
       # Use this to run exactly one signature
       # Parameters are presort, score, split, stacking
-      # signatures = [[1,0,2,0]]#, [3,0,2,0]]
+      # signatures = [[1,1,3,1]]
 
       # Not a super precise way of measuring compute time.
       start_timer(signatures.size)
 
       begin
-
-        packers = pack_next(nil, signatures)
+        packers = pack(nil, signatures)
         if packers.empty?
           @errors << ERROR_NO_PLACEMENT_POSSIBLE
           return [nil, ERROR_NO_PLACEMENT_POSSIBLE]
         end
 
         while !packings_done?(packers)
-          packers = filter_best_x_packings(packers, best_x)
+          packers = select_best_x_packings(packers)
           last_packers = packers
-          packers = pack_next(packers, signatures)
+          packers = pack(packers, signatures)
         end
 
         if !packers.nil? && !packers.empty?
-          last_packers = filter_best_x_packings(packers, best_x)
+          last_packers = select_best_x_packings(packers)
         end
-
       rescue TimeoutError => e
         puts ("Rescued in PackEngine: #{e.inspect}")
         # TODO: packengine timeout error, we should return the best solution found so far
@@ -408,10 +406,11 @@
           packer.add_invalid_bins(@invalid_bins)
         end
       end
+      opt = select_best_packing(last_packers)
       # last_packings is an array of 1-3 packings! depending on the BEST_X in options.rb.
       # For now, just returning the "best" one.
       # WARNING: Packers, essentially a list of packed Bins containers, are NOT sorted by efficiency!
-      [last_packers[0], ERROR_NONE]
+      [opt, ERROR_NONE]
     end
   end
 end

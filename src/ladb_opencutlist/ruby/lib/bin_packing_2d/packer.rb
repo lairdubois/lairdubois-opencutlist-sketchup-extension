@@ -73,14 +73,11 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_unused_bins] = 0
       @gstat[:nb_invalid_bins] = 0
       @gstat[:nb_leftovers] = 0
-      @gstat[:total_compactness] = 0
       @gstat[:total_length_cuts] = 0
       @gstat[:total_nb_cuts] = 0
       @gstat[:nb_through_cuts] = 0
       @gstat[:all_largest_area] = 0
       @gstat[:area_unplaced_boxes] = 0
-      @gstat[:rank] = 0
-      @gstat[:overall_rank] = 0
     end
 
     #
@@ -116,19 +113,19 @@ module Ladb::OpenCutList::BinPacking2D
 
       # TODO: may not be necessary!
       @previous_packer.invalid_boxes.each do |box|
-        @invalid_boxes << box
+        new_box = Box.new(box.length, box.width, box.rotatable, box.data)
+        @invalid_boxes << new_box
       end
 
       # Update start statistics for this packer
       @gstat[:nb_input_boxes] = @previous_packer.gstat[:nb_input_boxes]
       @gstat[:nb_leftovers] = @previous_packer.gstat[:nb_leftovers]
       @gstat[:nb_packed_boxes] = @previous_packer.gstat[:nb_packed_boxes]
-      @gstat[:total_compactness] = @previous_packer.gstat[:total_compactness]
+      #@gstat[:total_compactness] = @previous_packer.gstat[:total_compactness]
       @gstat[:total_length_cuts] = @previous_packer.gstat[:total_length_cuts]
       @gstat[:total_nb_cuts] = @previous_packer.gstat[:total_nb_cuts]
       @gstat[:nb_through_cuts] = @previous_packer.gstat[:nb_through_cuts]
-      @gstat[:largest_leftover_area] = @previous_packer.gstat[:largest_leftover_area]
-      @gstat[:overall_rank] += @previous_packer.gstat[:overall_rank]
+      @gstat[:all_largest_area] = @previous_packer.gstat[:all_largest_area]
     end
 
     #
@@ -166,7 +163,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns true if standard Bins can be infinitely added.
     #
     def bins_can_be_added?
-      (@options.base_length > EPS && @options.base_width > EPS) || !@bins.empty?
+      (@options.base_length - 2 * @options.trimsize > EPS && @options.base_width - 2 * @options.trimsize > EPS) || !@bins.empty?
     end
 
     #
@@ -179,13 +176,13 @@ module Ladb::OpenCutList::BinPacking2D
       when PRESORT_LENGTH_DECR
         @boxes.sort_by! { |box| [-box.length, -box.width] }
       when PRESORT_AREA_DECR
-        @boxes.sort_by! { |box| [-box.width * box.length] }
+        @boxes.sort_by! { |box| [-box.width * box.length, -box.length] }
       when PRESORT_LONGEST_SIDE_DECR
-        @boxes.sort_by! { |box| [-[box.length, box.width].max] }
+        @boxes.sort_by! { |box| [-[box.length, box.width].max, [box.length, box.width].max] }
       when PRESORT_SHORTEST_SIDE_DECR
-        @boxes.sort_by! { |box| [-[box.length, box.width].min] }
+        @boxes.sort_by! { |box| [-[box.length, box.width].min, [box.length, box.width].max] }
       when PRESORT_PERIMETER_DECR
-        @boxes.sort_by! { |box| [-box.length - box.width] }
+        @boxes.sort_by! { |box| [-box.length - box.width, -box.length] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
         wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
@@ -213,7 +210,7 @@ module Ladb::OpenCutList::BinPacking2D
           @boxes = ll.zip(ls).flatten!.compact
         end
       else
-        raise(Packing2DError, 'Presorting option not available in packer.sort_boxes!')
+        raise(Packing2DError, "Presorting option not available in packer.sort_boxes!")
       end
     end
 
@@ -312,6 +309,7 @@ module Ladb::OpenCutList::BinPacking2D
         make_superboxes_width
       end
       sort_boxes
+
       true
     end
 
@@ -346,7 +344,6 @@ module Ladb::OpenCutList::BinPacking2D
         current_bin = get_next_bin
         # Packing cannot proceed, return with what we have.
         return ERROR_NO_PLACEMENT_POSSIBLE if current_bin.nil?
-
         # Partition the Boxes into @boxes and @invalid_boxes, those that cannot
         # fit into this bin, also makes SuperBoxes if required.
         if can_be_packed?(current_bin)
@@ -377,7 +374,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
           @boxes += @invalid_boxes
         else
-          # Silently drop the last Bin which was not used.
+          # Silently drop the last Bin, not used.
           return ERROR_NO_BIN
         end
       end
@@ -457,19 +454,24 @@ module Ladb::OpenCutList::BinPacking2D
       current_bin.summarize
       # Get statistics from Bin, add our own.
       @stat = current_bin.stat
-      @stat[:area_unplaced_boxes] = @unplaced_boxes.inject(0) { |sum, box| sum + box.area }
+      @gstat[:area_unplaced_boxes] = @unplaced_boxes.inject(0) { |sum, box| sum + box.area }
       @gstat[:nb_unplaced_boxes] = @unplaced_boxes.size
       @gstat[:nb_invalid_boxes] += @invalid_boxes.size
       @gstat[:nb_packed_bins] = @packed_bins.size
-      @gstat[:nb_leftovers] += current_bin.stat[:nb_leftovers]
-      @gstat[:nb_packed_boxes] += current_bin.boxes.size
       @gstat[:nb_unused_bins] = @unused_bins.size
+      @gstat[:nb_leftovers] += current_bin.stat[:nb_leftovers]
+      @gstat[:nb_packed_boxes] += current_bin.stat[:nb_packed_boxes]
       @gstat[:nb_invalid_bins] += @invalid_bins.size
-      @gstat[:total_compactness] += @stat[:compactness]
       @gstat[:total_length_cuts] += @stat[:length_cuts]
       @gstat[:total_nb_cuts] += @stat[:nb_cuts]
-      @gstat[:nb_through_cuts] += @stat[:nb_through_cuts]
-      @gstat[:all_largest_area] += current_bin.stat[:largest_leftover_area]
+      @gstat[:nb_through_cuts] += @stat[:nb_h_through_cuts] + @stat[:nb_v_through_cuts]
+      @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
+    end
+
+    def all_signatures
+      @packed_bins.each do |bin|
+        puts("#{bin.stat[:signature]}, L=#{bin.length}, W=#{bin.width}")
+      end
     end
 
     #
@@ -489,18 +491,18 @@ module Ladb::OpenCutList::BinPacking2D
 
       dbg("-> Packing Summary")
       @packed_bins.each do |bin|
-        dbg("\n   single packer stats")
+        dbg("\n   single packer stats #{bin.index}")
         dbg("    nb_packed_boxes            #{"%5d" % bin.stat[:nb_packed_boxes]}")
-        dbg("    compactness               #{"%6.2f" % bin.stat[:compactness]}")
         dbg("    efficiency                #{"%6.2f" % bin.stat[:efficiency]}")
         dbg("    nb_leftovers               #{"%5d" % bin.stat[:nb_leftovers]}")
-        dbg("    largest_leftover    #{"%12.2f" % bin.stat[:largest_leftover_area]}")
+        dbg("    outer leftover      #{"%12.2f" % bin.stat[:outer_leftover_area]}")
         dbg("    length_cuts         #{"%12.2f" % bin.stat[:length_cuts]}")
         dbg("    nb_cuts                    #{"%5d" % bin.stat[:nb_cuts]}")
-        dbg("    nb_through_cuts            #{"%5d" % bin.stat[:nb_through_cuts]}")
+        dbg("    nb_h_through_cuts          #{"%5d" % bin.stat[:nb_h_through_cuts]}")
+        dbg("    nb_v_through_cuts          #{"%5d" % bin.stat[:nb_v_through_cuts]}")
 
         dbg("\n")
-        # bin.to_term
+        bin.to_term
       end
 
       dbg("\n   general stats (accumulated)")
@@ -512,11 +514,11 @@ module Ladb::OpenCutList::BinPacking2D
       dbg("    nb_unused_bins             #{"%5d" % @gstat[:nb_unused_bins]}")
       dbg("    nb_invalid_bins            #{"%5d" % @gstat[:nb_invalid_bins]}")
       dbg("    nb_leftovers               #{"%5d" % @gstat[:nb_leftovers]}")
-      dbg("    largest_leftover    #{"%12.2f" % @gstat[:largest_leftover_area]}")
+      dbg("    all_largest_area    #{"%12.2f" % @gstat[:all_largest_area]}")
       dbg("    total_length_cuts   #{"%12.2f" % @gstat[:total_length_cuts]}")
       dbg("    total_nb_cuts              #{"%5d" % @gstat[:total_nb_cuts]}")
       dbg("    nb_through_cuts            #{"%5d" % @gstat[:nb_through_cuts]}")
-      dbg("    avg compactness           #{"%6.2f" % (@gstat[:total_compactness] / @gstat[:nb_packed_bins])}")
+      #dbg("    avg compactness           #{"%6.2f" % (@gstat[:total_compactness] / @gstat[:nb_packed_bins])}")
 
       dbg("\n   unused bins")
       @unused_bins.each do |bin|

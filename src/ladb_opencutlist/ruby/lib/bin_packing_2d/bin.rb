@@ -52,17 +52,22 @@ module Ladb::OpenCutList::BinPacking2D
       @bounding_box_done = false
 
       @stat = {}
-      @stat[:net_area] = 0
-      @stat[:used_area] = 0
-      @stat[:bbox_area] = 0
-      @stat[:nb_packed_boxes] = 0
-      @stat[:compactness] = 0
-      @stat[:efficiency] = 0
-      @stat[:nb_leftovers] = 0
-      @stat[:largest_leftover_area] = 0
+      @stat[:net_area] = 0                   # area of the bin minus trimming
+      @stat[:used_area] = 0                  # area of all packed boxes
+      @stat[:bbox_area] = 0                  # area of the bounding box
+      @stat[:efficiency] = 0                 # used_area/net_area
+
+      @stat[:nb_packed_boxes] = 0            # nb of packed boxes in this bin
+      @stat[:nb_leftovers] = 0               # nb of leftovers excluding outer leftovers
+      @stat[:outer_leftover_area] = 0        # area of leftover outside of bounding box
+
       @stat[:nb_cuts] = 0
+      @stat[:nb_h_through_cuts] = 0
+      @stat[:nb_v_through_cuts] = 0
+
       @stat[:length_cuts] = 0
-      @stat[:nb_through_cuts] = 0
+
+      @stat[:l_measure] = 0
       @stat[:signature] = "not packed"
       @stat[:rank] = 0
     end
@@ -79,11 +84,19 @@ module Ladb::OpenCutList::BinPacking2D
     # Remembers signature for packing.
     #
     def keep_signature(signature)
-      @stat[:signature] = "[#{"%9.2f" % @length},#{"%9.2f" % @width}]-" + signature
+      @stat[:signature] = signature # "[#{"%9.2f" % @length},#{"%9.2f" % @width}]-" + signature
     end
 
     def signature_to_readable
+=begin
       if matches = @stat[:signature].match(/^(\[.*\])-(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
+        "#{PRESORT[matches[2].to_i]} - #{SCORE[matches[3].to_i]} - " \
+        "#{SPLIT[matches[4].to_i]} - #{STACKING[matches[5].to_i]}"
+      else
+        "no match found"
+      end
+=end
+      if matches = @stat[:signature].match(/^(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
         "#{PRESORT[matches[2].to_i]} - #{SCORE[matches[3].to_i]} - " \
         "#{SPLIT[matches[4].to_i]} - #{STACKING[matches[5].to_i]}"
       else
@@ -209,40 +222,38 @@ module Ladb::OpenCutList::BinPacking2D
     # Collects information about this Bin's packing.
     #
     def summarize
-      # Compute additional through cuts.
+      # Compute additional through cuts (primary cuts into the bounding box).
       h_cuts = @cuts_h.select { |cut|
         (cut.x - @options.trimsize).abs <= EPS &&
-          (@options.trimsize + cut.length - @max_x).abs <= EPS
+          (@options.trimsize + cut.length - @max_x).abs <= EPS &&
+          cut.y < @max_y
       }
       h_cuts.map(&:mark_through)
       v_cuts = @cuts_v.select { |cut|
         (cut.y - @options.trimsize).abs <= EPS &&
-          (@options.trimsize + cut.length - @max_y).abs <= EPS
+          (@options.trimsize + cut.length - @max_y).abs <= EPS &&
+          cut.x < @max_x
       }
       v_cuts.map(&:mark_through)
+
+      @stat[:nb_h_through_cuts] = h_cuts.size unless h_cuts.nil?
+      @stat[:nb_v_through_cuts] = v_cuts.size unless v_cuts.nil?
 
       @stat[:nb_cuts] = @cuts_h.size + @cuts_v.size
       @stat[:length_cuts] = @cuts_h.inject(0) { |sum, cut| sum + cut.length } +
                             @cuts_v.inject(0) { |sum, cut| sum + cut.length }
 
-      @stat[:nb_through_cuts] = h_cuts.size() + v_cuts.size() - 1 # not counting one of the two outer cuts
-
       @stat[:nb_packed_boxes] = @boxes.size
       @stat[:nb_leftovers] = @leftovers.size
       @stat[:bbox_area] = (@max_x - @options.trimsize) * (@max_y - @options.trimsize)
 
-      # Got the idea from here:
-      # https://repository.asu.edu/attachments/111230/content/Li_Goodchild_Church_CompactnessIndex.pdf
-      # In practice simple ratio between used_area and bounding box area.
-      if @stat[:bbox_area] > EPS
-        @stat[:compactness] = (@stat[:used_area] * 100.0 / @stat[:bbox_area]).round(3)
-      else
-        @stat[:compactness] = MAX_INT
-      end
-
       @leftovers.each do |leftover|
-        @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
+        # Compute l_measure over leftovers inside the bounding box only!
+        if leftover.x + leftover.length < @max_x + EPS && leftover.y + leftover.width < @max_y + EPS
+          @stat[:l_measure] += (@max_x - leftover.x + leftover.length + @max_y - leftover.y + leftover.width) * leftover.area
+        end
       end
+      @stat[:l_measure] = @stat[:l_measure] / @stat[:bbox_area]
 
       @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(3)
     end
@@ -292,7 +303,12 @@ module Ladb::OpenCutList::BinPacking2D
       # have been produced by the bounding box cuts.
       @leftovers, _ = @leftovers.partition { |leftover| leftover.resize_to(@max_x, @max_y) }
 
-      new_leftovers.each { |leftover| add_leftover(leftover) }
+      new_leftovers.each do |leftover|
+        add_leftover(leftover)
+        if finalbb && leftover.useable?
+          @stat[:outer_leftover_area] += leftover.area
+        end
+      end
       new_cuts.each { |cut| add_cut(cut) }
 
       @bounding_box_done = true
