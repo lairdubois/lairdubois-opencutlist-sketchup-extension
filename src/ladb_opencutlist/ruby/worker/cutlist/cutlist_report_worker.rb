@@ -30,6 +30,7 @@ module Ladb::OpenCutList
 
         cutlist_group = @cutlist.groups[@cutlist.groups.count - @remaining_step - 1]
         report_group_def = @report_def.group_defs[cutlist_group.material_type]
+        report_group_def.id = cutlist_group.id
         report_entry_def = nil
 
         case cutlist_group.material_type
@@ -37,8 +38,8 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_SOLID_WOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.volumic_mass.to_f
-          std_prices = material_attributes.std_prices.to_f
+          volumic_mass = _m3_to_inch3(material_attributes.volumic_mass.to_f)
+          std_prices = _m3_to_inch3(material_attributes.std_prices.to_f)
 
           report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
           report_entry_def.total_volume = cutlist_group.def.total_cutting_volume
@@ -51,8 +52,8 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_SHEET_GOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.volumic_mass.to_f
-          std_prices = material_attributes.std_prices.to_f
+          volumic_mass = _m3_to_inch3(material_attributes.volumic_mass.to_f)
+          std_prices = _m2_to_inch2(material_attributes.std_prices.to_f)
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -71,7 +72,7 @@ module Ladb::OpenCutList
           report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
           report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
           report_entry_def.total_mass = report_entry_def.total_area * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
-          report_entry_def.total_cost = report_entry_def.total_area * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
+          report_entry_def.total_cost = report_entry_def.total_area * std_prices unless std_prices == 0
 
           cuttingdiagram2d.summary.sheets.each do |cuttingdiagram2d_summary_sheet|
 
@@ -79,7 +80,7 @@ module Ladb::OpenCutList
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
-            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * std_prices unless std_prices == 0
             report_entry_def.sheet_defs << report_entry_sheet_def
 
           end
@@ -91,8 +92,8 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_DIMENSIONAL
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.volumic_mass.to_f
-          std_prices = material_attributes.std_prices.to_f
+          volumic_mass = _m3_to_inch3(material_attributes.volumic_mass.to_f)
+          std_prices = _m_to_inch(material_attributes.std_prices.to_f)
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -111,7 +112,7 @@ module Ladb::OpenCutList
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
           report_entry_def.total_mass = report_entry_def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
-          report_entry_def.total_cost = report_entry_def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
+          report_entry_def.total_cost = report_entry_def.total_length * std_prices unless std_prices == 0
 
           cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
 
@@ -119,7 +120,7 @@ module Ladb::OpenCutList
 
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
             report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
-            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * std_prices unless std_prices == 0
             report_entry_def.bar_defs << report_entry_bar_def
 
           end
@@ -131,8 +132,8 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_EDGE
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.volumic_mass.to_f
-          std_prices = material_attributes.std_prices.to_f
+          volumic_mass = _m3_to_inch3(material_attributes.volumic_mass.to_f)
+          std_prices = _m_to_inch(material_attributes.std_prices.to_f)
 
           report_entry_def = EdgeReportEntryDef.new(cutlist_group)
           report_entry_def.total_length = cutlist_group.def.total_cutting_length
@@ -247,6 +248,22 @@ module Ladb::OpenCutList
         report_entry_def.total_cost = report_entry_def.total_cost + report_entry_part_def.total_cost
       end
 
+    end
+
+    INCH_TO_M = 1.to_m
+    INCH2_TO_M2 = INCH_TO_M * INCH_TO_M
+    INCH3_TO_M3 = INCH2_TO_M2 * INCH_TO_M
+
+    def _m3_to_inch3(f)
+      f * INCH3_TO_M3
+    end
+
+    def _m2_to_inch2(f)
+      f * INCH2_TO_M2
+    end
+
+    def _m_to_inch(f)
+      f * INCH_TO_M
     end
 
   end

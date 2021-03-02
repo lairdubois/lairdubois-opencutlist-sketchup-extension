@@ -20,11 +20,12 @@ module Ladb::OpenCutList
 
   class AbstractReportEntry < AbstractReportItem
 
-    attr_reader :material_name, :material_display_name, :material_color, :material_type, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
+    attr_reader :id, :material_name, :material_display_name, :material_color, :material_type, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
 
     def initialize(_def)
       super(_def)
 
+      @id = _def.cutlist_group.id
       @material_name = _def.cutlist_group.material_name
       @material_display_name = _def.cutlist_group.material_display_name
       @material_color = _def.cutlist_group.material_color

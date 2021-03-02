@@ -780,6 +780,17 @@
                                         }
                                         $(this).blur();
                                     });
+                                    $('a.ladb-btn-folding-toggle-part', $slide).on('click', function () {
+                                        $(this).blur();
+                                        var $part = $(this).parents('.ladb-cutlist-row-folder');
+                                        that.toggleFoldingPart($part);
+                                        return false;
+                                    });
+                                    $('.ladb-cutlist-row', $slide).on('click', function () {
+                                        $(this).blur();
+                                        $('.ladb-click-tool', $(this)).first().click();
+                                        return false;
+                                    });
 
                                     that.dialog.finishProgress();
 
@@ -1584,7 +1595,7 @@
         $i.removeClass('ladb-opencutlist-icon-arrow-down');
 
         // Show children
-        $('tr[data-folder-id=' + partId + ']', this.$page).removeClass('hide');
+        $part.siblings('tr[data-folder-id=' + partId + ']').removeClass('hide');
 
     };
 
@@ -1597,7 +1608,7 @@
         $i.removeClass('ladb-opencutlist-icon-arrow-up');
 
         // Hide children
-        $('tr[data-folder-id=' + partId + ']', this.$page).addClass('hide');
+        $part.siblings('tr[data-folder-id=' + partId + ']').addClass('hide');
 
     };
 
