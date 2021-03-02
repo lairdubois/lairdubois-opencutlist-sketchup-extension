@@ -45,7 +45,7 @@ module Ladb::OpenCutList
           report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * volumic_mass unless volumic_mass == 0
           report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * std_prices unless std_prices == 0
 
-          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume = report_group_def.total_volume + report_entry_def.total_volume
 
         when MaterialAttributes::TYPE_SHEET_GOOD
@@ -73,7 +73,14 @@ module Ladb::OpenCutList
           report_entry_def.total_mass = report_entry_def.total_area * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
           report_entry_def.total_cost = report_entry_def.total_area * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
 
-          report_group_def.add_entry_def(report_entry_def)
+          cuttingdiagram2d.summary.sheets.each do |cuttingdiagram2d_summary_sheet|
+
+            report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
+            report_entry_def.sheet_defs << report_entry_sheet_def
+
+          end
+
+          report_group_def.entry_defs << report_entry_def
           report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
           report_group_def.total_area = report_group_def.total_area + report_entry_def.total_area
 
@@ -102,7 +109,14 @@ module Ladb::OpenCutList
           report_entry_def.total_mass = report_entry_def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * volumic_mass unless volumic_mass == 0
           report_entry_def.total_cost = report_entry_def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * std_prices unless std_prices == 0
 
-          report_group_def.add_entry_def(report_entry_def)
+          cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
+
+            report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
+            report_entry_def.bar_defs << report_entry_bar_def
+
+          end
+
+          report_group_def.entry_defs << report_entry_def
           report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
           report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
 
@@ -117,7 +131,7 @@ module Ladb::OpenCutList
           report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * volumic_mass unless volumic_mass == 0
           report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * std_prices unless std_prices == 0
 
-          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.entry_defs << report_entry_def
           report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
 
         when MaterialAttributes::TYPE_ACCESSORY
@@ -125,23 +139,19 @@ module Ladb::OpenCutList
           report_entry_def = AccessoryReportEntryDef.new(cutlist_group)
           report_entry_def.total_count = cutlist_group.def.part_count
 
-          cutlist_group.def.part_defs.each do |id, part_def|
+          cutlist_group.parts.each do |cutlist_part|
 
-            definition_attributes = _get_definition_attributes(part_def.definition_id)
-
-            unit_mass = definition_attributes.unit_mass
-            unless unit_mass.empty?
-              report_entry_def.total_mass = report_entry_def.total_mass + unit_mass.to_f * part_def.count
-            end
-
-            unit_price = definition_attributes.unit_price
-            unless unit_price.empty?
-              report_entry_def.total_cost = report_entry_def.total_cost + unit_price.to_f * part_def.count
+            if cutlist_part.is_a?(FolderPart)
+              cutlist_part.children.each { |cutlist_child_part|
+                _compute_accessory_part(cutlist_child_part, report_entry_def)
+              }
+            else
+              _compute_accessory_part(cutlist_part, report_entry_def)
             end
 
           end
 
-          report_group_def.add_entry_def(report_entry_def)
+          report_group_def.entry_defs << report_entry_def
           report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
 
         end
@@ -206,6 +216,29 @@ module Ladb::OpenCutList
         @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
       end
       @definition_attributes_cache[key]
+    end
+
+    # -----
+
+    def _compute_accessory_part(cutlist_part, report_entry_def)
+
+      report_entry_part_def = AccessoryReportEntryPartDef.new(cutlist_part)
+      report_entry_def.part_defs << report_entry_part_def
+
+      definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
+
+      unit_mass = definition_attributes.unit_mass
+      unless unit_mass.empty?
+        report_entry_part_def.total_mass = unit_mass.to_f * cutlist_part.def.count
+        report_entry_def.total_mass = report_entry_def.total_mass + report_entry_part_def.total_mass
+      end
+
+      unit_price = definition_attributes.unit_price
+      unless unit_price.empty?
+        report_entry_part_def.total_cost = unit_price.to_f * cutlist_part.def.count
+        report_entry_def.total_cost = report_entry_def.total_cost + report_entry_part_def.total_cost
+      end
+
     end
 
   end

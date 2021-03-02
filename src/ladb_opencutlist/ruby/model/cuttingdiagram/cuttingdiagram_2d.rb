@@ -61,7 +61,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :sheets
 
     def initialize(_def)
       @_def = _def
@@ -83,7 +83,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :length, :width, :total_length, :total_part_count, :is_used
+    attr_reader :type_id, :type, :count, :length, :width, :total_area, :total_part_count, :is_used
 
     def initialize(_def)
       @_def = _def
@@ -91,8 +91,8 @@ module Ladb::OpenCutList
       @type_id = _def.type_id
       @type = _def.type
       @count = _def.count
-      @length = DimensionUtils.instance.format_to_readable_length(_def.length)
-      @width = DimensionUtils.instance.format_to_readable_length(_def.width)
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
       @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
       @total_part_count = _def.total_part_count
       @is_used = _def.is_used

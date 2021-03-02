@@ -2,15 +2,18 @@ module Ladb::OpenCutList
 
   require_relative 'report_group'
 
-  class AstractReportGroupDef
+  class AbstractReportGroupDef
 
     attr_accessor :total_mass, :total_cost
     attr_reader :entry_defs
 
     def initialize
+
       @total_mass = 0
       @total_cost = 0
+
       @entry_defs = []
+
     end
 
     # ---
@@ -18,15 +21,11 @@ module Ladb::OpenCutList
     def create_group
     end
 
-    # Groups
-
-    def add_entry_def(entry_def)
-      @entry_defs.push(entry_def)
-    end
-
   end
 
-  class SolidWoodReportGroupDef < AstractReportGroupDef
+  # -----
+
+  class SolidWoodReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_volume
 
@@ -34,6 +33,7 @@ module Ladb::OpenCutList
       super
 
       @total_volume = 0
+
     end
 
     # ---
@@ -44,7 +44,9 @@ module Ladb::OpenCutList
 
   end
 
-  class SheetGoodReportGroupDef < AstractReportGroupDef
+  # -----
+
+  class SheetGoodReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_count, :total_area
 
@@ -53,6 +55,7 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_area = 0
+
     end
 
     # ---
@@ -63,7 +66,9 @@ module Ladb::OpenCutList
 
   end
 
-  class DimensionalReportGroupDef < AstractReportGroupDef
+  # -----
+
+  class DimensionalReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_count, :total_length
 
@@ -72,6 +77,7 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_length = 0
+
     end
 
     # ---
@@ -82,7 +88,9 @@ module Ladb::OpenCutList
 
   end
 
-  class EdgeReportGroupDef < AstractReportGroupDef
+  # -----
+
+  class EdgeReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_length
 
@@ -90,6 +98,7 @@ module Ladb::OpenCutList
       super
 
       @total_length = 0
+
     end
 
     # ---
@@ -100,7 +109,9 @@ module Ladb::OpenCutList
 
   end
 
-  class AccessoryReportGroupDef < AstractReportGroupDef
+  # -----
+
+  class AccessoryReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_count
 
@@ -108,6 +119,7 @@ module Ladb::OpenCutList
       super
 
       @total_count = 0
+
     end
 
     # ---

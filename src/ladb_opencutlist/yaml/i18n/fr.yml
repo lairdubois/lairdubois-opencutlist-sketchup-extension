@@ -410,12 +410,12 @@ tab:
       title: Rapport
       options_general: Générales
       total: Total
-      mass: Masse
-      cost: Coût
-      count: Qte
-      volume: Volume
-      area: Surface
-      length: Longueur
+      total_mass: Σ Masses
+      total_cost: Σ Coûts
+      total_count: Qte
+      total_volume: Σ Volumes
+      total_area: Σ Surfaces
+      total_length: Σ Longueurs
       error:
         no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
     cuttingdiagram:

@@ -24,6 +24,7 @@ module Ladb::OpenCutList
           MaterialAttributes::TYPE_EDGE => EdgeReportGroupDef.new,
           MaterialAttributes::TYPE_ACCESSORY => AccessoryReportGroupDef.new,
       }
+
     end
 
     # ---

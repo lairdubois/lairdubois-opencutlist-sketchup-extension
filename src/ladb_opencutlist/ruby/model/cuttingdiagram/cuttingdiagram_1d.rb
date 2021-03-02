@@ -58,7 +58,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :bars
 
     def initialize(_def)
       @_def = _def

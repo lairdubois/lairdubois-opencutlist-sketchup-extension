@@ -154,7 +154,7 @@
             // Cleanup nonexistent hidden group ids
             var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
             for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
+                if (that.generateOptions.hidden_group_ids[i] == null || that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
                     continue;
                 }
                 var exists = false;
@@ -774,9 +774,9 @@
                                     $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                         var $group = $(this).parents('.ladb-cutlist-group');
                                         if ($group.hasClass('no-print')) {
-                                            that.showGroup($group, false);
+                                            that.showGroup($group, true);
                                         } else {
-                                            that.hideGroup($group, false);
+                                            that.hideGroup($group, true);
                                         }
                                         $(this).blur();
                                     });
