@@ -11,7 +11,8 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      @remaining_step = @cutlist.groups.count
+      @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN }
+      @remaining_step = @cutlist_groups.count
 
       @report_def = ReportDef.new
 
@@ -28,7 +29,7 @@ module Ladb::OpenCutList
 
       unless @remaining_step == @cutlist.groups.count
 
-        cutlist_group = @cutlist.groups[@cutlist.groups.count - @remaining_step - 1]
+        cutlist_group = @cutlist_groups[@cutlist_groups.count - @remaining_step - 1]
         report_group_def = @report_def.group_defs[cutlist_group.material_type]
         report_group_def.id = cutlist_group.id
         report_entry_def = nil

@@ -121,7 +121,7 @@
                             {% endfor %}
                         {% elseif group.material_type == 3 %} {# TYPE_DIMENSIONAL #}
                             {% for bar in entry.bars %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ group.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">{{ bar.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.bar_type_'~bar.type)|i18next }}</em></td>
                                     <td class="text-center">{{ bar.count }}</td>
                                     <td class="ladb-cutlist-dimension-value">{{ bar.total_length }}</td>
@@ -131,7 +131,7 @@
                             {% endfor %}
                         {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                             {% for part in entry.parts %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ group.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">{{ part.name }}</td>
                                     <td class="text-center">{{ part.count }}</td>
                                     <td class="ladb-cutlist-dimension-value">{{ part.total_mass ? part.total_mass|format_mass : '-' }}</td>
