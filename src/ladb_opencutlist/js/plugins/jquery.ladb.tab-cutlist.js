@@ -2245,7 +2245,7 @@
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $labelEditor = $('#ladb_label_editor', $modal);
+            var $editorLabel = $('#ladb_editor_label', $modal);
             var $selectPageFormat = $('#ladb_select_page_format', $modal);
             var $inputPageWidth = $('#ladb_input_page_width', $modal);
             var $inputPageHeight = $('#ladb_input_page_height', $modal);
@@ -2300,7 +2300,7 @@
                 options.col_count = $inputColCount.val();
                 options.row_count = $inputRowCount.val();
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
-                options.layout = $labelEditor.ladbEditorLabel('getElementDefs');
+                options.layout = $editorLabel.ladbEditorLabel('getElementDefs');
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -2316,7 +2316,7 @@
                 $inputRowCount.val(options.row_count);
                 $selectCuttingMarks.selectpicker('val', options.cutting_marks ? '1' : '0');
                 fnComputeLabelSize(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (labelWidth, labelHeight) {
-                    $labelEditor.ladbEditorLabel('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
+                    $editorLabel.ladbEditorLabel('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
                 });
                 fnPageSizeVisibility();
             }
@@ -2327,7 +2327,7 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $labelEditor.ladbEditorLabel({
+            $editorLabel.ladbEditorLabel({
                 filename: that.filename,
                 pageLabel: that.pageLabel,
                 lengthUnit: that.lengthUnit,
@@ -2355,7 +2355,7 @@
                 if (that.lastLabelsOptionsTab === 'layout') {
 
                     fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
-                        $labelEditor.ladbEditorLabel('updateSize', [ labelWidth, labelHeight ]);
+                        $editorLabel.ladbEditorLabel('updateSize', [ labelWidth, labelHeight ]);
                     });
 
                 }
