@@ -1,5 +1,6 @@
 ﻿module Ladb::OpenCutList
 
+  require 'json'
   require 'securerandom'
   require_relative '../geom/size2d'
   require_relative '../geom/section'
@@ -352,7 +353,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)
       end
     end
 

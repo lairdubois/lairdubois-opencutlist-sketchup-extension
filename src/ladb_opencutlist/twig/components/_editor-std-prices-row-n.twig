@@ -1,0 +1,21 @@
+<div class="ladb-editor-std-prices-row row">
+    <div class="col-xs-6 col-xs-push-6">
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ stdPrice.value }}">
+            <span class="input-group-addon">€ / {{ unit }}</span>
+        </div>
+    </div>
+    <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-prices-select-range" title="Choisissez une taille">
+        {% for stdA in stdsA %}
+            {% if stdsB|length > 1 %}<optgroup>{% endif %}
+                {% for stdB in stdsB %}
+                    {% set range = stdA|escape('html')~';'~stdB|escape('html') %}
+                    <option data-content="<span class='std-a'>{{ stdA|escape('html') }}</span>{% if stdB|length > 1 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdB|escape('html') }}</span>{% endif %}"{% if stdPrice.range == range %} selected{% endif %}>{{ range }}</option>
+                {% endfor %}
+            {% if stdsB|length > 1 %}</optgroup>{% endif %}
+        {% endfor %}
+    </select>
+    <div class="ladb-minitools" style="position: absolute; right: -15px; top: 8px;">
+        <a href="#" class="ladb-editor-std-prices-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
+    </div>
+</div>
