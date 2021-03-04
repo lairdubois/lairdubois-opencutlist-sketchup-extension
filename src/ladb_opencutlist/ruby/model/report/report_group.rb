@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/hashable_helper'
+  require_relative '../../utils/mass_utils'
+  require_relative '../../utils/price_utils'
 
   class AbstractReportGroup
 
@@ -12,8 +14,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @material_type = material_type
-      @total_mass = _def.total_mass
-      @total_cost = _def.total_cost
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
+      @total_cost = _def.total_cost == 0 ? nil : CurrencyUtils.instance.format_to_readable_price(_def.total_cost)
 
       @entries = _def.entry_defs.map { |entry_def| entry_def.create_entry }
 

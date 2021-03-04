@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/hashable_helper'
+  require_relative '../../utils/mass_utils'
+  require_relative '../../utils/price_utils'
 
   class AbstractReportItem
 
@@ -11,8 +13,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       @_def = _def
 
-      @total_mass = _def.total_mass
-      @total_cost = _def.total_cost
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
+      @total_cost = _def.total_cost == 0 ? nil : CurrencyUtils.instance.format_to_readable_price(_def.total_cost)
 
     end
 
@@ -48,7 +50,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass == 0 ? nil : _def.volumic_mass.to_s
+      @volumic_mass = _def.volumic_mass == 0 ? nil : "#{MassUtils.instance.format_to_readable_mass(_def.volumic_mass)} / m3"
       @std_price = _def.std_price == 0 ? nil : _def.std_price.to_s
 
       @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
@@ -66,7 +68,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass == 0 ? nil : _def.volumic_mass.to_s
+      @volumic_mass = _def.volumic_mass == 0 ? nil : "#{MassUtils.instance.format_to_readable_mass(_def.volumic_mass)} / m3"
 
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
@@ -105,7 +107,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass == 0 ? nil : _def.volumic_mass.to_s
+      @volumic_mass = _def.volumic_mass == 0 ? nil : "#{MassUtils.instance.format_to_readable_mass(_def.volumic_mass)} / m3"
 
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
@@ -143,7 +145,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass == 0 ? nil : _def.volumic_mass.to_s
+      @volumic_mass = _def.volumic_mass == 0 ? nil : "#{MassUtils.instance.format_to_readable_mass(_def.volumic_mass)} / m3"
       @std_price = _def.std_price == 0 ? nil : _def.std_price.to_s
 
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
@@ -179,8 +181,8 @@ module Ladb::OpenCutList
       @name = _def.cutlist_part.name
       @count = _def.cutlist_part.count
 
-      @unit_mass = _def.unit_mass == 0 ? nil : _def.unit_mass
-      @unit_price = _def.unit_price == 0 ? nil : _def.unit_price
+      @unit_mass = _def.unit_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.unit_mass)
+      @unit_price = _def.unit_price == 0 ? nil : CurrencyUtils.instance.format_to_readable_price(_def.unit_price)
 
     end
 

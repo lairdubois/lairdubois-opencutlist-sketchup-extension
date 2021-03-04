@@ -252,15 +252,15 @@ module Ladb::OpenCutList
 
       definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
 
-      unit_mass = definition_attributes.unit_mass
-      unless unit_mass.empty?
+      unit_mass = definition_attributes.f_unit_mass
+      unless unit_mass == 0
         report_entry_part_def.unit_mass = unit_mass
         report_entry_part_def.total_mass = unit_mass.to_f * cutlist_part.def.count
         report_entry_def.total_mass = report_entry_def.total_mass + report_entry_part_def.total_mass
       end
 
-      unit_price = definition_attributes.unit_price
-      unless unit_price.empty?
+      unit_price = definition_attributes.f_unit_price
+      unless unit_price == 0
         report_entry_part_def.unit_price = unit_price
         report_entry_part_def.total_cost = unit_price.to_f * cutlist_part.def.count
         report_entry_def.total_cost = report_entry_def.total_cost + report_entry_part_def.total_cost

@@ -107,6 +107,14 @@ module Ladb::OpenCutList
       DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
     end
 
+    def f_unit_mass
+      unit_mass.to_f
+    end
+
+    def f_unit_price
+      unit_price.to_f
+    end
+
     # -----
 
     def read_from_attributes(force_unique_uuid = false)
