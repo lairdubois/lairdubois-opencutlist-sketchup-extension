@@ -84,21 +84,16 @@ module Ladb::OpenCutList::BinPacking2D
     # Remembers signature for packing.
     #
     def keep_signature(signature)
-      @stat[:signature] = signature # "[#{"%9.2f" % @length},#{"%9.2f" % @width}]-" + signature
+      @stat[:signature] = signature
     end
 
+    #
+    # Returns a readable string for our signature.
+    #
     def signature_to_readable
-=begin
-      if matches = @stat[:signature].match(/^(\[.*\])-(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
-        "#{PRESORT[matches[2].to_i]} - #{SCORE[matches[3].to_i]} - " \
-        "#{SPLIT[matches[4].to_i]} - #{STACKING[matches[5].to_i]}"
-      else
-        "no match found"
-      end
-=end
       if matches = @stat[:signature].match(/^(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
-        "#{PRESORT[matches[2].to_i]} - #{SCORE[matches[3].to_i]} - " \
-        "#{SPLIT[matches[4].to_i]} - #{STACKING[matches[5].to_i]}"
+        "#{PRESORT[matches[1].to_i]} - #{SCORE[matches[2].to_i]} - " \
+        "#{SPLIT[matches[3].to_i]} - #{STACKING[matches[4].to_i]}"
       else
         "no match found"
       end
@@ -149,18 +144,12 @@ module Ladb::OpenCutList::BinPacking2D
         i += 1
       end
 
-      # Sort by score, leftover_id ASC
-      # scores have already been filtered in leftovers!
-      # [leftover_index, score, ROTATED, @level]
-      # put in lowest score, lowest level
-      # return score.min_by { |s| [s[1], s[3]]}
-      # TODO: check sorting order!
-      if @options.stacking == STACKING_LENGTH
-        min_score = score.min_by { |s| [s[1], -s[2], s[3]] }
-      else
-        min_score = score.min_by { |s| [s[1], s[2], s[3]] }
-      end
-      min_score
+      # Sort by score returned as [leftover_index, score, ROTATED/NOT, level]
+      # . score ASC
+      # . leftover_id ASC
+      # . level of cut ASC
+      # . rotated = false, then true
+      score.min_by { |s| [s[1], s[0], s[3], s[2]] }
     end
 
     #
@@ -248,12 +237,13 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:bbox_area] = (@max_x - @options.trimsize) * (@max_y - @options.trimsize)
 
       @leftovers.each do |leftover|
-        # Compute l_measure over leftovers inside the bounding box only!
+        # Compute l_measure over Leftovers inside the bounding box only!
         if leftover.x + leftover.length < @max_x + EPS && leftover.y + leftover.width < @max_y + EPS
-          @stat[:l_measure] += (@max_x - leftover.x + leftover.length + @max_y - leftover.y + leftover.width) * leftover.area
+          @stat[:l_measure] += (@max_x - leftover.x + leftover.length / 2.0 + @max_y - leftover.y + leftover.width / 2.0) * leftover.area
         end
       end
-      @stat[:l_measure] = @stat[:l_measure] / @stat[:bbox_area]
+      # Normalize the l_measure
+      @stat[:l_measure] = @stat[:l_measure] / (@stat[:bbox_area] * (@max_x + @max_y))
 
       @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(3)
     end
