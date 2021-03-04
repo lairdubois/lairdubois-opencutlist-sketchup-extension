@@ -77,6 +77,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_nb_cuts] = 0
       @gstat[:nb_through_cuts] = 0
       @gstat[:all_largest_area] = 0
+      @gstat[:total_l_measure] = 0
       @gstat[:area_unplaced_boxes] = 0
     end
 
@@ -102,6 +103,7 @@ module Ladb::OpenCutList::BinPacking2D
         @bins << new_bin
       end
 
+      # Theses bins will not be used anymore, thus no need to copy them.
       @previous_packer.invalid_bins.each do |bin|
         @invalid_bins << bin
       end
@@ -111,7 +113,7 @@ module Ladb::OpenCutList::BinPacking2D
         @boxes << new_box
       end
 
-      # TODO: may not be necessary!
+      # Invalid boxes for one bin, may be valid for the next bin.
       @previous_packer.invalid_boxes.each do |box|
         new_box = Box.new(box.length, box.width, box.rotatable, box.data)
         @invalid_boxes << new_box
@@ -121,11 +123,11 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_input_boxes] = @previous_packer.gstat[:nb_input_boxes]
       @gstat[:nb_leftovers] = @previous_packer.gstat[:nb_leftovers]
       @gstat[:nb_packed_boxes] = @previous_packer.gstat[:nb_packed_boxes]
-      #@gstat[:total_compactness] = @previous_packer.gstat[:total_compactness]
       @gstat[:total_length_cuts] = @previous_packer.gstat[:total_length_cuts]
       @gstat[:total_nb_cuts] = @previous_packer.gstat[:total_nb_cuts]
       @gstat[:nb_through_cuts] = @previous_packer.gstat[:nb_through_cuts]
       @gstat[:all_largest_area] = @previous_packer.gstat[:all_largest_area]
+      @gstat[:total_l_measure] = @previous_packer.gstat[:total_l_measure]
     end
 
     #
@@ -144,7 +146,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Adds a list of unfit Boxes (too large to fit any Bin) to this Packer.
+    # Adds a list of invalid Boxes (too large to fit any Bin) to this Packer.
     # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
     #
     def add_invalid_boxes(invalid_boxes)
@@ -457,6 +459,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:area_unplaced_boxes] = @unplaced_boxes.inject(0) { |sum, box| sum + box.area }
       @gstat[:nb_unplaced_boxes] = @unplaced_boxes.size
       @gstat[:nb_invalid_boxes] += @invalid_boxes.size
+      @gstat[:area_unplaced_boxes] += @invalid_boxes.inject(0) { |sum, box| sum + box.area }
       @gstat[:nb_packed_bins] = @packed_bins.size
       @gstat[:nb_unused_bins] = @unused_bins.size
       @gstat[:nb_leftovers] += current_bin.stat[:nb_leftovers]
@@ -465,6 +468,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_length_cuts] += @stat[:length_cuts]
       @gstat[:total_nb_cuts] += @stat[:nb_cuts]
       @gstat[:nb_through_cuts] += @stat[:nb_h_through_cuts] + @stat[:nb_v_through_cuts]
+      @gstat[:total_l_measure] = @stat[:l_measure]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
     end
 
