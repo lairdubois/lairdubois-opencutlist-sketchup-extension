@@ -32,7 +32,7 @@ module Ladb::OpenCutList
       if f.nil?
         return nil
       end
-      format_value(f, 1, 0, UNIT_SIGN_KILOGRAM)
+      format_value(f, 1, f < 1 ? 3 : 0, UNIT_SIGN_KILOGRAM)
     end
 
     def format_value(f, multiplier, precision, unit_sign)

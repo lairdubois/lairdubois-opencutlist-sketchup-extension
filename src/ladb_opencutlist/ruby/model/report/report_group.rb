@@ -15,7 +15,7 @@ module Ladb::OpenCutList
 
       @material_type = material_type
       @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
-      @total_cost = _def.total_cost == 0 ? nil : CurrencyUtils.instance.format_to_readable_price(_def.total_cost)
+      @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)
 
       @entries = _def.entry_defs.map { |entry_def| entry_def.create_entry }
 

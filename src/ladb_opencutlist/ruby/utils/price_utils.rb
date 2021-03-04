@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   # Unit signs
   UNIT_SIGN_EURO = '€'
 
-  class CurrencyUtils
+  class PriceUtils
 
     include Singleton
 
@@ -32,7 +32,7 @@ module Ladb::OpenCutList
       if f.nil?
         return nil
       end
-      format_value(f, 1, 0, '€')
+      format_value(f, 1, f < 1 ? 2 : 0, '€')
     end
 
     def format_value(f, multiplier, precision, unit_sign)

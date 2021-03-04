@@ -49,7 +49,7 @@ module Ladb::OpenCutList
           report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _m3_to_inch3(std_price) unless std_price == 0
 
           report_group_def.entry_defs << report_entry_def
-          report_group_def.total_volume = report_group_def.total_volume + report_entry_def.total_volume
+          report_group_def.total_volume += report_entry_def.total_volume
 
         when MaterialAttributes::TYPE_SHEET_GOOD
 
@@ -86,16 +86,14 @@ module Ladb::OpenCutList
             report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * _m2_to_inch2(std_price) unless std_price == 0
             report_entry_def.sheet_defs << report_entry_sheet_def
 
-            report_entry_def.total_mass = report_entry_def.total_mass + report_entry_sheet_def.total_mass
-            report_entry_def.total_cost = report_entry_def.total_cost + report_entry_sheet_def.total_cost
+            report_entry_def.total_mass += report_entry_sheet_def.total_mass
+            report_entry_def.total_cost += report_entry_sheet_def.total_cost
 
           end
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
-          report_group_def.total_area = report_group_def.total_area + report_entry_def.total_area
-          report_group_def.total_mass = report_group_def.total_mass + report_entry_def.total_mass
-          report_group_def.total_cost = report_group_def.total_cost + report_entry_def.total_cost
+          report_group_def.total_area += report_entry_def.total_area
 
         when MaterialAttributes::TYPE_DIMENSIONAL
 
@@ -132,16 +130,14 @@ module Ladb::OpenCutList
             report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * _m_to_inch(std_price) unless std_price == 0
             report_entry_def.bar_defs << report_entry_bar_def
 
-            report_entry_def.total_mass = report_entry_def.total_mass + report_entry_bar_def.total_mass
-            report_entry_def.total_cost = report_entry_def.total_cost + report_entry_bar_def.total_cost
+            report_entry_def.total_mass += report_entry_bar_def.total_mass
+            report_entry_def.total_cost += report_entry_bar_def.total_cost
 
           end
 
           report_group_def.entry_defs << report_entry_def
-          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
-          report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
-          report_group_def.total_mass = report_group_def.total_mass + report_entry_def.total_mass
-          report_group_def.total_cost = report_group_def.total_cost + report_entry_def.total_cost
+          report_group_def.total_count += report_entry_def.total_count
+          report_group_def.total_length += report_entry_def.total_length
 
         when MaterialAttributes::TYPE_EDGE
 
@@ -157,7 +153,7 @@ module Ladb::OpenCutList
           report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _m_to_inch(std_price) unless std_price == 0
 
           report_group_def.entry_defs << report_entry_def
-          report_group_def.total_length = report_group_def.total_length + report_entry_def.total_length
+          report_group_def.total_length += report_entry_def.total_length
 
         when MaterialAttributes::TYPE_ACCESSORY
 
@@ -177,17 +173,17 @@ module Ladb::OpenCutList
           end
 
           report_group_def.entry_defs << report_entry_def
-          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
+          report_group_def.total_count += report_entry_def.total_count
 
         end
 
         unless report_entry_def.nil?
 
-          report_group_def.total_mass = report_group_def.total_mass + report_entry_def.total_mass
-          report_group_def.total_cost = report_group_def.total_cost + report_entry_def.total_cost
+          report_group_def.total_mass += report_entry_def.total_mass
+          report_group_def.total_cost += report_entry_def.total_cost
 
-          @report_def.total_mass = @report_def.total_mass + report_entry_def.total_mass
-          @report_def.total_cost = @report_def.total_cost + report_entry_def.total_cost
+          @report_def.total_mass += report_entry_def.total_mass
+          @report_def.total_cost += report_entry_def.total_cost
 
         end
 
