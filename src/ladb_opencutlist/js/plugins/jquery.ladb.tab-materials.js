@@ -861,11 +861,11 @@
         });
         $editorStdPrices.ladbEditorStdPrices({
             type: material.attributes.type,
-            stdLengths: material.attributes.std_lengths.split(';'),
-            stdWidths: material.attributes.std_widths.split(';'),
-            stdThicknesses: material.attributes.std_thicknesses.split(';'),
-            stdSections: material.attributes.std_sections.split(';'),
-            stdSizes: material.attributes.std_sizes.split(';'),
+            stdLengths: material.attributes.std_lengths ? material.attributes.std_lengths.split(';') : [],
+            stdWidths: material.attributes.std_widths ? material.attributes.std_widths.split(';') : [],
+            stdThicknesses: material.attributes.std_thicknesses ? material.attributes.std_thicknesses.split(';') : [],
+            stdSections: material.attributes.std_sections ? material.attributes.std_sections.split(';') : [],
+            stdSizes: material.attributes.std_sizes ? material.attributes.std_sizes.split(';') : [],
         });
 
         fnComputeFieldsVisibility(material.attributes.type);

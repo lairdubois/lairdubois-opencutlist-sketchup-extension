@@ -86,7 +86,7 @@
         // Bind
         $input
             .on('change', function () {
-                stdPrice.value = $(this).val();
+                stdPrice.val = $(this).val();
             })
         ;
 
@@ -131,7 +131,7 @@
                     var $tmpSelect = $(this);
                     $('option', $(this)).each(function () {
                         var $option = $(this);
-                        if ($option.html() === stdPrice.range) {
+                        if ($option.html() === stdPrice.dim) {
                             $option.prop('disabled', false);
                         } else if ($option.html() === newRange) {
                             $option.prop('disabled', true);
@@ -139,12 +139,12 @@
                         $tmpSelect.selectpicker('refresh');
                     });
                 });
-                stdPrice.range = newRange;
+                stdPrice.dim = newRange;
             })
         ;
         $input
             .on('change', function () {
-                stdPrice.value = $(this).val();
+                stdPrice.val = $(this).val();
             })
         ;
 
@@ -155,7 +155,7 @@
             if (tmpStdPrice !== stdPrice) {
                 $options.each(function () {
                     var $option = $(this);
-                    if ($option.html() === tmpStdPrice.range) {
+                    if ($option.html() === tmpStdPrice.dim) {
                         $option.prop('disabled', true);
                     }
                 });
@@ -176,19 +176,21 @@
         var has0 = false;
         for (var i = 0; i < stdPrices.length; i++) {
             stdPrice = stdPrices[i];
-            if (stdPrice.range == null) {
-                if (!has0) {
-                    this.stdPrices.unshift(stdPrice);
-                    has0 = true;
+            if (stdPrice != null) {
+                if (stdPrice.dim == null) {
+                    if (!has0) {
+                        this.stdPrices.unshift(stdPrice);
+                        has0 = true;
+                    }
+                } else if (stdPrice.val != null && stdPrice.val.length > 0 && stdPrice.dim.length > 0) {
+                    this.stdPrices.push(stdPrice);
                 }
-            } else if (stdPrice.value != null && stdPrice.value.length > 0 && stdPrice.range.length > 0) {
-                this.stdPrices.push(stdPrice);
             }
         }
         if (!has0) {
             this.stdPrices.unshift({
-                value: '',
-                range: null
+                val: '',
+                dim: null
             });
         }
 
@@ -196,7 +198,7 @@
         this.$rows.empty();
         for (var i = 0; i < this.stdPrices.length; i++) {
             stdPrice = this.stdPrices[i];
-            if (stdPrice.range == null) {
+            if (stdPrice.dim == null) {
                 this.prependPriceRow0(stdPrice);
             } else {
                 this.appendPriceRowN(stdPrice);
@@ -206,7 +208,17 @@
     };
 
     LadbEditorStdPrices.prototype.getStdPrices = function () {
-        return this.stdPrices;
+
+        // Cleanup input
+        var stdPrices = [];
+        for (var i = 0; i < this.stdPrices.length; i++) {
+            var stdPrice = this.stdPrices[i];
+            if (stdPrice.dim == null || stdPrice.val != null && stdPrice.val.length > 0 && stdPrice.dim.length > 0) {
+                stdPrices.push(stdPrice);
+            }
+        }
+
+        return stdPrices;
     };
 
     LadbEditorStdPrices.prototype.init = function () {
@@ -216,8 +228,8 @@
 
         $('button', this.$element).on('click', function () {
             var stdPrice = {
-                value: '',
-                range: ''
+                val: '',
+                dim: ''
             }
             that.stdPrices.push(stdPrice);
             that.appendPriceRowN(stdPrice);

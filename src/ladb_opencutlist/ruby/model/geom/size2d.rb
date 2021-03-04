@@ -12,8 +12,8 @@ module Ladb::OpenCutList
         length = s_length.to_l
         width = s_width.to_l
       end
-      @length = length
-      @width = width
+      @length = length.to_l
+      @width = width.to_l
     end
 
     # -----

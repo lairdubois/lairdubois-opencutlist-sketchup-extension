@@ -290,6 +290,66 @@
       a
     end
 
+    def volumic_mass
+      case @type
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
+          @volumic_mass
+        else
+          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['volumic_mass']
+      end
+    end
+
+    def f_volumic_mass
+      @volumic_mass.to_f
+    end
+
+    def std_prices
+      case @type
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
+          @std_prices
+        else
+          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_prices']
+      end
+    end
+
+    def l_std_prices
+
+      # Returns an array like [ { :val => FLOAT }, { :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
+
+      # Setup return array with default value first
+      std_prices = [ { :val => 0.0 } ]
+
+      if @std_prices.is_a?(Array)
+        @std_prices.each do |std_price|
+
+          if std_price['dim'].nil?
+            std_prices[0][:val] = std_price['val'].to_f unless std_price['val'].nil?
+          elsif !std_price['dim'].is_a?(String)
+            next
+          else
+            dim = []
+            a = std_price['dim'].split(';')
+            a.each { |d|
+              unless d.nil?
+                if d.index('x').nil?
+                  dim << d.to_l
+                else
+                  dim << Size2d.new(d)
+                end
+              end
+            }
+            if dim.length > 0
+              val = std_price['val'].nil? ? 0.0 : std_price['val'].to_f
+              std_prices << { :val => val, :dim => dim, }
+            end
+          end
+
+        end
+      end
+
+      std_prices
+    end
+
     # -----
 
     def read_from_attributes(force_unique_uuid = false)

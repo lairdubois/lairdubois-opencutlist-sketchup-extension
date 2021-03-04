@@ -802,7 +802,6 @@
                                     that.dialog.advanceProgress(1);
                                 });
 
-                                // that.dialog.advanceProgress(1);
                                 fnAdvance();
                             }
 
