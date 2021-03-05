@@ -228,7 +228,9 @@
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Bind form
-            var $inputs = this.bindMaterialPropertiesForm($modal, material);
+            var $inputs = this.bindMaterialPropertiesForm($modal, material, false, function () {
+                $btnExportToSkm.prop('disabled', true);
+            });
 
             // Define usefull functions
             var fnFetchAttributes = function (attributes) {
@@ -246,9 +248,6 @@
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
                 attributes.volumic_mass = $inputs.inputVolumicMass.val();
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices');
-            };
-            var fnDisableBtnExport = function () {
-                $btnExportToSkm.prop('disabled', true);
             };
             var fnRotateTexture = function (angle) {
                 var rotation = parseInt($inputTextureRotation.val());
@@ -313,11 +312,6 @@
 
                 // Unbind event
                 $btnTabTexture.off('shown.bs.tab');
-            });
-
-            // Bind change
-            $('input', $modal).on('change', function () {
-                fnDisableBtnExport();
             });
 
             // Bind buttons
@@ -687,7 +681,7 @@
         }
     };
 
-    LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($modal, material, setAttributeToDefaults) {
+    LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($modal, material, setAttributeToDefaults, inputChangeCallback) {
         var that = this;
 
         // Fetch UI elements
@@ -879,10 +873,8 @@
             fnFillInputs: fnFillInputs
         });
         $editorStdPrices.ladbEditorStdPrices({
-            type: material.attributes.type,
+            inputChangeCallback: inputChangeCallback
         });
-
-        fnComputeFieldsVisibility(material.attributes.type);
 
         // Bind tab
         $btnTabAttributes.on('shown.bs.tab', function () {
@@ -894,7 +886,6 @@
             var options = {};
             fnFetchType(options);
 
-            // fnDisableBtnExport();
             fnComputeFieldsVisibility(options.type);
 
             // Update section on preset widget
@@ -912,10 +903,6 @@
         $inputName.on('keyup change', function() { fnCheckInputNameValue(true); });
         $inputColor.on('keyup change', function() { fnCheckInputColorValue(true); });
         $inputColor.ladbTextinputColor();
-
-        // Initial input checks
-        fnCheckInputNameValue(false);
-        fnCheckInputColorValue(false);
 
         // Bind modal event
         $modal.on('shown.bs.modal', function() {
@@ -939,7 +926,19 @@
                 fnFillInputs(material.attributes);
             }
 
+            if (inputChangeCallback) {
+                // Bind change
+                $('input', $modal).on('change', function () {
+                    inputChangeCallback();
+                });
+            }
+
         });
+
+        // Initials
+        fnComputeFieldsVisibility(material.attributes.type);
+        fnCheckInputNameValue(false);
+        fnCheckInputColorValue(false);
 
         return {
             inputName: $inputName,

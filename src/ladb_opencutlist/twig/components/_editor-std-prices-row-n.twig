@@ -7,15 +7,14 @@
     </div>
     <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-prices-select-dim" title="{{ 'tab.materials.edit_material.std_prices_dim_placeholder'|i18next }}">
         {% for stdAK, stdAV in stdsA %}
-            {% if stdsB|length > 1 %}<optgroup>{% endif %}
-                {% for stdBK, stdBV in stdsB %}
-                    {% set dim = stdAV~';'~stdBV %}
-                    <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
-                {% endfor %}
-            {% if stdsB|length > 1 %}</optgroup>{% endif %}
+            {% if stdsB|length > 1 and not loop.first %}<option data-divider="true">{% endif %}
+            {% for stdBK, stdBV in stdsB %}
+                {% set dim = stdAV~';'~stdBV %}
+                <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
+            {% endfor %}
         {% endfor %}
     </select>
-    <div class="ladb-minitools" style="position: absolute; right: -15px; top: 8px;">
+    <div class="ladb-minitools">
         <a href="#" class="ladb-editor-std-prices-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
     </div>
 </div>

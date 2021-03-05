@@ -21,9 +21,11 @@
     };
 
     LadbEditorStdPrices.DEFAULTS = {
+        inputChangeCallback: null
     };
 
     LadbEditorStdPrices.prototype.prependPriceRow0 = function (stdPrice) {
+        var that = this;
 
         var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-0.twig'}).render({
             unit: this.unit,
@@ -38,6 +40,12 @@
         $input
             .on('change', function () {
                 stdPrice.val = $(this).val();
+
+                // Change callback
+                if (that.options.inputChangeCallback) {
+                    that.options.inputChangeCallback();
+                }
+
             })
         ;
 
@@ -91,11 +99,23 @@
                     });
                 });
                 stdPrice.dim = newRange;
+
+                // Change callback
+                if (that.options.inputChangeCallback) {
+                    that.options.inputChangeCallback();
+                }
+
             })
         ;
         $input
             .on('change', function () {
                 stdPrice.val = $(this).val();
+
+                // Change callback
+                if (that.options.inputChangeCallback) {
+                    that.options.inputChangeCallback();
+                }
+
             })
         ;
 
