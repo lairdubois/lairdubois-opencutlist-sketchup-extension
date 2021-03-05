@@ -10,6 +10,8 @@
 
         this.$rows = $('.ladb-editor-std-prices-rows', this.$element);
 
+        this.type = 0;
+        this.stds = null;
         this.stdsA = [];
         this.stdsB = [];
         this.unit = null;
@@ -19,57 +21,6 @@
     };
 
     LadbEditorStdPrices.DEFAULTS = {
-        type: 0,
-        stdLengths: [],
-        stdWidths: [],
-        stdThicknesses: [],
-        stdSections: [],
-        stdSizes: [],
-    };
-
-    LadbEditorStdPrices.prototype.computeStds = function () {
-        this.stdsA = [];
-        this.stdsB = [];
-        var i, j;
-        switch (this.options.type) {
-
-            case 1: /* TYPE_SOLID_WOOD */
-                for (i = 0; i < this.options.stdThicknesses.length; i++) {
-                    this.stdsA.push([ this.options.stdThicknesses[i] ]);
-                }
-                this.stdsB = [ '' ];
-                this.unit = 'm<sup>3</sup>';
-                break;
-
-            case 2: /* TYPE_SHEET_GOOD */
-                for (i = 0; i < this.options.stdThicknesses.length; i++) {
-                    this.stdsA.push(this.options.stdThicknesses[i]);
-                }
-                for (i = 0; i < this.options.stdSizes.length; i++) {
-                    this.stdsB.push(this.options.stdSizes[i]);
-                }
-                this.unit = 'm<sup>2</sup>';
-                break;
-
-            case 3: /* TYPE_DIMENSIONAL */
-                for (i = 0; i < this.options.stdSections.length; i++) {
-                    this.stdsA.push(this.options.stdSections[i]);
-                }
-                for (i = 0; i < this.options.stdLengths.length; i++) {
-                    this.stdsB.push( this.options.stdLengths[i]);
-                }
-                this.unit = 'm';
-                break;
-
-            case 4: /* TYPE_EDGE */
-                for (i = 0; i < this.options.stdWidths.length; i++) {
-                    this.stdsA.push(this.options.stdWidths[i]);
-                }
-                this.stdsB = [ '' ];
-                this.unit = 'm';
-                break;
-
-        }
     };
 
     LadbEditorStdPrices.prototype.prependPriceRow0 = function (stdPrice) {
@@ -165,6 +116,105 @@
 
     };
 
+    LadbEditorStdPrices.prototype.renderRows = function () {
+
+        // Render rows
+        this.$rows.empty();
+        for (var i = 0; i < this.stdPrices.length; i++) {
+            var stdPrice = this.stdPrices[i];
+            if (stdPrice.dim == null) {
+                this.prependPriceRow0(stdPrice);
+            } else {
+                this.appendPriceRowN(stdPrice);
+            }
+        }
+
+    };
+
+    LadbEditorStdPrices.prototype.setTypeAndStds = function (type, stds) {
+        this.type = type;
+        this.setStds(stds);
+    };
+
+    LadbEditorStdPrices.prototype.setStds = function (stds) {
+        var that = this;
+
+        this.stds = stds;
+        this.stdsA = [];
+        this.stdsB = [];
+
+        var stdsA = {};
+        var stdsB = {};
+        var i;
+        switch (this.type) {
+
+            case 1: /* TYPE_SOLID_WOOD */
+                for (i = 0; i < stds.stdThicknesses.length; i++) {
+                    stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
+                }
+                this.unit = 'm<sup>3</sup>';
+                break;
+
+            case 2: /* TYPE_SHEET_GOOD */
+                for (i = 0; i < stds.stdThicknesses.length; i++) {
+                    stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
+                }
+                for (i = 0; i < stds.stdSizes.length; i++) {
+                    stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
+                }
+                this.unit = 'm<sup>2</sup>';
+                break;
+
+            case 3: /* TYPE_DIMENSIONAL */
+                for (i = 0; i < stds.stdSections.length; i++) {
+                    stdsA[stds.stdSections[i]] = stds.stdSections[i];
+                }
+                for (i = 0; i < stds.stdLengths.length; i++) {
+                    stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
+                }
+                this.unit = 'm';
+                break;
+
+            case 4: /* TYPE_EDGE */
+                for (i = 0; i < stds.stdWidths.length; i++) {
+                    stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
+                }
+                this.unit = 'm';
+                break;
+
+        }
+
+        // Convert stds to inch fload representation
+        rubyCallCommand('core_length_to_float', stdsA, function (responseA) {
+
+            $.each(responseA, function (k, v) {
+               if (Array.isArray(v)) {
+                   responseA[k] = v[0] + '"x' + v[1] + '"';
+               } else {
+                   responseA[k] = v + '"'
+               }
+            });
+            that.stdsA = responseA;
+
+            rubyCallCommand('core_length_to_float', stdsB, function (responseB) {
+
+                $.each(responseB, function (k, v) {
+                    if (Array.isArray(v)) {
+                        responseB[k] = v[0] + '"x' + v[1] + '"';
+                    } else {
+                        responseB[k] = v + '"'
+                    }
+                });
+                that.stdsB = Object.keys(responseB).length === 0 ? { '':'' } : responseB;
+
+                // Render rows
+                that.renderRows();
+
+            });
+        });
+
+    };
+
     LadbEditorStdPrices.prototype.setStdPrices = function (stdPrices) {
         if (!Array.isArray(stdPrices)) {
             stdPrices = [];
@@ -194,15 +244,9 @@
             });
         }
 
-        // Render rows
-        this.$rows.empty();
-        for (var i = 0; i < this.stdPrices.length; i++) {
-            stdPrice = this.stdPrices[i];
-            if (stdPrice.dim == null) {
-                this.prependPriceRow0(stdPrice);
-            } else {
-                this.appendPriceRowN(stdPrice);
-            }
+        // Render rows if "stds" are ready
+        if (Object.keys(this.stdsA).length > 0 && Object.keys(this.stdsB).length > 0) {
+            this.renderRows();
         }
 
     };
@@ -224,8 +268,7 @@
     LadbEditorStdPrices.prototype.init = function () {
         var that = this;
 
-        this.computeStds();
-
+        // Bind button
         $('button', this.$element).on('click', function () {
             var stdPrice = {
                 val: '',

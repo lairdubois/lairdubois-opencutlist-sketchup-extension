@@ -332,9 +332,9 @@
             a.each { |d|
               unless d.nil?
                 if d.index('x').nil?
-                  dim << d.to_l
+                  dim << d.to_f.to_l
                 else
-                  dim << Size2d.new(d)
+                  dim << Size2d.new(d.split('x').map { |l| l.to_f })
                 end
               end
             }

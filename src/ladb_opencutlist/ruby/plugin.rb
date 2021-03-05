@@ -930,17 +930,17 @@ module Ladb::OpenCutList
 
     # -- Commands ---
 
-    def set_update_status_command(params)    # Waiting params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
+    def set_update_status_command(params)    # Expected params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
       @manifest = params['manifest']
       @update_available = params['update_available']
       @update_muted = params['update_muted']
     end
 
-    def set_news_status_command(params)    # Waiting params = { last_news_timestamp: TIMESTAMP }
+    def set_news_status_command(params)    # Expected params = { last_news_timestamp: TIMESTAMP }
       @last_news_timestamp = params['last_news_timestamp']
     end
 
-    def upgrade_command(params)    # Waiting params = { url: 'RBZ_URL' }
+    def upgrade_command(params)    # Expected params = { url: 'RBZ_URL' }
       # Just open URL for older Sketchup versions
       if Sketchup.version_number < 1700000000
         open_url_command(params)
@@ -1037,14 +1037,14 @@ module Ladb::OpenCutList
 
     end
 
-    def get_app_defaults_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION }
+    def get_app_defaults_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION }
       dictionary = params['dictionary']
       section = params['section']
 
       { :defaults => get_app_defaults(dictionary, section) }
     end
 
-    def set_global_preset_command(params) # Waiting params = { dictionary: DICTIONARY, values: VALUES, name: NAME, section: SECTION }
+    def set_global_preset_command(params) # Expected params = { dictionary: DICTIONARY, values: VALUES, name: NAME, section: SECTION }
       dictionary = params['dictionary']
       values = params['values']
       name = params['name']
@@ -1053,7 +1053,7 @@ module Ladb::OpenCutList
       set_global_preset(dictionary, values, name, section)
     end
 
-    def get_global_preset_command(params) # Waiting params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
+    def get_global_preset_command(params) # Expected params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
       dictionary = params['dictionary']
       name = params['name']
       section = params['section']
@@ -1061,14 +1061,14 @@ module Ladb::OpenCutList
       { :preset => get_global_preset(dictionary, name, section) }
     end
 
-    def list_global_preset_names_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION }
+    def list_global_preset_names_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION }
       dictionary = params['dictionary']
       section = params['section']
 
       { :names => list_global_preset_names(dictionary, section) }
     end
 
-    def set_model_preset_command(params) # Waiting params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
+    def set_model_preset_command(params) # Expected params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
       dictionary = params['dictionary']
       values = params['values']
       section = params['section']
@@ -1077,7 +1077,7 @@ module Ladb::OpenCutList
       set_model_preset(dictionary, values, section, app_default_section)
     end
 
-    def get_model_preset_command(params) # Waiting params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
+    def get_model_preset_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
       dictionary = params['dictionary']
       section = params['section']
       app_default_section = params['app_default_section']
@@ -1085,7 +1085,7 @@ module Ladb::OpenCutList
       { :preset => get_model_preset(dictionary, section, app_default_section) }
     end
 
-    def read_settings_command(params)    # Waiting params = { keys: [ 'key1', ... ] }
+    def read_settings_command(params)    # Expected params = { keys: [ 'key1', ... ] }
       keys = params['keys']
       values = []
       keys.each { |key|
@@ -1107,7 +1107,7 @@ module Ladb::OpenCutList
       { :values => values }
     end
 
-    def write_settings_command(params)    # Waiting params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
+    def write_settings_command(params)    # Expected params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
       settings = params['settings']
 
       settings.each { |setting|
@@ -1174,21 +1174,21 @@ module Ladb::OpenCutList
       end
     end
 
-    def open_external_file_command(params)    # Waiting params = { path: PATH_TO_FILE }
+    def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
       path = params['path']
       if path
         UI.openURL("file:///#{path}")
       end
     end
 
-    def open_url_command(params)    # Waiting params = { url: URL }
+    def open_url_command(params)    # Expected params = { url: URL }
       url = params['url']
       if url
         UI.openURL(url)
       end
     end
 
-    def open_model_info_page_command(params)    # Waiting params = { page: PAGE_TO_SHOW }
+    def open_model_info_page_command(params)    # Expected params = { page: PAGE_TO_SHOW }
       page = params['page']
       if page
         UI.show_model_info(page)
@@ -1201,7 +1201,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def play_sound_command(params)    # Waiting params = { filename: WAV_FILE_TO_PLAY }
+    def play_sound_command(params)    # Expected params = { filename: WAV_FILE_TO_PLAY }
       UI.play_sound("#{__dir__}/../#{params['filename']}")
     end
 
@@ -1216,16 +1216,21 @@ module Ladb::OpenCutList
       }
     end
 
-    def length_to_float_command(params)    # Waiting params = { key_1: 'STRING_LENGTH', key_2: 'STRING_LENGTH',  }
+    def length_to_float_command(params)    # Expected params = { key_1: 'STRING_LENGTH', key_2: 'STRING_LENGTH', ... }
       float_lengths = {}
       params.each do |key, string_length|
-        # Convert string length to inch float
-        float_lengths[key] = DimensionUtils.instance.d_to_ifloats(string_length).to_l.to_f
+        if string_length.index('x')
+          # Convert string "size" to inch float array
+          float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.instance.d_to_ifloats(v).to_l.to_f }
+        else
+          # Convert string length to inch float
+          float_lengths[key] = DimensionUtils.instance.d_to_ifloats(string_length).to_l.to_f
+        end
       end
       float_lengths
     end
 
-    def float_to_length_command(params)    # Waiting params = { key_1: FLOAT_DIMENSION, key_2: FLOAT_DIMENSION,  }
+    def float_to_length_command(params)    # Expected params = { key_1: FLOAT_DIMENSION, key_2: FLOAT_DIMENSION, ... }
       string_lengths = {}
       params.each do |key, float_length|
         # Convert float inch length to string length with model unit
@@ -1234,7 +1239,7 @@ module Ladb::OpenCutList
       string_lengths
     end
 
-    def compute_size_aspect_ratio_command(params)    # Waiting params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
+    def compute_size_aspect_ratio_command(params)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
       width = params['width']
       height = params['height']
       ratio = params['ratio']

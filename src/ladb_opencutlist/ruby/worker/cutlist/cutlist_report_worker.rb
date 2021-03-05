@@ -152,7 +152,7 @@ module Ladb::OpenCutList
           report_entry_def.std_price = std_price
           report_entry_def.total_length = cutlist_group.def.total_cutting_length
           report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _m3_to_inch3(volumic_mass) unless volumic_mass == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _m_to_inch(std_price) unless std_price == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * _m_to_inch(std_price) unless std_price == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_length += report_entry_def.total_length

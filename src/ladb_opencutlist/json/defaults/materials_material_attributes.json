@@ -23,7 +23,7 @@
     "grained": false,
     "edge_decremented": false,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   },
   "1": {  /* TYPE_SOLID_WOOD */
     "thickness": "0",
@@ -38,7 +38,7 @@
     "grained": true,
     "edge_decremented": false,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   },
   "2": {  /* TYPE_SHEET_GOOD */
     "thickness": "0",
@@ -53,7 +53,7 @@
     "grained": true,
     "edge_decremented": false,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   },
   "3": {  /* TYPE_DIMENSIONAL */
     "thickness": "0",
@@ -68,7 +68,7 @@
     "grained": false,
     "edge_decremented": false,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   },
   "4": {  /* TYPE_EDGE */
     "thickness": { "metric" : "2mm", "imperial" : "0.018\"" },
@@ -83,7 +83,7 @@
     "grained": false,
     "edge_decremented": true,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   },
   "5": {  /* TYPE_ACCESSORY */
     "thickness": "",
@@ -98,6 +98,6 @@
     "grained": false,
     "edge_decremented": false,
     "volumic_mass": "",
-    "std_prices": ""
+    "std_prices": []
   }
 }

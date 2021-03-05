@@ -171,8 +171,6 @@
                 }
             }, function (response) {
 
-                var materialId = response.id;
-
                 // Flag to stop ignoring next material change event
                 that.ignoreNextMaterialEvents = false;
 
@@ -228,6 +226,9 @@
             var $btnRemove = $('#ladb_materials_remove', $modal);
             var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
+
+            // Bind form
+            var $inputs = this.bindMaterialPropertiesForm($modal, material);
 
             // Define usefull functions
             var fnFetchAttributes = function (attributes) {
@@ -300,9 +301,6 @@
             var fnUpdateBtnUpdateStatus = function() {
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
-
-            // Bind form
-            var $inputs = this.bindMaterialPropertiesForm($modal, material);
 
             // Bind inputs
             $inputs.inputName.on('keyup change', fnUpdateBtnUpdateStatus);
@@ -694,6 +692,7 @@
 
         // Fetch UI elements
         var $widgetPreset = $('.ladb-widget-preset', $modal);
+        var $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
         var $inputName = $('#ladb_materials_input_name', $modal);
         var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
         var $inputColor = $('#ladb_materials_input_color', $modal);
@@ -714,24 +713,29 @@
         var $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
         // Define usefull functions
-        var fnFetchOptions = function (options) {
-            options.type = $selectType.val();
-            options.thickness = $inputThickness.val();
-            options.length_increase = $inputLengthIncrease.val();
-            options.width_increase = $inputWidthIncrease.val();
-            options.thickness_increase = $inputThicknessIncrease.val();
+        var fnFetchType = function (options) {
+            options.type = parseInt($selectType.val());
+        };
+        var fnFetchStds = function (options) {
             options.std_lengths = $inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
             options.std_widths = $inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
             options.std_thicknesses = $inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
             options.std_sections = $inputStdSections.ladbTextinputTokenfield('getValidTokensList');
             options.std_sizes = $inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
+        };
+        var fnFetchOptions = function (options) {
+            fnFetchType(options);
+            options.thickness = $inputThickness.val();
+            options.length_increase = $inputLengthIncrease.val();
+            options.width_increase = $inputWidthIncrease.val();
+            options.thickness_increase = $inputThicknessIncrease.val();
+            fnFetchStds(options);
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
             options.volumic_mass = $inputVolumicMass.val();
             options.std_prices = $editorStdPrices.ladbEditorStdPrices('getStdPrices');
         };
         var fnFillInputs = function (options) {
-
             var fnSetTokens = function ($input, tokens) {
                 // Workaround for empty string tokens
                 $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
@@ -748,8 +752,23 @@
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $inputVolumicMass.val(options.volumic_mass);
+            fnSetStdPricesTypeAndStds();
             $editorStdPrices.ladbEditorStdPrices('setStdPrices', [ options.std_prices ]);
-
+        };
+        var fnSetStdPricesTypeAndStds = function () {
+            var options = {};
+            fnFetchType(options);
+            fnFetchStds(options);
+            $editorStdPrices.ladbEditorStdPrices('setTypeAndStds', [
+                options.type,
+                {
+                    stdLengths: options.std_lengths ? options.std_lengths.split(';') : [],
+                    stdWidths: options.std_widths ? options.std_widths.split(';') : [],
+                    stdThicknesses: options.std_thicknesses ? options.std_thicknesses.split(';') : [],
+                    stdSections: options.std_sections ? options.std_sections.split(';') : [],
+                    stdSizes: options.std_sizes ? options.std_sizes.split(';') : [],
+                }
+            ]);
         };
         var fnComputeFieldsVisibility = function (type) {
             switch (type) {
@@ -861,24 +880,25 @@
         });
         $editorStdPrices.ladbEditorStdPrices({
             type: material.attributes.type,
-            stdLengths: material.attributes.std_lengths ? material.attributes.std_lengths.split(';') : [],
-            stdWidths: material.attributes.std_widths ? material.attributes.std_widths.split(';') : [],
-            stdThicknesses: material.attributes.std_thicknesses ? material.attributes.std_thicknesses.split(';') : [],
-            stdSections: material.attributes.std_sections ? material.attributes.std_sections.split(';') : [],
-            stdSizes: material.attributes.std_sizes ? material.attributes.std_sizes.split(';') : [],
         });
 
         fnComputeFieldsVisibility(material.attributes.type);
 
+        // Bind tab
+        $btnTabAttributes.on('shown.bs.tab', function () {
+            fnSetStdPricesTypeAndStds();
+        });
+
         // Bind select
         $selectType.on('change', function () {
-            var type = parseInt($(this).val());
+            var options = {};
+            fnFetchType(options);
 
             // fnDisableBtnExport();
-            fnComputeFieldsVisibility(type);
+            fnComputeFieldsVisibility(options.type);
 
             // Update section on preset widget
-            $widgetPreset.ladbWidgetPreset('setSection', type);
+            $widgetPreset.ladbWidgetPreset('setSection', options.type);
 
             // Reset fields to defaults
             $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
@@ -913,10 +933,10 @@
             $inputStdSections.ladbTextinputTokenfield({ format: 'dxd' });
             $inputStdSizes.ladbTextinputTokenfield({ format: 'dxd' });
 
-            fnFillInputs(material.attributes);
-
             if (setAttributeToDefaults) {
                 $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
+            } else {
+                fnFillInputs(material.attributes);
             }
 
         });

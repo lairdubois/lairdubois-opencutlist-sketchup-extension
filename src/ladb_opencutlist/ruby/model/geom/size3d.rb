@@ -9,11 +9,16 @@ module Ladb::OpenCutList
     attr_accessor :thickness
 
     def initialize(length = 0, width = 0, thickness = 0, normals = DEFAULT_NORMALS)
-      if length.is_a? String
+      if length.is_a?(String)    # String representation of a size "LxLxL"
         s_length, s_width, s_thickness = StringUtils.split_dxdxd(length)
         length = s_length.to_l
         width = s_width.to_l
         thickness = s_thickness.to_l
+      elsif length.is_a?(Array) && length.length >= 3  # Array(3) of inch float
+        a_size = length
+        length = a_size[0].to_l
+        width = a_size[1].to_l
+        thickness = a_size[2].to_l
       end
       super(length, width)
       @thickness = thickness
