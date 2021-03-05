@@ -30,6 +30,12 @@ module Ladb::OpenCutList
       # Fetch new length options
       DimensionUtils.instance.fetch_length_options
 
+      # Fetch new mass options
+      MassUtils.instance.fetch_mass_options
+
+      # Fetch new currency options
+      PriceUtils.instance.fetch_currency_options
+
       add_model_observers(model)
     end
 
@@ -43,6 +49,12 @@ module Ladb::OpenCutList
       # Fetch new length options
       DimensionUtils.instance.fetch_length_options
 
+      # Fetch new mass options
+      MassUtils.instance.fetch_mass_options
+
+      # Fetch new currency options
+      PriceUtils.instance.fetch_currency_options
+
       add_model_observers(model)
     end
 
@@ -55,6 +67,12 @@ module Ladb::OpenCutList
 
       # Fetch new length options
       DimensionUtils.instance.fetch_length_options
+
+      # Fetch new mass options
+      MassUtils.instance.fetch_mass_options
+
+      # Fetch new currency options
+      PriceUtils.instance.fetch_currency_options
 
     end
 

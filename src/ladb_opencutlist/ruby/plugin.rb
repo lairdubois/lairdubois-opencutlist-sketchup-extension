@@ -11,6 +11,7 @@ module Ladb::OpenCutList
   require 'open-uri'
   require_relative 'constants'
   require_relative 'observer/app_observer'
+  require_relative 'observer/plugin_observer'
   require_relative 'controller/materials_controller'
   require_relative 'controller/cutlist_controller'
   require_relative 'controller/importer_controller'
@@ -77,6 +78,7 @@ module Ladb::OpenCutList
       @commands = {}
       @event_callbacks = {}
       @controllers = []
+      @observers = []
 
       @started = false
 
@@ -171,6 +173,20 @@ module Ladb::OpenCutList
 
     end
 
+    def html_dialog_compatible
+      if @html_dialog_compatible
+        return @html_dialog_compatible
+      end
+      begin
+        @html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
+      rescue NameError
+        @html_dialog_compatible = false
+      end
+      @html_dialog_compatible
+    end
+
+    # -----
+
     def clear_app_defaults_cache
       @app_defaults_cache = nil
     end
@@ -222,18 +238,6 @@ module Ladb::OpenCutList
       end
 
       @app_defaults_cache[cache_key]
-    end
-
-    def html_dialog_compatible
-      if @html_dialog_compatible
-        return @html_dialog_compatible
-      end
-      begin
-        @html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
-      rescue NameError
-        @html_dialog_compatible = false
-      end
-      @html_dialog_compatible
     end
 
     # -----
@@ -336,7 +340,7 @@ module Ladb::OpenCutList
       write_default(PRESETS_KEY, @global_presets_cache)
     end
 
-    def set_global_preset(dictionary, values, name = nil, section = nil)
+    def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
@@ -367,6 +371,10 @@ module Ladb::OpenCutList
 
       # Store presets to SU defaults
       write_global_presets
+
+      # Fire event
+      self.fire_onGlobalPresetChanged(dictionary, section) if fire_event
+
     end
 
     def get_global_preset(dictionary, name = nil, section = nil)
@@ -441,7 +449,7 @@ module Ladb::OpenCutList
       Sketchup.active_model.commit_operation
     end
 
-    def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil)
+    def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil, fire_event = false)
 
       section = '0' if section.nil?
       app_defaults_section = '0' if app_defaults_section.nil?
@@ -471,6 +479,10 @@ module Ladb::OpenCutList
 
       # Store presets to SU defaults
       write_model_presets
+
+      # Fire event
+      self.fire_onModelPresetChanged(dictionary, section) if fire_event
+
     end
 
     def get_model_preset(dictionary, section = nil, app_defaults_section = nil)
@@ -505,6 +517,24 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
       return @model_presets_cache[dictionary].keys if @model_presets_cache.has_key?(dictionary)
       []
+    end
+
+    # -----
+
+    def fire_onGlobalPresetChanged(dictonary, section)
+      @observers.each do |observer|
+        if observer.respond_to?(:onGlobalPresetChanged)
+          observer.onGlobalPresetChanged(dictonary, section)
+        end
+      end
+    end
+
+    def fire_onModelPresetChanged(dictonary, section)
+      @observers.each do |observer|
+        if observer.respond_to?(:onModelPresetChanged)
+          observer.onModelPresetChanged(dictonary, section)
+        end
+      end
     end
 
     # -----
@@ -636,6 +666,7 @@ module Ladb::OpenCutList
         # -- Observers --
 
         Sketchup.add_observer(AppObserver.instance)
+        @observers.push(PluginObserver.instance)
 
         # -- Controllers --
 
@@ -1049,8 +1080,9 @@ module Ladb::OpenCutList
       values = params['values']
       name = params['name']
       section = params['section']
+      fire_event = params['fire_event']
 
-      set_global_preset(dictionary, values, name, section)
+      set_global_preset(dictionary, values, name, section, fire_event)
     end
 
     def get_global_preset_command(params) # Expected params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
@@ -1073,8 +1105,9 @@ module Ladb::OpenCutList
       values = params['values']
       section = params['section']
       app_default_section = params['app_default_section']
+      fire_event = params['fire_event']
 
-      set_model_preset(dictionary, values, section, app_default_section)
+      set_model_preset(dictionary, values, section, app_default_section, fire_event)
     end
 
     def get_model_preset_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }

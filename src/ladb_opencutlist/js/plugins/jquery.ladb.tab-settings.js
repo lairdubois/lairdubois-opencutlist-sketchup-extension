@@ -42,6 +42,8 @@
 
         var that = this;
 
+        // Global settings /////
+
         var fnUpdate = function () {
 
             // Adjust min limits
@@ -137,6 +139,67 @@
             that.dialog.capabilities.dialog_top -= 20;
             fnUpdate();
             return false;
+        });
+
+        // Model Settings /////
+
+        var modelSettings = {};
+
+        // Fetch UI elements
+        var $widgetPreset = $('.ladb-widget-preset', that.$element);
+        var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
+        var $selectMassUnitSymbol = $('#ladb_model_select_mass_unit_symbol', that.$element);
+        var $btnSave = $('#ladb_model_btn_save', that.$element);
+
+        var fnFetchOptions = function (options) {
+            options.currency_symbol = $inputCurrencySymbol.val();
+            options.mass_unit_symbol = $selectMassUnitSymbol.selectpicker('val');
+        };
+        var fnFillInputs = function (options) {
+            $inputCurrencySymbol.val(options.currency_symbol);
+            $selectMassUnitSymbol.selectpicker('val', options.mass_unit_symbol);
+        };
+        var retrieveModelOptions = function () {
+
+            // Retrieve label options
+            rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
+
+                var modelOptions = response.preset;
+                fnFillInputs(modelOptions);
+
+            });
+
+        };
+
+        $widgetPreset.ladbWidgetPreset({
+            dialog: that.dialog,
+            dictionary: 'settings_model',
+            fnFetchOptions: fnFetchOptions,
+            fnFillInputs: fnFillInputs
+        });
+        $selectMassUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
+
+        retrieveModelOptions();
+
+        // Bin button
+        $btnSave.on('click', function () {
+            $(this).blur();
+
+            // Fetch options
+            fnFetchOptions(modelSettings);
+
+            // Store options
+            rubyCallCommand('core_set_model_preset', { dictionary: 'settings_model', values: modelSettings, fire_event:true });
+
+            // Notification
+            that.dialog.notify(i18next.t('tab.settings.save_to_model_success'), 'success');
+
+        });
+
+        // Events
+
+        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
+            retrieveModelOptions();
         });
 
     };

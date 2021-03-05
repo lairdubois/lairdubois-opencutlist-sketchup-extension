@@ -20,11 +20,17 @@ module Ladb::OpenCutList
       rescue
         @decimal_separator = ','
       end
+      fetch_currency_options
+    end
+
+    def fetch_currency_options
+      settings_model = Plugin.instance.get_model_preset('settings_model')
+      @currency_symbol = settings_model['currency_symbol']
     end
 
     # -----
 
-    # Take a float containing a length in inch
+    # Take a float containing a price
     # and convert it to a string representation according to the
     # local unit settings.
     #
@@ -32,13 +38,13 @@ module Ladb::OpenCutList
       if f.nil?
         return nil
       end
-      format_value(f, 1, f < 1 ? 2 : 0, '€')
+      format_value(f, 1, f < 1 ? 2 : 0)
     end
 
-    def format_value(f, multiplier, precision, unit_sign)
+    def format_value(f, multiplier, precision)
       value = f * multiplier
       rounded_value = value.round(precision)
-      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + unit_sign
+      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + @currency_symbol
     end
 
   end

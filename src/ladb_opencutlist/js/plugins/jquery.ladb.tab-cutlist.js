@@ -2909,6 +2909,11 @@
                 that.showObsolete('core.event.options_change', true);
             }
         });
+        addEventCallback('on_model_preset_changed', function (params) {
+            if (that.generateAt && params.dictionary === 'settings_model') {
+                that.showObsolete('core.event.options_change', true);
+            }
+        });
         addEventCallback([ 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {
                 if (that.generateAt) {

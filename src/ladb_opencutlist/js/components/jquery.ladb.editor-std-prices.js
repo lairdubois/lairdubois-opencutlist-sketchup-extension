@@ -21,6 +21,8 @@
     };
 
     LadbEditorStdPrices.DEFAULTS = {
+        currency_symbol: '',
+        length_unit_symbol: '',
         inputChangeCallback: null
     };
 
@@ -76,11 +78,8 @@
         });
 
         // Bind
-        var previousValue = null;
         $select
-            .selectpicker($.extend(SELECT_PICKER_OPTIONS, {
-                noneSelectedText: 'Toutes les tailles'
-            }))
+            .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 var newRange = $(this).selectpicker('val');
                 $('select', that.$element).each(function () {
@@ -172,7 +171,7 @@
                 for (i = 0; i < stds.stdThicknesses.length; i++) {
                     stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
                 }
-                this.unit = 'm<sup>3</sup>';
+                this.unit = that.options.currency_symbol + ' / ' + (that.options.length_unit_symbol === 'ft' ? 'FBM' : that.options.length_unit_symbol + '³');
                 break;
 
             case 2: /* TYPE_SHEET_GOOD */
@@ -182,7 +181,7 @@
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.unit = 'm<sup>2</sup>';
+                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol + '²';
                 break;
 
             case 3: /* TYPE_DIMENSIONAL */
@@ -192,14 +191,14 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.unit = 'm';
+                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol;
                 break;
 
             case 4: /* TYPE_EDGE */
                 for (i = 0; i < stds.stdWidths.length; i++) {
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
-                this.unit = 'm';
+                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol;
                 break;
 
         }

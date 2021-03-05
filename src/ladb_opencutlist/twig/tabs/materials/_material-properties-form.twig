@@ -28,7 +28,7 @@
     </div>
 </div>
 <section style="position: relative; margin-top: 30px;">
-    {% include 'components/_widget-preset.twig' with { 'top': 8, 'right': 10} %}
+    {% include 'components/_widget-preset.twig' with { 'top':8, 'right':10 } %}
     <ul class="nav nav-tabs nav-centred" role="tablist">
         <li role="presentation" class="active"><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
         <li role="presentation"><a id="ladb_materials_btn_tab_general_attributes" href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>
@@ -134,7 +134,7 @@
                     <div class="col-xs-5">
                         <div class="input-group">
                             <input type="text" class="form-control text-right" id="ladb_materials_input_volumic_mass">
-                            <span class="input-group-addon">kg / m<sup>3</sup></span>
+                            <span class="input-group-addon">{{ mass_unit_symbol }} / {{ length_unit_symbol }}<sup>3</sup></span>
                         </div>
                     </div>
                 </div>

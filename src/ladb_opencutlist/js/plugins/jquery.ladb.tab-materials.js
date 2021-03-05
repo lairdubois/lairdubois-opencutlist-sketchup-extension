@@ -7,7 +7,9 @@
     var LadbTabMaterials = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
 
-        this.materials = [];
+        this.currency_symbol = '';
+        this.mass_unit_symbol = '';
+        this.length_unit_symbol = '';
         this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
@@ -46,6 +48,9 @@
             var currentMaterialName = response.current_material_name;
 
             // Keep useful data
+            that.currency_symbol = response.currency_symbol;
+            that.mass_unit_symbol = response.mass_unit_symbol;
+            that.length_unit_symbol = response.length_unit_symbol;
             that.materials = materials;
 
             // Update filename
@@ -126,6 +131,8 @@
         };
 
         var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
+            mass_unit_symbol: that.mass_unit_symbol,
+            length_unit_symbol: that.length_unit_symbol,
             material: material
         }, true);
 
@@ -210,6 +217,8 @@
 
             var $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
                 capabilities: that.dialog.capabilities,
+                mass_unit_symbol: that.mass_unit_symbol,
+                length_unit_symbol: that.length_unit_symbol,
                 material: material
             }, true);
 
@@ -873,6 +882,8 @@
             fnFillInputs: fnFillInputs
         });
         $editorStdPrices.ladbEditorStdPrices({
+            currency_symbol: that.currency_symbol,
+            length_unit_symbol: that.length_unit_symbol,
             inputChangeCallback: inputChangeCallback
         });
 
@@ -1017,6 +1028,14 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
+        });
+        addEventCallback('on_options_provider_changed', function () {
+            that.showObsolete('core.event.options_change', true);
+        });
+        addEventCallback('on_model_preset_changed', function (params) {
+            if (params.dictionary === 'settings_model') {
+                that.showObsolete('core.event.options_change', true);
+            }
         });
         addEventCallback([ 'on_material_add', 'on_material_remove', 'on_material_change' ], function () {
             if (!that.ignoreNextMaterialEvents) {

@@ -419,7 +419,7 @@
         unit_sign = UNIT_SIGN_METER_2
       else
         multiplier = 1 / 144.0
-        precision = [2, @length_precision-3].max
+        precision = [2, @length_precision - 3].max
         unit_sign = UNIT_SIGN_FEET_2
       end
       format_value(f2, multiplier, precision, unit_sign)
@@ -440,11 +440,11 @@
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
-          precision = [2, @length_precision-3].max
+          precision = [2, @length_precision - 3].max
           unit_sign = UNIT_SIGN_BOARD_FEET_3
         else
           multiplier = 1 / 1728.0
-          precision = [2, @length_precision-3].max
+          precision = [2, @length_precision - 3].max
           unit_sign = UNIT_SIGN_FEET_3
         end
       end

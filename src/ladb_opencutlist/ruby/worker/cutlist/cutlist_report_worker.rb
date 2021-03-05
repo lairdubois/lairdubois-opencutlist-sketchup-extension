@@ -21,6 +21,7 @@ module Ladb::OpenCutList
       # Setup caches
       @material_attributes_cache = {}
       @definition_attributes_cache = {}
+      @model_unit_is_metric = DimensionUtils.instance.model_unit_is_metric
 
     end
 
@@ -47,8 +48,8 @@ module Ladb::OpenCutList
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
           report_entry_def.total_volume = cutlist_group.def.total_cutting_volume
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _m3_to_inch3(volumic_mass) unless volumic_mass == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _m3_to_inch3(std_price) unless std_price == 0
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _u3_to_inch3(volumic_mass, cutlist_group.material_type) unless volumic_mass == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _u3_to_inch3(std_price) unless std_price == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume += report_entry_def.total_volume
@@ -84,8 +85,8 @@ module Ladb::OpenCutList
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.std_price = std_price
-            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _m3_to_inch3(volumic_mass) unless volumic_mass == 0
-            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * _m2_to_inch2(std_price) unless std_price == 0
+            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * _u2_to_inch2(std_price) unless std_price == 0
             report_entry_def.sheet_defs << report_entry_sheet_def
 
             report_entry_def.total_mass += report_entry_sheet_def.total_mass
@@ -128,8 +129,8 @@ module Ladb::OpenCutList
 
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
             report_entry_bar_def.std_price = std_price
-            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _m3_to_inch3(volumic_mass) unless volumic_mass == 0
-            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * _m_to_inch(std_price) unless std_price == 0
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * _u_to_inch(std_price) unless std_price == 0
             report_entry_def.bar_defs << report_entry_bar_def
 
             report_entry_def.total_mass += report_entry_bar_def.total_mass
@@ -151,8 +152,8 @@ module Ladb::OpenCutList
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
           report_entry_def.total_length = cutlist_group.def.total_cutting_length
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _m3_to_inch3(volumic_mass) unless volumic_mass == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * _m_to_inch(std_price) unless std_price == 0
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * _u_to_inch(std_price) unless std_price == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_length += report_entry_def.total_length
@@ -284,16 +285,32 @@ module Ladb::OpenCutList
     INCH2_TO_M2 = INCH_TO_M * INCH_TO_M
     INCH3_TO_M3 = INCH2_TO_M2 * INCH_TO_M
 
-    def _m3_to_inch3(f)
-      f * INCH3_TO_M3
+    def _u3_to_inch3(f3, material_type = nil)
+      if @model_unit_is_metric
+        f3 * INCH3_TO_M3
+      else
+        if material_type == MaterialAttributes::TYPE_SOLID_WOOD
+          f3 / 144
+        else
+          f3 / 1728
+        end
+      end
     end
 
-    def _m2_to_inch2(f)
-      f * INCH2_TO_M2
+    def _u2_to_inch2(f2)
+      if @model_unit_is_metric
+        f2 * INCH2_TO_M2
+      else
+        f2 / 144
+      end
     end
 
-    def _m_to_inch(f)
-      f * INCH_TO_M
+    def _u_to_inch(f)
+      if @model_unit_is_metric
+        f * INCH_TO_M
+      else
+        f
+      end
     end
 
   end
