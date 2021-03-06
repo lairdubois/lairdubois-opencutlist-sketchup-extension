@@ -269,16 +269,14 @@ module Ladb::OpenCutList
 
     def _get_std_price(entry_dim, material_attributes)
 
-      l_std_prices = material_attributes.l_std_prices
-      l_std_prices.each do |std_price|
-
+      h_std_prices = material_attributes.h_std_prices
+      h_std_prices.each do |std_price|
         if std_price[:dim] == entry_dim
           return std_price
         end
-
       end
 
-      l_std_prices[0]
+      h_std_prices[0]
     end
 
     def _uv_mass_to_model_unit(s_unit, f_value)
@@ -311,7 +309,7 @@ module Ladb::OpenCutList
         f_value = DimensionUtils.instance.m3_to_inch3(f_value)
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET_3
         f_value = DimensionUtils.instance.ft3_to_inch3(f_value)
-      when DimensionUtils::UNIT_STRIPPEDNAME_BOARD_FEET_3
+      when DimensionUtils::UNIT_STRIPPEDNAME_BOARD_FEET
         f_value = DimensionUtils.instance.fbm_to_inch3(f_value)
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER_2

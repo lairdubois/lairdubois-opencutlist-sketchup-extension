@@ -79,13 +79,14 @@ module Ladb::OpenCutList
       }
 
       # Retrieve model infos
-      length_unit = model ? model.options["UnitsOptions"]["LengthUnit"] : nil
-      settings_model = Plugin.instance.get_model_preset('settings_model')
+      length_unit = DimensionUtils.instance.length_unit
+      mass_unit_strippedname = MassUtils.instance.get_symbol
+      currency_symbol = PriceUtils.instance.get_symbol
       dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
       # Create cut list
-      cutlist = Cutlist.new(selection_only, length_unit, settings_model['currency_symbol'], settings_model['mass_unit_symbol'], dir, filename, page_label, @instance_infos_cache.length)
+      cutlist = Cutlist.new(selection_only, length_unit, mass_unit_strippedname, currency_symbol, dir, filename, page_label, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0

@@ -38,8 +38,8 @@
     };
 
     LadbEditorStdPrices.DEFAULTS = {
+        lengthUnitStrippedname: '',
         currencySymbol: '',
-        lengthUnitSymbol: '',
         inputChangeCallback: null
     };
 
@@ -201,7 +201,7 @@
                 for (i = 0; i < stds.stdThicknesses.length; i++) {
                     stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
                 }
-                this.defaultUnit = '$_' + (that.options.lengthUnitSymbol === 'ft' ? 'fbm' : that.options.lengthUnitSymbol + '3');
+                this.defaultUnit = '$_' + (that.options.lengthUnitStrippedname === 'ft' ? 'fbm' : that.options.lengthUnitStrippedname + '3');
                 enabledUnitKeys = [ '$_m3', '$_ft3', '$_fbm' ];
                 break;
 
@@ -212,7 +212,7 @@
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitSymbol + '2';
+                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
                 enabledUnitKeys = [ '$_m3', '$_m2', '$_ft3', '$_ft2', '$_p' ];
                 break;
 
@@ -223,7 +223,7 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitSymbol;
+                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
                 enabledUnitKeys = [ '$_m3', '$_m2', '$_m', '$_ft3', '$_ft2', '$_ft', '$_p' ];
                 break;
 
@@ -231,7 +231,7 @@
                 for (i = 0; i < stds.stdWidths.length; i++) {
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitSymbol;
+                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
                 enabledUnitKeys = [ '$_m', '$_ft' ];
                 break;
 

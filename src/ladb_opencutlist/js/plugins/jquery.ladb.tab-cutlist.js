@@ -78,8 +78,8 @@
             var tips = response.tips;
             var selectionOnly = response.selection_only;
             var lengthUnit = response.length_unit;
+            var massUnitStrippedname = response.mass_unit_strippedname;
             var currencySymbol = response.currency_symbol;
-            var massUnitSymbol = response.mass_unit_symbol;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
@@ -93,7 +93,7 @@
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
             that.currencySymbol = currencySymbol;
-            that.massUnitSymbol = massUnitSymbol;
+            that.massUnitStrippedname = massUnitStrippedname;
             that.usedTags = usedTags;
             that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
@@ -1317,7 +1317,7 @@
                     ]
                 });
                 $inputMass.ladbTextinputWithUnit({
-                    defaultUnit: that.massUnitSymbol + '_p',
+                    defaultUnit: that.massUnitStrippedname + '_p',
                     units: [
                         { kg_p: 'kg / ' + i18next.t('default.part_single') },
                         { lb_p: 'lb / ' + i18next.t('default.part_single') }

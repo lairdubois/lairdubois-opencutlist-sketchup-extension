@@ -20,15 +20,13 @@ module Ladb::OpenCutList
       end
       Dir.mkdir(material_thumbnails_dir)
 
-      settings_model = Plugin.instance.get_model_preset('settings_model')
-
       response = {
           :errors => [],
           :warnings => [],
           :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
-          :currency_symbol => settings_model['currency_symbol'],
-          :mass_unit_symbol => settings_model['mass_unit_symbol'],
-          :length_unit_symbol => DimensionUtils.instance.model_unit_is_metric ? DimensionUtils::UNIT_STRIPPEDNAME_METER : DimensionUtils::UNIT_STRIPPEDNAME_FEET,
+          :length_unit_strippedname => DimensionUtils.instance.model_unit_is_metric ? DimensionUtils::UNIT_STRIPPEDNAME_METER : DimensionUtils::UNIT_STRIPPEDNAME_FEET,
+          :mass_unit_strippedname => MassUtils.instance.get_symbol,
+          :currency_symbol => PriceUtils.instance.get_symbol,
           :solid_wood_material_count => 0,
           :sheet_good_material_count => 0,
           :dimensional_material_count => 0,

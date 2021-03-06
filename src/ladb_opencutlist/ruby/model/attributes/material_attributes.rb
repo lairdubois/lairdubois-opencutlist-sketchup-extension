@@ -316,7 +316,7 @@
       end
     end
 
-    def l_std_prices
+    def h_std_prices
 
       # Returns an array like [ { :unit => STRING_UNIT, :val => FLOAT }, { :unit => STRING_UNIT, :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
 

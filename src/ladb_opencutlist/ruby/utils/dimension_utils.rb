@@ -17,19 +17,19 @@
     CENTIMETER    = Length::Centimeter
     METER         = Length::Meter
 
-    # Unit signs
-    UNIT_SIGN_INCHES = '"'
-    UNIT_SIGN_FEET = "'"
-    UNIT_SIGN_METER = 'm'
-    UNIT_SIGN_CENTIMETER = 'cm'
-    UNIT_SIGN_MILLIMETER = 'mm'
+    # Unit symbols
+    UNIT_SYMBOL_INCHES = '"'
+    UNIT_SYMBOL_FEET = "'"
+    UNIT_SYMBOL_METER = 'm'
+    UNIT_SYMBOL_CENTIMETER = 'cm'
+    UNIT_SYMBOL_MILLIMETER = 'mm'
 
-    UNIT_SIGN_METER_2 = 'm²'
-    UNIT_SIGN_FEET_2 = 'ft²'
+    UNIT_SYMBOL_METER_2 = 'm²'
+    UNIT_SYMBOL_FEET_2 = 'ft²'
 
-    UNIT_SIGN_METER_3 = 'm³'
-    UNIT_SIGN_FEET_3 = 'ft³'
-    UNIT_SIGN_BOARD_FEET_3 = 'FBM'
+    UNIT_SYMBOL_METER_3 = 'm³'
+    UNIT_SYMBOL_FEET_3 = 'ft³'
+    UNIT_SYMBOL_BOARD_FEET = 'FBM'
 
     # Unit strippednames
     UNIT_STRIPPEDNAME_INCHES = 'in'
@@ -43,7 +43,7 @@
 
     UNIT_STRIPPEDNAME_METER_3 = 'm3'
     UNIT_STRIPPEDNAME_FEET_3 = 'ft3'
-    UNIT_STRIPPEDNAME_BOARD_FEET_3 = 'fbm'
+    UNIT_STRIPPEDNAME_BOARD_FEET = 'fbm'
 
     include Singleton
 
@@ -126,15 +126,15 @@
     def unit_sign
       case @length_unit
         when MILLIMETER
-          return UNIT_SIGN_MILLIMETER
+          return UNIT_SYMBOL_MILLIMETER
         when CENTIMETER
-          return UNIT_SIGN_CENTIMETER
+          return UNIT_SYMBOL_CENTIMETER
         when METER
-          return UNIT_SIGN_METER
+          return UNIT_SYMBOL_METER
         when FEET
-          return UNIT_SIGN_FEET
+          return UNIT_SYMBOL_FEET
         else
-          return UNIT_SIGN_INCHES
+          return UNIT_SYMBOL_INCHES
       end
     end
 
@@ -180,7 +180,7 @@
       nu = ""
       sum = 0
       if i.is_a?(String)
-        if match = i.match(/^(~?\s*)(\d*(([.,])\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
+        if match = i.match(/^(~?\s*)(\d*(([.,])\d*)?)?\s*(#{UNIT_SYMBOL_MILLIMETER}|#{UNIT_SYMBOL_CENTIMETER}|#{UNIT_SYMBOL_METER}|#{UNIT_SYMBOL_FEET}|#{UNIT_SYMBOL_INCHES})?$/)
           one, two, three, four, five = match.captures
           if five.nil?
             nu = one + two + unit_sign
@@ -223,22 +223,22 @@
      sum = 0
       # make sure the entry is a string and starts with the proper magic
       if i.is_a?(String)
-        if match = i.match(/^(\d*([.,]\d*)?)?\s*(#{UNIT_SIGN_MILLIMETER}|#{UNIT_SIGN_CENTIMETER}|#{UNIT_SIGN_METER}|#{UNIT_SIGN_FEET}|#{UNIT_SIGN_INCHES})?$/)
+        if match = i.match(/^(\d*([.,]\d*)?)?\s*(#{UNIT_SYMBOL_MILLIMETER}|#{UNIT_SYMBOL_CENTIMETER}|#{UNIT_SYMBOL_METER}|#{UNIT_SYMBOL_FEET}|#{UNIT_SYMBOL_INCHES})?$/)
           one, two, three = match.captures
           #puts "i = #{'%7s' % i} => decimal/integer number::  #{'%7s' % one}   #{'%7s' % three}"
           one = one.sub(/,/, '.')
           one = one.to_f
           if three.nil?
             sum = model_units_to_inches(one)
-          elsif three == UNIT_SIGN_MILLIMETER
+          elsif three == UNIT_SYMBOL_MILLIMETER
             sum = one / 25.4
-          elsif three == UNIT_SIGN_CENTIMETER
+          elsif three == UNIT_SYMBOL_CENTIMETER
             sum = one / 2.54
-          elsif three == UNIT_SIGN_METER
+          elsif three == UNIT_SYMBOL_METER
             sum = one / 0.0254
-          elsif three == UNIT_SIGN_FEET
+          elsif three == UNIT_SYMBOL_FEET
             sum = 12 * one
-          elsif three == UNIT_SIGN_INCHES
+          elsif three == UNIT_SYMBOL_INCHES
             sum = one
           end
         elsif match = i.match(/^(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
@@ -262,7 +262,7 @@
         end
       end
       sum = sum.to_s.sub(/\./, @decimal_separator)
-      sum + UNIT_SIGN_INCHES
+      sum + UNIT_SYMBOL_INCHES
     end
 
     # Takes a single number in a string and converts it to a string
@@ -442,11 +442,11 @@
       if model_unit_is_metric
         multiplier = 0.0254
         precision = 3
-        unit_sign = UNIT_SIGN_METER
+        unit_sign = UNIT_SYMBOL_METER
       else
         multiplier = 1 / 12.0
         precision = 2
-        unit_sign = UNIT_SIGN_FEET
+        unit_sign = UNIT_SYMBOL_FEET
       end
       format_value(f, multiplier, precision, unit_sign)
     end
@@ -462,11 +462,11 @@
       if model_unit_is_metric
         multiplier = 0.0254**2
         precision = [3, @length_precision].max
-        unit_sign = UNIT_SIGN_METER_2
+        unit_sign = UNIT_SYMBOL_METER_2
       else
         multiplier = 1 / 144.0
         precision = [2, @length_precision - 3].max
-        unit_sign = UNIT_SIGN_FEET_2
+        unit_sign = UNIT_SYMBOL_FEET_2
       end
       format_value(f2, multiplier, precision, unit_sign)
     end
@@ -482,16 +482,16 @@
       if model_unit_is_metric
         multiplier = 0.0254**3
         precision = [3, @length_precision].max
-        unit_sign = UNIT_SIGN_METER_3
+        unit_sign = UNIT_SYMBOL_METER_3
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
           precision = [2, @length_precision - 3].max
-          unit_sign = UNIT_SIGN_BOARD_FEET_3
+          unit_sign = UNIT_SYMBOL_BOARD_FEET
         else
           multiplier = 1 / 1728.0
           precision = [2, @length_precision - 3].max
-          unit_sign = UNIT_SIGN_FEET_3
+          unit_sign = UNIT_SYMBOL_FEET_3
         end
       end
       format_value(f3, multiplier, precision, unit_sign)

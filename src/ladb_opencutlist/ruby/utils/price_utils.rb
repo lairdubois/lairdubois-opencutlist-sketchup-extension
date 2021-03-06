@@ -2,9 +2,6 @@ module Ladb::OpenCutList
 
   require 'singleton'
 
-  # Unit signs
-  UNIT_SIGN_EURO = '€'
-
   class PriceUtils
 
     include Singleton
@@ -28,6 +25,10 @@ module Ladb::OpenCutList
       @currency_symbol = settings_model['currency_symbol']
     end
 
+    def get_symbol
+      @currency_symbol
+    end
+
     # -----
 
     # Take a float containing a price
@@ -44,7 +45,7 @@ module Ladb::OpenCutList
     def format_value(f, multiplier, precision)
       value = f * multiplier
       rounded_value = value.round(precision)
-      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + @currency_symbol
+      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + get_symbol
     end
 
   end

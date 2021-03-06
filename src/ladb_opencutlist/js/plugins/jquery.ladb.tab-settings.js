@@ -147,16 +147,16 @@
 
         // Fetch UI elements
         var $widgetPreset = $('.ladb-widget-preset', that.$element);
-        var $selectLengthUnitSymbol = $('#ladb_model_select_length_unit_symbol', that.$element);
-        var $selectMassUnitSymbol = $('#ladb_model_select_mass_unit_symbol', that.$element);
+        var $selectLengthUnit = $('#ladb_model_select_length_unit', that.$element);
+        var $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
         var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
 
         var fnFetchOptions = function (options) {
-            options.mass_unit_symbol = $selectMassUnitSymbol.selectpicker('val');
+            options.mass_unit = $selectMassUnit.selectpicker('val');
             options.currency_symbol = $inputCurrencySymbol.val();
         };
         var fnFillInputs = function (options) {
-            $selectMassUnitSymbol.selectpicker('val', options.mass_unit_symbol);
+            $selectMassUnit.selectpicker('val', options.mass_unit);
             $inputCurrencySymbol.val(options.currency_symbol);
         };
         var retrieveModelOptions = function () {
@@ -164,7 +164,7 @@
             // Retrieve SU options
             rubyCallCommand('settings_get_length_unit', null, function (response) {
 
-                $selectLengthUnitSymbol.selectpicker('val', response.length_unit);
+                $selectLengthUnit.selectpicker('val', response.length_unit);
 
             });
 
@@ -196,19 +196,19 @@
                 fnSaveOptions();
             }
         });
-        $selectLengthUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectMassUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLengthUnit.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectMassUnit.selectpicker(SELECT_PICKER_OPTIONS);
 
         retrieveModelOptions();
 
         // Bind input & select
-        $selectLengthUnitSymbol.on('change', function () {
-            var lengthUnit = $selectLengthUnitSymbol.selectpicker('val');
+        $selectLengthUnit.on('change', function () {
+            var lengthUnit = $selectLengthUnit.selectpicker('val');
 
             rubyCallCommand('settings_set_length_unit', { length_unit: lengthUnit });
 
         });
-        $selectMassUnitSymbol.on('change', fnSaveOptions);
+        $selectMassUnit.on('change', fnSaveOptions);
         $inputCurrencySymbol.on('change', fnSaveOptions);
 
         // Events

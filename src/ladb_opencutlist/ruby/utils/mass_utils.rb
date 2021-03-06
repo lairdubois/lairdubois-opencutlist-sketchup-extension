@@ -4,6 +4,14 @@ module Ladb::OpenCutList
 
   class MassUtils
 
+    # Units
+    KILOGRAM = 0
+    POUND = 1
+
+    # Unit symbols
+    UNIT_SYMBOL_KILOGRAM = 'kg'
+    UNIT_SYMBOL_POUND = 'lb'
+
     # Unit strippednames
     UNIT_STRIPPEDNAME_KILOGRAM = 'kg'
     UNIT_STRIPPEDNAME_POUND = 'lb'
@@ -26,16 +34,27 @@ module Ladb::OpenCutList
 
     def fetch_mass_options
       settings_model = Plugin.instance.get_model_preset('settings_model')
-      @unit_symbol = settings_model['mass_unit_symbol']
+      @mass_unit = settings_model['mass_unit']
+    end
+
+    def get_symbol
+      case @mass_unit
+      when KILOGRAM
+        return UNIT_SYMBOL_KILOGRAM
+      when POUND
+        return UNIT_SYMBOL_POUND
+      else
+        ''
+      end
     end
 
     # -----
 
     def kg_to_model_unit(f)
-      case @unit_symbol
-      when UNIT_STRIPPEDNAME_KILOGRAM
+      case @mass_unit
+      when KILOGRAM
         return f
-      when UNIT_STRIPPEDNAME_POUND
+      when POUND
         return f * 2.20462262185
       else
         0
@@ -43,10 +62,10 @@ module Ladb::OpenCutList
     end
 
     def lb_to_model_unit(f)
-      case @unit_symbol
-      when UNIT_STRIPPEDNAME_KILOGRAM
+      case @mass_unit
+      when KILOGRAM
         return f * 0.45359237
-      when UNIT_STRIPPEDNAME_POUND
+      when POUND
         return f
       else
         0
@@ -69,7 +88,7 @@ module Ladb::OpenCutList
     def format_value(f, multiplier, precision)
       value = f * multiplier
       rounded_value = value.round(precision)
-      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + @unit_symbol
+      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + get_symbol
     end
 
   end
