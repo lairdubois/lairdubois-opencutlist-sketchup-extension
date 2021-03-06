@@ -257,9 +257,9 @@
 
             $.each(responseA, function (k, v) {
                if (Array.isArray(v)) {
-                   responseA[k] = v[0] + '"x' + v[1] + '"';
+                   responseA[k] = v[0] + 'x' + v[1];
                } else {
-                   responseA[k] = v + '"'
+                   responseA[k] = v
                }
             });
             that.stdsA = responseA;
@@ -268,9 +268,9 @@
 
                 $.each(responseB, function (k, v) {
                     if (Array.isArray(v)) {
-                        responseB[k] = v[0] + '"x' + v[1] + '"';
+                        responseB[k] = v[0] + 'x' + v[1];
                     } else {
-                        responseB[k] = v + '"'
+                        responseB[k] = v
                     }
                 });
                 that.stdsB = Object.keys(responseB).length === 0 ? { '':'' } : responseB;
