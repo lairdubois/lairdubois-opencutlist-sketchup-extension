@@ -12,6 +12,12 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("settings_dialog_settings") do |settings|
         dialog_settings_command(settings)
       end
+      Plugin.instance.register_command('settings_set_length_unit') do |params|
+        set_length_unit_command(params)
+      end
+      Plugin.instance.register_command('settings_get_length_unit') do |params|
+        get_length_unit_command
+      end
 
     end
 
@@ -34,6 +40,21 @@ module Ladb::OpenCutList
       Plugin.instance.dialog_set_position(left, top, true)
       Plugin.instance.dialog_set_zoom(zoom, true)
 
+    end
+
+    def set_length_unit_command(params)
+      length_unit = params['length_unit'].to_i
+
+      model = Sketchup.active_model
+      model.options['UnitsOptions']['LengthUnit'] = length_unit if model
+
+    end
+
+    def get_length_unit_command
+      model = Sketchup.active_model
+      {
+          :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES
+      }
     end
 
   end

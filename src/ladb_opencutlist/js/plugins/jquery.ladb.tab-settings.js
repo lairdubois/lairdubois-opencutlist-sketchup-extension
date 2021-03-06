@@ -147,21 +147,28 @@
 
         // Fetch UI elements
         var $widgetPreset = $('.ladb-widget-preset', that.$element);
-        var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
+        var $selectLengthUnitSymbol = $('#ladb_model_select_length_unit_symbol', that.$element);
         var $selectMassUnitSymbol = $('#ladb_model_select_mass_unit_symbol', that.$element);
-        var $btnSave = $('#ladb_model_btn_save', that.$element);
+        var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
 
         var fnFetchOptions = function (options) {
-            options.currency_symbol = $inputCurrencySymbol.val();
             options.mass_unit_symbol = $selectMassUnitSymbol.selectpicker('val');
+            options.currency_symbol = $inputCurrencySymbol.val();
         };
         var fnFillInputs = function (options) {
-            $inputCurrencySymbol.val(options.currency_symbol);
             $selectMassUnitSymbol.selectpicker('val', options.mass_unit_symbol);
+            $inputCurrencySymbol.val(options.currency_symbol);
         };
         var retrieveModelOptions = function () {
 
-            // Retrieve label options
+            // Retrieve SU options
+            rubyCallCommand('settings_get_length_unit', null, function (response) {
+
+                $selectLengthUnitSymbol.selectpicker('val', response.length_unit);
+
+            });
+
+            // Retrieve OCL options
             rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
 
                 var modelOptions = response.preset;
@@ -170,20 +177,7 @@
             });
 
         };
-
-        $widgetPreset.ladbWidgetPreset({
-            dialog: that.dialog,
-            dictionary: 'settings_model',
-            fnFetchOptions: fnFetchOptions,
-            fnFillInputs: fnFillInputs
-        });
-        $selectMassUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
-
-        retrieveModelOptions();
-
-        // Bin button
-        $btnSave.on('click', function () {
-            $(this).blur();
+        var fnSaveOptions = function () {
 
             // Fetch options
             fnFetchOptions(modelSettings);
@@ -191,14 +185,38 @@
             // Store options
             rubyCallCommand('core_set_model_preset', { dictionary: 'settings_model', values: modelSettings, fire_event:true });
 
-            // Notification
-            that.dialog.notify(i18next.t('tab.settings.save_to_model_success'), 'success');
+        };
+
+        $widgetPreset.ladbWidgetPreset({
+            dialog: that.dialog,
+            dictionary: 'settings_model',
+            fnFetchOptions: fnFetchOptions,
+            fnFillInputs: function (options) {
+                fnFillInputs(options);
+                fnSaveOptions();
+            }
+        });
+        $selectLengthUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectMassUnitSymbol.selectpicker(SELECT_PICKER_OPTIONS);
+
+        retrieveModelOptions();
+
+        // Bind input & select
+        $selectLengthUnitSymbol.on('change', function () {
+            var lengthUnit = $selectLengthUnitSymbol.selectpicker('val');
+
+            rubyCallCommand('settings_set_length_unit', { length_unit: lengthUnit });
 
         });
+        $selectMassUnitSymbol.on('change', fnSaveOptions);
+        $inputCurrencySymbol.on('change', fnSaveOptions);
 
         // Events
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
+            retrieveModelOptions();
+        });
+        addEventCallback('on_options_provider_changed', function (params) {
             retrieveModelOptions();
         });
 

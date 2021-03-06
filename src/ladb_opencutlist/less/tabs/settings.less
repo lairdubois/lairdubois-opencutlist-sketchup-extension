@@ -4,109 +4,120 @@
 
 @btn_size: 34px;
 
-.ladb-language-prefix {
-  color: #000;
-  border-right: 1px solid #999;
-  width: 30px;
-  display: inline-block;
-  font-weight: bold;
-  padding-right: 8px;
-  margin-right: 8px;
-  text-align: center;
-}
+#ladb_tab_settings {
 
-.ladb-fake-dialog {
-  width: 300px;
-  height: 230px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  position: relative;
-  margin-right: 40px + @btn_size;
-  margin-bottom: 40px + @btn_size;
-  .box-shadow(3px 3px 1px 1px rgba(0, 0, 0, .1));
-
-  .ladb-fake-dialog-titlebar {
-    height: 20px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #ccc;
-    color: #999;
-    font-size: 10px;
+  .ladb-language-prefix {
+    color: #000;
+    border-right: 1px solid #999;
+    width: 30px;
+    display: inline-block;
+    font-weight: bold;
+    padding-right: 8px;
+    margin-right: 8px;
     text-align: center;
-    line-height: 20px;
   }
 
-  .ladb-fake-dialog-leftbar {
-    width: 50px;
-    position: absolute;
-    top: 20px;
-    left: 0;
-    bottom: 0;
-    background-color: @ladb-brand-dark;
+  .ladb-fake-dialog {
+    width: 300px;
+    height: 230px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    margin-right: 40px + @btn_size;
+    margin-bottom: 40px + @btn_size;
+    .box-shadow(3px 3px 1px 1px rgba(0, 0, 0, .1));
+
+    .ladb-fake-dialog-titlebar {
+      height: 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #ccc;
+      color: #999;
+      font-size: 10px;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    .ladb-fake-dialog-leftbar {
+      width: 50px;
+      position: absolute;
+      top: 20px;
+      left: 0;
+      bottom: 0;
+      background-color: @ladb-brand-dark;
+    }
+
+    .btn {
+      width: @btn_size;
+      height: @btn_size;
+      position: absolute;
+    }
+
+    #ladb_btn_top_up {
+      top: 50%;
+      left: 50%;
+      margin-top: 40px - @btn_size / 2;
+      margin-left: -@btn_size / 2;
+    }
+
+    #ladb_btn_top_down {
+      top: 50%;
+      left: 50%;
+      margin-top: -40px - @btn_size / 2;
+      margin-left: -@btn_size / 2;
+    }
+
+
+    #ladb_btn_left_up {
+      top: 50%;
+      left: 50%;
+      margin-top: -@btn_size / 2;
+      margin-left: 40px - @btn_size / 2;
+    }
+
+    #ladb_btn_left_down {
+      top: 50%;
+      left: 50%;
+      margin-top: -@btn_size / 2;
+      margin-left: -40px - @btn_size / 2;
+    }
+
+
+    #ladb_btn_width_up {
+      bottom: -50px;
+      left: 50%;
+      margin-left: 40px - @btn_size / 2;
+    }
+
+    #ladb_btn_width_down {
+      bottom: -50px;
+      left: 50%;
+      margin-left: -40px - @btn_size / 2;
+    }
+
+
+    #ladb_btn_height_up {
+      right: -50px;
+      top: 50%;
+      margin-top: 40px - @btn_size / 2;
+    }
+
+    #ladb_btn_height_down {
+      right: -50px;
+      top: 50%;
+      margin-top: -40px - @btn_size / 2;
+    }
+
   }
 
-  .btn {
-    width: @btn_size;
-    height: @btn_size;
-    position: absolute;
-  }
-
-  #ladb_btn_top_up {
-    top: 50%;
-    left: 50%;
-    margin-top: 40px - @btn_size / 2;
-    margin-left: -@btn_size / 2;
-  }
-
-  #ladb_btn_top_down {
-    top: 50%;
-    left: 50%;
-    margin-top: -40px - @btn_size / 2;
-    margin-left: -@btn_size / 2;
-  }
-
-
-  #ladb_btn_left_up {
-    top: 50%;
-    left: 50%;
-    margin-top: -@btn_size / 2;
-    margin-left: 40px - @btn_size / 2;
-  }
-
-  #ladb_btn_left_down {
-    top: 50%;
-    left: 50%;
-    margin-top: -@btn_size / 2;
-    margin-left: -40px - @btn_size / 2;
-  }
-
-
-  #ladb_btn_width_up {
-    bottom: -50px;
-    left: 50%;
-    margin-left: 40px - @btn_size / 2;
-  }
-
-  #ladb_btn_width_down {
-    bottom: -50px;
-    left: 50%;
-    margin-left: -40px - @btn_size / 2;
-  }
-
-
-  #ladb_btn_height_up {
-    right: -50px;
-    top: 50%;
-    margin-top: 40px - @btn_size / 2;
-  }
-
-  #ladb_btn_height_down {
-    right: -50px;
-    top: 50%;
-    margin-top: -40px - @btn_size / 2;
+  .form-group > label {
+    margin-bottom: 10px;
+    font-size: 120%;
+    font-weight: normal;
   }
 
 }
+

@@ -11,7 +11,6 @@
                     <strong>{{ 'tab.settings.global_settings'|i18next }}</strong>
                 </div>
                 <div class="panel-body">
-
                     <div id="ladb_reload_alert" class="alert alert-warning" style="display: none;">
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i></div>
@@ -23,7 +22,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.language'|i18next }}</div>
+                        <label>{{ 'tab.settings.language'|i18next }}</label>
                         <select id="ladb_select_language" class="form-control">
                             {% set preferedLanguage = null %}
                             {% for language in capabilities.available_languages %}
@@ -41,7 +40,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.zoom'|i18next }}</div>
+                        <label>{{ 'tab.settings.zoom'|i18next }}</label>
                         <select id="ladb_select_zoom" class="form-control"{% if not compatible_with('body.zoom') %} disabled{% endif %}>
                             <option value="100%">{{ 'tab.settings.zoom_normal'|i18next }}</option>
                             <option value="90%">{{ 'tab.settings.zoom_small'|i18next }}</option>
@@ -49,7 +48,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.size_and_position'|i18next }}</div>
+                        <label>{{ 'tab.settings.size_and_position'|i18next }}</label>
                         <div class="ladb-fake-dialog">
                             <div class="ladb-fake-dialog-titlebar">OpenCutList</div>
                             <div class="ladb-fake-dialog-leftbar"></div>
@@ -74,18 +73,25 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.currency_symbol'|i18next }}</div>
-                        <input id="ladb_model_input_currency_symbol" class="form-control">
+                        <label>{{ 'tab.settings.length_unit_symbol'|i18next }}</label>
+                        <select id="ladb_model_select_length_unit_symbol" class="form-control">
+                            <option data-content="{{ 'default.unit_0'|i18next }}">0</option>
+                            <option data-content="{{ 'default.unit_1'|i18next }}">1</option>
+                            <option data-content="{{ 'default.unit_2'|i18next }}">2</option>
+                            <option data-content="{{ 'default.unit_3'|i18next }}">3</option>
+                            <option data-content="{{ 'default.unit_4'|i18next }}">4</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <div style="margin-bottom: 10px; font-size: 120%;">{{ 'tab.settings.mass_unit_symbol'|i18next }}</div>
+                        <label>{{ 'tab.settings.mass_unit_symbol'|i18next }}</label>
                         <select id="ladb_model_select_mass_unit_symbol" class="form-control">
                             <option data-content="{{ 'default.unit_kg'|i18next }} (kg)">kg</option>
                             <option data-content="{{ 'default.unit_lb'|i18next }} (lb)">lb</option>
                         </select>
                     </div>
-                    <div class="text-right">
-                        <button id="ladb_model_btn_save" class="btn btn-primary">{{ 'tab.settings.save_to_model'|i18next }}</button>
+                    <div class="form-group">
+                        <label>{{ 'tab.settings.currency_symbol'|i18next }}</label>
+                        <input id="ladb_model_input_currency_symbol" class="form-control">
                     </div>
                 </div>
             </div>

@@ -39,8 +39,8 @@ default:
   unit_2: Millimètres
   unit_3: Centimètres
   unit_4: Mètres
-  unit_kg: Kilogramme
-  unit_lb: Livre
+  unit_kg: Kilogrammes
+  unit_lb: Livres
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
@@ -911,10 +911,9 @@ tab:
     zoom_tiny: Très petite
     size_and_position: Taille et position de la fenêtre
     model_settings: Préférences du modèle
-    currency_symbol: Symbole monétaire
+    length_unit_symbol: Unité de longueur
     mass_unit_symbol: Unité de masse
-    save_to_model: Enregistrer dans le modèle
-    save_to_model_success: Préférences enregistrées avec succès dans le modèle
+    currency_symbol: Symbole monétaire
   about:
     label: A propos
     title: A propos
