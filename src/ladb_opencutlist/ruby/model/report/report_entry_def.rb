@@ -205,7 +205,7 @@ module Ladb::OpenCutList
 
   class AccessoryReportEntryPartDef < AbstractReportItemDef
 
-    attr_accessor :unit_mass, :unit_price
+    attr_accessor :mass, :price
     attr_reader :cutlist_part
 
     def initialize(cutlist_part)
@@ -213,8 +213,8 @@ module Ladb::OpenCutList
 
       @cutlist_part = cutlist_part
 
-      @unit_mass = nil
-      @unit_price = nil
+      @mass = nil
+      @price = nil
 
     end
 

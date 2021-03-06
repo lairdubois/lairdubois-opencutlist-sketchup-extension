@@ -177,7 +177,7 @@ module Ladb::OpenCutList
 
   class AccessoryReportEntryPart < AbstractReportItem
 
-    attr_reader :name, :count, :unit_mass, :unit_price
+    attr_reader :name, :count, :mass, :price
 
     def initialize(_def)
       super(_def)
@@ -185,8 +185,8 @@ module Ladb::OpenCutList
       @name = _def.cutlist_part.name
       @count = _def.cutlist_part.count
 
-      @unit_mass = _def.unit_mass.nil? || _def.unit_mass[:val] == 0 ? nil : "#{_def.unit_mass[:val]} #{_def.unit_mass[:unit]}"
-      @unit_price = _def.unit_price.nil? || _def.unit_price[:val] == 0 ? nil : "#{_def.unit_price[:val]} #{_def.unit_price[:unit]}"
+      @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : "#{_def.mass[:val]} #{_def.mass[:unit]}"
+      @price = _def.price.nil? || _def.price[:val] == 0 ? nil : "#{_def.price[:val]} #{_def.price[:unit]}"
 
     end
 

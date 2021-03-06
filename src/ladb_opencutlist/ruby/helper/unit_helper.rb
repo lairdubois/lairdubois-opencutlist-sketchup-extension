@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   module UnitHelper
 
     def _split_unit_and_value(str)
+      return nil, 0.0 unless str.is_a?(String)
       unit = nil
       val = str
       unless str.nil?

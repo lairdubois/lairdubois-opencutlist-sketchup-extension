@@ -232,23 +232,25 @@
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
                 this.defaultUnit = '$_' + that.options.lengthUnitSymbol;
-                enabledUnitKeys = [ '$_m', '$_ft', '$_p' ];
+                enabledUnitKeys = [ '$_m', '$_ft' ];
                 break;
 
         }
 
         this.enabledUnits = [];
-        $.each(this.units, function (index, unitGroup) {
-            var g = {};
-            $.each(unitGroup, function (key, value) {
-                if (enabledUnitKeys.includes(key)) {
-                    g[key] = value;
+        if (enabledUnitKeys) {
+            $.each(this.units, function (index, unitGroup) {
+                var g = {};
+                $.each(unitGroup, function (key, value) {
+                    if (enabledUnitKeys.includes(key)) {
+                        g[key] = value;
+                    }
+                });
+                if (Object.keys(g).length > 0) {
+                    that.enabledUnits.push(g);
                 }
             });
-            if (Object.keys(g).length > 0) {
-                that.enabledUnits.push(g);
-            }
-        });
+        }
 
         // Convert stds to inch fload representation
         rubyCallCommand('core_length_to_float', stdsA, function (responseA) {

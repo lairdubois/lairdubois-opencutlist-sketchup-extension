@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :unit_price, :unit_mass, :orientation_locked_on_axis, :tags, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :mass, :price, :orientation_locked_on_axis, :tags, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -110,13 +110,13 @@ module Ladb::OpenCutList
       DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
     end
 
-    def h_unit_mass
-      unit, val = _split_unit_and_value(unit_mass)
+    def h_mass
+      unit, val = _split_unit_and_value(mass)
       { :unit => unit, :val => val }
     end
 
-    def h_unit_price
-      unit, val = _split_unit_and_value(unit_price)
+    def h_price
+      unit, val = _split_unit_and_value(price)
       { :unit => '$_p', :val => val }
     end
 
@@ -147,8 +147,8 @@ module Ladb::OpenCutList
           @numbers = {}
         end
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
-        @unit_price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
-        @unit_mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', '')
+        @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
+        @price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
@@ -167,8 +167,8 @@ module Ladb::OpenCutList
 
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
-        @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @unit_price)
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'unit_mass', @unit_mass)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
+        @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))

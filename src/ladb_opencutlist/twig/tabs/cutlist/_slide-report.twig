@@ -134,8 +134,8 @@
                                 <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">{{ part.name }}</td>
                                     <td class="text-center">{{ part.count }}</td>
-                                    <td class="ladb-cutlist-dimension-value"{% if part.unit_mass %}data-toggle="tooltip" title="{{ part.unit_mass }}"{% endif %}>{{ part.total_mass ? part.total_mass : '-' }}</td>
-                                    <td class="ladb-cutlist-dimension-value"{% if part.unit_price %}data-toggle="tooltip" title="{{ part.unit_price }}"{% endif %}>{{ part.total_cost ? part.total_cost : '-' }}</td>
+                                    <td class="ladb-cutlist-dimension-value"{% if part.mass %}data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_mass ? part.total_mass : '-' }}</td>
+                                    <td class="ladb-cutlist-dimension-value"{% if part.price %}data-toggle="tooltip" title="{{ part.price }}"{% endif %}>{{ part.total_cost ? part.total_cost : '-' }}</td>
                                 </tr>
                             {% endfor %}
                         {% endif %}

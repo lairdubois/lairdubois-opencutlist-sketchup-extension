@@ -1127,11 +1127,11 @@
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
-                if (editedPart.unit_price !== editedParts[i].unit_price) {
-                    editedPart.unit_price = MULTIPLE_VALUE;
+                if (editedPart.price !== editedParts[i].price) {
+                    editedPart.price = MULTIPLE_VALUE;
                 }
-                if (editedPart.unit_mass !== editedParts[i].unit_mass) {
-                    editedPart.unit_mass = MULTIPLE_VALUE;
+                if (editedPart.mass !== editedParts[i].mass) {
+                    editedPart.mass = MULTIPLE_VALUE;
                 }
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
@@ -1190,8 +1190,8 @@
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $inputUnitPrice = $('#ladb_cutlist_part_input_unit_price', $modal);
-                var $inputUnitMass = $('#ladb_cutlist_part_input_unit_mass', $modal);
+                var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+                var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
@@ -1310,13 +1310,13 @@
                 })
 
                 // Bind input
-                $inputUnitPrice.ladbTextinputWithUnit({
+                $inputPrice.ladbTextinputWithUnit({
                     defaultUnit: '$_p',
                     units: [
                         { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
                     ]
                 });
-                $inputUnitMass.ladbTextinputWithUnit({
+                $inputMass.ladbTextinputWithUnit({
                     defaultUnit: that.massUnitSymbol + '_p',
                     units: [
                         { kg_p: 'kg / ' + i18next.t('default.part_single') },
@@ -1465,11 +1465,11 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
-                        if ($inputUnitPrice.val() !== '') {
-                            editedParts[i].unit_price = $inputUnitPrice.val();
+                        if ($inputPrice.val() !== '') {
+                            editedParts[i].price = $inputPrice.val();
                         }
-                        if ($inputUnitMass.val() !== '') {
-                            editedParts[i].unit_mass = $inputUnitMass.ladbTextinputWithUnit('val');
+                        if ($inputMass.val() !== '') {
+                            editedParts[i].mass = $inputMass.ladbTextinputWithUnit('val');
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });

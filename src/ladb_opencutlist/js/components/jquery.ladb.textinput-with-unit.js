@@ -102,6 +102,12 @@
 
     LadbTextinputWithUnit.prototype.init = function () {
         LadbTextinputAbstract.prototype.init.call(this);
+
+        var value = this.$element.val();
+        if (!value) {
+            this.reset();
+        }
+
     };
 
 
