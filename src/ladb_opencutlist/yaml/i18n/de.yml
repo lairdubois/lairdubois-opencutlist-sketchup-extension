@@ -5,7 +5,7 @@ default:
   minimize: Minimieren
   maximize: Maximieren
   cancel: Abbrechen
-  validate: Bestätigen
+  validate: Validieren
   confirm: Bestätigen
   open: Öffnen
   see: Sehen
@@ -454,8 +454,8 @@ tab:
       option_optimization_help: Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit.
       option_optimization_0: Mittel
       option_optimization_1: Fortgeschritten
-      option_stacking: Gleiche Teile stapeln
-      option_stacking_help: "Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben."
+      option_stacking: Vorzugsrichtung
+      option_stacking_help: "Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben, pro Platte falls mehrere benötigt werden."
       option_stacking_0: Keine Präferenz
       option_stacking_1: Der Länge nach
       option_stacking_2: Der Breite nach

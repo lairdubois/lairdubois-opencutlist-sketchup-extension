@@ -1,11 +1,12 @@
 _label: Português
 _reload_msg: "Para levar em consideração todas as mudanças, você deve **fechar** e **reabrir** a janela OpenCutList."
-_description: "Ficha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
+_description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:
   minimize: Minimizar
   maximize: Maximizar
   cancel: Cancelar
   validate: Aplicar
+  confirm: Validar
   open: Abrir
   see: Ver
   close: Fechar
@@ -42,8 +43,6 @@ default:
   part_plural: peças
   setup_model_units: Configure as unidades do modelo
   load_more: "Carregue mais ..."
-  save_to_defaults: Salvar como valores padrão
-  reset_to_defaults: Restaurar para os valores salvos
   reset_to_app_defaults: Restaurar os valores originais
 core:
   menu:
@@ -65,13 +64,12 @@ core:
     more_update: Atualizar
   warning:
     dev: |
-      You are using a **development** version of *OpenCutList*.
-      This version is available for testing only.
-      It is not recommended to use it in production.
-
-      To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Você está usando uma versão **em desenvolvimento** do *OpenCutList*.
+      Esta versão está disponível apenas para teste.
+      Não é recomendado usá-lo na produção.
+      Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Você está usando uma versão antiga do SketchUp ({{ sketchupVersion }}). Este plugin vai funcionar, mas pode exibir certos bugs.
+      Você está usando uma versão antiga do SketchUp ({{ sketchup_version }}). Este plugin vai funcionar, mas pode exibir certos bugs.
       Para tirar o máximo proveito do OpenCutList, recomendamos a atualização para no mínimo **SketchUp 2017**.
     feature_locked: "*Não é possível desativar nesta versão do SketchUp*"
   event:
@@ -103,13 +101,35 @@ core:
     error:
       download: Erro ao baixar o arquivo.
       unzip: Erro ao descompactar o arquivo.
+  preset:
+    label: Predefinições
+    save_to: Salvar como
+    restore_from: "Reataurar a partir de "
+    app_defaults: Definições de fábrica
+    user_defaults: Minhas definições padrão
+    new: Novas definições
+    new_prompt: |
+      A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.
+
+      Digite o nome da predefinição
+    delete_confirm_title: Remoção
+    delete_confirm: "Tem certeza que você quer apagar as definições **\"{{ name }}\"**?"
+    override_confirm_title: Atualizar
+    override_confirm: "Confirma a atualização das definições **\"{{name}}\"** com os parâmetros do formulário?"
+    new_success: "Predefinições **\"{{ name }}\"** criadas"
+    override_success: "Predefinições **\"{{ name }}\"** atualizadas"
+    restore_success: "O formulário foi preenchido com as definições **\"{{ name }}\"**"
+    delete_success: "Predefinições **\"{{ name }}\"** apagadas"
+    tooltip:
+      save_to: "Atualizar as definições '{{ name }}'"
+      delete: "Apagar as definições '{{ name }}'"
 tab:
   cutlist:
     label: Peças
     title: Ficha de Produção
     help: |
       Selecione as peças na cena atual para incluir na lista e clique no botão **Gerar**.
-      Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Ficha de Produção.
+      Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Planilha de Produção.
     selection_only: Seleção
     material_undefined: Nenhum material definido
     not_available_std_width: Largura indefinida
@@ -199,6 +219,7 @@ tab:
       group_numbers_save: Salve os números de peça deste grupo
       group_numbers_reset: Reinicialize os números de peça deste grupo
       group_cuttingdiagram: Diagrama de Corte
+      group_labels: Imprimir etiquetas
       edit_material: "Editar material '{{ material }}' ..."
       expand_all: Desdobrar peças idênticas
       collapse_all: Dobre partes idênticas
@@ -211,8 +232,8 @@ tab:
       name: Descrição
       material: Material
       cumulable: Pode somar
-      cumulable_help: |-
-        Se esta opção for selecionada, o **comprimento** ou o **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Ficha de Produção.
+      cumulable_help: |
+        Se esta opção for selecionada, o **comprimento** ou o **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Planilha de Produção.
       cumulable_0: Não somam
       cumulable_1: Soma ao comprimento
       cumulable_2: Soma à largura
@@ -241,7 +262,7 @@ tab:
       tags_help: |
         Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
         Pode adicionar tantas tags quantas achar conveniente.
-        Você poderá então filtrar as peças visíveis em sua Ficha de Produção com essas tags.
+        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
       tags_multiple_info: Apenas tags comuns são mostrados
       axes: Eixos
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
@@ -308,6 +329,9 @@ tab:
       property_name: Descrição
       property_count: Quantidade
       property_edge_pattern: Número de fitas de borda
+      tags: Tags
+      tags_help: Lista personalizada de tags oferecidas na janela de propriedades da peça.
+      tags_placeholder: Adicionar uma tag
     list:
       filters: Filtros
       filters_warning_0: "Este filtro mascara todas as partes!"
@@ -340,10 +364,10 @@ tab:
       edges: Fita de Borda
     export:
       title: Exportar no formato CSV
-      info: |
-        Com esta função você pode exportar a lista *peças* para um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values) file.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *As peças dentro de grupos ocultos de sua Ficha de Produção não serão exportadas*.
+      info_0: |
+        Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
+      info_1: |
+        *As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*.
       options: Opções de exportação
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,25 +430,32 @@ tab:
       option_origin_corner_0: Canto superior esquerdo
       option_origin_corner_1: Canto inferior esquerdo
       option_origin_corner_help: Permite que você escolha o canto de origem para colocar as peças nos painéis.
+      option_full_width_diagram: Exibir a largura total
+      option_full_width_diagram_0: Não
+      option_full_width_diagram_1: Sim
+      option_full_width_diagram_help: "Se esta opção for ativada, os diagramas são exibidos com toda a largura disponível. Caso contrário, sua largura é definida por um fator de escala fixo de seu tamanho real."
       option_wrap_length: Comprimento do corte
       option_wrap_length_help: Comprimento máximo após o qual uma prancha será exibida em várias linhas.
       option_hide_cross: Sobra
-      option_hide_cross_help: Mostra ou oculta a marca indicando as peças definidas como retalhos no diagrama.
       option_hide_cross_0: Dimensions et Cruz de marcação
       option_hide_cross_1: Somente dimensões
+      option_hide_cross_help: Mostra ou oculta a marca indicando as peças definidas como retalhos no diagrama.
+      option_highlight_primary_cuts: Cortes primários
+      option_highlight_primary_cuts_0: Visão geral apenas
+      option_highlight_primary_cuts_1: Sempre visível
+      option_highlight_primary_cuts_help: Permite destacar os cortes primários.
       option_saw_kerf: Espessura da serra
       option_saw_kerf_help: A largura do material removido pelo corte da serra.
       option_trimming: Tamanho da apara
       option_trimming_help_1d: Margem em cada extremidade da prancha a ser considerada como sobra.
       option_trimming_help_2d: A quantidade de material ao redor do painel bruto a ser tratada como sobra.
       option_optimization: Nível de otimização
-      option_optimization_help: O nível de otimização define o número de possibilidades calculadas.
-      option_optimization_0: Leve
-      option_optimization_1: Médio
-      option_optimization_2: Avançado
+      option_optimization_help: "O nível de otimização define o número de possibilidades computadas e, portanto, também o tempo de cálculo."
+      option_optimization_0: Médio
+      option_optimization_1: Avançado
       option_stacking: Empilhar peças idênticas
       option_stacking_help: Direção de empilhamento de peças com um comprimento ou largura comum.
-      option_stacking_0: Nenhum
+      option_stacking_0: Nenhuma preferência
       option_stacking_1: Longitudinalmente
       option_stacking_2: Transversalmente
       option_stacking_3: Todas as possibilidades
@@ -456,9 +487,6 @@ tab:
         Formato esperado: **C**x**L**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
         A quantidade é opcional.
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
-      options_defaults:
-        manage_help: Administração dos *parâmetros do diagrama de corte* padrão
-        save_success: "Padrão *Parâmetros do diagrama de corte* salvos"
       tooltip:
         scroll_to_block_1d: Role até a primeira prancha
         scroll_to_block_2d: Role para o primeiro painel
@@ -472,12 +500,15 @@ tab:
         width: Largura
         total_length: Σ Comprimentos
         total_area: Σ Áreas
+        total_part_count: Σ Peças
         total_used: Total utilizado
         trimming: Apara
         total_length_cuts: Comprimento dos cortes
         efficiency: Eficiência
         leftover: Sobras
         cut: Cortar
+        cut_final: Corte primário (nível 1)
+        cut_through: Corte primário (nível 2)
         bar_type_0: Prancha MLC padrão
         bar_type_1: Sobra de prancha
         sheet_type_0: Painel de tamanho padrão
@@ -506,17 +537,74 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensões reduzidas pela espessura da faixa de borda.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquetas
+      title: Etiquetas
+      options_layout: Composição
+      options_settings: Configuração
+      size: Tamanho real da etiqueta
+      add_element: Adicionar um elemento
+      remove_element: Remover
+      option_page: Tamanho do papel
+      option_page_format: Formato
+      option_page_format_portrait: Retrato
+      option_page_format_landscape: Paisagem
+      option_page_format_custom: Personalizado
+      option_page_width: Largura
+      option_page_height: Altura
+      option_margin: Margens
+      option_margin_top: Acima
+      option_margin_right: Direita
+      option_margin_bottom: Embaixo
+      option_margin_left: Esquerda
+      option_spacing: Espaçamentos
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertical
+      option_grid: Etiquetas por página
+      option_col_count: Colunas
+      option_row_count: Linhas
+      option_cutting_marks: Marcas de corte
+      option_cutting_marks_0: Nenhum
+      option_cutting_marks_1: Impresso
+      option_formula: Valor
+      option_size: Dimensão
+      option_anchor: Âncora
+      option_anchor_start: Início
+      option_anchor_middle: Meio
+      option_anchor_end: Fim
+      option_color: Cor
+      formula:
+        part_number: Número
+        part_name: Descrição
+        part_cutting_size: Dimensões aproximadas
+        part_cutting_length: Comprimento - aproximado
+        part_cutting_width: Largura - aproximada
+        part_size: Dimensão
+        part_length: Comprimento
+        part_width: Largura
+        part_tags: Tags
+        part_batch: Grupo
+        thumbnail_proportional: Miniatura proporcional
+        thumbnail_square: Miniatura quadrada
+        group_material: Espessura do material
+        group_material_name: Nome do material
+        group_std_dimension: Dimensões padrão
+        filename: Nome do arquivo
+        page_label: Nome da cena
+        length_unit: Unidades
+        generated_at: Data e hora
+      error:
+        invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
+      warning:
+        selection_only: Estes etiquetas são limitados a **partes selecionadas** somente
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
       no_component_in_selection: Nenhuma instância de um componente visível foi detectada em sua seleção.
       no_component_in_model: Nenhuma instância de um componente visível foi detectada em sua cena.
       failed_to_write_export_file: "Falha ao gravar o arquivo de exportação. **{{ error }}**"
-      unknow_part: A peça selecionada não existe na Ficha de Produção.
-      obsolete_cutlist: "Impossível, a Ficha de Produção está obsoleta. Regenere-o."
+      unknow_part: A peça selecionada não existe na Planilha de Produção.
+      obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
-      partial_cutlist: "Esta Ficha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
+      partial_cutlist: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
       no_typed_materials_in_model: Este modelo não usa nenhum material definido (**Madeira serrada** ou **Painel** ou **Dimensional MLC**).
       no_typed_materials_in_selection: A seleção não usa nenhum material definido (**Madeira serrada** ou **Painel** ou **Dimensional MLC**).
       export_empty: Sua exportação não contém nenhuma peça.
@@ -524,11 +612,11 @@ tab:
       exported_to: "Exportação para {{ export_path }} com sucesso."
     tip:
       no_component: |
-        As peças que você deseja que apareçam na *Ficha de Produção* devem ser instâncias de **componente***.
+        As peças que você deseja que apareçam na *Planilha de Produção* devem ser instâncias de **componente***.
         Se você usar apenas grupos, converta-os em componentes.
         Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
-      no_typed_materials: Aplique um material às partes a serem incluídas na Ficha de Produção e defina as propriedades deste material (**Madeira Serrada** ou **Chapa** ou **Dimensional MLC**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
-    obsolete_base: "Para permanecer sincronizado, você deve gerar novamente a Ficha de Produção."
+      no_typed_materials: Aplique um material às partes a serem incluídas na Planilha de Produção e defina as propriedades deste material (**Madeira Serrada** ou **Chapa** ou **Dimensional MLC**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
+    obsolete_base: "Para permanecer sincronizado, você deve gerar novamente a Planilha de Produção."
   materials:
     label: Materiais
     title: Materiais
@@ -614,11 +702,6 @@ tab:
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
       volumic_mass: Densidade
-      cut_options_defaults:
-        manage_help: Administração dos *parâmetros de corte* padrão
-        save_success: |
-          **{{ type_name }}**
-          padrão *Parâmetros de corte* salvo
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
@@ -652,17 +735,18 @@ tab:
     title: Importar peças
     help: |
       Esta página permite importar uma série de peças compatíveis (definidas por uma caixa de delimitação retangular) para seu modelo a partir de um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
-      Você poderá então usar o poder da Ficha de Produção do *OpenCutList* gerando plano de corte com um software diferente de *SketchUp*.
+      Você poderá então usar o poder da Planilha de Produção do *OpenCutList* gerando plano de corte com um software diferente de *SketchUp*.
       Clique no botão **Abrir arquivo CSV** para carregar.
     open_csv: Abrir arquivo CSV
     import_to_model: Importar para o modelo
     load:
       title: Carregando arquivo CSV
-      info: |
-        Selecione as opções necessárias para ler **{{ filename }}** corretamente.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *A unidade configurada no modelo é : **{{unit}}***.
-        Esta unidade será utilizada para dimensões que a unidade não tem especificadas*.
+      info_0: |
+        Escolha as opções necessárias para a leitura correta do arquivo:
+        **{{ filename }}**.
+      info_1: |
+        *A unidade configurada no modelo é: **{{ unit }}**.
+        Esta unidade será usada para dimensões para as quais a unidade não está especificada*.
       options: Opções de carregamento
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -832,7 +916,9 @@ tab:
     credits_vendors: |
       A aventura não seria possível sem o trabalho dos autores dos seguintes componentes Open Source:
     credits_thanks: |
-      Um agradecimento especial vai para [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
+      Um agradecimento especial vai para:
+      - [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com/) por seu apoio a projetos de código aberto.
 tool:
   highlight:
     transparency: Transparência
