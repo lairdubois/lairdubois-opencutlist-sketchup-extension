@@ -11,6 +11,10 @@
 
     LadbTextinputDimension.DEFAULTS = {};
 
+    LadbTextinputDimension.prototype.createLeftToolsContainer = function ($toolContainer) {
+        // Do not create left tools container
+    };
+
 
     // PLUGIN DEFINITION
     // =======================

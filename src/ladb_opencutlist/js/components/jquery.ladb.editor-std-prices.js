@@ -14,7 +14,24 @@
         this.stds = null;
         this.stdsA = [];
         this.stdsB = [];
-        this.unit = null;
+        this.defaultUnit = null;
+        this.units = [
+            {
+                $_m3: options.currency_symbol + ' / m³',
+                $_m2: options.currency_symbol + ' / m²',
+                $_m: options.currency_symbol + ' / m',
+            },
+            {
+                $_fbm: options.currency_symbol + ' / fbm',
+                $_ft3: options.currency_symbol + ' / ft³',
+                $_ft2: options.currency_symbol + ' / ft²',
+                $_ft: options.currency_symbol + ' / ft',
+            },
+            {
+                $_p: options.currency_symbol + ' / ' + i18next.t('default.part_single')
+            }
+        ];
+        this.enabledUnits = [];
 
         this.stdPrices = [];
 
@@ -29,10 +46,7 @@
     LadbEditorStdPrices.prototype.prependPriceRow0 = function (stdPrice) {
         var that = this;
 
-        var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-0.twig'}).render({
-            unit: this.unit,
-            stdPrice: stdPrice
-        }));
+        var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-0.twig'}).render());
         this.$rows.prepend($row);
 
         // Fetch UI elements
@@ -40,8 +54,15 @@
 
         // Bind
         $input
+            .ladbTextinputWithUnit({
+                defaultUnit: this.defaultUnit,
+                units: this.enabledUnits,
+            })
+            .ladbTextinputWithUnit('val', stdPrice.val)
+        ;
+        $input
             .on('change', function () {
-                stdPrice.val = $(this).val();
+                stdPrice.val = $(this).ladbTextinputWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -59,8 +80,6 @@
         var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-n.twig'}).render({
             stdsA: this.stdsA,
             stdsB: this.stdsB,
-            unit: this.unit,
-            stdPrice: stdPrice
         }));
         this.$rows.append($row);
 
@@ -80,8 +99,11 @@
         // Bind
         $select
             .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker('val', stdPrice.dim)
+        ;
+        $select
             .on('change', function () {
-                var newRange = $(this).selectpicker('val');
+                var newDim = $(this).selectpicker('val');
                 $('select', that.$element).each(function () {
                     if (this === $select[0]) {
                         return;
@@ -91,13 +113,13 @@
                         var $option = $(this);
                         if ($option.html() === stdPrice.dim) {
                             $option.prop('disabled', false);
-                        } else if ($option.html() === newRange) {
+                        } else if ($option.html() === newDim) {
                             $option.prop('disabled', true);
                         }
                         $tmpSelect.selectpicker('refresh');
                     });
                 });
-                stdPrice.dim = newRange;
+                stdPrice.dim = newDim;
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -107,8 +129,15 @@
             })
         ;
         $input
+            .ladbTextinputWithUnit({
+                defaultUnit: this.defaultUnit,
+                units: this.enabledUnits,
+            })
+            .ladbTextinputWithUnit('val', stdPrice.val)
+        ;
+        $input
             .on('change', function () {
-                stdPrice.val = $(this).val();
+                stdPrice.val = $(this).ladbTextinputWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -165,13 +194,15 @@
         var stdsA = {};
         var stdsB = {};
         var i;
+        var enabledUnitKeys;
         switch (this.type) {
 
             case 1: /* TYPE_SOLID_WOOD */
                 for (i = 0; i < stds.stdThicknesses.length; i++) {
                     stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
                 }
-                this.unit = that.options.currency_symbol + ' / ' + (that.options.length_unit_symbol === 'ft' ? 'FBM' : that.options.length_unit_symbol + '³');
+                this.defaultUnit = '$_' + (that.options.length_unit_symbol === 'ft' ? 'fbm' : that.options.length_unit_symbol + '3');
+                enabledUnitKeys = [ '$_m3', '$_ft3', '$_fbm' ];
                 break;
 
             case 2: /* TYPE_SHEET_GOOD */
@@ -181,7 +212,8 @@
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol + '²';
+                this.defaultUnit = '$_' + that.options.length_unit_symbol + '2';
+                enabledUnitKeys = [ '$_m3', '$_m2', '$_ft3', '$_ft2', '$_p' ];
                 break;
 
             case 3: /* TYPE_DIMENSIONAL */
@@ -191,17 +223,32 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol;
+                this.defaultUnit = '$_' + that.options.length_unit_symbol;
+                enabledUnitKeys = [ '$_m3', '$_m2', '$_m', '$_ft3', '$_ft2', '$_ft', '$_p' ];
                 break;
 
             case 4: /* TYPE_EDGE */
                 for (i = 0; i < stds.stdWidths.length; i++) {
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
-                this.unit = that.options.currency_symbol + ' / ' + that.options.length_unit_symbol;
+                this.defaultUnit = '$_' + that.options.length_unit_symbol;
+                enabledUnitKeys = [ '$_m', '$_ft', '$_p' ];
                 break;
 
         }
+
+        this.enabledUnits = [];
+        $.each(this.units, function (index, unitGroup) {
+            var g = {};
+            $.each(unitGroup, function (key, value) {
+                if (enabledUnitKeys.includes(key)) {
+                    g[key] = value;
+                }
+            });
+            if (Object.keys(g).length > 0) {
+                that.enabledUnits.push(g);
+            }
+        });
 
         // Convert stds to inch fload representation
         rubyCallCommand('core_length_to_float', stdsA, function (responseA) {

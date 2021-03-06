@@ -1,9 +1,6 @@
 <div class="ladb-editor-std-prices-row row">
     <div class="col-xs-6 col-xs-push-6">
-        <div class="input-group">
-            <input type="text" class="form-control" value="{{ stdPrice.val }}">
-            <span class="input-group-addon">{{ unit }}</span>
-        </div>
+        <input type="text" class="form-control">
     </div>
     <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-prices-select-dim" title="{{ 'tab.materials.edit_material.std_prices_dim_placeholder'|i18next }}">
         {% for stdAK, stdAV in stdsA %}

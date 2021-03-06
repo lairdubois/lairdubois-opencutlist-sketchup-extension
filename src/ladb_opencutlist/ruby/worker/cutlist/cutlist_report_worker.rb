@@ -42,14 +42,14 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
           volumic_mass = material_attributes.f_volumic_mass
-          std_price = _get_std_price_value([ cutlist_group.def.std_thickness ], material_attributes)
+          std_price = _get_std_price([ cutlist_group.def.std_thickness ], material_attributes)
 
           report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
           report_entry_def.total_volume = cutlist_group.def.total_cutting_volume
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _u3_to_inch3(volumic_mass, cutlist_group.material_type) unless volumic_mass == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _u3_to_inch3(std_price) unless std_price == 0
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness) unless std_price[:val] == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume += report_entry_def.total_volume
@@ -81,12 +81,12 @@ module Ladb::OpenCutList
 
             next unless cuttingdiagram2d_summary_sheet.is_used
 
-            std_price = _get_std_price_value([ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ], material_attributes)
+            std_price = _get_std_price([cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ], material_attributes)
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.std_price = std_price
-            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
-            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * _u2_to_inch2(std_price) unless std_price == 0
+            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_summary_sheet.def.width, cuttingdiagram2d_summary_sheet.def.length) unless std_price[:val] == 0
             report_entry_def.sheet_defs << report_entry_sheet_def
 
             report_entry_def.total_mass += report_entry_sheet_def.total_mass
@@ -125,12 +125,12 @@ module Ladb::OpenCutList
 
             next unless cuttingdiagram1d_summary_bar.is_used
 
-            std_price = _get_std_price_value([ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ], material_attributes)
+            std_price = _get_std_price([ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ], material_attributes)
 
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
             report_entry_bar_def.std_price = std_price
-            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
-            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * _u_to_inch(std_price) unless std_price == 0
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_summary_bar.def.length) unless std_price[:val] == 0
             report_entry_def.bar_defs << report_entry_bar_def
 
             report_entry_def.total_mass += report_entry_bar_def.total_mass
@@ -146,14 +146,14 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
           volumic_mass = material_attributes.f_volumic_mass
-          std_price = _get_std_price_value([ cutlist_group.def.std_dimension.to_l ], material_attributes)
+          std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l ], material_attributes)
 
           report_entry_def = EdgeReportEntryDef.new(cutlist_group)
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
           report_entry_def.total_length = cutlist_group.def.total_cutting_length
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _u3_to_inch3(volumic_mass) unless volumic_mass == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * _u_to_inch(std_price) unless std_price == 0
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width) unless std_price[:val] == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_length += report_entry_def.total_length
@@ -267,50 +267,58 @@ module Ladb::OpenCutList
 
     end
 
-    def _get_std_price_value(entry_dim, material_attributes)
+    def _get_std_price(entry_dim, material_attributes)
 
       l_std_prices = material_attributes.l_std_prices
       l_std_prices.each do |std_price|
 
         if std_price[:dim] == entry_dim
-          return std_price[:val]
+          return std_price
         end
 
       end
 
-      l_std_prices[0][:val]
+      l_std_prices[0]
     end
 
-    INCH_TO_M = 1.to_m
-    INCH2_TO_M2 = INCH_TO_M * INCH_TO_M
-    INCH3_TO_M3 = INCH2_TO_M2 * INCH_TO_M
+    def _uv_to_inch3(s_unit, f_value, inch_thickness = 0, inch_width = 0, inch_length = 0)
 
-    def _u3_to_inch3(f3, material_type = nil)
-      if @model_unit_is_metric
-        f3 * INCH3_TO_M3
-      else
-        if material_type == MaterialAttributes::TYPE_SOLID_WOOD
-          f3 / 144
-        else
-          f3 / 1728
-        end
-      end
-    end
+      unit_numerator, unit_denominator = s_unit.split('_')
 
-    def _u2_to_inch2(f2)
-      if @model_unit_is_metric
-        f2 * INCH2_TO_M2
-      else
-        f2 / 144
-      end
-    end
+      case unit_numerator
 
-    def _u_to_inch(f)
-      if @model_unit_is_metric
-        f * INCH_TO_M
-      else
-        f
+      when MassUtils::UNIT_STRIPPEDNAME_KILOGRAM
+        f_value = MassUtils.instance.kg_to_model_unit(f_value)
+      when MassUtils::UNIT_STRIPPEDNAME_POUND
+        f_value = MassUtils.instance.lb_to_model_unit(f_value)
+
       end
+
+      case unit_denominator
+
+      when DimensionUtils::UNIT_STRIPPEDNAME_METER_3
+        f_value = DimensionUtils.instance.m3_to_inch3(f_value)
+      when DimensionUtils::UNIT_STRIPPEDNAME_FEET_3
+        f_value = DimensionUtils.instance.ft3_to_inch3(f_value)
+      when DimensionUtils::UNIT_STRIPPEDNAME_BOARD_FEET_3
+        f_value = DimensionUtils.instance.fbm_to_inch3(f_value)
+
+      when DimensionUtils::UNIT_STRIPPEDNAME_METER_2
+        f_value = inch_thickness == 0 ? 0 : DimensionUtils.instance.m2_to_inch2(f_value) / inch_thickness
+      when DimensionUtils::UNIT_STRIPPEDNAME_FEET_2
+        f_value = inch_thickness == 0 ? 0 : DimensionUtils.instance.ft2_to_inch2(f_value) / inch_thickness
+
+      when DimensionUtils::UNIT_STRIPPEDNAME_METER
+        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.instance.m_to_inch(f_value) / inch_thickness / inch_width
+      when DimensionUtils::UNIT_STRIPPEDNAME_FEET
+        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.instance.ft_to_inch(f_value) / inch_thickness / inch_width
+
+      when 'p'
+        f_value = inch_thickness * inch_width * inch_length == 0 ? 0 : f_value / inch_thickness / inch_width / inch_length
+
+      end
+
+      f_value
     end
 
   end

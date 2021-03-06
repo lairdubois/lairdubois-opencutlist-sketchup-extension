@@ -2,34 +2,48 @@
 
   require 'singleton'
 
-  # Format - just here for convenience
-  DECIMAL       = Length::Decimal
-  ARCHITECTURAL = Length::Architectural
-  ENGINEERING   = Length::Engineering
-  FRACTIONAL    = Length::Fractional
-
-  # Unit - just here for convenience
-  INCHES        = Length::Inches
-  FEET          = Length::Feet
-  MILLIMETER    = Length::Millimeter
-  CENTIMETER    = Length::Centimeter
-  METER         = Length::Meter
-
-  # Unit signs
-  UNIT_SIGN_INCHES = '"'
-  UNIT_SIGN_FEET = "'"
-  UNIT_SIGN_METER = 'm'
-  UNIT_SIGN_CENTIMETER = 'cm'
-  UNIT_SIGN_MILLIMETER = 'mm'
-
-  UNIT_SIGN_METER_2 = 'm²'
-  UNIT_SIGN_FEET_2 = 'ft²'
-
-  UNIT_SIGN_METER_3 = 'm³'
-  UNIT_SIGN_FEET_3 = 'ft³'
-  UNIT_SIGN_BOARD_FEET_3 = 'FBM'
-
   class DimensionUtils
+
+    # Format - just here for convenience
+    DECIMAL       = Length::Decimal
+    ARCHITECTURAL = Length::Architectural
+    ENGINEERING   = Length::Engineering
+    FRACTIONAL    = Length::Fractional
+
+    # Unit - just here for convenience
+    INCHES        = Length::Inches
+    FEET          = Length::Feet
+    MILLIMETER    = Length::Millimeter
+    CENTIMETER    = Length::Centimeter
+    METER         = Length::Meter
+
+    # Unit signs
+    UNIT_SIGN_INCHES = '"'
+    UNIT_SIGN_FEET = "'"
+    UNIT_SIGN_METER = 'm'
+    UNIT_SIGN_CENTIMETER = 'cm'
+    UNIT_SIGN_MILLIMETER = 'mm'
+
+    UNIT_SIGN_METER_2 = 'm²'
+    UNIT_SIGN_FEET_2 = 'ft²'
+
+    UNIT_SIGN_METER_3 = 'm³'
+    UNIT_SIGN_FEET_3 = 'ft³'
+    UNIT_SIGN_BOARD_FEET_3 = 'FBM'
+
+    # Unit strippednames
+    UNIT_STRIPPEDNAME_INCHES = 'in'
+    UNIT_STRIPPEDNAME_FEET = "ft"
+    UNIT_STRIPPEDNAME_METER = 'm'
+    UNIT_STRIPPEDNAME_CENTIMETER = 'cm'
+    UNIT_STRIPPEDNAME_MILLIMETER = 'mm'
+
+    UNIT_STRIPPEDNAME_METER_2 = 'm2'
+    UNIT_STRIPPEDNAME_FEET_2 = 'ft2'
+
+    UNIT_STRIPPEDNAME_METER_3 = 'm3'
+    UNIT_STRIPPEDNAME_FEET_3 = 'ft3'
+    UNIT_STRIPPEDNAME_BOARD_FEET_3 = 'fbm'
 
     include Singleton
 
@@ -381,6 +395,38 @@
     #
     def dxdxq_to_ifloats(i)
       dxdxq_transform(i, :str_to_ifloat)
+    end
+
+    # -----
+
+    def m3_to_inch3(f)
+      f * 0.0254**3
+    end
+
+    def ft3_to_inch3(f)
+      f / 12**3
+    end
+
+    def fbm_to_inch3(f)
+      f / 12**2
+    end
+
+
+    def m2_to_inch2(f)
+      f * 0.0254**2
+    end
+
+    def ft2_to_inch2(f)
+      f / 12**2
+    end
+
+
+    def m_to_inch(f)
+      f * 0.0254
+    end
+
+    def ft_to_inch(f)
+      f / 12
     end
 
     # -----

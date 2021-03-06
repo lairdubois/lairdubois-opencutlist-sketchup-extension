@@ -28,7 +28,7 @@ module Ladb::OpenCutList
           :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
           :currency_symbol => settings_model['currency_symbol'],
           :mass_unit_symbol => settings_model['mass_unit_symbol'],
-          :length_unit_symbol => DimensionUtils.instance.model_unit_is_metric ? UNIT_SIGN_METER : 'ft',
+          :length_unit_symbol => DimensionUtils.instance.model_unit_is_metric ? DimensionUtils::UNIT_STRIPPEDNAME_METER : DimensionUtils::UNIT_STRIPPEDNAME_FEET,
           :solid_wood_material_count => 0,
           :sheet_good_material_count => 0,
           :dimensional_material_count => 0,

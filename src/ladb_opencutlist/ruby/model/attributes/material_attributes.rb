@@ -300,7 +300,8 @@
     end
 
     def f_volumic_mass
-      @volumic_mass.to_f
+      unit, val = _split_unit_and_value(@volumic_mass)
+      { :unit => unit, :val => val }
     end
 
     def std_prices
@@ -314,16 +315,18 @@
 
     def l_std_prices
 
-      # Returns an array like [ { :val => FLOAT }, { :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
+      # Returns an array like [ { :unit => STRING_UNIT, :val => FLOAT }, { :unit => STRING_UNIT, :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
 
       # Setup return array with default value first
-      std_prices = [ { :val => 0.0 } ]
+      std_prices = [ { unit: nil, :val => 0.0 } ]
 
       if @std_prices.is_a?(Array)
         @std_prices.each do |std_price|
 
           if std_price['dim'].nil?
-            std_prices[0][:val] = std_price['val'].to_f unless std_price['val'].nil?
+            unit, val = _split_unit_and_value(std_price['val'])
+            std_prices[0][:unit] = unit
+            std_prices[0][:val] = val
           elsif !std_price['dim'].is_a?(String)
             next
           else
@@ -339,8 +342,8 @@
               end
             }
             if dim.length > 0
-              val = std_price['val'].nil? ? 0.0 : std_price['val'].to_f
-              std_prices << { :val => val, :dim => dim, }
+              unit, val = _split_unit_and_value(std_price['val'])
+              std_prices << { :unit => unit, :val => val, :dim => dim }
             end
           end
 
@@ -415,6 +418,21 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)
       end
+    end
+
+    private
+
+    def _split_unit_and_value(str)
+      unit = nil
+      val = 0.0
+      unless str.nil?
+        a = str.split(' ')
+        if a.length > 1
+          unit = a.last
+          val = a.slice(0, a.length - 1).join(' ').tr(',', '.').to_f
+        end
+      end
+      return unit, val
     end
 
   end

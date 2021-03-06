@@ -173,7 +173,7 @@
                     std_sizes: $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList'),
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
-                    volumic_mass: $inputs.inputVolumicMass.val(),
+                    volumic_mass: $inputs.inputVolumicMass.ladbTextinputWithUnit('val'),
                     std_prices: $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices')
                 }
             }, function (response) {
@@ -255,7 +255,7 @@
                 attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
-                attributes.volumic_mass = $inputs.inputVolumicMass.val();
+                attributes.volumic_mass = $inputs.inputVolumicMass.ladbTextinputWithUnit('val');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices');
             };
             var fnRotateTexture = function (angle) {
@@ -735,7 +735,7 @@
             fnFetchStds(options);
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
-            options.volumic_mass = $inputVolumicMass.val();
+            options.volumic_mass = $inputVolumicMass.ladbTextinputWithUnit('val');
             options.std_prices = $editorStdPrices.ladbEditorStdPrices('getStdPrices');
         };
         var fnFillInputs = function (options) {
@@ -754,7 +754,7 @@
             fnSetTokens($inputStdSizes, options.std_sizes);
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
-            $inputVolumicMass.val(options.volumic_mass);
+            $inputVolumicMass.ladbTextinputWithUnit('val', options.volumic_mass);
             fnSetStdPricesTypeAndStds();
             $editorStdPrices.ladbEditorStdPrices('setStdPrices', [ options.std_prices ]);
         };
@@ -880,6 +880,19 @@
             section: material.attributes.type,
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
+        });
+        $inputVolumicMass.ladbTextinputWithUnit({
+            defaultUnit: that.mass_unit_symbol + '_' + that.length_unit_symbol + '3',
+            units: [
+                {
+                    kg_m3: 'kg / m³',
+                    kg_ft3: 'kg / ft³'
+                },
+                {
+                    lb_ft3: 'lb / ft³',
+                    lb_m3: 'lb / m³'
+                },
+            ]
         });
         $editorStdPrices.ladbEditorStdPrices({
             currency_symbol: that.currency_symbol,

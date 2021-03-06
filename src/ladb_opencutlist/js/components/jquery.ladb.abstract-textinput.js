@@ -6,6 +6,7 @@
 var LadbTextinputAbstract = function (element, options, resetValue) {
     this.options = options;
     this.$element = $(element);
+    this.$elementWrapper = null;
 
     this.resetValue = resetValue;
 
@@ -25,21 +26,65 @@ LadbTextinputAbstract.prototype.enable = function () {
 };
 
 LadbTextinputAbstract.prototype.reset = function () {
-    this.$element.val(this.resetValue);
+    this.$element
+        .val(this.resetValue)
+        .trigger('change')
+    ;
+};
+
+LadbTextinputAbstract.prototype.val = function (value) {
+    return this.$element.val(value);
+};
+
+/////
+
+LadbTextinputAbstract.prototype.createLeftToolsContainer = function () {
+    var $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-left" />');
+    this.appendLeftTools($toolsContainer);
+    this.$inputWrapper
+        .before($toolsContainer)
+    ;
+};
+
+LadbTextinputAbstract.prototype.appendLeftTools = function ($toolsContainer) {
+};
+
+LadbTextinputAbstract.prototype.createRightToolsContainer = function () {
+    var $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-right" />');
+    this.appendRightTools($toolsContainer);
+    this.$inputWrapper
+        .after($toolsContainer)
+    ;
+};
+
+LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
+    var that = this;
+
+    var $resetBtn =
+        $('<div class="ladb-textinput-tool ladb-btn-reset" tabindex="-1"><i class="ladb-opencutlist-icon-clear"></i></div>')
+            .on('click', function() {
+                that.reset();
+                $(this).blur();
+            })
+    ;
+    $toolsContainer.append($resetBtn);
+
+    this.$resetBtn = $resetBtn;
 };
 
 LadbTextinputAbstract.prototype.init = function () {
-    var that = this;
 
-    var $resetBtn = $('<div class="ladb-btn-reset"><i class="ladb-opencutlist-icon-clear"></i></div>');
-    $resetBtn.on('click', function() {
-        that.reset();
-        that.$element.trigger('change');
-    });
     this.$element
-        .wrap('<div class="input-group ladb-textinput" />')
-        .after($resetBtn)
+        .wrap('<div class="ladb-textinput-input" />')
     ;
-    this.$resetBtn = $resetBtn;
+    this.$inputWrapper = this.$element.parent();
+
+    this.$inputWrapper
+        .wrap('<div class="ladb-textinput" />')
+    ;
+    this.$wrapper = this.$inputWrapper.parent();
+
+    this.createLeftToolsContainer();
+    this.createRightToolsContainer();
 
 };

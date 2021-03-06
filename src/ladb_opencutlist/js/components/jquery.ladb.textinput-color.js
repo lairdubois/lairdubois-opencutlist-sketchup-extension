@@ -6,7 +6,6 @@
 
     var LadbTextinputColor = function(element, options) {
         LadbTextinputAbstract.call(this, element, options, '#000000');
-        this.$previewAddOn = null;
         this.$preview = null;
     };
     LadbTextinputColor.prototype = new LadbTextinputAbstract;
@@ -54,12 +53,12 @@
         });
 
         var fnPositionAndShowPicker = function($picker) {
-            var pos = that.$previewAddOn.position();
-            $picker.css({ left: pos.left, top: (pos.top + that.$element.outerHeight(false)) });
+            var pos = that.$wrapper.position();
+            $picker.css({ left: pos.left, top: (pos.top + that.$wrapper.outerHeight(false)) });
             $picker.show();
         };
 
-        that.$previewAddOn.on('click', function(e) {
+        that.$preview.on('click', function(e) {
             e.stopPropagation();
             fnPositionAndShowPicker($picker);
         });
@@ -84,21 +83,20 @@
         }
     };
 
+    LadbTextinputColor.prototype.appendLeftTools = function($toolsContainer) {
+        LadbTextinputAbstract.prototype.appendLeftTools.call(this, $toolsContainer);
+
+        var $preview = $('<div class="ladb-textinput-color-preview ladb-textinput-tool" />');
+        $toolsContainer.append($preview);
+
+        this.$preview = $('.ladb-textinput-color-preview', $toolsContainer);
+
+    };
+
     LadbTextinputColor.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
         var that = this;
-
-        // Decorate input
-
-        this.$previewAddOn = $('<div class="ladb-textinput-color-preview-addon input-group-addon"></div>');
-        this.$preview = $('<div class="ladb-textinput-color-preview"></div>');
-
-        this.$previewAddOn.append(this.$preview);
-
-        var $inputGroup = this.$element.parent();
-        $inputGroup.addClass('ladb-textinput-color')
-        $inputGroup.prepend(this.$previewAddOn);
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: 'component_textinput_color' }, function (response) {

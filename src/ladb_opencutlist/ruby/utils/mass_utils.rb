@@ -2,10 +2,11 @@ module Ladb::OpenCutList
 
   require 'singleton'
 
-  # Unit signs
-  UNIT_SIGN_KILOGRAM = 'kg'
-
   class MassUtils
+
+    # Unit strippednames
+    UNIT_STRIPPEDNAME_KILOGRAM = 'kg'
+    UNIT_STRIPPEDNAME_POUND = 'lb'
 
     include Singleton
 
@@ -26,6 +27,30 @@ module Ladb::OpenCutList
     def fetch_mass_options
       settings_model = Plugin.instance.get_model_preset('settings_model')
       @unit_symbol = settings_model['mass_unit_symbol']
+    end
+
+    # -----
+
+    def kg_to_model_unit(f)
+      case @unit_symbol
+      when UNIT_STRIPPEDNAME_KILOGRAM
+        return f
+      when UNIT_STRIPPEDNAME_POUND
+        return f * 2.20462262185
+      else
+        0
+      end
+    end
+
+    def lb_to_model_unit(f)
+      case @unit_symbol
+      when UNIT_STRIPPEDNAME_KILOGRAM
+        return f / 0.45359237
+      when UNIT_STRIPPEDNAME_POUND
+        return f
+      else
+        0
+      end
     end
 
     # -----

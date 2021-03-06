@@ -4,24 +4,70 @@
 
 div.ladb-textinput {
   width: 100%;
+  display: table;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+
+  &:focus-within {
+    border-color: @ladb-global-color-focus;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
+  > .ladb-textinput-input {
+    display: table-cell;
+    width: 100%;
+
+    > input.form-control {
+      width: 100%;
+      height: auto;
+      float: none;
+      border: none;
+      background: none;
+      box-shadow: none;
+    }
+
+  }
+
+  .ladb-textinput-tools-left + .ladb-textinput-input > input.form-control {
+    padding-left: 6px;
+  }
+
+  .ladb-textinput-tools-right ~ .ladb-textinput-input > input.form-control {
+    padding-right: 6px;
+  }
+
+  > .ladb-textinput-tools {
+    display: table-cell;
+    white-space: nowrap;
+
+    .ladb-textinput-tool {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    &.ladb-textinput-tools-left .ladb-textinput-tool {
+        margin-left: 6px;
+    }
+
+    &.ladb-textinput-tools-right .ladb-textinput-tool {
+        margin-right: 6px;
+    }
+
+  }
 
   div.ladb-btn-reset {
-    position: absolute;
-    top: 9px;
-    right: 5px;
     width: 16px;
     height: 16px;
     cursor: pointer;
     line-height: 16px;
     font-size: 10px;
     text-align: center;
-    color: #888;
-    z-index: 3;
-  }
+    color: @ladb-global-light-color;
 
-  input {
-    padding-right: 16px;
-    box-sizing: border-box;
+    &:hover {
+      color: #888;
+    }
+
   }
 
 }
