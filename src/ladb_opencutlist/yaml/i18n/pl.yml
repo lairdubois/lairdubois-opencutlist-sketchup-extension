@@ -70,8 +70,8 @@ core:
 
       Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Używasz starszej wersji SketchUp ({{ sketchup_version }}). Plugin może częściowo działać, ale generować również błędy.
-      Aby wykożystać w pełni OpenCutList zalecamy przynajmniej **SketchUp 2017**.
+      Używasz starszej wersji SketchUp ({{ sketchup_version }}). Plugin będzie działać, ale może generować błędy.
+      Aby w pełni wykorzystać OpenCutList zalecamy przynajmniej **SketchUp 2017**.
     feature_locked: "*Nie można dezaktywować w tej wersji programu SketchUp*"
   event:
     model_change: Aktywny model został zmieniony.
@@ -110,17 +110,17 @@ core:
     user_defaults: Moje ustawienia domyślne
     new: Nowe ustawienia
     new_prompt: |
-      *Utworzenie własnych ustawień pozwala zachować aktualne ustawienia globalnie, co pozwala użyć ich we wszystkich swoich modelach.*
+      *Tworzenie własnych ustawień pozwala zachować aktualne ustawienia globalnie, abyś mógł użyć ich we wszystkich swoich modelach.*
 
       Wprowadź nazwę dla ustawień:
     delete_confirm_title: Usunięcie
     delete_confirm: "Czy na pewno chcesz usunąć ustawienia **\"{{ name }}\"**?"
     override_confirm_title: Aktualizacja
-    override_confirm: "Czy na pewno chcesz zapisać aktualne parametry w formularzu w ustawieniach **\"{{name}}\"**?"
-    new_success: "Utworzone ustawienia **\"{{ name }}\"**"
+    override_confirm: "Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **\"{{name}}\"**?"
+    new_success: "Ustawienia **\"{{ name }}\"** zostały utworzone"
     override_success: "Zaktualizowano ustawienia **\"{{ name }}\"**"
     restore_success: "Do formularza wczytano parametry zapisane w ustawieniach **\"{{ name }}\"**"
-    delete_success: "Ustawienia **\"{{ name }}\"** usunięte"
+    delete_success: "Ustawienia **\"{{ name }}\"** zostały usunięte"
     tooltip:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
       delete: "Usuń ustawienia '{{name}}'"
@@ -310,10 +310,10 @@ tab:
       hide_cutting_dimensions_help: "Jeśli ta opcja jest wybrana, **przybliżone** wymiary części zostaną ukryte."
       hide_bbox_dimensions: Ukryj gotowe wymiary
       hide_bbox_dimensions_help: "Jeśli ta opcja jest wybrana, wymiary **gotowych** części zostaną ukryte."
-      hide_final_areas: Ukryj rzeczywisty obszar części typu *Dobry arkusz*
-      hide_final_areas_help: "Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Dobry arkusz* zostaną ukryte."
+      hide_final_areas: Ukryj rzeczywisty obszar części typu *Płyty*
+      hide_final_areas_help: "Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Płyty* zostaną ukryte."
       hide_edges: Ukryj kolumny obrzeży
-      hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Dobry arkusz* będą ukryte."
+      hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte."
       minimize_on_highlight: Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*."
       general: Główne
@@ -434,29 +434,29 @@ tab:
       option_full_width_diagram: Wyświetlanie na całej szerokości
       option_full_width_diagram_0: Nie
       option_full_width_diagram_1: Tak
-      option_full_width_diagram_help: "Jeśli ta opcja jest zaznaczona, schematy cięć są wyświetlane na całej dostępnej szerokości. W przeciwnym razie ich szerokość jest zdefiniowana przez skalowanie zależne od wszystkich schematów."
+      option_full_width_diagram_help: "Jeśli ta opcja jest włączona, schematy cięć są wyświetlane na całej szerokości. W przeciwnym razie ich szerokość jest zdefiniowana przez stały współczynnik skalowania."
       option_wrap_length: Długość deski dzielącej
       option_wrap_length_help: Maksymalna długość powyżej której deska będzie rozdzielona na wiele linii.
       option_hide_cross: Ścinki
       option_hide_cross_0: Wymiary i Przekrój
       option_hide_cross_1: Tylko wymiary
-      option_hide_cross_help: Wyświetl lub ukryj przekreślenie na częściach traktowanych jako ścinki.
+      option_hide_cross_help: Wyświetl lub ukryj przekreślenie na częściach traktowanych jako odpad.
       option_highlight_primary_cuts: Cięcia główne
       option_highlight_primary_cuts_0: Tylko przegląd
       option_highlight_primary_cuts_1: Zawsze widoczne
-      option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia podstawowe.
+      option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia główne.
       option_saw_kerf: Grubość linii cięcia
       option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
       option_trimming: Rozmiar przycinania
       option_trimming_help_1d: Ilość materiału na każdym końcu płyty potraktowana jako odpad.
       option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.
       option_optimization: Poziom optymalizacji
-      option_optimization_help: Poziom optymalizacji definiuje ilość obliczonych możliwości.
+      option_optimization_help: "Poziom optymalizacji określa ilość obliczanych możliwości, a tym samym również czas obliczeń."
       option_optimization_0: Średni
       option_optimization_1: Zaawansowany
       option_stacking: Ułóż identyczne części
       option_stacking_help: Kierunek układania w stos części o wspólnej długości lub szerokości.
-      option_stacking_0: Nie układaj w stos
+      option_stacking_0: Brak preferencji
       option_stacking_1: Na całej długości
       option_stacking_2: Na całej szerokości
       option_stacking_3: Wszystkie możliwości
@@ -508,8 +508,8 @@ tab:
         efficiency: Efektywność
         leftover: Pozostałość
         cut: Cięcie
-        cut_final: Cięcie podstawowe (poziom 1)
-        cut_through: Cięcie podstawowe (poziom 2)
+        cut_final: Cięcie główne (poziom 1)
+        cut_through: Cięcie główne (poziom 2)
         bar_type_0: Płyta o standardowych wymiarach
         bar_type_1: Odpad
         sheet_type_0: Arkusz o standardowych wymiarach
@@ -557,13 +557,13 @@ tab:
       option_margin_bottom: Dolny
       option_margin_left: Lewy
       option_spacing: Odstęp
-      option_spacing_h: Poziomo
-      option_spacing_v: Pionowo
+      option_spacing_h: Poziomy
+      option_spacing_v: Pionowy
       option_grid: Ilość etytkiet na stronę
       option_col_count: Kolumny
       option_row_count: Rzędy
       option_cutting_marks: Linie cięcia
-      option_cutting_marks_0: Żaden
+      option_cutting_marks_0: Brak
       option_cutting_marks_1: Drukowane
       option_formula: Nazwa pola
       option_size: Wymiar
@@ -583,8 +583,8 @@ tab:
         part_width: Szerokość
         part_tags: Oznaczenia
         part_batch: Partia
-        thumbnail_proportional: Linia przerywana
-        thumbnail_square: Kwadrat - linia przerywana
+        thumbnail_proportional: Miniaturka prostokątna
+        thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
         group_material_name: Nazwa materiału
         group_std_dimension: Rozmiary standardowe
@@ -606,8 +606,8 @@ tab:
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
     warning:
       partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
-      no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
-      no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**Lite drewno**, **W arkuszach** lub **Deski**)."
+      no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**Lite drewno**, **Płyty** lub **Deski**)."
+      no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**Lite drewno**, **Płyty** lub **Deski**)."
       export_empty: Twója selekcja do eksportu nie zawiera żadnych części.
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
@@ -616,7 +616,7 @@ tab:
         Części które mają być na *liście części* muszą być instancjami **komponentu**.
         Jeżeli używasz tylko grup, przekształć je w komponenty.
         Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
-      no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**Lite drewno**, **W arkuszach** lub **Deski**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
+      no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**Lite drewno**, **Płyty** lub **Deski**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
     obsolete_base: "Aby zachować synchronizację, należy wygenerować listę części."
   materials:
     label: Materiały

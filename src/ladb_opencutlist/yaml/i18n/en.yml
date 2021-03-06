@@ -454,8 +454,8 @@ tab:
       option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
       option_optimization_0: Medium
       option_optimization_1: Advanced
-      option_stacking: Stack Identical Parts
-      option_stacking_help: Stacking direction of parts that have a common length or width.
+      option_stacking: Preferred Direction
+      option_stacking_help: "Stacking direction of parts that have a common length or width, per panel if more than one required."
       option_stacking_0: No preference
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
@@ -481,7 +481,7 @@ tab:
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: Add a panel size ...
       option_std_sheet_none: None
-      option_scrap_sheet_sizes: Offcut Sheet Goods
+      option_scrap_sheet_sizes: Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
         List all offcut sheet goods you would like to be considered in the cutting diagram.

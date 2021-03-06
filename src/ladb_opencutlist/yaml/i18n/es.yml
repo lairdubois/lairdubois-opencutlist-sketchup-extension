@@ -6,6 +6,7 @@ default:
   maximize: Maximizar
   cancel: Cancelar
   validate: Aplicar
+  confirm: Confirmer
   open: Abrir
   see: Ver
   close: Cerra
@@ -42,8 +43,6 @@ default:
   part_plural: partes
   setup_model_units: Configurar las unidades del modelo
   load_more: "Carga más ..."
-  save_to_defaults: Guardar como valores predeterminados
-  reset_to_defaults: Restaurar a los valores guardados
   reset_to_app_defaults: Restaurar a los valores originales
 core:
   menu:
@@ -65,13 +64,13 @@ core:
     more_update: Actualizar
   warning:
     dev: |
-      You are using a **development** version of *OpenCutList*.
-      This version is available for testing only.
-      It is not recommended to use it in production.
+      Está utilizando una versión de **desarrollo** de *OpenCutList*.
+      Esta versión está disponible solo para pruebas.
+      No se recomienda su uso en producción.
 
-      To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      Estás ejecutando una versión anterior de SketchUp ({{ sketchupVersion }}). Este complemento funcionará, pero puede presentar ciertos errores.
+      Estás ejecutando una versión anterior de SketchUp ({{ sketchup_version }}). Este complemento funcionará, pero puede presentar ciertos errores.
       Para aprovechar al máximo OpenCutList, recomendamos actualizar al menos a **SketchUp 2017**.
     feature_locked: "*No se puede desactivar en esta versión de SketchUp*"
   event:
@@ -103,6 +102,28 @@ core:
     error:
       download: Error al descargar el archivo.
       unzip: Error al descomprimir el archivo.
+  preset:
+    label: Preajustes
+    save_to: Guardar como
+    restore_from: Restaurar desde
+    app_defaults: Preajuste de origen
+    user_defaults: Mis ajustes por defecto
+    new: Nuevo preajuste
+    new_prompt: |
+      La creación de un preajuste personalizado le permite mantener la configuración actual del formulario de forma global para que pueda reutilizarla en todas sus plantillas más adelante.
+
+      Introduzca el nombre de la preselección:
+    delete_confirm_title: Supresión
+    delete_confirm: "¿Confirma la eliminación del preajuste **\"{{ name }}\"**?"
+    override_confirm_title: Actualización
+    override_confirm: "¿Confirmas la actualización del preajuste** \"{{ name }}\" ** con los parámetros del formulario?"
+    new_success: "Preajuste **\"{{ name }}\"** creado"
+    override_success: "Preajuste **\"{{ name }}\"** actualizado"
+    restore_success: "El formulario se ha rellenado con el preajuste **\"{{ name }}\"**."
+    delete_success: "Preajuste **\"{{ name }}\"** borrado"
+    tooltip:
+      save_to: "Actualizar la configuración de '{{ name }}'"
+      delete: "Eliminar la configuración '{{ name }}'"
 tab:
   cutlist:
     label: Partes
@@ -199,6 +220,7 @@ tab:
       group_numbers_save: Guarde los números de pieza de este grupo
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
+      group_labels: Imprimir etiquetas
       edit_material: "Editar material '{{ material }}'..."
       expand_all: Despliegue las partes similares
       collapse_all: Doblar las partes similares
@@ -308,6 +330,9 @@ tab:
       property_name: Descripción
       property_count: Cantidad
       property_edge_pattern: Número de tiras de cantos
+      tags: Etiquetas
+      tags_help: Lista personalizada de tags propuestas en la ventana de propiedades de las piezas.
+      tags_placeholder: Añadir un tag
     list:
       filters: Filtro
       filters_warning_0: "¡Este filtro enmascara todas las partes!"
@@ -340,10 +365,10 @@ tab:
       edges: Tiras de cantos
     export:
       title: Exportar en formato CSV
-      info: |
+      info_0: |
         Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
-
-        <i class="ladb-opencutlist-icon-warning"></i> *Las partes dentro de los grupos ocultos de su lista de partes no serán exportadas*.
+      info_1: |
+        *Las piezas dentro de grupos ocultos de su lista de piezas no se exportarán*.
       options: Opciones de exportación
       option_source: Fuente
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,25 +431,32 @@ tab:
       option_origin_corner_0: Esquina superior izquierda
       option_origin_corner_1: Esquina inferior izquierda
       option_origin_corner_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
+      option_full_width_diagram: Pantalla de ancho total
+      option_full_width_diagram_0: No
+      option_full_width_diagram_1: Si
+      option_full_width_diagram_help: "Si esta opción está activada, los diagramas de corte se muestran utilizando el ancho disponible. De lo contrario, su ancho se define mediante un factor de escala que depende de todos los diagramas."
       option_wrap_length: Longitud del tablero envolvente
       option_wrap_length_help: Longitud máxima después de la cual una tabla se envolverá en varias líneas.
       option_hide_cross: Desperdicios
-      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
       option_hide_cross_0: Dimensiones y Cruz
       option_hide_cross_1: Solo dimensiones
+      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_highlight_primary_cuts: Cortes primarios
+      option_highlight_primary_cuts_0: Sólo en vista general
+      option_highlight_primary_cuts_1: Siempre visible
+      option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Tamaño de recorte
       option_trimming_help_1d: La cantidad de material en cada extremo del tablero que se tratará como desecho.
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
       option_optimization: Nivel de optimización
-      option_optimization_help: El nivel de optimización define el número de posibilidades calculadas.
-      option_optimization_0: Ligero
-      option_optimization_1: Camino
-      option_optimization_2: Avanzado
+      option_optimization_help: "El nivel de optimización define el número de posibilidades calculadas y, por tanto, también el tiempo de cálculo."
+      option_optimization_0: Camino
+      option_optimization_1: Avanzado
       option_stacking: Apilar piezas idénticas
       option_stacking_help: La forma en que las partes con ancho o largo común se colocan provisionalmente juntas.
-      option_stacking_0: Ninguno
+      option_stacking_0: Sin preferencias
       option_stacking_1: Longitudinal
       option_stacking_2: A lo ancho
       option_stacking_3: Todas las posibilidades
@@ -456,9 +488,6 @@ tab:
         Formato esperado: **L** x **W** x **Q**, donde **L** y **W** representan el *largo* y el *ancho* del panel y **Q** la cantidad.
         La cantidad es opcional.
         *Los tamaños sin unidades se consideran en unidades modelo.*
-      options_defaults:
-        manage_help: Administración de los *parámetros predeterminados del diagrama* de corte
-        save_success: "*Parámetros predeterminados del diagrama* de corte guardados"
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla
         scroll_to_block_2d: Desplazate al primer tablero
@@ -472,12 +501,15 @@ tab:
         width: Anchura
         total_length: Σ Longitudes
         total_area: Σ Areas
+        total_part_count: Σ Partes
         total_used: Total utilizado
         trimming: Margen
         total_length_cuts: Longitud de cortes
         efficiency: Eficiencia
         leftover: Sobrante
         cut: Cortar
+        cut_final: Corte primario (nivel 1)
+        cut_through: Corte primario (nivel 2)
         bar_type_0: Dimensiones estándar
         bar_type_1: Trozo
         sheet_type_0: Panel de tamaño estándar
@@ -506,7 +538,64 @@ tab:
         cutting_dimensions_edge_decrement: |
           *Dimensiones reducidas por el grosor de las tiras del canto.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      label: Etiquetas
+      title: Etiquetas
+      options_layout: Composición
+      options_settings: Configuración
+      size: Tamaño real de la etiqueta
+      add_element: Añadir un elemento
+      remove_element: Eliminar
+      option_page: Tamaño de papel
+      option_page_format: Formato
+      option_page_format_portrait: Retrato
+      option_page_format_landscape: Paisaje
+      option_page_format_custom: Personalizado
+      option_page_width: Anchura
+      option_page_height: Altura
+      option_margin: Márgenes
+      option_margin_top: Arriba
+      option_margin_right: Derecha
+      option_margin_bottom: Bajo
+      option_margin_left: Izquierda
+      option_spacing: Separación
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertical
+      option_grid: Etiquetas por página
+      option_col_count: Columnas
+      option_row_count: Líneas
+      option_cutting_marks: Marcas de corte
+      option_cutting_marks_0: No
+      option_cutting_marks_1: Impreso
+      option_formula: Valor
+      option_size: Dimensión
+      option_anchor: Ancla
+      option_anchor_start: Inicio
+      option_anchor_middle: Melo
+      option_anchor_end: Fin
+      option_color: Color
+      formula:
+        part_number: Número
+        part_name: Descripción
+        part_cutting_size: Dimensiones aproximadas
+        part_cutting_length: Longitud - cruda
+        part_cutting_width: Ancho - crudo
+        part_size: Dimensiones
+        part_length: Longitud
+        part_width: Anchura
+        part_tags: Etiquetas
+        part_batch: Lote
+        thumbnail_proportional: Miniatura proporcional
+        thumbnail_square: Miniatura cuadrada
+        group_material: Espesor / Material
+        group_material_name: Miniatura proporcional
+        group_std_dimension: Dimensiones estándar
+        filename: Nombre del archivo
+        page_label: Nombre de la escena
+        length_unit: Unidad
+        generated_at: Fecha y hora
+      error:
+        invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
+      warning:
+        selection_only: Estas etiquetas están limitadas a **piezas seleccionadas** únicamente
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -614,11 +703,6 @@ tab:
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
       volumic_mass: Densidad
-      cut_options_defaults:
-        manage_help: Administración de los *parámetros de corte* predeterminados
-        save_success: |
-          **{{ type_name }}**
-          *Parámetros de corte* predeterminados guardados
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
@@ -658,11 +742,12 @@ tab:
     import_to_model: Importar al modelo
     load:
       title: Cargando archivo CSV
-      info: |
-        Seleccione las opciones necesarias para leer **{{ filename }}**.
-
-        <i class="ladb-opencutlist-icon-warning"></i> *La unidad configurada en el modelo es : **{{ unit }}**.
-        Esta unidad se utilizará para interpretar las dimensiones dadas sin unidades *.
+      info_0: |
+        Elija las opciones necesarias para leer correctamente el archivo:
+        **{{ filename }}**.
+      info_1: |
+        *La unidad configurada en la plantilla es: **{{ unit }}**.
+        Esta unidad se utilizará para dimensiones para las que no se especifica la unidad*.
       options: Opciones de carga
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -832,7 +917,9 @@ tab:
     credits_vendors: |
       La aventura no sería posible sin el trabajo de los autores de los siguientes componentes de código abierto:
     credits_thanks: |
-      Un agradecimiento especial para [JetBrains](https://www.jetbrains.com) por su apoyo a este proyecto [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      Un agradecimiento especial para:
+      - [JetBrains](https://www.jetbrains.com) por su apoyo a este proyecto mediante su [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex] (https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
 tool:
   highlight:
     transparency: Transparencia

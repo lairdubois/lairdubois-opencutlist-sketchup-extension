@@ -430,7 +430,7 @@ tab:
       option_origin_corner: Исходная позиция
       option_origin_corner_0: Верхний левый
       option_origin_corner_1: Нижний левый
-      option_origin_corner_help: Позволяет выбрать первоначальный угол размещения деталей на листе
+      option_origin_corner_help: Позволяет выбрать верхний левый или нижний левый угол листа в качестве исходной позиции размещения деталей для формирования карты раскроя
       option_full_width_diagram: Отображать по ширине экрана
       option_full_width_diagram_0: Нет
       option_full_width_diagram_1: Да
