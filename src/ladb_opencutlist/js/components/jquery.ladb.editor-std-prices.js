@@ -17,18 +17,18 @@
         this.defaultUnit = null;
         this.units = [
             {
-                $_m3: options.currency_symbol + ' / m³',
-                $_m2: options.currency_symbol + ' / m²',
-                $_m: options.currency_symbol + ' / m',
+                $_m3: options.currencySymbol + ' / m³',
+                $_m2: options.currencySymbol + ' / m²',
+                $_m: options.currencySymbol + ' / m',
             },
             {
-                $_fbm: options.currency_symbol + ' / fbm',
-                $_ft3: options.currency_symbol + ' / ft³',
-                $_ft2: options.currency_symbol + ' / ft²',
-                $_ft: options.currency_symbol + ' / ft',
+                $_fbm: options.currencySymbol + ' / fbm',
+                $_ft3: options.currencySymbol + ' / ft³',
+                $_ft2: options.currencySymbol + ' / ft²',
+                $_ft: options.currencySymbol + ' / ft',
             },
             {
-                $_p: options.currency_symbol + ' / ' + i18next.t('default.part_single')
+                $_p: options.currencySymbol + ' / ' + i18next.t('default.part_single')
             }
         ];
         this.enabledUnits = [];
@@ -38,8 +38,8 @@
     };
 
     LadbEditorStdPrices.DEFAULTS = {
-        currency_symbol: '',
-        length_unit_symbol: '',
+        currencySymbol: '',
+        lengthUnitSymbol: '',
         inputChangeCallback: null
     };
 
@@ -201,7 +201,7 @@
                 for (i = 0; i < stds.stdThicknesses.length; i++) {
                     stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
                 }
-                this.defaultUnit = '$_' + (that.options.length_unit_symbol === 'ft' ? 'fbm' : that.options.length_unit_symbol + '3');
+                this.defaultUnit = '$_' + (that.options.lengthUnitSymbol === 'ft' ? 'fbm' : that.options.lengthUnitSymbol + '3');
                 enabledUnitKeys = [ '$_m3', '$_ft3', '$_fbm' ];
                 break;
 
@@ -212,7 +212,7 @@
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.defaultUnit = '$_' + that.options.length_unit_symbol + '2';
+                this.defaultUnit = '$_' + that.options.lengthUnitSymbol + '2';
                 enabledUnitKeys = [ '$_m3', '$_m2', '$_ft3', '$_ft2', '$_p' ];
                 break;
 
@@ -223,7 +223,7 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.defaultUnit = '$_' + that.options.length_unit_symbol;
+                this.defaultUnit = '$_' + that.options.lengthUnitSymbol;
                 enabledUnitKeys = [ '$_m3', '$_m2', '$_m', '$_ft3', '$_ft2', '$_ft', '$_p' ];
                 break;
 
@@ -231,7 +231,7 @@
                 for (i = 0; i < stds.stdWidths.length; i++) {
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
-                this.defaultUnit = '$_' + that.options.length_unit_symbol;
+                this.defaultUnit = '$_' + that.options.lengthUnitSymbol;
                 enabledUnitKeys = [ '$_m', '$_ft', '$_p' ];
                 break;
 

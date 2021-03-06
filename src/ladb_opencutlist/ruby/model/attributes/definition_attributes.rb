@@ -1,8 +1,11 @@
 module Ladb::OpenCutList
 
   require 'json'
+  require_relative '../../helper/unit_helper'
 
   class DefinitionAttributes
+
+    include UnitHelper
 
     CUMULABLE_NONE = 0
     CUMULABLE_LENGTH = 1
@@ -107,12 +110,14 @@ module Ladb::OpenCutList
       DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
     end
 
-    def f_unit_mass
-      unit_mass.to_f
+    def h_unit_mass
+      unit, val = _split_unit_and_value(unit_mass)
+      { :unit => unit, :val => val }
     end
 
-    def f_unit_price
-      unit_price.to_f
+    def h_unit_price
+      unit, val = _split_unit_and_value(unit_price)
+      { :unit => '$_p', :val => val }
     end
 
     # -----

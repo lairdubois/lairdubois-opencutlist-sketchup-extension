@@ -33,8 +33,8 @@
             return val ? val + ' ' + this.unit : '';
         }
 
-        var valueAndUnit = value.split(' ');
         var unit = this.options.defaultUnit;
+        var valueAndUnit = value.split(' ');
         if (valueAndUnit.length > 1) {
             unit = valueAndUnit[valueAndUnit.length - 1];
             if (unit === undefined || this.getUnitLabel(unit) === '') {

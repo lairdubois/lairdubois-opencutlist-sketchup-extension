@@ -4,9 +4,12 @@
   require 'securerandom'
   require_relative '../geom/size2d'
   require_relative '../geom/section'
+  require_relative '../../helper/unit_helper'
   require_relative '../../utils/dimension_utils'
 
   class MaterialAttributes
+
+    include UnitHelper
 
     TYPE_UNKNOWN = 0
     TYPE_SOLID_WOOD = 1
@@ -299,7 +302,7 @@
       end
     end
 
-    def f_volumic_mass
+    def h_volumic_mass
       unit, val = _split_unit_and_value(@volumic_mass)
       { :unit => unit, :val => val }
     end
@@ -418,21 +421,6 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)
       end
-    end
-
-    private
-
-    def _split_unit_and_value(str)
-      unit = nil
-      val = 0.0
-      unless str.nil?
-        a = str.split(' ')
-        if a.length > 1
-          unit = a.last
-          val = a.slice(0, a.length - 1).join(' ').tr(',', '.').to_f
-        end
-      end
-      return unit, val
     end
 
   end

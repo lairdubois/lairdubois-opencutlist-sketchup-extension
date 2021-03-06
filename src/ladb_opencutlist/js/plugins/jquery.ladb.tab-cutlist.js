@@ -78,6 +78,8 @@
             var tips = response.tips;
             var selectionOnly = response.selection_only;
             var lengthUnit = response.length_unit;
+            var currencySymbol = response.currency_symbol;
+            var massUnitSymbol = response.mass_unit_symbol;
             var filename = response.filename;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
@@ -90,6 +92,8 @@
             that.filename = filename;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
+            that.currencySymbol = currencySymbol;
+            that.massUnitSymbol = massUnitSymbol;
             that.usedTags = usedTags;
             that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
@@ -1306,8 +1310,19 @@
                 })
 
                 // Bind input
-                $inputUnitPrice.ladbTextinputCurrency();
-                $inputUnitMass.ladbTextinputMass();
+                $inputUnitPrice.ladbTextinputWithUnit({
+                    defaultUnit: '$_p',
+                    units: [
+                        { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
+                    ]
+                });
+                $inputUnitMass.ladbTextinputWithUnit({
+                    defaultUnit: that.massUnitSymbol + '_p',
+                    units: [
+                        { kg_p: 'kg / ' + i18next.t('default.part_single') },
+                        { lb_p: 'lb / ' + i18next.t('default.part_single') }
+                    ]
+                });
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
@@ -1454,7 +1469,7 @@
                             editedParts[i].unit_price = $inputUnitPrice.val();
                         }
                         if ($inputUnitMass.val() !== '') {
-                            editedParts[i].unit_mass = $inputUnitMass.val();
+                            editedParts[i].unit_mass = $inputUnitMass.ladbTextinputWithUnit('val');
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });

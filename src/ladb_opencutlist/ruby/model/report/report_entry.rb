@@ -50,8 +50,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
-      @std_price = _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
 
       @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
 
@@ -68,7 +68,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
 
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
@@ -88,7 +88,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_price = _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
 
       @type = _def.cuttingdiagram2d_summary_sheet.type
       @length = _def.cuttingdiagram2d_summary_sheet.length
@@ -109,7 +109,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
 
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
@@ -129,7 +129,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_price = _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
 
       @type = _def.cuttingdiagram1d_summary_bar.type
       @length = _def.cuttingdiagram1d_summary_bar.length
@@ -149,8 +149,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
-      @std_price = _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
 
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
@@ -185,8 +185,8 @@ module Ladb::OpenCutList
       @name = _def.cutlist_part.name
       @count = _def.cutlist_part.count
 
-      @unit_mass = _def.unit_mass == 0 ? nil : "#{MassUtils.instance.format_to_readable_mass(_def.unit_mass)} / pièce"
-      @unit_price = _def.unit_price == 0 ? nil : "#{PriceUtils.instance.format_to_readable_price(_def.unit_price)} / pièce"
+      @unit_mass = _def.unit_mass.nil? || _def.unit_mass[:val] == 0 ? nil : "#{_def.unit_mass[:val]} #{_def.unit_mass[:unit]}"
+      @unit_price = _def.unit_price.nil? || _def.unit_price[:val] == 0 ? nil : "#{_def.unit_price[:val]} #{_def.unit_price[:unit]}"
 
     end
 

@@ -43,8 +43,8 @@ module Ladb::OpenCutList
     def initialize(cutlist_group)
       super(cutlist_group)
 
-      @volumic_mass = 0
-      @std_price = 0
+      @volumic_mass = nil
+      @std_price = nil
 
       @total_volume = 0
 
@@ -68,7 +68,7 @@ module Ladb::OpenCutList
     def initialize(cutlist_group)
       super(cutlist_group)
 
-      @volumic_mass = 0
+      @volumic_mass = nil
 
       @total_count = 0
       @total_area = 0
@@ -95,7 +95,7 @@ module Ladb::OpenCutList
 
       @cuttingdiagram2d_summary_sheet = cuttingdiagram2d_summary_sheet
 
-      @std_price = 0
+      @std_price = nil
 
     end
 
@@ -116,7 +116,7 @@ module Ladb::OpenCutList
     def initialize(cutlist_group)
       super(cutlist_group)
 
-      @volumic_mass = 0
+      @volumic_mass = nil
 
       @total_count = 0
       @total_length = 0
@@ -143,7 +143,7 @@ module Ladb::OpenCutList
 
       @cuttingdiagram1d_summary_bar = cuttingdiagram1d_summary_bar
 
-      @std_price = 0
+      @std_price = nil
 
     end
 
@@ -164,8 +164,8 @@ module Ladb::OpenCutList
     def initialize(cutlist_group)
       super(cutlist_group)
 
-      @volumic_mass = 0
-      @std_price = 0
+      @volumic_mass = nil
+      @std_price = nil
 
       @total_length = 0
 
@@ -213,8 +213,8 @@ module Ladb::OpenCutList
 
       @cutlist_part = cutlist_part
 
-      @unit_mass = 0
-      @unit_price = 0
+      @unit_mass = nil
+      @unit_price = nil
 
     end
 

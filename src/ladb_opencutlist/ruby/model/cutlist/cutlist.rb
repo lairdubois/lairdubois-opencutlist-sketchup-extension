@@ -6,10 +6,10 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :selection_only, :length_unit, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
+    attr_accessor :selection_only, :length_unit, :currency_symbol, :mass_unit_symbol, :dir, :filename, :page_label, :max_number, :instance_count, :ignored_instance_count
     attr_reader :errors, :warnings, :tips, :used_tags, :material_usages, :groups
 
-    def initialize(selection_only, length_unit, dir, filename, page_label, instance_count)
+    def initialize(selection_only, length_unit, currency_symbol, mass_unit_symbol, dir, filename, page_label, instance_count)
       @_obsolete = false
       @_observers = []
 
@@ -18,6 +18,8 @@ module Ladb::OpenCutList
       @tips = []
       @selection_only = selection_only
       @length_unit = length_unit
+      @currency_symbol = currency_symbol
+      @mass_unit_symbol = mass_unit_symbol
       @dir = dir
       @filename = filename
       @page_label = page_label

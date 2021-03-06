@@ -45,7 +45,7 @@ module Ladb::OpenCutList
     def lb_to_model_unit(f)
       case @unit_symbol
       when UNIT_STRIPPEDNAME_KILOGRAM
-        return f / 0.45359237
+        return f * 0.45359237
       when UNIT_STRIPPEDNAME_POUND
         return f
       else

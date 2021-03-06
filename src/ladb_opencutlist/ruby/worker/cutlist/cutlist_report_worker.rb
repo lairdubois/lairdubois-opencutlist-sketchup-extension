@@ -41,7 +41,7 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_SOLID_WOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.f_volumic_mass
+          volumic_mass = material_attributes.h_volumic_mass
           std_price = _get_std_price([ cutlist_group.def.std_thickness ], material_attributes)
 
           report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
@@ -57,7 +57,7 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_SHEET_GOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.f_volumic_mass
+          volumic_mass = material_attributes.h_volumic_mass
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -101,7 +101,7 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_DIMENSIONAL
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.f_volumic_mass
+          volumic_mass = material_attributes.h_volumic_mass
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -145,7 +145,7 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_EDGE
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-          volumic_mass = material_attributes.f_volumic_mass
+          volumic_mass = material_attributes.h_volumic_mass
           std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l ], material_attributes)
 
           report_entry_def = EdgeReportEntryDef.new(cutlist_group)
@@ -251,17 +251,17 @@ module Ladb::OpenCutList
 
       definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
 
-      unit_mass = definition_attributes.f_unit_mass
-      unless unit_mass == 0
-        report_entry_part_def.unit_mass = unit_mass
-        report_entry_part_def.total_mass = unit_mass.to_f * cutlist_part.def.count
+      h_unit_mass = definition_attributes.h_unit_mass
+      unless h_unit_mass[:val] == 0
+        report_entry_part_def.unit_mass = h_unit_mass
+        report_entry_part_def.total_mass = _uv_mass_to_model_unit(h_unit_mass[:unit].split('_')[0], h_unit_mass[:val]) * cutlist_part.def.count
         report_entry_def.total_mass = report_entry_def.total_mass + report_entry_part_def.total_mass
       end
 
-      unit_price = definition_attributes.f_unit_price
-      unless unit_price == 0
-        report_entry_part_def.unit_price = unit_price
-        report_entry_part_def.total_cost = unit_price.to_f * cutlist_part.def.count
+      h_unit_price = definition_attributes.h_unit_price
+      unless h_unit_price[:val] == 0
+        report_entry_part_def.unit_price = h_unit_price
+        report_entry_part_def.total_cost = h_unit_price[:val] * cutlist_part.def.count
         report_entry_def.total_cost = report_entry_def.total_cost + report_entry_part_def.total_cost
       end
 
@@ -281,11 +281,9 @@ module Ladb::OpenCutList
       l_std_prices[0]
     end
 
-    def _uv_to_inch3(s_unit, f_value, inch_thickness = 0, inch_width = 0, inch_length = 0)
+    def _uv_mass_to_model_unit(s_unit, f_value)
 
-      unit_numerator, unit_denominator = s_unit.split('_')
-
-      case unit_numerator
+      case s_unit
 
       when MassUtils::UNIT_STRIPPEDNAME_KILOGRAM
         f_value = MassUtils.instance.kg_to_model_unit(f_value)
@@ -294,6 +292,17 @@ module Ladb::OpenCutList
 
       end
 
+      f_value
+    end
+
+    def _uv_to_inch3(s_unit, f_value, inch_thickness = 0, inch_width = 0, inch_length = 0)
+
+      unit_numerator, unit_denominator = s_unit.split('_')
+
+      # Process mass if needed
+      _uv_mass_to_model_unit(unit_numerator, f_value)
+
+      # Process volume / area / length / part
       case unit_denominator
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER_3

@@ -8,8 +8,8 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.currency_symbol = '';
-        this.mass_unit_symbol = '';
-        this.length_unit_symbol = '';
+        this.massUnitSymbol = '';
+        this.lengthUnitSymbol = '';
         this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
@@ -48,9 +48,9 @@
             var currentMaterialName = response.current_material_name;
 
             // Keep useful data
-            that.currency_symbol = response.currency_symbol;
-            that.mass_unit_symbol = response.mass_unit_symbol;
-            that.length_unit_symbol = response.length_unit_symbol;
+            that.currencySymbol = response.currency_symbol;
+            that.massUnitSymbol = response.mass_unit_symbol;
+            that.lengthUnitSymbol = response.length_unit_symbol;
             that.materials = materials;
 
             // Update filename
@@ -131,8 +131,8 @@
         };
 
         var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
-            mass_unit_symbol: that.mass_unit_symbol,
-            length_unit_symbol: that.length_unit_symbol,
+            mass_unit_symbol: that.massUnitSymbol,
+            length_unit_symbol: that.lengthUnitSymbol,
             material: material
         }, true);
 
@@ -217,8 +217,8 @@
 
             var $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
                 capabilities: that.dialog.capabilities,
-                mass_unit_symbol: that.mass_unit_symbol,
-                length_unit_symbol: that.length_unit_symbol,
+                mass_unit_symbol: that.massUnitSymbol,
+                length_unit_symbol: that.lengthUnitSymbol,
                 material: material
             }, true);
 
@@ -882,7 +882,7 @@
             fnFillInputs: fnFillInputs
         });
         $inputVolumicMass.ladbTextinputWithUnit({
-            defaultUnit: that.mass_unit_symbol + '_' + that.length_unit_symbol + '3',
+            defaultUnit: that.massUnitSymbol + '_' + that.lengthUnitSymbol + '3',
             units: [
                 {
                     kg_m3: 'kg / m³',
@@ -895,8 +895,8 @@
             ]
         });
         $editorStdPrices.ladbEditorStdPrices({
-            currency_symbol: that.currency_symbol,
-            length_unit_symbol: that.length_unit_symbol,
+            currencySymbol: that.currencySymbol,
+            lengthUnitSymbol: that.lengthUnitSymbol,
             inputChangeCallback: inputChangeCallback
         });
 

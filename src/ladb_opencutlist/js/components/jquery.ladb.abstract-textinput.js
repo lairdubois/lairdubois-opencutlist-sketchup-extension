@@ -87,4 +87,9 @@ LadbTextinputAbstract.prototype.init = function () {
     this.createLeftToolsContainer();
     this.createRightToolsContainer();
 
+    var value = this.$element.val();
+    if (value) {
+        this.val(value);
+    }
+
 };
