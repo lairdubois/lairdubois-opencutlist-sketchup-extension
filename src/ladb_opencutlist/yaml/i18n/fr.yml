@@ -415,6 +415,7 @@ tab:
       options_general: Générales
       option_solid_wood_coefficient: Coefficient *Bois massif*
       option_solid_wood_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**Bois massif**".
+      raw_materials: Matières brutes
       coefficient: Coefficient
       total: Total
       total_mass: Σ Masses

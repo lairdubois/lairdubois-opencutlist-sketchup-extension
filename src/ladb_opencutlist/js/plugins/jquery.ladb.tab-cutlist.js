@@ -810,6 +810,20 @@
                                         $('.ladb-click-tool', $(this)).first().click();
                                         return false;
                                     });
+                                    $('a.ladb-btn-edit-material', $slide).on('click', function () {
+                                        $(this).blur();
+                                        var materialId = $(this).data('material-id');
+                                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                                            material_id: materialId
+                                        });
+                                        return false;
+                                    });
+                                    $('a.ladb-btn-edit-part', $slide).on('click', function () {
+                                        $(this).blur();
+                                        var partId = $(this).data('part-id');
+                                        that.editPart(partId);
+                                        return false;
+                                    });
 
                                     that.dialog.finishProgress();
 

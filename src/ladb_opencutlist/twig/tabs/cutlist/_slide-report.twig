@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block headerHeadingInner %}
-    {{ 'tab.cutlist.report.title'|i18next}}
+    {{ 'tab.cutlist.report.title'|i18next}} <small>| {{ 'tab.cutlist.report.raw_materials'|i18next }}</small>
 {% endblock %}
 
 {% block headerToolsInner %}
@@ -52,6 +52,7 @@
         {% for group in report.groups %}
 
             {% set foldableRow = group.material_type == 2 or group.material_type == 3 or group.material_type == 5 %}
+            {% set editableRow = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 %}
 
             <table class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
                 <thead>
@@ -94,9 +95,12 @@
                                     {% if entry.errors|length > 0 %}
                                         <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_display_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
                                     {% endif %}
+                                    <span class="ladb-separator"></span>
                                     {% if foldableRow %}
-                                        <span class="ladb-separator"></span>
-                                        <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
+                                        <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if group.material_type == 5 or entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>  {# TYPE_ACCESSORY #}
+                                    {% endif %}
+                                    {% if editableRow %}
+                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':entry.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
                                     {% endif %}
                                 </div>
                                 {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
@@ -118,7 +122,7 @@
                             <td class="ladb-cutlist-dimension-value"{% if entry.std_price is defined %}data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_cost ? entry.total_cost : '-' }}</td>
                         </tr>
                         {% for error in entry.errors %}
-                            <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error hide" data-folder-id="{{ entry.id }}">
+                            <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error" data-folder-id="{{ entry.id }}">
                                 <td colspan="5" style="padding-left: 40px;">{% if error is iterable %}{{ error[0]|i18next(error[1]) }}{% else %}{{ error|i18next }}{% endif %}</td>
                             </tr>
                         {% endfor %}
@@ -144,8 +148,13 @@
                             {% endfor %}
                         {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                             {% for part in entry.parts %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
-                                    <td style="padding-left: 40px;">{{ part.name }}</td>
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child" data-folder-id="{{ entry.id }}">
+                                    <td style="padding-left: 40px;">
+                                        {{ part.name }}
+                                        <div class="ladb-minitools ladb-minitools-right no-print">
+                                            <a href="#" class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                                        </div>
+                                    </td>
                                     <td class="text-center">{{ part.count }}</td>
                                     <td class="ladb-cutlist-dimension-value"{% if part.mass %}data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_mass ? part.total_mass : '-' }}</td>
                                     <td class="ladb-cutlist-dimension-value"{% if part.price %}data-toggle="tooltip" title="{{ part.price }}"{% endif %}>{{ part.total_cost ? part.total_cost : '-' }}</td>
