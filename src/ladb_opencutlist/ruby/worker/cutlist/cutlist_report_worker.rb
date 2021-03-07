@@ -10,6 +10,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
 
       @hidden_group_ids = settings['hidden_group_ids']
+      @solid_wood_coefficient = [ 1.0, "#{settings['solid_wood_coefficient']}".tr(',', '.').to_f ].max
 
       @cutlist = cutlist
 
@@ -17,6 +18,7 @@ module Ladb::OpenCutList
       @remaining_step = @cutlist_groups.count
 
       @report_def = ReportDef.new
+      @report_def.solid_wood_coefficient = @solid_wood_coefficient
 
       # Setup caches
       @material_attributes_cache = {}
@@ -47,9 +49,9 @@ module Ladb::OpenCutList
           report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
-          report_entry_def.total_volume = cutlist_group.def.total_cutting_volume
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness) unless std_price[:val] == 0
+          report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness) unless std_price[:val] == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume += report_entry_def.total_volume

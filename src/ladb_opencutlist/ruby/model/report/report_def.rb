@@ -5,7 +5,7 @@ module Ladb::OpenCutList
 
   class ReportDef
 
-    attr_accessor :total_mass, :total_cost
+    attr_accessor :solid_wood_coefficient,:total_mass, :total_cost
     attr_reader :errors, :warnings, :tips, :group_defs
 
     def initialize
@@ -13,6 +13,8 @@ module Ladb::OpenCutList
       @errors = []
       @warnings = []
       @tips = []
+
+      @solid_wood_coefficient = 1.0
 
       @total_mass = 0
       @total_cost = 0

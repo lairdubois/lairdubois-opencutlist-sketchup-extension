@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :errors, :warnings, :tips, :total_mass, :total_cost, :groups
+    attr_reader :errors, :warnings, :tips, :solid_wood_coefficient, :total_mass, :total_cost, :groups
 
     def initialize(_def)
       @_def = _def
@@ -16,6 +16,8 @@ module Ladb::OpenCutList
       @errors = _def.errors
       @warnings = _def.warnings
       @tips = _def.tips
+
+      @solid_wood_coefficient = _def.solid_wood_coefficient
 
       @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)

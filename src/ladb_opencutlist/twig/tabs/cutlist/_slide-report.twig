@@ -59,7 +59,12 @@
                     <td colspan="5">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                         {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':true, 'classes':'pull-left' } %}
-                        <div class="ladb-heading">{{ ('tab.materials.type_'~group.material_type)|i18next }}</div>
+                        <div class="ladb-heading">
+                            {{ ('tab.materials.type_'~group.material_type)|i18next }}
+                            {% if group.material_type == 1 %} {# TYPE_SOLID_WOOD #}
+                                <span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;">{{ 'tab.cutlist.report.coefficient'|i18next }} = {{ report.solid_wood_coefficient }}</span>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 <tr class="table-column-heading">

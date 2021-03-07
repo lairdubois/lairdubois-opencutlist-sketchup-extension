@@ -510,12 +510,17 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
+        var visible_only = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
+
         // Retrieve export option options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_export_options' }, function (response) {
 
             var exportOptions = response.preset;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig');
+            var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
+                visible_only: visible_only
+            });
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
@@ -707,22 +712,29 @@
         // Show Objective modal
         // this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
 
+        var visible_only = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
+
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_report_options' }, function (response) {
 
             var reportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
+                visible_only: visible_only,
                 tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab
             }, true);
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
             var $btnReport = $('#ladb_btn_report', $modal);
 
             var fnFetchOptions = function (options) {
+                options.solid_wood_coefficient = $inputSolidWoodCoefficient.val();
             }
             var fnFillInputs = function (options) {
+                $inputSolidWoodCoefficient.val(options.solid_wood_coefficient);
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -731,6 +743,9 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
+            $inputSolidWoodCoefficient.ladbTextinputDimension();
+
+            fnFillInputs(reportOptions);
 
             // Bind buttons
             $btnReport.on('click', function () {
@@ -829,6 +844,9 @@
 
             // Show modal
             $modal.modal('show');
+
+            // Setup popovers
+            that.dialog.setupPopovers();
 
         });
 
@@ -2056,7 +2074,6 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 if (cuttingdiagram2dOptions.std_sheet) {
                     var defaultValue = $inputStdSheet.val();
                     $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
@@ -2068,6 +2085,7 @@
                         }
                     }
                 }
+                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
                 $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);

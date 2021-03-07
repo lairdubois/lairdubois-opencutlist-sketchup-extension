@@ -13,6 +13,9 @@
 {% endblock %}
 
 {% block bodyInner %}
+    {% if visible_only %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.visible_only'|i18next }}</div>
+    {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="tab_export_general">
             <div class="row">
@@ -51,11 +54,6 @@
                             <option value="2" data-content="UTF-16BE">2</option>
                         </select>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-push-1 col-xs-10">
-                    <div class="help-block text-center">{{ 'tab.cutlist.export.info_1'|i18next }}</div>
                 </div>
             </div>
         </div>

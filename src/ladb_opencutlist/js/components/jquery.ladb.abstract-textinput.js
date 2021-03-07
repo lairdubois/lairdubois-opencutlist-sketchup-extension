@@ -6,7 +6,6 @@
 var LadbTextinputAbstract = function (element, options, resetValue) {
     this.options = options;
     this.$element = $(element);
-    this.$elementWrapper = null;
 
     this.resetValue = resetValue;
 

@@ -369,8 +369,6 @@ tab:
       title: Exporter au format CSV
       info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      info_1: |
-        *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +406,16 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      warning:
+        visible_only: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:
       title: Rapport
+      info_0: |
+        Cette fonctionnalité vous permet de générer un rapport des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
+      option_solid_wood_coefficient: Coefficient *Bois massif*
+      option_solid_wood_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**Bois massif**".
+      coefficient: Coefficient
       total: Total
       total_mass: Σ Masses
       total_cost: Σ Coûts
@@ -422,6 +427,8 @@ tab:
         no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
         entry_error: "*{{ material_display_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_display_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
+      warning:
+        visible_only: Seules les pièces contenues dans les **groupes visibles** sont comptabilisées.
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
