@@ -1465,23 +1465,23 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val();
                         }
-                        if ($inputPrice.val() !== '') {
+                        if ($inputPrice.val() !== undefined) {
                             editedParts[i].price = $inputPrice.val();
                         }
-                        if ($inputMass.val() !== '') {
+                        if ($inputMass.val() !== undefined) {
                             editedParts[i].mass = $inputMass.ladbTextinputWithUnit('val');
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
-                        if ($inputLengthIncrease.val() !== '') {
+                        if ($inputLengthIncrease.val() !== undefined) {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
                         }
-                        if ($inputWidthIncrease.val() !== '') {
+                        if ($inputWidthIncrease.val() !== undefined) {
                             editedParts[i].width_increase = $inputWidthIncrease.val();
                         }
-                        if ($inputThicknessIncrease.val() !== '') {
+                        if ($inputThicknessIncrease.val() !== undefined) {
                             editedParts[i].thickness_increase = $inputThicknessIncrease.val();
                         }
 

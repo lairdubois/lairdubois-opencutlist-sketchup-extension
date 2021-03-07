@@ -17,12 +17,14 @@ module Ladb::OpenCutList
 
   class AbstractReportEntryDef < AbstractReportItemDef
 
-    attr_accessor :cutlist_group
+    attr_accessor :cutlist_group, :errors
 
     def initialize(cutlist_group)
       super()
 
       @cutlist_group = cutlist_group
+
+      @errors = []
 
     end
 
@@ -111,7 +113,8 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :total_count, :total_length, :bar_defs
+    attr_accessor :volumic_mass, :total_count, :total_length
+    attr_reader :bar_defs
 
     def initialize(cutlist_group)
       super(cutlist_group)

@@ -73,6 +73,7 @@ module Ladb::OpenCutList
           cuttingdiagram2d = worker.run
 
           report_entry_def = SheetGoodReportEntryDef.new(cutlist_group)
+          report_entry_def.errors += cuttingdiagram2d.errors
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
           report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
@@ -117,6 +118,7 @@ module Ladb::OpenCutList
           cuttingdiagram1d = worker.run
 
           report_entry_def = DimensionalReportEntryDef.new(cutlist_group)
+          report_entry_def.errors += cuttingdiagram1d.errors
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
@@ -181,6 +183,10 @@ module Ladb::OpenCutList
         end
 
         unless report_entry_def.nil?
+
+          unless report_entry_def.errors.empty?
+            @report_def.errors << [ 'tab.cutlist.report.error.entry_error', { :material_display_name => cutlist_group.material_display_name, :std_dimension => cutlist_group.std_dimension, :count => report_entry_def.errors.length } ]
+          end
 
           report_group_def.total_mass += report_entry_def.total_mass
           report_group_def.total_cost += report_entry_def.total_cost

@@ -85,30 +85,38 @@
                     {% for entry in group.entries %}
                         <tr class="ladb-cutlist-row ladb-minitools-holder{% if foldableRow %} ladb-cutlist-row-folder{% endif %}" data-part-id="{{ entry.id }}">
                             <td>
-                                {% if foldableRow %}
-                                    <div class="ladb-minitools ladb-minitools-right no-print">
+                                <div class="ladb-minitools ladb-minitools-right no-print">
+                                    {% if entry.errors|length > 0 %}
+                                        <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_display_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
+                                    {% endif %}
+                                    {% if foldableRow %}
                                         <span class="ladb-separator"></span>
                                         <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
-                                    </div>
-                                {% endif %}
+                                    {% endif %}
+                                </div>
                                 {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
                             </td>
                             {% if group.material_type == 1 %} {# TYPE_SOLID_WOOD #}
                                 <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_volume }}</td>
                             {% elseif group.material_type == 2 %} {# TYPE_SHEET_GOOD #}
                                 <td class="text-center" width="12%">{{ entry.total_count }}</td>
-                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_area }}</td>
+                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_area ? entry.total_area : '-' }}</td>
                             {% elseif group.material_type == 3 %} {# TYPE_DIMENSIONAL #}
                                 <td class="text-center" width="12%">{{ entry.total_count }}</td>
-                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length }}</td>
+                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length ? entry.total_length : '-' }}</td>
                             {% elseif group.material_type == 4 %} {# TYPE_EDGE #}
-                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length }}</td>
+                                <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length ? entry.total_length : '-' }}</td>
                             {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                                 <td class="text-center" width="12%">{{ entry.total_count }}</td>
                             {% endif %}
                             <td class="ladb-cutlist-dimension-value"{% if entry.volumic_mass is defined %}data-toggle="tooltip" title="{{ entry.volumic_mass }}"{% endif %}>{{ entry.total_mass ? entry.total_mass : '-' }}</td>
                             <td class="ladb-cutlist-dimension-value"{% if entry.std_price is defined %}data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_cost ? entry.total_cost : '-' }}</td>
                         </tr>
+                        {% for error in entry.errors %}
+                            <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error hide" data-folder-id="{{ entry.id }}">
+                                <td colspan="5" style="padding-left: 40px;">{% if error is iterable %}{{ error[0]|i18next(error[1]) }}{% else %}{{ error|i18next }}{% endif %}</td>
+                            </tr>
+                        {% endfor %}
                         {% if group.material_type == 2 %} {# TYPE_SHEET_GOOD #}
                             {% for sheet in entry.sheets %}
                                 <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
