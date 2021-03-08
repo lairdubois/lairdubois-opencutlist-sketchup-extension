@@ -4,12 +4,10 @@
   require 'securerandom'
   require_relative '../geom/size2d'
   require_relative '../geom/section'
-  require_relative '../../helper/unit_helper'
+  require_relative '../../utils/unit_utils'
   require_relative '../../utils/dimension_utils'
 
   class MaterialAttributes
-
-    include UnitHelper
 
     TYPE_UNKNOWN = 0
     TYPE_SOLID_WOOD = 1
@@ -303,7 +301,7 @@
     end
 
     def h_volumic_mass
-      unit, val = _split_unit_and_value(@volumic_mass)
+      unit, val = UnitUtils.split_unit_and_value(@volumic_mass)
       { :unit => unit, :val => val }
     end
 
@@ -327,7 +325,7 @@
         @std_prices.each do |std_price|
 
           if std_price['dim'].nil?
-            unit, val = _split_unit_and_value(std_price['val'])
+            unit, val = UnitUtils.split_unit_and_value(std_price['val'])
             std_prices[0][:unit] = unit
             std_prices[0][:val] = val
           elsif !std_price['dim'].is_a?(String)
@@ -345,7 +343,7 @@
               end
             }
             if dim.length > 0
-              unit, val = _split_unit_and_value(std_price['val'])
+              unit, val = UnitUtils.split_unit_and_value(std_price['val'])
               std_prices << { :unit => unit, :val => val, :dim => dim }
             end
           end

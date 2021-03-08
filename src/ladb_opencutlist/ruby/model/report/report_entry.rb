@@ -53,8 +53,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.volumic_mass[:val], _def.volumic_mass[:unit])
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 0, 2)
 
       @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
 
@@ -71,7 +71,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.volumic_mass[:val], _def.volumic_mass[:unit])
 
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
@@ -91,7 +91,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 0, 2)
 
       @type = _def.cuttingdiagram2d_summary_sheet.type
       @length = _def.cuttingdiagram2d_summary_sheet.length
@@ -112,7 +112,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.volumic_mass[:val], _def.volumic_mass[:unit])
 
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
@@ -132,7 +132,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 0, 2)
 
       @type = _def.cuttingdiagram1d_summary_bar.type
       @length = _def.cuttingdiagram1d_summary_bar.length
@@ -152,8 +152,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : "#{_def.volumic_mass[:val]} #{_def.volumic_mass[:unit]}"
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : "#{_def.std_price[:val]} #{_def.std_price[:unit]}"
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.volumic_mass[:val], _def.volumic_mass[:unit])
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 0, 2)
 
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
@@ -189,8 +189,8 @@ module Ladb::OpenCutList
       @name = _def.cutlist_part.name
       @count = _def.cutlist_part.count
 
-      @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : "#{_def.mass[:val]} #{_def.mass[:unit]}"
-      @price = _def.price.nil? || _def.price[:val] == 0 ? nil : "#{_def.price[:val]} #{_def.price[:unit]}"
+      @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.mass[:val], _def.mass[:unit])
+      @price = _def.price.nil? || _def.price[:val] == 0 ? nil : UnitUtils.format_readable(_def.price[:val], _def.price[:unit], 0, 2)
 
     end
 

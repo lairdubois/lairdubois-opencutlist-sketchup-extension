@@ -442,13 +442,13 @@
       if model_unit_is_metric
         multiplier = 0.0254
         precision = 3
-        unit_sign = UNIT_SYMBOL_METER
+        unit_strippedname = UNIT_STRIPPEDNAME_METER
       else
         multiplier = 1 / 12.0
         precision = 2
-        unit_sign = UNIT_SYMBOL_FEET
+        unit_strippedname = UNIT_STRIPPEDNAME_FEET
       end
-      format_value(f, multiplier, precision, unit_sign)
+      UnitUtils.format_readable(f * multiplier, unit_strippedname, precision, precision)
     end
 
     # Take a float containing an area in inch²
@@ -462,13 +462,13 @@
       if model_unit_is_metric
         multiplier = 0.0254**2
         precision = [3, @length_precision].max
-        unit_sign = UNIT_SYMBOL_METER_2
+        unit_strippedname = UNIT_STRIPPEDNAME_METER_2
       else
         multiplier = 1 / 144.0
         precision = [2, @length_precision - 3].max
-        unit_sign = UNIT_SYMBOL_FEET_2
+        unit_strippedname = UNIT_STRIPPEDNAME_FEET_2
       end
-      format_value(f2, multiplier, precision, unit_sign)
+      UnitUtils.format_readable(f2 * multiplier, unit_strippedname, precision, precision)
     end
 
     # Take a float containing a volume in inch³
@@ -482,25 +482,19 @@
       if model_unit_is_metric
         multiplier = 0.0254**3
         precision = [3, @length_precision].max
-        unit_sign = UNIT_SYMBOL_METER_3
+        unit_strippedname = UNIT_STRIPPEDNAME_METER_3
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
           precision = [2, @length_precision - 3].max
-          unit_sign = UNIT_SYMBOL_BOARD_FEET
+          unit_strippedname = UNIT_STRIPPEDNAME_BOARD_FEET
         else
           multiplier = 1 / 1728.0
           precision = [2, @length_precision - 3].max
-          unit_sign = UNIT_SYMBOL_FEET_3
+          unit_strippedname = UNIT_STRIPPEDNAME_FEET_3
         end
       end
-      format_value(f3, multiplier, precision, unit_sign)
-    end
-
-    def format_value(f, multiplier, precision, unit_sign)
-      value = f * multiplier
-      rounded_value = value.round(precision)
-      ((value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + unit_sign
+      UnitUtils.format_readable(f3 * multiplier, unit_strippedname, precision, precision)
     end
 
   end

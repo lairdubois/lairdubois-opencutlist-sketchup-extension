@@ -18,17 +18,9 @@ module Ladb::OpenCutList
 
     include Singleton
 
-    attr_accessor :decimal_separator
-
     # -----
 
     def initialize
-      begin
-        '1.0'.to_l
-        @decimal_separator = '.'
-      rescue
-        @decimal_separator = ','
-      end
       fetch_mass_options
     end
 
@@ -43,6 +35,17 @@ module Ladb::OpenCutList
         return UNIT_SYMBOL_KILOGRAM
       when POUND
         return UNIT_SYMBOL_POUND
+      else
+        ''
+      end
+    end
+
+    def get_strippedname
+      case @mass_unit
+      when KILOGRAM
+        return UNIT_STRIPPEDNAME_KILOGRAM
+      when POUND
+        return UNIT_STRIPPEDNAME_POUND
       else
         ''
       end
@@ -79,16 +82,7 @@ module Ladb::OpenCutList
     # local unit settings.
     #
     def format_to_readable_mass(f)
-      if f.nil?
-        return nil
-      end
-      format_value(f, 1, f < 1 ? 3 : 0)
-    end
-
-    def format_value(f, multiplier, precision)
-      value = f * multiplier
-      rounded_value = value.round(precision)
-      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + get_symbol
+      UnitUtils.format_readable(f, get_strippedname, 0, 3)
     end
 
   end

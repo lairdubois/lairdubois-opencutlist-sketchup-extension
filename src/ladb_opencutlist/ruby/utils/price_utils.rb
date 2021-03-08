@@ -4,19 +4,14 @@ module Ladb::OpenCutList
 
   class PriceUtils
 
-    include Singleton
+    # Unit strippednames
+    UNIT_STRIPPEDNAME = '$'
 
-    attr_accessor :decimal_separator
+    include Singleton
 
     # -----
 
     def initialize
-      begin
-        '1.0'.to_l
-        @decimal_separator = '.'
-      rescue
-        @decimal_separator = ','
-      end
       fetch_currency_options
     end
 
@@ -36,16 +31,7 @@ module Ladb::OpenCutList
     # local unit settings.
     #
     def format_to_readable_price(f)
-      if f.nil?
-        return nil
-      end
-      format_value(f, 1, f < 1 ? 2 : 0)
-    end
-
-    def format_value(f, multiplier, precision)
-      value = f * multiplier
-      rounded_value = value.round(precision)
-      ("%.#{precision}f" % rounded_value).tr('.', @decimal_separator) + ' ' + get_symbol
+      UnitUtils.format_readable(f, UNIT_STRIPPEDNAME, 0, 2)
     end
 
   end
