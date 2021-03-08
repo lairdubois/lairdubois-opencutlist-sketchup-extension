@@ -388,6 +388,14 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if part.symmetrical %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-symmetrical ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.symmetrical'|i18next }}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}
