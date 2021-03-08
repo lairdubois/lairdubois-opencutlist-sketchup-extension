@@ -304,9 +304,22 @@
             });
             $('a.ladb-btn-edit-material', that.$page).on('click', function () {
                 $(this).blur();
+
+                // Flag to ignore next material change event
+                that.ignoreNextMaterialEvents = true;
+
                 var materialId = $(this).data('material-id');
                 that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                    material_id: materialId
+                    material_id: materialId,
+                    updatedCallback: function () {
+
+                        // Flag to stop ignoring next material change event
+                        that.ignoreNextMaterialEvents = false;
+
+                        // Refresh the list
+                        that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+
+                    }
                 });
                 return false;
             });
@@ -354,12 +367,25 @@
             });
             $('a.ladb-item-edit-material', that.$page).on('click', function () {
                 $(this).blur();
+
+                // Flag to ignore next material change event
+                that.ignoreNextMaterialEvents = true;
+
                 var $group = $(this).parents('.ladb-cutlist-group');
                 var groupId = $group.data('group-id');
                 var group = that.findGroupById(groupId);
                 if (group) {
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                        material_id: group.material_id
+                        material_id: group.material_id,
+                        updatedCallback: function () {
+
+                            // Flag to stop ignoring next material change event
+                            that.ignoreNextMaterialEvents = false;
+
+                            // Refresh the list
+                            that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+
+                        }
                     });
                 }
             });
@@ -756,112 +782,8 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', {dictionary: 'cutlist_report_options', values: reportOptions });
 
-                var fnAdvance = function () {
-                    window.requestAnimationFrame(function () {
-                        rubyCallCommand('cutlist_report_advance', null, function (response) {
-
-                            if (response.remaining_step === 0 || response.remaining_step === undefined) {
-
-                                window.requestAnimationFrame(function () {
-
-                                    var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
-                                        errors: response.errors,
-                                        filename: that.filename,
-                                        pageLabel: that.pageLabel,
-                                        lengthUnit: that.lengthUnit,
-                                        generatedAt: new Date().getTime() / 1000,
-                                        report: response
-                                    }, reportOptions), function () {
-                                        that.dialog.setupTooltips();
-                                    });
-
-                                    // Fetch UI elements
-                                    var $btnReport = $('#ladb_btn_report', $slide);
-                                    var $btnPrint = $('#ladb_btn_print', $slide);
-                                    var $btnClose = $('#ladb_btn_close', $slide);
-
-                                    // Bind buttons
-                                    $btnReport.on('click', function () {
-                                        that.reportCutlist();
-                                    });
-                                    $btnPrint.on('click', function () {
-                                        window.print();
-                                    });
-                                    $btnClose.on('click', function () {
-                                        that.popSlide();
-                                    });
-                                    $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                        var $group = $(this).parents('.ladb-cutlist-group');
-                                        if ($group.hasClass('no-print')) {
-                                            that.showGroup($group, true);
-                                        } else {
-                                            that.hideGroup($group, true);
-                                        }
-                                        $(this).blur();
-                                    });
-                                    $('a.ladb-btn-folding-toggle-part', $slide).on('click', function () {
-                                        $(this).blur();
-                                        var $part = $(this).parents('.ladb-cutlist-row-folder');
-                                        that.toggleFoldingPart($part);
-                                        return false;
-                                    });
-                                    $('.ladb-cutlist-row', $slide).on('click', function () {
-                                        $(this).blur();
-                                        $('.ladb-click-tool', $(this)).first().click();
-                                        return false;
-                                    });
-                                    $('a.ladb-btn-edit-material', $slide).on('click', function () {
-                                        $(this).blur();
-                                        var materialId = $(this).data('material-id');
-                                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                                            material_id: materialId
-                                        });
-                                        return false;
-                                    });
-                                    $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
-                                        $(this).blur();
-                                        var groupId = $(this).data('group-id');
-                                        that.cuttingdiagram1dGroup(groupId, true);
-                                        return false;
-                                    });
-                                    $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
-                                        $(this).blur();
-                                        var groupId = $(this).data('group-id');
-                                        that.cuttingdiagram2dGroup(groupId, true);
-                                        return false;
-                                    });
-                                    $('a.ladb-btn-edit-part', $slide).on('click', function () {
-                                        $(this).blur();
-                                        var partId = $(this).data('part-id');
-                                        that.editPart(partId);
-                                        return false;
-                                    });
-
-                                    that.dialog.finishProgress();
-
-                                });
-
-                            } else {
-
-                                window.requestAnimationFrame(function () {
-                                    that.dialog.advanceProgress(1);
-                                });
-
-                                fnAdvance();
-                            }
-
-                        });
-                    });
-                }
-
-                window.requestAnimationFrame(function () {
-                    rubyCallCommand('cutlist_report_start', $.extend(reportOptions, that.generateOptions), function (response) {
-                        window.requestAnimationFrame(function () {
-                            that.dialog.startProgress(response.remaining_step);
-                            fnAdvance();
-                        });
-                    });
-                });
+                // Generate report
+                that.generateReportCutlist(reportOptions);
 
                 // Hide modal
                 $modal.modal('hide');
@@ -874,6 +796,148 @@
             // Setup popovers
             that.dialog.setupPopovers();
 
+        });
+
+    };
+
+    LadbTabCutlist.prototype.generateReportCutlist = function (reportOptions) {
+        var that = this;
+
+        var fnAdvance = function () {
+            window.requestAnimationFrame(function () {
+                rubyCallCommand('cutlist_report_advance', null, function (response) {
+
+                    if (response.remaining_step === 0 || response.remaining_step === undefined) {
+
+                        window.requestAnimationFrame(function () {
+
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
+                                errors: response.errors,
+                                filename: that.filename,
+                                pageLabel: that.pageLabel,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                report: response
+                            }, reportOptions), function () {
+                                that.dialog.setupTooltips();
+                            });
+
+                            // Fetch UI elements
+                            var $btnReport = $('#ladb_btn_report', $slide);
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnReport.on('click', function () {
+                                that.reportCutlist();
+                            });
+                            $btnPrint.on('click', function () {
+                                window.print();
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                var $group = $(this).parents('.ladb-cutlist-group');
+                                if ($group.hasClass('no-print')) {
+                                    that.showGroup($group, true);
+                                } else {
+                                    that.hideGroup($group, true);
+                                }
+                                $(this).blur();
+                            });
+                            $('a.ladb-btn-folding-toggle-part', $slide).on('click', function () {
+                                $(this).blur();
+                                var $part = $(this).parents('.ladb-cutlist-row-folder');
+                                that.toggleFoldingPart($part);
+                                return false;
+                            });
+                            $('.ladb-cutlist-row', $slide).on('click', function () {
+                                $(this).blur();
+                                $('.ladb-click-tool', $(this)).first().click();
+                                return false;
+                            });
+                            $('a.ladb-btn-edit-material', $slide).on('click', function () {
+                                $(this).blur();
+
+                                // Flag to ignore next material change event
+                                that.ignoreNextMaterialEvents = true;
+
+                                var materialId = $(this).data('material-id');
+                                that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                                    material_id: materialId,
+                                    updatedCallback: function () {
+
+                                        // Flag to ignore next material change event
+                                        that.ignoreNextMaterialEvents = true;
+
+                                        // Refresh the list
+                                        that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
+                                            callback: function () {
+                                                that.generateReportCutlist(reportOptions);
+                                            }
+                                        });
+
+                                    }
+                                });
+                                return false;
+                            });
+                            $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
+                                $(this).blur();
+                                var groupId = $(this).data('group-id');
+                                that.cuttingdiagram1dGroup(groupId, true, function () {
+                                    that.generateReportCutlist(reportOptions);
+                                });
+                                return false;
+                            });
+                            $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
+                                $(this).blur();
+                                var groupId = $(this).data('group-id');
+                                that.cuttingdiagram2dGroup(groupId, true, function () {
+                                    that.generateReportCutlist(reportOptions);
+                                });
+                                return false;
+                            });
+                            $('a.ladb-btn-edit-part', $slide).on('click', function () {
+                                $(this).blur();
+                                var partId = $(this).data('part-id');
+                                that.editPart(partId, undefined, undefined, function () {
+
+                                    // Refresh the list
+                                    that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
+                                        callback: function () {
+                                            that.generateReportCutlist(reportOptions);
+                                        }
+                                    });
+
+                                });
+                                return false;
+                            });
+
+                            that.dialog.finishProgress();
+
+                        });
+
+                    } else {
+
+                        window.requestAnimationFrame(function () {
+                            that.dialog.advanceProgress(1);
+                        });
+
+                        fnAdvance();
+                    }
+
+                });
+            });
+        }
+
+        window.requestAnimationFrame(function () {
+            rubyCallCommand('cutlist_report_start', $.extend(reportOptions, that.generateOptions), function (response) {
+                window.requestAnimationFrame(function () {
+                    that.dialog.startProgress(response.remaining_step);
+                    fnAdvance();
+                });
+            });
         });
 
     };
@@ -1110,7 +1174,7 @@
         }
     };
 
-    LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab) {
+    LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab, updatedCallback) {
         var that = this;
 
         var groupAndPart = id ? this.findGroupAndPartById(id) : (serializedPath ? this.findGroupAndPartBySerializedPath(serializedPath) : null);
@@ -1554,23 +1618,29 @@
 
                         } else {
 
-                            var partId = editedPart.id;
-                            var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+                            if (typeof(updatedCallback) === 'function') {
+                                updatedCallback()
+                            } else {
 
-                            // Refresh the list
-                            that.generateCutlist(function () {
+                                var partId = editedPart.id;
+                                var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
 
-                                // Try to scroll to the edited part's row
-                                var $part = $('#ladb_part_' + partId, that.$page);
-                                if ($part.length > 0) {
-                                    if ($part.hasClass('hide')) {
-                                        that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
+                                // Refresh the list
+                                that.generateCutlist(function () {
+
+                                    // Try to scroll to the edited part's row
+                                    var $part = $('#ladb_part_' + partId, that.$page);
+                                    if ($part.length > 0) {
+                                        if ($part.hasClass('hide')) {
+                                            that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
+                                        }
+                                        $part.effect('highlight', {}, 1500);
+                                        that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
                                     }
-                                    $part.effect('highlight', {}, 1500);
-                                    that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
-                                }
 
-                            });
+                                });
+
+                            }
 
                             // Hide modal
                             $modal.modal('hide');
@@ -1770,7 +1840,7 @@
         });
     };
 
-    LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId, forceDefaultTab) {
+    LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId, forceDefaultTab, generateCallback) {
         var that = this;
 
         // Reset lastCuttingdiagram1dOptionsTab if new group
@@ -1899,109 +1969,113 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_options', values: cuttingdiagram1dOptions, section: groupId });
 
-                    rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                    if (typeof(generateCallback) === 'function') {
+                        generateCallback();
+                    } else {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null}, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
-                            generateOptions: that.generateOptions,
-                            dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
-                            filename: that.filename,
-                            pageLabel: that.pageLabel,
-                            lengthUnit: that.lengthUnit,
-                            generatedAt: new Date().getTime() / 1000,
-                            group: group
-                        }, response), function () {
-                            that.dialog.setupTooltips();
-                        });
-
-                        // Fetch UI elements
-                        var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
-                        var $btnLabels = $('#ladb_btn_labels', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
-
-                        // Bind buttons
-                        $btnCuttingDiagram.on('click', function () {
-                            that.cuttingdiagram1dGroup(groupId);
-                        });
-                        $btnPrint.on('click', function () {
-                            window.print();
-                        });
-                        $btnLabels.on('click', function () {
-                            that.labelsGroup(groupId);
-                        });
-                        $btnClose.on('click', function () {
-                            that.popSlide();
-                        });
-                        $('.ladb-btn-setup-model-units', $slide).on('click', function() {
-                            $(this).blur();
-                            rubyCallCommand('core_open_model_info_page', {
-                                page: i18next.t('core.model_info_page.units')
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
+                                generateOptions: that.generateOptions,
+                                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                                filename: that.filename,
+                                pageLabel: that.pageLabel,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: group
+                            }, response), function () {
+                                that.dialog.setupTooltips();
                             });
-                        });
 
-                        $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            if ($group.hasClass('no-print')) {
-                                that.showGroup($group, false);
-                            } else {
-                                that.hideGroup($group, false);
-                            }
-                            $(this).blur();
-                        });
-                        $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            var groupId = $group.data('bar-index');
-                            var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
-                            $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                $target.effect('highlight', {}, 1500);
+                            // Fetch UI elements
+                            var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnLabels = $('#ladb_btn_labels', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnCuttingDiagram.on('click', function () {
+                                that.cuttingdiagram1dGroup(groupId);
                             });
-                            $(this).blur();
-                            return false;
-                        });
-                        $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            var groupId = $group.data('bar-index');
-                            var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
-                            $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                $target.effect('highlight', {}, 1500);
+                            $btnPrint.on('click', function () {
+                                window.print();
                             });
-                            $(this).blur();
-                            return false;
-                        });
-                        $('a.ladb-btn-highlight-part', $slide).on('click', function () {
-                            $(this).blur();
-                            var $part = $(this).parents('.ladb-cutlist-row');
-                            var partId = $part.data('part-id');
-                            that.highlightPart(partId);
-                            return false;
-                        });
-                        $('a.ladb-btn-scrollto', $slide).on('click', function () {
-                            var $target = $($(this).attr('href'));
-                            if ($target.data('group-id')) {
-                                that.showGroup($target, false);
-                            }
-                            $slide.animate({ scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20 }, 200).promise().then(function () {
-                                $target.effect('highlight', {}, 1500);
+                            $btnLabels.on('click', function () {
+                                that.labelsGroup(groupId);
                             });
-                            $(this).blur();
-                            return false;
-                        });
-                        $('.ladb-cutlist-row', $slide).on('click', function () {
-                            $('.ladb-click-tool', $(this)).click();
-                            $(this).blur();
-                            return false;
-                        });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                                $(this).blur();
+                                rubyCallCommand('core_open_model_info_page', {
+                                    page: i18next.t('core.model_info_page.units')
+                                });
+                            });
 
-                        // SVG
-                        $('SVG .part', $slide).on('click', function () {
-                            var partId = $(this).data('part-id');
-                            that.highlightPart(partId);
-                            $(this).blur();
-                            return false;
+                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                var $group = $(this).parents('.ladb-cutlist-group');
+                                if ($group.hasClass('no-print')) {
+                                    that.showGroup($group, false);
+                                } else {
+                                    that.hideGroup($group, false);
+                                }
+                                $(this).blur();
+                            });
+                            $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
+                                var $group = $(this).parents('.ladb-cutlist-group');
+                                var groupId = $group.data('bar-index');
+                                var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
+                                $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
+                                    $target.effect('highlight', {}, 1500);
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
+                                var $group = $(this).parents('.ladb-cutlist-group');
+                                var groupId = $group.data('bar-index');
+                                var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
+                                $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
+                                    $target.effect('highlight', {}, 1500);
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('a.ladb-btn-highlight-part', $slide).on('click', function () {
+                                $(this).blur();
+                                var $part = $(this).parents('.ladb-cutlist-row');
+                                var partId = $part.data('part-id');
+                                that.highlightPart(partId);
+                                return false;
+                            });
+                            $('a.ladb-btn-scrollto', $slide).on('click', function () {
+                                var $target = $($(this).attr('href'));
+                                if ($target.data('group-id')) {
+                                    that.showGroup($target, false);
+                                }
+                                $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
+                                    $target.effect('highlight', {}, 1500);
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-cutlist-row', $slide).on('click', function () {
+                                $('.ladb-click-tool', $(this)).click();
+                                $(this).blur();
+                                return false;
+                            });
+
+                            // SVG
+                            $('SVG .part', $slide).on('click', function () {
+                                var partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                $(this).blur();
+                                return false;
+                            });
+
                         });
-
-                    });
-
+                    }
+                    
                     // Hide modal
                     $modal.modal('hide');
 
@@ -2020,7 +2094,7 @@
 
     };
 
-    LadbTabCutlist.prototype.cuttingdiagram2dGroup = function (groupId, forceDefaultTab) {
+    LadbTabCutlist.prototype.cuttingdiagram2dGroup = function (groupId, forceDefaultTab, generateCallback) {
         var that = this;
 
         var group = this.findGroupById(groupId);
@@ -2159,7 +2233,10 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_options', values: cuttingdiagram2dOptions, section: groupId });
 
-                    rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                    if (typeof(generateCallback) === 'function') {
+                        generateCallback();
+                    } else {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                             generateOptions: that.generateOptions,
@@ -2255,6 +2332,7 @@
                         });
 
                     });
+                    }
 
                     // Hide modal
                     $modal.modal('hide');

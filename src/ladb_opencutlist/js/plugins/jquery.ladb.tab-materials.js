@@ -206,7 +206,7 @@
 
     };
 
-    LadbTabMaterials.prototype.editMaterial = function (id, callback) {
+    LadbTabMaterials.prototype.editMaterial = function (id, callback, updatedCallback) {
         var that = this;
 
         var material = this.findMaterialById(id);
@@ -385,11 +385,17 @@
                         that.dialog.notifyErrors(response['errors']);
                     } else {
 
-                        // Reload the list
-                        var material_id = that.editedMaterial.id;
-                        that.loadList(function() {
-                            that.scrollSlideToTarget(null, $('#ladb_material_' + material_id, that.$page), false, true);
-                        });
+                        if (typeof(updatedCallback) === 'function') {
+                            updatedCallback();
+                        } else {
+
+                            // Reload the list
+                            var material_id = that.editedMaterial.id;
+                            that.loadList(function() {
+                                that.scrollSlideToTarget(null, $('#ladb_material_' + material_id, that.$page), false, true);
+                            });
+
+                        }
 
                         // Reset edited material
                         that.editedMaterial = null;
@@ -1002,9 +1008,10 @@
         this.registerCommand('edit_material', function (parameters) {
             var materialId = parameters.material_id;
             var callback = parameters.callback;
+            var updatedCallback = parameters.updatedCallback;
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
                 that.loadList(function () {
-                    that.editMaterial(materialId, callback);
+                    that.editMaterial(materialId, callback, updatedCallback);
                 });
             }, 1);
         });
