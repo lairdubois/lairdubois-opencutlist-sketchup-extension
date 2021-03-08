@@ -187,7 +187,7 @@ module Ladb::OpenCutList
         unless report_entry_def.nil?
 
           unless report_entry_def.errors.empty?
-            @report_def.errors << [ 'tab.cutlist.report.error.entry_error', { :material_display_name => cutlist_group.material_display_name, :std_dimension => cutlist_group.std_dimension, :count => report_entry_def.errors.length } ]
+            @report_def.errors << [ 'tab.cutlist.report.error.entry_error', { :material_name => cutlist_group.material_display_name, :std_dimension => cutlist_group.std_dimension, :count => report_entry_def.errors.length } ]
           end
 
           report_group_def.total_mass += report_entry_def.total_mass
