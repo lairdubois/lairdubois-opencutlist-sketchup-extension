@@ -17,13 +17,14 @@ module Ladb::OpenCutList
         :cumulable,
         :price,
         :mass,
+        :tags,
+        :orientation_locked_on_axis,
+        :symmetrical,
+        :axes_order,
+        :axes_origin_position,
         :length_increase,
         :width_increase,
         :thickness_increase,
-        :orientation_locked_on_axis,
-        :tags,
-        :axes_order,
-        :axes_origin_position,
         :edge_material_names,
         :edge_entity_ids,
         :entity_ids
@@ -42,13 +43,14 @@ module Ladb::OpenCutList
             DefinitionAttributes.valid_cumulable(part_data['cumulable']),
             part_data['price'],
             part_data['mass'],
+            DefinitionAttributes.valid_tags(part_data['tags']),
+            part_data['orientation_locked_on_axis'],
+            part_data['symmetrical'],
+            part_data['axes_order'],
+            part_data['axes_origin_position'],
             part_data['length_increase'],
             part_data['width_increase'],
             part_data['thickness_increase'],
-            part_data['orientation_locked_on_axis'],
-            DefinitionAttributes.valid_tags(part_data['tags']),
-            part_data['axes_order'],
-            part_data['axes_origin_position'],
             part_data['edge_material_names'],
             part_data['edge_entity_ids'],
             part_data['entity_ids']
@@ -88,19 +90,21 @@ module Ladb::OpenCutList
           if part_data.cumulable != definition_attributes.cumulable ||
               part_data.price != definition_attributes.price ||
               part_data.mass != definition_attributes.mass ||
+              part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
+              part_data.symmetrical != definition_attributes.symmetrical ||
+              part_data.tags != definition_attributes.tags
               part_data.length_increase != definition_attributes.length_increase ||
               part_data.width_increase != definition_attributes.width_increase ||
-              part_data.thickness_increase != definition_attributes.thickness_increase ||
-              part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
-              part_data.tags != definition_attributes.tags
+              part_data.thickness_increase != definition_attributes.thickness_increase
             definition_attributes.cumulable = part_data.cumulable
             definition_attributes.price = part_data.price
             definition_attributes.mass = part_data.mass
+            definition_attributes.tags = part_data.tags
+            definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
+            definition_attributes.symmetrical = part_data.symmetrical
             definition_attributes.length_increase = part_data.length_increase
             definition_attributes.width_increase = part_data.width_increase
             definition_attributes.thickness_increase = part_data.thickness_increase
-            definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
-            definition_attributes.tags = part_data.tags
             definition_attributes.write_to_attributes
           end
 

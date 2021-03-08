@@ -189,6 +189,7 @@ tab:
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition
       flipped: Cette pièce est en miroir par rapport à sa définition
+      symmetrical: Cette pièce est symétrique
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
@@ -242,6 +243,24 @@ tab:
       cumulable_2: Cumulable sur la largeur
       price: Prix
       mass: Masse
+      tags: Tags
+      tags_help: |
+        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant de tags que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
+      tags_multiple_info: Seuls les tags communs sont visibles
+      orientation: Orientation
+      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
+      orientation_locked_on_axis_help: |
+        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+
+        Et donc,
+        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
+        - la *largeur* sur l'axe <span style='color:green'>vert</span>
+        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
+      symmetrical: La pièce est symétrique
+      symmetrical_help: |
+        Si cette case est cochée, la détection de *pièce en miroir* n'aura pas d'effet sur cette pièce.
       size_increase: Surcotes
       size_increase_help: |
         Les surcotes vous permettent de majorer les dimensions capables de la pièce.
@@ -252,21 +271,6 @@ tab:
       width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
       thickness_increase: Surcote d'épaisseur
       thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
-      orientation: Orientation
-      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
-      orientation_locked_on_axis_help: |
-        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
-
-        Et donc,
-        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur l'axe <span style='color:green'>vert</span>
-        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
-      tags: Tags
-      tags_help: |
-        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant de tags que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
-      tags_multiple_info: Seuls les tags communs sont visibles
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |

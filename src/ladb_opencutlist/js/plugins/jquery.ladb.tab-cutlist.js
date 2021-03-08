@@ -1221,17 +1221,18 @@
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-                var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
                 var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
-                var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-                var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-                var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
+                var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+                var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+                var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+                var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+                var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
                 var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
@@ -1486,6 +1487,7 @@
                             editedParts[i].name = $inputName.val();
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
+                            editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
                             editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
 

@@ -180,13 +180,14 @@ module Ladb::OpenCutList
 
   class AccessoryReportEntryPart < AbstractReportItem
 
-    attr_reader :id, :name, :count, :mass, :price
+    attr_reader :id, :name, :flipped, :count, :mass, :price
 
     def initialize(_def)
       super(_def)
 
       @id = _def.cutlist_part.id
       @name = _def.cutlist_part.name
+      @flipped = _def.cutlist_part.flipped
       @count = _def.cutlist_part.count
 
       @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.mass[:val], _def.mass[:unit])

@@ -85,9 +85,6 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-obsolete:before {
   content: "\e90c";
 }
-.ladb-opencutlist-icon-size-length:before {
-  content: "\e90d";
-}
 .ladb-opencutlist-icon-sponsor:before {
   content: "\e90e";
 }
@@ -198,6 +195,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-flipped:before {
   content: "\e932";
+}
+.ladb-opencutlist-icon-symmetrical:before {
+  content: "\e984";
 }
 .ladb-opencutlist-icon-resized:before {
   content: "\e933";
@@ -378,6 +378,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-size-length-width:before {
   content: "\e96e";
+}
+.ladb-opencutlist-icon-size-length:before {
+  content: "\e90d";
 }
 .ladb-opencutlist-icon-close:before {
   content: "\e96f";

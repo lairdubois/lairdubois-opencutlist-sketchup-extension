@@ -23,6 +23,7 @@ in 2.x, 1.x and 0.x versions.
   * Added settings option to choose dialog global zoom
   * Added SketchUp 2021 Tag folders compatibility
   * Added custom proposal list of tags in cutlist options
+  * Added "symmetrical" definition attribute
 
 * 1.9.10 (2020-12-17)
 

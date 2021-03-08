@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     EDGES_Y = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX ]
     EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :price, :mass, :length_increase, :width_increase, :thickness_increase, :orientation_locked_on_axis, :tags, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :price, :mass, :orientation_locked_on_axis, :tags, :symmetrical, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
     attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs
 
     def initialize(id)
@@ -32,11 +32,12 @@ module Ladb::OpenCutList
       @cumulable = DefinitionAttributes::CUMULABLE_NONE
       @price = ''
       @mass = ''
+      @tags = ''
+      @orientation_locked_on_axis = false
+      @symmetrical = false
       @length_increase = 0
       @width_increase = 0
       @thickness_increase = 0
-      @orientation_locked_on_axis = false
-      @tags = ''
       @edge_count = 0
       @edge_pattern = nil                 # A string from 0000 to 1111
       @edge_material_names = {}
@@ -84,7 +85,7 @@ module Ladb::OpenCutList
       end
 
       # Include scale into part_id to separate instances with the same definition, but different scale
-      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.length).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.width).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.thickness).to_s}|#{instance_info.flipped.to_s}")
+      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.length).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.width).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.thickness).to_s}|#{definition_attributes.symmetrical ? false : instance_info.flipped.to_s}")
 
     end
 

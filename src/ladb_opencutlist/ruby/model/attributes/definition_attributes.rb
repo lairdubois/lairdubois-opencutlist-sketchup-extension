@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :mass, :price, :orientation_locked_on_axis, :tags, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :mass, :price, :symmetrical, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -147,8 +147,9 @@ module Ladb::OpenCutList
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
-        @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
+        @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
+        @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
         @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
         @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
@@ -167,8 +168,9 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))
