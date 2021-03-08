@@ -179,6 +179,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Éditer les propriétés du groupe de pièces
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Déplier / Replier
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
@@ -214,6 +215,7 @@ tab:
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
+      setup_group_cuttingdiagram: Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -224,7 +226,7 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
-      edit_material: Éditer la matière '{{ material }}'
+      edit_material: Éditer la matière '{{ material_name }}'
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:
@@ -430,8 +432,8 @@ tab:
       total_length: Σ Longueurs
       error:
         no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
-        entry_error: "*{{ material_display_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
-        entry_error_plural: "*{{ material_display_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         visible_only: Seules les pièces contenues dans les **groupes visibles** sont comptabilisées.
     cuttingdiagram:

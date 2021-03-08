@@ -93,20 +93,20 @@
                             <td>
                                 <div class="ladb-minitools ladb-minitools-right no-print">
                                     {% if entry.errors|length > 0 %}
-                                        <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_display_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
+                                        <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
                                     {% endif %}
                                     <span class="ladb-separator"></span>
                                     {% if foldableRow %}
                                         <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if group.material_type == 5 or entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>  {# TYPE_ACCESSORY #}
                                     {% endif %}
                                     {% if group.material_type == 2 %} {# TYPE_SOLID_WOOD #}
-                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}..."><i class="ladb-opencutlist-icon-cuttingdiagram-2d"></i></a>
+                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram-2d"></i></a>
                                     {% endif %}
                                     {% if group.material_type == 3 %} {# TYPE_DIMENSIONAL #}
-                                        <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}..."><i class="ladb-opencutlist-icon-cuttingdiagram-1d"></i></a>
+                                        <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram-1d"></i></a>
                                     {% endif %}
                                     {% if editableRow %}
-                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':entry.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
+                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':entry.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                                     {% endif %}
                                 </div>
                                 {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
