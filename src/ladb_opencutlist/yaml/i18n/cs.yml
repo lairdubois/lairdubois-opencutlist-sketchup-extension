@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: "Aktualizovat předvolbu '{{ name }}'"
       delete: "Smazat předvolbu '{{ name }}'"
+  progress:
+    please_wait: "Prosím, čekejte"
 tab:
   cutlist:
     label: Kusovník
@@ -179,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Upravte vlastnosti skupiny dílů
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Rozložit / Seskupit
       material_origin_1: Materiál této části je definován na jejích instancích
       material_origin_2: Materiál této části se dědí z jednoho z jejích nadřazených prvků
@@ -189,6 +192,7 @@ tab:
       number_generated: Číslo této části je generováno automaticky
       resized: Tato část byla změněna s ohledem na definici její součásti
       flipped: Tato část je zrcadlena ve srovnání s definicí komponenty
+      symmetrical: Tato část je symetrická
       auto_oriented: Tato část byla automaticky přeorientována
       add_label_filter: "Filtrování zapnuto '{{ label }}'"
       remove_label_filter: "Odstranit filtrování '{{ label }}'"
@@ -213,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: 2x kliknutím zde duplikujete tuto hodnotu na ostatní hrany
       part_axes: Vnitřní osy dílu
       select_unselect_all_parts: Výberte/zruště výběr dílců ve skupině
+      setup_group_cuttingdiagram: "Nakonfigurujte nářezový plán '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Zobrazit všechny skupiny
       hide_all_other_groups: Skrýt všechny ostatní skupiny
@@ -242,6 +247,24 @@ tab:
       cumulable_2: Celkem šířka
       price: Cena
       mass: Masa
+      tags: Štítky
+      tags_help: |
+        *Dílcům* můžete přidávat štítky pro lepší definici dílců.
+        Můžete přidat tolik štítků, kolik uznáte za vhodné.
+        Viditelné části vašeho kusovníku lze poté filtrovat podle seznamu štítků.
+      tags_multiple_info: Jsou zobrazeny pouze běžné značky
+      orientation: Orientace
+      orientation_locked_on_axis: Zamkněte orientaci na osách
+      orientation_locked_on_axis_help: |
+        Pokud je vybrána tato možnost *Automatická orientace pro dílce* nebude mít na tyto dílce žádný vliv,
+
+        místní souřadnicový systém:
+        - *Délka* je na <span style='color:red'>červené</span> ose
+        - *Šířka* je na <span style='color:green'>zelené</span> ose
+        - *Tloušťka* je na <span style='color:blue'>modré</span> ose
+      symmetrical: Část je symetrická
+      symmetrical_help: |
+        Pokud je toto políčko zaškrtnuto, detekce * zrcadlené části * nebude mít na tuto část žádný vliv.
       size_increase: Nadmíry
       size_increase_help: |
         Nadmíra vám umožní zvětšit rozměry tohoto dílce.
@@ -252,21 +275,6 @@ tab:
       width_increase_help: Na skutečnou šířku se použije nadmíra **hrubá šířka**.
       thickness_increase: Nadmíra pro tloušťku
       thickness_increase_help: Na skutečnou tloušťku se použije nadmíra **hrubá tloušťka**.
-      orientation: Orientace
-      orientation_locked_on_axis: Zamkněte orientaci na osách
-      orientation_locked_on_axis_help: |
-        Pokud je vybrána tato možnost *Automatická orientace pro dílce* nebude mít na tyto dílce žádný vliv,
-
-        místní souřadnicový systém:
-        - *Délka* je na <span style='color:red'>červené</span> ose
-        - *Šířka* je na <span style='color:green'>zelené</span> ose
-        - *Tloušťka* je na <span style='color:blue'>modré</span> ose
-      tags: Štítky
-      tags_help: |
-        *Dílcům* můžete přidávat štítky pro lepší definici dílců.
-        Můžete přidat tolik štítků, kolik uznáte za vhodné.
-        Viditelné části vašeho kusovníku lze poté filtrovat podle seznamu štítků.
-      tags_multiple_info: Jsou zobrazeny pouze běžné značky
       axes: Osy
       axes_help: "Uspořádejte rozměry tak, aby odpovídaly barvám os vašeho dílce."
       axes_tip: |
@@ -369,8 +377,6 @@ tab:
       title: Export do CSV
       info_0: |
         Pomocí této funkce můžete exportovat *seznam dílců* do [CSV](https://cs.wikipedia.org/wiki/CSV) souboru.
-      info_1: |
-        *Díly uvnitř skrytých skupin vašeho seznamu dílů nebudou exportovány*.
       options: Možnosti exportu
       option_source: Zdroj
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +414,17 @@ tab:
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
+      warning:
+        visible_only: "*Díly uvnitř skrytých skupin vašeho seznamu dílů nebudou exportovány*."
     report:
       title: Zpráva
+      info_0: |
+        Tato funkce umožňuje generovat zprávu o **hmotnosti** a **nákladech** surovin** nezbytných pro výrobu částí *debetního listu*.
       options_general: Všeobecné
+      option_solid_wood_coefficient: Koeficient *masivní dřevo*
+      option_solid_wood_coefficient_help: Slouží k označení multiplikačního koeficientu použitého na hrubý objem měřený pro materiály typu "**masivní dřevo**".
+      raw_materials: Suroviny
+      coefficient: Koeficient
       total: Celkový
       total_mass: Σ Hmotností
       total_cost: Σ Nákladů
@@ -420,6 +434,10 @@ tab:
       total_length: Σ Délky
       error:
         no_typed_material_parts: Žádná část vašeho modelu nemá materiál s definovaným typem.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
+      warning:
+        visible_only: Počítají se pouze části obsažené ve **viditelných skupinách**.
     cuttingdiagram:
       title: Nářezový plán
       options_material: Materiál

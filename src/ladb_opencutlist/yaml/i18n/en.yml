@@ -262,7 +262,7 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis,
         - *width* on the <span style='color:green'>green</span> axis and
         - *thickness* on the <span style='color:blue'>blue</span> axis
-      symmetrical: This part is symmetrical
+      symmetrical: The part is symmetrical
       symmetrical_help: |
         If this box is checked, the detection of *mirrored part* will have no effect on this part.
       size_increase: Oversizes

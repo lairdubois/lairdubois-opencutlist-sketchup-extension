@@ -262,7 +262,7 @@ tab:
         - la *longitud* está en el eje <span style='color:red'>rojo</span>
         - el *ancho* está en el eje <span style='color:green'>verde</span>
         - el *espesor* está en el eje <span style='color:blue'>azul</span>.
-      symmetrical: la pieza es simétrica
+      symmetrical: La pieza es simétrica
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *pieza espejo* no tendrá efecto sobre esta pieza.
       size_increase: Aumento de tamaño

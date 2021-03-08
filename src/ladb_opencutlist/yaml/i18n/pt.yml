@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: "Atualizar as definições '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
+  progress:
+    please_wait: Por favor espere
 tab:
   cutlist:
     label: Peças
@@ -179,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Editar propriedades de um grupo de peças
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Desdobrar / dobrar
       material_origin_1: O material desta peça é definido em suas instâncias
       material_origin_2: O material desta peça é herdado de um de seus elementos pais
@@ -189,6 +192,7 @@ tab:
       number_generated: O número desta peça é gerado automaticamente
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
+      symmetrical: Esta peça é simétrica
       auto_oriented: Esta peça foi reorientada automaticamente
       add_label_filter: "Filtrando em '{{ label }}'"
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
@@ -213,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
       part_axes: "Eixos internos da peça "
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
+      setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{material_name}} & nbsp; / & nbsp; {{std_dimension}}'"
     menu:
       show_all_groups: Mostrar todos os grupos
       hide_all_other_groups: Esconder todos os outros grupos
@@ -242,6 +247,24 @@ tab:
       cumulable_2: Soma à largura
       price: Preço
       mass: Massa
+      tags: Tags
+      tags_help: |
+        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
+        Pode adicionar tantas tags quantas achar conveniente.
+        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
+      tags_multiple_info: Apenas tags comuns são mostrados
+      orientation: Orientação
+      orientation_locked_on_axis: Travar orientação nos eixos
+      orientation_locked_on_axis_help: |
+        Se esta opção for selecionada, a opção *Orientação automática das peças* não terá qualquer efeito sobre esta peça,
+
+        portanto, no sistema de coordenadas local:
+        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
+        - *largura* está no eixo <span style='color:green'>verde</span>
+        - *espessura* está no eixo <span style='color:blue'>azul</span>
+      symmetrical: A peça é simétrica
+      symmetrical_help: |
+        Se esta caixa estiver marcada, a detecção da *parte espelhada* não terá efeito nesta parte.
       size_increase: Superdimensionar
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
@@ -252,21 +275,6 @@ tab:
       width_increase_help: O superdimensionamento é aplicado à largura real para definir a **largura aproximada**.
       thickness_increase: Superdimensionamento da espessura
       thickness_increase_help: O superdimensionamento é aplicado à espessura real para definir a **espessura aproximada**.
-      orientation: Orientação
-      orientation_locked_on_axis: Travar orientação nos eixos
-      orientation_locked_on_axis_help: |
-        Se esta opção for selecionada, a opção *Orientação automática das peças* não terá qualquer efeito sobre esta peça,
-
-        portanto, no sistema de coordenadas local:
-        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
-        - *largura* está no eixo <span style='color:green'>verde</span>
-        - *espessura* está no eixo <span style='color:blue'>azul</span>
-      tags: Tags
-      tags_help: |
-        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
-        Pode adicionar tantas tags quantas achar conveniente.
-        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
-      tags_multiple_info: Apenas tags comuns são mostrados
       axes: Eixos
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
@@ -369,8 +377,6 @@ tab:
       title: Exportar no formato CSV
       info_0: |
         Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
-      info_1: |
-        *As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*.
       options: Opções de exportação
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +414,17 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
+      warning:
+        visible_only: "*As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*."
     report:
       title: Relatório
+      info_0: |
+        Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
       options_general: Geral
+      option_solid_wood_coefficient: Proporção de madeira serrada em bruto
+      option_solid_wood_coefficient_help: Usado para indicar o fator de multiplicação aplicado ao volume bruto medido para materiais do tipo "**Madeira maciça**".
+      raw_materials: Matéria prima
+      coefficient: Fator
       total: Total
       total_mass: Σ Massas
       total_cost: Σ Custos
@@ -420,6 +434,10 @@ tab:
       total_length: Σ Comprimentos
       error:
         no_typed_material_parts: Nenhuma parte do seu modelo possui material com um tipo definido.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
+      warning:
+        visible_only: Apenas as partes contidas nos **grupos visíveis** são contadas.
     cuttingdiagram:
       title: Diagrama de Corte
       options_material: Material
