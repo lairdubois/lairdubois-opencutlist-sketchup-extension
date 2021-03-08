@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: "Voreinstellung '{{name}}' aktualisieren"
       delete: "Voreinstellung '{{ name }}' löschen"
+  progress:
+    please_wait: Bitte warten
 tab:
   cutlist:
     label: Holzliste
@@ -179,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das verwendete Material für dieses Teil ist auf einer Instanz definiert
       material_origin_2: Das verwendete Material für dieses Teil wird von einem übergeordneten Teil geerbt
@@ -189,6 +192,7 @@ tab:
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
+      symmetrical: Dieses Teil ist symmetrisch
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: "Nach '{{ label }}' auswählen"
       remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
@@ -213,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile der Gruppe selektieren / deselektieren
+      setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -242,6 +247,24 @@ tab:
       cumulable_2: Summierbar über die Breitachse
       price: Preis
       mass: Masse
+      tags: Tags
+      tags_help: |
+        Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
+        Sie können beliebig viele Tags hinzufügen.
+        Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Tags auswählen.
+      tags_multiple_info: Nur gemeinsame Tags werden angezeigt
+      orientation: Ausrichtung
+      orientation_locked_on_axis: An das Koordinatensystem binden
+      orientation_locked_on_axis_help: |
+        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
+
+        Es gilt somit,
+        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
+        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
+        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
+      symmetrical: Das Teil ist symmetrisch
+      symmetrical_help: |
+        Wenn dieses Kästchen aktiviert ist, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -252,21 +275,6 @@ tab:
       width_increase_help: Übermaß welches die **effektive Breite** vergrössert.
       thickness_increase: Dickenzumaß
       thickness_increase_help: Übermaß welches die **effektive Dicke** vergrössert.
-      orientation: Ausrichtung
-      orientation_locked_on_axis: An das Koordinatensystem binden
-      orientation_locked_on_axis_help: |
-        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
-
-        Es gilt somit,
-        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
-        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
-        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
-      tags: Tags
-      tags_help: |
-        Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
-        Sie können beliebig viele Tags hinzufügen.
-        Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Tags auswählen.
-      tags_multiple_info: Nur gemeinsame Tags werden angezeigt
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -369,8 +377,6 @@ tab:
       title: Exportieren im CSV-Format
       info_0: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
-      info_1: |
-        *Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*.
       options: Exportoptionen
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +414,17 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
+      warning:
+        visible_only: "*Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*."
     report:
       title: Bericht
+      info_0: |
+        Mit dieser Funktion können Sie einen Bericht über die **Massen** und **Kosten** der **Rohmaterialien** erstellen, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: Allgemein
+      option_solid_wood_coefficient: Koeffizient *Massivholz*
+      option_solid_wood_coefficient_help: "Wird verwendet, um den Multiplikationskoeffizienten anzugeben, der auf das Bruttovolumen angewendet wird, das für Materialien vom Typ \"**Massivholz**\" gemessen wurde."
+      raw_materials: Rohmaterial
+      coefficient: Koeffizient
       total: Total
       total_mass: Σ Massen
       total_cost: Σ Kosten
@@ -420,6 +434,10 @@ tab:
       total_length: Σ Längen
       error:
         no_typed_material_parts: Kein Teil in Ihrem Modells enthält Material mit einem definierten Typ.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+      warning:
+        visible_only: "Es werden nur die Teile gezählt, die in den **sichtbaren Gruppen** enthalten sind."
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
