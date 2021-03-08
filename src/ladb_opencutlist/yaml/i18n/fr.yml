@@ -34,13 +34,13 @@ default:
   by: par
   date_format: d/m/Y G:i
   date_format_short: d/m/Y
-  unit_0: Pouces
-  unit_1: Pieds
-  unit_2: Millimètres
-  unit_3: Centimètres
-  unit_4: Mètres
-  unit_mass_0: Kilogrammes
-  unit_mass_1: Livres
+  unit_0: Pouce
+  unit_1: Pied
+  unit_2: Millimètre
+  unit_3: Centimètre
+  unit_4: Mètre
+  unit_mass_0: Kilogramme
+  unit_mass_1: Livre
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
@@ -112,7 +112,7 @@ core:
     user_defaults: Mon préréglage par défaut
     new: Nouveau préréglage
     new_prompt: |
-      *La création d'un préréglage personnalisé vous permet conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutilisés ensuite dans tous vos modèles.*
+      *La création d'un préréglage personnalisé vous permet de conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutiliser ensuite dans tous vos modèles.*
 
       Saisissez le nom du préréglage :
     delete_confirm_title: Suppression
@@ -126,8 +126,6 @@ core:
     tooltip:
       save_to: Actualiser le préréglage '{{ name }}'
       delete: Supprimer le préréglage '{{ name }}'
-  progress:
-    please_wait: Veuillez patienter
 tab:
   cutlist:
     label: Débit
@@ -181,7 +179,6 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Éditer les propriétés du groupe de pièces
-      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Déplier / Replier
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
@@ -192,7 +189,6 @@ tab:
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition
       flipped: Cette pièce est en miroir par rapport à sa définition
-      symmetrical: Cette pièce est symétrique
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
@@ -217,7 +213,6 @@ tab:
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
-      setup_group_cuttingdiagram: Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -228,7 +223,7 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
-      edit_material: Éditer la matière '{{ material_name }}'
+      edit_material: Éditer la matière '{{ material }}'...
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:
@@ -247,24 +242,6 @@ tab:
       cumulable_2: Cumulable sur la largeur
       price: Prix
       mass: Masse
-      tags: Tags
-      tags_help: |
-        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant de tags que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
-      tags_multiple_info: Seuls les tags communs sont visibles
-      orientation: Orientation
-      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
-      orientation_locked_on_axis_help: |
-        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
-
-        Et donc,
-        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
-        - la *largeur* sur l'axe <span style='color:green'>vert</span>
-        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
-      symmetrical: La pièce est symétrique
-      symmetrical_help: |
-        Si cette case est cochée, la détection de *pièce en miroir* n'aura pas d'effet sur cette pièce.
       size_increase: Surcotes
       size_increase_help: |
         Les surcotes vous permettent de majorer les dimensions capables de la pièce.
@@ -275,6 +252,21 @@ tab:
       width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
       thickness_increase: Surcote d'épaisseur
       thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
+      orientation: Orientation
+      orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
+      orientation_locked_on_axis_help: |
+        Si cette case est cochée, l'option *Orientation automatique des pièces* n'aura pas d'effet sur cette pièce.
+
+        Et donc,
+        - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
+        - la *largeur* sur l'axe <span style='color:green'>vert</span>
+        - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
+      tags: Tags
+      tags_help: |
+        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant de tags que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
+      tags_multiple_info: Seuls les tags communs sont visibles
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |
@@ -377,6 +369,8 @@ tab:
       title: Exporter au format CSV
       info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      info_1: |
+        *Les pièces contenues dans les groupes masqués de votre fiche de débit ne seront pas exportées*.
       options: Options d'export
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -414,17 +408,9 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
-      warning:
-        visible_only: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:
       title: Rapport
-      info_0: |
-        Cette fonctionnalité vous permet de générer un rapport des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
-      option_solid_wood_coefficient: Coefficient *Bois massif*
-      option_solid_wood_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**Bois massif**".
-      raw_materials: Matières premières brutes
-      coefficient: Coefficient
       total: Total
       total_mass: Σ Masses
       total_cost: Σ Coûts
@@ -434,10 +420,6 @@ tab:
       total_length: Σ Longueurs
       error:
         no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
-      warning:
-        visible_only: Seules les pièces contenues dans les **groupes visibles** sont comptabilisées.
     cuttingdiagram:
       title: Calepinage
       options_material: Matière
@@ -729,7 +711,7 @@ tab:
       grained_0: Pas de fil
       grained_1: Le fil suit la longueur
       edge_decremented: Reduction
-      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
+      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
       volumic_mass: Masse volumique

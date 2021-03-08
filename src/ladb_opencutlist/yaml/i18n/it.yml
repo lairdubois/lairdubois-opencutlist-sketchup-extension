@@ -34,11 +34,13 @@ default:
   by: da
   date_format: "d/m/Y G:i"
   date_format_short: d/m/Y
-  unit_0: Pollici
-  unit_1: Piedi
-  unit_2: Millimetri
-  unit_3: Centimetri
-  unit_4: Metri
+  unit_0: Pollice
+  unit_1: Piede
+  unit_2: Millimetro
+  unit_3: Centimetro
+  unit_4: Metro
+  unit_mass_0: Chilogrammo
+  unit_mass_1: Libbra
   part_single: pezzo
   part_plural: pezzi
   setup_model_units: Impostare l'unita di misura del modello
@@ -199,7 +201,7 @@ tab:
       children_size_increase: "Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate"
       invalid_final_area: "Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida"
       invalid_final_area_plural: "Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida"
-      is_dynamic_attributes_name: La descrizione di questa parte e estratta dall'attributo 'Nome' del componente dinamico
+      is_dynamic_attributes_name: La descrizione di questa parte e estratta dall'attributo 'Name' del componente dinamico
       size_increased: "Dimensione maggiorata di {{ value }}"
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
@@ -221,7 +223,7 @@ tab:
       group_numbers_reset: Ricomincia la numerazione delle parti di questo gruppo
       group_cuttingdiagram: Schema di taglio
       group_labels: Stampa etichette
-      edit_material: "Modifica materiale '{{ material }}'..."
+      edit_material: "Modifica materiale '{{ material_name }}'"
       expand_all: Espandi le parti identiche
       collapse_all: Collassa le parti identiche
     edit_part:
@@ -238,8 +240,8 @@ tab:
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
-      unit_price: Prezzo per unità
-      unit_mass: Massa unitaria
+      price: Prezzo
+      mass: Massa
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.
@@ -407,7 +409,17 @@ tab:
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
     report:
-      label: Resoconto
+      title: Resoconto
+      options_general: Generale
+      total: Totale
+      total_mass: Σ Masse
+      total_cost: Σ Costi
+      total_count: Qtà
+      total_volume: Σ Volumi
+      total_area: Σ Aree
+      total_length: Σ Lunghezze
+      error:
+        no_typed_material_parts: Nessuna parte del modello ha materiale con un tipo definito.
     cuttingdiagram:
       title: Schema di taglio
       options_material: Materiale
@@ -703,6 +715,11 @@ tab:
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
       volumic_mass: Massa volumica
+      volumic_mass_help: Permette di definire la densità (massa volumetrica) del materiale.
+      std_prices: Prezzo
+      std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
+      std_prices_dim_placeholder: Scegli una taglia
+      std_prices_add: Aggiungi prezzo
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)
@@ -886,12 +903,17 @@ tab:
   settings:
     label: Preferenze
     title: Preferenze
+    global_settings: Preferenze globali
     language: Lingua
     zoom: Dimensione del carattere
     zoom_normal: Normale
     zoom_small: Piccolo
     zoom_tiny: Minuscolo
     size_and_position: Dimensione e posizione della finestra
+    model_settings: Preferenze del modello
+    length_unit: Unità di lunghezza
+    mass_unit: Unità di massa
+    currency_symbol: Simbolo di valuta
   about:
     label: Info su
     title: Info su

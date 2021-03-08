@@ -39,6 +39,8 @@ default:
   unit_2: Millimeter
   unit_3: Zentimeter
   unit_4: Meter
+  unit_mass_0: Kilogramm
+  unit_mass_1: Pfund
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
@@ -221,7 +223,7 @@ tab:
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
       group_labels: Etiketten drucken
-      edit_material: "Bearbeiten des Materials '{{ material }}'..."
+      edit_material: "Bearbeiten des Materials '{{ material_name }}'"
       expand_all: Identische Teile aufklappen
       collapse_all: Identische Teile zuklappen
     edit_part:
@@ -238,8 +240,8 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      unit_price: Preis pro Einheit
-      unit_mass: Einheitsmasse
+      price: Preis
+      mass: Masse
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -407,7 +409,17 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
     report:
-      label: Bericht
+      title: Bericht
+      options_general: Allgemein
+      total: Total
+      total_mass: Σ Massen
+      total_cost: Σ Kosten
+      total_count: Anz.
+      total_volume: Σ Volumen
+      total_area: Σ Flächen
+      total_length: Σ Längen
+      error:
+        no_typed_material_parts: Kein Teil in Ihrem Modells enthält Material mit einem definierten Typ.
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
@@ -703,6 +715,11 @@ tab:
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
       volumic_mass: Rohdichte
+      volumic_mass_help: Ermöglicht die Massendichte des Materials festzulegen.
+      std_prices: Preis
+      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede Standardgröße des Materials.
+      std_prices_dim_placeholder: Wählen Sie eine Größe
+      std_prices_add: Preis hinzufügen
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -886,12 +903,17 @@ tab:
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
+    global_settings: Globale Einstellungen
     language: Sprache
     zoom: Schriftgröße
     zoom_normal: Normal
     zoom_small: Klein
     zoom_tiny: Sehr klein
     size_and_position: Größe und Position des Fensters
+    model_settings: Modelleinstellungen
+    length_unit: Längeneinheit
+    mass_unit: Masseneinheit
+    currency_symbol: Währungszeichen
   about:
     label: Über
     title: Über

@@ -34,11 +34,13 @@ default:
   by: by
   date_format: "m/d/Y g:ia"
   date_format_short: m/d/Y
-  unit_0: Inches
-  unit_1: Feet
+  unit_0: Inch
+  unit_1: Foot
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
+  unit_mass_0: Kilogram
+  unit_mass_1: Pound
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
@@ -221,7 +223,7 @@ tab:
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       group_labels: Print labels
-      edit_material: "Edit material '{{ material }}'..."
+      edit_material: "Edit material '{{ material_name }}'"
       expand_all: Unfold similar parts
       collapse_all: Fold similar parts
     edit_part:
@@ -238,8 +240,8 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
-      unit_price: Price per unit
-      unit_mass: Unit mass
+      price: Price
+      mass: Mass
       size_increase: Oversizes
       size_increase_help: |
         Oversizes allow you to increase the dimensions of a single part.
@@ -407,7 +409,17 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
     report:
-      label: Report
+      title: Report
+      options_general: General
+      total: Total
+      total_mass: Σ Masses
+      total_cost: Σ Costs
+      total_count: Qty.
+      total_volume: Σ Volumes
+      total_area: Σ Areas
+      total_length: Σ Lengths
+      error:
+        no_typed_material_parts: No part in your model has material with a defined type.
     cuttingdiagram:
       title: Cutting Diagram
       options_material: Material
@@ -703,6 +715,11 @@ tab:
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
       volumic_mass: Density
+      volumic_mass_help: Allows you to define the density (specific mass) of the material.
+      std_prices: Price
+      std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
+      std_prices_dim_placeholder: Select a size
+      std_prices_add: Add a price
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -886,12 +903,17 @@ tab:
   settings:
     label: Preferences
     title: Preferences
+    global_settings: Global preferences
     language: Language
     zoom: Font size
     zoom_normal: Normal
     zoom_small: Small
     zoom_tiny: Tiny
     size_and_position: Size and Position of the Window
+    model_settings: Model preferences
+    length_unit: Unit of length
+    mass_unit: Unit of mass
+    currency_symbol: Currency symbol
   about:
     label: About
     title: About

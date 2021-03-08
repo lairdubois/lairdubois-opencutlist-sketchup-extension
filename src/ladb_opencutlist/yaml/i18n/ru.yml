@@ -34,11 +34,13 @@ default:
   by: фон
   date_format: "d/m/Y G:i"
   date_format_short: d/m/Y
-  unit_0: Дюймы
-  unit_1: Футы
-  unit_2: Миллиметры
-  unit_3: Сантиметры
-  unit_4: Метры
+  unit_0: Дюйм
+  unit_1: Фут
+  unit_2: Миллиметр
+  unit_3: Сантиметр
+  unit_4: Метр
+  unit_mass_0: Килограмм
+  unit_mass_1: Фунт
   part_single: деталь
   part_plural: детали
   setup_model_units: Установка единиц измерения
@@ -221,7 +223,7 @@ tab:
       group_numbers_reset: Повторная индексация номеров деталей этой группы
       group_cuttingdiagram: Карта раскроя
       group_labels: Печать этикеток
-      edit_material: "Редактировать материал '{{ material }}'..."
+      edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть идентичные части
       collapse_all: Свернуть идентичные части
     edit_part:
@@ -238,8 +240,8 @@ tab:
       cumulable_0: Не суммировать
       cumulable_1: Суммировать по длине
       cumulable_2: Суммировать по ширине
-      unit_price: Стоимость за единицу
-      unit_mass: Масса единицы
+      price: Цена
+      mass: Масса
       size_increase: Припуски
       size_increase_help: |
         Припуски это добавочные размеры ‘под подгонку’ которые увеличивают расчетные размеры детали.
@@ -348,7 +350,7 @@ tab:
       area: Площадь
       area_short: Площадь
       volume: Объем
-      number: No.
+      number: N°
       name: Описание
       count: К-во
       cutting: Пильный
@@ -379,7 +381,7 @@ tab:
       option_col_sep_comma: Запятая
       option_col_sep_semicolon: Точка с запятой
       option_encoding: Кодировка
-      number: No.
+      number: N°
       path: Путь
       instance_name: Экземпляр
       definition_name: Определение
@@ -407,7 +409,17 @@ tab:
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
     report:
-      label: Отчет
+      title: Отчет
+      options_general: Общие
+      total: Всего
+      total_mass: Σ Вес
+      total_cost: Σ Сумма
+      total_count: К-во
+      total_volume: Σ Объемов
+      total_area: Σ Площадей
+      total_length: Σ Длин
+      error:
+        no_typed_material_parts: Ни одной детали модели не задан материал из предусмотренных в OpenCutList.
     cuttingdiagram:
       title: Карта раскроя
       options_material: Материал
@@ -699,10 +711,15 @@ tab:
       grained_0: Без фактуры
       grained_1: Вдоль волокон
       edge_decremented: Учёт кромки
-      edge_decremented_help: Настройка изменения линейных размеров детали с учетом толщины кромки.
+      edge_decremented_help: "При активации, настройка учитывает в линейном размере детали толщину кромки."
       edge_decremented_0: Не учитывать
       edge_decremented_1: Вычесть толщину кромок
       volumic_mass: Плотность
+      volumic_mass_help: Используется для определения плотности материала.
+      std_prices: Цена
+      std_prices_help: "Позволяет определить стоимость как для всех размеров, так и для каждого типоразмера материала."
+      std_prices_dim_placeholder: Выберите размер
+      std_prices_add: Добавить цену
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)
@@ -886,12 +903,17 @@ tab:
   settings:
     label: Параметры
     title: Параметры
+    global_settings: Общие настройки
     language: Язык
     zoom: Размер текста
     zoom_normal: Нормальный
     zoom_small: Малый
     zoom_tiny: Маленький
     size_and_position: Размер и позиция окна
+    model_settings: Параметры модели
+    length_unit: Единица длины
+    mass_unit: Единица массы
+    currency_symbol: Символ валюты
   about:
     label: О программе
     title: О программе

@@ -34,11 +34,13 @@ default:
   by: por
   date_format: "d/m/Y g:ia"
   date_format_short: d/m/Y
-  unit_0: Pulgadas
-  unit_1: Pies
-  unit_2: Milimetros
-  unit_3: Centimetros
-  unit_4: Metros
+  unit_0: Pulgada
+  unit_1: Pie
+  unit_2: Milimetro
+  unit_3: Centimetro
+  unit_4: Metro
+  unit_mass_0: Kilogramo
+  unit_mass_1: Libra
   part_single: parte
   part_plural: partes
   setup_model_units: Configurar las unidades del modelo
@@ -199,7 +201,7 @@ tab:
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
       invalid_final_area: "Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida"
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
-      is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Nombre' del componente dinámico
+      is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Name' del componente dinámico
       size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
@@ -221,7 +223,7 @@ tab:
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
       group_labels: Imprimir etiquetas
-      edit_material: "Editar material '{{ material }}'..."
+      edit_material: "Editar material '{{ material_name }}'"
       expand_all: Despliegue las partes similares
       collapse_all: Doblar las partes similares
     edit_part:
@@ -238,8 +240,8 @@ tab:
       cumulable_0: No sumable
       cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
-      unit_price: Precio por unidad
-      unit_mass: Unidad de masa
+      price: Premio
+      mass: Masa
       size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
@@ -407,7 +409,17 @@ tab:
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
     report:
-      label: Reporte
+      title: Reporte
+      options_general: General
+      total: Total
+      total_mass: Σ Masas
+      total_cost: Σ Costos
+      total_count: Cant.
+      total_volume: Σ Volúmenes
+      total_area: Σ Areas
+      total_length: Σ Longitudes
+      error:
+        no_typed_material_parts: Ninguna parte de su modelo tiene material con un tipo definido.
     cuttingdiagram:
       title: Diagrama de corte
       options_material: Material
@@ -703,6 +715,11 @@ tab:
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
       volumic_mass: Densidad
+      volumic_mass_help: Le permite definir la densidad del material.
+      std_prices: Premio
+      std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
+      std_prices_dim_placeholder: Elige una talla
+      std_prices_add: Añade un premio
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
@@ -886,12 +903,17 @@ tab:
   settings:
     label: Preferencias
     title: Preferencias
+    global_settings: Preferencias Globales
     language: Idioma
     zoom: Tamaño de letra
     zoom_normal: Normal
     zoom_small: Pequeño
     zoom_tiny: Minúsculo
     size_and_position: Tamaño y posición de la ventana
+    model_settings: Preferencias del modelo
+    length_unit: Unidad de longitud
+    mass_unit: Unidad de masa
+    currency_symbol: Símbolo de moneda
   about:
     label: Acerca de
     title: Acerca de
@@ -919,7 +941,7 @@ tab:
     credits_thanks: |
       Un agradecimiento especial para:
       - [JetBrains](https://www.jetbrains.com) por su apoyo a este proyecto mediante su [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex] (https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
+      - [Transifex](https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
 tool:
   highlight:
     transparency: Transparencia
