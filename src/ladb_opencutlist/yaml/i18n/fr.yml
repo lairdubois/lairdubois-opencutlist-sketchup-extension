@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: Actualiser le préréglage '{{ name }}'
       delete: Supprimer le préréglage '{{ name }}'
+  progress:
+    please_wait: Veuillez patienter
 tab:
   cutlist:
     label: Débit
@@ -421,7 +423,7 @@ tab:
       options_general: Générales
       option_solid_wood_coefficient: Coefficient *Bois massif*
       option_solid_wood_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**Bois massif**".
-      raw_materials: Matières brutes
+      raw_materials: Matières premières brutes
       coefficient: Coefficient
       total: Total
       total_mass: Σ Masses
