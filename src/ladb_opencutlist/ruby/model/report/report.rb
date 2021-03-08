@@ -17,7 +17,7 @@ module Ladb::OpenCutList
       @warnings = _def.warnings
       @tips = _def.tips
 
-      @solid_wood_coefficient = _def.solid_wood_coefficient
+      @solid_wood_coefficient = UnitUtils.format_readable_value(_def.solid_wood_coefficient, 1)
 
       @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)

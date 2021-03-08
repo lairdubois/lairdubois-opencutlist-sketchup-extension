@@ -224,7 +224,7 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
-      edit_material: Éditer la matière '{{ material }}'...
+      edit_material: Éditer la matière '{{ material }}'
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:

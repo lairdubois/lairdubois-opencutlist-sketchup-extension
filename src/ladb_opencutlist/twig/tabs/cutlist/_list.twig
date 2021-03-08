@@ -131,7 +131,7 @@
                         {% endif %}
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                         {% if group.material_id %}
-                            <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                            <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                         {% endif %}
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
@@ -213,7 +213,7 @@
                         {% endif %}
                         {% if group.material_display_name is not empty %}
                             <li role="separator" class="divider"></li>
-                            <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}</a></li>
+                            <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material':group.material_display_name }) }}...</a></li>
                         {% endif %}
                     </ul>
                 </div>

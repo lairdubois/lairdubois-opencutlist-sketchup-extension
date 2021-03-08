@@ -818,6 +818,18 @@
                                         });
                                         return false;
                                     });
+                                    $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
+                                        $(this).blur();
+                                        var groupId = $(this).data('group-id');
+                                        that.cuttingdiagram1dGroup(groupId, true);
+                                        return false;
+                                    });
+                                    $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
+                                        $(this).blur();
+                                        var groupId = $(this).data('group-id');
+                                        that.cuttingdiagram2dGroup(groupId, true);
+                                        return false;
+                                    });
                                     $('a.ladb-btn-edit-part', $slide).on('click', function () {
                                         $(this).blur();
                                         var partId = $(this).data('part-id');
