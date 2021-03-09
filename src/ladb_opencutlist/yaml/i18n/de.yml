@@ -378,6 +378,7 @@ tab:
       info_0: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
       options: Exportoptionen
+      options_customize: Anpassung
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -619,6 +620,7 @@ tab:
         group_material_name: Materialname
         group_std_dimension: Standarddimensionen
         filename: Dateiname
+        model_name: Modellname
         page_label: Szenenname
         length_unit: Einheit
         generated_at: Datum und Uhrzeit

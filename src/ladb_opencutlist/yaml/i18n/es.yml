@@ -378,6 +378,7 @@ tab:
       info_0: |
         Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
       options: Opciones de exportación
+      options_customize: Personalización
       option_source: Fuente
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -619,6 +620,7 @@ tab:
         group_material_name: Miniatura proporcional
         group_std_dimension: Dimensiones estándar
         filename: Nombre del archivo
+        model_name: Nombre del modelo
         page_label: Nombre de la escena
         length_unit: Unidad
         generated_at: Fecha y hora
