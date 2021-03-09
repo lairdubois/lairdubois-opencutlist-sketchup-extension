@@ -64,6 +64,8 @@
         {% endif %}
     {% elseif terms[0] == 'filename' %}
         {% set value = filename %}
+    {% elseif terms[0] == 'model_name' %}
+        {% set value = modelName %}
     {% elseif terms[0] == 'page_label' %}
         {% set value = pageLabel %}
     {% elseif terms[0] == 'length_unit' %}

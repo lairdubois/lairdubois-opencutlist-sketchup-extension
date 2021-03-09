@@ -228,7 +228,7 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
-      edit_material: Éditer la matière '{{ material }}'...
+      edit_material: Éditer la matière '{{ material_name }}'
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:
@@ -620,6 +620,7 @@ tab:
         group_material_name: Nom de matière
         group_std_dimension: Dimension standard
         filename: Nom du fichier
+        model_name: Nom du modèle
         page_label: Nom de la scène
         length_unit: Unité
         generated_at: Date et heure

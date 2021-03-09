@@ -81,6 +81,7 @@
             var massUnitStrippedname = response.mass_unit_strippedname;
             var currencySymbol = response.currency_symbol;
             var filename = response.filename;
+            var modelName = response.model_name;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
             var ignoredInstanceCount = response.ignored_instance_count;
@@ -90,6 +91,7 @@
 
             // Keep usefull data
             that.filename = filename;
+            that.modelName = modelName;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
             that.currencySymbol = currencySymbol;
@@ -111,6 +113,7 @@
             that.$fileTabs.append(Twig.twig({ ref: "tabs/cutlist/_file-tab.twig" }).render({
                 selectionOnly: selectionOnly,
                 filename: filename,
+                modelName: modelName,
                 pageLabel: pageLabel,
                 generateAt: that.generateAt,
                 lengthUnit: lengthUnit
@@ -814,6 +817,7 @@
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
                                 errors: response.errors,
                                 filename: that.filename,
+                                modelName: that.modelName,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
@@ -1978,6 +1982,7 @@
                                 generateOptions: that.generateOptions,
                                 dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                                 filename: that.filename,
+                                modelName: that.modelName,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
@@ -2242,6 +2247,7 @@
                             generateOptions: that.generateOptions,
                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                             filename: that.filename,
+                            modelName: that.modelName,
                             pageLabel: that.pageLabel,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
@@ -2467,6 +2473,7 @@
             });
             $editorLabel.ladbEditorLabel({
                 filename: that.filename,
+                modelName: that.modelName,
                 pageLabel: that.pageLabel,
                 lengthUnit: that.lengthUnit,
                 generatedAt: new Date().getTime() / 1000,
@@ -2568,6 +2575,7 @@
                     var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
                         errors: errors,
                         filename: that.filename,
+                        modelName: that.modelName,
                         pageLabel: that.pageLabel,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
