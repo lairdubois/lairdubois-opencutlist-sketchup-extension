@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: "Обновить пресет '{{ name }}'"
       delete: "Удалить пресет '{{ name }}'"
+  progress:
+    please_wait: ""
 tab:
   cutlist:
     label: Раскрой
@@ -179,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Редактирование свойств группы деталей
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Развернуть / Свернуть
       material_origin_1: Материал этой детали определен на ее экземплярах
       material_origin_2: Материал этой детали унаследован от одного из ее родительских элементов
@@ -189,6 +192,7 @@ tab:
       number_generated: Нумерация этой детали сгенерирована автоматически
       resized: Эта часть была изменена в соответствии с определением ее компонентов
       flipped: Эта часть зеркально отображена в сравнении с определением ее компонентов
+      symmetrical: ""
       auto_oriented: Эта деталь была автоматически переориентирована
       add_label_filter: "Фильтровать по '{{ label }}'"
       remove_label_filter: "Удалить фильтрацию по '{{ label }}'"
@@ -213,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: "Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки"
       part_axes: Внутренние оси детали
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
+      setup_group_cuttingdiagram: ""
     menu:
       show_all_groups: Показать все группы
       hide_all_other_groups: Скрыть все остальные группы
@@ -242,6 +247,23 @@ tab:
       cumulable_2: Суммировать по ширине
       price: Цена
       mass: Масса
+      tags: Теги
+      tags_help: |
+        С опцией *Теги* вы можете добавлять ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
+        Вы можете добавить столько тегов, сколько сочтете нужным
+        Видимые детали Вашего списка раскроя в последующем могут быть отфильтрованы по тегам.
+      tags_multiple_info: Отображаются только обычные Теги
+      orientation: Ориентация
+      orientation_locked_on_axis: Блокировка ориентации по осям
+      orientation_locked_on_axis_help: |
+        Если активирована эта опция, то *Автоматическая ориентация деталей* не окажет влияния на эту деталь,
+
+        следовательно, в локальной системе координат:
+        - *длина* соответствует <span style='color:red'>красной</span> оси
+        - *ширина* соответствует <span style='color:green'>зелёной</span> оси
+        - *толщина* соответствует <span style='color:blue'>синей</span> оси
+      symmetrical: ""
+      symmetrical_help: |
       size_increase: Припуски
       size_increase_help: |
         Припуски это добавочные размеры ‘под подгонку’ которые увеличивают расчетные размеры детали.
@@ -252,21 +274,6 @@ tab:
       width_increase_help: Припуск применяется к фактической ширине для определения **пильной ширины**.
       thickness_increase: Припуск к толщине
       thickness_increase_help: Припуск применяется к фактической толщине для определения **пильной толщины**.
-      orientation: Ориентация
-      orientation_locked_on_axis: Блокировка ориентации по осям
-      orientation_locked_on_axis_help: |
-        Если активирована эта опция, то *Автоматическая ориентация деталей* не окажет влияния на эту деталь,
-
-        следовательно, в локальной системе координат:
-        - *длина* соответствует <span style='color:red'>красной</span> оси
-        - *ширина* соответствует <span style='color:green'>зелёной</span> оси
-        - *толщина* соответствует <span style='color:blue'>синей</span> оси
-      tags: Теги
-      tags_help: |
-        С опцией *Теги* вы можете добавлять ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
-        Вы можете добавить столько тегов, сколько сочтете нужным
-        Видимые детали Вашего списка раскроя в последующем могут быть отфильтрованы по тегам.
-      tags_multiple_info: Отображаются только обычные Теги
       axes: Оси
       axes_help: "Задайте размеры так, чтобы они соответствовали цветам осей вашей детали."
       axes_tip: |
@@ -369,8 +376,6 @@ tab:
       title: Экспортировать в формате CSV
       info_0: |
         Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV](https://ru.wikipedia.org/wiki/CSV).
-      info_1: |
-        *Изображения, содержащиеся в скрытых группах вашего раскроя, не будут экспортированы*.
       options: Параметры экспорта
       option_source: Источник
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +413,16 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
+      warning:
+        visible_only: ""
     report:
       title: Отчет
+      info_0: |
       options_general: Общие
+      option_solid_wood_coefficient: ""
+      option_solid_wood_coefficient_help: ""
+      raw_materials: ""
+      coefficient: ""
       total: Всего
       total_mass: Σ Вес
       total_cost: Σ Сумма
@@ -420,6 +432,10 @@ tab:
       total_length: Σ Длин
       error:
         no_typed_material_parts: Ни одной детали модели не задан материал из предусмотренных в OpenCutList.
+        entry_error: ""
+        entry_error_plural: ""
+      warning:
+        visible_only: ""
     cuttingdiagram:
       title: Карта раскроя
       options_material: Материал

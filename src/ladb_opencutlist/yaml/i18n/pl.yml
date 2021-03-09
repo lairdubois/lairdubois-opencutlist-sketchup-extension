@@ -126,6 +126,8 @@ core:
     tooltip:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
       delete: "Usuń ustawienia '{{name}}'"
+  progress:
+    please_wait: ""
 tab:
   cutlist:
     label: Części
@@ -179,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Edytuj właściwości grupy części
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Rozwiń / Zwiń
       material_origin_1: Materiał tej części jest zdefiniowany w jej instancjach
       material_origin_2: Materiał tej części jest dziedziczony z jednego z jej elementów nadrzędnych
@@ -189,6 +192,7 @@ tab:
       number_generated: Numer tej części został wygenerowany automatycznie
       resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
+      symmetrical: ""
       auto_oriented: Ta część została automatycznie obrócona
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
@@ -213,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
+      setup_group_cuttingdiagram: ""
     menu:
       show_all_groups: Pokaż wszystkie grupy
       hide_all_other_groups: Ukryj wszystkie inne grupy
@@ -242,6 +247,23 @@ tab:
       cumulable_2: Zsumowane po szerokości
       price: Cena
       mass: Masa
+      tags: Oznaczenia
+      tags_help: |
+        *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
+        Możesz dodać dowolną liczbę oznaczeń.
+        Widoczne części listy cięć mogą być następnie filtrowane na podstawie tych oznaczeń.
+      tags_multiple_info: Wyświetlane są tylko popularne oznaczenia
+      orientation: Orientacja
+      orientation_locked_on_axis: Zablokuj orientację na osiach części
+      orientation_locked_on_axis_help: |
+        Jeśli ta opcja jest wybrana, opcja *Automatyczna orientacja części* nie będzie miała wpływu na tę część.
+
+        Stąd w lokalnym układzie współrzędnych:
+        - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
+        - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
+        - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
+      symmetrical: ""
+      symmetrical_help: |
       size_increase: Ponadwymiarowe
       size_increase_help: |
         Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
@@ -252,21 +274,6 @@ tab:
       width_increase_help: "Nadmiar jest stosowany do ostatecznej szerokości, aby zdefiniować **szerokość wstępną**."
       thickness_increase: Grubość ponadwymiarowa
       thickness_increase_help: "Nadmiar nakłada się na ostateczną grubość, aby określić **grubość wstępną**."
-      orientation: Orientacja
-      orientation_locked_on_axis: Zablokuj orientację na osiach części
-      orientation_locked_on_axis_help: |
-        Jeśli ta opcja jest wybrana, opcja *Automatyczna orientacja części* nie będzie miała wpływu na tę część.
-
-        Stąd w lokalnym układzie współrzędnych:
-        - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
-        - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
-        - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
-      tags: Oznaczenia
-      tags_help: |
-        *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
-        Możesz dodać dowolną liczbę oznaczeń.
-        Widoczne części listy cięć mogą być następnie filtrowane na podstawie tych oznaczeń.
-      tags_multiple_info: Wyświetlane są tylko popularne oznaczenia
       axes: Osie
       axes_help: "Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części."
       axes_tip: |
@@ -369,8 +376,6 @@ tab:
       title: Eksportuj w formacie CSV
       info_0: |
         Dzięki tej funkcji możesz wyeksportować *listę części* do pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
-      info_1: |
-        *Części w ukrytych grupach twojej listy części nie będą wyeksportowane*.
       options: Opcje eksportu
       option_source: Źródło
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -408,9 +413,16 @@ tab:
       edge_ymax: Długość krawędzi 2
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
+      warning:
+        visible_only: ""
     report:
       title: Raport
+      info_0: |
       options_general: Główne
+      option_solid_wood_coefficient: ""
+      option_solid_wood_coefficient_help: ""
+      raw_materials: ""
+      coefficient: ""
       total: Totalny
       total_mass: Σ Mszy
       total_cost: Σ Kosztów
@@ -420,6 +432,10 @@ tab:
       total_length: Σ Długości
       error:
         no_typed_material_parts: Żadna część Twojego modelu nie zawiera materiału o zdefiniowanym typie.
+        entry_error: ""
+        entry_error_plural: ""
+      warning:
+        visible_only: ""
     cuttingdiagram:
       title: Schemat cięcia
       options_material: Materiał
