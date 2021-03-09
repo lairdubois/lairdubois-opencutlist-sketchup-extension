@@ -34,11 +34,13 @@ default:
   by: by
   date_format: "m/d/Y g:ia"
   date_format_short: m/d/Y
-  unit_0: Inches
-  unit_1: Feet
+  unit_0: Inch
+  unit_1: Foot
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
+  unit_mass_0: Kilogram
+  unit_mass_1: Pound
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
@@ -124,6 +126,8 @@ core:
     tooltip:
       save_to: "Update preset '{{ name }}'"
       delete: "Delete preset '{{name}}'"
+  progress:
+    please_wait: Please wait
 tab:
   cutlist:
     label: Parts
@@ -177,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Edit properties of a group of parts
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Unfold / Fold
       material_origin_1: The material of this part is defined on its instances
       material_origin_2: The material of this part is inherited from one of its parent elements
@@ -187,6 +192,7 @@ tab:
       number_generated: The number of this part was generated automatically
       resized: This part was resized with respect to its component definition
       flipped: This part is mirrored compared to its component definition
+      symmetrical: This part is symmetrical
       auto_oriented: This part has been reoriented automatically
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
@@ -211,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       part_axes: Internal axes of the part
       select_unselect_all_parts: Select/deselect all parts in the group
+      setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -221,7 +228,7 @@ tab:
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       group_labels: Print labels
-      edit_material: "Edit material '{{ material }}'..."
+      edit_material: "Edit material '{{ material_name }}'"
       expand_all: Unfold similar parts
       collapse_all: Fold similar parts
     edit_part:
@@ -238,8 +245,26 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
-      unit_price: Price per unit
-      unit_mass: Unit mass
+      price: Price
+      mass: Mass
+      tags: Tags
+      tags_help: |
+        The *Tags* allow you to add custom keywords to each part definition.
+        You can add as many tags as you want.
+        The visible parts of your custlist can then be filtered based on these tags.
+      tags_multiple_info: Only common tags are displayed
+      orientation: Orientation
+      orientation_locked_on_axis: Lock orientation on axes
+      orientation_locked_on_axis_help: |
+        If this option is selected, the option *Automatic orientation of parts* will have no effect on this part
+
+        Hence, in the local coordinate system:
+        - *length* is on the <span style='color:red'>red</span> axis,
+        - *width* on the <span style='color:green'>green</span> axis and
+        - *thickness* on the <span style='color:blue'>blue</span> axis
+      symmetrical: The part is symmetrical
+      symmetrical_help: |
+        If this box is checked, the detection of *mirrored part* will have no effect on this part.
       size_increase: Oversizes
       size_increase_help: |
         Oversizes allow you to increase the dimensions of a single part.
@@ -250,21 +275,6 @@ tab:
       width_increase_help: Oversize is applied to the final width to define the **raw width**.
       thickness_increase: Thickness Oversize
       thickness_increase_help: Oversize is applied to the final thickness to define the **raw thickness**.
-      orientation: Orientation
-      orientation_locked_on_axis: Lock orientation on axes
-      orientation_locked_on_axis_help: |
-        If this option is selected, the option *Automatic orientation of parts* will have no effect on this part
-
-        Hence, in the local coordinate system:
-        - *length* is on the <span style='color:red'>red</span> axis,
-        - *width* on the <span style='color:green'>green</span> axis and
-        - *thickness* on the <span style='color:blue'>blue</span> axis
-      tags: Tags
-      tags_help: |
-        The *Tags* allow you to add custom keywords to each part definition.
-        You can add as many tags as you want.
-        The visible parts of your custlist can then be filtered based on these tags.
-      tags_multiple_info: Only common tags are displayed
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -367,8 +377,6 @@ tab:
       title: Export to CSV format
       info_0: |
         With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
-      info_1: |
-        *Parts inside hidden groups of your parts list will not be exported*.
       options: Export Options
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,8 +414,30 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      warning:
+        visible_only: "*Parts inside hidden groups of your parts list will not be exported*."
     report:
-      label: Report
+      title: Report
+      info_0: |
+        This functionality allows you to generate a report of the **masses** and **costs** of the **raw materials** necessary for the production of the parts contained in the *parts list*.
+      options_general: General
+      option_solid_wood_coefficient: Rough lumber ratio
+      option_solid_wood_coefficient_help: Used to indicate the multiplying factor applied to the gross volume measured for "**Solid wood**" type materials.
+      raw_materials: Raw materials
+      coefficient: Coefficient
+      total: Total
+      total_mass: Σ Masses
+      total_cost: Σ Costs
+      total_count: Qty.
+      total_volume: Σ Volumes
+      total_area: Σ Areas
+      total_length: Σ Lengths
+      error:
+        no_typed_material_parts: No part in your model has material with a defined type.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
+      warning:
+        visible_only: Only the parts contained in the **visible groups** are counted.
     cuttingdiagram:
       title: Cutting Diagram
       options_material: Material
@@ -703,6 +733,11 @@ tab:
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
       volumic_mass: Density
+      volumic_mass_help: Allows you to define the density (specific mass) of the material.
+      std_prices: Price
+      std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
+      std_prices_dim_placeholder: Select a size
+      std_prices_add: Add a price
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -886,12 +921,17 @@ tab:
   settings:
     label: Preferences
     title: Preferences
+    global_settings: Global preferences
     language: Language
     zoom: Font size
     zoom_normal: Normal
     zoom_small: Small
     zoom_tiny: Tiny
     size_and_position: Size and Position of the Window
+    model_settings: Model preferences
+    length_unit: Unit of length
+    mass_unit: Unit of mass
+    currency_symbol: Currency symbol
   about:
     label: About
     title: About

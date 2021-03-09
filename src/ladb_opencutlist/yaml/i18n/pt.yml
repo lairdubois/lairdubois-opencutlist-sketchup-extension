@@ -34,11 +34,13 @@ default:
   by: por
   date_format: "d/m/Y g:ia"
   date_format_short: d/m/Y
-  unit_0: Polegadas
-  unit_1: Pés
+  unit_0: Polegada
+  unit_1: Pé
   unit_2: Milímetro
   unit_3: Centímetro
   unit_4: Metro
+  unit_mass_0: Quilograma
+  unit_mass_1: Libra
   part_single: peça
   part_plural: peças
   setup_model_units: Configure as unidades do modelo
@@ -67,6 +69,7 @@ core:
       Você está usando uma versão **em desenvolvimento** do *OpenCutList*.
       Esta versão está disponível apenas para teste.
       Não é recomendado usá-lo na produção.
+
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
       Você está usando uma versão antiga do SketchUp ({{ sketchup_version }}). Este plugin vai funcionar, mas pode exibir certos bugs.
@@ -123,6 +126,8 @@ core:
     tooltip:
       save_to: "Atualizar as definições '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
+  progress:
+    please_wait: Por favor espere
 tab:
   cutlist:
     label: Peças
@@ -176,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Editar propriedades de um grupo de peças
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Desdobrar / dobrar
       material_origin_1: O material desta peça é definido em suas instâncias
       material_origin_2: O material desta peça é herdado de um de seus elementos pais
@@ -186,6 +192,7 @@ tab:
       number_generated: O número desta peça é gerado automaticamente
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
+      symmetrical: Esta peça é simétrica
       auto_oriented: Esta peça foi reorientada automaticamente
       add_label_filter: "Filtrando em '{{ label }}'"
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
@@ -198,7 +205,7 @@ tab:
       children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ contagem }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
-      is_dynamic_attributes_name: A descrição desta peça é extraída do atributo 'Nome' do componente dinâmico
+      is_dynamic_attributes_name: A descrição desta peça é extraída do atributo 'Name' do componente dinâmico
       size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
@@ -210,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
       part_axes: "Eixos internos da peça "
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
+      setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{material_name}} & nbsp; / & nbsp; {{std_dimension}}'"
     menu:
       show_all_groups: Mostrar todos os grupos
       hide_all_other_groups: Esconder todos os outros grupos
@@ -220,7 +228,7 @@ tab:
       group_numbers_reset: Reinicialize os números de peça deste grupo
       group_cuttingdiagram: Diagrama de Corte
       group_labels: Imprimir etiquetas
-      edit_material: "Editar material '{{ material }}' ..."
+      edit_material: "Editar material '{{ material_name }}'"
       expand_all: Desdobrar peças idênticas
       collapse_all: Dobre partes idênticas
     edit_part:
@@ -237,8 +245,26 @@ tab:
       cumulable_0: Não somam
       cumulable_1: Soma ao comprimento
       cumulable_2: Soma à largura
-      unit_price: Preço por unidade
-      unit_mass: Massa por unidade
+      price: Preço
+      mass: Massa
+      tags: Tags
+      tags_help: |
+        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
+        Pode adicionar tantas tags quantas achar conveniente.
+        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
+      tags_multiple_info: Apenas tags comuns são mostrados
+      orientation: Orientação
+      orientation_locked_on_axis: Travar orientação nos eixos
+      orientation_locked_on_axis_help: |
+        Se esta opção for selecionada, a opção *Orientação automática das peças* não terá qualquer efeito sobre esta peça,
+
+        portanto, no sistema de coordenadas local:
+        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
+        - *largura* está no eixo <span style='color:green'>verde</span>
+        - *espessura* está no eixo <span style='color:blue'>azul</span>
+      symmetrical: A peça é simétrica
+      symmetrical_help: |
+        Se esta caixa estiver marcada, a detecção da *parte espelhada* não terá efeito nesta parte.
       size_increase: Superdimensionar
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
@@ -249,21 +275,6 @@ tab:
       width_increase_help: O superdimensionamento é aplicado à largura real para definir a **largura aproximada**.
       thickness_increase: Superdimensionamento da espessura
       thickness_increase_help: O superdimensionamento é aplicado à espessura real para definir a **espessura aproximada**.
-      orientation: Orientação
-      orientation_locked_on_axis: Travar orientação nos eixos
-      orientation_locked_on_axis_help: |
-        Se esta opção for selecionada, a opção *Orientação automática das peças* não terá qualquer efeito sobre esta peça,
-
-        portanto, no sistema de coordenadas local:
-        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
-        - *largura* está no eixo <span style='color:green'>verde</span>
-        - *espessura* está no eixo <span style='color:blue'>azul</span>
-      tags: Tags
-      tags_help: |
-        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
-        Pode adicionar tantas tags quantas achar conveniente.
-        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
-      tags_multiple_info: Apenas tags comuns são mostrados
       axes: Eixos
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
@@ -349,7 +360,7 @@ tab:
       volume: Volume
       number: Não.
       name: Descrição
-      count: Qtd
+      count: Qtd.
       cutting: Aproximado
       bbox: Acabado
       final: Real
@@ -366,8 +377,6 @@ tab:
       title: Exportar no formato CSV
       info_0: |
         Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
-      info_1: |
-        *As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*.
       options: Opções de exportação
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -405,8 +414,30 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
+      warning:
+        visible_only: "*As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*."
     report:
-      label: Relatório
+      title: Relatório
+      info_0: |
+        Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
+      options_general: Geral
+      option_solid_wood_coefficient: Proporção de madeira serrada em bruto
+      option_solid_wood_coefficient_help: Usado para indicar o fator de multiplicação aplicado ao volume bruto medido para materiais do tipo "**Madeira maciça**".
+      raw_materials: Matéria prima
+      coefficient: Fator
+      total: Total
+      total_mass: Σ Massas
+      total_cost: Σ Custos
+      total_count: Qtd.
+      total_volume: Σ Volumes
+      total_area: Σ Áreas
+      total_length: Σ Comprimentos
+      error:
+        no_typed_material_parts: Nenhuma parte do seu modelo possui material com um tipo definido.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
+      warning:
+        visible_only: Apenas as partes contidas nos **grupos visíveis** são contadas.
     cuttingdiagram:
       title: Diagrama de Corte
       options_material: Material
@@ -493,7 +524,7 @@ tab:
       list:
         unplaced_parts: Peças não colocadas
         summary: Resumo
-        count: Qtd
+        count: Qtd.
         bar: Prancha
         sheet: Painel
         length: Comprimento
@@ -702,6 +733,11 @@ tab:
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
       volumic_mass: Densidade
+      volumic_mass_help: Permite definir a densidade (massa volúmica) do material.
+      std_prices: Preço
+      std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
+      std_prices_dim_placeholder: Escolha um tamanho
+      std_prices_add: Adicionar preço
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
@@ -885,12 +921,17 @@ tab:
   settings:
     label: Preferências
     title: Preferências
+    global_settings: Preferências Globais
     language: Idioma
     zoom: Tamanho da fonte
     zoom_normal: Normal
     zoom_small: Pequena
     zoom_tiny: Minúscula
     size_and_position: Tamanho e posição da janela
+    model_settings: Preferências de modelo
+    length_unit: Unidade de comprimento
+    mass_unit: Unidade de massa
+    currency_symbol: Símbolo da moeda
   about:
     label: Sobre
     title: Sobre

@@ -39,6 +39,8 @@ default:
   unit_2: Millimeter
   unit_3: Zentimeter
   unit_4: Meter
+  unit_mass_0: Kilogramm
+  unit_mass_1: Pfund
   part_single: Teil
   part_plural: Teile
   setup_model_units: Die Einheit des Modells konfigurieren
@@ -124,6 +126,8 @@ core:
     tooltip:
       save_to: "Voreinstellung '{{name}}' aktualisieren"
       delete: "Voreinstellung '{{ name }}' löschen"
+  progress:
+    please_wait: Bitte warten
 tab:
   cutlist:
     label: Holzliste
@@ -177,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das verwendete Material für dieses Teil ist auf einer Instanz definiert
       material_origin_2: Das verwendete Material für dieses Teil wird von einem übergeordneten Teil geerbt
@@ -187,6 +192,7 @@ tab:
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
+      symmetrical: Dieses Teil ist symmetrisch
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: "Nach '{{ label }}' auswählen"
       remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
@@ -211,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile der Gruppe selektieren / deselektieren
+      setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -221,7 +228,7 @@ tab:
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
       group_labels: Etiketten drucken
-      edit_material: "Bearbeiten des Materials '{{ material }}'..."
+      edit_material: "Bearbeiten des Materials '{{ material_name }}'"
       expand_all: Identische Teile aufklappen
       collapse_all: Identische Teile zuklappen
     edit_part:
@@ -238,8 +245,26 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      unit_price: Preis pro Einheit
-      unit_mass: Einheitsmasse
+      price: Preis
+      mass: Masse
+      tags: Tags
+      tags_help: |
+        Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
+        Sie können beliebig viele Tags hinzufügen.
+        Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Tags auswählen.
+      tags_multiple_info: Nur gemeinsame Tags werden angezeigt
+      orientation: Ausrichtung
+      orientation_locked_on_axis: An das Koordinatensystem binden
+      orientation_locked_on_axis_help: |
+        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
+
+        Es gilt somit,
+        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
+        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
+        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
+      symmetrical: Das Teil ist symmetrisch
+      symmetrical_help: |
+        Wenn dieses Kästchen aktiviert ist, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -250,21 +275,6 @@ tab:
       width_increase_help: Übermaß welches die **effektive Breite** vergrössert.
       thickness_increase: Dickenzumaß
       thickness_increase_help: Übermaß welches die **effektive Dicke** vergrössert.
-      orientation: Ausrichtung
-      orientation_locked_on_axis: An das Koordinatensystem binden
-      orientation_locked_on_axis_help: |
-        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
-
-        Es gilt somit,
-        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
-        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
-        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
-      tags: Tags
-      tags_help: |
-        Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
-        Sie können beliebig viele Tags hinzufügen.
-        Anschließend können Sie die sichtbaren Teile der Holzliste anhand dieser Tags auswählen.
-      tags_multiple_info: Nur gemeinsame Tags werden angezeigt
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -367,8 +377,6 @@ tab:
       title: Exportieren im CSV-Format
       info_0: |
         Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
-      info_1: |
-        *Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*.
       options: Exportoptionen
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,8 +414,30 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
+      warning:
+        visible_only: "*Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*."
     report:
-      label: Bericht
+      title: Bericht
+      info_0: |
+        Mit dieser Funktion können Sie einen Bericht über die **Massen** und **Kosten** der **Rohmaterialien** erstellen, die zur Herstellung der Teile der *Holzliste* benötigt werden.
+      options_general: Allgemein
+      option_solid_wood_coefficient: Koeffizient *Massivholz*
+      option_solid_wood_coefficient_help: "Wird verwendet, um den Multiplikationskoeffizienten anzugeben, der auf das Bruttovolumen angewendet wird, das für Materialien vom Typ \"**Massivholz**\" gemessen wurde."
+      raw_materials: Rohmaterial
+      coefficient: Koeffizient
+      total: Total
+      total_mass: Σ Massen
+      total_cost: Σ Kosten
+      total_count: Anz.
+      total_volume: Σ Volumen
+      total_area: Σ Flächen
+      total_length: Σ Längen
+      error:
+        no_typed_material_parts: Kein Teil in Ihrem Modells enthält Material mit einem definierten Typ.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+      warning:
+        visible_only: "Es werden nur die Teile gezählt, die in den **sichtbaren Gruppen** enthalten sind."
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
@@ -703,6 +733,11 @@ tab:
       edge_decremented_0: Keine Verringerung
       edge_decremented_1: Verringerung um Stärke des Kantenbands
       volumic_mass: Rohdichte
+      volumic_mass_help: Ermöglicht die Massendichte des Materials festzulegen.
+      std_prices: Preis
+      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede Standardgröße des Materials.
+      std_prices_dim_placeholder: Wählen Sie eine Größe
+      std_prices_add: Preis hinzufügen
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -886,12 +921,17 @@ tab:
   settings:
     label: Benutzereinstellungen
     title: Benutzereinstellungen
+    global_settings: Globale Einstellungen
     language: Sprache
     zoom: Schriftgröße
     zoom_normal: Normal
     zoom_small: Klein
     zoom_tiny: Sehr klein
     size_and_position: Größe und Position des Fensters
+    model_settings: Modelleinstellungen
+    length_unit: Längeneinheit
+    mass_unit: Masseneinheit
+    currency_symbol: Währungszeichen
   about:
     label: Über
     title: Über

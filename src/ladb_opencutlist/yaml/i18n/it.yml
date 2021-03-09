@@ -34,11 +34,13 @@ default:
   by: da
   date_format: "d/m/Y G:i"
   date_format_short: d/m/Y
-  unit_0: Pollici
-  unit_1: Piedi
-  unit_2: Millimetri
-  unit_3: Centimetri
-  unit_4: Metri
+  unit_0: Pollice
+  unit_1: Piede
+  unit_2: Millimetro
+  unit_3: Centimetro
+  unit_4: Metro
+  unit_mass_0: Chilogrammo
+  unit_mass_1: Libbra
   part_single: pezzo
   part_plural: pezzi
   setup_model_units: Impostare l'unita di misura del modello
@@ -124,6 +126,8 @@ core:
     tooltip:
       save_to: "Impostazioni **\"{{ name }}\"** aggiornate"
       delete: "Elimina le impostazioni **\"{{ name }}\"**"
+  progress:
+    please_wait: Per favore aspetta
 tab:
   cutlist:
     label: Parti
@@ -177,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Modifica le proprietà di un gruppo di oggetti
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Espandi / Riduci
       material_origin_1: Il materiale di questa parte è definita nella varie occorrenze
       material_origin_2: Il materiale di questa parte è definita in uno dei suoi genitori
@@ -187,6 +192,7 @@ tab:
       number_generated: Il numero di questa parte è generato automaticamente
       resized: Questa parte è stata ridimensionata rispetto alla definizione del suo componente
       flipped: Questa parte è specchiata rispetto alla definizione del suo componente
+      symmetrical: Questo pezzo è simmetrico
       auto_oriented: Questa parte è stata automaticamente re-orientata
       add_label_filter: "Filtro su '{{ label }}'"
       remove_label_filter: "Rimuovi filtro su '{{ label }}'"
@@ -199,7 +205,7 @@ tab:
       children_size_increase: "Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate"
       invalid_final_area: "Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida"
       invalid_final_area_plural: "Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida"
-      is_dynamic_attributes_name: La descrizione di questa parte e estratta dall'attributo 'Nome' del componente dinamico
+      is_dynamic_attributes_name: La descrizione di questa parte e estratta dall'attributo 'Name' del componente dinamico
       size_increased: "Dimensione maggiorata di {{ value }}"
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
@@ -211,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: Fare doppio-click qui per duplicare questo valore su tutti gli altri lati
       part_axes: Assi interni della parte
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
+      setup_group_cuttingdiagram: "Configura il chema di taglio '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Mostra tutti i gruppi
       hide_all_other_groups: Nascondi gli altri gruppi
@@ -221,7 +228,7 @@ tab:
       group_numbers_reset: Ricomincia la numerazione delle parti di questo gruppo
       group_cuttingdiagram: Schema di taglio
       group_labels: Stampa etichette
-      edit_material: "Modifica materiale '{{ material }}'..."
+      edit_material: "Modifica materiale '{{ material_name }}'"
       expand_all: Espandi le parti identiche
       collapse_all: Collassa le parti identiche
     edit_part:
@@ -238,8 +245,26 @@ tab:
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
-      unit_price: Prezzo per unità
-      unit_mass: Massa unitaria
+      price: Prezzo
+      mass: Massa
+      tags: Tags
+      tags_help: |
+        Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
+        Puoi aggiungere tutti gli elementi chiave che siano congruenti.
+        La distinta puo essere filtrata mediante la lista degli elementi chiave.
+      tags_multiple_info: Sono visibili solo i tag comuni
+      orientation: Orientamento
+      orientation_locked_on_axis: Blocca l'orientamento sugli assi
+      orientation_locked_on_axis_help: |
+        Se questa opzione è selezionata, la funzione *Orientamento automatico* non ha effetto su questa parte,
+
+        di conseguenza, nel sistema di coordinate locali:
+        - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
+        - *larghezza* è sull'asse <span style='color:green'>verde</span>
+        - *spessore* è sull'asse <span style='color:blue'>blu</span>
+      symmetrical: Il pezzo è symmetrico
+      symmetrical_help: |
+        Se questa casella è selezionata, il rilevamento della *parte specchiata* non avrà alcun effetto su questa parte.
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.
@@ -250,21 +275,6 @@ tab:
       width_increase_help: Il sovramateriale viene applicato alla larghezza reale per definire la **larghezza semilavorata**.
       thickness_increase: Sovramateriale sullo spessore
       thickness_increase_help: Il sovramateriale viene applicato allo spessore per calcolare lo **spessore semilavorato**.
-      orientation: Orientamento
-      orientation_locked_on_axis: Blocca l'orientamento sugli assi
-      orientation_locked_on_axis_help: |
-        Se questa opzione è selezionata, la funzione *Orientamento automatico* non ha effetto su questa parte,
-
-        di conseguenza, nel sistema di coordinate locali:
-        - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
-        - *larghezza* è sull'asse <span style='color:green'>verde</span>
-        - *spessore* è sull'asse <span style='color:blue'>blu</span>
-      tags: Tags
-      tags_help: |
-        Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
-        Puoi aggiungere tutti gli elementi chiave che siano congruenti.
-        La distinta puo essere filtrata mediante la lista degli elementi chiave.
-      tags_multiple_info: Sono visibili solo i tag comuni
       axes: Assi
       axes_help: Modifica le dimensioni in modo da farle coincidere agli assi (colori) della parte.
       axes_tip: |
@@ -367,8 +377,6 @@ tab:
       title: Esporta in formato CSV
       info_0: |
         Con questa funzione si può esportare il *resoconto* in un file formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
-      info_1: |
-        *Le parti contenute nei gruppi nascosti non saranno esportate*
       options: Opzioni di esportazione
       option_source: Sorgente
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,8 +414,30 @@ tab:
       edge_ymax: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
+      warning:
+        visible_only: "*Le parti contenute nei gruppi nascosti non saranno esportate*."
     report:
-      label: Resoconto
+      title: Resoconto
+      info_0: |-
+        Questa funzionalità permette di generare un report delle **masse** e **costi** delle **materie prime** necessarie per la produzione delle parti del *elenco parti*.
+      options_general: Generale
+      option_solid_wood_coefficient: Coefficiente *Tavole*
+      option_solid_wood_coefficient_help: Utilizzato per indicare il coefficiente di moltiplicazione applicato al volume lordo misurato per materiali di tipo "**Tavole**".
+      raw_materials: Materiali grezzi
+      coefficient: Coefficiente
+      total: Totale
+      total_mass: Σ Masse
+      total_cost: Σ Costi
+      total_count: Qtà
+      total_volume: Σ Volumi
+      total_area: Σ Aree
+      total_length: Σ Lunghezze
+      error:
+        no_typed_material_parts: Nessuna parte del modello ha materiale con un tipo definito.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
+      warning:
+        visible_only: Solo le parti contenute nei **gruppi visibili** sono pubblicati.
     cuttingdiagram:
       title: Schema di taglio
       options_material: Materiale
@@ -703,6 +733,11 @@ tab:
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
       volumic_mass: Massa volumica
+      volumic_mass_help: Permette di definire la densità (massa volumetrica) del materiale.
+      std_prices: Prezzo
+      std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
+      std_prices_dim_placeholder: Scegli una taglia
+      std_prices_add: Aggiungi prezzo
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)
@@ -886,12 +921,17 @@ tab:
   settings:
     label: Preferenze
     title: Preferenze
+    global_settings: Preferenze globali
     language: Lingua
     zoom: Dimensione del carattere
     zoom_normal: Normale
     zoom_small: Piccolo
     zoom_tiny: Minuscolo
     size_and_position: Dimensione e posizione della finestra
+    model_settings: Preferenze del modello
+    length_unit: Unità di lunghezza
+    mass_unit: Unità di massa
+    currency_symbol: Simbolo di valuta
   about:
     label: Info su
     title: Info su

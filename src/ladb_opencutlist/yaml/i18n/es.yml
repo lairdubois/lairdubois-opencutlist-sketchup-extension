@@ -34,11 +34,13 @@ default:
   by: por
   date_format: "d/m/Y g:ia"
   date_format_short: d/m/Y
-  unit_0: Pulgadas
-  unit_1: Pies
-  unit_2: Milimetros
-  unit_3: Centimetros
-  unit_4: Metros
+  unit_0: Pulgada
+  unit_1: Pie
+  unit_2: Milimetro
+  unit_3: Centimetro
+  unit_4: Metro
+  unit_mass_0: Kilogramo
+  unit_mass_1: Libra
   part_single: parte
   part_plural: partes
   setup_model_units: Configurar las unidades del modelo
@@ -124,6 +126,8 @@ core:
     tooltip:
       save_to: "Actualizar la configuración de '{{ name }}'"
       delete: "Eliminar la configuración '{{ name }}'"
+  progress:
+    please_wait: "Por favor, espere"
 tab:
   cutlist:
     label: Partes
@@ -177,6 +181,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Editar las propiedades del grupo de piezas
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Desplegar / Plegar
       material_origin_1: El material de esta pieza se define en sus instancias
       material_origin_2: El material de esta pieza se hereda de uno de sus elementos principales
@@ -187,6 +192,7 @@ tab:
       number_generated: El número de esta parte se genera automáticamente
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
+      symmetrical: Esta pieza es simétrica
       auto_oriented: Esta parte se ha reorientado automáticamente
       add_label_filter: "Filtrado en '{{ label }}'"
       remove_label_filter: "Elimina el filtrado en '{{ label }}'"
@@ -199,7 +205,7 @@ tab:
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
       invalid_final_area: "Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida"
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
-      is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Nombre' del componente dinámico
+      is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Name' del componente dinámico
       size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
@@ -211,6 +217,7 @@ tab:
       dblclick_to_copy_all_edges: Haga doble clic aquí para duplicar este valor en todos los demás bordes
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
+      setup_group_cuttingdiagram: "Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Mostrar todos los grupos
       hide_all_other_groups: Ocultar todos los demás grupos
@@ -221,7 +228,7 @@ tab:
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
       group_labels: Imprimir etiquetas
-      edit_material: "Editar material '{{ material }}'..."
+      edit_material: "Editar material '{{ material_name }}'"
       expand_all: Despliegue las partes similares
       collapse_all: Doblar las partes similares
     edit_part:
@@ -238,8 +245,26 @@ tab:
       cumulable_0: No sumable
       cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
-      unit_price: Precio por unidad
-      unit_mass: Unidad de masa
+      price: Premio
+      mass: Masa
+      tags: Etiquetas
+      tags_help: |
+        Con las *etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
+        Puede agregar tantas etiquetas como desees.
+        Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
+      tags_multiple_info: Solo se muestran las etiquetas comunes
+      orientation: Orientaciónion
+      orientation_locked_on_axis: Bloquear orientación en ejes
+      orientation_locked_on_axis_help: |
+        Si se selecciona esta opción, la opción *Orientación automática de piezas* no tendrá ningún efecto en esta pieza,
+
+        por lo tanto, en el sistema de coordenadas local:
+        - la *longitud* está en el eje <span style='color:red'>rojo</span>
+        - el *ancho* está en el eje <span style='color:green'>verde</span>
+        - el *espesor* está en el eje <span style='color:blue'>azul</span>.
+      symmetrical: La pieza es simétrica
+      symmetrical_help: |
+        Si esta casilla está marcada, la detección de *pieza espejo* no tendrá efecto sobre esta pieza.
       size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
@@ -250,21 +275,6 @@ tab:
       width_increase_help: El tamaño sobremedida se aplica al ancho real para definir el **ancho bruto**.
       thickness_increase: Espesor sobremedida
       thickness_increase_help: Se aplica sobredimensionado al espesor real para definir el **espesor bruto**.
-      orientation: Orientaciónion
-      orientation_locked_on_axis: Bloquear orientación en ejes
-      orientation_locked_on_axis_help: |
-        Si se selecciona esta opción, la opción *Orientación automática de piezas* no tendrá ningún efecto en esta pieza,
-
-        por lo tanto, en el sistema de coordenadas local:
-        - la *longitud* está en el eje <span style='color:red'>rojo</span>
-        - el *ancho* está en el eje <span style='color:green'>verde</span>
-        - el *espesor* está en el eje <span style='color:blue'>azul</span>.
-      tags: Etiquetas
-      tags_help: |
-        Con las *etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
-        Puede agregar tantas etiquetas como desees.
-        Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
-      tags_multiple_info: Solo se muestran las etiquetas comunes
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -367,8 +377,6 @@ tab:
       title: Exportar en formato CSV
       info_0: |
         Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
-      info_1: |
-        *Las piezas dentro de grupos ocultos de su lista de piezas no se exportarán*.
       options: Opciones de exportación
       option_source: Fuente
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -406,8 +414,30 @@ tab:
       edge_ymax: Longitud de borde 2
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
+      warning:
+        visible_only: "*Las piezas dentro de grupos ocultos de su lista de piezas no se exportarán*."
     report:
-      label: Reporte
+      title: Reporte
+      info_0: |
+        Esta función le permite generar un informe de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
+      options_general: General
+      option_solid_wood_coefficient: Coeficiente *Madera maciza*
+      option_solid_wood_coefficient_help: Se utiliza para indicar el coeficiente multiplicador aplicado al volumen bruto medido para los materiales de tipo "**Madera maciza**".
+      raw_materials: Materias primas
+      coefficient: Coeficiente
+      total: Total
+      total_mass: Σ Masas
+      total_cost: Σ Costos
+      total_count: Cant.
+      total_volume: Σ Volúmenes
+      total_area: Σ Areas
+      total_length: Σ Longitudes
+      error:
+        no_typed_material_parts: Ninguna parte de su modelo tiene material con un tipo definido.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
+      warning:
+        visible_only: Sólo se cuentan las piezas contenidas en los **grupos visibles**.
     cuttingdiagram:
       title: Diagrama de corte
       options_material: Material
@@ -703,6 +733,11 @@ tab:
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
       volumic_mass: Densidad
+      volumic_mass_help: Le permite definir la densidad del material.
+      std_prices: Premio
+      std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
+      std_prices_dim_placeholder: Elige una talla
+      std_prices_add: Añade un premio
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
@@ -886,12 +921,17 @@ tab:
   settings:
     label: Preferencias
     title: Preferencias
+    global_settings: Preferencias Globales
     language: Idioma
     zoom: Tamaño de letra
     zoom_normal: Normal
     zoom_small: Pequeño
     zoom_tiny: Minúsculo
     size_and_position: Tamaño y posición de la ventana
+    model_settings: Preferencias del modelo
+    length_unit: Unidad de longitud
+    mass_unit: Unidad de masa
+    currency_symbol: Símbolo de moneda
   about:
     label: Acerca de
     title: Acerca de
@@ -919,7 +959,7 @@ tab:
     credits_thanks: |
       Un agradecimiento especial para:
       - [JetBrains](https://www.jetbrains.com) por su apoyo a este proyecto mediante su [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex] (https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
+      - [Transifex](https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
 tool:
   highlight:
     transparency: Transparencia

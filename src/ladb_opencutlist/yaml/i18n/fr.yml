@@ -34,13 +34,13 @@ default:
   by: par
   date_format: d/m/Y G:i
   date_format_short: d/m/Y
-  unit_0: Pouces
-  unit_1: Pieds
-  unit_2: Millimètres
-  unit_3: Centimètres
-  unit_4: Mètres
-  unit_mass_0: Kilogrammes
-  unit_mass_1: Livres
+  unit_0: Pouce
+  unit_1: Pied
+  unit_2: Millimètre
+  unit_3: Centimètre
+  unit_4: Mètre
+  unit_mass_0: Kilogramme
+  unit_mass_1: Livre
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer l'unité du modèle
@@ -112,7 +112,7 @@ core:
     user_defaults: Mon préréglage par défaut
     new: Nouveau préréglage
     new_prompt: |
-      *La création d'un préréglage personnalisé vous permet conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutilisés ensuite dans tous vos modèles.*
+      *La création d'un préréglage personnalisé vous permet de conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutiliser ensuite dans tous vos modèles.*
 
       Saisissez le nom du préréglage :
     delete_confirm_title: Suppression
@@ -228,7 +228,7 @@ tab:
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
-      edit_material: Éditer la matière '{{ material_name }}'
+      edit_material: Éditer la matière '{{ material }}'...
       expand_all: Déplier toutes les pièces identiques
       collapse_all: Replier toutes les pièces identiques
     edit_part:
@@ -729,7 +729,7 @@ tab:
       grained_0: Pas de fil
       grained_1: Le fil suit la longueur
       edge_decremented: Reduction
-      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduite de l'épaisseur des chants.
+      edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
       volumic_mass: Masse volumique
