@@ -17,6 +17,11 @@ module Ladb::OpenCutList
       return unit, val
     end
 
+    def self.split_unit(str)
+      return [] unless str.is_a?(String)
+      str.split('_')
+    end
+
     # -----
 
     # Convert strippedname unit string to readable unit representation
@@ -24,7 +29,7 @@ module Ladb::OpenCutList
     # Output format : kg / m³
     def self.format_readable_unit(s_unit)
       return '' unless s_unit.is_a?(String)
-      s_unit.split('_').map { |unit_strippedname|
+      split_unit(s_unit).map { |unit_strippedname|
 
         case unit_strippedname
 

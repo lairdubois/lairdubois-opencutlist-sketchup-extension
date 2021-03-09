@@ -262,7 +262,7 @@ module Ladb::OpenCutList
       h_mass = definition_attributes.h_mass
       unless h_mass[:val] == 0
         report_entry_part_def.mass = h_mass
-        report_entry_part_def.total_mass = _uv_mass_to_model_unit(h_mass[:unit].split('_')[0], h_mass[:val]) * cutlist_part.def.count
+        report_entry_part_def.total_mass = _uv_mass_to_model_unit(UnitUtils.split_unit(h_mass[:unit]).first, h_mass[:val]) * cutlist_part.def.count
         report_entry_def.total_mass = report_entry_def.total_mass + report_entry_part_def.total_mass
       end
 
