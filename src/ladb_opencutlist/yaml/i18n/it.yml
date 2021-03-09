@@ -378,6 +378,7 @@ tab:
       info_0: |
         Con questa funzione si può esportare il *resoconto* in un file formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
       options: Opzioni di esportazione
+      options_customize: Nome del modello
       option_source: Sorgente
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -619,6 +620,7 @@ tab:
         group_material_name: Nome del materiale
         group_std_dimension: Dimensioni standard
         filename: Nome del file
+        model_name: Personalizzazione
         page_label: Nome della scena
         length_unit: Unità
         generated_at: Data e ora

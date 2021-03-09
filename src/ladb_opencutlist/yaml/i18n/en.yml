@@ -228,7 +228,7 @@ tab:
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       group_labels: Print labels
-      edit_material: "Edit material '{{ material_name }}'"
+      edit_material: "Edit the material '{{ material_name }}'"
       expand_all: Unfold similar parts
       collapse_all: Fold similar parts
     edit_part:
@@ -264,7 +264,7 @@ tab:
         - *thickness* on the <span style='color:blue'>blue</span> axis
       symmetrical: The part is symmetrical
       symmetrical_help: |
-        If this box is checked, the detection of *mirrored part* will have no effect on this part.
+        If this box is checked, the detection of a *mirrored part* will have no effect on this part.
       size_increase: Oversizes
       size_increase_help: |
         Oversizes allow you to increase the dimensions of a single part.
@@ -378,6 +378,7 @@ tab:
       info_0: |
         With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       options: Export Options
+      options_customize: Customization
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -437,7 +438,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
-        visible_only: Only the parts contained in the **visible groups** are counted.
+        visible_only: Only the parts contained in the **visible groups** are considered.
     cuttingdiagram:
       title: Cutting Diagram
       options_material: Material
@@ -619,6 +620,7 @@ tab:
         group_material_name: Material name
         group_std_dimension: Standard dimensions
         filename: Filename
+        model_name: Model name
         page_label: Scene name
         length_unit: Unit
         generated_at: Date and time

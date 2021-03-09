@@ -378,6 +378,7 @@ tab:
       info_0: |
         Pomocí této funkce můžete exportovat *seznam dílců* do [CSV](https://cs.wikipedia.org/wiki/CSV) souboru.
       options: Možnosti exportu
+      options_customize: Přizpůsobení
       option_source: Zdroj
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -619,6 +620,7 @@ tab:
         group_material_name: Název materiálu
         group_std_dimension: Standardní rozměry
         filename: Název souboru
+        model_name: Jméno modelu
         page_label: Název scény
         length_unit: Jednotka
         generated_at: Datum a čas

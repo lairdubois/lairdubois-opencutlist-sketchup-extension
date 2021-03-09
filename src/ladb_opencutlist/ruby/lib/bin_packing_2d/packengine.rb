@@ -375,7 +375,15 @@ module Ladb::OpenCutList::BinPacking2D
         @bins << new_bin
       end
       @boxes, @invalid_boxes = @boxes.partition { |box| box.fits_into?(@max_length_bin, @max_width_bin) }
-      !@bins.empty? && !@boxes.empty?
+      if @boxes.empty?
+        @errors << ERROR_NO_PLACEMENT_POSSIBLE
+        return false
+      end
+      if @bins.empty?
+        @errors << ERROR_NO_BIN
+        return false
+      end
+      true
     end
 
     #
@@ -386,8 +394,7 @@ module Ladb::OpenCutList::BinPacking2D
       return nil, @errors[0] if !valid_input? && @errors.size > 0
 
       if !bins_available?
-        @errors << ERROR_NO_BIN
-        return nil, ERROR_NO_BIN
+        return nil, @errors.first
       end
 
       case @options.optimization
@@ -399,7 +406,7 @@ module Ladb::OpenCutList::BinPacking2D
         @nb_best_selection = BEST_X_SMALL if @boxes.size < MAX_BOXES_TIME
       else
         @errors << ERROR_INVALID_INPUT
-        return [nil, ERROR_INVALID_INPUT]
+        return nil, @errors.first
       end
 
       # Use this to run exactly one signature
@@ -413,7 +420,7 @@ module Ladb::OpenCutList::BinPacking2D
         packers = pack(nil, signatures)
         if packers.empty?
           @errors << ERROR_NO_PLACEMENT_POSSIBLE
-          return [nil, ERROR_NO_PLACEMENT_POSSIBLE]
+          return nil, @errors.first
         end
 
         while !packings_done?(packers)
@@ -430,12 +437,12 @@ module Ladb::OpenCutList::BinPacking2D
         # TODO: packengine timeout error, we should return the best solution found so far
         # but this is dangerous, since it can lead to different versions.
         @errors << ERROR_TIMEOUT
-        return [nil, ERROR_TIMEOUT]
+        return nil, @errors.first
       rescue Packing2DError => e
         puts ("Rescued in PackEngine: #{e.inspect}")
         puts e.backtrace
         @errors << ERROR_BAD_ERROR
-        return [nil, ERROR_TIMEOUT]
+        return nil, @errors.first
       end
 
       # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
@@ -451,7 +458,8 @@ module Ladb::OpenCutList::BinPacking2D
       # last_packings is an array of 1-3 packings! depending on the BEST_X in options.rb.
       # For now, just returning the "best" one.
       # WARNING: Packers, essentially a list of packed Bins containers, are NOT sorted by efficiency!
-      [opt, ERROR_NONE]
+      @errors << ERROR_NONE
+      return opt, @errors.first
     end
   end
 end

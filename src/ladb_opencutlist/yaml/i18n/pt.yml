@@ -378,6 +378,7 @@ tab:
       info_0: |
         Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       options: Opções de exportação
+      options_customize: Nome do modelo
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -619,6 +620,7 @@ tab:
         group_material_name: Nome do material
         group_std_dimension: Dimensões padrão
         filename: Nome do arquivo
+        model_name: Costumização
         page_label: Nome da cena
         length_unit: Unidades
         generated_at: Data e hora
