@@ -80,7 +80,7 @@ module Ladb::OpenCutList
 
       # Retrieve model infos
       length_unit = DimensionUtils.instance.length_unit
-      mass_unit_strippedname = MassUtils.instance.get_symbol
+      mass_unit_strippedname = MassUtils.instance.get_strippedname
       currency_symbol = PriceUtils.instance.get_symbol
       dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''

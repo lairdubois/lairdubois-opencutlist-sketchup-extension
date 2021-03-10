@@ -152,7 +152,7 @@
         var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
 
         var fnFetchOptions = function (options) {
-            options.mass_unit = $selectMassUnit.selectpicker('val');
+            options.mass_unit = parseInt($selectMassUnit.selectpicker('val'));
             options.currency_symbol = $inputCurrencySymbol.val();
         };
         var fnFillInputs = function (options) {
