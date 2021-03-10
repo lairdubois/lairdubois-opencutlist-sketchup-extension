@@ -12,11 +12,11 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("settings_dialog_settings") do |settings|
         dialog_settings_command(settings)
       end
-      Plugin.instance.register_command('settings_set_length_unit') do |params|
-        set_length_unit_command(params)
+      Plugin.instance.register_command('settings_set_length_settings') do |params|
+        set_length_settings_command(params)
       end
-      Plugin.instance.register_command('settings_get_length_unit') do |params|
-        get_length_unit_command
+      Plugin.instance.register_command('settings_get_length_settings') do |params|
+        get_length_settings_command
       end
 
     end
@@ -42,18 +42,26 @@ module Ladb::OpenCutList
 
     end
 
-    def set_length_unit_command(params)
-      length_unit = params['length_unit'].to_i
+    def set_length_settings_command(params)
+      length_unit = params['length_unit']
+      length_format = params['length_format']
+      length_precision = params['length_precision']
 
       model = Sketchup.active_model
-      model.options['UnitsOptions']['LengthUnit'] = length_unit if model
+      if model
+        model.options['UnitsOptions']['LengthUnit'] = length_unit unless length_unit.nil?
+        model.options['UnitsOptions']['LengthFormat'] = length_format unless length_format.nil?
+        model.options['UnitsOptions']['LengthPrecision'] = length_precision unless length_precision.nil?
+      end
 
     end
 
-    def get_length_unit_command
+    def get_length_settings_command
       model = Sketchup.active_model
       {
-          :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES
+          :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES,
+          :length_format => model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL,
+          :length_precision => model ? model.options['UnitsOptions']['LengthPrecision'] : 0,
       }
     end
 

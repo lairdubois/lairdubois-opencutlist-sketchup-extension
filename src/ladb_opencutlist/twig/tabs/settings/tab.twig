@@ -68,31 +68,63 @@
         <div class="col-xs-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {% include 'components/_widget-preset.twig' with { 'top':10, 'right':25 } %}
                     <strong>{{ 'tab.settings.model_settings'|i18next }}</strong>
                 </div>
                 <div class="panel-body">
-                    <div class="form-group">
-                        <label>{{ 'tab.settings.length_unit'|i18next }}</label>
-                        <select id="ladb_model_select_length_unit" class="form-control">
-                            <option data-content="{{ 'default.unit_0'|i18next }}">0</option>
-                            <option data-content="{{ 'default.unit_1'|i18next }}">1</option>
-                            <option data-content="{{ 'default.unit_2'|i18next }}">2</option>
-                            <option data-content="{{ 'default.unit_3'|i18next }}">3</option>
-                            <option data-content="{{ 'default.unit_4'|i18next }}">4</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ 'tab.settings.mass_unit'|i18next }}</label>
-                        <select id="ladb_model_select_mass_unit" class="form-control">
-                            <option data-content="{{ 'default.unit_mass_0'|i18next }}">0</option>
-                            <option data-content="{{ 'default.unit_mass_1'|i18next }}">1</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ 'tab.settings.currency_symbol'|i18next }}</label>
-                        <input id="ladb_model_input_currency_symbol" class="form-control">
-                    </div>
+                    <section class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.length_unit'|i18next }}</label>
+                                <select id="ladb_model_select_length_unit" class="form-control">
+                                    <option data-content="{{ 'default.unit_0'|i18next }}">0</option>
+                                    <option data-content="{{ 'default.unit_1'|i18next }}">1</option>
+                                    <option data-content="{{ 'default.unit_2'|i18next }}">2</option>
+                                    <option data-content="{{ 'default.unit_3'|i18next }}">3</option>
+                                    <option data-content="{{ 'default.unit_4'|i18next }}">4</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.length_format'|i18next }}</label>
+                                <select id="ladb_model_select_length_format" class="form-control">
+                                    <option data-content="{{ 'tab.settings.length_format_0'|i18next }}">0</option>
+                                    <option data-content="{{ 'tab.settings.length_format_1'|i18next }}">1</option>
+                                    <option data-content="{{ 'tab.settings.length_format_2'|i18next }}">2</option>
+                                    <option data-content="{{ 'tab.settings.length_format_3'|i18next }}">3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.length_precision'|i18next }}</label>
+                                <select id="ladb_model_select_length_precision" class="form-control">
+                                    <option data-content="<span class='length-unit-decimal'>0</span><span class='length-unit-fractional'>0</span>">0</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.0</span><span class='length-unit-fractional'>1/2</span>">1</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.00</span><span class='length-unit-fractional'>1/4</span>">2</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.000</span><span class='length-unit-fractional'>1/8</span>">3</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.0000</span><span class='length-unit-fractional'>1/16</span>">4</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.00000</span><span class='length-unit-fractional'>1/32</span>">5</option>
+                                    <option data-content="<span class='length-unit-decimal'>0.000000</span><span class='length-unit-fractional'>1/64</span>">6</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+                    <hr>
+                    <section style="position: relative;">
+                        {% include 'components/_widget-preset.twig' with { 'top':0, 'right':0 } %}
+                        <div class="form-group">
+                            <label>{{ 'tab.settings.mass_unit'|i18next }}</label>
+                            <select id="ladb_model_select_mass_unit" class="form-control">
+                                <option data-content="{{ 'default.unit_mass_0'|i18next }}">0</option>
+                                <option data-content="{{ 'default.unit_mass_1'|i18next }}">1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ 'tab.settings.currency_symbol'|i18next }}</label>
+                            <input id="ladb_model_input_currency_symbol" class="form-control">
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

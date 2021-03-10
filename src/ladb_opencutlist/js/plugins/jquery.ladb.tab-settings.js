@@ -144,10 +144,13 @@
         // Model Settings /////
 
         var modelSettings = {};
+        var modelLengthFormat = 0;
 
         // Fetch UI elements
         var $widgetPreset = $('.ladb-widget-preset', that.$element);
         var $selectLengthUnit = $('#ladb_model_select_length_unit', that.$element);
+        var $selectLengthFormat = $('#ladb_model_select_length_format', that.$element);
+        var $selectLengthPrecision = $('#ladb_model_select_length_precision', that.$element);
         var $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
         var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
 
@@ -159,12 +162,26 @@
             $selectMassUnit.selectpicker('val', options.mass_unit);
             $inputCurrencySymbol.val(options.currency_symbol);
         };
-        var retrieveModelOptions = function () {
+        var fnAdaptLengthPrecisionToFormat = function () {
+            if (modelLengthFormat > 0 /* DECIMAL */) {
+                $('.length-unit-decimal', that.$element).hide();
+                $('.length-unit-fractional', that.$element).show();
+            } else {
+                $('.length-unit-decimal', that.$element).show();
+                $('.length-unit-fractional', that.$element).hide();
+            }
+        }
+        var fnRetrieveModelOptions = function () {
 
             // Retrieve SU options
-            rubyCallCommand('settings_get_length_unit', null, function (response) {
+            rubyCallCommand('settings_get_length_settings', null, function (response) {
 
                 $selectLengthUnit.selectpicker('val', response.length_unit);
+                $selectLengthFormat.selectpicker('val', response.length_format);
+                $selectLengthPrecision.selectpicker('val', response.length_precision);
+
+                modelLengthFormat = response.length_format;
+                fnAdaptLengthPrecisionToFormat(modelLengthFormat);
 
             });
 
@@ -197,27 +214,50 @@
             }
         });
         $selectLengthUnit.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLengthFormat.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLengthPrecision.selectpicker(SELECT_PICKER_OPTIONS);
         $selectMassUnit.selectpicker(SELECT_PICKER_OPTIONS);
 
-        retrieveModelOptions();
+        fnRetrieveModelOptions();
 
         // Bind input & select
-        $selectLengthUnit.on('change', function () {
-            var lengthUnit = $selectLengthUnit.selectpicker('val');
+        $selectLengthUnit
+            .on('change', function () {
+                var lengthUnit = parseInt($selectLengthUnit.selectpicker('val'));
 
-            rubyCallCommand('settings_set_length_unit', { length_unit: lengthUnit });
+                rubyCallCommand('settings_set_length_settings', {length_unit: lengthUnit});
 
-        });
+            })
+        ;
+        $selectLengthFormat
+            .on('change', function () {
+                var lengthFormat = parseInt($selectLengthFormat.selectpicker('val'));
+
+                rubyCallCommand('settings_set_length_settings', {length_format: lengthFormat});
+
+            })
+        ;
+        $selectLengthPrecision
+            .on('change', function () {
+                var lengthPrecision = parseInt($selectLengthPrecision.selectpicker('val'));
+
+                rubyCallCommand('settings_set_length_settings', {length_precision: lengthPrecision});
+
+            })
+            .on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                fnAdaptLengthPrecisionToFormat(modelLengthFormat);
+            })
+        ;
         $selectMassUnit.on('change', fnSaveOptions);
         $inputCurrencySymbol.on('change', fnSaveOptions);
 
         // Events
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
-            retrieveModelOptions();
+            fnRetrieveModelOptions();
         });
         addEventCallback('on_options_provider_changed', function (params) {
-            retrieveModelOptions();
+            fnRetrieveModelOptions();
         });
 
     };
