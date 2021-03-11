@@ -1171,6 +1171,7 @@ module Ladb::OpenCutList
           :locale => Sketchup.get_locale,
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
+          :decimal_separator => DimensionUtils.instance.decimal_separator,
           :html_dialog_compatible => html_dialog_compatible,
           :manifest => @manifest,
           :update_available => @update_available,

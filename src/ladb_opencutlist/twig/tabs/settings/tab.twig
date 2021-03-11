@@ -39,7 +39,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group hide">
                         <label>{{ 'tab.settings.zoom'|i18next }}</label>
                         <select id="ladb_select_zoom" class="form-control"{% if not compatible_with('body.zoom') %} disabled{% endif %}>
                             <option value="100%">{{ 'tab.settings.zoom_normal'|i18next }}</option>
@@ -100,12 +100,12 @@
                                 <label>{{ 'tab.settings.length_precision'|i18next }}</label>
                                 <select id="ladb_model_select_length_precision" class="form-control">
                                     <option data-content="<span class='length-unit-decimal'>0</span><span class='length-unit-fractional'>0</span>">0</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.0</span><span class='length-unit-fractional'>1/2</span>">1</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.00</span><span class='length-unit-fractional'>1/4</span>">2</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.000</span><span class='length-unit-fractional'>1/8</span>">3</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.0000</span><span class='length-unit-fractional'>1/16</span>">4</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.00000</span><span class='length-unit-fractional'>1/32</span>">5</option>
-                                    <option data-content="<span class='length-unit-decimal'>0.000000</span><span class='length-unit-fractional'>1/64</span>">6</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}0</span><span class='length-unit-fractional'>1/2</span>">1</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}00</span><span class='length-unit-fractional'>1/4</span>">2</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}000</span><span class='length-unit-fractional'>1/8</span>">3</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}0000</span><span class='length-unit-fractional'>1/16</span>">4</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}00000</span><span class='length-unit-fractional'>1/32</span>">5</option>
+                                    <option data-content="<span class='length-unit-decimal'>0{{ capabilities.decimal_separator }}000000</span><span class='length-unit-fractional'>1/64</span>">6</option>
                                 </select>
                             </div>
                         </div>

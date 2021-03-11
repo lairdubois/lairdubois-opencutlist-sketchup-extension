@@ -35,6 +35,7 @@
             locale: options.locale,
             language: options.language,
             available_languages: options.available_languages,
+            decimal_separator: options.decimal_separator,
             html_dialog_compatible: options.html_dialog_compatible,
             manifest: options.manifest,
             update_available: options.update_available,

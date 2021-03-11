@@ -441,11 +441,11 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254
-        precision = 3
+        precision = [3, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER
       else
         multiplier = 1 / 12.0
-        precision = 2
+        precision = [2, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_FEET
       end
       UnitUtils.format_readable(f * multiplier, unit_strippedname, precision, precision)
@@ -465,7 +465,7 @@
         unit_strippedname = UNIT_STRIPPEDNAME_METER_2
       else
         multiplier = 1 / 144.0
-        precision = [2, @length_precision - 3].max
+        precision = [2, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_FEET_2
       end
       UnitUtils.format_readable(f2 * multiplier, unit_strippedname, precision, precision)
@@ -486,11 +486,11 @@
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
-          precision = [2, @length_precision - 3].max
+          precision = [2, @length_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_BOARD_FEET
         else
           multiplier = 1 / 1728.0
-          precision = [2, @length_precision - 3].max
+          precision = [2, @length_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_FEET_3
         end
       end

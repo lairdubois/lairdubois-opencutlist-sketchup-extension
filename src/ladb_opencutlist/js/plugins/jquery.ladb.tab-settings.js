@@ -92,6 +92,9 @@
         this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
 
         this.$selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
+        if (this.dialog.capabilities.dialog_zoom !== '100%') {
+            this.$selectZoom.show();
+        }
         this.$selectZoom.val(this.dialog.capabilities.dialog_zoom);
         this.$selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
 
