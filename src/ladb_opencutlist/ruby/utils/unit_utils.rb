@@ -2,24 +2,28 @@ module Ladb::OpenCutList
 
   class UnitUtils
 
+    # Separators
+    UV_SEPARATOR = ' '.freeze
+    U_SEPARATOR = '_'.freeze
+
     def self.split_unit_and_value(str)
       return nil, 0.0 unless str.is_a?(String)
       unit = nil
       val = str
       unless str.nil?
-        a = str.split(' ')
+        a = str.split(UV_SEPARATOR)
         if a.length > 1
           unit = a.last
-          val = a.slice(0, a.length - 1).join(' ')
+          val = a.slice(0, a.length - 1).join(UV_SEPARATOR)
         end
       end
-      val = val.tr(',', '.').to_f
+      val = [ 0.0, val.tr(',', '.').to_f ].max  # 0 if value < 0
       return unit, val
     end
 
     def self.split_unit(str)
       return [] unless str.is_a?(String)
-      str.split('_')
+      str.split(U_SEPARATOR)
     end
 
     # -----

@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputWithUnit = function (element, options) {
+    var LadbTextinputNumberWithUnit = function (element, options) {
         LadbTextinputAbstract.call(this, element, options, '');
 
         this.$spanUnit = null;
@@ -12,14 +12,14 @@
         this.unit = '';
 
     };
-    LadbTextinputWithUnit.prototype = new LadbTextinputAbstract;
+    LadbTextinputNumberWithUnit.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputWithUnit.DEFAULTS = {
+    LadbTextinputNumberWithUnit.DEFAULTS = {
         defaultUnit: '',
         units: {}
     };
 
-    LadbTextinputWithUnit.prototype.reset = function () {
+    LadbTextinputNumberWithUnit.prototype.reset = function () {
 
         this.unit = this.options.defaultUnit;
         this.$spanUnit.html(this.getUnitLabel(this.unit));
@@ -27,7 +27,7 @@
         LadbTextinputAbstract.prototype.reset.call(this);
     };
 
-    LadbTextinputWithUnit.prototype.val = function (value) {
+    LadbTextinputNumberWithUnit.prototype.val = function (value) {
         if (value === undefined) {
             var val = this.$element.val();
             return val ? val + ' ' + this.unit : '';
@@ -52,7 +52,7 @@
 
     /////
 
-    LadbTextinputWithUnit.prototype.getUnitLabel = function (unit) {
+    LadbTextinputNumberWithUnit.prototype.getUnitLabel = function (unit) {
         var label = '';
         $.each(this.options.units, function (index, unitGroup) {
             if (unitGroup[unit]) {
@@ -63,7 +63,7 @@
         return label;
     };
 
-    LadbTextinputWithUnit.prototype.appendLeftTools = function ($toolContainer) {
+    LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolContainer) {
         var that = this;
 
         var $span = $('<span />')
@@ -100,13 +100,30 @@
 
     };
 
-    LadbTextinputWithUnit.prototype.init = function () {
+    LadbTextinputNumberWithUnit.prototype.init = function () {
         LadbTextinputAbstract.prototype.init.call(this);
+        var that = this;
 
         var value = this.$element.val();
         if (!value) {
             this.reset();
         }
+
+        // Force input value to be positive decimal
+        ['input', 'keydown', 'keyup', 'mousedown', 'mouseup', 'select', 'contextmenu', 'drop'].forEach(function (event) {
+            that.$element[0].addEventListener(event, function () {
+                if (/^\d*[.,]?\d*$/.test(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty('oldValue')) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = '';
+                }
+            });
+        });
 
     };
 
@@ -118,11 +135,11 @@
         var value;
         var elements = this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.textinputWithUnit');
-            var options = $.extend({}, LadbTextinputWithUnit.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var data = $this.data('ladb.textinputNumberWithUnit');
+            var options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option == 'object' && option);
 
             if (!data) {
-                $this.data('ladb.textinputWithUnit', (data = new LadbTextinputWithUnit(this, options)));
+                $this.data('ladb.textinputNumberWithUnit', (data = new LadbTextinputNumberWithUnit(this, options)));
             }
             if (typeof option == 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -133,17 +150,17 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputWithUnit;
+    var old = $.fn.ladbTextinputNumberWithUnit;
 
-    $.fn.ladbTextinputWithUnit = Plugin;
-    $.fn.ladbTextinputWithUnit.Constructor = LadbTextinputWithUnit;
+    $.fn.ladbTextinputNumberWithUnit = Plugin;
+    $.fn.ladbTextinputNumberWithUnit.Constructor = LadbTextinputNumberWithUnit;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbTextinputWithUnit.noConflict = function () {
-        $.fn.ladbTextinputWithUnit = old;
+    $.fn.ladbTextinputNumberWithUnit.noConflict = function () {
+        $.fn.ladbTextinputNumberWithUnit = old;
         return this;
     }
 

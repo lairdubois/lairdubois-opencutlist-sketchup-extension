@@ -54,15 +54,15 @@
 
         // Bind
         $input
-            .ladbTextinputWithUnit({
+            .ladbTextinputNumberWithUnit({
                 defaultUnit: this.defaultUnit,
                 units: this.enabledUnits,
             })
-            .ladbTextinputWithUnit('val', stdPrice.val)
+            .ladbTextinputNumberWithUnit('val', stdPrice.val)
         ;
         $input
             .on('change', function () {
-                stdPrice.val = $(this).ladbTextinputWithUnit('val');
+                stdPrice.val = $(this).ladbTextinputNumberWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -72,6 +72,7 @@
             })
         ;
 
+        return $row;
     };
 
     LadbEditorStdPrices.prototype.appendPriceRowN = function (stdPrice) {
@@ -129,15 +130,15 @@
             })
         ;
         $input
-            .ladbTextinputWithUnit({
+            .ladbTextinputNumberWithUnit({
                 defaultUnit: this.defaultUnit,
                 units: this.enabledUnits,
             })
-            .ladbTextinputWithUnit('val', stdPrice.val)
+            .ladbTextinputNumberWithUnit('val', stdPrice.val)
         ;
         $input
             .on('change', function () {
-                stdPrice.val = $(this).ladbTextinputWithUnit('val');
+                stdPrice.val = $(this).ladbTextinputNumberWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -162,6 +163,7 @@
         }
         $select.selectpicker('refresh');
 
+        return $row;
     };
 
     LadbEditorStdPrices.prototype.renderRows = function () {
@@ -343,7 +345,8 @@
                 dim: ''
             }
             that.stdPrices.push(stdPrice);
-            that.appendPriceRowN(stdPrice);
+            var $row = that.appendPriceRowN(stdPrice);
+            $('input', $row).focus();
             this.blur();
         });
 

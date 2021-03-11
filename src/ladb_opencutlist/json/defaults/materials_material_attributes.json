@@ -1,13 +1,13 @@
 {
   "_preprocessors": {
-    "thickness": 1 /* PRESETS_PREPROCESSOR_D */,
-    "length_increase": 1 /* PRESETS_PREPROCESSOR_D */,
-    "width_increase": 1 /* PRESETS_PREPROCESSOR_D */,
-    "thickness_increase": 1 /* PRESETS_PREPROCESSOR_D */,
-    "std_lengths": 1 /* PRESETS_PREPROCESSOR_D */,
-    "std_widths": 1 /* PRESETS_PREPROCESSOR_D */,
-    "std_thicknesses": 1 /* PRESETS_PREPROCESSOR_D */,
-    "std_sections": 3 /* PRESETS_PREPROCESSOR_DXD */,
+    "thickness": 1, /* PRESETS_PREPROCESSOR_D */
+    "length_increase": 1, /* PRESETS_PREPROCESSOR_D */
+    "width_increase": 1, /* PRESETS_PREPROCESSOR_D */
+    "thickness_increase": 1, /* PRESETS_PREPROCESSOR_D */
+    "std_lengths": 1, /* PRESETS_PREPROCESSOR_D */
+    "std_widths": 1, /* PRESETS_PREPROCESSOR_D */
+    "std_thicknesses": 1, /* PRESETS_PREPROCESSOR_D */
+    "std_sections": 3, /* PRESETS_PREPROCESSOR_DXD */
     "std_sizes": 3 /* PRESETS_PREPROCESSOR_DXD */
   },
   "0": {  /* TYPE_UNKNOWN */

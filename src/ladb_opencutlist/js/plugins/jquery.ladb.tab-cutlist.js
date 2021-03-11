@@ -1425,13 +1425,13 @@
                 })
 
                 // Bind input
-                $inputPrice.ladbTextinputWithUnit({
+                $inputPrice.ladbTextinputNumberWithUnit({
                     defaultUnit: '$_p',
                     units: [
                         { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
                     ]
                 });
-                $inputMass.ladbTextinputWithUnit({
+                $inputMass.ladbTextinputNumberWithUnit({
                     defaultUnit: that.massUnitStrippedname + '_p',
                     units: [
                         { kg_p: 'kg / ' + i18next.t('default.part_single') },
@@ -1585,7 +1585,7 @@
                             editedParts[i].price = $inputPrice.val();
                         }
                         if ($inputMass.val() !== undefined) {
-                            editedParts[i].mass = $inputMass.ladbTextinputWithUnit('val');
+                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
