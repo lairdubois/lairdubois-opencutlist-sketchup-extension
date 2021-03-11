@@ -39,6 +39,7 @@ default:
   unit_2: Millimètre
   unit_3: Centimètre
   unit_4: Mètre
+  unit_5: Yard
   unit_mass_0: Kilogramme
   unit_mass_1: Livre
   part_single: pièce

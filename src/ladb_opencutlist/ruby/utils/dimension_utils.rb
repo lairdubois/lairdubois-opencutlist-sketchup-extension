@@ -13,6 +13,7 @@
     # Unit - just here for convenience
     INCHES        = Length::Inches
     FEET          = Length::Feet
+    YARD          = Sketchup.version_number >= 2000000000 ? Length::Yard : 5
     MILLIMETER    = Length::Millimeter
     CENTIMETER    = Length::Centimeter
     METER         = Length::Meter
@@ -20,6 +21,7 @@
     # Unit symbols
     UNIT_SYMBOL_INCHES = '"'
     UNIT_SYMBOL_FEET = "'"
+    UNIT_SYMBOL_YARD = "yd"
     UNIT_SYMBOL_METER = 'm'
     UNIT_SYMBOL_CENTIMETER = 'cm'
     UNIT_SYMBOL_MILLIMETER = 'mm'
@@ -34,6 +36,7 @@
     # Unit strippednames
     UNIT_STRIPPEDNAME_INCHES = 'in'
     UNIT_STRIPPEDNAME_FEET = "ft"
+    UNIT_STRIPPEDNAME_FEET = "yd"
     UNIT_STRIPPEDNAME_METER = 'm'
     UNIT_STRIPPEDNAME_CENTIMETER = 'cm'
     UNIT_STRIPPEDNAME_MILLIMETER = 'mm'
@@ -118,6 +121,8 @@
         return i / 0.0254
       when FEET
         return i * 12
+      when YARD
+        return i * 36
       else
         return i
       end
@@ -133,6 +138,8 @@
           return UNIT_SYMBOL_METER
         when FEET
           return UNIT_SYMBOL_FEET
+        when YARD
+          return UNIT_SYMBOL_YARD
         else
           return UNIT_SYMBOL_INCHES
       end

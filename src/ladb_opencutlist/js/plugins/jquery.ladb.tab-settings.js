@@ -191,28 +191,36 @@
             $inputCurrencySymbol.val(options.currency_symbol);
         };
         var fnAdaptLengthPrecisionToFormat = function () {
-            if (modelLengthFormat > 0 /* DECIMAL */) {
-                $('.length-unit-decimal', that.$element).hide();
-                $('.length-unit-fractional', that.$element).show();
-            } else {
+            if (modelLengthFormat === 0 /* DECIMAL */ || modelLengthFormat === 2 /* ENGINEERING */) {
                 $('.length-unit-decimal', that.$element).show();
                 $('.length-unit-fractional', that.$element).hide();
+            } else {
+                $('.length-unit-decimal', that.$element).hide();
+                $('.length-unit-fractional', that.$element).show();
             }
+        }
+        var fnFillLengthSettings = function(settings) {
+
+            $selectLengthUnit
+                .selectpicker('val', settings.length_unit)
+                .prop('disabled', settings.length_unit_disabled)
+                .selectpicker('refresh')
+            ;
+            $selectLengthFormat.selectpicker('val', settings.length_format);
+            $selectLengthPrecision.selectpicker('val', settings.length_precision);
+            $inputSuppressUnitsDisplay
+                .prop('checked', !settings.suppress_units_display)
+                .prop('disabled', settings.suppress_units_display_disabled)
+            ;
+
+            modelLengthFormat = settings.length_format;
+            fnAdaptLengthPrecisionToFormat(modelLengthFormat);
+
         }
         var fnRetrieveModelOptions = function () {
 
             // Retrieve SU options
-            rubyCallCommand('settings_get_length_settings', null, function (response) {
-
-                $selectLengthUnit.selectpicker('val', response.length_unit);
-                $selectLengthFormat.selectpicker('val', response.length_format);
-                $selectLengthPrecision.selectpicker('val', response.length_precision);
-                $inputSuppressUnitsDisplay.prop('checked', !response.suppress_units_display);
-
-                modelLengthFormat = response.length_format;
-                fnAdaptLengthPrecisionToFormat(modelLengthFormat);
-
-            });
+            rubyCallCommand('settings_get_length_settings', null, fnFillLengthSettings);
 
             // Retrieve OCL options
             rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
@@ -254,7 +262,7 @@
             .on('change', function () {
                 var lengthUnit = parseInt($selectLengthUnit.selectpicker('val'));
 
-                rubyCallCommand('settings_set_length_settings', {length_unit: lengthUnit});
+                rubyCallCommand('settings_set_length_settings', { length_unit: lengthUnit }, fnFillLengthSettings);
 
             })
         ;
@@ -262,7 +270,7 @@
             .on('change', function () {
                 var lengthFormat = parseInt($selectLengthFormat.selectpicker('val'));
 
-                rubyCallCommand('settings_set_length_settings', {length_format: lengthFormat});
+                rubyCallCommand('settings_set_length_settings', { length_format: lengthFormat }, fnFillLengthSettings);
 
             })
         ;
@@ -270,7 +278,7 @@
             .on('change', function () {
                 var lengthPrecision = parseInt($selectLengthPrecision.selectpicker('val'));
 
-                rubyCallCommand('settings_set_length_settings', { length_precision: lengthPrecision });
+                rubyCallCommand('settings_set_length_settings', { length_precision: lengthPrecision }, fnFillLengthSettings);
 
             })
             .on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -281,7 +289,7 @@
             .on('change', function () {
                 var suppressUnitsDisplay = !($inputSuppressUnitsDisplay.is(':checked'));
 
-                rubyCallCommand('settings_set_length_settings', { suppress_units_display: suppressUnitsDisplay });
+                rubyCallCommand('settings_set_length_settings', { suppress_units_display: suppressUnitsDisplay }, fnFillLengthSettings);
 
             })
         ;

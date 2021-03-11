@@ -48,6 +48,15 @@ module Ladb::OpenCutList
       length_precision = params['length_precision']
       suppress_units_display = params['suppress_units_display']
 
+      unless length_format.nil?
+        case length_format
+        when DimensionUtils::FRACTIONAL, DimensionUtils::ARCHITECTURAL
+          length_unit = DimensionUtils::INCHES
+        when DimensionUtils::ENGINEERING
+          length_unit = DimensionUtils::FEET
+        end
+      end
+
       model = Sketchup.active_model
       if model
         model.options['UnitsOptions']['LengthUnit'] = length_unit unless length_unit.nil?
@@ -56,15 +65,19 @@ module Ladb::OpenCutList
         model.options['UnitsOptions']['SuppressUnitsDisplay'] = suppress_units_display unless suppress_units_display.nil?
       end
 
+      get_length_settings_command
     end
 
     def get_length_settings_command
       model = Sketchup.active_model
+      length_format = model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL
       {
           :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES,
+          :length_unit_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
           :length_format => model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL,
           :length_precision => model ? model.options['UnitsOptions']['LengthPrecision'] : 0,
           :suppress_units_display => model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false,
+          :suppress_units_display_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
       }
     end
 
