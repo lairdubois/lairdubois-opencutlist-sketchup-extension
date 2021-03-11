@@ -178,6 +178,7 @@
         var $selectLengthUnit = $('#ladb_model_select_length_unit', that.$element);
         var $selectLengthFormat = $('#ladb_model_select_length_format', that.$element);
         var $selectLengthPrecision = $('#ladb_model_select_length_precision', that.$element);
+        var $inputSuppressUnitsDisplay = $('#ladb_model_input_suppress_units_display', that.$element);
         var $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
         var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
 
@@ -206,6 +207,7 @@
                 $selectLengthUnit.selectpicker('val', response.length_unit);
                 $selectLengthFormat.selectpicker('val', response.length_format);
                 $selectLengthPrecision.selectpicker('val', response.length_precision);
+                $inputSuppressUnitsDisplay.prop('checked', !response.suppress_units_display);
 
                 modelLengthFormat = response.length_format;
                 fnAdaptLengthPrecisionToFormat(modelLengthFormat);
@@ -268,11 +270,19 @@
             .on('change', function () {
                 var lengthPrecision = parseInt($selectLengthPrecision.selectpicker('val'));
 
-                rubyCallCommand('settings_set_length_settings', {length_precision: lengthPrecision});
+                rubyCallCommand('settings_set_length_settings', { length_precision: lengthPrecision });
 
             })
             .on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 fnAdaptLengthPrecisionToFormat(modelLengthFormat);
+            })
+        ;
+        $inputSuppressUnitsDisplay
+            .on('change', function () {
+                var suppressUnitsDisplay = !($inputSuppressUnitsDisplay.is(':checked'));
+
+                rubyCallCommand('settings_set_length_settings', { suppress_units_display: suppressUnitsDisplay });
+
             })
         ;
         $selectMassUnit.on('change', fnSaveOptions);

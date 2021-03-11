@@ -938,6 +938,7 @@ tab:
     length_format_2: Ingénierie
     length_format_3: Fractionnel
     length_precision: Précision
+    suppress_units_display: Afficher l'unité de longueur à chaque valeur
     mass_unit: Unité de masse
     currency_symbol: Symbole monétaire
   about:

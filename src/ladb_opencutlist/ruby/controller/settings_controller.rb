@@ -46,12 +46,14 @@ module Ladb::OpenCutList
       length_unit = params['length_unit']
       length_format = params['length_format']
       length_precision = params['length_precision']
+      suppress_units_display = params['suppress_units_display']
 
       model = Sketchup.active_model
       if model
         model.options['UnitsOptions']['LengthUnit'] = length_unit unless length_unit.nil?
         model.options['UnitsOptions']['LengthFormat'] = length_format unless length_format.nil?
         model.options['UnitsOptions']['LengthPrecision'] = length_precision unless length_precision.nil?
+        model.options['UnitsOptions']['SuppressUnitsDisplay'] = suppress_units_display unless suppress_units_display.nil?
       end
 
     end
@@ -62,6 +64,7 @@ module Ladb::OpenCutList
           :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES,
           :length_format => model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL,
           :length_precision => model ? model.options['UnitsOptions']['LengthPrecision'] : 0,
+          :suppress_units_display => model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false,
       }
     end
 
