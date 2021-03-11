@@ -202,9 +202,7 @@
                 // Bind buttons
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
                     $(this).blur();
-                    rubyCallCommand('core_open_model_info_page', {
-                        page: i18next.t('core.model_info_page.units')
-                    });
+                    that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                 });
 
                 // Manage buttons

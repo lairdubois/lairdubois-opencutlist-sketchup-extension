@@ -728,9 +728,6 @@ module Ladb::OpenCutList
         register_command('core_open_url') do |params|
           open_url_command(params)
         end
-        register_command('core_open_model_info_page') do |params|
-          open_model_info_page_command(params)
-        end
         register_command('core_zoom_extents') do |params|
           zoom_extents_command
         end
@@ -1218,13 +1215,6 @@ module Ladb::OpenCutList
       url = params['url']
       if url
         UI.openURL(url)
-      end
-    end
-
-    def open_model_info_page_command(params)    # Expected params = { page: PAGE_TO_SHOW }
-      page = params['page']
-      if page
-        UI.show_model_info(page)
       end
     end
 

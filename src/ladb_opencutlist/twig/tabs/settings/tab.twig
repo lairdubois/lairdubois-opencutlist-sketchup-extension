@@ -5,7 +5,7 @@
 {% block containerInner %}
     <div class="row">
         <div class="col-xs-6">
-            <div class="panel panel-default">
+            <div id="ladb_settings_panel_global" class="panel panel-default">
                 <div class="panel-heading">
                     <button id="ladb_btn_reset" class="btn btn-default btn-xs pull-right"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
                     <strong>{{ 'tab.settings.global_settings'|i18next }}</strong>
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <div class="panel panel-default">
+            <div id="ladb_settings_panel_modal" class="panel panel-default">
                 <div class="panel-heading">
                     <strong>{{ 'tab.settings.model_settings'|i18next }}</strong>
                 </div>

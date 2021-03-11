@@ -261,9 +261,7 @@
             // Bind buttons
             $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
                 $(this).blur();
-                rubyCallCommand('core_open_model_info_page', {
-                    page: i18next.t('core.model_info_page.units')
-                });
+                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
             });
             $('#ladb_cutlist_btn_tags_filter_clear', that.$page).on('click', function () {
                 $(this).blur();
@@ -840,6 +838,10 @@
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
+                            });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                                $(this).blur();
+                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                             });
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
@@ -2012,11 +2014,8 @@
                             });
                             $('.ladb-btn-setup-model-units', $slide).on('click', function () {
                                 $(this).blur();
-                                rubyCallCommand('core_open_model_info_page', {
-                                    page: i18next.t('core.model_info_page.units')
-                                });
+                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                             });
-
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 if ($group.hasClass('no-print')) {
@@ -2277,11 +2276,8 @@
                         });
                         $('.ladb-btn-setup-model-units', $slide).on('click', function() {
                             $(this).blur();
-                            rubyCallCommand('core_open_model_info_page', {
-                                page: i18next.t('core.model_info_page.units')
-                            });
+                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                         });
-
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                             var $group = $(this).parents('.ladb-cutlist-group');
                             if ($group.hasClass('no-print')) {
@@ -2613,9 +2609,7 @@
                     });
                     $('.ladb-btn-setup-model-units', $slide).on('click', function() {
                         $(this).blur();
-                        rubyCallCommand('core_open_model_info_page', {
-                            page: i18next.t('core.model_info_page.units')
-                        });
+                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                     });
                     $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                         var $page = $(this).parents('.ladb-cutlist-group');
@@ -2866,9 +2860,7 @@
         // Bind buttons
         $btnSetupModelUnits.on('click', function () {
             $(this).blur();
-            rubyCallCommand('core_open_model_info_page', {
-                page: i18next.t('core.model_info_page.units')
-            });
+            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
         });
         $btnUpdate.on('click', function () {
 

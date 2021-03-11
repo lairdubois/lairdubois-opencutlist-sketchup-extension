@@ -9,6 +9,9 @@
 
         this.initialLanguage = this.dialog.capabilities.language;
 
+        this.$panelGlobal = $('#ladb_settings_panel_global', this.$element);
+        this.$panelModel = $('#ladb_settings_panel_modal', this.$element);
+
         this.$btnReset = $('#ladb_btn_reset', this.$element);
 
         this.$selectLanguage = $('#ladb_select_language', this.$element);
@@ -35,6 +38,27 @@
         $('.ladb-reaload-msg', $reloadAlert).hide();
         var language = this.dialog.capabilities.language === 'auto' ? this.initialLanguage : this.dialog.capabilities.language;
         $('.ladb-reaload-msg-' + language, $reloadAlert).show();
+    };
+
+    // Init /////
+
+    LadbTabSettings.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('highlight_panel', function (parameters) {
+            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+                switch (parameters.panel) {
+                    case 'global':
+                        that.$panelGlobal.effect('highlight', {}, 1500);
+                        break;
+                    case 'model':
+                        that.$panelModel.effect('highlight', {}, 1500);
+                        break;
+                }
+            }, 1);
+        });
     };
 
     LadbTabSettings.prototype.bind = function () {
