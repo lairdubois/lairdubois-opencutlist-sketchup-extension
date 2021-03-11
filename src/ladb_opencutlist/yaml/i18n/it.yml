@@ -932,6 +932,12 @@ tab:
     size_and_position: Dimensione e posizione della finestra
     model_settings: Preferenze del modello
     length_unit: Unità di lunghezza
+    length_format: Formato
+    length_format_0: Decimale
+    length_format_1: Architettonico
+    length_format_2: Ingegneristico
+    length_format_3: Frazionario
+    length_precision: Precisione
     mass_unit: Unità di massa
     currency_symbol: Simbolo di valuta
   about:
