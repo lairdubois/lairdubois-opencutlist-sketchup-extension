@@ -39,6 +39,7 @@ default:
   unit_2: Milimetr
   unit_3: Centimetr
   unit_4: Metr
+  unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Libra
   part_single: pokoj
@@ -932,6 +933,13 @@ tab:
     size_and_position: Velikost a umístění okna
     model_settings: Předvolby modelu
     length_unit: Jednotka délky
+    length_format: Formát
+    length_format_0: Desetinný
+    length_format_1: Architektonický
+    length_format_2: Inženýrství
+    length_format_3: Frakční
+    length_precision: Přesnost
+    suppress_units_display: Zobrazit jednotku délky pro každou hodnotu
     mass_unit: Jednotka hmotnosti
     currency_symbol: Symbol měny
   about:

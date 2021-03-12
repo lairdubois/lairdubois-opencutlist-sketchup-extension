@@ -39,6 +39,7 @@ default:
   unit_2: Millimetro
   unit_3: Centimetro
   unit_4: Metro
+  unit_5: Iarda
   unit_mass_0: Chilogrammo
   unit_mass_1: Libbra
   part_single: pezzo
@@ -938,6 +939,7 @@ tab:
     length_format_2: Ingegneristico
     length_format_3: Frazionario
     length_precision: Precisione
+    suppress_units_display: Visualizza l'unità di lunghezza per ogni valore
     mass_unit: Unità di massa
     currency_symbol: Simbolo di valuta
   about:

@@ -39,6 +39,7 @@ default:
   unit_2: Milimetro
   unit_3: Centimetro
   unit_4: Metro
+  unit_5: Yarda
   unit_mass_0: Kilogramo
   unit_mass_1: Libra
   part_single: parte
@@ -938,6 +939,7 @@ tab:
     length_format_2: Ingenería
     length_format_3: Fraccional
     length_precision: Precisón
+    suppress_units_display: Muestra la unidad de longitud para cada valor
     mass_unit: Unidad de masa
     currency_symbol: Símbolo de moneda
   about:

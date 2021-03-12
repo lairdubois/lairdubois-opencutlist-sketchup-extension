@@ -39,6 +39,7 @@ default:
   unit_2: Milimetr
   unit_3: Centymetr
   unit_4: Metr
+  unit_5: Jard
   unit_mass_0: Kilogram
   unit_mass_1: Liwr
   part_single: część
@@ -127,7 +128,7 @@ core:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
       delete: "Usuń ustawienia '{{name}}'"
   progress:
-    please_wait: ""
+    please_wait: Proszę czekać
 tab:
   cutlist:
     label: Części
@@ -192,7 +193,7 @@ tab:
       number_generated: Numer tej części został wygenerowany automatycznie
       resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
-      symmetrical: ""
+      symmetrical: Ta część jest symetryczna
       auto_oriented: Ta część została automatycznie obrócona
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
@@ -217,7 +218,7 @@ tab:
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
-      setup_group_cuttingdiagram: ""
+      setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension}}'"
     menu:
       show_all_groups: Pokaż wszystkie grupy
       hide_all_other_groups: Ukryj wszystkie inne grupy
@@ -262,8 +263,9 @@ tab:
         - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
         - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
         - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
-      symmetrical: ""
+      symmetrical: Część jest symetryczna
       symmetrical_help: |
+        Jeśli to pole jest zaznaczone, wykrycie *części lustrzanej* nie będzie miało wpływu na tę część.
       size_increase: Ponadwymiarowe
       size_increase_help: |
         Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
@@ -377,6 +379,7 @@ tab:
       info_0: |
         Dzięki tej funkcji możesz wyeksportować *listę części* do pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
       options: Opcje eksportu
+      options_customize: Dostosowywanie
       option_source: Źródło
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -414,15 +417,16 @@ tab:
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
       warning:
-        visible_only: ""
+        visible_only: "*Części w ukrytych grupach twojej listy części nie będą wyeksportowane*."
     report:
       title: Raport
       info_0: |
+        Funkcjonalność ta pozwala na wygenerowanie raportu **mas** i **kosztów** **surowców** niezbędnych do produkcji części znajdujących się na *liście części*.
       options_general: Główne
       option_solid_wood_coefficient: ""
       option_solid_wood_coefficient_help: ""
-      raw_materials: ""
-      coefficient: ""
+      raw_materials: Surowy materiał
+      coefficient: Współczynnik
       total: Totalny
       total_mass: Σ Mszy
       total_cost: Σ Kosztów
@@ -432,10 +436,10 @@ tab:
       total_length: Σ Długości
       error:
         no_typed_material_parts: Żadna część Twojego modelu nie zawiera materiału o zdefiniowanym typie.
-        entry_error: ""
-        entry_error_plural: ""
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
-        visible_only: ""
+        visible_only: Uwzględniane są tylko części zawarte w **widocznych grupach**.
     cuttingdiagram:
       title: Schemat cięcia
       options_material: Materiał
@@ -617,6 +621,7 @@ tab:
         group_material_name: Nazwa materiału
         group_std_dimension: Rozmiary standardowe
         filename: Nazwa pliku
+        model_name: Nazwa modelu
         page_label: Nazwa sceny
         length_unit: Jednostka
         generated_at: Data i czas
@@ -928,6 +933,13 @@ tab:
     size_and_position: Rozmiar i Położenie Okna
     model_settings: Preferencje modelu
     length_unit: Jednostka długości
+    length_format: Format
+    length_format_0: Dziesiętny
+    length_format_1: Architektoniczny
+    length_format_2: Inżynieria
+    length_format_3: Frakcyjny
+    length_precision: Precyzja
+    suppress_units_display: Wyświetl jednostkę długości dla każdej wartości
     mass_unit: Jednostka masy
     currency_symbol: Symbol waluty
   about:

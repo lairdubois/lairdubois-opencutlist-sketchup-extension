@@ -39,6 +39,7 @@ default:
   unit_2: Миллиметр
   unit_3: Сантиметр
   unit_4: Метр
+  unit_5: Ярд
   unit_mass_0: Килограмм
   unit_mass_1: Фунт
   part_single: деталь
@@ -420,10 +421,10 @@ tab:
     report:
       title: Отчет
       info_0: |
-        Эта функция позволит вам создать отчет с отражением **массы**, ** стоимости ** и **материала**, по деталям включенным в *карту раскроя*.
+        Эта функция позволит вам создать отчет с отражением **массы**, **стоимости** и **материала**, по деталям включенным в *карту раскроя*.
       options_general: Общие
       option_solid_wood_coefficient: Коэффициент *Массив древесины*
-      option_solid_wood_coefficient_help: "Используется для расчета массы деталей, в качестве плотности  для материалов типа \"**Массив древесины**\"."
+      option_solid_wood_coefficient_help: "Используется для расчета массы деталей, в качестве плотности для материалов типа \"**Массив древесины**\"."
       raw_materials: Исходный материал
       coefficient: Коэффициент
       total: Всего
@@ -456,8 +457,8 @@ tab:
       option_hide_part_list_1d_0: Отображать для каждой доски
       option_hide_part_list_2d_0: Отображать для каждой панели
       option_hide_part_list_1: Скрыть
-      option_hide_part_list_1d_help: Отобразить или скрыть список деталей для каждой доски.
-      option_hide_part_list_2d_help: Отобразить или скрыть список деталей для каждой панели.
+      option_hide_part_list_1d_help: Отобразить или скрыть список деталей по карте раскроя для каждой доски.
+      option_hide_part_list_2d_help: Отобразить или скрыть список деталей по карте раскроя для каждой панели.
       option_origin_corner: Исходная позиция
       option_origin_corner_0: Верхний левый
       option_origin_corner_1: Нижний левый
@@ -737,7 +738,7 @@ tab:
       volumic_mass: Плотность
       volumic_mass_help: Сделайте выбор единиц измерения плотности материала.
       std_prices: Цена
-      std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу:  объема, площади, штуки."
+      std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
       std_prices_dim_placeholder: Выберите размер
       std_prices_add: Добавить цену
       texture_width: Ширина
@@ -932,6 +933,13 @@ tab:
     size_and_position: Размер и позиция окна
     model_settings: Параметры модели
     length_unit: Единица длины
+    length_format: Формат
+    length_format_0: Десятичный
+    length_format_1: Архитектура
+    length_format_2: Разработка
+    length_format_3: Дробный
+    length_precision: Точность
+    suppress_units_display: Отображение единицы длины для каждого значения
     mass_unit: Единица массы
     currency_symbol: Символ валюты
   about:
