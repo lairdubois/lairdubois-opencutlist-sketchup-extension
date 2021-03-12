@@ -5,7 +5,7 @@
     // ======================
 
     var LadbTextinputNumberWithUnit = function (element, options) {
-        LadbTextinputAbstract.call(this, element, options, '');
+        LadbTextinputAbstract.call(this, element, options, '', /^\d*[.,]?\d*$/);
 
         this.$spanUnit = null;
 
@@ -108,22 +108,6 @@
         if (!value) {
             this.reset();
         }
-
-        // Force input value to be positive decimal
-        ['input', 'keydown', 'keyup', 'mousedown', 'mouseup', 'select', 'contextmenu', 'drop'].forEach(function (event) {
-            that.$element[0].addEventListener(event, function () {
-                if (/^\d*[.,]?\d*$/.test(this.value)) {
-                    this.oldValue = this.value;
-                    this.oldSelectionStart = this.selectionStart;
-                    this.oldSelectionEnd = this.selectionEnd;
-                } else if (this.hasOwnProperty('oldValue')) {
-                    this.value = this.oldValue;
-                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-                } else {
-                    this.value = '';
-                }
-            });
-        });
 
     };
 

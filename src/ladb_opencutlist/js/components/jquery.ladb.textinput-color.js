@@ -5,7 +5,7 @@
     // ======================
 
     var LadbTextinputColor = function(element, options) {
-        LadbTextinputAbstract.call(this, element, options, '#000000');
+        LadbTextinputAbstract.call(this, element, options, '#000000', /^#[0-9a-f]*$/i);
         this.$preview = null;
     };
     LadbTextinputColor.prototype = new LadbTextinputAbstract;

@@ -3,11 +3,12 @@
 // CLASS DEFINITION
 // ======================
 
-var LadbTextinputAbstract = function (element, options, resetValue) {
+var LadbTextinputAbstract = function (element, options, resetValue, inputRegex) {
     this.options = options;
     this.$element = $(element);
 
     this.resetValue = resetValue;
+    this.inputRegex = inputRegex;
 
     this.$resetBtn = null;
 };
@@ -72,6 +73,7 @@ LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
 };
 
 LadbTextinputAbstract.prototype.init = function () {
+    var that = this;
 
     this.$element
         .wrap('<div class="ladb-textinput-input" />')
@@ -89,6 +91,26 @@ LadbTextinputAbstract.prototype.init = function () {
     var value = this.$element.val();
     if (value) {
         this.val(value);
+    }
+
+    if (this.inputRegex) {
+
+        // Apply regex on input values
+        ['input', 'keydown', 'keyup', 'mousedown', 'mouseup', 'select', 'contextmenu', 'drop'].forEach(function (event) {
+            that.$element[0].addEventListener(event, function () {
+                if (that.inputRegex.test(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty('oldValue')) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = '';
+                }
+            });
+        });
+
     }
 
 };
