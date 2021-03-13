@@ -44,6 +44,7 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var filename = response.filename;
+            var modelName = response.model_name;
             var materials = response.materials;
             var currentMaterialName = response.current_material_name;
 
@@ -56,7 +57,8 @@
             // Update filename
             that.$fileTabs.empty();
             that.$fileTabs.append(Twig.twig({ ref: "tabs/materials/_file-tab.twig" }).render({
-                filename: filename
+                filename: filename,
+                modelName: modelName
             }));
 
             // Update items state

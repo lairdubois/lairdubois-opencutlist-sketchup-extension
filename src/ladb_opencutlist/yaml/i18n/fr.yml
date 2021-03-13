@@ -249,10 +249,17 @@ tab:
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
       instance_count_by_part: Lot
+      instance_count_by_part_help: |
+        Permet de compatiliser les pièces sur le nombre de **lot** nécessaires au lieu du nombre d'unités présentes dans le modèle.
+        Les pièces réunies en lot doivent avoir la même définition.
+
+        *Exemple : Ne compter que 1 pièce pour une paire de coulisses de tiroir.*
       instance_count_by_part_1: 1 unité par pièce
       instance_count_by_part_2: 2 unités par pièce
       mass: Masse
+      mass_help: La masse de la pièce sera utilisée lors de la génération des **Rapports**.
       price: Prix
+      price_help: Le prix de la pièce sera utilisé lors de la génération des **Rapports**.
       tags: Tags
       tags_help: |
         Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.

@@ -24,6 +24,7 @@ module Ladb::OpenCutList
           :errors => [],
           :warnings => [],
           :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
+          :model_name => model ? model.name : '',
           :length_unit_strippedname => DimensionUtils.instance.model_unit_is_metric ? DimensionUtils::UNIT_STRIPPEDNAME_METER : DimensionUtils::UNIT_STRIPPEDNAME_FEET,
           :mass_unit_strippedname => MassUtils.instance.get_symbol,
           :currency_symbol => PriceUtils.instance.get_symbol,

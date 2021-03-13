@@ -77,6 +77,7 @@
                 {% endif %}
                 {% if group.material_type == 5 %}   {# 5 = TYPE_ACCESSORY #}
                     <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label for="ladb_cutlist_part_select_instance_count_by_part" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.instance_count_by_part'|i18next }}</label>
                         <div class="col-xs-7">
                             <select class="form-control" id="ladb_cutlist_part_select_instance_count_by_part">
@@ -90,12 +91,14 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.mass_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label for="ladb_cutlist_part_input_mass" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.mass'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_mass" {% if part.mass == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.mass }}"{% endif %}>
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.price_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label for="ladb_cutlist_part_input_price" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.price'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_price" {% if part.price == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.price }}"{% endif %}>

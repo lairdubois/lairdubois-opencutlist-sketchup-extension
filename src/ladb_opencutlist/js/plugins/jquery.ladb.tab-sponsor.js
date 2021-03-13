@@ -23,7 +23,7 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveGoal = 4808; // Top of Mont-Blanc Altitude
+        var objectiveGoal = 5891; // Top of KILIMANJARO Altitude
         var objectiveCurrency = 'USD';
 
         // Fetch UI elements
