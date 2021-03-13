@@ -25,6 +25,7 @@ in 2.x, 1.x and 0.x versions.
   * Added custom proposal list of tags in cutlist options
   * Added "symmetrical" definition attribute
   * Added dump and reset global and model presets
+  * Added part set
 
 * 1.9.10 (2020-12-17)
 

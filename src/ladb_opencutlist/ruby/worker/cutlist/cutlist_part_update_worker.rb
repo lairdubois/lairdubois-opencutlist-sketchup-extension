@@ -15,8 +15,9 @@ module Ladb::OpenCutList
         :is_dynamic_attributes_name,
         :material_name,
         :cumulable,
-        :price,
+        :instance_count_by_part,
         :mass,
+        :price,
         :tags,
         :orientation_locked_on_axis,
         :symmetrical,
@@ -41,8 +42,9 @@ module Ladb::OpenCutList
             part_data['is_dynamic_attributes_name'],
             part_data['material_name'],
             DefinitionAttributes.valid_cumulable(part_data['cumulable']),
-            part_data['price'],
+            part_data['instance_count_by_part'],
             part_data['mass'],
+            part_data['price'],
             DefinitionAttributes.valid_tags(part_data['tags']),
             part_data['orientation_locked_on_axis'],
             part_data['symmetrical'],
@@ -88,8 +90,9 @@ module Ladb::OpenCutList
           # Update definition's attributes
           definition_attributes = DefinitionAttributes.new(definition)
           if part_data.cumulable != definition_attributes.cumulable ||
-              part_data.price != definition_attributes.price ||
+              part_data.instance_count_by_part != definition_attributes.instance_count_by_part ||
               part_data.mass != definition_attributes.mass ||
+              part_data.price != definition_attributes.price ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
               part_data.symmetrical != definition_attributes.symmetrical ||
               part_data.tags != definition_attributes.tags
@@ -97,8 +100,9 @@ module Ladb::OpenCutList
               part_data.width_increase != definition_attributes.width_increase ||
               part_data.thickness_increase != definition_attributes.thickness_increase
             definition_attributes.cumulable = part_data.cumulable
-            definition_attributes.price = part_data.price
+            definition_attributes.instance_count_by_part = part_data.instance_count_by_part
             definition_attributes.mass = part_data.mass
+            definition_attributes.price = part_data.price
             definition_attributes.tags = part_data.tags
             definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
             definition_attributes.symmetrical = part_data.symmetrical

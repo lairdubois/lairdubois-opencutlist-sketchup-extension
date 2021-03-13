@@ -47,7 +47,9 @@
         }
 
         this.unit = unit;
-        this.$spanUnit.html(this.getUnitLabel(unit));
+        if (this.$spanUnit) {
+            this.$spanUnit.html(this.getUnitLabel(unit));
+        }
 
         return LadbTextinputAbstract.prototype.val.call(this, value);
     };

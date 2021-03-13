@@ -190,6 +190,12 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-grained-1:before {
   content: "\e930";
 }
+.ladb-opencutlist-icon-instance-count-by-part:before {
+  content: "\e985";
+}
+.ladb-opencutlist-icon-missing-instance-count:before {
+  content: "\e986";
+}
 .ladb-opencutlist-icon-multiple-layers:before {
   content: "\e931";
 }

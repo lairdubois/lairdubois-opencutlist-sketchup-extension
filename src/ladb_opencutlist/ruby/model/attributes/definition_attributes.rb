@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :mass, :price, :symmetrical, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :symmetrical, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -145,6 +145,7 @@ module Ladb::OpenCutList
           @numbers = {}
         end
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
+        @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
@@ -166,6 +167,7 @@ module Ladb::OpenCutList
 
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', @instance_count_by_part)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)

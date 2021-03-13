@@ -192,13 +192,16 @@ tab:
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition
       flipped: Cette pièce est en miroir par rapport à sa définition
-      symmetrical: Cette pièce est symétrique
+      symmetrical: La détection en miroir est désactivée sur cette pièce
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
       add_edge_material_name_filter: Filtrer sur '{{ material_name }}'
       remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
+      instance_count_by_part: Cette pièce est comptabilisée par lot de **{{ count }}** unités.
+      missing_instance_count: Attention, **{{ count }}** unité du dernier lot ne sera pas utilisée.
+      missing_instance_count_plural: Attention, **{{ count }}** unités du dernier lot ne seront pas utilisées.
       multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
@@ -245,8 +248,11 @@ tab:
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
-      price: Prix
+      instance_count_by_part: Lot
+      instance_count_by_part_1: 1 unité par pièce
+      instance_count_by_part_2: 2 unités par pièce
       mass: Masse
+      price: Prix
       tags: Tags
       tags_help: |
         Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
@@ -262,9 +268,9 @@ tab:
         - la *longueur* sera sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur l'axe <span style='color:green'>vert</span>
         - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
-      symmetrical: La pièce est symétrique
+      symmetrical: Désactiver la détection en miroir sur cette pièce
       symmetrical_help: |
-        Si cette case est cochée, la détection de *pièce en miroir* n'aura pas d'effet sur cette pièce.
+        Si cette case est cochée, la détection de *pièce en miroir* ne sera pas appliquée sur cette pièce.
       size_increase: Surcotes
       size_increase_help: |
         Les surcotes vous permettent de majorer les dimensions capables de la pièce.

@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :price, :mass, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -29,8 +29,9 @@ module Ladb::OpenCutList
       @cumulable = part_def.cumulable
       @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
       @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
-      @price = part_def.price
+      @instance_count_by_part = part_def.instance_count_by_part
       @mass = part_def.mass
+      @price = part_def.price
       @tags = part_def.tags
       @edge_count = part_def.edge_count
       @edge_pattern = part_def.edge_pattern
@@ -114,6 +115,7 @@ module Ladb::OpenCutList
       @thickness_increased = part_def.thickness_increased
       @auto_oriented = part_def.auto_oriented
       @not_aligned_on_axes = part_def.not_aligned_on_axes
+      @missing_instance_count = part_def.missing_instance_count
       @layers = part_def.layers.map(&:name)
       @multiple_layers = part_def.multiple_layers
       @edge_entity_ids = part_def.edge_entity_ids

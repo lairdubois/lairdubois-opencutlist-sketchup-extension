@@ -293,8 +293,9 @@ module Ladb::OpenCutList
           part_def.size = size
           part_def.material_name = material_name
           part_def.cumulable = definition_attributes.cumulable
-          part_def.price = definition_attributes.price
+          part_def.instance_count_by_part = definition_attributes.instance_count_by_part
           part_def.mass = definition_attributes.mass
+          part_def.price = definition_attributes.price
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
@@ -487,6 +488,19 @@ module Ladb::OpenCutList
 
       end
 
+      # Compute instance count by part
+      @group_defs_cache.each { |key, group_def|
+        group_def.part_defs.each { |key, part_def|
+          if part_def.instance_count_by_part > 1
+            instance_count = part_def.count
+            count = ((instance_count * 1.0) / part_def.instance_count_by_part).ceil
+            part_def.count = count
+            part_def.missing_instance_count = instance_count % part_def.instance_count_by_part
+            group_def.part_count -= instance_count - count
+          end
+        }
+      }
+
       # Warnings & tips
       if @instance_infos_cache.length > 0
         solid_wood_material_count = 0
@@ -556,6 +570,9 @@ module Ladb::OpenCutList
                 folder_part_def.size = first_child_part_def.size
                 folder_part_def.material_name = first_child_part_def.material_name
                 folder_part_def.cumulable = first_child_part_def.cumulable
+                folder_part_def.instance_count_by_part = first_child_part_def.instance_count_by_part
+                folder_part_def.mass = first_child_part_def.mass
+                folder_part_def.price = first_child_part_def.price
                 folder_part_def.tags = first_child_part_def.tags
                 folder_part_def.final_area = first_child_part_def.final_area
                 folder_part_def.edge_count = first_child_part_def.edge_count
@@ -568,6 +585,7 @@ module Ladb::OpenCutList
                 folder_part_def.children.push(first_child_part_def)
                 folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
                 folder_part_def.children_warning_count += 1 if first_child_part_def.multiple_layers
+                folder_part_def.children_warning_count += 1 if first_child_part_def.missing_instance_count > 0
                 folder_part_def.children_length_increased_count += first_child_part_def.count if first_child_part_def.length_increased
                 folder_part_def.children_width_increased_count += first_child_part_def.count if first_child_part_def.width_increased
                 folder_part_def.children_thickness_increased_count += first_child_part_def.count if first_child_part_def.thickness_increased
@@ -579,6 +597,7 @@ module Ladb::OpenCutList
               folder_part_def.count += part_def.count
               folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
               folder_part_def.children_warning_count += 1 if part_def.multiple_layers
+              folder_part_def.children_warning_count += 1 if part_def.missing_instance_count > 0
               folder_part_def.children_length_increased_count += part_def.count if part_def.length_increased
               folder_part_def.children_width_increased_count += part_def.count if part_def.width_increased
               folder_part_def.children_thickness_increased_count += part_def.count if part_def.thickness_increased

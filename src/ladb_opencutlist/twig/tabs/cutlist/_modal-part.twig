@@ -3,7 +3,7 @@
 {% set id = 'ladb_cutlist_modal_part' %}
 {% set title = multiple ? ('tab.cutlist.edit_part.title_multiple'|i18next) : ('tab.cutlist.edit_part.title'|i18next({ 'name':part.name })) %}
 
-{% set has_warnings = part.not_aligned_on_axes or part.multiple_layers %}
+{% set has_warnings = part.not_aligned_on_axes or part.multiple_layers or part.missing_instance_count > 0 %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -68,24 +68,37 @@
                                     <option value="-1" data-content="<span style='color: #ccc; font-style: italic;'><i class='ladb-opencutlist-icon-multiple'></i> {{ 'tab.cutlist.edit_part.multiple_values'|i18next }}</span>"></option>
                                     <option data-divider="true"></option>
                                 {% endif %}
-                                <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.cumulable_0'|i18next }}</span>">0</option>
-                                <option value="1" data-content="{{ 'tab.cutlist.edit_part.cumulable_1'|i18next }}">1</option>
-                                <option value="2" data-content="{{ 'tab.cutlist.edit_part.cumulable_2'|i18next }}">2</option>
+                                <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.cutlist.edit_part.cumulable_0'|i18next }}</span>"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.edit_part.cumulable_1'|i18next }}"></option>
+                                <option value="2" data-content="{{ 'tab.cutlist.edit_part.cumulable_2'|i18next }}"></option>
                             </select>
                         </div>
                     </div>
                 {% endif %}
                 {% if group.material_type == 5 %}   {# 5 = TYPE_ACCESSORY #}
                     <div class="form-group">
-                        <label for="ladb_cutlist_part_input_price" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.price'|i18next }}</label>
+                        <label for="ladb_cutlist_part_select_instance_count_by_part" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.instance_count_by_part'|i18next }}</label>
                         <div class="col-xs-7">
-                            <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_price" {% if part.price == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.price }}"{% endif %}>
+                            <select class="form-control" id="ladb_cutlist_part_select_instance_count_by_part">
+                                {% if multiple and part.instance_count_by_part == '-1' %}
+                                    <option value="-1" data-content="<span style='color: #ccc; font-style: italic;'><i class='ladb-opencutlist-icon-multiple'></i> {{ 'tab.cutlist.edit_part.multiple_values'|i18next }}</span>"></option>
+                                    <option data-divider="true"></option>
+                                {% endif %}
+                                <option value="1" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_1'|i18next }}</span>"></option>
+                                <option value="2" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_2'|i18next }}</span>"></option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ladb_cutlist_part_input_mass" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.mass'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_mass" {% if part.mass == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.mass }}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ladb_cutlist_part_input_price" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.price'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_price" {% if part.price == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.price }}"{% endif %}>
                         </div>
                     </div>
                 {% endif %}
@@ -336,6 +349,14 @@
             <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
                 <div class="col-sm-offset-1 col-sm-10">
                     {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins': part.material_origins, 'displayOwned': true, 'flat': true } %}
+                    {% if part.instance_count_by_part > 1 %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-instance-count-by-part ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if part.is_dynamic_attributes_name %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-dynamic-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>
@@ -463,6 +484,14 @@
                             <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
                             <div class="media-body">
                                 {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if part.missing_instance_count > 0 %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.missing_instance_count'|i18next({ 'count':part.missing_instance_count }) }}
                             </div>
                         </div>
                     {% endif %}

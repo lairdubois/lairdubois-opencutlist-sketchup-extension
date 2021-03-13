@@ -1243,11 +1243,14 @@
                 if (editedPart.cumulable !== editedParts[i].cumulable) {
                     editedPart.cumulable = MULTIPLE_VALUE;
                 }
-                if (editedPart.price !== editedParts[i].price) {
-                    editedPart.price = MULTIPLE_VALUE;
+                if (editedPart.instance_count_by_part !== editedParts[i].instance_count_by_part) {
+                    editedPart.instance_count_by_part = MULTIPLE_VALUE;
                 }
                 if (editedPart.mass !== editedParts[i].mass) {
                     editedPart.mass = MULTIPLE_VALUE;
+                }
+                if (editedPart.price !== editedParts[i].price) {
+                    editedPart.price = MULTIPLE_VALUE;
                 }
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
@@ -1305,8 +1308,9 @@
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-                var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+                var $selectInstanceCountByPart = $('#ladb_cutlist_part_select_instance_count_by_part', $modal);
                 var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
+                var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
@@ -1427,17 +1431,17 @@
                 })
 
                 // Bind input
-                $inputPrice.ladbTextinputNumberWithUnit({
-                    defaultUnit: '$_p',
-                    units: [
-                        { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
-                    ]
-                });
                 $inputMass.ladbTextinputNumberWithUnit({
                     defaultUnit: that.massUnitStrippedname + '_p',
                     units: [
                         { kg_p: 'kg / ' + i18next.t('default.part_single') },
                         { lb_p: 'lb / ' + i18next.t('default.part_single') }
+                    ]
+                });
+                $inputPrice.ladbTextinputNumberWithUnit({
+                    defaultUnit: '$_p',
+                    units: [
+                        { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
                     ]
                 });
                 $inputLengthIncrease.on('change', function() {
@@ -1459,6 +1463,8 @@
                     });
                 $selectCumulable.val(editedPart.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectInstanceCountByPart.val(editedPart.instance_count_by_part);
+                $selectInstanceCountByPart.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartAxesOriginPosition
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -1581,13 +1587,16 @@
                             editedParts[i].material_name = $selectMaterialName.val();
                         }
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].cumulable = $selectCumulable.val();
+                            editedParts[i].cumulable = $selectCumulable.val() === '1';
                         }
-                        if ($inputPrice.val() !== undefined) {
-                            editedParts[i].price = $inputPrice.val();
+                        if ($selectInstanceCountByPart.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].instance_count_by_part = parseInt($selectInstanceCountByPart.val());
                         }
                         if ($inputMass.val() !== undefined) {
                             editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
+                        }
+                        if ($inputPrice.val() !== undefined) {
+                            editedParts[i].price = $inputPrice.val();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
