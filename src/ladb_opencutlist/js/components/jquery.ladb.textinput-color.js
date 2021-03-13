@@ -5,12 +5,13 @@
     // ======================
 
     var LadbTextinputColor = function(element, options) {
-        LadbTextinputAbstract.call(this, element, options, '#000000', /^#[0-9a-f]*$/i);
+        LadbTextinputAbstract.call(this, element, options, /^#[0-9a-f]*$/i);
         this.$preview = null;
     };
     LadbTextinputColor.prototype = new LadbTextinputAbstract;
 
     LadbTextinputColor.DEFAULTS = {
+        resetValue: '#000000',
         colors: ['#000000', '#FFFFFF'],
         colorsPerLine: 6
     };

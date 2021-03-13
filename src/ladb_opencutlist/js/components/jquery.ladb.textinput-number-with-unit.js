@@ -5,7 +5,7 @@
     // ======================
 
     var LadbTextinputNumberWithUnit = function (element, options) {
-        LadbTextinputAbstract.call(this, element, options, '', /^\d*[.,]?\d*$/);
+        LadbTextinputAbstract.call(this, element, options, /^\d*[.,]?\d*$/);
 
         this.$spanUnit = null;
 
@@ -16,13 +16,15 @@
 
     LadbTextinputNumberWithUnit.DEFAULTS = {
         defaultUnit: '',
-        units: {}
+        units: null
     };
 
     LadbTextinputNumberWithUnit.prototype.reset = function () {
 
         this.unit = this.options.defaultUnit;
-        this.$spanUnit.html(this.getUnitLabel(this.unit));
+        if (this.$spanUnit) {
+            this.$spanUnit.html(this.getUnitLabel(this.unit));
+        }
 
         LadbTextinputAbstract.prototype.reset.call(this);
     };
@@ -52,51 +54,57 @@
 
     /////
 
+    LadbTextinputNumberWithUnit.prototype.hasUnit = function () {
+        return this.options.units !== null && Object.keys(this.options.units).length > 0;
+    };
+
     LadbTextinputNumberWithUnit.prototype.getUnitLabel = function (unit) {
         var label = '';
-        $.each(this.options.units, function (index, unitGroup) {
-            if (unitGroup[unit]) {
-                label = unitGroup[unit];
-                return false;
-            }
-        });
+        if (this.hasUnit()) {
+            $.each(this.options.units, function (index, unitGroup) {
+                if (unitGroup[unit]) {
+                    label = unitGroup[unit];
+                    return false;
+                }
+            });
+        }
         return label;
     };
 
     LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolContainer) {
         var that = this;
 
-        var $span = $('<span />')
-        var $dropdown = $('<ul class="dropdown-menu" />');
-        $.each(this.options.units, function (index, unitGroup) {
-            if (index > 0) {
-                $dropdown.append('<li class="divider" />');
-            }
-            $.each(unitGroup, function (key, value) {
-                $dropdown.append(
-                    $('<li />')
-                        .append ('<a href="#">' + value + '</a></li>')
-                        .on('click', function () {
-                            $span.html(value);
-                            that.unit = key;
-                            that.$element.trigger('change');
-                        })
-                );
+        if (this.hasUnit()) {
+            var $span = $('<span />')
+            var $dropdown = $('<ul class="dropdown-menu" />');
+            $.each(this.options.units, function (index, unitGroup) {
+                if (index > 0) {
+                    $dropdown.append('<li class="divider" />');
+                }
+                $.each(unitGroup, function (key, value) {
+                    $dropdown.append(
+                        $('<li />')
+                            .append ('<a href="#">' + value + '</a></li>')
+                            .on('click', function () {
+                                $span.html(value);
+                                that.unit = key;
+                                that.$element.trigger('change');
+                            })
+                    );
+                });
             });
-        });
-        this.$spanUnit = $span;
+            this.$spanUnit = $span;
 
-        var $btnGroup = $('<div class="ladb-textinput-tool btn-group" />')
-            .append(
-                $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
-                    .append($span)
-                    .append('&nbsp;')
-                    .append('<span class="caret" />')
-            )
-            .append($dropdown)
-        ;
-
-        $toolContainer.append($btnGroup);
+            $toolContainer.append($('<div class="ladb-textinput-tool btn-group" />')
+                .append(
+                    $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
+                        .append($span)
+                        .append('&nbsp;')
+                        .append('<span class="caret" />')
+                )
+                .append($dropdown)
+            );
+        }
 
     };
 

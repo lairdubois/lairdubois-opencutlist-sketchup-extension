@@ -19,13 +19,13 @@ module Ladb::OpenCutList
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @optimization = settings['optimization'].to_i
-      @stacking = settings['stacking'].to_i
+      @optimization = settings['optimization']
+      @stacking = settings['stacking']
       @sheet_folding = settings['sheet_folding']
       @full_width_diagram = settings['full_width_diagram']
       @hide_part_list = settings['hide_part_list']
       @hide_cross = settings['hide_cross']
-      @origin_corner = settings['origin_corner'].to_i
+      @origin_corner = settings['origin_corner']
       @highlight_primary_cuts = settings['highlight_primary_cuts']
 
       @cutlist = cutlist

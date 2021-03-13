@@ -641,9 +641,9 @@
                 }
             };
             var fnFetchOptions = function (options) {
-                options.source = $selectSource.val();
-                options.col_sep = $selectColSep.val();
-                options.encoding = $selectEncoding.val();
+                options.source = parseInt($selectSource.val());
+                options.col_sep = parseInt($selectColSep.val());
+                options.encoding = parseInt($selectEncoding.val());
 
                 var fnFetchColumnDefs = function ($sorter) {
                     var columnDefs = [];
@@ -770,7 +770,9 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $inputSolidWoodCoefficient.ladbTextinputDimension();
+            $inputSolidWoodCoefficient.ladbTextinputNumberWithUnit({
+                resetValue: '1'
+            });
 
             fnFillInputs(reportOptions);
 
@@ -2140,13 +2142,13 @@
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
                     options.trimming = $inputTrimming.val();
-                    options.optimization = $selectOptimization.val();
-                    options.stacking = $selectStacking.val();
+                    options.optimization = parseInt($selectOptimization.val());
+                    options.stacking = parseInt($selectStacking.val());
                     options.sheet_folding = $selectSheetFolding.val() === '1';
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
-                    options.origin_corner = $selectOriginCorner.val();
+                    options.origin_corner = parseInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                 }
                 var fnFillInputs = function (options) {

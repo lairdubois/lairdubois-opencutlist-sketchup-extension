@@ -46,7 +46,7 @@ module Ladb::OpenCutList
         begin
 
           # Convert col_sep
-          case @col_sep.to_i
+          case @col_sep
             when EXPORT_OPTION_COL_SEP_COMMA
               col_sep = ','
             when EXPORT_OPTION_COL_SEP_SEMICOLON
@@ -56,7 +56,7 @@ module Ladb::OpenCutList
           end
 
           # Convert col_sep
-          case @encoding.to_i
+          case @encoding
             when EXPORT_OPTION_ENCODING_UTF16LE
               bom = "\xFF\xFE".force_encoding('utf-16le')
               encoding = 'UTF-16LE'
@@ -75,7 +75,7 @@ module Ladb::OpenCutList
               # Create the formula calculator
               calculator = Dentaku::Calculator.new
 
-              case @source.to_i
+              case @source
 
                 when EXPORT_OPTION_SOURCE_SUMMARY
 

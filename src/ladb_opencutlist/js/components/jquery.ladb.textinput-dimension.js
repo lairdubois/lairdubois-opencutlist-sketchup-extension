@@ -5,11 +5,13 @@
     // ======================
 
     var LadbTextinputDimension = function (element, options) {
-        LadbTextinputAbstract.call(this, element, options, '0');
+        LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputDimension.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputDimension.DEFAULTS = {};
+    LadbTextinputDimension.DEFAULTS = {
+        resetValue: '0'
+    };
 
     LadbTextinputDimension.prototype.createLeftToolsContainer = function ($toolContainer) {
         // Do not create left tools container

@@ -3,17 +3,18 @@
 // CLASS DEFINITION
 // ======================
 
-var LadbTextinputAbstract = function (element, options, resetValue, inputRegex) {
+var LadbTextinputAbstract = function (element, options, inputRegex) {
     this.options = options;
     this.$element = $(element);
 
-    this.resetValue = resetValue;
     this.inputRegex = inputRegex;
 
     this.$resetBtn = null;
 };
 
-LadbTextinputAbstract.DEFAULTS = {};
+LadbTextinputAbstract.DEFAULTS = {
+    resetValue: ''
+};
 
 LadbTextinputAbstract.prototype.disable = function () {
     this.$element.prop('disabled', true);
@@ -27,7 +28,7 @@ LadbTextinputAbstract.prototype.enable = function () {
 
 LadbTextinputAbstract.prototype.reset = function () {
     this.$element
-        .val(this.resetValue)
+        .val(this.options.resetValue)
         .trigger('change')
     ;
 };
