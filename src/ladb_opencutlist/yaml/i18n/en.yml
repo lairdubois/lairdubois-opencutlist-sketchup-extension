@@ -39,6 +39,7 @@ default:
   unit_2: Millimeter
   unit_3: Centimeter
   unit_4: Meter
+  unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
   part_single: part
@@ -935,9 +936,10 @@ tab:
     length_format: Format
     length_format_0: Decimal
     length_format_1: Architectural
-    length_format_2: Decimal
+    length_format_2: Engineering
     length_format_3: Fractional
     length_precision: Precision
+    suppress_units_display: Display the unit of length for each value
     mass_unit: Unit of mass
     currency_symbol: Currency symbol
   about:
@@ -957,6 +959,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
+      - SOUL Issam (*Arabic*), RTL interface not yet supported
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

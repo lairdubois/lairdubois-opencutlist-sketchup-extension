@@ -39,6 +39,7 @@ default:
   unit_2: Millimeter
   unit_3: Zentimeter
   unit_4: Meter
+  unit_5: Yard
   unit_mass_0: Kilogramm
   unit_mass_1: Pfund
   part_single: Teil
@@ -938,6 +939,7 @@ tab:
     length_format_2: Ingenieurswesen
     length_format_3: Fraktional
     length_precision: Genauigkeit
+    suppress_units_display: Die Längeneinheit für jeden Wert anzeigen
     mass_unit: Masseneinheit
     currency_symbol: Währungszeichen
   about:
@@ -957,6 +959,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tschechisch*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk und Dominik Szybisz (*Polnisch*)
       - Sergey Isupov (*Hebräisch*), noch ohne RTL Schnittstelle
+      - SOUL Issam (*Arabisch*), noch ohne RTL Schnittstelle
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.

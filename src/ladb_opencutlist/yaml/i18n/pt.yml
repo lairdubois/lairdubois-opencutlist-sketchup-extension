@@ -39,6 +39,7 @@ default:
   unit_2: Milímetro
   unit_3: Centímetro
   unit_4: Metro
+  unit_5: Jarda
   unit_mass_0: Quilograma
   unit_mass_1: Libra
   part_single: peça
@@ -938,6 +939,7 @@ tab:
     length_format_2: Engenharia
     length_format_3: Fracionário
     length_precision: Precisão
+    suppress_units_display: Exibir a unidade de comprimento em cada valor
     mass_unit: Unidade de massa
     currency_symbol: Símbolo da moeda
   about:
