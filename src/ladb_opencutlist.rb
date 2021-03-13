@@ -16,6 +16,8 @@ module Ladb
       case Sketchup.get_locale.split('-')[0].downcase
       ## /!\ Auto-generated lines, do not edit ##
       ## DESCRIPTION_START ##
+      when 'ar'
+        ex.description = 'مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)'
       when 'cs'
         ex.description = 'Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)'
       when 'de'
