@@ -962,6 +962,25 @@
                         that.selectTab(that.options.dialog_startup_tab_name);
                     }
 
+                    // Dev alert
+                    var $devAlert = $('#ladb_dev_alert');
+                    if ($devAlert.length > 0) {
+                        var devAlertTotalTime = 10000;
+                        var devAlertRemaining = devAlertTotalTime;
+                        var fnDevAlertCountdown = function () {
+                            devAlertRemaining -= 100;
+                            $('.countdown-bar', $devAlert).css('width', Math.max((devAlertRemaining / devAlertTotalTime) * 100, 0) + '%');
+                            if (devAlertRemaining < 0) {
+                                $devAlert.hide();
+                                return;
+                            }
+                            setTimeout(function () {
+                                window.requestAnimationFrame(fnDevAlertCountdown);
+                            }, 100);
+                        }
+                        window.requestAnimationFrame(fnDevAlertCountdown);
+                    }
+
                 }
 
             });
