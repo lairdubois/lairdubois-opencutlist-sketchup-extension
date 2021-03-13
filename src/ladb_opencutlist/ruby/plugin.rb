@@ -463,7 +463,7 @@ module Ladb::OpenCutList
 
     def reset_model_presets
       @model_presets_cache = {}
-      write_global_presets
+      write_model_presets
     end
 
     def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil, fire_event = false)

@@ -84,13 +84,16 @@ module Ladb::OpenCutList
 
     def get_length_settings_command
       model = Sketchup.active_model
-      length_format = model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL
+
+      return { :errors => [ 'default.error' ] } unless model
+
+      length_format = model.options['UnitsOptions']['LengthFormat']
       {
-          :length_unit => model ? model.options['UnitsOptions']['LengthUnit'] : INCHES,
+          :length_unit => model.options['UnitsOptions']['LengthUnit'],
           :length_unit_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
-          :length_format => model ? model.options['UnitsOptions']['LengthFormat'] : Length::DECIMAL,
-          :length_precision => model ? model.options['UnitsOptions']['LengthPrecision'] : 0,
-          :suppress_units_display => model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false,
+          :length_format => model.options['UnitsOptions']['LengthFormat'],
+          :length_precision => model.options['UnitsOptions']['LengthPrecision'],
+          :suppress_units_display => model.options['UnitsOptions']['SuppressUnitsDisplay'],
           :suppress_units_display_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
       }
     end

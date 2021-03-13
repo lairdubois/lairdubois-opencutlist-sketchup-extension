@@ -12,19 +12,6 @@
         this.$panelGlobal = $('#ladb_settings_panel_global', this.$element);
         this.$panelModel = $('#ladb_settings_panel_modal', this.$element);
 
-        this.$btnReset = $('#ladb_btn_reset', this.$element);
-
-        this.$selectLanguage = $('#ladb_select_language', this.$element);
-        this.$selectZoom = $('#ladb_select_zoom', this.$element);
-        this.$btnWidthUp = $('#ladb_btn_width_up', this.$element);
-        this.$btnWidthDown = $('#ladb_btn_width_down', this.$element);
-        this.$btnHeightUp = $('#ladb_btn_height_up', this.$element);
-        this.$btnHeightDown = $('#ladb_btn_height_down', this.$element);
-        this.$btnLeftUp = $('#ladb_btn_left_up', this.$element);
-        this.$btnLeftDown = $('#ladb_btn_left_down', this.$element);
-        this.$btnTopUp = $('#ladb_btn_top_up', this.$element);
-        this.$btnTopDown = $('#ladb_btn_top_down', this.$element);
-
     };
     LadbTabSettings.prototype = new LadbAbstractTab;
 
@@ -66,6 +53,8 @@
 
         var that = this;
 
+        // Menu /////
+
         $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
             rubyCallCommand('settings_dump_global_presets');
         });
@@ -101,6 +90,18 @@
 
         // Global settings /////
 
+        var $btnReset = $('#ladb_btn_reset', this.$element);
+        var $selectLanguage = $('#ladb_select_language', this.$element);
+        var $selectZoom = $('#ladb_select_zoom', this.$element);
+        var $btnWidthUp = $('#ladb_btn_width_up', this.$element);
+        var $btnWidthDown = $('#ladb_btn_width_down', this.$element);
+        var $btnHeightUp = $('#ladb_btn_height_up', this.$element);
+        var $btnHeightDown = $('#ladb_btn_height_down', this.$element);
+        var $btnLeftUp = $('#ladb_btn_left_up', this.$element);
+        var $btnLeftDown = $('#ladb_btn_left_down', this.$element);
+        var $btnTopUp = $('#ladb_btn_top_up', this.$element);
+        var $btnTopDown = $('#ladb_btn_top_down', this.$element);
+
         var fnUpdate = function () {
 
             // Adjust min limits
@@ -121,26 +122,31 @@
 
         };
 
-        this.$selectLanguage.val(this.dialog.capabilities.language);
-        this.$selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLanguage
+            .val(this.dialog.capabilities.language)
+            .selectpicker(SELECT_PICKER_OPTIONS)
+        ;
 
-        this.$selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
+        $selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
         if (this.dialog.capabilities.dialog_zoom !== '100%') {
-            this.$selectZoom.show();
+            $selectZoom.show();
         }
-        this.$selectZoom.val(this.dialog.capabilities.dialog_zoom);
-        this.$selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectZoom
+            .val(this.dialog.capabilities.dialog_zoom)
+            .selectpicker(SELECT_PICKER_OPTIONS)
+        ;
 
-        this.$selectLanguage.on('change', function () {
-            that.dialog.capabilities.language = that.$selectLanguage.val();
+        // Bind
+        $selectLanguage.on('change', function () {
+            that.dialog.capabilities.language = $selectLanguage.val();
             fnUpdate();
             that.showReloadAlert();
         });
-        this.$selectZoom.on('change', function () {
-            that.dialog.capabilities.dialog_zoom = that.$selectZoom.val();
+        $selectZoom.on('change', function () {
+            that.dialog.capabilities.dialog_zoom = $selectZoom.val();
             fnUpdate();
         });
-        this.$btnReset.on('click', function () {
+        $btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
             that.dialog.capabilities.dialog_maximized_width = 1100;
@@ -152,49 +158,49 @@
             that.showReloadAlert();
             return false;
         });
-        this.$btnWidthUp.on('click', function () {
+        $btnWidthUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_width += 20;
             fnUpdate();
             return false;
         });
-        this.$btnWidthDown.on('click', function () {
+        $btnWidthDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_width -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnHeightUp.on('click', function () {
+        $btnHeightUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_height += 20;
             fnUpdate();
             return false;
         });
-        this.$btnHeightDown.on('click', function () {
+        $btnHeightDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_height -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnLeftUp.on('click', function () {
+        $btnLeftUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_left += 20;
             fnUpdate();
             return false;
         });
-        this.$btnLeftDown.on('click', function () {
+        $btnLeftDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_left -= 20;
             fnUpdate();
             return false;
         });
-        this.$btnTopUp.on('click', function () {
+        $btnTopUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_top += 20;
             fnUpdate();
             return false;
         });
-        this.$btnTopDown.on('click', function () {
+        $btnTopDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_top -= 20;
             fnUpdate();
@@ -253,13 +259,25 @@
         var fnRetrieveModelOptions = function () {
 
             // Retrieve SU options
-            rubyCallCommand('settings_get_length_settings', null, fnFillLengthSettings);
+            rubyCallCommand('settings_get_length_settings', null, function (response) {
 
-            // Retrieve OCL options
-            rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
+                if (response.errors && response.errors.length > 0) {
 
-                var modelOptions = response.preset;
-                fnFillInputs(modelOptions);
+                    // No model or error : hide model panel
+                    that.$panelModel.hide();
+
+                    return;
+                }
+
+                fnFillLengthSettings(response);
+
+                // Retrieve OCL options
+                rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
+
+                    var modelOptions = response.preset;
+                    fnFillInputs(modelOptions);
+
+                });
 
             });
 
@@ -333,6 +351,7 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             fnRetrieveModelOptions();
+            that.$panelModel.show();
         });
         addEventCallback('on_options_provider_changed', function (params) {
             fnRetrieveModelOptions();

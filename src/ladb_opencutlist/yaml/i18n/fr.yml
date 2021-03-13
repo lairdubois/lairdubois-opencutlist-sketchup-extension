@@ -192,7 +192,7 @@ tab:
       number_generated: Le numéro de cette pièce est généré automatiquement
       resized: Cette pièce est redimensionnée par rapport à sa définition
       flipped: Cette pièce est en miroir par rapport à sa définition
-      symmetrical: La détection en miroir est désactivée sur cette pièce
+      symmetrical: La détection de pièce en miroir est désactivée sur cette pièce
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'

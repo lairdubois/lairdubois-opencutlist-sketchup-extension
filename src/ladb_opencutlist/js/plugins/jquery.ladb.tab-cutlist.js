@@ -1592,23 +1592,23 @@
                         if ($selectInstanceCountByPart.val() !== MULTIPLE_VALUE) {
                             editedParts[i].instance_count_by_part = parseInt($selectInstanceCountByPart.val());
                         }
-                        if ($inputMass.val() !== undefined) {
+                        if ($inputMass.val() !== undefined && $inputMass.val() !== '') {
                             editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
                         }
-                        if ($inputPrice.val() !== undefined) {
+                        if ($inputPrice.val() !== undefined && $inputPrice.val() !== '') {
                             editedParts[i].price = $inputPrice.val();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
-                        if ($inputLengthIncrease.val() !== undefined) {
+                        if ($inputLengthIncrease.val() !== undefined && $inputLengthIncrease.val() !== '') {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
                         }
-                        if ($inputWidthIncrease.val() !== undefined) {
+                        if ($inputWidthIncrease.val() !== undefined && $inputWidthIncrease.val() !== '') {
                             editedParts[i].width_increase = $inputWidthIncrease.val();
                         }
-                        if ($inputThicknessIncrease.val() !== undefined) {
+                        if ($inputThicknessIncrease.val() !== undefined && $inputThicknessIncrease.val() !== '') {
                             editedParts[i].thickness_increase = $inputThicknessIncrease.val();
                         }
 
