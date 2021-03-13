@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../plugin'
+
   class SettingsController < Controller
 
     def initialize()
@@ -17,6 +19,18 @@ module Ladb::OpenCutList
       end
       Plugin.instance.register_command('settings_get_length_settings') do |params|
         get_length_settings_command
+      end
+      Plugin.instance.register_command('settings_dump_global_presets') do |params|
+        dump_global_presets_command
+      end
+      Plugin.instance.register_command('settings_dump_model_presets') do |params|
+        dump_model_presets_command
+      end
+      Plugin.instance.register_command('settings_reset_global_presets') do |params|
+        reset_global_presets_command
+      end
+      Plugin.instance.register_command('settings_reset_model_presets') do |params|
+        reset_model_presets_command
       end
 
     end
@@ -79,6 +93,24 @@ module Ladb::OpenCutList
           :suppress_units_display => model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false,
           :suppress_units_display_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
       }
+    end
+
+    def dump_global_presets_command
+      SKETCHUP_CONSOLE.show
+      Plugin.instance.dump_global_presets
+    end
+
+    def dump_model_presets_command
+      SKETCHUP_CONSOLE.show
+      Plugin.instance.dump_model_presets
+    end
+
+    def reset_global_presets_command
+      Plugin.instance.reset_global_presets
+    end
+
+    def reset_model_presets_command
+      Plugin.instance.reset_model_presets
     end
 
   end

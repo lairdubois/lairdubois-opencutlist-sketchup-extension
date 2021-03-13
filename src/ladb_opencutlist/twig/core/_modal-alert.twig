@@ -1,0 +1,13 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_core_modal_alert' %}
+{% set noDefaultClose = true %}
+{% set noHeader = title is null %}
+
+{% block bodyInner %}
+    <p>{{ text }}</p>
+{% endblock %}
+
+{% block footerInner %}
+    <button type="button" id="ladb_confirm_btn_ok" class="btn btn-{{ options.okBtnType|default('primary') }}" data-dismiss="modal">{% if options.okBtnIcon is defined %}<i class="ladb-opencutlist-icon-{{ options.okBtnIcon }}"></i> {% endif %}{{ options.okBtnLabel|default('default.ok'|i18next) }}</button>
+{% endblock %}

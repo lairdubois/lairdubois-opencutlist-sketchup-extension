@@ -66,6 +66,39 @@
 
         var that = this;
 
+        $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
+            rubyCallCommand('settings_dump_global_presets');
+        });
+        $('#ladb_item_dump_model_presets', this.$element).on('click', function () {
+            rubyCallCommand('settings_dump_model_presets');
+        });
+        $('#ladb_item_reset_global_presets', this.$element).on('click', function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.menu.reset_global_presets_confirm'), function () {
+                rubyCallCommand('settings_reset_global_presets', null, function () {
+                    that.dialog.alert(null, i18next.t('tab.settings.menu.reset_global_presets_success'), function () {
+                        rubyCallCommand('core_dialog_hide');
+                    }, {
+                        okBtnLabel: i18next.t('default.close')
+                    });
+                });
+            }, {
+                confirmBtnType: 'danger'
+            })
+        });
+        $('#ladb_item_reset_model_presets', this.$element).on('click', function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.menu.reset_model_presets_confirm'), function () {
+                rubyCallCommand('settings_reset_model_presets', null, function () {
+                    that.dialog.alert(null, i18next.t('tab.settings.menu.reset_model_presets_success'), function () {
+                        rubyCallCommand('core_dialog_hide');
+                    }, {
+                        okBtnLabel: i18next.t('default.close')
+                    });
+                });
+            }, {
+                confirmBtnType: 'danger'
+            });
+        });
+
         // Global settings /////
 
         var fnUpdate = function () {

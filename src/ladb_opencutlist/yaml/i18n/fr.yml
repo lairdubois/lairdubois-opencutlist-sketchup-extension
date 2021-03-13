@@ -7,6 +7,7 @@ default:
   cancel: Annuler
   validate: Valider
   confirm: Confirmer
+  ok: Ok
   open: Ouvrir
   see: Voir
   close: Fermer
@@ -81,8 +82,6 @@ core:
     options_change: Les options du modèle ont été modifiées.
     material_change: Au moins une matière a été modifiée.
     selection_change: La sélection dans le modèle actif a changée.
-  model_info_page:
-    units: Unités
   upgrade:
     unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
     available: |
@@ -942,6 +941,25 @@ tab:
     suppress_units_display: Afficher l'unité de longueur à chaque valeur
     mass_unit: Unité de masse
     currency_symbol: Symbole monétaire
+    menu:
+      dump_global_presets: Dump des préréglages
+      dump_model_presets: Dump des réglages du modèle
+      reset_global_presets: Réinitialiser les préréglages
+      reset_global_presets_confirm: |
+        Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
+        Cette action est définitive. **Tous les préréglages seront perdus.**
+        Confirmez pour continuer.
+      reset_global_presets_success: |
+        Les préréglages *OpenCutList* ont été réinitialisés.
+        Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
+      reset_model_presets: Réinitialiser les réglages du modèle
+      reset_model_presets_confirm: |
+        Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courrant.
+        Cette action est définitive. **Tous les réglages seront restaurés aux valeurs par défaut.**
+        Confirmez pour continuer.
+      reset_model_presets_success: |
+        Les réglages *OpenCutList* du modèle courrant ont été réinitialisés.
+        Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
   about:
     label: A propos
     title: A propos

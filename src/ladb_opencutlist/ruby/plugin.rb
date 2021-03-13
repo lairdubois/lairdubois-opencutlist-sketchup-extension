@@ -340,6 +340,11 @@ module Ladb::OpenCutList
       write_default(PRESETS_KEY, @global_presets_cache)
     end
 
+    def reset_global_presets
+      @global_presets_cache = {}
+      write_global_presets
+    end
+
     def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
@@ -389,8 +394,8 @@ module Ladb::OpenCutList
         begin
           default_values = get_app_defaults(dictionary, section)
         rescue => e
-          # App defaults don't contain the given dictionary and/or section. Raise exception.
-          raise "App defaults not found (dictionary=#{dictionary}, section=#{section})"
+          # App defaults don't contain the given dictionary and/or section. Returns nil.
+          return nil
         end
       else
         default_values = get_global_preset(dictionary, nil, section)
@@ -427,6 +432,13 @@ module Ladb::OpenCutList
       []
     end
 
+    def dump_global_presets
+      read_global_presets if @global_presets_cache.nil?
+      _debug('GLOBAL PRESETS') do
+        pp @global_presets_cache
+      end
+    end
+
     # -----
 
     def clear_model_presets_cache
@@ -447,6 +459,11 @@ module Ladb::OpenCutList
 
       # Commit model modification operation
       Sketchup.active_model.commit_operation
+    end
+
+    def reset_model_presets
+      @model_presets_cache = {}
+      write_global_presets
     end
 
     def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil, fire_event = false)
@@ -517,6 +534,13 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
       return @model_presets_cache[dictionary].keys if @model_presets_cache.has_key?(dictionary)
       []
+    end
+
+    def dump_model_presets
+      read_model_presets if @model_presets_cache.nil?
+      _debug('MODEL PRESETS') do
+        pp @model_presets_cache
+      end
     end
 
     # -----
@@ -721,6 +745,9 @@ module Ladb::OpenCutList
         end
         register_command('core_dialog_maximize') do |params|
           dialog_maximize_command
+        end
+        register_command('core_dialog_hide') do |params|
+          dialog_hide_command
         end
         register_command('core_open_external_file') do |params|
           open_external_file_command(params)
@@ -941,6 +968,15 @@ module Ladb::OpenCutList
     private
 
     # -- Utils ---
+
+    def _debug(heading, &block)
+      heading = "#{heading} - #{EXTENSION_NAME} #{EXTENSION_VERSION} ( build: #{EXTENSION_BUILD} )"
+      puts '-' * heading.length
+      puts heading
+      puts '-' * heading.length
+      block.call
+      puts '-' * heading.length
+    end
 
     def _get_selected_component_entity
       entity = (Sketchup.active_model.nil? || Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
@@ -1203,6 +1239,10 @@ module Ladb::OpenCutList
       if @dialog
         dialog_set_size(@dialog_maximized_width, @dialog_maximized_height)
       end
+    end
+
+    def dialog_hide_command
+      hide_dialog
     end
 
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }

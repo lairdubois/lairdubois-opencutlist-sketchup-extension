@@ -2,6 +2,22 @@
 
 {% block headerHeadingInner %}<i class="ladb-opencutlist-icon-settings"></i> {{ parent() }}{% endblock %}
 
+{% block headerToolsInner %}
+    {{ parent() }}
+    <div class="btn-group">
+        <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li class="dropdown-header dropdown-header-top">Debug</li>
+            <li><a id="ladb_item_dump_global_presets" href="#">{{ 'tab.settings.menu.dump_global_presets'|i18next }}</a></li>
+            <li><a id="ladb_item_dump_model_presets" href="#">{{ 'tab.settings.menu.dump_model_presets'|i18next }}</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-item-danger"><a id="ladb_item_reset_global_presets" href="#">{{ 'tab.settings.menu.reset_global_presets'|i18next }}...</a></li>
+            <li class="dropdown-item-danger"><a id="ladb_item_reset_model_presets" href="#">{{ 'tab.settings.menu.reset_model_presets'|i18next }}...</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+
 {% block containerInner %}
     <div class="row">
         <div class="col-xs-6">
@@ -76,12 +92,16 @@
                             <div class="form-group">
                                 <label>{{ 'tab.settings.length_unit'|i18next }}</label>
                                 <select id="ladb_model_select_length_unit" class="form-control">
-                                    <option data-content="{{ 'default.unit_0'|i18next }}">0</option>
-                                    <option data-content="{{ 'default.unit_1'|i18next }}">1</option>
-                                    <option data-content="{{ 'default.unit_2'|i18next }}">2</option>
-                                    <option data-content="{{ 'default.unit_3'|i18next }}">3</option>
-                                    <option data-content="{{ 'default.unit_4'|i18next }}">4</option>
-                                    <option data-content="{{ 'default.unit_5'|i18next }}"{% if capabilities.sketchup_version_number < 2000000000 %} disabled{% endif %}>5</option>
+                                    <optgroup>
+                                        <option data-content="{{ 'default.unit_2'|i18next }}">2</option>
+                                        <option data-content="{{ 'default.unit_3'|i18next }}">3</option>
+                                        <option data-content="{{ 'default.unit_4'|i18next }}">4</option>
+                                    </optgroup>
+                                    <optgroup>
+                                        <option data-content="{{ 'default.unit_0'|i18next }}">0</option>
+                                        <option data-content="{{ 'default.unit_1'|i18next }}">1</option>
+                                        <option data-content="{{ 'default.unit_5'|i18next }}"{% if capabilities.sketchup_version_number < 2000000000 %} disabled{% endif %}>5</option>
+                                    </optgroup>
                                 </select>
                             </div>
                         </div>

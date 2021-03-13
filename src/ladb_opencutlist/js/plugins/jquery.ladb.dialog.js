@@ -667,6 +667,30 @@
 
     };
 
+    LadbDialog.prototype.alert = function (title, text, callback, options) {
+
+        // Append modal
+        var $modal = this.appendModal('ladb_core_modal_alert', 'core/_modal-alert.twig', {
+            title: title,
+            text: text,
+            options: options
+        });
+
+        // Fetch UI elements
+        var $btnOk = $('#ladb_confirm_btn_ok', $modal);
+
+        // Bind buttons
+        $btnOk.on('click', function() {
+            if (callback) {
+                callback();
+            }
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
     LadbDialog.prototype.confirm = function (title, text, callback, options) {
 
         // Append modal

@@ -4,6 +4,18 @@
 
 .dropdown-menu {
 
+  > li.dropdown-item-danger > a {
+    color: @ladb-brand-danger;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+      color: #fff;
+      background-color: @ladb-brand-danger;
+    }
+
+  }
+
   & > .active > a, & > .active > a:hover, & > .active > a:focus {
     background-color: #f5f5f5;
     color: @ladb-global-color;

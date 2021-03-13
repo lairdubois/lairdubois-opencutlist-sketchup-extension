@@ -4,6 +4,7 @@
 {# set noDefaultClose (facultative) #}
 
 {% set noDefaultClose = noDefaultClose|default(false) %}
+{% set noHeader = noHeader|default(false) %}
 
 {% block modal %}
     <div id="{{ id }}" class="modal{% if classes is defined %} {{ classes }}{% endif %}"{% if noDefaultClose %} data-keyboard="false" data-backdrop="static"{% endif%} role="dialog" tabindex="-1" aria-hidden="true" aria-labelledby="{{ id }}_label">
@@ -13,12 +14,14 @@
                     <div class="modal-content">
                         {% block contentInner %}
                             {% block header %}
-                                <div class="modal-header">
-                                    {% block headerInner %}
-                                        {% if not noDefaultClose %}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}
-                                        {% if title is defined %}<h3 id="{{ id }}_label" class="modal-title">{{ title|raw }}</h3>{% endif %}
-                                    {% endblock %}
-                                </div>
+                                {% if not noHeader %}
+                                    <div class="modal-header">
+                                        {% block headerInner %}
+                                            {% if not noDefaultClose %}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}
+                                            {% if title is defined %}<h3 id="{{ id }}_label" class="modal-title">{{ title|raw }}</h3>{% endif %}
+                                        {% endblock %}
+                                    </div>
+                                {% endif %}
                             {% endblock %}
                             {% block body %}
                                 <div class="modal-body{% if bodyClasses is defined %} {{ bodyClasses }}{% endif %}">

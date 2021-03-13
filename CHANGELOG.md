@@ -24,6 +24,7 @@ in 2.x, 1.x and 0.x versions.
   * Added SketchUp 2021 Tag folders compatibility
   * Added custom proposal list of tags in cutlist options
   * Added "symmetrical" definition attribute
+  * Added dump and reset global and model presets
 
 * 1.9.10 (2020-12-17)
 
