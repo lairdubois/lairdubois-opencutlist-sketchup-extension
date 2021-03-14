@@ -27,6 +27,7 @@
         this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
+        this.solidWoodMaterialCount = 0;
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
@@ -88,6 +89,7 @@
             var usedTags = response.used_tags;
             var materialUsages = response.material_usages;
             var groups = response.groups;
+            var solidWoodMaterialCount = response.solid_wood_material_count;
 
             // Keep usefull data
             that.filename = filename;
@@ -100,6 +102,7 @@
             that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
             that.groups = groups;
+            that.solidWoodMaterialCount = solidWoodMaterialCount;
 
             // Compute usedEdgeMaterialDisplayNames
             for (var i = 0; i < materialUsages.length; i++) {
@@ -537,7 +540,7 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        var visible_only = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        var visibleOnly = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve export option options
@@ -546,7 +549,7 @@
             var exportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
-                visible_only: visible_only
+                visible_only: visibleOnly
             });
 
             // Fetch UI elements
@@ -739,7 +742,7 @@
         // Show Objective modal
         // this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
 
-        var visible_only = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        var visibleOnly = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve label options
@@ -748,8 +751,9 @@
             var reportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
-                visible_only: visible_only,
-                tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab
+                visible_only: visibleOnly,
+                tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
+                solid_wood_material_count: that.solidWoodMaterialCount
             }, true);
 
             // Fetch UI elements

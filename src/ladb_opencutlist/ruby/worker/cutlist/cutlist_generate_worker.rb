@@ -503,25 +503,20 @@ module Ladb::OpenCutList
 
       # Warnings & tips
       if @instance_infos_cache.length > 0
-        solid_wood_material_count = 0
-        sheet_good_material_count = 0
-        bar_material_count = 0
-        edge_material_count = 0
-        accessory_material_count = 0
         @material_usages_cache.each { |key, material_usage|
           if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
-            solid_wood_material_count += material_usage.use_count
+            cutlist.solid_wood_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
-            sheet_good_material_count += material_usage.use_count
+            cutlist.sheet_good_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_DIMENSIONAL
-            bar_material_count += material_usage.use_count
+            cutlist.dimensional_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_EDGE
-            edge_material_count += material_usage.use_count
+            cutlist.edge_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_ACCESSORY
-            accessory_material_count += material_usage.use_count
+            cutlist.accessory_material_count += material_usage.use_count
           end
         }
-        if cutlist.instance_count - cutlist.ignored_instance_count > 0 && solid_wood_material_count == 0 && sheet_good_material_count == 0 && bar_material_count == 0 && accessory_material_count == 0
+        if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.accessory_material_count == 0
           cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{selection_only ? "selection" : "model"}")
           cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
         end

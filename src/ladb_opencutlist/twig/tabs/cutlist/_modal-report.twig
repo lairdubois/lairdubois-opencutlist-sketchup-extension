@@ -22,8 +22,8 @@
                     {{ 'tab.cutlist.report.info_0'|i18next }}
                 </div>
             </div>
-            <hr>
-            <div class="form form-horizontal" style="margin-top: 15px;">
+            <hr{% if solid_wood_material_count == 0 %} class="hide"{% endif %}>
+            <div class="form form-horizontal{% if solid_wood_material_count == 0 %} hide{% endif %}" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.report.option_solid_wood_coefficient_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_input_solid_wood_coefficient" class="control-label col-xs-5">{{ 'tab.cutlist.report.option_solid_wood_coefficient'|i18next }}</label>
