@@ -9,6 +9,9 @@
     var MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
     var MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
 
+    var DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
+    var DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
+
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
     var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
@@ -827,13 +830,14 @@
                 that.selectTab(tabName);
             });
         });
-        $('#ladb_btn_close_dev_alert', that.$element).on('click', function () {
-            $('#ladb_dev_alert').hide();
-        });
         $('#ladb_btn_close_compatibility_alert', that.$element).on('click', function () {
             $('#ladb_compatibility_alert').hide();
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
+        });
+        $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
+            rubyCallCommand('core_open_url', { url: that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL) });
+            return false;
         });
 
         // Bind fake tabs
