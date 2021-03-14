@@ -7,6 +7,7 @@ default:
   cancel: Abbrechen
   validate: Validieren
   confirm: Bestätigen
+  ok: Ok
   open: Öffnen
   see: Sehen
   close: Schließen
@@ -81,8 +82,6 @@ core:
     options_change: Die Optionen des Modells wurden verändert.
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
-  model_info_page:
-    units: Einheiten
   upgrade:
     unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
-      symmetrical: Dieses Teil ist symmetrisch
+      symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: "Nach '{{ label }}' auswählen"
       remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
       add_edge_material_name_filter: "Nach '{{ material_name }}' auswählen"
       remove_edge_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
       not_aligned_on_axes: "Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet"
+      instance_count_by_part: "Dieses Teil wird in Chargen von **{{ count }}** Einheiten gezählt."
+      missing_instance_count: "Achtung, **{{ count }}** Einheit der letzten Charge wird nicht verwendet."
+      missing_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Charge werden nicht verwendet."
       multiple_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die in {{ count }} verschiedenen Ebenen vorhanden sind:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
@@ -246,8 +248,18 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      price: Preis
+      instance_count_by_part: Los
+      instance_count_by_part_help: |
+        Ermöglicht das Zählen von Teilen anhand der Anzahl der erforderlichen **Lose** anstelle der Anzahl der im Modell vorhandenen Einheiten.
+        Die in einem Los gesammelten Teile müssen dieselbe Definition haben.
+
+        *Beispiel: Es wird nur 1 Stück für ein Paar Schubladenführungen gezählt.*
+      instance_count_by_part_1: 1 Einheit pro Teil
+      instance_count_by_part_2: 2 Einheiten pro Teil
       mass: Masse
+      mass_help: Die Masse des Teils wird bei der Erstellung von **Berichten** verwendet.
+      price: Preis
+      price_help: Der Preis des Teils wird bei der Erstellung von **Berichten** verwendet.
       tags: Tags
       tags_help: |
         Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
@@ -263,7 +275,7 @@ tab:
         - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
         - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
         - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
-      symmetrical: Das Teil ist symmetrisch
+      symmetrical: Deaktivieren Sie die Spiegelerkennung für dieses Teil
       symmetrical_help: |
         Wenn dieses Kästchen aktiviert ist, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       size_increase: Übermaße
@@ -435,7 +447,6 @@ tab:
       total_area: Σ Flächen
       total_length: Σ Längen
       error:
-        no_typed_material_parts: Kein Teil in Ihrem Modells enthält Material mit einem definierten Typ.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
@@ -942,6 +953,25 @@ tab:
     suppress_units_display: Die Längeneinheit für jeden Wert anzeigen
     mass_unit: Masseneinheit
     currency_symbol: Währungszeichen
+    menu:
+      dump_global_presets: Dump der Voreinstellungen
+      dump_model_presets: Dump der Modell-Einstellungen
+      reset_global_presets: Voreinstellungen reinitialisieren
+      reset_global_presets_confirm: |
+        Sie sind dabei, alle Ihre gespeicherten *OpenCutList*-Voreinstellungen zurückzusetzen.
+        Diese Aktion ist endgültig. **Alle Voreinstellungen gehen verloren**.
+        Bestätigen Sie, um fortzufahren.
+      reset_global_presets_success: |
+        Die *OpenCutList*-Voreinstellungen wurden zurückgesetzt.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+      reset_model_presets: Modellvoreinstellungen reinitialiseren
+      reset_model_presets_confirm: |
+        Sie sind dabei, alle *OpenCutList*-Einstellungen für das aktuelle Modell zurückzusetzen.
+        Diese Aktion ist endgültig. **Alle Einstellungen werden auf die Standardwerte zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_model_presets_success: |
+        Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
   about:
     label: Über
     title: Über

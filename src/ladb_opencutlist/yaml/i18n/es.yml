@@ -7,6 +7,7 @@ default:
   cancel: Cancelar
   validate: Aplicar
   confirm: Confirmer
+  ok: Ok
   open: Abrir
   see: Ver
   close: Cerra
@@ -81,8 +82,6 @@ core:
     options_change: Las opciones en el modelo han cambiado.
     material_change: Se ha cambiado al menos un material.
     selection_change: Se ha modificado la selección en el modelo activo.
-  model_info_page:
-    units: Unidades
   upgrade:
     unavailable: Imposible encontrar la última versión de *OpenCutList*.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: El número de esta parte se genera automáticamente
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
-      symmetrical: Esta pieza es simétrica
+      symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
       auto_oriented: Esta parte se ha reorientado automáticamente
       add_label_filter: "Filtrado en '{{ label }}'"
       remove_label_filter: "Elimina el filtrado en '{{ label }}'"
       add_edge_material_name_filter: "Filtrar por '{{ material_name }}'"
       remove_edge_material_name_filter: "No filtrar por '{{ material_name }}'"
       not_aligned_on_axes: "Atención, esta parte puede no estar orientada correctamente con respecto a sus ejes"
+      instance_count_by_part: "Esta pieza se cuenta en lotes de **{{ count }}** unidades."
+      missing_instance_count: "Tenga en cuenta que no se utilizará **{{ count }}** unidad del último lote."
+      missing_instance_count_plural: "Tenga en cuenta que no se utilizarán **{{ count }}** unidades del último lote."
       multiple_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas diferentes:<br>{{ layers }}"
       children_warnings: "Precaución, hay {{ count }} alerta en partes agrupadas"
       children_warnings_plural: "Precauciones, hay {{ count }} alertas en partes agrupadas"
@@ -246,8 +248,18 @@ tab:
       cumulable_0: No sumable
       cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
-      price: Premio
+      instance_count_by_part: Lote
+      instance_count_by_part_help: |
+        Permite contar las piezas en el número de **conjuntos** necesarios en lugar del número de unidades del modelo.
+        Las piezas de un conjunto deben tener la misma definición.
+
+        *Ejemplo: Contar sólo 1 pieza para un par de guías de cajón.*
+      instance_count_by_part_1: 1 unidad por pieza
+      instance_count_by_part_2: 2 unidades por pieza
       mass: Masa
+      mass_help: La masa de la pieza se utilizará al generar los **Reportes**.
+      price: Premio
+      price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
       tags: Etiquetas
       tags_help: |
         Con las *etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
@@ -263,9 +275,9 @@ tab:
         - la *longitud* está en el eje <span style='color:red'>rojo</span>
         - el *ancho* está en el eje <span style='color:green'>verde</span>
         - el *espesor* está en el eje <span style='color:blue'>azul</span>.
-      symmetrical: La pieza es simétrica
+      symmetrical: Deshabilitar la detección de espejos en esta parte
       symmetrical_help: |
-        Si esta casilla está marcada, la detección de *pieza espejo* no tendrá efecto sobre esta pieza.
+        Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
       size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
@@ -435,7 +447,6 @@ tab:
       total_area: Σ Areas
       total_length: Σ Longitudes
       error:
-        no_typed_material_parts: Ninguna parte de su modelo tiene material con un tipo definido.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
@@ -942,6 +953,25 @@ tab:
     suppress_units_display: Muestra la unidad de longitud para cada valor
     mass_unit: Unidad de masa
     currency_symbol: Símbolo de moneda
+    menu:
+      dump_global_presets: Volcado de preajustes
+      dump_model_presets: "Volcado de preajustes de modelos "
+      reset_global_presets: "Reiniciar los preajustes "
+      reset_global_presets_confirm: |
+        Está a punto de restablecer todos sus preajustes *OpenCutList* guardados.
+        Esta acción es definitiva. **Todos los preajustes se perderán.
+        Confirme para continuar.
+      reset_global_presets_success: |
+        Los preajustes de *OpenCutList* se han restablecido.
+        Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
+      reset_model_presets: "Reiniciar los preajustes del modelo "
+      reset_model_presets_confirm: |
+        Está a punto de restablecer todos los preajustes de *OpenCutList* para el modelo actual.
+        Esta acción es definitiva. **Todos los ajustes serán restaurados a los valores por defecto.**
+        Confirme para continuar.
+      reset_model_presets_success: |
+        Los preajustes de *OpenCutList* del modelo actual se han restablecido.
+        Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
   about:
     label: Acerca de
     title: Acerca de
@@ -959,6 +989,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk y Dominik Szybisz (*polaco*)
       - Sergey Isupov (*hebreo*), sin interfaz RTL
+      - SOUL Issam (*árabe*), sin interfaz RTL
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

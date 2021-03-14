@@ -7,6 +7,7 @@ default:
   cancel: Cancel
   validate: Apply
   confirm: Validate
+  ok: Ok
   open: Open
   see: See
   close: Close
@@ -81,8 +82,6 @@ core:
     options_change: Options in the model have been changed.
     material_change: At least one material has been changed.
     selection_change: The selection in the active model has been changed.
-  model_info_page:
-    units: Units
   upgrade:
     unavailable: The latest version of *OpenCutList* could not be found.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: The number of this part was generated automatically
       resized: This part was resized with respect to its component definition
       flipped: This part is mirrored compared to its component definition
-      symmetrical: This part is symmetrical
+      symmetrical: Mirrored part detection is disabled on this part
       auto_oriented: This part has been reoriented automatically
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
       add_edge_material_name_filter: "Filter on '{{ material_name }}'"
       remove_edge_material_name_filter: "Remove filtering on '{{ material_name }}'"
       not_aligned_on_axes: "Caution, this part may not be oriented correctly with respect to its axes"
+      instance_count_by_part: "This part is counted in sets of **{{ count }}** units."
+      missing_instance_count: "Please note that **{{ count }}** unit from the last set will not be used."
+      missing_instance_count_plural: "Please note that **{{ count }}** units from the last set will not be used."
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
@@ -246,8 +248,18 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
-      price: Price
+      instance_count_by_part: Set
+      instance_count_by_part_help: |
+        Allows you to count the parts in the number of **sets** needed instead of the number of units in the model.
+        The parts in a set must have the same definition.
+
+        *Example: Count only 1 piece for a pair of drawer slides.*
+      instance_count_by_part_1: 1 unit per part
+      instance_count_by_part_2: 2 units per part
       mass: Mass
+      mass_help: The mass of the part will be used when generating **Reports**.
+      price: Price
+      price_help: The price of the part will be used when generating **Reports**.
       tags: Tags
       tags_help: |
         The *Tags* allow you to add custom keywords to each part definition.
@@ -263,7 +275,7 @@ tab:
         - *length* is on the <span style='color:red'>red</span> axis,
         - *width* on the <span style='color:green'>green</span> axis and
         - *thickness* on the <span style='color:blue'>blue</span> axis
-      symmetrical: The part is symmetrical
+      symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this box is checked, the detection of a *mirrored part* will have no effect on this part.
       size_increase: Oversizes
@@ -435,7 +447,6 @@ tab:
       total_area: Σ Areas
       total_length: Σ Lengths
       error:
-        no_typed_material_parts: No part in your model has material with a defined type.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -942,6 +953,25 @@ tab:
     suppress_units_display: Display the unit of length for each value
     mass_unit: Unit of mass
     currency_symbol: Currency symbol
+    menu:
+      dump_global_presets: Dump of presets
+      dump_model_presets: Dump of model presets
+      reset_global_presets: Reinitialize the presets
+      reset_global_presets_confirm: |
+        You are about to reset all of your saved *OpenCutList* presets.
+        This action is final. **All presets will be lost.**
+        Confirm to continue.
+      reset_global_presets_success: |
+        *OpenCutList* presets have been reset.
+        In order to take the changes into account, you must **close** and **reopen** the OpenCutList window.
+      reset_model_presets: Reinitialize the model presets
+      reset_model_presets_confirm: |
+        You are about to reset all *OpenCutList* presets for the current model.
+        This action is final. **All settings will be restored to default values.**
+        Confirm to continue.
+      reset_model_presets_success: |
+        The current model's *OpenCutList* presets have been reset.
+        In order to take the changes into account, you must **close** and **reopen** the OpenCutList window.
   about:
     label: About
     title: About
