@@ -91,3 +91,10 @@ if (!Array.prototype.unique) {
         return a;
     };
 }
+
+// Add requestAnimationFrame support
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+    };
+}
