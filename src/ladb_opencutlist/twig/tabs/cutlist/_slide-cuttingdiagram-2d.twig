@@ -42,11 +42,11 @@
     <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ leftover.length|escape('html') }}&nbsp;x&nbsp;{{ leftover.width|escape('html') }}</div>
 {% endspaceless %}
 {% endmacro %}
-{% macro cut_tooltip(cut, saw_kerf) %}
+{% macro cut_tooltip(cut, options) %}
 {% spaceless %}
     <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_final ? '_final' : (cut.is_through ? '_through' : '')))|i18next }}</span></div>
-    <div class='tt-data'>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut'></i> {{ cut.x|escape('html') }}{% endif %}</div>
-    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ saw_kerf|escape('html') }}</div>
+    <div class='tt-data'>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 or options.origin_corner == 3 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut-{% if options.origin_corner == 2 or options.origin_corner == 3 %}{# 2 = ORIGIN_CORNER_TOP_RIGHT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}left{% else %}right{% endif %}'></i> {{ cut.x|escape('html') }}{% endif %}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ saw_kerf.saw_kerf|escape('html') }}</div>
 {% endspaceless %}
 {% endmacro %}
 
@@ -319,7 +319,7 @@
                                 </g>
                             {% endfor %}
                             {% for cut in sheet.cuts %}
-                                <g class="cut{% if cut.is_through %}{% if options.highlight_primary_cuts %} cut-highlighted{% endif%} cut-through{% endif %}{% if cut.is_final %} cut-final{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options.saw_kerf) }}">
+                                <g class="cut{% if cut.is_through %}{% if options.highlight_primary_cuts %} cut-highlighted{% endif%} cut-through{% endif %}{% if cut.is_final %} cut-final{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options) }}">
                                     <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                     <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
                                 </g>

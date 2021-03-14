@@ -1874,12 +1874,6 @@
     LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId, forceDefaultTab, generateCallback) {
         var that = this;
 
-        // Reset lastCuttingdiagram1dOptionsTab if new group
-        if (groupId !== this.lastCuttingdiagram1dGroupId) {
-            this.lastCuttingdiagram1dOptionsTab = null;
-        }
-        this.lastCuttingdiagram1dGroupId = groupId;
-
         var group = this.findGroupById(groupId);
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
@@ -1898,6 +1892,7 @@
                 }, true);
 
                 // Fetch UI elements
+                var $tabs = $('a[data-toggle="tab"]', $modal);
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdBar = $('#ladb_select_std_bar', $modal);
                 var $inputScrapBarLengths = $('#ladb_input_scrap_bar_lengths', $modal);
@@ -1979,6 +1974,12 @@
                 $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
                 $inputWrapLength.ladbTextinputDimension();
 
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastCuttingdiagram1dOptionsTab = $(e.target).attr('href').substring('#tab_cuttingdiagram_options_'.length);
+                })
+
+                // Bind select
                 $inputStdBar.on('changed.bs.select', function () {
                     var value = $inputStdBar.val();
                     if (value === 'add') {
@@ -2144,6 +2145,7 @@
                 }, true);
 
                 // Fetch UI elements
+                var $tabs = $('a[data-toggle="tab"]', $modal);
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
@@ -2239,6 +2241,11 @@
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.val(cuttingdiagram2dOptions.highlight_primary_cuts ? '1' : '0');
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastCuttingdiagram2dOptionsTab = $(e.target).attr('href').substring('#tab_cuttingdiagram_options_'.length);
+                })
 
                 // Bind select
                 $inputStdSheet.on('changed.bs.select', function () {

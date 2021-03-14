@@ -9,6 +9,8 @@ module Ladb::OpenCutList
 
     ORIGIN_CORNER_TOP_LEFT = 0
     ORIGIN_CORNER_BOTTOM_LEFT = 1
+    ORIGIN_CORNER_TOP_RIGHT = 2
+    ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
@@ -186,7 +188,7 @@ module Ladb::OpenCutList
           bin.boxes.each { |box|
 
             part_def = Cuttingdiagram2dPartDef.new(box.data)
-            part_def.px_x = _to_px(box.x)
+            part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
             part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
             part_def.px_length = _to_px(box.length)
             part_def.px_width = _to_px(box.width)
@@ -209,7 +211,7 @@ module Ladb::OpenCutList
           bin.leftovers.each { |box|
 
             leftover_def = Cuttingdiagram2dLeftoverDef.new
-            leftover_def.px_x = _to_px(box.x)
+            leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
             leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
             leftover_def.px_length = _to_px(box.length)
             leftover_def.px_width = _to_px(box.width)
@@ -223,7 +225,7 @@ module Ladb::OpenCutList
           bin.cuts.each { |cut|
 
             cut_def = Cuttingdiagram2dCutDef.new
-            cut_def.px_x = _to_px(cut.x)
+            cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : 0, bin.length))
             cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width))
             cut_def.px_length = _to_px(cut.length)
             cut_def.x = cut.x
@@ -272,9 +274,18 @@ module Ladb::OpenCutList
       sheet_def.total_part_count += bin.boxes.count
     end
 
+    def _compute_x_with_origin_corner(origin_corner, x, x_size, x_translation)
+      case origin_corner
+        when ORIGIN_CORNER_TOP_RIGHT, ORIGIN_CORNER_BOTTOM_RIGHT
+          x_translation - x - x_size
+        else
+          x
+      end
+    end
+
     def _compute_y_with_origin_corner(origin_corner, y, y_size, y_translation)
       case origin_corner
-        when ORIGIN_CORNER_BOTTOM_LEFT
+        when ORIGIN_CORNER_BOTTOM_LEFT, ORIGIN_CORNER_BOTTOM_RIGHT
           y_translation - y - y_size
         else
           y
