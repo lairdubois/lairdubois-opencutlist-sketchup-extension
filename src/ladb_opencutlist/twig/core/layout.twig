@@ -8,7 +8,7 @@
         {% for tabDef in tabDefs if tabDef.bar == 'leftbar-bottom' %}
             <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
         {% endfor %}
-        <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}8{% else %}5{% endif %}">
+        <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}8{% else %}6{% endif %}">
             <div class="ladb-subbar-toggle">
                 <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><div>{{ 'core.leftbar.more'|i18next }}</div></div>
                 <span class="ladb-toggle-arrow"></span>
