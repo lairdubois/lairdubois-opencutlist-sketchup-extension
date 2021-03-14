@@ -10,6 +10,8 @@ in 2.x, 1.x and 0.x versions.
   * Added printable **Reports** feature
   * Added **Polish** language (thanks to Jarek Ostaszewski, Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz)
   * Added **Czech** language (thanks to Radek Rýznar for joining the translators team)
+  * Added **Hebrew** language, experimental without RTL interface (thanks to Sergey Isupov for joining the translators team)
+  * Added **Arabic** language, experimental without RTL interface (thanks to SOUL Issam for joining the translators team)
   * Added Accessory material type
   * Added part unit price field for accessories
   * Added bars and sheets scrap's cross display / hide in cutting diagram options
@@ -20,7 +22,7 @@ in 2.x, 1.x and 0.x versions.
   * Added cutting diagram 2D primary cuts
   * Added cutting diagram 2D edge banding infos in part tooltips
   * Added comments display on news
-  * Added settings option to choose dialog global zoom
+  * Added settings option to choose dialog global zoom, removed due to incompatibilities
   * Added SketchUp 2021 Tag folders compatibility
   * Added custom proposal list of tags in cutlist options
   * Added "symmetrical" definition attribute
