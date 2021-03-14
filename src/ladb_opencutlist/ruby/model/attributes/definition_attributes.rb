@@ -50,6 +50,12 @@ module Ladb::OpenCutList
       end
     end
 
+    def self.valid_price(price)
+      return '' unless price.is_a?(String)
+      return price if price.empty?
+      price.scan(/\d*(?:[.,]?\d+)?/).select { |p| !p.empty? }.first
+    end
+
     def self.valid_tags(tags)
       if tags
         if tags.is_a?(Array) && !tags.empty?
@@ -147,7 +153,7 @@ module Ladb::OpenCutList
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
         @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
-        @price = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', '')
+        @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', ''))
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
