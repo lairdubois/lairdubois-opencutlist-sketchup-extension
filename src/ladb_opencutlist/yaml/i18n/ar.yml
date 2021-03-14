@@ -1,4 +1,4 @@
-_label: العربية
+_label: "العربية (experimental, no rtl)"
 _reload_msg: لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
 _description: مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)
 default:
@@ -7,6 +7,7 @@ default:
   cancel: إلغاء
   validate: تطبيق
   confirm: تأكيد
+  ok: موافق
   open: فتح
   see: معاينة
   close: غلق
@@ -81,8 +82,6 @@ core:
     options_change: لقد غُيّرت الخيارات في النموذج.
     material_change: هناك خامة واحدة على الأقل قد غُيرت.
     selection_change: لقد غُيّر التحديد في النموذج النشط.
-  model_info_page:
-    units: الوحدات
   upgrade:
     unavailable: لا يتسنى العثور على آخر نسخة من *OpenCutList*.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: لقد استُحدث رقم هذه القطعة آليا
       resized: لقد أُعيد تحجيم هذه القطعة بالنظر إلى تعريف عنصرها
       flipped: لقد طبق على هذه القطعة انعكاس مقارنة بتعريف عنصرها
-      symmetrical: هذه القطعة متناظرة
+      symmetrical: الكشف عن الانعكاس لهذه القطعة معطل
       auto_oriented: لقد أُعيد توجيه هذه القطعة آليا
       add_label_filter: "تصفية وفق '{{ label }}'"
       remove_label_filter: "إزالة التصفية وفق '{{ label }}'"
       add_edge_material_name_filter: "تصفية وفق '{{ material_name }}'"
       remove_edge_material_name_filter: "إزالة التصفية وفق '{{ material_name }}'"
       not_aligned_on_axes: تحذير، قد لا تتم محاذاة هذه القطعة بشكل صحيح على محاورها
+      instance_count_by_part: "هذه القطعة محسوبة في أطقم من **{{ count }}** وحدات"
+      missing_instance_count: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم."
+      missing_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
       multiple_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>"
       children_warnings: "تحذير، هناك {{ count }} إنذار في القطع المجموعة"
       children_warnings_plural: "تحذير، هناك {{ count }} إنذارات في القطع المجموعة"
@@ -246,8 +248,18 @@ tab:
       cumulable_0: غير مجموع
       cumulable_1: مجموع وفقا للطول
       cumulable_2: مجموع وفقا للعرض
-      price: السعر
+      instance_count_by_part: طقم
+      instance_count_by_part_help: |
+        يسمح لك بحساب القطع في ** الأطقم ** المطلوبة بدلاً من الوحدات في النموذج.
+        يجب أن يكون لقِطع الدفعة نفس التعريف.
+
+        * مثال: عُدَّ قطعة واحدة فقط لزَوج من زلاّقات الدُرج. *
+      instance_count_by_part_1: وحدة لكل قطعة
+      instance_count_by_part_2: وحدتان لكل قطعة
       mass: الكتلة
+      mass_help: ستُستعمل كتلة القطعة عند استحداث **التقارير**.
+      price: السعر
+      price_help: سيُستعمل سعر القطعة عند استحداث **التقارير**.
       tags: الوسوم
       tags_help: |
         تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
@@ -263,7 +275,7 @@ tab:
         - *الطول* يتبع المحور <span style='color:red'>الأحمر</span>،
         - *العرض* يتبع المحور <span style='color:green'>الأخضر</span>،
         - *السُّمك* يتبع المحور <span style='color:blue'>الأزرق</span>،
-      symmetrical: القطعة متناظرة
+      symmetrical: عطّل الكشف عن الانعكاس لهذه القطعة
       symmetrical_help: |
         إذا تم تحديد هذا المربع، فلن يكون لاكتشاف * قطعة معكوسة * أي تأثير على هذه القطعة.
       size_increase: التمديدات
@@ -417,11 +429,11 @@ tab:
       edge_xmin: عرض الحاشية 1
       edge_xmax: عرض الحاشية 2
       warning:
-        visible_only: "*لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع*."
+        visible_only: لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
     report:
       title: تقرير
       info_0: |
-        تتيح لك هذه الوظيفة إنشاء تقرير **بالكتل ** و ** التكاليف ** و ** الخامات ** اللازمة لإنتاج القطع المتضمَّنة في * قائمة القطع *.
+        تتيح لك هذه الوظيفة إنشاء تقرير **بالكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
       options_general: عام
       option_solid_wood_coefficient: معامل *خشب الجذوع الصلب*
       option_solid_wood_coefficient_help: تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "** خشب الجذوع الصلب **".
@@ -435,7 +447,6 @@ tab:
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
       error:
-        no_typed_material_parts: لا توجد أي قطعة في نموذجك بخامة معينة النوع.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -614,7 +625,7 @@ tab:
         part_length: الطول
         part_width: العرض
         part_tags: الوسوم
-        part_batch: ملف دفعي -باتش-
+        part_batch: طقم
         thumbnail_proportional: ملصق متناسب
         thumbnail_square: ملصق مربع
         group_material: الخامة / السُمك
@@ -942,6 +953,25 @@ tab:
     suppress_units_display: اعرض وحدة الطول لكل قيمة
     mass_unit: وحدة الكتلة
     currency_symbol: رمز العملة
+    menu:
+      dump_global_presets: مَكَبّ الإعدادات المسبقة
+      dump_model_presets: مَكَبّ إعدادات النموذج المسبقة
+      reset_global_presets: إعادت تهيئة الإعدادات المسبقة
+      reset_global_presets_confirm: |
+        أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* المسبقة المحفوظة.
+        هذا الإجراء نهائي. **ستضيع كل الإعدادات المسبقة.**
+        أكّد من أجل المواصلة.
+      reset_global_presets_success: |
+        لقد أُعيد تعيين إعدادات *OpenCutList* المسبقة.
+        لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
+      reset_model_presets: إعادت تهيئة إعدادات النموذج المسبقة
+      reset_model_presets_confirm: |
+        أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* للنموذج الحالي.
+        هذا الإجراء نهائي. **ستعاد كل الإعدادات إلى القيم الافتراضية.**
+        أكّد من أجل المواصلة.
+      reset_model_presets_success: |
+        لقد أُعيد تعيين إعدادات *OpenCutList* للنموذج الحالي.
+        لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
   about:
     label: حول
     title: حول
