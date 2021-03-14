@@ -836,7 +836,9 @@
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
         $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
-            rubyCallCommand('core_open_url', { url: that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL) });
+            $.getJSON(that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL), function (data) {
+                rubyCallCommand('core_open_url', data);
+            });
             return false;
         });
 
