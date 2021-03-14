@@ -207,11 +207,6 @@ module Ladb::OpenCutList
         @remaining_step = @remaining_step - 1
       else
 
-        # Errors
-        if @report_def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.length == 0
-          @report_def.errors << 'tab.cutlist.report.error.no_typed_material_parts'
-        end
-
         # Create the report
         report = @report_def.create_report
 

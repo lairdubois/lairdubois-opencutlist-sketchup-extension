@@ -447,7 +447,6 @@ tab:
       total_area: Σ Surfaces
       total_length: Σ Longueurs
       error:
-        no_typed_material_parts: Aucune pièce de votre modèle n'a de matière avec un type défini.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
