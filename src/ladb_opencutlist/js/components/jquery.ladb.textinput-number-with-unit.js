@@ -73,40 +73,44 @@
         return label;
     };
 
+    LadbTextinputNumberWithUnit.prototype.createLeftToolsContainer = function () {
+        if (this.hasUnit()) {
+            LadbTextinputAbstract.prototype.createLeftToolsContainer.call(this);
+        }
+    };
+
     LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolContainer) {
         var that = this;
 
-        if (this.hasUnit()) {
-            var $span = $('<span />')
-            var $dropdown = $('<ul class="dropdown-menu" />');
-            $.each(this.options.units, function (index, unitGroup) {
-                if (index > 0) {
-                    $dropdown.append('<li class="divider" />');
-                }
-                $.each(unitGroup, function (key, value) {
-                    $dropdown.append(
-                        $('<li />')
-                            .append ('<a href="#">' + value + '</a></li>')
-                            .on('click', function () {
-                                $span.html(value);
-                                that.unit = key;
-                                that.$element.trigger('change');
-                            })
-                    );
-                });
+        var $span = $('<span />')
+        var $dropdown = $('<ul class="dropdown-menu" />');
+        $.each(this.options.units, function (index, unitGroup) {
+            if (index > 0) {
+                $dropdown.append('<li class="divider" />');
+            }
+            $.each(unitGroup, function (key, value) {
+                $dropdown.append(
+                    $('<li />')
+                        .append ('<a href="#">' + value + '</a></li>')
+                        .on('click', function () {
+                            $span.html(value);
+                            that.unit = key;
+                            that.$element.trigger('change');
+                        })
+                );
             });
-            this.$spanUnit = $span;
+        });
+        this.$spanUnit = $span;
 
-            $toolContainer.append($('<div class="ladb-textinput-tool btn-group" />')
-                .append(
-                    $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
-                        .append($span)
-                        .append('&nbsp;')
-                        .append('<span class="caret" />')
-                )
-                .append($dropdown)
-            );
-        }
+        $toolContainer.append($('<div class="ladb-textinput-tool btn-group" />')
+            .append(
+                $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
+                    .append($span)
+                    .append('&nbsp;')
+                    .append('<span class="caret" />')
+            )
+            .append($dropdown)
+        );
 
     };
 

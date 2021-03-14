@@ -914,6 +914,12 @@
                                 });
                                 return false;
                             });
+                            $('a.ladb-btn-highlight-part', $slide).on('click', function () {
+                                $(this).blur();
+                                var partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                return false;
+                            });
                             $('a.ladb-btn-edit-part', $slide).on('click', function () {
                                 $(this).blur();
                                 var partId = $(this).data('part-id');
@@ -2456,8 +2462,8 @@
                 options.margin_left = $inputMarginLeft.val();
                 options.spacing_h = $inputSpacingH.val();
                 options.spacing_v = $inputSpacingV.val();
-                options.col_count = $inputColCount.val();
-                options.row_count = $inputRowCount.val();
+                options.col_count = Math.max(1, parseInt($inputColCount.val() === '' ? 1 : $inputColCount.val()));
+                options.row_count = Math.max(1, parseInt($inputRowCount.val() === '' ? 1 : $inputRowCount.val()));
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
                 options.layout = $editorLabel.ladbEditorLabel('getElementDefs');
             }
@@ -2504,6 +2510,12 @@
             $inputMarginLeft.ladbTextinputDimension();
             $inputSpacingH.ladbTextinputDimension();
             $inputSpacingV.ladbTextinputDimension();
+            $inputColCount.ladbTextinputNumberWithUnit({
+                resetValue: '1'
+            });
+            $inputRowCount.ladbTextinputNumberWithUnit({
+                resetValue: '1'
+            });
             $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(labelsOptions);
