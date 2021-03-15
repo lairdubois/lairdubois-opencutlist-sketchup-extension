@@ -24,10 +24,10 @@ module Ladb::OpenCutList
     MAX_TIME = 30
 
     # Number of best solution to carry over for each bin.
-    BEST_X_SMALL = 5
+    BEST_X_SMALL = 4
     BEST_X_LARGE = 3
     # With less than this Boxes, use BEST_X_SMALL to keep Packers.
-    MAX_BOXES_TIME = 50
+    MAX_BOXES_TIME = 30
 
     # Bin has illegal size <= 0, has been ignored.
     WARNING_ILLEGAL_SIZED_BIN = 0

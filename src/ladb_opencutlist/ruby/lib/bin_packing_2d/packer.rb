@@ -110,6 +110,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       @previous_packer.unplaced_boxes.each do |box|
         new_box = Box.new(box.length, box.width, box.rotatable, box.data)
+        new_box.set_rotated if box.rotated?
         @boxes << new_box
       end
 
@@ -468,7 +469,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_length_cuts] += @stat[:length_cuts]
       @gstat[:total_nb_cuts] += @stat[:nb_cuts]
       @gstat[:nb_through_cuts] += @stat[:nb_h_through_cuts] + @stat[:nb_v_through_cuts]
-      @gstat[:total_l_measure] = @stat[:l_measure]
+      @gstat[:total_l_measure] += @stat[:l_measure]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
     end
 
