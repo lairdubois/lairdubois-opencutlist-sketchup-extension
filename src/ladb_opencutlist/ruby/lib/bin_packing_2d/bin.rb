@@ -60,6 +60,7 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:nb_packed_boxes] = 0            # nb of packed boxes in this bin
       @stat[:nb_leftovers] = 0               # nb of leftovers excluding outer leftovers
       @stat[:outer_leftover_area] = 0        # area of leftover outside of bounding box
+      @stat[:largest_leftover_area] = 0      # area of largest leftover outside bounding box
 
       @stat[:nb_cuts] = 0
       @stat[:nb_h_through_cuts] = 0
@@ -240,6 +241,8 @@ module Ladb::OpenCutList::BinPacking2D
         # Compute l_measure over Leftovers inside the bounding box only!
         if leftover.x + leftover.length < @max_x + EPS && leftover.y + leftover.width < @max_y + EPS
           @stat[:l_measure] += (@max_x - leftover.x + leftover.length / 2.0 + @max_y - leftover.y + leftover.width / 2.0) * leftover.area
+        else
+          @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
         end
       end
       # Normalize the l_measure

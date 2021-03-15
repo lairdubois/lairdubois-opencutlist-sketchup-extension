@@ -40,6 +40,13 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Sets rotated when copied.
+    #
+    def set_rotated
+      @rotated = true
+    end
+
+    #
     # Returns true if the Box was rotated.
     #
     def rotated?

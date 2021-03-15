@@ -144,12 +144,12 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Prints intermediate packings.
     #
-    def print_intermediate_packers(packers, level = @level)
+    def print_intermediate_packers(packers, level = @level, no_footer = false)
       return unless @options.debug
       return if packers.nil?
 
       packers.each_with_index do |packer, i|
-        # print_intermediate_packers([packer.previous_packer], level - 1) unless packer.previous_packer.nil?
+        #print_intermediate_packers([packer.previous_packer], level - 1, true) unless packer.previous_packer.nil?
         stat = packer.stat
         next if stat.nil?
 
@@ -166,10 +166,10 @@ module Ladb::OpenCutList::BinPacking2D
             "#{'%4d' % packer.gstat[:nb_unplaced_boxes]}" \
             "#{'%22s' % stat[:signature]}" \
             "#{'%3d' % stat[:rank]}"
-      dbg(s)
+        dbg(s)
       end
       dbg("  packer      usedArea   eff  #cuts thru h/v      leftA        cutL  #left " \
-      "l_meas.                signature rank")
+      "l_meas.                signature rank") if !no_footer
     end
 
     #
@@ -209,8 +209,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def select_best_packing(packers)
       return nil if packers.size == 0
-      packers.sort_by! { |packer| [-packer.gstat[:all_largest_area], packer.gstat[:total_l_measure], packer.gstat[:total_length_cuts]]}
       print_final_packers(packers)
+      packers.sort_by! { |packer| [packer.gstat[:total_l_measure], packer.gstat[:total_length_cuts], -packer.gstat[:all_largest_area]]}
       packers.first
     end
 
@@ -220,6 +220,7 @@ module Ladb::OpenCutList::BinPacking2D
     # winner!
     #
     def select_best_x_packings(packers)
+      zero_left = false
       packers = packers.compact
       return nil if packers.empty?
 
@@ -231,44 +232,55 @@ module Ladb::OpenCutList::BinPacking2D
 
       # If that is the case, keep only Packers that did manage to pack all Boxes.
       if packers_with_zero_left.size > 0
+        zero_left = true
         packers = packers_with_zero_left
       end
 
       # L_measure is a measure that uniquely identifies the shape of
-      # a packing. Select unique l_measure Packers, sort best_packers
-      # with ascending l_measure.
+      # a packing if it is not perfectly compact, i.e. = 0. Select unique
+      # l_measure Packers, sort best_packers with ascending l_measure.
       p = packers.group_by { |packer| packer.stat[:l_measure] }
       p.keys.sort.each_with_index do |k, i|
-        b = p[k].first
+        if zero_left
+          b = p[k].sort_by { |p| [-p.stat[:largest_leftover_area], p.gstat[:total_l_measure]] }.first
+        else
+          b = p[k].sort_by { |p| p.gstat[:total_l_measure] }.first
+        end
         b.stat[:rank] = i + 1
         best_packers << b
       end
 
       # Select best Packers for this level/Bin using the following three unweighted criteria.
       # Try to maximize the used area, i.e. area of packed Boxes.
-      best_packers.sort_by! { |packer| -packer.stat[:used_area] }
-      best_packers.each_with_index do |b, i|
-        b.stat[:rank] += i + 1
+      used_areas = best_packers.collect { |packer| packer.stat[:used_area] }.uniq.sort.reverse
+      ranks = used_areas.map { |e| used_areas.index(e) + 1}
+      h = [used_areas, ranks].transpose.to_h
+      best_packers.each do |b|
+        b.stat[:rank] += h[b.stat[:used_area]]
       end
 
       # Try to maximize the area outside of the bounding box. We presume this
       # a more useful waste.
-      best_packers.sort_by! { |packer| -packer.stat[:outer_leftover_area] }
-      best_packers.each_with_index do |b, i|
-        b.stat[:rank] += i + 1
+
+      outer_areas = best_packers.collect { |packer| packer.stat[:outer_leftover_area] }.uniq.sort.reverse
+      ranks = outer_areas.map { |e| outer_areas.index(e) + 1}
+      h = [outer_areas, ranks].transpose.to_h
+      best_packers.each do |b|
+        b.stat[:rank] += h[b.stat[:outer_leftover_area]]
       end
 
       # Try to maximize the number of through cuts. We presume that more through
       # cuts make the cutting diagram easier to cut.
-      best_packers.sort_by! { |packer| (-packer.stat[:nb_h_through_cuts] - packer.stat[:nb_v_through_cuts]) }
-      best_packers.each_with_index do |b, i|
-        b.stat[:rank] += i + 1
+      through_cuts = best_packers.collect { |packer| packer.stat[:nb_h_through_cuts] + packer.stat[:nb_v_through_cuts] }.uniq.sort.reverse
+      ranks = through_cuts.map { |e| through_cuts.index(e) + 1}
+      h = [through_cuts, ranks].transpose.to_h
+      best_packers.each do |b|
+        b.stat[:rank] += h[b.stat[:nb_h_through_cuts] + b.stat[:nb_v_through_cuts]]
       end
 
       # Sort the Packers by their rank.
       best_packers.sort_by! { |packer| packer.stat[:rank] }
-
-      print_intermediate_packers(best_packers)
+      print_intermediate_packers(best_packers.slice(0, @nb_best_selection))
 
       # Return a list of possible candidates for the next Bin to pack.
       best_packers.slice(0, @nb_best_selection)
