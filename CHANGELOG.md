@@ -19,15 +19,16 @@ in 2.x, 1.x and 0.x versions.
   * Added new 2D bin packing library
   * Improved import by putting new instances into a group
   * Added cutting diagram 1D/2D option to render full width diagrams
+  * Added cutting diagram 1D/2D option to define the origin corner
   * Added cutting diagram 2D primary cuts
   * Added cutting diagram 2D edge banding infos in part tooltips
   * Added comments display on news
-  * Added settings option to choose dialog global zoom, removed due to incompatibilities
+  * Added settings option to choose dialog global zoom, **removed due to incompatibilities**
   * Added SketchUp 2021 Tag folders compatibility
   * Added custom proposal list of tags in cutlist options
   * Added "symmetrical" definition attribute
-  * Added dump and reset global and model presets
   * Added part set
+  * Added dump and reset global and model presets
 
 * 1.9.10 (2020-12-17)
 

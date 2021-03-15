@@ -18,6 +18,7 @@
     "hide_part_list": false,
     "full_width_diagram": false,
     "hide_cross": false,
+    "origin_corner": 0,       /* ORIGIN_CORNER_LEFT */
     "wrap_length": { "metric": "3000mm", "imperial": "12'" }
   }
 }

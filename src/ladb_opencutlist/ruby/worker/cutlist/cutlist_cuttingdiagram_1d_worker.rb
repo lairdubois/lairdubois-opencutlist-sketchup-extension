@@ -6,6 +6,9 @@ module Ladb::OpenCutList
 
   class CutlistCuttingdiagram1dWorker
 
+    ORIGIN_CORNER_LEFT = 0
+    ORIGIN_CORNER_RIGHT = 1
+
     def initialize(settings, cutlist)
       @group_id = settings['group_id']
       @part_ids = settings['part_ids']
@@ -17,6 +20,7 @@ module Ladb::OpenCutList
       @hide_part_list = settings['hide_part_list']
       @full_width_diagram = settings['full_width_diagram']
       @hide_cross = settings['hide_cross']
+      @origin_corner = settings['origin_corner']
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings['wrap_length']).to_l.to_f
 
       @cutlist = cutlist
@@ -73,6 +77,7 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.hide_part_list = @hide_part_list
       cuttingdiagram1d_def.options_def.full_width_diagram = @full_width_diagram
       cuttingdiagram1d_def.options_def.hide_cross = @hide_cross
+      cuttingdiagram1d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram1d_def.options_def.wrap_length = @wrap_length
 
       if err > BinPacking1D::ERROR_SUBOPT
@@ -166,8 +171,10 @@ module Ladb::OpenCutList
           slice_count = (bin.length / wrap_length).ceil
           i = 0
           while i < slice_count do
+            slice_length = [ wrap_length, bin.length - i * wrap_length ].min
             slice_def = Cuttingdiagram1dSliceDef.new
-            slice_def.px_length = _to_px([ wrap_length, bin.length - i * wrap_length ].min)
+            slice_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, 0, slice_length, wrap_length))
+            slice_def.px_length = _to_px(slice_length)
             bar_def.slice_defs.push(slice_def)
             i += 1
           end
@@ -200,7 +207,7 @@ module Ladb::OpenCutList
           bin.cuts.each { |cut|
             cut_def = Cuttingdiagram1dCutDef.new
             cut_def.x = cut.to_l
-            cut_def.slice_defs.concat(_to_slice_defs(cut, 0, wrap_length))
+            cut_def.slice_defs.concat(_to_slice_defs(cut, @saw_kerf, wrap_length))
             bar_def.cut_defs.push(cut_def)
           }
 
@@ -239,6 +246,15 @@ module Ladb::OpenCutList
       bar_def.total_part_count += bin.boxes.count
     end
 
+    def _compute_x_with_origin_corner(origin_corner, x, x_size, x_translation)
+      case origin_corner
+      when ORIGIN_CORNER_RIGHT
+        x_translation - x - x_size
+      else
+        x
+      end
+    end
+
     # Convert inch float value to pixel
     def _to_px(inch_value)
       inch_value * 7 # 840px = 120" ~ 3m
@@ -266,7 +282,7 @@ module Ladb::OpenCutList
 
         slice_def = Cuttingdiagram1dSliceDef.new
         slice_def.index = slice_index
-        slice_def.px_x = _to_px(part_slice_x)
+        slice_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, part_slice_x, part_slice_length, wrap_length))
         slice_def.px_length = _to_px(part_slice_length)
         slice_defs.push(slice_def)
 

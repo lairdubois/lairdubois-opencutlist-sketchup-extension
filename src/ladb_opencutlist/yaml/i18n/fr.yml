@@ -471,11 +471,14 @@ tab:
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre.
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
       option_origin_corner: Position de l'origine
-      option_origin_corner_0: En haut à gauche
-      option_origin_corner_1: En bas à gauche
-      option_origin_corner_2: En haut à droite
-      option_origin_corner_3: En bas à droite
-      option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
+      option_origin_corner_1d_0: A gauche
+      option_origin_corner_1d_1: A droite
+      option_origin_corner_2d_0: En haut à gauche
+      option_origin_corner_2d_1: En bas à gauche
+      option_origin_corner_2d_2: En haut à droite
+      option_origin_corner_2d_3: En bas à droite
+      option_origin_corner_1d_help: Permet de choisir le coin d'origine de placement des pièces dans les barres.
+      option_origin_corner_2d_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
       option_full_width_diagram: Affichage pleine largeur
       option_full_width_diagram_0: Non
       option_full_width_diagram_1: Oui

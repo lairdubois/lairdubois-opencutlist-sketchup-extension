@@ -1902,6 +1902,7 @@
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
+                var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
@@ -1915,6 +1916,7 @@
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
+                    options.origin_corner = parseInt($selectOriginCorner.val());
                     options.wrap_length = $inputWrapLength.val();
                 }
                 var fnFillInputs = function (options) {
@@ -1924,6 +1926,7 @@
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectFullWidthDiagram.selectpicker('val', options.full_width_diagram ? '1' : '0');
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
+                    $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $inputWrapLength.val(options.wrap_length);
                 }
                 var fnEditMaterial = function (callback) {
@@ -1959,20 +1962,16 @@
                 $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapBarLengths.ladbTextinputTokenfield({ format: 'dxq' });
                 $inputScrapBarLengths.ladbTextinputTokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
-                $inputSawKerf.val(cuttingdiagram1dOptions.saw_kerf);
                 $inputSawKerf.ladbTextinputDimension();
-                $inputTrimming.val(cuttingdiagram1dOptions.trimming);
                 $inputTrimming.ladbTextinputDimension();
-                $selectBarFolding.val(cuttingdiagram1dOptions.bar_folding ? '1' : '0');
                 $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.val(cuttingdiagram1dOptions.hide_part_list ? '1' : '0');
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectFullWidthDiagram.val(cuttingdiagram1dOptions.full_width_diagram ? '1' : '0');
                 $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideCross.val(cuttingdiagram1dOptions.hide_cross ? '1' : '0');
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputWrapLength.val(cuttingdiagram1dOptions.wrap_length);
+                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputWrapLength.ladbTextinputDimension();
+
+                fnFillInputs(cuttingdiagram1dOptions);
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
@@ -2221,26 +2220,18 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
-                $inputSawKerf.val(cuttingdiagram2dOptions.saw_kerf);
                 $inputSawKerf.ladbTextinputDimension();
-                $inputTrimming.val(cuttingdiagram2dOptions.trimming);
                 $inputTrimming.ladbTextinputDimension();
-                $selectOptimization.val(cuttingdiagram2dOptions.optimization);
                 $selectOptimization.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectStacking.val(cuttingdiagram2dOptions.stacking);
                 $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectSheetFolding.val(cuttingdiagram2dOptions.sheet_folding ? '1' : '0');
                 $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.val(cuttingdiagram2dOptions.hide_part_list ? '1' : '0');
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectFullWidthDiagram.val(cuttingdiagram2dOptions.full_width_diagram ? '1' : '0');
                 $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideCross.val(cuttingdiagram2dOptions.hide_cross ? '1' : '0');
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectOriginCorner.val(cuttingdiagram2dOptions.origin_corner);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHighlightPrimaryCuts.val(cuttingdiagram2dOptions.highlight_primary_cuts ? '1' : '0');
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
+
+                fnFillInputs(cuttingdiagram2dOptions);
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
