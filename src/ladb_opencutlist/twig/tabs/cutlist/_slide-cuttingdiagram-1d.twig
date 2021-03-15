@@ -249,11 +249,11 @@
                                     {% set yOffset = sliceHeight * loop.index0 %}
                                     <rect class="bar-outer" x="{{ slice.px_x - (loop.first or (loop.last and originCornerIsRight) ? 1 : 0) }}" y="{{ yOffset - 1 }}" width="{{ slice.px_length + (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width + 2 }}"></rect>
                                     <rect class="bar-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
-                                    {% if not loop.first %}
-                                        <text class="bar-dimension" x="{% if originCornerIsRight %}{{ slice.px_x + slice.px_length + barOutlineWidth + barDimensionOffset }}{% else %}-{{ barOutlineWidth + barDimensionOffset }}{% endif %}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
+                                    {% if not loop.first and not (loop.last and originCornerIsRight) %}
+                                        <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
-                                    {% if not loop.last %}
-                                        <text class="bar-dimension" x="{{ slice.px_length + barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
+                                    {% if not loop.last and originCornerIsLeft or originCornerIsRight %}
+                                        <text class="bar-dimension" x="{{ slice.px_x + slice.px_length + barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
                                 {% endfor %}
                             </g>
