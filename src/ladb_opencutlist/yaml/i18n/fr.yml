@@ -1005,7 +1005,8 @@ tab:
     credits_thanks: |
       Un remerciement particulier à :
       - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) pour leur soutien de projet Open Source.
+      - [Transifex](https://www.transifex.com) pour leur soutien de projet Open Source.
+      - [GitBook](https://www.gitbook.com) pour leur soutien de projet Open Source.
 tool:
   highlight:
     transparency: Transparence

@@ -252,7 +252,7 @@
                                     {% if not loop.first and not (loop.last and originCornerIsRight) %}
                                         <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
-                                    {% if not loop.last and originCornerIsLeft or originCornerIsRight %}
+                                    {% if not loop.last and originCornerIsLeft or not (loop.first and loop.last) and originCornerIsRight %}
                                         <text class="bar-dimension" x="{{ slice.px_x + slice.px_length + barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
                                 {% endfor %}

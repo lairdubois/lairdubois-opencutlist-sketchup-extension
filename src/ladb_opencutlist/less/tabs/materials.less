@@ -151,12 +151,18 @@
 // Print
 
 @media print {
+
   .ladb-material-type-icon {
     color: #000 !important;
     border-radius: 0;
-    font-size: 1em;
     width: auto;
     height: auto;
     line-height: inherit;
+
+    &.ladb-material-type-icon-filled {
+      background: none !important;
+    }
+
   }
+
 }

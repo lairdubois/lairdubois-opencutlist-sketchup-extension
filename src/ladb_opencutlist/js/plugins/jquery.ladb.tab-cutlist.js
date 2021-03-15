@@ -3089,7 +3089,7 @@
                 }
             }
         });
-        addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function () {
+        addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared', 'on_pages_contents_modified' ], function () {
             if (that.generateAt) {
                 that.showObsolete('core.event.selection_change');
             }
