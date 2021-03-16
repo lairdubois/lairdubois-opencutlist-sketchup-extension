@@ -1466,7 +1466,7 @@
                     resetValue: '1',
                     defaultUnit: 'u_p',
                     units: [
-                        { u_p: i18next.t('default.instance') + ' / ' + i18next.t('default.part_single') },
+                        { u_p: i18next.t('default.instance_plural') + ' / ' + i18next.t('default.part_single') },
                     ]
                 });
                 $inputMass.ladbTextinputNumberWithUnit({

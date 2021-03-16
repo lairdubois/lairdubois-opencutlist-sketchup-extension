@@ -78,7 +78,7 @@
                 {% if group.material_type == 5 %}   {# 5 = TYPE_ACCESSORY #}
                     <div class="form-group">
                         <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <label for="ladb_cutlist_part_select_instance_count_by_part" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.instance_count_by_part'|i18next }}</label>
+                        <label for="ladb_cutlist_part_select_instance_count_by_part" class="control-label col-xs-3"><i class="ladb-opencutlist-icon-instance-count-by-part"></i> {{ 'tab.cutlist.edit_part.instance_count_by_part'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_instance_count_by_part" {% if part.instance_count_by_part == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.instance_count_by_part }}"{% endif %}>
                         </div>
