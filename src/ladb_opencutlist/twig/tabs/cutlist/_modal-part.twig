@@ -3,7 +3,7 @@
 {% set id = 'ladb_cutlist_modal_part' %}
 {% set title = multiple ? ('tab.cutlist.edit_part.title_multiple'|i18next) : ('tab.cutlist.edit_part.title'|i18next({ 'name':part.name })) %}
 
-{% set has_warnings = part.not_aligned_on_axes or part.multiple_layers or part.missing_instance_count > 0 %}
+{% set has_warnings = part.not_aligned_on_axes or part.multiple_layers or part.unused_instance_count > 0 %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -483,11 +483,11 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if part.missing_instance_count > 0 %}
+                    {% if part.unused_instance_count > 0 %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
                             <div class="media-body">
-                                {{ 'tab.cutlist.tooltip.missing_instance_count'|i18next({ 'count':part.missing_instance_count }) }}
+                                {{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}
                             </div>
                         </div>
                     {% endif %}

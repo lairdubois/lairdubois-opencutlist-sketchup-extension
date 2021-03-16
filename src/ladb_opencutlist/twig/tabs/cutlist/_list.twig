@@ -283,7 +283,7 @@
             <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %} ladb-minitools-holder">
                 {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                 {% include 'tabs/cutlist/_list-row-col-name.twig' %}
-                <td class="text-center"{% if part.instance_count_by_part > 1 %} data-toggle="tooltip" title="{{ part.instance_count_by_part }} {{ 'default.instance_plural'|i18next }} / {{ 'default.part_single'|i18next }}"{% endif %}>{{ part.count }}</td>
+                <td class="text-center"{% if part.instance_count_by_part > 1 %} data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.used_instance_count'|i18next({ 'count':(part.instance_count_by_part * part.count - part.unused_instance_count), 'total':(part.instance_count_by_part * part.count) }) }}"{% endif %}>{{ part.count }}</td>
                 {% if showCuttingDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
                         {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}

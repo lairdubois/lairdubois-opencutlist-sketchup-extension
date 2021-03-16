@@ -202,8 +202,10 @@ tab:
       remove_edge_material_name_filter: Ne plus filtrer sur '{{ material_name }}'
       not_aligned_on_axes: Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes
       instance_count_by_part: Cette pièce est comptabilisée par lot de **{{ count }}** unités.
-      missing_instance_count: Attention, **{{ count }}** unité du dernier lot ne sera pas utilisée.
-      missing_instance_count_plural: Attention, **{{ count }}** unités du dernier lot ne seront pas utilisées.
+      unused_instance_count: Attention, **{{ count }}** unité du dernier lot ne sera pas utilisée.
+      unused_instance_count_plural: Attention, **{{ count }}** unités du dernier lot ne seront pas utilisées.
+      used_instance_count: "**{{ count }}** / {{ total }} unité utilisée"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} unités utilisées"
       multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
@@ -255,7 +257,8 @@ tab:
         Permet de comptabiliser les pièces sur le nombre de **lots** nécessaires au lieu du nombre d'unités présentes dans le modèle.
         Les pièces réunies en lot doivent avoir la même définition.
 
-        *Exemple : Ne compter que 1 pièce pour une paire de coulisses de tiroir.*
+        *Exemple : Pour ne compter que 1 pièce pour une paire de coulisses de tiroir :
+        Lot = 2 unités / pièce.*
       instance_count_by_part_1: 1 unité par pièce
       instance_count_by_part_2: 2 unités par pièce
       mass: Masse
