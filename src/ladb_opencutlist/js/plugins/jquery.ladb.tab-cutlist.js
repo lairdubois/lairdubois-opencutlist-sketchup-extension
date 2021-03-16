@@ -890,6 +890,14 @@
                                 $(this).blur();
                                 that.showAllGroups($slide, true);
                             });
+                            $('#ladb_item_expand_all', $slide).on('click', function () {
+                                $(this).blur();
+                                that.expandAllFoldingPart($slide);
+                            });
+                            $('#ladb_item_collapse_all', $slide).on('click', function () {
+                                $(this).blur();
+                                that.collapseAllFoldingPart($slide);
+                            });
                             $('a.ladb-btn-edit-material', $slide).on('click', function () {
                                 $(this).blur();
 
@@ -1795,16 +1803,16 @@
 
     };
 
-    LadbTabCutlist.prototype.expandAllFoldingPart = function () {
+    LadbTabCutlist.prototype.expandAllFoldingPart = function ($slide) {
         var that = this;
-        $('.ladb-cutlist-row-folder', this.$page).each(function () {
+        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
             that.expandFoldingPart($(this));
         });
     };
 
-    LadbTabCutlist.prototype.collapseAllFoldingPart = function () {
+    LadbTabCutlist.prototype.collapseAllFoldingPart = function ($slide) {
         var that = this;
-        $('.ladb-cutlist-row-folder', this.$page).each(function () {
+        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
             that.collapseFoldingPart($(this));
         });
     };

@@ -236,8 +236,8 @@ tab:
       group_cuttingdiagram: Calepinage
       group_labels: Imprimer des étiquettes
       edit_material: Éditer la matière '{{ material_name }}'
-      expand_all: Déplier toutes les pièces identiques
-      collapse_all: Replier toutes les pièces identiques
+      expand_all: Déplier toutes les lignes
+      collapse_all: Replier toutes les lignes
     edit_part:
       title: Propriétés de la pièce '{{ name }}'
       title_multiple: Propriétés du groupe de pièces
@@ -925,8 +925,8 @@ tab:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **3.0** !
       docs: |
-        Il nous tient à coeur qu'*OpenCutList* soit accessible et intuitif. Mais cette démarche va de paire avec une **documentation de qualité**.
-        En nous fournissant les moyens de la rédiger, vous nous apportez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
+        Il nous tient à coeur qu'*OpenCutList* soit accessible et intuitif. Mais cette démarche va de paire avec la rédaction d'une **Documentation Complète et de Qualité**.
+        En nous fournissant les moyens de la rédiger, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
       Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
