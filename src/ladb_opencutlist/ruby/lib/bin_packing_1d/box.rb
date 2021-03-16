@@ -1,19 +1,20 @@
 module Ladb::OpenCutList::BinPacking1D
+  
   #
   # Implements an element to pack into a Bin.
   #
   class Box < Packing1D
-  
-    # Position of the box inside the enclosing bin.
+
+    # Position of the Box inside the enclosing Bin.
     attr_accessor :x
-    
-    # Length of this box.
+
+    # Length of this Box.
     attr_reader :length
-    
+
     # Reference to an external object. This value is kept
     # during optimization.
     attr_reader :data
-    
+
     #
     # Initialize a new Box, ensure that it has a length > 0.
     #
@@ -25,6 +26,6 @@ module Ladb::OpenCutList::BinPacking1D
       end
       @data = data
     end
-    
+
   end
 end

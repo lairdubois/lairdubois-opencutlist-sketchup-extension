@@ -1,40 +1,40 @@
 module Ladb::OpenCutList::BinPacking1D
 
   #
-  # Implements Options 
+  # Implements Options
   #
   class Options < Packing1D
-  
-    # Length of a standard bin that can be replicated 
+
+    # Length of a standard bin that can be replicated
     # any number of times.
-    attr_reader :base_bin_length 
-    
+    attr_reader :base_bin_length
+
     # Width of the kerf produced by the saw blade.
     attr_reader :saw_kerf
-    
+
     # Margin that will be removed on both sides of
     # the raw bin.
     attr_reader :trimsize
-    
+
     # Maximum time to spend in computation before raising
     # a TimeoutError.
     attr_reader :max_time
-    
+
     # Enable debugging information, very verbose.
-    attr_accessor :debug
-    
+    attr_reader :debug
+
     #
     # initialize a new Options object. Check for validity
-    # of parameters. Raises an error on 
+    # of parameters. Raises an error on
     # negative base_bin_length.
     #
-    def initialize(base_bin_length, saw_kerf, trimsize, 
+    def initialize(base_bin_length, saw_kerf, trimsize,
                    max_time=MAX_TIME, debug=false)
-       
+
       @base_bin_length = base_bin_length
       @base_bin_length = 0 if @base_bin_length < 0
-      
-      # the following two options are tested by packengine.
+
+      # The following two options are tested by packengine.
       # make them positive.
       @saw_kerf = saw_kerf.abs
       @trimsize = trimsize.abs
@@ -42,9 +42,25 @@ module Ladb::OpenCutList::BinPacking1D
       @max_time = max_time
       if @max_time < 0 or @max_time > MAX_TIME
         @max_time = MAX_TIME
-      end      
+      end
       @debug = debug
     end
-  end
 
+    #
+    # Sets debug mode to on/off.
+    #
+    def set_debug(debug)
+      @debug = debug
+    end
+
+    #
+    # Debugging!
+    #
+    def to_str
+      "  options:\n" \
+      "  saw_kerf         = #{@saw_kerf}\n" \
+      "  trimsize         = #{@trimsize}\n" \
+      "  base_bin_length  = #{@base_bin_length}\n"
+    end
+  end
 end
