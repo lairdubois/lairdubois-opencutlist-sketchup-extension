@@ -93,6 +93,21 @@
       color: #fff;
     }
 
+    &.ladb-sponsored {
+      border-style: dashed;
+      border-color: @ladb-brand-sponsor;
+      border-width: 2px;
+      border-radius: 5px;
+      margin: 3px;
+      width: @ladb-leftbar-width - 6px;
+      height: @ladb-leftbar-height - 6px;
+
+      &:hover {
+        border-color: darken(@ladb-brand-sponsor, 5%);
+      }
+
+    }
+
     &:hover {
       background-color: @ladb-brand-light;
       color: @ladb-brand-dark;

@@ -917,11 +917,15 @@ tab:
     objective_slogan: OpenCutList, c'est nous tous
     objective_title:
       default: Objectifs
+      docs: Financement de la Documentation
     objective_details:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **3.0** !
+      docs: |
+        Il nous tient à coeur qu'*OpenCutList* soit accessible et intuitif. Mais cette démarche va de paire avec une **documentation de qualité**.
+        En nous fournissant les moyens de la rédiger, vous nous apportez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
-      Le développement des nouvelles fonctionnalités se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
+      Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
       Merci pour votre contribution !
     objective_funded_progress: financé à {{ progress }}%
