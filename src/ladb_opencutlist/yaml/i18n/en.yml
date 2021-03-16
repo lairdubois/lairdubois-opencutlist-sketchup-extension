@@ -264,7 +264,7 @@ tab:
       tags_help: |
         The *Tags* allow you to add custom keywords to each part definition.
         You can add as many tags as you want.
-        The visible parts of your custlist can then be filtered based on these tags.
+        The visible parts of your parts list can then be filtered based on these tags.
       tags_multiple_info: Only common tags are displayed
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes
@@ -292,9 +292,9 @@ tab:
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
         Note that if the option *Automatic orientation of parts* is not active or the part is *locked on its axes* then:
-         - the **length** is read on the <strong style='color:red'>red</strong> axes,
-         - the **width** on the <strong style='color:green'>green</strong> axes and
-         - the **thickness** on the <strong style='color:blue'>blue</strong> axes.
+         - the **length** is read on the <strong style='color:red'>red</strong> axis,
+         - the **width** on the <strong style='color:green'>green</strong> axis and
+         - the **thickness** on the <strong style='color:blue'>blue</strong> axis.
       axes_origin_position_none: Do not change the origin
       axes_origin_position_min: Place the origin at a corner
       axes_origin_position_center: Place the origin at the center
@@ -306,7 +306,7 @@ tab:
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
-        If this option is selected, the 3 dimensions of the parts are sorted so that the largest represents the *length* and the smallest the *thickness*.
+        If this option is selected, the 3 dimensions of the parts are sorted so that the largest value represents the *length* and the smallest the *thickness*.
 
         Otherwise,
          - the *length* is read on the <span style='color:red'>red</span> axis,
@@ -328,7 +328,7 @@ tab:
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
       hide_tags: Hide tags
-      hide_tags_help: "If this option is selected, **tags** will be hidden."
+      hide_tags_help: "If this option is selected, **tags** will not be displayed."
       hide_cutting_dimensions: Hide rough dimensions
       hide_cutting_dimensions_help: "If this option is selected, the **rough** dimensions of parts will be hidden."
       hide_bbox_dimensions: Hide finished dimensions
@@ -337,7 +337,7 @@ tab:
       hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden."
       hide_edges: Hide the columns of edge bandings
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Good* will be hidden."
-      minimize_on_highlight: Mimimize after *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
       part_order_strategy: Parts Sorting
@@ -354,7 +354,7 @@ tab:
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
       tags: Tags
-      tags_help: Custom list of tags offered in the part properties window.
+      tags_help: Custom list of tags proposed in the part properties window.
       tags_placeholder: Add a tag
     list:
       filters: Filter
@@ -471,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: Display or mask the list of parts for each board.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
       option_origin_corner: Position of the origin
-      option_origin_corner_0: Top left corner
-      option_origin_corner_1: Bottom left corner
-      option_origin_corner_help: "Determines the position of the coordinate origin for displaying the parts on the panels. "
+      option_origin_corner_1d_0: To the left
+      option_origin_corner_1d_1: To the right
+      option_origin_corner_2d_0: Top left corner
+      option_origin_corner_2d_1: Bottom left corner
+      option_origin_corner_2d_2: Top right corner
+      option_origin_corner_2d_3: Bottom right corner
+      option_origin_corner_1d_help: Determines the position of the coordinate origin for displaying the parts on dimensional lumber.
+      option_origin_corner_2d_help: "Determines the position of the coordinate origin for displaying the parts on the panels. "
       option_full_width_diagram: Full width display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
@@ -909,24 +914,9 @@ tab:
     objective_slogan: OpenCutList is all of us
     objective_title:
       default: Objectives
-      report: Generate a Report
-      labels: Print Labels
     objective_details:
       default: |
-        *The generation of **reports** and printing **labels** will be available in release 2.0.*
-      report: |
-        ***Reports** will be available in release 2.0.*
-
-        The purpose of this feature is to:
-          - calculate the **estimated cost** of the project with details per material,
-          - calculate the estimated **weight** of required materials,
-          - synthesize the information of the entire project in a single document accessible by a single action.
-      labels: |
-        *Printing **Labels** will be available in release 2.0.*
-
-        The purpose of this feature is to:
-        - support printing of a batch of adhesive labels for this cutting diagram,
-        - avoid mistakes by clearly marking each part once it has been cut.
+        The continuous improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **3.0**!
     objective_crowdfunding: |
       The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
     objective_thanks: |
@@ -1000,7 +990,8 @@ tab:
     credits_thanks: |
       A special thank goes to:
       - [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) for their support of Open Source projects.
+      - [Transifex](https://www.transifex.com) for their support of Open Source projects.
+      - [GitBook](https://www.gitbook.com) for their support of Open Source projects.
 tool:
   highlight:
     transparency: Transparency

@@ -471,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: Exiba ou oculte a lista de peças de cada prancha.
       option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada placa.
       option_origin_corner: Posição da origem
-      option_origin_corner_0: Canto superior esquerdo
-      option_origin_corner_1: Canto inferior esquerdo
-      option_origin_corner_help: Permite que você escolha o canto de origem para colocar as peças nos painéis.
+      option_origin_corner_1d_0: Para a esquerda
+      option_origin_corner_1d_1: Para a direita
+      option_origin_corner_2d_0: Canto superior esquerdo
+      option_origin_corner_2d_1: Canto inferior esquerdo
+      option_origin_corner_2d_2: Canto superior direito
+      option_origin_corner_2d_3: Canto inferior direito
+      option_origin_corner_1d_help: Permite que você escolha o canto original para colocar as peças nas barras.
+      option_origin_corner_2d_help: Permite que você escolha o canto de origem para colocar as peças nos painéis.
       option_full_width_diagram: Exibir a largura total
       option_full_width_diagram_0: Não
       option_full_width_diagram_1: Sim
@@ -909,24 +914,9 @@ tab:
     objective_slogan: OpenCutList somos todos nós
     objective_title:
       default: Objetivo
-      report: Gerar um relatório
-      labels: Imprimir etiquetas
     objective_details:
       default: |
-        *A criação de **relatórios** e a impressão de **etiquetas** estarão disponíveis na versão 2.0. *
-      report: |
-        ***Relatórios** estarão disponíveis na versão 2.0.*
-
-        O objetivo deste recurso será o de:
-          - Calcular o **custo estimado** do projeto com detalhes por material,
-          - Calcular o **peso estimado** dos materiais necessários,
-          - Sintetizar as informações de todo o projeto em um único documento acessível por uma única ação.
-      labels: |
-        *A impressão de **etiquetas** estará disponível na versão 2.0.*
-
-        Esta funcionalidade deverá:
-        - permitir a impressão das informações úteis de cada peça em etiquetas adesivas,
-        - simplificando o trabalho em equipe.
+        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua a precisar de sua ajuda para sua próxima atualização **3.0***!
     objective_crowdfunding: |
       O desenvolvimento desta nova funcionalidade será feito através de **financiamento participativo** e começará quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
@@ -1000,7 +990,8 @@ tab:
     credits_thanks: |
       Um agradecimento especial vai para:
       - [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) por seu apoio a projetos de código aberto.
+      - [Transifex](https://www.transifex.com) por seu apoio a projetos de código aberto.
+      - [GitBook](https://www.gitbook.com) por seu apoio a projetos de código aberto.
 tool:
   highlight:
     transparency: Transparência

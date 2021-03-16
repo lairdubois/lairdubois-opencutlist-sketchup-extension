@@ -45,7 +45,7 @@ default:
   unit_mass_1: رطل
   part_single: قطعة
   part_plural: القطع
-  setup_model_units: إعداد وحدات النموذج
+  setup_model_units: تكوين وحدات النموذج
   load_more: "رفع إضافي..."
   reset_to_app_defaults: استعادة القيم الأصلية
 core:
@@ -471,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: اعرض أو أخف قائمة القِطع لكل قضيب.
       option_hide_part_list_2d_help: اعرض أو أخف قائمة القِطع لكل لوح
       option_origin_corner: موضع المبدأ
-      option_origin_corner_0: الزاوية العلوية اليسرى
-      option_origin_corner_1: الزاوية السفلية اليسرى
-      option_origin_corner_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على الألواح.
+      option_origin_corner_1d_0: إلى اليسار
+      option_origin_corner_1d_1: إلى اليمين
+      option_origin_corner_2d_0: الزاوية العلوية اليسرى
+      option_origin_corner_2d_1: الزاوية السفلية اليسرى
+      option_origin_corner_2d_2: الزاوية العلوية اليمنى
+      option_origin_corner_2d_3: الزاوية السفلية اليمنى
+      option_origin_corner_1d_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على القضبان الخشبية.
+      option_origin_corner_2d_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على الألواح.
       option_full_width_diagram: عَرض كامل للعُرض
       option_full_width_diagram_0: لا
       option_full_width_diagram_1: نعم
@@ -909,24 +914,9 @@ tab:
     objective_slogan: OpenCutList، هو نحن كلنا
     objective_title:
       default: الأهداف
-      report: استحدث تقريرا
-      labels: اطبع الملصقات
     objective_details:
       default: |
-        * سيكون استحداث **التقارير** و طباعة **الملصقات** ممكنا في الإصدار 2.0.*
-      report: |
-        * ستكون **التقارير** متوفرة في الإصدار 2.0.*
-
-        الهدف من هذه الوظيفة هو:
-        - حساب **التكلفة المتوقعة** للمشروع مع التفاصيل لكل خامة،
-        - حساب **الكتلة** المتوقعة للخامات المطلوبة،
-        - تجميع معلومات المشروع بأكمله في مستند واحد يمكن الوصول إليه من خلال إجراء واحد.
-      labels: |
-        *ستكون طباعة **الملصقات** متوفرة في الإصدار 2.0.*
-
-        الهدف من هذه الوظيفة هو:
-        - دعم طباعة مجموعة من الملصقات لرسم التقطيع التخطيطي هذا،
-        - تجنب الأخطاء و تسهيل العمل الجماعي.
+        التحسين المستمر لـ *OpenCutList* مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي **3.0**!
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |
@@ -984,8 +974,8 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
       - Vladimir Badulya (*الروسية*)
       - Pierluigi Colombo (*الإيطالية*)
-      - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل (Carlos Maciel ELT](https://www.inglesonline.pro.br]
-      - [Leonardo Romero Giménez](https://latablamarilla.com) (*الإسبانية*)
+      - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل [Carlos Maciel ELT](https://www.inglesonline.pro.br)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*الإسبانية*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*التشيكية*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk, Dominik Szybisz (*البولندية*)
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
@@ -1001,6 +991,7 @@ tab:
       شكر خاص لـ:
       - [JetBrains](https://www.jetbrains.com) على دعم هذا المشروع عبر [رخصة حرة مجانية مفتوحة المصدر](https://www.jetbrains.com/buy/opensource).
       - [Transifex](https://www.transifex.com) على دعم المشاريع مفتوحة المصدر.
+      - [GitBook](https://www.gitbook.com) على دعم المشاريع مفتوحة المصدر .
 tool:
   highlight:
     transparency: الشفافية

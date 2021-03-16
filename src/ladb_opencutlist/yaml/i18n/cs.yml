@@ -7,6 +7,7 @@ default:
   cancel: Zrušit
   validate: Použít
   confirm: Potvrdit
+  ok: Dobře
   open: Otevřít
   see: Podívat se
   close: Zavřít
@@ -44,7 +45,7 @@ default:
   unit_mass_1: Libra
   part_single: pokoj
   part_plural: pokoje
-  setup_model_units: Nastavte jednotky modelu
+  setup_model_units: Nakonfigurujte modelové jednotky
   load_more: "Více ..."
   reset_to_app_defaults: Obnovit původní hodnoty
 core:
@@ -81,8 +82,6 @@ core:
     options_change: Nastavení v modelu se změnilo.
     material_change: Alespoň jeden materiál byl změněn.
     selection_change: Výběr v aktivním modelu byl změněn.
-  model_info_page:
-    units: Jednotky
   upgrade:
     unavailable: Nelze najít nejnovější verzi *OpenCutList*.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: Číslo této části je generováno automaticky
       resized: Tato část byla změněna s ohledem na definici její součásti
       flipped: Tato část je zrcadlena ve srovnání s definicí komponenty
-      symmetrical: Tato část je symetrická
+      symmetrical: Detekce zrcadleného dílu je u této součásti zakázána
       auto_oriented: Tato část byla automaticky přeorientována
       add_label_filter: "Filtrování zapnuto '{{ label }}'"
       remove_label_filter: "Odstranit filtrování '{{ label }}'"
       add_edge_material_name_filter: "Filtr zapnutý '{{ material_name }}'"
       remove_edge_material_name_filter: "Nefiltrujte '{{ material_name }}'"
       not_aligned_on_axes: "Pozor, tato část nemusí být správně orientována vzhledem ke svým osám"
+      instance_count_by_part: "Tato část se počítá v sadách jednotek **{{ count }}**."
+      missing_instance_count: "Upozorňujeme, že jednotka **{{ count }}** z poslední sady nebude použita."
+      missing_instance_count_plural: "Upozorňujeme, že **{{ count }}** jednotky z poslední sady nebudou použity."
       multiple_layers: "Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}"
       children_warnings: "Pozor, v seskupených částech je upozornění {{count}}"
       children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{count}}"
@@ -246,8 +248,18 @@ tab:
       cumulable_0: Nelze shrnout
       cumulable_1: Celkem délka
       cumulable_2: Celkem šířka
-      price: Cena
+      instance_count_by_part: Šarže
+      instance_count_by_part_help: |
+        Umožňuje počítat části v počtu **sad** potřebných místo počtu jednotek v modelu.
+        Díly v sadě musí mít stejnou definici.
+
+        *Příklad: Pro pár zásuvkových snímků počítejte pouze 1 kus.*
+      instance_count_by_part_1: 1 jednotka na díl
+      instance_count_by_part_2: 2 jednotky na díl
       mass: Masa
+      mass_help: Hmotnost součásti bude použita při generování **Zpráv**.
+      price: Cena
+      price_help: Cena dílu bude použita při generování **Zpráv**.
       tags: Štítky
       tags_help: |
         *Dílcům* můžete přidávat štítky pro lepší definici dílců.
@@ -263,7 +275,7 @@ tab:
         - *Délka* je na <span style='color:red'>červené</span> ose
         - *Šířka* je na <span style='color:green'>zelené</span> ose
         - *Tloušťka* je na <span style='color:blue'>modré</span> ose
-      symmetrical: Část je symetrická
+      symmetrical: ""
       symmetrical_help: |
         Pokud je toto políčko zaškrtnuto, detekce * zrcadlené části * nebude mít na tuto část žádný vliv.
       size_increase: Nadmíry
@@ -435,7 +447,6 @@ tab:
       total_area: Σ Oblasti
       total_length: Σ Délky
       error:
-        no_typed_material_parts: Žádná část vašeho modelu nemá materiál s definovaným typem.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
       warning:
@@ -460,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: Zobrazit nebo skrýt seznam dílců pro každou desku.
       option_hide_part_list_2d_help: Zobrazte nebo skryjte seznam dílů pro každý panel.
       option_origin_corner: Původní pozice
-      option_origin_corner_0: Levý horní roh
-      option_origin_corner_1: Levý dolní roh
-      option_origin_corner_help: Určuje polohu počátku souřadnic pro zobrazení dílů na panelech.
+      option_origin_corner_1d_0: ""
+      option_origin_corner_1d_1: ""
+      option_origin_corner_2d_0: Levý horní roh
+      option_origin_corner_2d_1: Levý dolní roh
+      option_origin_corner_2d_2: ""
+      option_origin_corner_2d_3: ""
+      option_origin_corner_1d_help: ""
+      option_origin_corner_2d_help: Určuje polohu počátku souřadnic pro zobrazení dílů na panelech.
       option_full_width_diagram: Zobrazení na celou šířku
       option_full_width_diagram_0: Ne
       option_full_width_diagram_1: Ano
@@ -898,24 +914,8 @@ tab:
     objective_slogan: OpenCutList je pro všechny
     objective_title:
       default: Objekty
-      report: Vytvořit Report
-      labels: Tisk štítků
     objective_details:
       default: |
-        *Generování **reportů** a tisk **štítků** bude k dispozici ve verzi 2.0.*
-      report: |
-        ***Reporty** budou k dispozici ve verzi 2.0.*
-
-        Účelem této funkce je:
-        - vypočítat **odhadovanou cenu **projektu s podrobnostmi o materiálu,
-        - vypočítat odhadovanou **hmotnost** požadovaného materiálu,
-        - seskupit informace o celém projektu do jediného dokumentu vytvořeného jedinou akcí.
-      labels: |
-        *Tisk **Štítky** budou k dispozici ve verzi 2.0.*
-
-        Účelem této funkce je:
-        - podpora tisku dávky lepicích štítků pro tento nářezový plán,
-        - vyhněte se chybám jasným označením každé části, která již byla uříznuta.
     objective_crowdfunding: |
       Vývoj této nové funkce bude probíhat prostřednictvím **participativního financování** a bude zahájen po dosažení **finančního cíle**.
     objective_thanks: |
@@ -942,6 +942,15 @@ tab:
     suppress_units_display: Zobrazit jednotku délky pro každou hodnotu
     mass_unit: Jednotka hmotnosti
     currency_symbol: Symbol měny
+    menu:
+      dump_global_presets: ""
+      dump_model_presets: ""
+      reset_global_presets: ""
+      reset_global_presets_confirm: |
+      reset_global_presets_success: |
+      reset_model_presets: ""
+      reset_model_presets_confirm: |
+      reset_model_presets_success: |
   about:
     label: O
     title: O
@@ -959,6 +968,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk a Dominik Szybisz (*polsky*)
       - Sergey Isupov (*hebrejsky*), bez RTL rozhraní
+      - SOUL Issam (*arabština*), bez RTL rozhraní
     credits_description: |
       Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -969,7 +979,8 @@ tab:
     credits_thanks: |
       Zvláštní poděkování patří:
       - [JetBrains](https://www.jetbrains.com) za podporu tohoto projektu prostřednictvím jejich [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) za jejich podporu projektů Open Source.
+      - [Transifex](https://www.transifex.com) za jejich podporu projektů Open Source.
+      - [GitBook](https://www.gitbook.com) za jejich podporu projektů Open Source.
 tool:
   highlight:
     transparency: Průhlednost

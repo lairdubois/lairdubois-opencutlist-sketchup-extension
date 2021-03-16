@@ -7,6 +7,7 @@ default:
   cancel: Anuluj
   validate: Zastosuj
   confirm: Potwierdź
+  ok: ""
   open: Otwórz
   see: Zobacz
   close: Zamknij
@@ -44,7 +45,7 @@ default:
   unit_mass_1: Liwr
   part_single: część
   part_plural: części
-  setup_model_units: Skonfiguruj jednostki modelu
+  setup_model_units: ""
   load_more: "Załaduj więcej ..."
   reset_to_app_defaults: Przywróć oryginalne wartości
 core:
@@ -81,8 +82,6 @@ core:
     options_change: Opcje w modelu zostały zmienione.
     material_change: Co najmniej jeden materiał został zmieniony.
     selection_change: Wybór/zaznaczenie w aktywnym modelu zostało zmienione.
-  model_info_page:
-    units: Jednostki
   upgrade:
     unavailable: Nie można znaleźć najnowszej wersji *OpenCutList*.
     available: |
@@ -193,13 +192,16 @@ tab:
       number_generated: Numer tej części został wygenerowany automatycznie
       resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
-      symmetrical: Ta część jest symetryczna
+      symmetrical: ""
       auto_oriented: Ta część została automatycznie obrócona
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
       add_edge_material_name_filter: "Filtruj według '{{ material_name }}'"
       remove_edge_material_name_filter: "Nie filtruj według '{{ material_name }}'"
       not_aligned_on_axes: "Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi"
+      instance_count_by_part: ""
+      missing_instance_count: ""
+      missing_instance_count_plural: ""
       multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
       children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
@@ -246,8 +248,14 @@ tab:
       cumulable_0: Nie da się podsumować
       cumulable_1: Zsumowane po długości
       cumulable_2: Zsumowane po szerokości
-      price: Cena
+      instance_count_by_part: Partia
+      instance_count_by_part_help: |
+      instance_count_by_part_1: ""
+      instance_count_by_part_2: ""
       mass: Masa
+      mass_help: ""
+      price: Cena
+      price_help: ""
       tags: Oznaczenia
       tags_help: |
         *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
@@ -263,9 +271,8 @@ tab:
         - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
         - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
         - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
-      symmetrical: Część jest symetryczna
+      symmetrical: ""
       symmetrical_help: |
-        Jeśli to pole jest zaznaczone, wykrycie *części lustrzanej* nie będzie miało wpływu na tę część.
       size_increase: Ponadwymiarowe
       size_increase_help: |
         Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
@@ -435,7 +442,6 @@ tab:
       total_area: Σ Powierzchni
       total_length: Σ Długości
       error:
-        no_typed_material_parts: Żadna część Twojego modelu nie zawiera materiału o zdefiniowanym typie.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
@@ -460,9 +466,14 @@ tab:
       option_hide_part_list_1d_help: Wyświetl lub zamaskuj listę części dla każdej płyty.
       option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
       option_origin_corner: Pozycja pochodzenia
-      option_origin_corner_0: Górny lewy narożnik
-      option_origin_corner_1: Dolny lewy narożnik
-      option_origin_corner_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
+      option_origin_corner_1d_0: ""
+      option_origin_corner_1d_1: ""
+      option_origin_corner_2d_0: Górny lewy narożnik
+      option_origin_corner_2d_1: Dolny lewy narożnik
+      option_origin_corner_2d_2: ""
+      option_origin_corner_2d_3: ""
+      option_origin_corner_1d_help: ""
+      option_origin_corner_2d_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
       option_full_width_diagram: Wyświetlanie na całej szerokości
       option_full_width_diagram_0: Nie
       option_full_width_diagram_1: Tak
@@ -898,24 +909,8 @@ tab:
     objective_slogan: OpenCutList to my wszyscy
     objective_title:
       default: Cele
-      report: Generuj Raport
-      labels: Drukuj etykiety
     objective_details:
       default: |
-        *Generowanie **raportów** i drukowanie **etykiet** będzie dostępne w wersji 2.0.*
-      report: |
-        ***Raporty** będą dostępne w wersji 2.0.*
-
-        Celem tej funkcji jest:
-          - obliczyć **szacunkowy koszt** projektu z wyszczególnieniem według materiałów,
-          - obliczyć szacunkową **wagę** potrzebnych materiałów,
-          - zebrać informacje o całym projekcie w jednym dokumencie dostępnym za pomocą jednego kliknięcia.
-      labels: |
-        *Drukowanie **Etykiet** będzie dostępne w wersji 2.0.*
-
-        Celem tej funkcji jest:
-        - umożliwić drukowanie na etykietach samoprzylepnych opisu każdej części rozkroju,
-        - uniknięcie błędów przez wyraźne oznaczenie każdej części po cięciu.
     objective_crowdfunding: |
       Rozwój nowych funkcjonalności będzie się odbywał dzięki **crowdfundingowi** i może się rozpocząć po osiągnięciu jego **Celu Finansowego**.
     objective_thanks: |
@@ -942,6 +937,15 @@ tab:
     suppress_units_display: Wyświetl jednostkę długości dla każdej wartości
     mass_unit: Jednostka masy
     currency_symbol: Symbol waluty
+    menu:
+      dump_global_presets: ""
+      dump_model_presets: ""
+      reset_global_presets: ""
+      reset_global_presets_confirm: |
+      reset_global_presets_success: |
+      reset_model_presets: ""
+      reset_model_presets_confirm: |
+      reset_model_presets_success: |
   about:
     label: O programie
     title: O programie
@@ -959,6 +963,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polski*)
       - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
+      - SOUL Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -969,7 +974,8 @@ tab:
     credits_thanks: |
       Specjalne podziękowania dla:
       - [JetBrains](https://www.jetbrains.com) za ich wsparcie dla tego projektu porzez ich [Darmową Licencję Open Source](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) za ich wsparcie projektów Open Source.
+      - [Transifex](https://www.transifex.com) za ich wsparcie projektów Open Source.
+      - [GitBook](https://www.gitbook.com) za ich wsparcie projektów Open Source.
 tool:
   highlight:
     transparency: Przezroczystość
