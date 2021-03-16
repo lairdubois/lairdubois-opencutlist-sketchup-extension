@@ -748,9 +748,6 @@
     LadbTabCutlist.prototype.reportCutlist = function (forceDefaultTab) {
         var that = this;
 
-        // Show Objective modal
-        // this.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'report' }, null, true);
-
         var visibleOnly = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
@@ -768,7 +765,7 @@
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
-            var $btnReport = $('#ladb_btn_report', $modal);
+            var $btnGenerate = $('#ladb_btn_generate', $modal);
 
             var fnFetchOptions = function (options) {
                 options.solid_wood_coefficient = Math.max(1.0, $inputSolidWoodCoefficient.val() === '' ? 1.0 : parseFloat($inputSolidWoodCoefficient.val().replace(',', '.')));
@@ -790,7 +787,7 @@
             fnFillInputs(reportOptions);
 
             // Bind buttons
-            $btnReport.on('click', function () {
+            $btnGenerate.on('click', function () {
 
                 // Fetch options
                 fnFetchOptions(reportOptions);
@@ -1327,7 +1324,7 @@
                 var $inputName = $('#ladb_cutlist_part_input_name', $modal);
                 var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
                 var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-                var $selectInstanceCountByPart = $('#ladb_cutlist_part_select_instance_count_by_part', $modal);
+                var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
                 var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
                 var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
@@ -1450,6 +1447,13 @@
                 })
 
                 // Bind input
+                $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
+                    resetValue: '1',
+                    defaultUnit: 'u_p',
+                    units: [
+                        { u_p: i18next.t('default.part_single') + ' / ' + i18next.t('default.part_single') },
+                    ]
+                });
                 $inputMass.ladbTextinputNumberWithUnit({
                     defaultUnit: that.massUnitStrippedname + '_p',
                     units: [
@@ -1482,8 +1486,6 @@
                     });
                 $selectCumulable.val(editedPart.cumulable);
                 $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectInstanceCountByPart.val(editedPart.instance_count_by_part);
-                $selectInstanceCountByPart.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartAxesOriginPosition
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -1608,8 +1610,8 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = $selectCumulable.val() === '1';
                         }
-                        if ($selectInstanceCountByPart.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].instance_count_by_part = parseInt($selectInstanceCountByPart.val());
+                        if ($inputInstanceCountByPart.val() !== undefined && $inputInstanceCountByPart.val() !== '') {
+                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
                         }
                         if ($inputMass.val() !== undefined && $inputMass.val() !== '') {
                             editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
@@ -1910,7 +1912,7 @@
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
+                var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.std_bar = $inputStdBar.val();
@@ -1997,7 +1999,7 @@
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
                 });
-                $btnCuttingdiagram.on('click', function () {
+                $btnGenerate.on('click', function () {
 
                     // Fetch options
                     fnFetchOptions(cuttingdiagram1dOptions);
@@ -2164,7 +2166,7 @@
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnCuttingdiagram = $('#ladb_btn_cuttingdiagram', $modal);
+                var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
@@ -2257,7 +2259,7 @@
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
                 });
-                $btnCuttingdiagram.on('click', function () {
+                $btnGenerate.on('click', function () {
 
                     // Fetch options
                     fnFetchOptions(cuttingdiagram2dOptions);
@@ -2426,7 +2428,7 @@
             var $inputColCount = $('#ladb_input_col_count', $modal);
             var $inputRowCount = $('#ladb_input_row_count', $modal);
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
-            var $btnLabels = $('#ladb_btn_labels', $modal);
+            var $btnGenerate = $('#ladb_btn_generate', $modal);
 
             var fnPageSizeVisibility = function () {
                 if ($selectPageFormat.selectpicker('val') == null) {
@@ -2552,7 +2554,7 @@
             });
 
             // Bind buttons
-            $btnLabels.on('click', function () {
+            $btnGenerate.on('click', function () {
 
                 // Fetch options
                 fnFetchOptions(labelsOptions);

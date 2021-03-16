@@ -250,7 +250,7 @@ tab:
       cumulable_2: Cumulable sur la largeur
       instance_count_by_part: Lot
       instance_count_by_part_help: |
-        Permet de comptabiliser les pièces sur le nombre de **lot** nécessaires au lieu du nombre d'unités présentes dans le modèle.
+        Permet de comptabiliser les pièces sur le nombre de **lots** nécessaires au lieu du nombre d'unités présentes dans le modèle.
         Les pièces réunies en lot doivent avoir la même définition.
 
         *Exemple : Ne compter que 1 pièce pour une paire de coulisses de tiroir.*
