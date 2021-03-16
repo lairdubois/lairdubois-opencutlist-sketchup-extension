@@ -26,6 +26,11 @@
     </div>
 {% endblock %}
 
+{% block headerInner %}
+    {{ parent() }}
+    <div class="ladb-header-extra"></div>
+{% endblock %}
+
 {% block containerInner %}
     {% include 'tabs/cutlist/_panel-help.twig' with { 'classes':'no-print' } %}
     {{ parent() }}

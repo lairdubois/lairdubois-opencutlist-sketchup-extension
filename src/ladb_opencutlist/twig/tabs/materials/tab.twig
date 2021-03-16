@@ -18,6 +18,11 @@
     </div>
 {% endblock %}
 
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs no-print"></ul>
+{% endblock %}
+
 {% block containerInner %}
     {{ parent() }}
     <div class="ladb-page"></div>

@@ -38,7 +38,7 @@
         this.lastLabelsOptionsTab = null;
 
         this.$header = $('.ladb-header', this.$element);
-        this.$fileTabs = $('.ladb-file-tabs', this.$header);
+        this.$headerExtra = $('.ladb-header-extra', this.$header);
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
@@ -116,8 +116,8 @@
             }
 
             // Update filename
-            that.$fileTabs.empty();
-            that.$fileTabs.append(Twig.twig({ ref: "tabs/cutlist/_file-tab.twig" }).render({
+            that.$headerExtra.empty();
+            that.$headerExtra.append(Twig.twig({ ref: "tabs/cutlist/_header-extra.twig" }).render({
                 selectionOnly: selectionOnly,
                 filename: filename,
                 modelName: modelName,

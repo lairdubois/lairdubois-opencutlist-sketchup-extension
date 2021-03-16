@@ -6,9 +6,9 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <ul class="ladb-file-tabs nav nav-tabs">
-        {% include 'tabs/cutlist/_file-tab.twig' with { 'generatedAt':'000' } %}
-    </ul>
+    <div class="ladb-header-extra">
+        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
+    </div>
 {% endblock %}
 
 {% block headerHeadingInner %}

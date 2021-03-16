@@ -1,0 +1,7 @@
+<ul class="ladb-file-tabs nav nav-tabs no-print">
+    {% embed 'tabs/base-file-tab.twig' %}
+        {% block inner %}{{ parent() }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}{% if selectionOnly %} <span style="font-weight: normal; color: #003eff;" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.partial_cutlist'|i18next }}">({{ 'tab.cutlist.selection_only'|i18next }})</span>{% endif %}{% include 'core/_length-unit-extra.twig' %}{% endblock %}
+    {% endembed %}
+</ul>
+<div class="ladb-file-infos no-screen">{{ modelName ? modelName : (filename ? filename : 'default.empty_filename'|i18next) }}{% if pageLabel %} - <em>{{ pageLabel }}</em>{% endif %}</div>
+<div class="ladb-time-and-unit no-screen">{{ generateAt|date(('default.date_format'|i18next())) }}{% if lengthUnit is not null %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}</div>
