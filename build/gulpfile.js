@@ -62,7 +62,7 @@ gulp.task('i18n_compile', function () {
             languageLabels[language] = ymlDocument['_label'];
         }
         if ('_description' in ymlDocument) {
-            descriptions[language] = ymlDocument['_description'];
+            descriptions[language] = ymlDocument['_description'].replace("'", "\\'");
         }
         if ('_reload_msg' in ymlDocument) {
             languageReloadMsgs[language] = ymlDocument['_reload_msg'];

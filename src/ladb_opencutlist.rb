@@ -31,7 +31,7 @@ module Ladb
       when 'it'
         ex.description = 'Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)'
       when 'nl'
-        ex.description = 'Genereer materiaallijsten, zaagschema's voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)'
+        ex.description = 'Genereer materiaallijsten, zaagschema\'s voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)'
       when 'pl'
         ex.description = 'Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;) '
       when 'pt'
