@@ -410,6 +410,10 @@
                 that.hideAllGroups(groupId);
                 that.scrollSlideToTarget(null, $group, true, false);
             });
+            $('a.ladb-item-show-all-groups', that.$page).on('click', function () {
+                $(this).blur();
+                that.showAllGroups();
+            });
             $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                 $(this).blur();
                 var $group = $(this).parents('.ladb-cutlist-group');
@@ -874,6 +878,17 @@
                                 $(this).blur();
                                 $('.ladb-click-tool', $(this)).first().click();
                                 return false;
+                            });
+                            $('a.ladb-item-hide-all-other-groups', $slide).on('click', function () {
+                                $(this).blur();
+                                var $group = $(this).parents('.ladb-cutlist-group');
+                                var groupId = $group.data('group-id');
+                                that.hideAllGroups(groupId, $slide, true);
+                                that.scrollSlideToTarget($slide, $group, true, false);
+                            });
+                            $('a.ladb-item-show-all-groups', $slide).on('click', function () {
+                                $(this).blur();
+                                that.showAllGroups($slide, true);
                             });
                             $('a.ladb-btn-edit-material', $slide).on('click', function () {
                                 $(this).blur();
@@ -1451,7 +1466,7 @@
                     resetValue: '1',
                     defaultUnit: 'u_p',
                     units: [
-                        { u_p: i18next.t('default.part_single') + ' / ' + i18next.t('default.part_single') },
+                        { u_p: i18next.t('default.instance') + ' / ' + i18next.t('default.part_single') },
                     ]
                 });
                 $inputMass.ladbTextinputNumberWithUnit({
@@ -1857,24 +1872,28 @@
 
     };
 
-    LadbTabCutlist.prototype.showAllGroups = function () {
+    LadbTabCutlist.prototype.showAllGroups = function ($slide, doNotSaveState) {
+        console.log('showAllGroups', $slide, doNotSaveState);
         var that = this;
-        $('.ladb-cutlist-group', this.$page).each(function () {
-            that.showGroup($(this), false,true);
+        $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
+            that.showGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
         }).promise().done( function (){
             that.saveUIOptionsHiddenGroupIds();
         });
     };
 
-    LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId) {
+    LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId, $slide, doNotSaveState) {
+        console.log('hideAllGroups', exceptedGroupId, $slide, doNotSaveState);
         var that = this;
-        $('.ladb-cutlist-group', this.$page).each(function () {
+        $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
             var groupId = $(this).data('group-id');
             if (exceptedGroupId && groupId !== exceptedGroupId) {
-                that.hideGroup($(this), false,true);
+                that.hideGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
             }
         }).promise().done( function (){
-            that.saveUIOptionsHiddenGroupIds();
+            if (!doNotSaveState) {
+                that.saveUIOptionsHiddenGroupIds();
+            }
         });
     };
 

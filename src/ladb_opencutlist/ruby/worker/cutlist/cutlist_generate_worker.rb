@@ -495,7 +495,7 @@ module Ladb::OpenCutList
             instance_count = part_def.count
             count = ((instance_count * 1.0) / part_def.instance_count_by_part).ceil
             part_def.count = count
-            part_def.missing_instance_count = instance_count % part_def.instance_count_by_part
+            part_def.missing_instance_count = part_def.instance_count_by_part - (instance_count % part_def.instance_count_by_part)
             group_def.part_count -= instance_count - count
           end
         }

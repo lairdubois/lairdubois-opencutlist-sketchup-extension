@@ -27,11 +27,18 @@
         {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %} {# TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_ACCESSORY #}
 
         {% if report.groups|length > 0 %}
-            <table id="ladb_group_summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
+            <table id="ladb_group_summary" data-group-id="summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="2">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default ladb-btn-group-menu btn-sm ladb-btn-hiddable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
+                                <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+                            </ul>
+                        </div>
                         <div class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</div>
                     </td>
                 </tr>
@@ -54,12 +61,19 @@
             {% set foldableRow = group.material_type == 2 or group.material_type == 3 or group.material_type == 5 %}
             {% set editableRow = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 %}
 
-            <table class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
+            <table data-group-id="{{ group.material_type }}" class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="5">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
                         {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':true, 'classes':'pull-left' } %}
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default ladb-btn-group-menu btn-sm ladb-btn-hiddable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
+                                <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+                            </ul>
+                        </div>
                         <div class="ladb-heading">
                             {{ ('tab.materials.type_'~group.material_type)|i18next }}
                             {% if group.material_type == 1 %} {# TYPE_SOLID_WOOD #}

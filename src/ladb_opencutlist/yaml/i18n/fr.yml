@@ -43,6 +43,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramme
   unit_mass_1: Livre
+  instance: unité
   part_single: pièce
   part_plural: pièces
   setup_model_units: Configurer les unités du modèle
