@@ -77,7 +77,7 @@
                         <div class="ladb-heading">
                             {{ ('tab.materials.type_'~group.material_type)|i18next }}
                             {% if group.material_type == 1 %} {# TYPE_SOLID_WOOD #}
-                                <span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;">{{ 'tab.cutlist.report.coefficient'|i18next }} = {{ report.solid_wood_coefficient }}</span>
+                                <span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.option_solid_wood_coefficient_help'|i18next }}">{{ 'tab.cutlist.report.coefficient'|i18next }} = {{ report.solid_wood_coefficient }}</span>
                             {% endif %}
                         </div>
                     </td>
