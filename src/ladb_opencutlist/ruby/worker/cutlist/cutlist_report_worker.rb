@@ -16,6 +16,7 @@ module Ladb::OpenCutList
 
       @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }
       @remaining_step = @cutlist_groups.count
+      @starting = true
 
       @report_def = ReportDef.new
       @report_def.solid_wood_coefficient = @solid_wood_coefficient
@@ -32,7 +33,7 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
 
-      unless @remaining_step == @cutlist_groups.count
+      unless @starting || @cutlist_groups.count == 0
 
         cutlist_group = @cutlist_groups[@cutlist_groups.count - @remaining_step - 1]
         report_group_def = @report_def.group_defs[cutlist_group.material_type]
@@ -200,12 +201,18 @@ module Ladb::OpenCutList
 
       end
 
-      if @remaining_step > 0
+      if @starting || @remaining_step > 0
         response = {
             :remaining_step => @remaining_step,
         }
-        @remaining_step = @remaining_step - 1
+        @remaining_step = [ 0, @remaining_step - 1 ].max
+        @starting = false
       else
+
+        # Errors
+        if @report_def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.length == 0
+          @report_def.errors << 'tab.cutlist.report.error.no_typed_material_parts'
+        end
 
         # Create the report
         report = @report_def.create_report
