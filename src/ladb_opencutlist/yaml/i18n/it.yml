@@ -45,7 +45,7 @@ default:
   unit_mass_1: Libbra
   part_single: pezzo
   part_plural: pezzi
-  setup_model_units: Impostare l'unita di misura del modello
+  setup_model_units: Impostare le unità del modello
   load_more: "Carica di più ..."
   reset_to_app_defaults: Ripristina i valori originali
 core:
@@ -471,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola.
       option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
       option_origin_corner: Posizione dell'origine
-      option_origin_corner_0: In alto a sinistra
-      option_origin_corner_1: In basso a sinistra
-      option_origin_corner_help: Determina la posizione dell'origine delle coordinate per la visualizzazione dei pezzi sulle pannelli.
+      option_origin_corner_1d_0: A sinistra
+      option_origin_corner_1d_1: A destra
+      option_origin_corner_2d_0: In alto a sinistra
+      option_origin_corner_2d_1: In basso a sinistra
+      option_origin_corner_2d_2: In alto a destra
+      option_origin_corner_2d_3: In basso a destra
+      option_origin_corner_1d_help: Permette di scegliere l'angolo originale per posizionare i pezzi nelle barre.
+      option_origin_corner_2d_help: Permette di scegliere la fine originale del posizionamento dei pezzi nelle barre.
       option_full_width_diagram: Modalità schermo intero
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Si
@@ -909,24 +914,9 @@ tab:
     objective_slogan: OpenCutList è tutti noi
     objective_title:
       default: Obiettivo
-      report: La generazione di un resoconto
-      labels: Stampa etichette
     objective_details:
       default: |
-        *La creazione di **Resoconti** e la stampa di **Etichette** saranno disponibili nel prossimo aggiornamento 2.0.*
-      report: |
-        ***I resoconti** saranno disponibili nel prossimo aggiornamento 2.0.*
-
-        Lo scopo di questa funzione è di :
-          - Stimare il **costo** del progetto con i dettagli dei singoli materiali.
-          - Calcolare il **peso** dei materiali richiesti.
-          - Riassumere le informazioni dell'intero progetto in un singolo documento accessibile con un solo comando.
-      labels: |
-        *La stampa di **etichette** sarà disponibile nel prossimo aggiornamento 2.0.*
-
-        Lo scopo di questa funzione è quello di:
-        - Supportare la stampa di etichette adesive.
-        - Evitare errori marcando chiaramente ogni parte una volta che è stata tagliata.
+        Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **3.0**!
     objective_crowdfunding: |
       Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
     objective_thanks: |
@@ -999,8 +989,9 @@ tab:
       Il conseguimento di questo risultato non sarebbe stato possibile senza il lavoro degli autori dei componenti Open Source elencati di seguito:
     credits_thanks: |
       Un ringraziamento speciale va a:
-      - [JetBrains](https://www.jetbrains.com) per il supporto al progetto [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) per il supporto al progetto Open Source.
+      - [JetBrains](https://www.jetbrains.com) per il loro sostegno a questo progetto attraverso il loro [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) per il loro sostegno ai progetti Open Source.
+      - [GitBook](https://www.gitbook.com) per il loro sostegno ai progetti Open Source.
 tool:
   highlight:
     transparency: Transparenza

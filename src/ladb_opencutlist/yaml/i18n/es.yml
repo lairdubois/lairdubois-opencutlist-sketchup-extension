@@ -6,12 +6,12 @@ default:
   maximize: Maximizar
   cancel: Cancelar
   validate: Aplicar
-  confirm: Confirmer
+  confirm: Confirmar
   ok: Ok
   open: Abrir
   see: Ver
   close: Cerra
-  clear: Clear
+  clear: Borrar
   refresh: Actualizar
   generate: Generar
   print: Imprimir
@@ -108,7 +108,7 @@ core:
     label: Preajustes
     save_to: Guardar como
     restore_from: Restaurar desde
-    app_defaults: Preajuste de origen
+    app_defaults: Preajuste de fábrica
     user_defaults: Mis ajustes por defecto
     new: Nuevo preajuste
     new_prompt: |
@@ -354,8 +354,8 @@ tab:
       property_count: Cantidad
       property_edge_pattern: Número de tiras de cantos
       tags: Etiquetas
-      tags_help: Lista personalizada de tags propuestas en la ventana de propiedades de las piezas.
-      tags_placeholder: Añadir un tag
+      tags_help: Lista personalizada de etiquetas propuestas en la ventana de propiedades de las piezas.
+      tags_placeholder: Añadir una etiqueta
     list:
       filters: Filtro
       filters_warning_0: "¡Este filtro enmascara todas las partes!"
@@ -374,7 +374,7 @@ tab:
       number: No.
       name: Descripción
       count: Cant.
-      cutting: Áspera
+      cutting: Ajustadas
       bbox: Finales
       final: Actual
       total_cutting: Σ Áspera
@@ -389,7 +389,7 @@ tab:
     export:
       title: Exportar en formato CSV
       info_0: |
-        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
+        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       options: Opciones de exportación
       options_customize: Personalización
       option_source: Fuente
@@ -471,9 +471,14 @@ tab:
       option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero.
       option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada panel.
       option_origin_corner: Posición del origen
-      option_origin_corner_0: Esquina superior izquierda
-      option_origin_corner_1: Esquina inferior izquierda
-      option_origin_corner_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
+      option_origin_corner_1d_0: A la izquierda
+      option_origin_corner_1d_1: A la derecha
+      option_origin_corner_2d_0: Esquina superior izquierda
+      option_origin_corner_2d_1: Esquina inferior izquierda
+      option_origin_corner_2d_2: Esquina superior derecha
+      option_origin_corner_2d_3: Esquina inferior derecha
+      option_origin_corner_1d_help: Le permite elegir la esquina original de la colocación de piezas en barras.
+      option_origin_corner_2d_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
       option_full_width_diagram: Pantalla de ancho total
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Si
@@ -612,7 +617,7 @@ tab:
       option_size: Dimensión
       option_anchor: Ancla
       option_anchor_start: Inicio
-      option_anchor_middle: Melo
+      option_anchor_middle: Medio
       option_anchor_end: Fin
       option_color: Color
       formula:
@@ -909,24 +914,9 @@ tab:
     objective_slogan: OpenCutList somos todos
     objective_title:
       default: Objetivo
-      report: Generar un informe
-      labels: Imprimir etiquetas
     objective_details:
       default: |
-        *La generación de **informes** y la impresión de **etiquetas** estarán disponibles en la próxima actualización 2.0.*
-      report: |
-        ***Los informes** estarán disponibles en la próxima actualización 2.0.*
-
-        El propósito de esta función es:
-        - calcular el **costo estimado** del proyecto con detalles por material,
-        - calcular el **peso** estimado de los materiales requeridos,
-        - sintetizar la información de todo el proyecto en un solo documento accesible mediante una sola acción.
-      labels: |
-        *La impresión de **etiquetas** estará disponible en la próxima actualización 2.0.*
-
-        El propósito de esta función es:
-        - admite la impresión de un lote de etiquetas adhesivas para este diagrama de corte,
-        - Evite errores marcando claramente cada parte una vez cortada.
+        ¡La mejora continua de * OpenCutList * es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización ** 3.0 **!
     objective_crowdfunding: |
       El desarrollo de esta nueva funcionalidad se hará mediante **financiamiento participativo** y comenzará cuando se alcance su **Objetivo Financiero**.
     objective_thanks: |
@@ -1000,7 +990,8 @@ tab:
     credits_thanks: |
       Un agradecimiento especial para:
       - [JetBrains](https://www.jetbrains.com) por su apoyo a este proyecto mediante su [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
-      - [Transifex](https://www.transifex.com/) por su apoyo a los proyectos de código abierto.
+      - [Transifex](https://www.transifex.com) por su apoyo a los proyectos de código abierto.
+      - [GitBook](https://www.gitbook.com) por su apoyo a los proyectos de código abierto.
 tool:
   highlight:
     transparency: Transparencia
