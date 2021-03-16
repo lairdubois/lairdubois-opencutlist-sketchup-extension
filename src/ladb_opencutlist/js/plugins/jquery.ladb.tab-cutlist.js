@@ -564,6 +564,7 @@
             var $sortableColumnOrderSummary = $('#ladb_sortable_column_order_summary', $modal);
             var $sortableColumnOrderCutlist = $('#ladb_sortable_column_order_cutlist', $modal);
             var $sortableColumnOrderInstancesList = $('#ladb_sortable_column_order_instances_list', $modal);
+            var $btnSetupModelUnits = $('#ladb_btn_setup_model_units', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
             // Define useful functions
@@ -699,6 +700,10 @@
             });
 
             // Bind buttons
+            $btnSetupModelUnits.on('click', function () {
+                $(this).blur();
+                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+            });
             $btnExport.on('click', function () {
 
                 // Fetch options
@@ -766,7 +771,7 @@
             var $btnReport = $('#ladb_btn_report', $modal);
 
             var fnFetchOptions = function (options) {
-                options.solid_wood_coefficient = $inputSolidWoodCoefficient.val();
+                options.solid_wood_coefficient = Math.max(1.0, $inputSolidWoodCoefficient.val() === '' ? 1.0 : parseFloat($inputSolidWoodCoefficient.val().replace(',', '.')));
             }
             var fnFillInputs = function (options) {
                 $inputSolidWoodCoefficient.val(options.solid_wood_coefficient);
