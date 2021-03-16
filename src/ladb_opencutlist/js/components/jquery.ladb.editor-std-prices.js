@@ -17,15 +17,15 @@
         this.defaultUnit = null;
         this.units = [
             {
-                $_m3: options.currencySymbol + ' / m³',
-                $_m2: options.currencySymbol + ' / m²',
                 $_m: options.currencySymbol + ' / m',
+                $_m2: options.currencySymbol + ' / m²',
+                $_m3: options.currencySymbol + ' / m³',
             },
             {
                 $_fbm: options.currencySymbol + ' / fbm',
-                $_ft3: options.currencySymbol + ' / ft³',
-                $_ft2: options.currencySymbol + ' / ft²',
                 $_ft: options.currencySymbol + ' / ft',
+                $_ft2: options.currencySymbol + ' / ft²',
+                $_ft3: options.currencySymbol + ' / ft³',
             },
             {
                 $_p: options.currencySymbol + ' / ' + i18next.t('default.part_single')
@@ -215,7 +215,7 @@
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
                 this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
-                enabledUnitKeys = [ '$_m3', '$_m2', '$_ft3', '$_ft2', '$_p' ];
+                enabledUnitKeys = [ '$_m2', '$_m3', '$_ft2', '$_ft3', '$_ft2', '$_p' ];
                 break;
 
             case 3: /* TYPE_DIMENSIONAL */
@@ -226,7 +226,7 @@
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
                 this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
-                enabledUnitKeys = [ '$_m3', '$_m2', '$_m', '$_ft3', '$_ft2', '$_ft', '$_p' ];
+                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_p' ];
                 break;
 
             case 4: /* TYPE_EDGE */
