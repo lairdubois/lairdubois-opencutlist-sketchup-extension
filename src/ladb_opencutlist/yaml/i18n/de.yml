@@ -43,8 +43,10 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramm
   unit_mass_1: Pfund
-  part_single: Teil
-  part_plural: Teile
+  instance_single: Einheit
+  instance_plural: Einheiten
+  part_single: Stück
+  part_plural: Stücke
   setup_model_units: Modelleinheiten konfigurieren
   load_more: "Weitere laden ..."
   reset_to_app_defaults: Originalwerte wiederherstellen
@@ -61,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Mehr
-    more_docs: Dokus
+    more_docs: Doku
     more_reviews: Meinungen
     more_plans: Pläne
     more_extensions: Plugins
@@ -134,7 +136,7 @@ tab:
     title: Holzliste
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
-      Ist die Auswahl leer, werden zur Berechnung der Holzliste alle sichtbaren Komponenten der Szene verwendet.
+      Falls die Auswahl leer ist, werden alle sichtbaren Komponenten der Szene für die Holzliste verwendet.
     selection_only: Auswahl
     material_undefined: Kein Material definiert
     not_available_std_width: Breite nicht verfügbar
@@ -199,9 +201,11 @@ tab:
       add_edge_material_name_filter: "Nach '{{ material_name }}' auswählen"
       remove_edge_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
       not_aligned_on_axes: "Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet"
-      instance_count_by_part: "Dieses Teil wird in Garnituren von **{{ count }}** Einheiten gezählt."
-      missing_instance_count: "Achtung, **{{ count }}** Einheit der letzten Garnitur wird nicht verwendet."
-      missing_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Garnitur werden nicht verwendet."
+      instance_count_by_part: "Dieses Teil wird in **{{ count }}** Einheiten pro Packung gezählt."
+      unused_instance_count: "Achtung, **{{ count }}** Einheit der letzten Packung wird nicht verwendet."
+      unused_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Packung werden nicht verwendet."
+      used_instance_count: "**{{ count }}** / {{ total }} Einheiten verwendet"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} Einheiten verwendet"
       multiple_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die in {{ count }} verschiedenen Ebenen vorhanden sind:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
@@ -232,8 +236,8 @@ tab:
       group_cuttingdiagram: Schnittplan
       group_labels: Etiketten drucken
       edit_material: "Bearbeiten des Materials '{{ material_name }}'"
-      expand_all: Identische Teile aufklappen
-      collapse_all: Identische Teile zuklappen
+      expand_all: Alle Zeilen aufklappen
+      collapse_all: Alle Zeilen zuklappen
     edit_part:
       title: "Eigenschaften des Teils '{{ name }}'"
       title_multiple: Eigenschaften der Gruppe von Teilen
@@ -248,12 +252,13 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      instance_count_by_part: Garnitur
+      instance_count_by_part: Packung
       instance_count_by_part_help: |
-        Ermöglicht das Zählen von Teilen anhand der Anzahl erforderlichen **Garnituren** anstelle der Anzahl der im Modell vorhandenen Einheiten.
-        Die in einer Garnitur gesammelten Teile müssen dieselbe Definition haben.
+        Ermöglicht das Zählen von Teilen anhand der Anzahl erforderlichen **Packungen** anstelle der im Modell vorhandenen Einheiten.
+        Die in einer Packung zusammengefassten Teile müssen dieselbe Definition haben.
 
-        *Beispiel: Es wird nur 1 Garnitur für ein Paar Schubladenführungen gezählt.*
+        *Beispiel: Um 1 Teil für ein Paar Schubladenführungen zu berechnen:
+        Packung = 2 Einheiten / Teil.*
       instance_count_by_part_1: 1 Stück
       instance_count_by_part_2: 2 Stücke
       mass: Masse
@@ -435,8 +440,8 @@ tab:
       info_0: |
         Mit dieser Funktion können Sie einen Bericht über die **Massen** und **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden, erstellen.
       options_general: Allgemein
-      option_solid_wood_coefficient: Koeffizient *Massivholz*
-      option_solid_wood_coefficient_help: "Wird verwendet, um den Multiplikationskoeffizienten anzugeben, der auf das Bruttovolumen angewendet wird, das für Materialien vom Typ \"**Massivholz**\" gemessen wurde."
+      option_solid_wood_coefficient: Koeffizient für *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: "Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ \"**$t(tab.materials.type_1)**\" angewendet wird, um den Verschnitt zu berücksichtigen."
       raw_materials: Rohmaterial
       coefficient: Koeffizient
       total: Total
@@ -447,6 +452,7 @@ tab:
       total_area: Σ Flächen
       total_length: Σ Längen
       error:
+        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um den Bericht zu generieren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
@@ -655,8 +661,8 @@ tab:
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren."
     warning:
       partial_cutlist: "Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde."
-      no_typed_materials_in_model: "Ihr Modell verwenden keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**)."
-      no_typed_materials_in_selection: "Ihre Auswahl verwendet keinen definierten Materialtypen (**Massivholz**, **Platte** oder **Stangenware**)."
+      no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Ihre Auswahl verwendet kein Material eines definierten Typs (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
@@ -665,7 +671,7 @@ tab:
         Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
         Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
-      no_typed_materials: "Übertragen Sie ein Material auf die Teile, die Sie in der Holzliste sehen möchten und definieren Sie die Eigenschaften dieses Materials (**Massivholz**, **Platte** oder **Stangenware**) im Tab <i class=\"ladb-opencutlist-icon-materials\"></i> *Materialien*."
+      no_typed_materials: "Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten. Und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialien**."
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Holzliste neu generieren."
   materials:
     label: Materialien
@@ -789,7 +795,7 @@ tab:
     label: Importieren
     title: Teile importieren
     help: |
-      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
+      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren. 
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
       Klicken Sie auf **CSV-Datei öffnen** zum Starten.
     open_csv: CSV-Datei öffnen
@@ -914,11 +920,15 @@ tab:
     objective_slogan: OpenCutList sind wir alle
     objective_title:
       default: Ziele
+      docs: Finanzierung der Dokumentation
     objective_details:
       default: |
         Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update **3.0**!
+      docs: |
+        Es ist uns wichtig, dass *OpenCutList* zugänglich und intuitiv ist. Dies geht jedoch Hand in Hand mit dem Schreiben einer **vollständigen und qualitativ hochwertigen Dokumentation**.
+        Indem Sie uns die Mittel zum Schreiben zur Verfügung stellen, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
     objective_crowdfunding: |
-      Die Entwicklung diesere neuen Funktion wird durch **teilnehmende Finanzierung** erfolgen und kann beginnen sobald das **finanzielle Ziel** erreicht wurde.
+      Die Entwicklung von neuen Funktionen dank **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!
     objective_funded_progress: "zu {{ progress }} % finanziert"
@@ -966,7 +976,7 @@ tab:
     label: Über
     title: Über
     version: Version
-    credits: Technischer Verdienst
+    credits: Entwicklung und Programmierung
     credits_authors: |
       *OpenCutList* wird von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) und [Martin Müller](https://www.lairdubois.fr/@mobilarte) entwickelt. *[Beitragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
     credits_translators: |
@@ -979,7 +989,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tschechisch*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk und Dominik Szybisz (*Polnisch*)
       - Sergey Isupov (*Hebräisch*), noch ohne RTL Schnittstelle
-      - SOUL Issam (*Arabisch*), noch ohne RTL Schnittstelle
+      - Soul Issam (*Arabisch*), noch ohne RTL Schnittstelle
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
