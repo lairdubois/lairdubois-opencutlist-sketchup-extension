@@ -178,7 +178,7 @@
                             {% endfor %}
                         {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
                             {% for part in entry.parts %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child" data-folder-id="{{ entry.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">
                                         {{ part.name }}
                                         <div class="ladb-minitools ladb-minitools-right no-print">
