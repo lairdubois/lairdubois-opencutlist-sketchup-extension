@@ -66,6 +66,8 @@ core:
     more_plans: Plány
     more_extensions: Rozšíření
     more_update: Aktualizace
+  bottombar:
+    report_a_bug: Report a bug
   warning:
     dev: |
       Používáte **vyvíjenou** verzi *OpenCutList*.

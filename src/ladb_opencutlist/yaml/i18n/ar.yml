@@ -66,6 +66,8 @@ core:
     more_plans: خطط
     more_extensions: إضافات
     more_update: ترقية
+  bottombar:
+    report_a_bug: Report a bug
   warning:
     dev: |
       أنت تستعمل نسخة **ما زالت تحت التطوير** من *OpenCutList*.

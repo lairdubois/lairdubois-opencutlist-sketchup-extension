@@ -66,6 +66,8 @@ core:
     more_plans: voorbeelden
     more_extensions: plugin
     more_update: Bijwerken
+  bottombar:
+    report_a_bug: Report a bug
   warning:
     dev: |
       U gebruikt een ** betaversie ** van * OpenCutList *.

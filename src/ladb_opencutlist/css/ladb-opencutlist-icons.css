@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-bug:before {
+  content: "\e988";
+}
 .ladb-opencutlist-icon-preset:before {
   content: "\e983";
 }

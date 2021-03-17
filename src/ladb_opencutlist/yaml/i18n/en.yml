@@ -68,6 +68,8 @@ core:
     more_plans: Plans
     more_extensions: Extensions
     more_update: Update
+  bottombar:
+    report_a_bug: Report a bug
   warning:
     dev: |
       You are using a **development** version of *OpenCutList*.

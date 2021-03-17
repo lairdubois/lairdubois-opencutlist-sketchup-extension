@@ -66,6 +66,8 @@ core:
     more_plans: תוכניות
     more_extensions: תוספים
     more_update: עדכונים
+  bottombar:
+    report_a_bug: Report a bug
   warning:
     dev: |
     old_su: |
