@@ -28,7 +28,7 @@
                 $_ft3: options.currencySymbol + ' / ft³',
             },
             {
-                $_p: options.currencySymbol + ' / ' + i18next.t('default.part_single')
+                $_i: options.currencySymbol + ' / ' + i18next.t('default.instance_single')
             }
         ];
         this.enabledUnits = [];
@@ -215,7 +215,7 @@
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
                 this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
-                enabledUnitKeys = [ '$_m2', '$_m3', '$_ft2', '$_ft3', '$_ft2', '$_p' ];
+                enabledUnitKeys = [ '$_m2', '$_m3', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
                 break;
 
             case 3: /* TYPE_DIMENSIONAL */
@@ -226,7 +226,7 @@
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
                 this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
-                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_p' ];
+                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_i' ];
                 break;
 
             case 4: /* TYPE_EDGE */
