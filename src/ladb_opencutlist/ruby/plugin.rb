@@ -433,6 +433,7 @@ module Ladb::OpenCutList
     end
 
     def dump_global_presets
+      require 'pp'
       read_global_presets if @global_presets_cache.nil?
       _debug('GLOBAL PRESETS') do
         pp @global_presets_cache
@@ -537,6 +538,7 @@ module Ladb::OpenCutList
     end
 
     def dump_model_presets
+      require 'pp'
       read_model_presets if @model_presets_cache.nil?
       _debug('MODEL PRESETS') do
         pp @model_presets_cache

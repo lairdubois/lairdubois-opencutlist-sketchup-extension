@@ -982,8 +982,8 @@ tab:
     credits: Crédits techniques
     credits_authors: |
       *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Traductions
     credits_translators: |
-      Traductions :
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo (*italien*)
