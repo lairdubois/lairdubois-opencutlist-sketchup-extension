@@ -312,7 +312,7 @@ module Ladb::OpenCutList
       # Process mass if needed
       _uv_mass_to_model_unit(unit_numerator, f_value)
 
-      # Process volume / area / length / part
+      # Process volume / area / length / instance or part
       case unit_denominator
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER_3
@@ -332,7 +332,7 @@ module Ladb::OpenCutList
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET
         f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.instance.ft_to_inch(f_value) / inch_thickness / inch_width
 
-      when 'p'
+      when 'i', 'p'
         f_value = inch_thickness * inch_width * inch_length == 0 ? 0 : f_value / inch_thickness / inch_width / inch_length
 
       end
