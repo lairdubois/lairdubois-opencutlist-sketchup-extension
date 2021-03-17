@@ -43,6 +43,8 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Libra
+  instance_single: ""
+  instance_plural: ""
   part_single: pokoj
   part_plural: pokoje
   setup_model_units: Nakonfigurujte modelové jednotky
@@ -67,7 +69,7 @@ core:
     more_extensions: Rozšíření
     more_update: Aktualizace
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: ""
   warning:
     dev: |
       Používáte **vyvíjenou** verzi *OpenCutList*.
@@ -202,8 +204,10 @@ tab:
       remove_edge_material_name_filter: "Nefiltrujte '{{ material_name }}'"
       not_aligned_on_axes: "Pozor, tato část nemusí být správně orientována vzhledem ke svým osám"
       instance_count_by_part: "Tato část se počítá v sadách jednotek **{{ count }}**."
-      missing_instance_count: "Upozorňujeme, že jednotka **{{ count }}** z poslední sady nebude použita."
-      missing_instance_count_plural: "Upozorňujeme, že **{{ count }}** jednotky z poslední sady nebudou použity."
+      unused_instance_count: "Upozorňujeme, že jednotka **{{ count }}** z poslední sady nebude použita."
+      unused_instance_count_plural: "Upozorňujeme, že **{{ count }}** jednotky z poslední sady nebudou použity."
+      used_instance_count: ""
+      used_instance_count_plural: ""
       multiple_layers: "Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}"
       children_warnings: "Pozor, v seskupených částech je upozornění {{count}}"
       children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{count}}"
@@ -234,8 +238,8 @@ tab:
       group_cuttingdiagram: Nářezový plán
       group_labels: Tisk štítků
       edit_material: "Upravit materiál ‘{{ material }}’…"
-      expand_all: Rozbalit podobné díly
-      collapse_all: Sbalit podobné díly
+      expand_all: ""
+      collapse_all: ""
     edit_part:
       title: "Vlastnosti dílce ‘{{ name }}’"
       title_multiple: Vlastnosti skupiny dílců
@@ -250,12 +254,8 @@ tab:
       cumulable_0: Nelze shrnout
       cumulable_1: Celkem délka
       cumulable_2: Celkem šířka
-      instance_count_by_part: Šarže
+      instance_count_by_part: ""
       instance_count_by_part_help: |
-        Umožňuje počítat části v počtu **sad** potřebných místo počtu jednotek v modelu.
-        Díly v sadě musí mít stejnou definici.
-
-        *Příklad: Pro pár zásuvkových snímků počítejte pouze 1 kus.*
       instance_count_by_part_1: 1 jednotka na díl
       instance_count_by_part_2: 2 jednotky na díl
       mass: Masa
@@ -437,8 +437,8 @@ tab:
       info_0: |
         Tato funkce umožňuje generovat zprávu o **hmotnosti** a **nákladech** surovin** nezbytných pro výrobu částí *debetního listu*.
       options_general: Všeobecné
-      option_solid_wood_coefficient: Koeficient *masivní dřevo*
-      option_solid_wood_coefficient_help: Slouží k označení multiplikačního koeficientu použitého na hrubý objem měřený pro materiály typu "**masivní dřevo**".
+      option_solid_wood_coefficient: ""
+      option_solid_wood_coefficient_help: ""
       raw_materials: Suroviny
       coefficient: Koeficient
       total: Celkový
@@ -449,6 +449,7 @@ tab:
       total_area: Σ Oblasti
       total_length: Σ Délky
       error:
+        no_typed_material_parts: ""
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
       warning:
@@ -625,6 +626,7 @@ tab:
       formula:
         part_number: Číslo
         part_name: Popis
+        part_entity_name: ""
         part_cutting_size: Drsné rozměry
         part_cutting_length: Délka - drsná
         part_cutting_width: Šířka - drsná
@@ -657,8 +659,8 @@ tab:
       obsolete_cutlist: "Je možné, že kusovník je zastaralý. Vygenerujte ho znovu."
     warning:
       partial_cutlist: Tento kusovník je vytvořen pouze z vybraných dílců.
-      no_typed_materials_in_model: "Tento model nepoužívá žádný definovaný materiál (**Masiv**, **Tabule** nebo **Délkový**)."
-      no_typed_materials_in_selection: "Výběr nepoužívá žádný definovaný materiál (**Masiv**, **Tabule** nebo **Délkový**)."
+      no_typed_materials_in_model: ""
+      no_typed_materials_in_selection: ""
       export_empty: Váš export neobsahuje žádné dílce.
     success:
       exported_to: "Úspěšný export do: {{ export_path }}."
@@ -667,7 +669,7 @@ tab:
         Dílce, které mají být zahrnuty do *kusovníku*, musí být instancemi **komponenty**.
         Pokud používáte pouze skupiny, převeďte je na komponenty.
         Použitím komponent u skupiny dílců je lze replikovat, aniž by byly duplikovány.
-      no_typed_materials: "Použijte materiál na dílce, které mají být zahrnuty do kusovníku, a na kartě **Materiály** definujte vlastnosti tohoto materiálu (**Masiv**, **Tabule** nebo **Délkový materiál**)."
+      no_typed_materials: ""
     obsolete_base: "Chcete-li zůstat v synchronizaci, musíte znovu vygenerovat seznam dílů."
   materials:
     label: Materiály
@@ -916,10 +918,11 @@ tab:
     objective_slogan: OpenCutList je pro všechny
     objective_title:
       default: Objekty
+      docs: ""
     objective_details:
       default: |
+      docs: |
     objective_crowdfunding: |
-      Vývoj této nové funkce bude probíhat prostřednictvím **participativního financování** a bude zahájen po dosažení **finančního cíle**.
     objective_thanks: |
       Děkujeme za váš příspěvek!
     objective_funded_progress: "financováno na {{ progress }}%"
@@ -960,8 +963,8 @@ tab:
     credits: Technické kredity
     credits_authors: |
       *OpenCutList* vyvíjejí [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) a [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Seznam všech [přispěvatelů](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Překlady
     credits_translators: |
-      Překlady:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglicky*, *německy*)
       - Vladimir Badulya (*ruský*)
       - Pierluigi Colombo (*italský*)
@@ -970,7 +973,8 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk a Dominik Szybisz (*polsky*)
       - Sergey Isupov (*hebrejsky*), bez RTL rozhraní
-      - SOUL Issam (*arabština*), bez RTL rozhraní
+      - Soul Issam (*arabština*), bez RTL rozhraní
+      - Dany Dhondt, Eric Lugtigheid (*holandský*)
     credits_description: |
       Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
