@@ -256,8 +256,8 @@ tab:
       cumulable_2: Cumulable sur la largeur
       instance_count_by_part: Lot
       instance_count_by_part_help: |
-        Permet de comptabiliser les pièces sur le nombre de **lots** nécessaires au lieu du nombre d'unités présentes dans le modèle.
-        Les pièces réunies en lot doivent avoir la même définition.
+        Permet de considérer la pièce comme étant un *lot* de une ou plusieurs *unités*.
+        La quantité associée à la pièce dans la fiche de débit représentera donc le nombre de lots entiés nécessaires pour contenir le nombre d'unités réellement présentes dans le modèle.
 
         *Exemple : Pour ne compter que 1 pièce pour une paire de coulisses de tiroir :
         Lot = 2 unités / pièce.*
