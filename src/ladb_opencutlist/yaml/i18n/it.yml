@@ -43,6 +43,8 @@ default:
   unit_5: Iarda
   unit_mass_0: Chilogrammo
   unit_mass_1: Libbra
+  instance_single: unità
+  instance_plural: unità
   part_single: pezzo
   part_plural: pezzi
   setup_model_units: Impostare le unità del modello
@@ -200,8 +202,10 @@ tab:
       remove_edge_material_name_filter: "Escludi filtro su '{{ material_name }}'"
       not_aligned_on_axes: "Attenzione, questa parte puo' non orientarsi correttamente rispetto ai suoi assi"
       instance_count_by_part: "Questa parte è contata in lotti di **{{ count }}** unità."
-      missing_instance_count: "Attenzione, l'unità **{{ count }}** dell'ultimo lotto non sarà usata."
-      missing_instance_count_plural: "Attenzione, le unità **{{ count }}** dell'ultimo lotto non saranno utilizzate."
+      unused_instance_count: "Attenzione, l'unità **{{ count }}** dell'ultimo lotto non sarà usata."
+      unused_instance_count_plural: "Attenzione, le unità **{{ count }}** dell'ultimo lotto non saranno utilizzate."
+      used_instance_count: "**{{ count }}** su {{ total }} unità utilizzate"
+      used_instance_count_plural: "**{{ count }}** su {{ total }} unità utilizzate"
       multiple_layers: "Attenzione, questa parte è costituita da sotto-insiemi definiti su {{ count }} layer differenti:<br>{{ layers }}"
       children_warnings: "Attenzione, c'è {{ count }} avvertimento nelle parti raggruppate"
       children_warnings_plural: "Attenzione, ci sono {{ count }} avvertimenti nelle parti raggruppate"
@@ -232,8 +236,8 @@ tab:
       group_cuttingdiagram: Schema di taglio
       group_labels: Stampa etichette
       edit_material: "Modifica materiale '{{ material_name }}'"
-      expand_all: Espandi le parti identiche
-      collapse_all: Collassa le parti identiche
+      expand_all: Svolgere tutte le linee
+      collapse_all: Piegare tutte le linee
     edit_part:
       title: "Elenca proprietà della parte '{{ name }}'"
       title_multiple: Elenca proprietà di un gruppo di parti
@@ -250,10 +254,11 @@ tab:
       cumulable_2: Sommabile sulla larghezza
       instance_count_by_part: "Gruppo / lotto ?"
       instance_count_by_part_help: |
-        Permette di contare le parti in base al numero di **lotti** richiesti invece che al numero di unità nel modello.
-        I pezzi di un lotto devono avere la stessa definizione.
+        Permette di contare le parti in base al numero di **pacchetti** richiesti invece delle unità presenti nel modello.
+        Le parti raggruppate in un pacchetto devono avere la stessa definizione.
 
-        *Esempio: conta solo 1 pezzo per una coppia di guide per cassetti.*
+        *Esempio: Per calcolare 1 parte per una coppia di guide per cassetti:
+        Pacchetto = 2 unità / parte.
       instance_count_by_part_1: 1 unità per pezzo
       instance_count_by_part_2: 2 unità per pezzo
       mass: Massa
@@ -435,8 +440,8 @@ tab:
       info_0: |-
         Questa funzionalità permette di generare un report delle **masse** e **costi** delle **materie prime** necessarie per la produzione delle parti del *elenco parti*.
       options_general: Generale
-      option_solid_wood_coefficient: Coefficiente *Tavole*
-      option_solid_wood_coefficient_help: Utilizzato per indicare il coefficiente di moltiplicazione applicato al volume lordo misurato per materiali di tipo "**Tavole**".
+      option_solid_wood_coefficient: Coefficiente per *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Quantifica il fattore applicato al volume lordo per i materiali di tipo "**$t(tab.materials.type_1)**" per tenere conto dei rifiuti.
       raw_materials: Materiali grezzi
       coefficient: Coefficiente
       total: Totale
@@ -447,6 +452,7 @@ tab:
       total_area: Σ Aree
       total_length: Σ Lunghezze
       error:
+        no_typed_material_parts: "Nessuna parte con un tipo di materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, o **$t(tab.materials.type_5)**) è stato selezionato per generare il rapporto."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
       warning:
@@ -655,8 +661,8 @@ tab:
       obsolete_cutlist: "Impossibile, la distinta non è aggiornata. Va rigenerata."
     warning:
       partial_cutlist: "Questa distinta è una rappresentazione parziale del tuo modello, perchè mostra solo una selezione di parti."
-      no_typed_materials_in_model: Le parti del modello non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Barre**.
-      no_typed_materials_in_selection: Le parti selezionate non usano alcun materiale definito di tipo **Tavole** o **Pannello** o **Barre**
+      no_typed_materials_in_model: "Il vostro modello non usa un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "La vostra selezione non utilizza un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Nessuna parte da esportare.
     success:
       exported_to: "Esportazione in {{ export_path }} completata."
@@ -665,7 +671,7 @@ tab:
         Le parti da inserire nella *distinta* devono essere di tipo **componenti**.
         Se ci sono solo "gruppi", gli stessi devono essere convertiti in **componenti**.
         Usando **componenti** per le parti, gli stessi possono essere replicati senza inutili duplicazioni.
-      no_typed_materials: Applica il materiale alle parti che devono essere incluse nella distinta e definisci le proprietà del materiale come (**Tavole** o **Pannello** o **Barre**) nella scheda <i class="ladb-opencutlist-icon-materials"></i> **Materiali**.
+      no_typed_materials: "Applica un materiale alle parti che vuoi vedere nella vostra elenco di parti. E definisci il tipo di quel materiale (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**) nella scheda <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiali**."
     obsolete_base: "Per rimanere aggiornata, la distinta parti va rigenerata."
   materials:
     label: Materiali
@@ -914,11 +920,15 @@ tab:
     objective_slogan: OpenCutList è tutti noi
     objective_title:
       default: Obiettivo
+      docs: Finanziamento della documentazione
     objective_details:
       default: |
         Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **3.0**!
+      docs: |
+        Per noi è importante che *OpenCutList* sia accessibile e intuitivo. Tuttavia, questo va di pari passo con la scrittura di **Documentazione Completa e di alta Qualità**.
+        Dandoci i mezzi per scriverlo, ci dai l'opportunità di aiutarti ad ottenere il massimo da *OpenCutList*.
     objective_crowdfunding: |
-      Lo sviluppo di questa nuova opzione avverrà mediante il **finanziamento collettivo (crowfunding)** è inizierà quando il suo **Finanziamento** sarà completato.
+      Lo sviluppo di nuove funzionalità grazie al **finanziamento collettivo (crowfunding)** avrà luogo e potrà iniziare non appena il **Finanziamento** sarà raggiunto.
     objective_thanks: |
       Grazie per il vostro contributo !
     objective_funded_progress: "finanziato al {{ progress }}%"
@@ -979,7 +989,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*ceco*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*polacco*)
       - Sergey Isupov (*ebraico*), interfaccia RTL non ancora implementata
-      - SOUL Issam (*arabico*), interfaccia RTL non anchora implementata
+      - Soul Issam (*arabico*), interfaccia RTL non anchora implementata
     credits_description: |
       Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

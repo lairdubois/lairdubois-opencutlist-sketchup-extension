@@ -43,6 +43,8 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
+  instance_single: unit
+  instance_plural: units
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
@@ -200,8 +202,10 @@ tab:
       remove_edge_material_name_filter: "Remove filtering on '{{ material_name }}'"
       not_aligned_on_axes: "Caution, this part may not be oriented correctly with respect to its axes"
       instance_count_by_part: "This part is counted in sets of **{{ count }}** units."
-      missing_instance_count: "Please note that **{{ count }}** unit from the last set will not be used."
-      missing_instance_count_plural: "Please note that **{{ count }}** units from the last set will not be used."
+      unused_instance_count: "Please note that **{{ count }}** unit from the last set will not be used."
+      unused_instance_count_plural: "Please note that **{{ count }}** units from the last set will not be used."
+      used_instance_count: "**{{ count }}** unit of {{ total }} used"
+      used_instance_count_plural: "**{{ count }}** units of {{ total }} used"
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
@@ -232,8 +236,8 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       group_labels: Print labels
       edit_material: "Edit the material '{{ material_name }}'"
-      expand_all: Unfold similar parts
-      collapse_all: Fold similar parts
+      expand_all: Unfold all lines
+      collapse_all: Fold all lines
     edit_part:
       title: "Properties of Part '{{ name }}'"
       title_multiple: Properties of the group of parts
@@ -253,7 +257,8 @@ tab:
         Allows you to count the parts in the number of **sets** needed instead of the number of units in the model.
         The parts in a set must have the same definition.
 
-        *Example: Count only 1 piece for a pair of drawer slides.*
+        *Example: To count only 1 part for a pair of drawer slides:
+        Set = 2 units / part*
       instance_count_by_part_1: 1 unit per part
       instance_count_by_part_2: 2 units per part
       mass: Mass
@@ -433,20 +438,21 @@ tab:
     report:
       title: Report
       info_0: |
-        This functionality allows you to generate a report of the **masses** and **costs** of the **raw materials** necessary for the production of the parts contained in the *parts list*.
+        This functionality allows you to generate a report of the **weights** and **costs** of the **raw materials** necessary for the production of the parts contained in the *parts list*.
       options_general: General
-      option_solid_wood_coefficient: Rough lumber ratio
-      option_solid_wood_coefficient_help: Used to indicate the multiplying factor applied to the gross volume measured for "**Solid wood**" type materials.
+      option_solid_wood_coefficient: Rough lumber waste ratio for *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
       raw_materials: Raw materials
       coefficient: Coefficient
       total: Total
-      total_mass: Σ Masses
+      total_mass: Σ Weights
       total_cost: Σ Costs
       total_count: Qty.
       total_volume: Σ Volumes
       total_area: Σ Areas
       total_length: Σ Lengths
       error:
+        no_typed_material_parts: "No part with a defined material type \n(**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) \nhas been provided to generate the report."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -655,8 +661,8 @@ tab:
       obsolete_cutlist: "Impossible, the parts list is obsolete. Regenerate it."
     warning:
       partial_cutlist: "This parts list is a partial representation of your model, because it is only based on a selection of parts."
-      no_typed_materials_in_model: "This model does not use any defined material (**Solid Wood**, **Sheet Good** or **Dimensional**)."
-      no_typed_materials_in_selection: "The selection does not use any defined material (**Solid Wood**, **Sheet Good** or **Dimensional**)."
+      no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Your export selection does not contain any part.
     success:
       exported_to: "Successful export to {{ export_path }}."
@@ -665,7 +671,7 @@ tab:
         The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
         By using components for parts, they can be replicated without being duplicated.
-      no_typed_materials: "Apply a material to the parts to be included in the parts list and define the properties of this material (**Solid Wood**, **Sheet Good** or **Dimensional**) on the tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materials**."
+      no_typed_materials: "Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materials**."
     obsolete_base: "To stay in sync, you must regenerate the parts list."
   materials:
     label: Materials
@@ -676,7 +682,7 @@ tab:
     type_2: Sheet Good
     type_3: Dimensional
     type_4: Edge Banding
-    type_5: Fitting
+    type_5: Hardware
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -914,11 +920,15 @@ tab:
     objective_slogan: OpenCutList is all of us
     objective_title:
       default: Objectives
+      docs: Funding for Documentation
     objective_details:
       default: |
         The continuous improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **3.0**!
+      docs: |
+        It is important to us that *OpenCutList* is accessible and intuitive. But this requires a **Complete and Comprehensive Documentation**.
+        By providing us with the means to write it, you give us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
-      The development of this new functionality will be done through **participatory financing** and will start when its **Financial Objective** is reached.
+      The development of new features will be done thanks to **Fundraising** and will start when its **Financial Goal** is reached.
     objective_thanks: |
       Thank you for your contribution!
     objective_funded_progress: "funded at {{ progress }}%"
