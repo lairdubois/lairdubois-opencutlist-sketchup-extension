@@ -1631,7 +1631,7 @@
                             editedParts[i].material_name = $selectMaterialName.val();
                         }
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].cumulable = $selectCumulable.val() === '1';
+                            editedParts[i].cumulable = parseInt($selectCumulable.val());
                         }
                         if ($inputInstanceCountByPart.val() !== undefined && $inputInstanceCountByPart.val() !== '') {
                             editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
@@ -2614,6 +2614,14 @@
                         var page;
                         var gIndex = 0;
                         $.each(parts, function (index) {
+                            var entityNames = [];
+                            $.each(this.entity_names, function () {
+                                var entityName = this[0];
+                                var count = this[1];
+                                for (var i = 0; i < count; i++) {
+                                    entityNames.push(entityName)
+                                }
+                            });
                             for (var i = 1; i <= this.count; i++) {
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                     page = {
@@ -2623,6 +2631,7 @@
                                 }
                                 page.part_infos.push({
                                     position_in_batch: i,
+                                    entity_name: entityNames[i - 1],
                                     part: this
                                 });
                                 gIndex++;

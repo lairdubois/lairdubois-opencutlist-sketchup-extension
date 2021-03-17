@@ -631,6 +631,7 @@ tab:
       formula:
         part_number: Numéro
         part_name: Désignation
+        part_entity_name: Nom d'instance
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit

@@ -44,7 +44,9 @@
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}
-        {% if key == 'cutting_size' %}
+        {% if key == 'entity_name' %}
+            {% set value = part_info.entity_name %}
+        {% elseif key == 'cutting_size' %}
             {% set value = part_info.part.cutting_length~' x '~part_info.part.cutting_width %}
         {% elseif key == 'size' %}
             {% set value = part_info.part.length~' x '~part_info.part.width %}
@@ -74,7 +76,7 @@
         {% set value = generatedAt|date(('default.date_format'|i18next())) %}
     {% endif %}
     {% if value is empty and noEmptyValue|default(false) %}
-        {% set value = '['~elementDef.formula~']' %}
+        {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}
     {% endif %}
     <text class="ladb-label-element" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
 {% endif %}
