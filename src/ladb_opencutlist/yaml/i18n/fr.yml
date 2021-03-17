@@ -254,13 +254,13 @@ tab:
       cumulable_0: Non cumulable
       cumulable_1: Cumulable sur la longueur
       cumulable_2: Cumulable sur la largeur
-      instance_count_by_part: Lot
+      instance_count_by_part: Conditionnement
       instance_count_by_part_help: |
         Permet de considérer la pièce comme étant un *lot* de une ou plusieurs *unités*.
         La quantité associée à la pièce dans la fiche de débit représentera donc le nombre de lots entiés nécessaires pour contenir le nombre d'unités réellement présentes dans le modèle.
 
         *Exemple : Pour ne compter que 1 pièce pour une paire de coulisses de tiroir :
-        Lot = 2 unités / pièce.*
+        Conditionnement = 2 unités / pièce*
       instance_count_by_part_1: 1 unité par pièce
       instance_count_by_part_2: 2 unités par pièce
       mass: Masse
