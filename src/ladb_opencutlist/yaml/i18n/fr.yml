@@ -257,7 +257,7 @@ tab:
       instance_count_by_part: Conditionnement
       instance_count_by_part_help: |
         Permet de considérer la pièce comme étant un *lot* de une ou plusieurs *unités*.
-        La quantité associée à la pièce dans la fiche de débit représentera donc le nombre de lots entiés nécessaires pour contenir le nombre d'unités réellement présentes dans le modèle.
+        La quantité associée à la pièce dans la fiche de débit représentera donc le nombre de lots entiers nécessaires pour contenir le nombre d'unités réellement présentes dans le modèle.
 
         *Exemple : Pour ne compter que 1 pièce pour une paire de coulisses de tiroir :
         Conditionnement = 2 unités / pièce*

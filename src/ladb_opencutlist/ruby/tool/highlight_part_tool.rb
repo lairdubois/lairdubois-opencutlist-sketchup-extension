@@ -34,11 +34,11 @@ module Ladb::OpenCutList
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(cutlist, group, parts, part_count, maximize_on_quit)
+    def initialize(cutlist, group, parts, instance_count, maximize_on_quit)
       @cutlist = cutlist
       @group = group
       @parts = parts
-      @part_count = part_count
+      @instance_count = instance_count
       @maximize_on_quit = maximize_on_quit
 
       # Add tool as observer of the cutlist
@@ -348,24 +348,26 @@ module Ladb::OpenCutList
       part = @hover_part ? @hover_part : (@parts.length == 1 ? @parts.first : nil)
       if part
 
+        instance_count = part.instance_count_by_part * part.count - part.unused_instance_count
+
         @text_line_1 = "[#{part.number}] #{part.name}"
         @text_line_2 = part.tags.join(' | ')
         @text_line_3 = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
-            " | #{part.count.to_s} #{Plugin.instance.get_i18n_string(part.count > 1 ? 'default.part_plural' : 'default.part_single')}" +
+            " | #{instance_count.to_s} #{Plugin.instance.get_i18n_string(instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')}" +
             " | #{(part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"
 
       elsif @group
 
         @text_line_1 = (@group.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
         @text_line_2 = ''
-        @text_line_3 = @part_count.to_s + ' ' + Plugin.instance.get_i18n_string(@part_count > 1 ? 'default.part_plural' : 'default.part_single')
+        @text_line_3 = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       else
 
         @text_line_1 = ''
         @text_line_2 = ''
-        @text_line_3 = @part_count.to_s + ' ' + Plugin.instance.get_i18n_string(@part_count > 1 ? 'default.part_plural' : 'default.part_single')
+        @text_line_3 = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       end
 

@@ -35,14 +35,14 @@ module Ladb::OpenCutList
       end
 
       # Compute part count
-      part_count = parts.inject(0) { |sum, part|  sum + part.count }
+      instance_count = parts.inject(0) { |sum, part| sum + part.instance_count_by_part * part.count - part.unused_instance_count }
 
-      if part_count == 0
+      if instance_count == 0
         return { :errors => [ 'default.error' ] }
       end
 
       # Create and activate highlight part tool
-      highlight_tool = HighlightPartTool.new(@cutlist, group, parts, part_count, @minimize_on_highlight)
+      highlight_tool = HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight)
       model.select_tool(highlight_tool)
 
     end
