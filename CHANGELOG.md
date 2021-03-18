@@ -14,12 +14,11 @@ in 2.x, 1.x and 0.x versions.
   * Added **Arabic** language, experimental without RTL interface (thanks to Soul Issam for joining the translators team)
   * Added **Dutch** language (thanks to Dany Dhondt and Eric Lugtigheid for joining the translators team)
   * Added Hardware material type
-  * Added part unit price field for hardware
   * Added part set for hardware
+  * Added part unit price and weight fields for hardware
   * Added bars and sheets waste's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - all four corners
   * Added new 2D bin packing library
-  * Improved import by putting new instances into a group
   * Added cutting diagram 1D/2D option to render full width diagrams
   * Added cutting diagram 1D/2D option to define the origin corner
   * Added cutting diagram 2D primary cuts
@@ -30,6 +29,7 @@ in 2.x, 1.x and 0.x versions.
   * Added custom proposal list of tags in cutlist options
   * Added "symmetrical" definition attribute
   * Added dump and reset global and model presets for debugging
+  * Improved import by putting new instances into a group
 
 * 1.9.10 (2020-12-17)
 

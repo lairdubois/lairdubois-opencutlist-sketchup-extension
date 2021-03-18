@@ -512,11 +512,11 @@ module Ladb::OpenCutList
             cutlist.dimensional_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_EDGE
             cutlist.edge_material_count += material_usage.use_count
-          elsif material_usage.type == MaterialAttributes::TYPE_ACCESSORY
-            cutlist.accessory_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_HARDWARE
+            cutlist.hardware_material_count += material_usage.use_count
           end
         }
-        if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.accessory_material_count == 0
+        if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.hardware_material_count == 0
           cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{selection_only ? "selection" : "model"}")
           cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
         end
@@ -548,7 +548,7 @@ module Ladb::OpenCutList
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_ACCESSORY) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_ACCESSORY doesn't fold
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
                 (folder_part_def.tags == part_def.tags || @hide_tags) &&

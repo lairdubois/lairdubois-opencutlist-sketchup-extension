@@ -34,7 +34,7 @@
     {{ parent() }}
     <div class="ladb-page">
 
-        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %} {# TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_ACCESSORY #}
+        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %} {# TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_HARDWARE #}
 
         {% if report.groups|length > 0 %}
             <table id="ladb_group_summary" data-group-id="summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
@@ -104,7 +104,7 @@
                         <td class="text-center" width="12%">{{ 'tab.cutlist.report.total_length'|i18next }}</td>
                     {% elseif group.material_type == 4 %} {# TYPE_EDGE #}
                         <td class="text-center" width="12%">{{ 'tab.cutlist.report.total_length'|i18next }}</td>
-                    {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
+                    {% elseif group.material_type == 5 %} {# TYPE_HARDWARE #}
                         <td class="text-center" width="12%">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
                     {% endif %}
                     <td class="text-center" width="12%">{{ 'tab.cutlist.report.total_mass'|i18next }}</td>
@@ -121,7 +121,7 @@
                                     {% endif %}
                                     <span class="ladb-separator"></span>
                                     {% if foldableRow %}
-                                        <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if group.material_type == 5 or entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>  {# TYPE_ACCESSORY #}
+                                        <a href="#" class="ladb-btn-folding-toggle-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if group.material_type == 5 or entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>  {# TYPE_HARDWARE #}
                                     {% endif %}
                                     {% if group.material_type == 2 %} {# TYPE_SOLID_WOOD #}
                                         <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram-2d"></i></a>
@@ -145,7 +145,7 @@
                                 <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length ? entry.total_length : '-' }}</td>
                             {% elseif group.material_type == 4 %} {# TYPE_EDGE #}
                                 <td class="ladb-cutlist-dimension-value" width="12%">{{ entry.total_length ? entry.total_length : '-' }}</td>
-                            {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
+                            {% elseif group.material_type == 5 %} {# TYPE_HARDWARE #}
                                 <td class="text-center" width="12%">{{ entry.total_count }}</td>
                             {% endif %}
                             <td class="ladb-cutlist-dimension-value"{% if entry.volumic_mass is defined %}data-toggle="tooltip" title="{{ entry.volumic_mass }}"{% endif %}>{{ entry.total_mass ? entry.total_mass : '-' }}</td>
@@ -176,7 +176,7 @@
                                     <td class="ladb-cutlist-dimension-value"{% if bar.std_price %}data-toggle="tooltip" title="{{ bar.std_price }}"{% endif %}>{{ bar.total_cost ? bar.total_cost : '-' }}</td>
                                 </tr>
                             {% endfor %}
-                        {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
+                        {% elseif group.material_type == 5 %} {# TYPE_HARDWARE #}
                             {% for part in entry.parts %}
                                 <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">
@@ -207,7 +207,7 @@
                             <td class="ladb-cutlist-dimension-value">{{ group.total_length }}</td>
                         {% elseif group.material_type == 4 %} {# TYPE_EDGE #}
                             <td class="ladb-cutlist-dimension-value">{{ group.total_length }}</td>
-                        {% elseif group.material_type == 5 %} {# TYPE_ACCESSORY #}
+                        {% elseif group.material_type == 5 %} {# TYPE_HARDWARE #}
                             <td class="text-center">{{ group.total_count }}</td>
                         {% endif %}
                         <td class="ladb-cutlist-dimension-value">{{ group.total_mass ? group.total_mass : '-' }}</td>

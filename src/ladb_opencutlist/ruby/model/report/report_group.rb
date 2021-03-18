@@ -87,12 +87,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class AccessoryReportGroup < AbstractReportGroup
+  class HardwareReportGroup < AbstractReportGroup
 
     attr_reader :total_count
 
     def initialize(_def)
-      super(_def, MaterialAttributes::TYPE_ACCESSORY)
+      super(_def, MaterialAttributes::TYPE_HARDWARE)
 
       @total_count = _def.total_count
 

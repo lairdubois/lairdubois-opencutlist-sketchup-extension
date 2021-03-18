@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :selection_only, :length_unit, :currency_symbol, :mass_unit_strippedname, :dir, :filename, :model_name, :page_label, :max_number, :instance_count, :ignored_instance_count, :solid_wood_material_count, :sheet_good_material_count, :dimensional_material_count, :edge_material_count, :accessory_material_count
+    attr_accessor :selection_only, :length_unit, :currency_symbol, :mass_unit_strippedname, :dir, :filename, :model_name, :page_label, :max_number, :instance_count, :ignored_instance_count, :solid_wood_material_count, :sheet_good_material_count, :dimensional_material_count, :edge_material_count, :hardware_material_count
     attr_reader :errors, :warnings, :tips, :used_tags, :material_usages, :groups
 
     def initialize(selection_only, length_unit, mass_unit_strippedname, currency_symbol, dir, filename, model_name, page_label, instance_count)
@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       @sheet_good_material_count = 0
       @dimensional_material_count = 0
       @edge_material_count = 0
-      @accessory_material_count = 0
+      @hardware_material_count = 0
 
     end
 

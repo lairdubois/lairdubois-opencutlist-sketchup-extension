@@ -123,7 +123,7 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_ACCESSORY
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
 
                       vars = {
                         :number => part.number,
@@ -168,7 +168,7 @@ module Ladb::OpenCutList
                     group.parts.each { |part|
 
                       no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_ACCESSORY
+                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_HARDWARE
 
                       parts = part.is_a?(FolderPart) ? part.children : [ part ]
                       parts.each { |part|

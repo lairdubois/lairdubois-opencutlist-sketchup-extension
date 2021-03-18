@@ -2,22 +2,24 @@
 {# set materialOrigin #}
 {# set displayOwned (facultative) #}
 {# set flat (facultative) #}
+{# set noColor (facultative) #}
 {# set attr (facultative) #}
 
 {% set displayOwned = displayOwned|default(false) %}
 {% set flat = flat|default(false) %}
+{% set noColor = noColor|default(false) %}
 
 {% for materialOrigin in materialOrigins %}
     {% if materialOrigin > 1 or displayOwned %}  {# OWNED origin are ignored #}
         {% if flat %}
             <div class="media">
-                <div class="media-left" style="width: 40px;"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }} ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                <div class="media-left" style="width: 40px;"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }} ladb-opencutlist-icon-lg{% if not noColor %} ladb-color-info{% endif %}"></i></div>
                 <div class="media-body">
                     {{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}
                 </div>
             </div>
         {% else %}
-            <a{% if attr is defined %} href="#"{% endif %} class="ladb-tool-info"{% if attr is defined %} {{ attr }}{% endif %} data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
+            <a{% if attr is defined %} href="#"{% endif %}{% if not noColor %} class="ladb-tool-info"{% endif %}{% if attr is defined %} {{ attr }}{% endif %} data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
         {% endif %}
     {% endif %}
 {% endfor %}

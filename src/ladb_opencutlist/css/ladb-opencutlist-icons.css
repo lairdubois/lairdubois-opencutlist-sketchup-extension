@@ -298,7 +298,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-bar:before {
   content: "\e94f";
 }
-.ladb-opencutlist-icon-accessory:before {
+.ladb-opencutlist-icon-hardware:before {
   content: "\e950";
 }
 .ladb-opencutlist-icon-mini-logo-ladb:before {

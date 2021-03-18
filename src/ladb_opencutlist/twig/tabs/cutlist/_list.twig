@@ -153,8 +153,8 @@
 
     {% set groupHidden = group.id in generateOptions.hidden_group_ids %}
     {% set showGrain = group.material_type == 1 or group.material_type == 2 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-    {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions or group.material_type == 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_ACCESSORY #}
-    {% set showBoxDimensions = not generateOptions.hide_bbox_dimensions and group.material_type >= 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_ACCESSORY #}
+    {% set showCuttingDimensions = group.show_cutting_dimensions and not generateOptions.hide_cutting_dimensions or group.material_type == 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE #}
+    {% set showBoxDimensions = not generateOptions.hide_bbox_dimensions and group.material_type >= 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE #}
     {% set hideWidth = group.material_type == 3 or group.material_type == 4  %}    {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
     {% set hideThickness = group.material_type == 2 or group.material_type == 3 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
@@ -196,7 +196,7 @@
                     {% if group.material_type == 3 %}    {# 3 = TYPE_BAR #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram-1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
-                    {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_ACCESSORY #}
+                    {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-labels" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_labels'|i18next }}..."><i class="ladb-opencutlist-icon-labels" style="font-size: 14px;"></i></button>
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-dimensions-help" data-toggle="tooltip" title="{{ 'tab.cutlist.list.dimensions_help'|i18next }}"><i class="ladb-opencutlist-icon-dimensions-help"></i></button>
                     {% endif %}

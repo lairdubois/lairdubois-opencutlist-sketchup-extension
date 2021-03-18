@@ -184,7 +184,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class AccessoryReportEntryDef < AbstractReportEntryDef
+  class HardwareReportEntryDef < AbstractReportEntryDef
 
     attr_accessor :total_count
     attr_reader :part_defs
@@ -201,12 +201,12 @@ module Ladb::OpenCutList
     # ---
 
     def create_entry
-      AccessoryReportEntry.new(self)
+      HardwareReportEntry.new(self)
     end
 
   end
 
-  class AccessoryReportEntryPartDef < AbstractReportItemDef
+  class HardwareReportEntryPartDef < AbstractReportItemDef
 
     attr_accessor :mass, :price
     attr_reader :cutlist_part
@@ -224,7 +224,7 @@ module Ladb::OpenCutList
     # ---
 
     def create_part
-      AccessoryReportEntryPart.new(self)
+      HardwareReportEntryPart.new(self)
     end
 
   end

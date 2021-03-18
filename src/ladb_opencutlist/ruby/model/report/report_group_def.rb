@@ -111,7 +111,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class AccessoryReportGroupDef < AbstractReportGroupDef
+  class HardwareReportGroupDef < AbstractReportGroupDef
 
     attr_accessor :total_count
 
@@ -125,7 +125,7 @@ module Ladb::OpenCutList
     # ---
 
     def create_group
-      AccessoryReportGroup.new(self)
+      HardwareReportGroup.new(self)
     end
 
   end

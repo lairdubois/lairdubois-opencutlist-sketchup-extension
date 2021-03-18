@@ -850,7 +850,7 @@
                     $inputVolumicMass.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
-                case 5:   // TYPE_ACCESSORY
+                case 5:   // TYPE_HARDWARE
                     $inputLengthIncrease.closest('section').hide();
                     break;
             }

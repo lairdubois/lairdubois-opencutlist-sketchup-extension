@@ -14,7 +14,7 @@
     TYPE_SHEET_GOOD = 2
     TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
-    TYPE_ACCESSORY = 5
+    TYPE_HARDWARE = 5
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
@@ -58,7 +58,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOWN || i_type > TYPE_ACCESSORY
+        if i_type < TYPE_UNKNOWN || i_type > TYPE_HARDWARE
           return TYPE_UNKNOWN
         end
         i_type
@@ -113,7 +113,7 @@
           3
         when TYPE_EDGE
           4
-        when TYPE_ACCESSORY
+        when TYPE_HARDWARE
           5
         else
           99

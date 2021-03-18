@@ -93,7 +93,7 @@
             var sheetGoodMaterialCount = response.sheet_good_material_count;
             var dimensionalMaterialCount = response.dimensional_material_count;
             var edgeMaterialCount = response.edge_material_count;
-            var accessoryMaterialCount = response.accessory_material_count;
+            var hardwareMaterialCount = response.hardware_material_count;
 
             // Keep usefull data
             that.filename = filename;
@@ -132,7 +132,7 @@
             // Update buttons and items state
             that.$btnPrint.prop('disabled', groups.length === 0);
             that.$btnExport.prop('disabled', groups.length === 0);
-            that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + accessoryMaterialCount === 0);
+            that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
             that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
             that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
             that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);

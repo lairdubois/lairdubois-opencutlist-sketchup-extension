@@ -163,7 +163,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class AccessoryReportEntry < AbstractReportEntry
+  class HardwareReportEntry < AbstractReportEntry
 
     attr_reader :total_count
 
@@ -178,7 +178,7 @@ module Ladb::OpenCutList
 
   end
 
-  class AccessoryReportEntryPart < AbstractReportItem
+  class HardwareReportEntryPart < AbstractReportItem
 
     attr_reader :id, :name, :flipped, :count, :mass, :price
 

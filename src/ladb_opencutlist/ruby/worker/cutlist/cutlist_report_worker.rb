@@ -163,19 +163,19 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_length += report_entry_def.total_length
 
-        when MaterialAttributes::TYPE_ACCESSORY
+        when MaterialAttributes::TYPE_HARDWARE
 
-          report_entry_def = AccessoryReportEntryDef.new(cutlist_group)
+          report_entry_def = HardwareReportEntryDef.new(cutlist_group)
           report_entry_def.total_count = cutlist_group.def.part_count
 
           cutlist_group.parts.each do |cutlist_part|
 
             if cutlist_part.is_a?(FolderPart)
               cutlist_part.children.each { |cutlist_child_part|
-                _compute_accessory_part(cutlist_child_part, report_entry_def)
+                _compute_hardware_part(cutlist_child_part, report_entry_def)
               }
             else
-              _compute_accessory_part(cutlist_part, report_entry_def)
+              _compute_hardware_part(cutlist_part, report_entry_def)
             end
 
           end
@@ -254,9 +254,9 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _compute_accessory_part(cutlist_part, report_entry_def)
+    def _compute_hardware_part(cutlist_part, report_entry_def)
 
-      report_entry_part_def = AccessoryReportEntryPartDef.new(cutlist_part)
+      report_entry_part_def = HardwareReportEntryPartDef.new(cutlist_part)
       report_entry_def.part_defs << report_entry_part_def
 
       definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
