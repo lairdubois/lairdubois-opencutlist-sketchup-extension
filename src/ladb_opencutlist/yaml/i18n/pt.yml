@@ -254,8 +254,13 @@ tab:
       cumulable_0: Não somam
       cumulable_1: Soma ao comprimento
       cumulable_2: Soma à largura
-      instance_count_by_part: ""
+      instance_count_by_part: Embalagem
       instance_count_by_part_help: |
+        Permite que a peça seja considerada como um *lote* de uma ou mais *unidades*.
+        A quantidade associada à parte no cartão de débito representará, portanto, o número de lotes inteiros necessários para conter o número de unidades realmente presentes no modelo.
+
+        *Exemplo: Para contar apenas 1 peça para um par de corrediças de gaveta:
+        Embalagem = 2 unidades / peça*
       instance_count_by_part_1: 1 unidade por peça
       instance_count_by_part_2: 2 unidades por peça
       mass: Massa
@@ -437,7 +442,7 @@ tab:
       info_0: |
         Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
       options_general: Geral
-      option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient: Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
       raw_materials: Matéria prima
       coefficient: Fator
@@ -449,7 +454,7 @@ tab:
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
-        no_typed_material_parts: "Sem peças com um tipo de material definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
+        no_typed_material_parts: "Sem peças com um tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
@@ -626,7 +631,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descrição
-        part_entity_name: ""
+        part_entity_name: Nome da instância
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado
         part_cutting_width: Largura - aproximada
@@ -659,8 +664,8 @@ tab:
       obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
       partial_cutlist: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
-      no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Sua exportação não contém nenhuma peça.
     success:
       exported_to: "Exportação para {{ export_path }} com sucesso."

@@ -43,8 +43,8 @@ default:
   unit_5: Jard
   unit_mass_0: Kilogram
   unit_mass_1: Funt
-  instance_single: ""
-  instance_plural: ""
+  instance_single: Pozycja
+  instance_plural: Pozycje
   part_single: część
   part_plural: części
   setup_model_units: Ustaw jednostki modelu
@@ -203,11 +203,11 @@ tab:
       add_edge_material_name_filter: "Filtruj według '{{ material_name }}'"
       remove_edge_material_name_filter: "Nie filtruj według '{{ material_name }}'"
       not_aligned_on_axes: "Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi"
-      instance_count_by_part: ""
-      unused_instance_count: ""
-      unused_instance_count_plural: ""
-      used_instance_count: ""
-      used_instance_count_plural: ""
+      instance_count_by_part: "W pakietach znajduje się **{{ count }}** pozycji tej części."
+      unused_instance_count: "Uwaga, **{{ count }}** pozycja z ostatniego pakietu nie będzie użyta."
+      unused_instance_count_plural: "Uwaga, **{{ count }}** pozycji z ostatniego pakietu nie będzie użyte."
+      used_instance_count: "Użyto **{{ count }}** pozycję z {{ total }}"
+      used_instance_count_plural: "Użyto **{{ count }}** pozycji z {{ total }}"
       multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
       children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
@@ -238,8 +238,8 @@ tab:
       group_cuttingdiagram: Schemat cięcia
       group_labels: Drukuj etykiety
       edit_material: "Edytuj materiał '{{ material_name }}'"
-      expand_all: ""
-      collapse_all: ""
+      expand_all: Rozwiń wszystkie linie
+      collapse_all: Zwiń wszystkie linie
     edit_part:
       title: "Właściwości części '{{ name }}'"
       title_multiple: Właściwości grupy części
@@ -256,12 +256,17 @@ tab:
       cumulable_2: Zsumowane po szerokości
       instance_count_by_part: Opakowanie
       instance_count_by_part_help: |
+        Pozwala traktować część jako *pakiet* składający się z jednej lub więcej *pozycji*.
+        Ilość skojarzona z częścią na liście części będzie reprezentować liczbę całych pakietów potrzebnych do otrzymania liczby pozycji aktualnie znajdujących się w modelu.
+
+        *Przykład: Aby potraktować parę prowadnic do szuflad jako 1 część:
+        Pakiet = 2 jednostki / część*
       instance_count_by_part_1: 1 jednostka na część
       instance_count_by_part_2: 2 jednostki na część
       mass: Masa
-      mass_help: ""
+      mass_help: Waga części będzie użyta podczas tworzenia **Reportów**.
       price: Cena
-      price_help: ""
+      price_help: Cena części będzie użyta podczas tworzenia **Reportów**.
       tags: Oznaczenia
       tags_help: |
         *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
@@ -277,8 +282,9 @@ tab:
         - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
         - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
         - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
-      symmetrical: ""
+      symmetrical: Wyłącz wykrywanie lustrzanych części dla tej części
       symmetrical_help: |
+        Jeśli to pole jest zaznaczone, wykrywanie *lustrzanych części* nie będzie miało żadnego wpływu na część.
       size_increase: Ponadwymiarowe
       size_increase_help: |
         Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
@@ -376,7 +382,7 @@ tab:
       name: Opis
       count: Opis
       cutting: Wstępny
-      bbox: Zakończony
+      bbox: Końcowa
       final: Rzeczywisty
       total_cutting: Σ Wstępny
       total_final: Σ Rzeczywisty
@@ -437,10 +443,10 @@ tab:
         Funkcjonalność ta pozwala na wygenerowanie raportu **mas** i **kosztów** **surowców** niezbędnych do produkcji części znajdujących się na *liście części*.
       options_general: Główne
       option_solid_wood_coefficient: ""
-      option_solid_wood_coefficient_help: ""
+      option_solid_wood_coefficient_help: Współczynnik do pomnożenia przez objętość surowca typu "**$t(tab.materials.type_1)**" aby uwzględnić defekty i odpady.
       raw_materials: Surowce
       coefficient: Współczynnik
-      total: Totalny
+      total: Suma
       total_mass: Σ Wagi
       total_cost: Σ Kosztów
       total_count: Szt.
@@ -473,12 +479,12 @@ tab:
       option_hide_part_list_1d_help: Wyświetl lub zamaskuj listę części dla każdej płyty.
       option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
       option_origin_corner: Pozycja początku
-      option_origin_corner_1d_0: ""
-      option_origin_corner_1d_1: ""
+      option_origin_corner_1d_0: Z lewej
+      option_origin_corner_1d_1: Z prawej
       option_origin_corner_2d_0: Górny lewy narożnik
       option_origin_corner_2d_1: Dolny lewy narożnik
-      option_origin_corner_2d_2: ""
-      option_origin_corner_2d_3: ""
+      option_origin_corner_2d_2: Górny prawy róg
+      option_origin_corner_2d_3: Dolny prawy róg
       option_origin_corner_1d_help: ""
       option_origin_corner_2d_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
       option_full_width_diagram: Wyświetlanie na całej szerokości
@@ -521,7 +527,7 @@ tab:
       option_scrap_bar_lengths_placeholder: długość x ilość ; ...
       option_scrap_bar_lengths_help: |
         Podaj wszystkie odpady które chcesz uwzględnić jako pierwsze w rozkroju.
-        Oczekiwany format: **Dług**x**Licz**, gdzie **Dług** reprezentuje *długość* odpadu, a **Licz** ilość.
+        Oczekiwany format: **długość x ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
         Ilość jest opcjonalna
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       option_std_sheet: Arkusz standardowy
@@ -535,7 +541,7 @@ tab:
       option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
       option_scrap_sheet_sizes_help: |
         Pokaż wszystkie arkusze odpadu które chcesz uwzględnić w rozkroju.
-        Oczekiwany format: **Dług**x**Szer**x**Licz**, gdzie **Dług** i **Szer** reprezentują *długość* i *szerokość* arkusza, a **Licz** ilość.
+        Oczekiwany format: **długość x szerokość x ilość**, gdzie **długość** i **szerokość** reprezentują *długość* i *szerokość* arkusza, a **ilość** ilość.
         Ilość jest opcjonalna
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       tooltip:
@@ -589,7 +595,7 @@ tab:
           *Wymiary pomniejszone o grubość obrzeża.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etykiety
-      options_layout: Rozkład
+      options_layout: Układ
       options_settings: Konfiguracja
       size: Rzeczywisty rozmiar etykiety
       add_element: Dodaj element
@@ -625,7 +631,7 @@ tab:
       formula:
         part_number: Numer
         part_name: Opis
-        part_entity_name: ""
+        part_entity_name: Nazwa instancji
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
@@ -744,7 +750,7 @@ tab:
       std_sizes: Standardowe rozmiary arkuszy
       std_sizes_placeholder: długość x szerokość ; ...
       std_sizes_help: |
-        Oczekiwany format: **Dług**x**Szer**, gdzie **Dług** i **Szer** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
+        Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       grained: Kierunek wzoru/tekstury
       grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale
@@ -940,7 +946,7 @@ tab:
     length_format: Format
     length_format_0: Dziesiętny
     length_format_1: Architektoniczny
-    length_format_2: Inżynieryjny
+    length_format_2: Inżynieryjski
     length_format_3: Ułamkowy
     length_precision: Precyzja
     suppress_units_display: Wyświetl jednostkę długości dla każdej wartości
