@@ -43,13 +43,13 @@
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$btnReport = $('#ladb_btn_report', this.$header);
+        this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemExpendAll = $('#ladb_item_expand_all', this.$header);
         this.$itemCollapseAll = $('#ladb_item_collapse_all', this.$header);
-        this.$itemOptions = $('#ladb_item_options', this.$header);
 
         this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
@@ -3089,6 +3089,10 @@
             that.reportCutlist();
             this.blur();
         });
+        this.$btnOptions.on('click', function () {
+            that.editOptions();
+            this.blur();
+        });
         this.$itemHighlightAllParts.on('click', function () {
             if (!$(this).parents('li').hasClass('disabled')) {
                 that.highlightAllParts();
@@ -3120,10 +3124,6 @@
         this.$itemCollapseAll.on('click', function () {
             that.collapseAllFoldingPart();
             $(this).blur();
-        });
-        this.$itemOptions.on('click', function () {
-            that.editOptions();
-            this.blur();
         });
 
         // Events

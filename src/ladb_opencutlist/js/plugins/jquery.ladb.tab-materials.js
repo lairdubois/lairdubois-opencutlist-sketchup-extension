@@ -18,9 +18,9 @@
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnList = $('#ladb_btn_list', this.$header);
         this.$btnNew = $('#ladb_btn_new', this.$header);
+        this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
-        this.$itemOptions = $('#ladb_item_options', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
 
@@ -1033,16 +1033,16 @@
             that.newMaterial();
             this.blur();
         });
+        this.$btnOptions.on('click', function () {
+            that.editOptions();
+            this.blur();
+        });
         this.$itemImportFromSkm.on('click', function () {
             that.importFromSkm();
             this.blur();
         });
         this.$itemPurgeUnused.on('click', function () {
             that.purgeUnused();
-            this.blur();
-        });
-        this.$itemOptions.on('click', function () {
-            that.editOptions();
             this.blur();
         });
 
