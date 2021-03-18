@@ -784,11 +784,11 @@
         var fnComputeFieldsVisibility = function (type) {
             switch (type) {
                 case 0:   // TYPE_UNKNOWN
-                    $inputLengthIncrease.closest('section').hide();
+                    $inputThickness.closest('section').hide();
                     break;
                 case 1:   // TYPE_SOLID_WOOD
+                    $inputThickness.closest('section').show();
                     $inputThickness.closest('.form-group').hide();
-                    $inputLengthIncrease.closest('section').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
                     $inputThicknessIncrease.closest('.form-group').show();
@@ -803,8 +803,8 @@
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
+                    $inputThickness.closest('section').show();
                     $inputThickness.closest('.form-group').hide();
-                    $inputLengthIncrease.closest('section').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
                     $inputThicknessIncrease.closest('.form-group').hide();
@@ -819,8 +819,8 @@
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
+                    $inputThickness.closest('section').show();
                     $inputThickness.closest('.form-group').hide();
-                    $inputLengthIncrease.closest('section').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
                     $inputThicknessIncrease.closest('.form-group').hide();
@@ -835,8 +835,8 @@
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
+                    $inputThickness.closest('section').show();
                     $inputThickness.closest('.form-group').show();
-                    $inputLengthIncrease.closest('section').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
                     $inputThicknessIncrease.closest('.form-group').hide();
@@ -851,8 +851,10 @@
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 5:   // TYPE_HARDWARE
-                    $inputLengthIncrease.closest('section').hide();
+                    $inputThickness.closest('section').hide();
                     break;
+                default:
+                    $inputThickness.closest('section').hide();
             }
         };
         var fnCheckInputNameValue = function(verbose) {
