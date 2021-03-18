@@ -430,7 +430,7 @@
             this.dialog.setupPopovers();
 
             // Callback
-            if (typeof(callback) === 'function') {
+            if (callback && typeof(callback) == 'function') {
                 callback($modal);
             }
 
@@ -553,7 +553,7 @@
             that.generateOptions = response.preset;
 
             // Callback
-            if (callback && typeof(callback) === 'function') {
+            if (callback && typeof(callback) == 'function') {
                 callback();
             }
 

@@ -2830,7 +2830,7 @@
             that.generateOptions = response.preset;
 
             // Callback
-            if (callback && typeof(callback) === 'function') {
+            if (callback && typeof(callback) == 'function') {
                 callback();
             }
 
