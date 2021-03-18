@@ -501,10 +501,10 @@
                 that.editPart(partId);
                 return false;
             });
-            $('a.ladb-btn-folding-toggle-part', that.$page).on('click', function () {
+            $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
                 $(this).blur();
                 var $part = $(this).parents('.ladb-cutlist-row-folder');
-                that.toggleFoldingPart($part);
+                that.toggleFoldingRow($part);
                 return false;
             });
             $('a.ladb-btn-label-filter', that.$page).on('click', function () {
@@ -769,6 +769,7 @@
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
+            var $btnSetupModelUnits = $('#ladb_btn_setup_model_units', $modal);
             var $btnGenerate = $('#ladb_btn_generate', $modal);
 
             var fnFetchOptions = function (options) {
@@ -791,6 +792,10 @@
             fnFillInputs(reportOptions);
 
             // Bind buttons
+            $btnSetupModelUnits.on('click', function () {
+                $(this).blur();
+                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+            });
             $btnGenerate.on('click', function () {
 
                 // Fetch options
@@ -817,7 +822,7 @@
 
     };
 
-    LadbTabCutlist.prototype.generateReportCutlist = function (reportOptions) {
+    LadbTabCutlist.prototype.generateReportCutlist = function (reportOptions, callback) {
         var that = this;
 
         var fnAdvance = function () {
@@ -837,7 +842,14 @@
                                 generatedAt: new Date().getTime() / 1000,
                                 report: response
                             }, reportOptions), function () {
+
                                 that.dialog.setupTooltips();
+
+                                // Callback
+                                if (callback && typeof callback == 'function') {
+                                    callback();
+                                }
+
                             });
 
                             // Fetch UI elements
@@ -868,10 +880,10 @@
                                 }
                                 $(this).blur();
                             });
-                            $('a.ladb-btn-folding-toggle-part', $slide).on('click', function () {
+                            $('a.ladb-btn-folding-toggle-row', $slide).on('click', function () {
                                 $(this).blur();
-                                var $part = $(this).parents('.ladb-cutlist-row-folder');
-                                that.toggleFoldingPart($part);
+                                var $row = $(this).parents('.ladb-cutlist-row-folder');
+                                that.toggleFoldingRow($row, 'entry-id');
                                 return false;
                             });
                             $('.ladb-cutlist-row', $slide).on('click', function () {
@@ -892,11 +904,11 @@
                             });
                             $('#ladb_item_expand_all', $slide).on('click', function () {
                                 $(this).blur();
-                                that.expandAllFoldingPart($slide);
+                                that.expandAllFoldingRows($slide, 'entry-id');
                             });
                             $('#ladb_item_collapse_all', $slide).on('click', function () {
                                 $(this).blur();
-                                that.collapseAllFoldingPart($slide);
+                                that.collapseAllFoldingRows($slide, 'entry-id');
                             });
                             $('a.ladb-btn-edit-material', $slide).on('click', function () {
                                 $(this).blur();
@@ -909,8 +921,8 @@
                                     material_id: materialId,
                                     updatedCallback: function () {
 
-                                        // Flag to ignore next material change event
-                                        that.ignoreNextMaterialEvents = true;
+                                        // Flag to stop ignoring next material change event
+                                        that.ignoreNextMaterialEvents = false;
 
                                         // Refresh the list
                                         that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
@@ -1713,7 +1725,7 @@
                                     var $part = $('#ladb_part_' + partId, that.$page);
                                     if ($part.length > 0) {
                                         if ($part.hasClass('hide')) {
-                                            that.expandFoldingPart($('#ladb_part_' + $part.data('folder-id')));
+                                            that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
                                         }
                                         $part.effect('highlight', {}, 1500);
                                         that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
@@ -1791,54 +1803,54 @@
         }
     };
 
-    LadbTabCutlist.prototype.toggleFoldingPart = function ($part) {
-        var $btn = $('.ladb-btn-folding-toggle-part', $part);
+    LadbTabCutlist.prototype.toggleFoldingRow = function ($row, dataKey) {
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
         var $i = $('i', $btn);
 
         if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
-            this.expandFoldingPart($part);
+            this.expandFoldingRow($row, dataKey);
         } else {
-            this.collapseFoldingPart($part);
+            this.collapseFoldingRow($row, dataKey);
         }
     };
 
-    LadbTabCutlist.prototype.expandFoldingPart = function ($part) {
-        var partId = $part.data('part-id');
-        var $btn = $('.ladb-btn-folding-toggle-part', $part);
+    LadbTabCutlist.prototype.expandFoldingRow = function ($row, dataKey) {
+        var rowId = $row.data(dataKey ? dataKey : 'part-id');
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
         var $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-up');
         $i.removeClass('ladb-opencutlist-icon-arrow-down');
 
         // Show children
-        $part.siblings('tr[data-folder-id=' + partId + ']').removeClass('hide');
+        $row.siblings('tr[data-folder-id=' + rowId + ']').removeClass('hide');
 
     };
 
-    LadbTabCutlist.prototype.collapseFoldingPart = function ($part) {
-        var partId = $part.data('part-id');
-        var $btn = $('.ladb-btn-folding-toggle-part', $part);
+    LadbTabCutlist.prototype.collapseFoldingRow = function ($row, dataKey) {
+        var rowId = $row.data(dataKey ? dataKey : 'part-id');
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
         var $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-down');
         $i.removeClass('ladb-opencutlist-icon-arrow-up');
 
         // Hide children
-        $part.siblings('tr[data-folder-id=' + partId + ']').addClass('hide');
+        $row.siblings('tr[data-folder-id=' + rowId + ']').addClass('hide');
 
     };
 
-    LadbTabCutlist.prototype.expandAllFoldingPart = function ($slide) {
+    LadbTabCutlist.prototype.expandAllFoldingRows = function ($slide, dataKey) {
         var that = this;
         $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
-            that.expandFoldingPart($(this));
+            that.expandFoldingRow($(this), dataKey);
         });
     };
 
-    LadbTabCutlist.prototype.collapseAllFoldingPart = function ($slide) {
+    LadbTabCutlist.prototype.collapseAllFoldingRows = function ($slide, dataKey) {
         var that = this;
         $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
-            that.collapseFoldingPart($(this));
+            that.collapseFoldingRow($(this), dataKey);
         });
     };
 
@@ -3118,11 +3130,11 @@
             this.blur();
         });
         this.$itemExpendAll.on('click', function () {
-            that.expandAllFoldingPart();
+            that.expandAllFoldingRows();
             $(this).blur();
         });
         this.$itemCollapseAll.on('click', function () {
-            that.collapseAllFoldingPart();
+            that.collapseAllFoldingRows();
             $(this).blur();
         });
 
