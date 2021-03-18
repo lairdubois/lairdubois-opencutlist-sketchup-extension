@@ -1375,6 +1375,7 @@
                 var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
                 var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
+                var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
                 // Utils function
@@ -1584,7 +1585,10 @@
                         fnDisplayAxisDimensions();
 
                         // By default set origin position to 'min'
-                        $selectPartAxesOriginPosition.selectpicker('val', 'min');
+                        $selectPartAxesOriginPosition
+                            .selectpicker('val', 'min')
+                            .trigger('change')
+                        ;
 
                     }
                 });
@@ -1610,6 +1614,22 @@
                 $btnHighlight.on('click', function () {
                     this.blur();
                     that.highlightPart(part.id);
+                    return false;
+                });
+                $btnExportToSkp.on('click', function () {
+                    this.blur();
+                    rubyCallCommand('cutlist_part_export_to_skp', {
+                        definition_id: part.definition_id
+                    }, function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.export_path) {
+                            that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success');
+                        }
+
+                    });
                     return false;
                 });
                 $btnUpdate.on('click', function () {
@@ -1741,6 +1761,11 @@
                 // Setup popovers and tooltips
                 that.dialog.setupPopovers();
                 that.dialog.setupTooltips();
+
+                // Change event
+                $('input, select', $modal).on('change', function () {
+                    $btnExportToSkp.prop('disabled', true);
+                });
 
             };
 

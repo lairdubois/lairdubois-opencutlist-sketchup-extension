@@ -504,8 +504,6 @@
             display_name: material.display_name
         }, function (response) {
 
-            var i;
-
             if (response.errors) {
                 that.dialog.notifyErrors(response.errors);
             }

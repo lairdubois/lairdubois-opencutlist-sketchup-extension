@@ -16,6 +16,7 @@ in 2.x, 1.x and 0.x versions.
   * Added Hardware material type
   * Added part set for hardware
   * Added part unit price and weight fields for hardware
+  * Added part export to skp
   * Added bars and sheets waste's cross display / hide in cutting diagram options
   * Added cutting diagram 2D option to select origin corner - all four corners
   * Added new 2D bin packing library

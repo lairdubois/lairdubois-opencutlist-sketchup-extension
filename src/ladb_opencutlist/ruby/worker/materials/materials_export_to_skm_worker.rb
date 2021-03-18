@@ -5,7 +5,6 @@ module Ladb::OpenCutList
     def initialize(material_data)
       @name = material_data['name']
       @display_name = material_data['display_name']
-      @display_name = material_data['display_name']
     end
 
     # -----

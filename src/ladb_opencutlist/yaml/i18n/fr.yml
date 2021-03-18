@@ -310,6 +310,9 @@ tab:
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       multiple_values: Valeurs multiples
+      export_to_skp: Exporter (.skp)
+    export_to_skp:
+      title: Exporter un fichier .skp
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: Echec de l'écriture du fichier d'export. **{{ error }}**
+      failed_export_skp_file: Une erreur s'est produite lors de l'exportation du fichier .skp. **{{ error }}**
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
       obsolete_cutlist: Impossible, la fiche de débit générée est obsolète. Re-générez là.
     warning:
