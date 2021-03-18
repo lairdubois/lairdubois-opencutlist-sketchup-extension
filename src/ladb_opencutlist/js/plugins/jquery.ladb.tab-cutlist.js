@@ -2078,9 +2078,9 @@
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                 var $group = $(this).parents('.ladb-cutlist-group');
                                 if ($group.hasClass('no-print')) {
-                                    that.showGroup($group, false);
+                                    that.showGroup($group, true);
                                 } else {
-                                    that.hideGroup($group, false);
+                                    that.hideGroup($group, true);
                                 }
                                 $(this).blur();
                             });
@@ -2338,9 +2338,9 @@
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                             var $group = $(this).parents('.ladb-cutlist-group');
                             if ($group.hasClass('no-print')) {
-                                that.showGroup($group, false);
+                                that.showGroup($group, true);
                             } else {
-                                that.hideGroup($group, false);
+                                that.hideGroup($group, true);
                             }
                             $(this).blur();
                         });
