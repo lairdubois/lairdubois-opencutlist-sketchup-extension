@@ -7,7 +7,7 @@ default:
   cancel: Anuluj
   validate: Zastosuj
   confirm: Potwierdź
-  ok: ""
+  ok: OK
   open: Otwórz
   see: Zobacz
   close: Zamknij
@@ -42,10 +42,12 @@ default:
   unit_4: Metr
   unit_5: Jard
   unit_mass_0: Kilogram
-  unit_mass_1: Liwr
+  unit_mass_1: Funt
+  instance_single: ""
+  instance_plural: ""
   part_single: część
   part_plural: części
-  setup_model_units: ""
+  setup_model_units: Ustaw jednostki modelu
   load_more: "Załaduj więcej ..."
   reset_to_app_defaults: Przywróć oryginalne wartości
 core:
@@ -67,7 +69,7 @@ core:
     more_extensions: Rozszerzenia
     more_update: Aktualizacja
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Zgłoś błąd
   warning:
     dev: |
       To jest wersja **rozwojowa** *OpenCutList*.
@@ -194,7 +196,7 @@ tab:
       number_generated: Numer tej części został wygenerowany automatycznie
       resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
-      symmetrical: ""
+      symmetrical: Wykrywanie lustrzanej części jest nieaktywne dla tej części
       auto_oriented: Ta część została automatycznie obrócona
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
@@ -202,8 +204,10 @@ tab:
       remove_edge_material_name_filter: "Nie filtruj według '{{ material_name }}'"
       not_aligned_on_axes: "Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi"
       instance_count_by_part: ""
-      missing_instance_count: ""
-      missing_instance_count_plural: ""
+      unused_instance_count: ""
+      unused_instance_count_plural: ""
+      used_instance_count: ""
+      used_instance_count_plural: ""
       multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
       children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
@@ -222,7 +226,7 @@ tab:
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
-      setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension}}'"
+      setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Pokaż wszystkie grupy
       hide_all_other_groups: Ukryj wszystkie inne grupy
@@ -234,8 +238,8 @@ tab:
       group_cuttingdiagram: Schemat cięcia
       group_labels: Drukuj etykiety
       edit_material: "Edytuj materiał '{{ material_name }}'"
-      expand_all: Rozłóż podobne części
-      collapse_all: Złóż podobne części
+      expand_all: ""
+      collapse_all: ""
     edit_part:
       title: "Właściwości części '{{ name }}'"
       title_multiple: Właściwości grupy części
@@ -250,10 +254,10 @@ tab:
       cumulable_0: Nie da się podsumować
       cumulable_1: Zsumowane po długości
       cumulable_2: Zsumowane po szerokości
-      instance_count_by_part: Partia
+      instance_count_by_part: Opakowanie
       instance_count_by_part_help: |
-      instance_count_by_part_1: ""
-      instance_count_by_part_2: ""
+      instance_count_by_part_1: 1 jednostka na część
+      instance_count_by_part_2: 2 jednostki na część
       mass: Masa
       mass_help: ""
       price: Cena
@@ -292,7 +296,7 @@ tab:
          - **długość** jest odczytywana na osi <strong style='color:red'>czerwonej</strong>
          - **szerokość** jest odczytywana na osi <strong style='color:green'>zielonej</strong>
          - **grubość** jest odczytywana na osi <strong style='color:blue'>niebieskiej</strong>
-      axes_origin_position_none: Nie zmieniaj pochodzenia
+      axes_origin_position_none: Nie zmieniaj pozycji początku
       axes_origin_position_min: Umieść początek na narożniku
       axes_origin_position_center: Umieść początek w środku
       axes_origin_position_min_center: Umieść początek na środku płaszczyzny
@@ -434,16 +438,17 @@ tab:
       options_general: Główne
       option_solid_wood_coefficient: ""
       option_solid_wood_coefficient_help: ""
-      raw_materials: Surowy materiał
+      raw_materials: Surowce
       coefficient: Współczynnik
       total: Totalny
-      total_mass: Σ Mszy
+      total_mass: Σ Wagi
       total_cost: Σ Kosztów
       total_count: Szt.
-      total_volume: Σ Wolumenów
+      total_volume: Σ Objętości
       total_area: Σ Powierzchni
       total_length: Σ Długości
       error:
+        no_typed_material_parts: ""
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
@@ -462,12 +467,12 @@ tab:
       option_sheet_folding_1: Tak
       option_sheet_folding_help: Grupuj arkusze zawierające te same części i cięcia.
       option_hide_part_list: Lista części
-      option_hide_part_list_1d_0: Wyświetlane dla każdej płyty
+      option_hide_part_list_1d_0: Wyświetlana dla każdej płyty
       option_hide_part_list_2d_0: Wyświetlane dla każdego arkusza
-      option_hide_part_list_1: Zamaskowany
+      option_hide_part_list_1: Zamaskowana
       option_hide_part_list_1d_help: Wyświetl lub zamaskuj listę części dla każdej płyty.
       option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
-      option_origin_corner: Pozycja pochodzenia
+      option_origin_corner: Pozycja początku
       option_origin_corner_1d_0: ""
       option_origin_corner_1d_1: ""
       option_origin_corner_2d_0: Górny lewy narożnik
@@ -480,10 +485,10 @@ tab:
       option_full_width_diagram_0: Nie
       option_full_width_diagram_1: Tak
       option_full_width_diagram_help: "Jeśli ta opcja jest włączona, schematy cięć są wyświetlane na całej szerokości. W przeciwnym razie ich szerokość jest zdefiniowana przez stały współczynnik skalowania."
-      option_wrap_length: Długość deski dzielącej
+      option_wrap_length: Długość deski w jednej lini
       option_wrap_length_help: Maksymalna długość powyżej której deska będzie rozdzielona na wiele linii.
       option_hide_cross: Ścinki
-      option_hide_cross_0: Wymiary i Przekrój
+      option_hide_cross_0: Wymiary i Przekreślenie
       option_hide_cross_1: Tylko wymiary
       option_hide_cross_help: Wyświetl lub ukryj przekreślenie na częściach traktowanych jako odpad.
       option_highlight_primary_cuts: Cięcia główne
@@ -620,6 +625,7 @@ tab:
       formula:
         part_number: Numer
         part_name: Opis
+        part_entity_name: ""
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
@@ -652,8 +658,8 @@ tab:
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
     warning:
       partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
-      no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**Lite drewno**, **Płyty** lub **Deski**)."
-      no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**Lite drewno**, **Płyty** lub **Deski**)."
+      no_typed_materials_in_model: ""
+      no_typed_materials_in_selection: ""
       export_empty: Twója selekcja do eksportu nie zawiera żadnych części.
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
@@ -662,7 +668,7 @@ tab:
         Części które mają być na *liście części* muszą być instancjami **komponentu**.
         Jeżeli używasz tylko grup, przekształć je w komponenty.
         Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
-      no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**Lite drewno**, **Płyty** lub **Deski**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
+      no_typed_materials: ""
     obsolete_base: "Aby zachować synchronizację, należy wygenerować listę części."
   materials:
     label: Materiały
@@ -749,7 +755,7 @@ tab:
       edge_decremented_0: Brak zmniejszania
       edge_decremented_1: Zmniejsz o grubość obrzeża
       volumic_mass: Gęstość
-      volumic_mass_help: Pozwala określić gęstość (masa właściwa) materiału.
+      volumic_mass_help: Pozwala określić gęstość materiału.
       std_prices: Cena
       std_prices_help: "Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału."
       std_prices_dim_placeholder: Wybierz rozmiar
@@ -911,10 +917,11 @@ tab:
     objective_slogan: OpenCutList to my wszyscy
     objective_title:
       default: Cele
+      docs: ""
     objective_details:
       default: |
+      docs: |
     objective_crowdfunding: |
-      Rozwój nowych funkcjonalności będzie się odbywał dzięki **crowdfundingowi** i może się rozpocząć po osiągnięciu jego **Celu Finansowego**.
     objective_thanks: |
       Dziękujemy za Twój wkład!
     objective_funded_progress: "sfinansowany w {{ progress }}%"
@@ -933,8 +940,8 @@ tab:
     length_format: Format
     length_format_0: Dziesiętny
     length_format_1: Architektoniczny
-    length_format_2: Inżynieria
-    length_format_3: Frakcyjny
+    length_format_2: Inżynieryjny
+    length_format_3: Ułamkowy
     length_precision: Precyzja
     suppress_units_display: Wyświetl jednostkę długości dla każdej wartości
     mass_unit: Jednostka masy
@@ -955,17 +962,18 @@ tab:
     credits: Zasługi techniczne
     credits_authors: |
       *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Tłumaczenia
     credits_translators: |
-      Tłumaczenia:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
       - Vladimir Badulya (*Rosyjski*)
       - Pierluigi Colombo (*Włoski*)
       - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugalski*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Hiszpański*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polski*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk i Dominik Szybisz (*Polski*)
       - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
       - SOUL Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
+      - Dany Dhondt, Eric Lugtigheid (*Holenderski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

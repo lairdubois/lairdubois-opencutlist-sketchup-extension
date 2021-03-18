@@ -43,6 +43,8 @@ default:
   unit_5: Jarda
   unit_mass_0: Quilograma
   unit_mass_1: Libra
+  instance_single: unidade
+  instance_plural: unidades
   part_single: peça
   part_plural: peças
   setup_model_units: Configure as unidades do modelo
@@ -67,7 +69,7 @@ core:
     more_extensions: Extensões
     more_update: Atualizar
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Relatar um erro
   warning:
     dev: |
       Você está usando uma versão **em desenvolvimento** do *OpenCutList*.
@@ -194,7 +196,7 @@ tab:
       number_generated: O número desta peça é gerado automaticamente
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
-      symmetrical: A detecção de peças espelhadas está desactivada nesta parte
+      symmetrical: A detecção de peças espelhadas está desativada nesta parte
       auto_oriented: Esta peça foi reorientada automaticamente
       add_label_filter: "Filtrando em '{{ label }}'"
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
@@ -202,8 +204,10 @@ tab:
       remove_edge_material_name_filter: "Não filtre em '{{ material_name }}'"
       not_aligned_on_axes: "Cuidado, esta peça pode não estar orientada corretamente em relação aos seus eixos"
       instance_count_by_part: "Esta parte é contada em conjuntos de **{{contagem }}** unidades."
-      missing_instance_count: "Note-se que **{{ count }}** unidade do último conjunto não será utilizada."
-      missing_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
+      unused_instance_count: "Note-se que **{{ count }}** unidade do último conjunto não será utilizada."
+      unused_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
+      used_instance_count: "**{{ count }}** / {{ total }} unidade utilizada"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} unidades utilizadas"
       multiple_layers: "Cuidado, esta peça é composta de subpeças presentes em {{ contagem }} camadas diferentes:<br>{{ camadas }}"
       children_warnings: "Atenção, há {{ contagem }} alerta em partes agrupadas"
       children_warnings_plural: "Atenção, existem {{ count }} alertas em peças agrupadas"
@@ -234,8 +238,8 @@ tab:
       group_cuttingdiagram: Diagrama de Corte
       group_labels: Imprimir etiquetas
       edit_material: "Editar material '{{ material_name }}'"
-      expand_all: Desdobrar peças idênticas
-      collapse_all: Dobre partes idênticas
+      expand_all: Desdobrar todas as linhas
+      collapse_all: Dobrar todas as linhas
     edit_part:
       title: "Propriedades da peça '{{ name }}'"
       title_multiple: Propriedades do grupo de peças
@@ -250,12 +254,8 @@ tab:
       cumulable_0: Não somam
       cumulable_1: Soma ao comprimento
       cumulable_2: Soma à largura
-      instance_count_by_part: Grupo
+      instance_count_by_part: ""
       instance_count_by_part_help: |
-        Permite-lhe contar as peças no número de **conjuntos** necessários em vez do número de unidades no modelo.
-        As peças de um conjunto devem ter a mesma definição.
-
-        *Exemplo: Conte apenas 1 peça para um par de corrediças de gaveta.*
       instance_count_by_part_1: 1 unidade por peça
       instance_count_by_part_2: 2 unidades por peça
       mass: Massa
@@ -277,7 +277,7 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
-      symmetrical: "Desactivar a detecção de peças espelhadas nesta parte "
+      symmetrical: "Desativar a detecção de peças espelhadas nesta parte "
       symmetrical_help: |
         Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
       size_increase: Superdimensionar
@@ -437,8 +437,8 @@ tab:
       info_0: |
         Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
       options_general: Geral
-      option_solid_wood_coefficient: Proporção de madeira serrada em bruto
-      option_solid_wood_coefficient_help: Usado para indicar o fator de multiplicação aplicado ao volume bruto medido para materiais do tipo "**Madeira maciça**".
+      option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
       raw_materials: Matéria prima
       coefficient: Fator
       total: Total
@@ -449,6 +449,7 @@ tab:
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
+        no_typed_material_parts: "Sem peças com um tipo de material definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
@@ -625,6 +626,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descrição
+        part_entity_name: ""
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado
         part_cutting_width: Largura - aproximada
@@ -657,8 +659,8 @@ tab:
       obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
       partial_cutlist: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
-      no_typed_materials_in_model: Este modelo não usa nenhum material definido (**Madeira serrada** ou **Painel** ou **Dimensional MLC**).
-      no_typed_materials_in_selection: A seleção não usa nenhum material definido (**Madeira serrada** ou **Painel** ou **Dimensional MLC**).
+      no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido  (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Sua exportação não contém nenhuma peça.
     success:
       exported_to: "Exportação para {{ export_path }} com sucesso."
@@ -667,7 +669,7 @@ tab:
         As peças que você deseja que apareçam na *Planilha de Produção* devem ser instâncias de **componente***.
         Se você usar apenas grupos, converta-os em componentes.
         Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
-      no_typed_materials: Aplique um material às partes a serem incluídas na Planilha de Produção e defina as propriedades deste material (**Madeira Serrada** ou **Chapa** ou **Dimensional MLC**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
+      no_typed_materials: "Aplique um material nas peças que você deseja ver em sua Planilha de Produção e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiais**."
     obsolete_base: "Para permanecer sincronizado, você deve gerar novamente a Planilha de Produção."
   materials:
     label: Materiais
@@ -754,7 +756,7 @@ tab:
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
       volumic_mass: Densidade
-      volumic_mass_help: Permite definir a densidade (massa volúmica) do material.
+      volumic_mass_help: Permite definir a densidade (massa volumétrica) do material.
       std_prices: Preço
       std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
       std_prices_dim_placeholder: Escolha um tamanho
@@ -916,11 +918,15 @@ tab:
     objective_slogan: OpenCutList somos todos nós
     objective_title:
       default: Objetivo
+      docs: Financiamento da documentação
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua a precisar de sua ajuda para sua próxima atualização **3.0***!
+      docs: |
+        É importante para nós que a *OpenCutList* seja acessível e intuitiva. Mas isto vai de mãos dadas com a escrita de uma **Documentação Completa e de Qualidade**.
+        Ao nos fornecer os meios para escrevê-lo, você nos dá a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
     objective_crowdfunding: |
-      O desenvolvimento desta nova funcionalidade será feito através de **financiamento participativo** e começará quando seu **Objetivo financeiro** for alcançado.
+      O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo*** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
       Obrigado por sua contribuição!
     objective_funded_progress: "financiado a {{ progress }}%"
@@ -971,17 +977,18 @@ tab:
     credits: Créditos Técnicos
     credits_authors: |
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Traduções
     credits_translators: |
-      Traduções:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglês*, *alemão*)
       - Vladimir Badulya (*russiano*)
       - Pierluigi Colombo (*italiano*)
-      - Nayton Sanches Barbosa, corrigido e revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*português*)
+      - Nayton Sanches Barbosa, corrigido, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*português*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espanhol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk e Dominik Szybisz (*polonês*)
       - Sergey Isupov (*hebraico*), sem interface RTL
-      - SOUL Issam (*árabe*), sem interface RTL
+      - Soul Issam (*árabe*), sem interface RTL
+      - Dany Dhondt, Eric Lugtigheid (*holandês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

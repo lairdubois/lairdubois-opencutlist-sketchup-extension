@@ -43,8 +43,8 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
-  instance_single: unit
-  instance_plural: units
+  instance_single: item
+  instance_plural: items
   part_single: part
   part_plural: parts
   setup_model_units: Setup the model units
@@ -63,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: More
-    more_docs: Docs
+    more_docs: Doc
     more_reviews: Reviews
     more_plans: Plans
     more_extensions: Extensions
@@ -116,13 +116,13 @@ core:
     user_defaults: My default preset
     new: New preset
     new_prompt: |
-      *Creating a custom preset allows you to keep the current form settings globally so you can reuse them in all your models.*
+      *Creating a custom preset allows you to keep the current form settings globally so that you can reuse them in all your models.*
 
       Enter the name of the preset:
     delete_confirm_title: Removal
     delete_confirm: "Are you sure you want to delete the preset **\"{{ name }}\"**?"
     override_confirm_title: Update
-    override_confirm: "Do you confirm updating the preset **\"{{name}}\"** with the form parameters?"
+    override_confirm: "Do you confirm the update of the preset **\"{{name}}\"** with the form parameters?"
     new_success: "Preset **\"{{ name }}\"** created"
     override_success: "Preset **\"{{ name }}\"** updated"
     restore_success: "The form has been filled with the preset **\"{{ name }}\"**"
@@ -137,8 +137,8 @@ tab:
     label: Parts
     title: Parts List
     help: |
-      Select the parts to be used for your list in the current scene and click **Generate**.
-      If the selection is empty, all visible components of the scene are used to compute the parts list.
+      Select the parts to be used for the parts list in the current scene and click **Generate**.
+      If the selection is empty, all visible components of the scene will be used to compute the list.
     selection_only: Selection
     material_undefined: No material defined
     not_available_std_width: Width undefined
@@ -154,7 +154,7 @@ tab:
       show_hide_block: Show / hide group
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'."
-      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
+      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thickness of the material '{{ material_name }}'"
       not_available_std_section: "The cross section *{{ std_dimension }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
@@ -203,11 +203,11 @@ tab:
       add_edge_material_name_filter: "Filter on '{{ material_name }}'"
       remove_edge_material_name_filter: "Remove filtering on '{{ material_name }}'"
       not_aligned_on_axes: "Caution, this part may not be oriented correctly with respect to its axes"
-      instance_count_by_part: "This part is counted in sets of **{{ count }}** units."
-      unused_instance_count: "Please note that **{{ count }}** unit from the last set will not be used."
-      unused_instance_count_plural: "Please note that **{{ count }}** units from the last set will not be used."
-      used_instance_count: "**{{ count }}** unit of {{ total }} used"
-      used_instance_count_plural: "**{{ count }}** units of {{ total }} used"
+      instance_count_by_part: "This part is counted in packages of **{{ count }}** items."
+      unused_instance_count: "Note that **{{ count }}** item from the last package will not be used."
+      unused_instance_count_plural: "Note that **{{ count }}** items from the last package will not be used."
+      used_instance_count: "**{{ count }}** item of {{ total }} used"
+      used_instance_count_plural: "**{{ count }}** items of {{ total }} used"
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
@@ -242,8 +242,8 @@ tab:
       collapse_all: Fold all lines
     edit_part:
       title: "Properties of Part '{{ name }}'"
-      title_multiple: Properties of the group of parts
-      multiple_alert: "Common properties of the group of {{ part_count }} parts."
+      title_multiple: Properties of the Group of Parts
+      multiple_alert: "Shared properties of {{ part_count }} parts."
       general: General
       edges: Edge Bandings
       name: Description
@@ -254,24 +254,24 @@ tab:
       cumulable_0: Not summable
       cumulable_1: Summable over length
       cumulable_2: Summable over width
-      instance_count_by_part: Set
+      instance_count_by_part: Packaging
       instance_count_by_part_help: |
-        Allows you to count the parts in the number of **sets** needed instead of the number of units in the model.
-        The parts in a set must have the same definition.
+        Allows the part to be considered as a *package* of one or more *items*.
+        The quantity associated with the part in the parts list will therefore represent the number of whole packages needed to obtain the number of items actually present in the model.
 
-        *Example: To count only 1 part for a pair of drawer slides:
-        Set = 2 units / part*
+        *Example: To count only 1 part for a pair of drawer runners:
+        Packaging = 2 units / part*
       instance_count_by_part_1: 1 unit per part
       instance_count_by_part_2: 2 units per part
-      mass: Mass
-      mass_help: The mass of the part will be used when generating **Reports**.
+      mass: Weight
+      mass_help: The weight of the part will be used when generating **Reports**.
       price: Price
       price_help: The price of the part will be used when generating **Reports**.
       tags: Tags
       tags_help: |
-        The *Tags* allow you to add custom keywords to each part definition.
+        *Tags* are custom keywords that can be added to each part definition.
         You can add as many tags as you want.
-        The visible parts of your parts list can then be filtered based on these tags.
+        The visible parts of your parts list can then be filtered against these tags.
       tags_multiple_info: Only common tags are displayed
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes
@@ -284,11 +284,11 @@ tab:
         - *thickness* on the <span style='color:blue'>blue</span> axis
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
-        If this box is checked, the detection of a *mirrored part* will have no effect on this part.
+        If this box is checked, the detection of a *mirrored part* will have no effect on the part.
       size_increase: Oversizes
       size_increase_help: |
-        Oversizes allow you to increase the dimensions of a single part.
-        (*Example: Oversize for a baseboard or a scribe molding that should be adjusted during assembly.*)
+        Oversizes increase the dimensions of a single part.
+        (*Example: Oversize for a baseboard or a scribe molding that should be adjusted at assembly.*)
       length_increase: Length Oversize
       length_increase_help: Oversize is applied to the final length to define the **raw length**.
       width_increase: Width Oversize
@@ -347,7 +347,7 @@ tab:
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
-      part_order_strategy: Parts Sorting
+      part_order_strategy: Part Sorting
       part_order_strategy_help: |
         Reorganize the following properties to define the sort order within each group.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
@@ -396,7 +396,7 @@ tab:
     export:
       title: Export to CSV format
       info_0: |
-        With this function you can export the *parts list* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        With this function the *parts list* can be exported into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       options: Export Options
       options_customize: Customization
       option_source: Source
@@ -440,21 +440,21 @@ tab:
     report:
       title: Report
       info_0: |
-        This functionality allows you to generate a report of the **weights** and **costs** of the **raw materials** necessary for the production of the parts contained in the *parts list*.
+        Reports generate a summary of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
       options_general: General
       option_solid_wood_coefficient: Rough lumber waste ratio for *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
       raw_materials: Raw materials
       coefficient: Coefficient
       total: Total
-      total_mass: Σ Weights
-      total_cost: Σ Costs
+      total_mass: Σ Weight
+      total_cost: Σ Cost
       total_count: Qty.
-      total_volume: Σ Volumes
-      total_area: Σ Areas
-      total_length: Σ Lengths
+      total_volume: Σ Volume
+      total_area: Σ Area
+      total_length: Σ Length
       error:
-        no_typed_material_parts: "No part with a defined material type \n(**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) \nhas been provided to generate the report."
+        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) has been provided to generate the report."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -479,14 +479,14 @@ tab:
       option_hide_part_list_1d_help: Display or mask the list of parts for each board.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
       option_origin_corner: Position of the origin
-      option_origin_corner_1d_0: To the left
-      option_origin_corner_1d_1: To the right
+      option_origin_corner_1d_0: From the left
+      option_origin_corner_1d_1: From the right
       option_origin_corner_2d_0: Top left corner
       option_origin_corner_2d_1: Bottom left corner
       option_origin_corner_2d_2: Top right corner
       option_origin_corner_2d_3: Bottom right corner
-      option_origin_corner_1d_help: Determines the position of the coordinate origin for displaying the parts on dimensional lumber.
-      option_origin_corner_2d_help: "Determines the position of the coordinate origin for displaying the parts on the panels. "
+      option_origin_corner_1d_help: Determines the start position of the coordinate system for displaying parts on dimensional lumber.
+      option_origin_corner_2d_help: "Determines the start position of the coordinate system for displaying parts on panels. "
       option_full_width_diagram: Full width display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
@@ -540,7 +540,7 @@ tab:
       option_scrap_sheet_sizes: Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
-        List all offcut sheet goods you would like to be considered in the cutting diagram.
+        List all offcut sheet goods you would like to be considered in priority for the cutting diagram.
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -555,9 +555,9 @@ tab:
         sheet: Panel
         length: Length
         width: Width
-        total_length: Σ Lengths
-        total_area: Σ Areas
-        total_part_count: Σ Parts
+        total_length: Σ Length
+        total_area: Σ Area
+        total_part_count: "# Parts"
         total_used: Total used
         trimming: Trimming
         total_length_cuts: Length of cuts
@@ -566,9 +566,9 @@ tab:
         cut: Cut
         cut_final: Primary cut (level 1)
         cut_through: Primary cut (level 2)
-        bar_type_0: Standard Sized Dimensional
+        bar_type_0: Standard Dimensional
         bar_type_1: Offcut
-        sheet_type_0: Standard Sized Panel
+        sheet_type_0: Standard Panel
         sheet_type_1: Offcut
         unused: Unused
         parts: "{{ count }} part"
@@ -580,7 +580,7 @@ tab:
         no_parts: No part.
         no_sheet: Standard panel sizes are misconfigured and no offcuts are available.
         no_placement_possible: "No placement possible (trimming size too large, standard panel too small, saw kerf too large, ...)."
-        bad_error: "Algorithmic panic, please contact the developpers, you have an interesting case."
+        bad_error: "Algorithm error. Please contact the developers, as this is an interesting case."
         unplaced_parts: "**1 part** could not be placed, because it is too large to fit."
         unplaced_parts_plural: "There are **{{ count }} parts** which could not be placed because they are too large to fit."
       warning:
@@ -631,6 +631,7 @@ tab:
       formula:
         part_number: Number
         part_name: Description
+        part_entity_name: Instance name
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
@@ -660,7 +661,7 @@ tab:
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: "Failed to write the export file. **{{ error }}**"
       unknow_part: The selected part does not exist in the parts list.
-      obsolete_cutlist: "Impossible, the parts list is obsolete. Regenerate it."
+      obsolete_cutlist: "Impossible, the parts list is obsolete. Please, regenerate it."
     warning:
       partial_cutlist: "This parts list is a partial representation of your model, because it is only based on a selection of parts."
       no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
@@ -672,9 +673,9 @@ tab:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
-        By using components for parts, they can be replicated without being duplicated.
+        The use of components makes it possible to replicate identical parts without duplicating them.
       no_typed_materials: "Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materials**."
-    obsolete_base: "To stay in sync, you must regenerate the parts list."
+    obsolete_base: "To stay in sync, the parts list must be regenerated."
   materials:
     label: Materials
     title: Materials
@@ -736,7 +737,7 @@ tab:
       std_widths_help: |
         Standard widths of edge bandings.
         *Widths without units are considered to be in model units.*
-      std_thicknesses: Standard Thicknesses
+      std_thicknesses: Standard Thickness
       std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
         Available **actual** rough thicknesses.
@@ -746,7 +747,7 @@ tab:
       std_sections_help: |
         Expected format: **W**x**T**, where **W** and **T** represent the **actual** *width* and *thickness* of the dimensional piece.
         *Sizes without units are considered to be in model units.*
-      std_sizes: Standard Panel Sizes
+      std_sizes: Standard Panel Size
       std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
@@ -756,11 +757,11 @@ tab:
       grained_0: No Grain
       grained_1: Grain Follows Length
       edge_decremented: Reduce
-      edge_decremented_help: Allows you to indicate whether the dimensions of parts must be reduced by the thickness of the edge banding.
+      edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
       volumic_mass: Density
-      volumic_mass_help: Allows you to define the density (specific mass) of the material.
+      volumic_mass_help: Allows you to define the density of the material.
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
       std_prices_dim_placeholder: Select a size
@@ -822,7 +823,7 @@ tab:
       title: Import Parts into the Model
       info_0: |
         You are about to import **{{ count }} part** into the model.
-        This part will be placed at the origin of the the main scene.
+        This part will be placed at the origin of the main scene.
       info_0_plural: |
         You are about to import **{{ count }} parts** into the model.
         These parts will be stacked starting at the origin of the main scene.
@@ -855,7 +856,7 @@ tab:
       bad_extension: "The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**."
       failed_to_load_csv_file: |
         Unable to load the CSV file: **{{ error }}**
-        *Verify that you have selected the correct field separator.*
+        *Verify that you have selected the appropriate field separator.*
       empty_file: The file seems empty or could not be interpreted.
       no_importable_part: No part can be imported. Assign the mandatory fields to the corresponding columns.
       invalid_name: Invalid description
@@ -925,26 +926,26 @@ tab:
       docs: Funding for Documentation
     objective_details:
       default: |
-        The continuous improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **3.0**!
+        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **3.0**!
       docs: |
-        It is important to us that *OpenCutList* is accessible and intuitive. But this requires a **Complete and Comprehensive Documentation**.
+        It is important to us that *OpenCutList* is accessible and intuitive. But this requires a **Complete and Quality Documentation**.
         By providing us with the means to write it, you give us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
-      The development of new features will be done thanks to **Fundraising** and will start when its **Financial Goal** is reached.
+      The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |
       Thank you for your contribution!
     objective_funded_progress: "funded at {{ progress }}%"
   settings:
     label: Preferences
     title: Preferences
-    global_settings: Global preferences
+    global_settings: Global Preferences
     language: Language
     zoom: Font size
     zoom_normal: Normal
     zoom_small: Small
     zoom_tiny: Tiny
     size_and_position: Size and Position of the Window
-    model_settings: Model preferences
+    model_settings: Model Preferences
     length_unit: Unit of length
     length_format: Format
     length_format_0: Decimal
@@ -952,12 +953,12 @@ tab:
     length_format_2: Engineering
     length_format_3: Fractional
     length_precision: Precision
-    suppress_units_display: Display the unit of length for each value
-    mass_unit: Unit of mass
+    suppress_units_display: Display length unit for each value
+    mass_unit: Unit of weight
     currency_symbol: Currency symbol
     menu:
-      dump_global_presets: Dump of presets
-      dump_model_presets: Dump of model presets
+      dump_global_presets: Dump presets
+      dump_model_presets: Dump model presets
       reset_global_presets: Reinitialize the presets
       reset_global_presets_confirm: |
         You are about to reset all of your saved *OpenCutList* presets.
@@ -965,15 +966,15 @@ tab:
         Confirm to continue.
       reset_global_presets_success: |
         *OpenCutList* presets have been reset.
-        In order to take the changes into account, you must **close** and **reopen** the OpenCutList window.
-      reset_model_presets: Reinitialize the model presets
+        In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
+      reset_model_presets: Reinitialize model presets
       reset_model_presets_confirm: |
         You are about to reset all *OpenCutList* presets for the current model.
-        This action is final. **All settings will be restored to default values.**
+        This action is final. **All settings will be restored to their default values.**
         Confirm to continue.
       reset_model_presets_success: |
-        The current model's *OpenCutList* presets have been reset.
-        In order to take the changes into account, you must **close** and **reopen** the OpenCutList window.
+        The *OpenCutList* presets for the current model have been reset.
+        In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
   about:
     label: About
     title: About
@@ -981,8 +982,8 @@ tab:
     credits: Technical Credits
     credits_authors: |
       *OpenCutList* is developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Translations
     credits_translators: |
-      Translations:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
       - Vladimir Badulya (*Russian*)
       - Pierluigi Colombo (*Italian*)
@@ -991,7 +992,8 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
-      - SOUL Issam (*Arabic*), RTL interface not yet supported
+      - Soul Issam (*Arabic*), RTL interface not yet supported
+      - Dany Dhondt, Eric Lugtigheid (*Dutch*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -63,13 +63,13 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Altro
-    more_docs: Docs
+    more_docs: Doc
     more_reviews: Recensioni
     more_plans: Progetti
     more_extensions: Estensioni
     more_update: Aggiorna
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Segnala un bug
   warning:
     dev: |
       Stai utilizzando una versione **in fase di sviluppo** di *OpenCutList*.
@@ -254,13 +254,13 @@ tab:
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
-      instance_count_by_part: "Gruppo / lotto ?"
+      instance_count_by_part: Condizionamento
       instance_count_by_part_help: |
-        Permette di contare le parti in base al numero di **pacchetti** richiesti invece delle unità presenti nel modello.
-        Le parti raggruppate in un pacchetto devono avere la stessa definizione.
+        Permette di considerare la parte come un *lotto* di una o più *unità*.
+        La quantità associata al pezzo nel elenco di parti rappresenterà quindi il numero di lotti interi necessari per contenere il numero di unità effettivamente presenti nel modello.
 
-        *Esempio: Per calcolare 1 parte per una coppia di guide per cassetti:
-        Pacchetto = 2 unità / parte.
+        *Esempio: per contare solo 1 pezzo per una coppia di guide per cassetti:
+        Imballaggio = 2 unità / pezzo*
       instance_count_by_part_1: 1 unità per pezzo
       instance_count_by_part_2: 2 unità per pezzo
       mass: Massa
@@ -631,6 +631,7 @@ tab:
       formula:
         part_number: Numero
         part_name: Descrizione
+        part_entity_name: Nome dell'istanza
         part_cutting_size: Dimensioni grezze
         part_cutting_length: Lunghezza grezza
         part_cutting_width: Larghezza grezza
@@ -981,8 +982,8 @@ tab:
     credits: Crediti Tecnici
     credits_authors: |
       *OpenCutList* è stata sviluppata da [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Elenco dei [contributori](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Traduzioni
     credits_translators: |
-      Traduzioni:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
       - Vladimir Badulya (*russo*)
       - Pierluigi Colombo (*italiano*)
@@ -992,6 +993,7 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz (*polacco*)
       - Sergey Isupov (*ebraico*), interfaccia RTL non ancora implementata
       - Soul Issam (*arabico*), interfaccia RTL non anchora implementata
+      - Dany Dhondt, Eric Lugtigheid (*olandese*)
     credits_description: |
       Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

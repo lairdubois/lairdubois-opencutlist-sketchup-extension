@@ -7,7 +7,7 @@ default:
   cancel: ביטול
   validate: אישור
   confirm: לאשר
-  ok: ""
+  ok: Ok
   open: לפתוח
   see: צפייה
   close: לסגור
@@ -43,9 +43,11 @@ default:
   unit_5: יארד
   unit_mass_0: קִילוֹגרָם
   unit_mass_1: לִירָה
+  instance_single: יחידה
+  instance_plural: יחידות
   part_single: חלק
   part_plural: חלקים
-  setup_model_units: ""
+  setup_model_units: הגדרת יחידות
   load_more: "טען עוד ..."
   reset_to_app_defaults: לשחזר ערכים מקוריים
 core:
@@ -67,10 +69,17 @@ core:
     more_extensions: תוספים
     more_update: עדכונים
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: דווח על באג
   warning:
     dev: |
+      אתה משתמש בגרסת **פיתוח** של *OpenCutList*.
+      גרסה זו זמינה רק לבדיקה.
+      לא מומלץ להשתמש בה בייצור.
+
+      לדיווח על באג: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
+      אתם משתמשים בגרסה ישנה של SketchUp ({{ sketchup_version }}). תוסף זה יעבוד, אך יתכן שיש באגים.
+      כדי לנצל את מלוא היתרונות של OpenCutList, אנו ממליצים לשדרג לפחות ל- **SketchUp 2017**.
     feature_locked: "*לא ניתן להשבית בגרסה זו של SketchUp*"
   event:
     model_change: המודל הפעיל השתנה.
@@ -107,6 +116,9 @@ core:
     user_defaults: הגדרות ברירת מחדל שלי
     new: הגדרות חדשות
     new_prompt: |
+      *יצירת הגדרה קבועה מראש מאפשרת לך לשמור על הגדרות נוכחיות בכל מקום, כך שתוכל לעשות בהן שימוש חוזר בכל התבניות שלך.*
+
+      הזן את שם ההגדרה:
     delete_confirm_title: הסרה
     delete_confirm: "האם אתה בטוח שברצונך למחוק את ההגדרה **\"{{ name }}\"**?"
     override_confirm_title: עדכון
@@ -119,7 +131,7 @@ core:
       save_to: "עדכן הגדרה '{{ name }}'"
       delete: "למחק הגדרה '{{ name }}'"
   progress:
-    please_wait: ""
+    please_wait: המתן בבקשה
 tab:
   cutlist:
     label: תוכנית חיתוך
@@ -173,7 +185,7 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: עריכת מאפיינים של קבוצת חלקים
-      edit_material: ""
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: הגדל / מזער
       material_origin_1: חומר של החלק נקבע לפי עותקיו
       material_origin_2: חומר של החלק עבר בירושה מאחת האלמנטיים המקוריים.
@@ -184,16 +196,18 @@ tab:
       number_generated: מספר החלק נוצר באופן אוטומטי
       resized: החלק שונה על פי הגדרת מרכיביו.
       flipped: החלק משתקף מהגדרתיו
-      symmetrical: ""
+      symmetrical: בחלק הזה לא מופעל זיהוי *חלק משתקף*
       auto_oriented: החלק עבר הכוונה אוטומטית
       add_label_filter: "לסנן לפי '{{ label }}'"
       remove_label_filter: "הסר סינון לפי '{{ label }}'"
       add_edge_material_name_filter: "לסנן לפי '{{ material_name }}'"
       remove_edge_material_name_filter: "לא לסנן לפי '{{ material_name }}'"
       not_aligned_on_axes: " שימו לב, החלק עשוי להיות מכוון בצורה לא נכונה ביחס לצירים שלו."
-      instance_count_by_part: ""
-      missing_instance_count: ""
-      missing_instance_count_plural: ""
+      instance_count_by_part: "החלק נספר בקבוצות של **{{count}}** יחידות."
+      unused_instance_count: "לידיעתך, לא תעשה שימוש ביחידה **{{ count }}** מהקבוצה האחרונה."
+      unused_instance_count_plural: "לידיעתך, ש-**{{ count }}** יחידות מהקבוצה האחרונה לא ישמשו."
+      used_instance_count: "נעשה שימוש ביחידה **{{ count }}** / {{ total }}"
+      used_instance_count_plural: "נעשה שימוש ביחידות **{{ count }}** / {{ total }}"
       multiple_layers: "שימו לב, החלק מורכב מקבוצות משנה הקיימות ב-{{ count }} שכבות שונות: <br> {{ layers }}"
       children_warnings: "שימו לב, קיימת התראה בחלקים המקובצים {{ count }}"
       children_warnings_plural: "שימו לב, קיימות התראות בחלקים המקובצים {{ count }}"
@@ -212,7 +226,7 @@ tab:
       dblclick_to_copy_all_edges: לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
       part_axes: צירים פנימיים של החלק
       select_unselect_all_parts: בחר / בטל את הבחירה בכל החלקים בקבוצה
-      setup_group_cuttingdiagram: ""
+      setup_group_cuttingdiagram: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: הצג את כל הקבוצות
       hide_all_other_groups: הסתר את כל שאר הקבוצות
@@ -224,8 +238,8 @@ tab:
       group_cuttingdiagram: תוכנית חיתוך
       group_labels: הדפסת תוויות
       edit_material: "ערוך חומר '{{ material_name }}'"
-      expand_all: פתח חלקים זהים
-      collapse_all: קפל חלקים זהים
+      expand_all: פתח את כל השורות
+      collapse_all: קפל את כל השורות
     edit_part:
       title: "מאפייני חלק '{{ name }}'"
       title_multiple: מאפייני קבוצת חלקים
@@ -240,14 +254,14 @@ tab:
       cumulable_0: לא לצבור
       cumulable_1: לצבור לאורך
       cumulable_2: לצבור לרוחב
-      instance_count_by_part: קבוצה
+      instance_count_by_part: ""
       instance_count_by_part_help: |
-      instance_count_by_part_1: ""
-      instance_count_by_part_2: ""
+      instance_count_by_part_1: פריט 1 ביחידה
+      instance_count_by_part_2: 2 פריטים ביחידה
       mass: מסה
-      mass_help: ""
+      mass_help: המשקל החלק ישמש בעת הפקת **דוחות**.
       price: מחיר
-      price_help: ""
+      price_help: מחיר החלק ישמש בעת הפקת **דוחות**.
       tags: תגים
       tags_help: |
         בעזרת האפשרות *תגים*, תוכלו להוסיף מילות מפתח לאינדקס כדי לזהות טוב יותר חלקים בתוכנית חיתוך.
@@ -263,8 +277,9 @@ tab:
         - *אורך* תואם את הציר <span style='color:red'>אדום</span>
         - *רוחב* תואם את הציר <span style='color:green'>ירוק</span>
         - *עובי* תואם את הציר <span style='color:blue'>כחול</span>
-      symmetrical: ""
+      symmetrical: השבת זיהוי חלקים משתקפים
       symmetrical_help: |
+        אם התיבה מסומנת, זיהוי *חלק משתקף* לא יופעל.
       size_increase: תוספות
       size_increase_help: |
         תוספות מאפשרות להגדיל מידות מחושבות של החלק.
@@ -341,8 +356,8 @@ tab:
       property_count: כמות
       property_edge_pattern: כמות קאנטים
       tags: תגים
-      tags_help: ""
-      tags_placeholder: ""
+      tags_help: רשימה מותאמת אישית של תגים המוצעים בחלון מאפייני החלק.
+      tags_placeholder: הוסף תג
     list:
       filters: סינון
       filters_warning_0: "סינון הזה מסתיר את כל החלקים!"
@@ -378,7 +393,7 @@ tab:
       info_0: |
         הפונקציונליות מאפשרת לייצא *תוכנית חיתוך* כ*רשימת חלקים* לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
       options: אפשרויות ייצוא
-      options_customize: ""
+      options_customize: הגדרות
       option_source: מקור
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -433,6 +448,7 @@ tab:
       total_area: שטח כללי
       total_length: סכום אורכים
       error:
+        no_typed_material_parts: ""
         entry_error: ""
         entry_error_plural: ""
       warning:
@@ -609,6 +625,7 @@ tab:
       formula:
         part_number: מספר
         part_name: תיאור
+        part_entity_name: ""
         part_cutting_size: גודל חיתוך
         part_cutting_length: אורך חיתוך
         part_cutting_width: רוחב חיתוך
@@ -641,8 +658,8 @@ tab:
       obsolete_cutlist: "לא ניתן, תוכנית חיתוך לא מעודכנת. ליצור מחדש."
     warning:
       partial_cutlist: תוכנית חיתוך כוללת רק מודל חלקי מכיוון שהוא נוצר מאלמנטים שנבחרו.
-      no_typed_materials_in_model: המודל אינו משתמש בשום חומר עם סוג מוגדר (**מטר קוב** או **מטר מרובע** או **מטר רץ**).
-      no_typed_materials_in_selection: בבחירתך אין שימוש בחומר עם סוג מוגדר (**מטר קוב** או **מטר מרובע** או **מטר רץ**).
+      no_typed_materials_in_model: ""
+      no_typed_materials_in_selection: ""
       export_empty: הייצוא אינו מכיל חלקים כלשהם.
     success:
       exported_to: "הייצוא בוצע אל {{ export_path }}."
@@ -651,7 +668,7 @@ tab:
         החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
         אם משתמשים רק בקבוצות, המירו אותן לרכיבים.
         שימוש ברכיבים מאפשר לעתיק חלקים זהים מבלי לשכפל אותם.
-      no_typed_materials: החל חומר על החלקים שיכללו בתוכנית חיתוך והגדר את סוג החומר (**מטר קוב** או **מטר מרובע** או **מטר רץ**) בלשונית <i class="ladb-opencutlist-icon-materials"></i> **חומרים**.
+      no_typed_materials: ""
     obsolete_base: "כדי לסנכרן שינויים, עליך לחשב מחדש את התוכנית חיתוך."
   materials:
     label: חומרים
@@ -900,10 +917,11 @@ tab:
     objective_slogan: OpenCutList - זה כולנו
     objective_title:
       default: מטרות
+      docs: ""
     objective_details:
       default: |
+      docs: |
     objective_crowdfunding: |
-      פיתוח פונקציות חדשות יתבצע הודות ל-**מימון המונים** ויכול להתחיל כאשר הושג **היעד הכספי**.
     objective_thanks: |
       תודה על תרומתך !
     objective_funded_progress: "ממומן ב-{{ progress }}%"
@@ -944,8 +962,8 @@ tab:
     credits: מפרט טכני
     credits_authors: |
       *OpenCutList* פותח על ידי [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) ו- [Martin Müller](https://www.lairdubois.fr/@mobilarte). *רשום את [התורמים](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: תרגומים
     credits_translators: |
-      תרגומים:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*אנגלית*, *גרמנית*)
       - Vladimir Badulya (*רוסית*)
       - Pierluigi Colombo (*איטלקית*)
@@ -954,7 +972,8 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*צ'כית*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk et Dominik Szybisz (*פולנית*)
       - Sergey Isupov (*עברית*), ללא ממשק מימין לשמאל
-      - Soul Issam (* ערבית *), ללא ממשק מימין לשמאל
+      - Soul Issam (*ערבית*), ללא ממשק מימין לשמאל
+      - Dany Dhondt, Eric Lugtigheid (*הוֹלַנדִי*)
     credits_description: |
       פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
       ובנוסף, הוא גם *קוד פתוח* וזמין ברישיון [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

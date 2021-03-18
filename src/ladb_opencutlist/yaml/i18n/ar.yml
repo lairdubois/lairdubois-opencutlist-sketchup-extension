@@ -43,6 +43,8 @@ default:
   unit_5: ياردة
   unit_mass_0: كيلوغرام
   unit_mass_1: رطل
+  instance_single: الوحدة
+  instance_plural: الوحدات
   part_single: قطعة
   part_plural: القطع
   setup_model_units: تكوين وحدات النموذج
@@ -67,7 +69,7 @@ core:
     more_extensions: إضافات
     more_update: ترقية
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: ""
   warning:
     dev: |
       أنت تستعمل نسخة **ما زالت تحت التطوير** من *OpenCutList*.
@@ -202,8 +204,10 @@ tab:
       remove_edge_material_name_filter: "إزالة التصفية وفق '{{ material_name }}'"
       not_aligned_on_axes: تحذير، قد لا تتم محاذاة هذه القطعة بشكل صحيح على محاورها
       instance_count_by_part: "هذه القطعة محسوبة في أطقم من **{{ count }}** وحدات"
-      missing_instance_count: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم."
-      missing_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
+      unused_instance_count: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم."
+      unused_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
+      used_instance_count: ""
+      used_instance_count_plural: ""
       multiple_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>"
       children_warnings: "تحذير، هناك {{ count }} إنذار في القطع المجموعة"
       children_warnings_plural: "تحذير، هناك {{ count }} إنذارات في القطع المجموعة"
@@ -234,8 +238,8 @@ tab:
       group_cuttingdiagram: رسم التقطيعِ التخطيطيُ
       group_labels: اطبع الملصقات
       edit_material: "عدّل الخامة '{{ material }}'..."
-      expand_all: نشر القطع كل المماثلة
-      collapse_all: طيّ كل القطع المماثلة
+      expand_all: نشر كل الأسطر
+      collapse_all: طيّ كل الأسطر
     edit_part:
       title: "خصائص القطعة '{{ name }}'"
       title_multiple: خصائص مجموعة القطع
@@ -250,12 +254,8 @@ tab:
       cumulable_0: غير مجموع
       cumulable_1: مجموع وفقا للطول
       cumulable_2: مجموع وفقا للعرض
-      instance_count_by_part: طقم
+      instance_count_by_part: ""
       instance_count_by_part_help: |
-        يسمح لك بحساب القطع في ** الأطقم ** المطلوبة بدلاً من الوحدات في النموذج.
-        يجب أن يكون لقِطع الدفعة نفس التعريف.
-
-        * مثال: عُدَّ قطعة واحدة فقط لزَوج من زلاّقات الدُرج. *
       instance_count_by_part_1: وحدة لكل قطعة
       instance_count_by_part_2: وحدتان لكل قطعة
       mass: الكتلة
@@ -437,8 +437,8 @@ tab:
       info_0: |
         تتيح لك هذه الوظيفة إنشاء تقرير **بالكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
       options_general: عام
-      option_solid_wood_coefficient: معامل *خشب الجذوع الصلب*
-      option_solid_wood_coefficient_help: تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "** خشب الجذوع الصلب **".
+      option_solid_wood_coefficient: ""
+      option_solid_wood_coefficient_help: ""
       raw_materials: المواد الأولية
       coefficient: المعامل
       total: الإجمالي
@@ -449,6 +449,7 @@ tab:
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
       error:
+        no_typed_material_parts: ""
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -625,6 +626,7 @@ tab:
       formula:
         part_number: الرقم
         part_name: وصف
+        part_entity_name: ""
         part_cutting_size: الأبعاد الأولية
         part_cutting_length: الطول الأولي
         part_cutting_width: العرض الأولي
@@ -657,8 +659,8 @@ tab:
       obsolete_cutlist: مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:
       partial_cutlist: قائمة القِطع هذه هي تمثيل جزئي لنموذجك، لأنه تدخل فيها بعض القطع المحددة فحسب.
-      no_typed_materials_in_model: نموذجك لا يستعمل أي خامة ضمن أي نوع (** لوح** أو **خشب الجذوع الصلب** أو **قضيب خشبي** ).
-      no_typed_materials_in_selection: تحديدك لا يستعمل أي خامة ضمن أي نوع (** لوح** أو **خشب الجذوع الصلب** أو **قضيب خشبي** ).
+      no_typed_materials_in_model: ""
+      no_typed_materials_in_selection: ""
       export_empty: تصديرك لا يحتوي أي قطعة.
     success:
       exported_to: "نجح التصدير إلى {{ export_path }}."
@@ -667,7 +669,7 @@ tab:
         يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
         إن كنت تستعمل المجموعات groups فحسب فعليك تحويلها إلى عناصر components.
         استخدام العناصر لإنتاج القِطع، يتيح إعادة إنتاجها بطريقة مماثلة دون نسخها نسخا مطابقا.
-      no_typed_materials: طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائص النوع (** لوح** أو **خشب الجذوع الصلب** أو **قضيب خشبي** ). في التبويب <i class="ladb-opencutlist-icon-materials"></i> **الخامات**.
+      no_typed_materials: ""
     obsolete_base: للبقاء في وضعية مزامنة، ينبغي أن تعيد استحداث قائمة القِطع.
   materials:
     label: الخامات
@@ -916,9 +918,11 @@ tab:
     objective_slogan: OpenCutList، هو نحن كلنا
     objective_title:
       default: الأهداف
+      docs: ""
     objective_details:
       default: |
         التحسين المستمر لـ *OpenCutList* مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي **3.0**!
+      docs: |
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |
@@ -971,8 +975,8 @@ tab:
     credits: الاعتمادات التقنية
     credits_authors: |
       *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte).* قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: المترجمون
     credits_translators: |
-      المترجمون:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
       - Vladimir Badulya (*الروسية*)
       - Pierluigi Colombo (*الإيطالية*)
@@ -982,6 +986,7 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk, Dominik Szybisz (*البولندية*)
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
+      - Dany Dhondt, Eric Lugtigheid (*اللغة الهولندية*)
     credits_description: |
       تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة [L'Air du Bois](https://www.lairdubois.fr).
       هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) على [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -43,10 +43,10 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramm
   unit_mass_1: Pfund
-  instance_single: Einheit
-  instance_plural: Einheiten
-  part_single: Stück
-  part_plural: Stücke
+  instance_single: Stk.
+  instance_plural: Stücke
+  part_single: Teil
+  part_plural: Teile
   setup_model_units: Modelleinheiten konfigurieren
   load_more: "Weitere laden ..."
   reset_to_app_defaults: Originalwerte wiederherstellen
@@ -69,7 +69,7 @@ core:
     more_extensions: Plugins
     more_update: Update
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Fehler melden
   warning:
     dev: |
       Sie verwenden eine **in Entwicklung befindliche** Version von *OpenCutList*.
@@ -204,10 +204,10 @@ tab:
       remove_edge_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
       not_aligned_on_axes: "Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet"
       instance_count_by_part: "Dieses Teil wird in **{{ count }}** Einheiten pro Packung gezählt."
-      unused_instance_count: "Achtung, **{{ count }}** Einheit der letzten Packung wird nicht verwendet."
-      unused_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Packung werden nicht verwendet."
-      used_instance_count: "**{{ count }}** / {{ total }} Einheiten verwendet"
-      used_instance_count_plural: "**{{ count }}** / {{ total }} Einheiten verwendet"
+      unused_instance_count: "Achtung, **{{ count }}** Stück der letzten Packung wird nicht verwendet."
+      unused_instance_count_plural: "Achtung, **{{ count }}** Stücke der letzten Packung werden nicht verwendet."
+      used_instance_count: "**{{ count }}** / {{ total }} Stücken verwendet"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} Stücken verwendet"
       multiple_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die in {{ count }} verschiedenen Ebenen vorhanden sind:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
@@ -243,7 +243,7 @@ tab:
     edit_part:
       title: "Eigenschaften des Teils '{{ name }}'"
       title_multiple: Eigenschaften der Gruppe von Teilen
-      multiple_alert: "Gemeinsame Eigenschaften der Gruppe von {{ part_count }} Teilen."
+      multiple_alert: "Gemeinsame Eigenschaften von {{ part_count }} Teilen."
       general: Allgemein
       edges: Kantenbänder
       name: Bezeichnung
@@ -254,13 +254,13 @@ tab:
       cumulable_0: Nicht Summierbar
       cumulable_1: Summierbar über die Längsachse
       cumulable_2: Summierbar über die Breitachse
-      instance_count_by_part: Packung
+      instance_count_by_part: Verpackung
       instance_count_by_part_help: |
-        Ermöglicht das Zählen von Teilen anhand der Anzahl erforderlichen **Packungen** anstelle der im Modell vorhandenen Einheiten.
-        Die in einer Packung zusammengefassten Teile müssen dieselbe Definition haben.
+        Erlaubt die Betrachtung des Teils als *Verpackung* einer oder mehrerer *Einheiten*.
+        Die Menge, die dem Teil in der Holzliste zugeordnet ist, stellt daher die Anzahl der ganzen Verpackungen dar, die benötigt werden, um die Anzahl der tatsächlich im Modell vorhandenen Stücke zu enthalten.
 
-        *Beispiel: Um 1 Teil für ein Paar Schubladenführungen zu berechnen:
-        Packung = 2 Einheiten / Teil.*
+        *Beispiel: Um nur 1 Teil für ein Paar Schubladenführungen zu zählen:
+        Verpackung = 2 Stücke / Teil*
       instance_count_by_part_1: 1 Stück
       instance_count_by_part_2: 2 Stücke
       mass: Masse
@@ -442,7 +442,7 @@ tab:
       info_0: |
         Mit dieser Funktion können Sie einen Bericht über die **Massen** und **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden, erstellen.
       options_general: Allgemein
-      option_solid_wood_coefficient: Koeffizient für *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient: Faktor für *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: "Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ \"**$t(tab.materials.type_1)**\" angewendet wird, um den Verschnitt zu berücksichtigen."
       raw_materials: Rohmaterial
       coefficient: Koeffizient
@@ -458,7 +458,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
-        visible_only: "Es werden nur die Teile gezählt, die in den **sichtbaren Gruppen** enthalten sind."
+        visible_only: "Es werden nur die Teile gezählt, die in den **eingeblendeten Gruppen** enthalten sind."
     cuttingdiagram:
       title: Schnittplan
       options_material: Material
@@ -500,7 +500,7 @@ tab:
       option_highlight_primary_cuts: Primärschnitte
       option_highlight_primary_cuts_0: Nur bei Übersicht
       option_highlight_primary_cuts_1: Immer sichtbar
-      option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte immer hervorzuheben."
+      option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte hervorzuheben."
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
       option_trimming: Randabfallbreite
@@ -557,7 +557,7 @@ tab:
         width: Breite
         total_length: Σ Längen
         total_area: Σ Flächen
-        total_part_count: Σ Teile
+        total_part_count: "# Teile"
         total_used: Insgesamt verwendet
         trimming: Seitenrand
         total_length_cuts: Schnittlänge
@@ -631,6 +631,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Bezeichnung
+        part_entity_name: Instanzbezeichnung
         part_cutting_size: Rohmaße
         part_cutting_length: Länge - roh
         part_cutting_width: Breite - roh
@@ -664,16 +665,16 @@ tab:
     warning:
       partial_cutlist: "Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde."
       no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: "Ihre Auswahl verwendet kein Material eines definierten Typs (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       export_empty: Ihre Exportauswahl enthält keine Teile.
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
     tip:
       no_component: |
         Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
-        Falls Sie Gruppen verwenden, müssen diese in Komponenten konvertiert werden.
+        Falls Sie ausschliesslich Gruppen verwenden, müssen Sie diese in Komponenten konvertieren.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
-      no_typed_materials: "Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten. Und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialien**."
+      no_typed_materials: "Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialien**."
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Holzliste neu generieren."
   materials:
     label: Materialien
@@ -762,7 +763,7 @@ tab:
       volumic_mass: Rohdichte
       volumic_mass_help: Ermöglicht die Massendichte des Materials festzulegen.
       std_prices: Preis
-      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede Standardgröße des Materials.
+      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_prices_dim_placeholder: Wählen Sie eine Größe
       std_prices_add: Preis hinzufügen
       texture_width: Breite
@@ -930,7 +931,7 @@ tab:
         Es ist uns wichtig, dass *OpenCutList* zugänglich und intuitiv ist. Dies geht jedoch Hand in Hand mit dem Schreiben einer **vollständigen und qualitativ hochwertigen Dokumentation**.
         Indem Sie uns die Mittel zum Schreiben zur Verfügung stellen, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
     objective_crowdfunding: |
-      Die Entwicklung von neuen Funktionen dank **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
+      Die Entwicklung von neuen Funktionen wird durch **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
     objective_thanks: |
       Vielen Dank für Ihren Beitrag!
     objective_funded_progress: "zu {{ progress }} % finanziert"
@@ -952,7 +953,7 @@ tab:
     length_format_2: Ingenieurswesen
     length_format_3: Fraktional
     length_precision: Genauigkeit
-    suppress_units_display: Die Längeneinheit für jeden Wert anzeigen
+    suppress_units_display: Längeneinheiten für jeden Wert anzeigen
     mass_unit: Masseneinheit
     currency_symbol: Währungszeichen
     menu:
@@ -981,8 +982,8 @@ tab:
     credits: Entwicklung und Programmierung
     credits_authors: |
       *OpenCutList* wird von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) und [Martin Müller](https://www.lairdubois.fr/@mobilarte) entwickelt. *[Beitragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
+    credits_translations: Übersetzungen
     credits_translators: |
-      Übersetzungen:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
       - Vladimir Badulya (*Russisch*)
       - Pierluigi Colombo (*Italienisch*)
@@ -992,6 +993,7 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk und Dominik Szybisz (*Polnisch*)
       - Sergey Isupov (*Hebräisch*), noch ohne RTL Schnittstelle
       - Soul Issam (*Arabisch*), noch ohne RTL Schnittstelle
+      - Dany Dhondt, Eric Lugtigheid (*Niederländisch*)
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.

@@ -43,6 +43,8 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pond
+  instance_single: eenheid
+  instance_plural: eenheden
   part_single: deel
   part_plural: delen
   setup_model_units: Configureer modeleenheden
@@ -67,7 +69,7 @@ core:
     more_extensions: plugin
     more_update: Bijwerken
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Meld een bug
   warning:
     dev: |
       U gebruikt een ** betaversie ** van * OpenCutList *.
@@ -201,8 +203,10 @@ tab:
       remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
       not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
       instance_count_by_part: "Dit onderdeel wordt geteld als set van {{ count }} eenheden"
-      missing_instance_count: ""
-      missing_instance_count_plural: ""
+      unused_instance_count: "Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt."
+      unused_instance_count_plural: "Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt."
+      used_instance_count: "**{{ count }}** / {{ total }} gebruikte eenheden"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} gebruikte eenheden"
       multiple_layers: "Let op! dit component is opgebouwd uit delen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
       children_warnings: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_warnings_plural: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
@@ -233,8 +237,8 @@ tab:
       group_cuttingdiagram: Zaagschema
       group_labels: Druk etiketten af
       edit_material: "Wijzig materiaal '{{ material }}'..."
-      expand_all: Vouw alle identieke onderdelen uit
-      collapse_all: Vouw alle identieke onderdelen samen
+      expand_all: Alle lijnen uitzetten
+      collapse_all: Alle lijnen samenvouwen
     edit_part:
       title: "Eigenschappen van onderdeel '{{ name }}'"
       title_multiple: Eigenschappen van groep onderdelen
@@ -249,14 +253,14 @@ tab:
       cumulable_0: Niet cumuleerbaar
       cumulable_1: Cumuleerbaar over de lengte
       cumulable_2: Cumuleerbaar over de breedte
-      instance_count_by_part: Lot
+      instance_count_by_part: ""
       instance_count_by_part_help: |
-      instance_count_by_part_1: ""
-      instance_count_by_part_2: ""
+      instance_count_by_part_1: 1 per onderdeel
+      instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
-      mass_help: ""
+      mass_help: De gewicht van het deel zal worden gebruikt bij het genereren van **Rapporten**.
       price: Prijs
-      price_help: ""
+      price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Rapporten**.
       tags: Tags
       tags_help: |
         Met * Tags * kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
@@ -272,8 +276,9 @@ tab:
         - de * lengte * komt op de rode as
         - de * breedte * op de groene as
         - de * dikte * op de blauwe as
-      symmetrical: ""
+      symmetrical: Schakel detectie van gespiegelde delen op dit deel uit
       symmetrical_help: |
+        Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
       size_increase: Overlengtes
       size_increase_help: |
         Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
@@ -433,8 +438,8 @@ tab:
       info_0: |
         Deze functionaliteit laat u toe om een rapport te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
       options_general: Algemeen
-      option_solid_wood_coefficient: "*Massief hout* coëfficient"
-      option_solid_wood_coefficient_help: Laat toe om de vermenigvuldigings coëfficient aan te duiden van het bruto gemeten volume voor materialen van het type "**Massief hout**".
+      option_solid_wood_coefficient: "*$t(tab.materials.type_1)* coëfficient"
+      option_solid_wood_coefficient_help: Laat toe om de vermenigvuldigings coëfficient aan te duiden van het bruto gemeten volume voor materialen van het type "**$t(tab.materials.type_1)**".
       raw_materials: Basis materialen
       coefficient: Coëfficiënt
       total: Totaal
@@ -445,6 +450,7 @@ tab:
       total_area: Σ Oppervlaktes
       total_length: Σ Lengtes
       error:
+        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materialen.type_1)**, **$t(tab.materialen.type_2)**, **$t(tab.materialen.type_3)**, **$t(tab.materialen.type_4)** of **$t(tab.materialen.type_5)**) is verstrekt om het rapport te genereren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
@@ -622,6 +628,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Beschrijving
+        part_entity_name: ""
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
@@ -654,8 +661,8 @@ tab:
       obsolete_cutlist: Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
     warning:
       partial_cutlist: Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
-      no_typed_materials_in_model: Uw model gebruikt geen enkel materiaal van het type (**Massief hout** ou **Paneel** ou **Plank**).
-      no_typed_materials_in_selection: Uw selectie bevat geen enkel materiaal van het type (**Massief hout** of **Paneel** of **Plank**).
+      no_typed_materials_in_model: "Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**)."
       export_empty: Uw export bevat geen enkel onderdeel.
     success:
       exported_to: "Export geslaagd naar {{ export_path }}."
@@ -664,7 +671,7 @@ tab:
         De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instanties zijn.
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
-      no_typed_materials: Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**Massief hout** of **Paneel** of **Plank**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
+      no_typed_materials: "Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialen**."
     obsolete_base: Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
   materials:
     label: Materialen
@@ -712,11 +719,11 @@ tab:
       attributes: Attributen
       thickness: Dikte
       length_increase: Lengte overmaat
-      length_increase_help: ""
+      length_increase_help: Overmaat wordt opgeteld bij de uiteindelijke lengte om de **raw length** te bepalen.
       width_increase: Breedte overmaat
-      width_increase_help: ""
+      width_increase_help: Overmaat wordt opgeteld bij de uiteindelijke breedte om de **raw width** te bepalen.
       thickness_increase: Dikte overmaat
-      thickness_increase_help: ""
+      thickness_increase_help: Overmaat wordt opgeteld bij de uiteindelijke dikte om de **raw thickness** te bepalen.
       std_lengths: Standaard lengtes
       std_lengths_placeholder: lengte ; ...
       std_lengths_help: |
@@ -788,6 +795,9 @@ tab:
     label: Importeren
     title: Onderdelen importeren
     help: |
+      Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV] (https://en.wikipedia.org/wiki/Comma-separated_values) bestand.
+      U kunt dan de functies van * OpenCutList * gebruiken voor onderdelen die zijn gegenereerd door andere software dan * SketchUp *.
+      Klik op de knop ** CSV-bestand openen ** om te beginnen.
     open_csv: Open CSV bestand
     import_to_model: Importeer in het model
     load:
@@ -814,12 +824,12 @@ tab:
       info_0_plural: |
         U staat op het punt om **{{ count }} onderdelen** te importeren in het model.
         Deze onderdelen zullen in de hoofdscène gestapeld op de oorsprong geplaatst worden.
-      info_1: ""
+      info_1: Klik op  **Import** om door te gaan..
       options: |
         Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
         Kies de gewenste importeer opties..
       option_remove_all_?: "Wat nu?"
-      option_remove_all_false: ""
+      option_remove_all_false: Voeg onderdelen toe aan bestaande..
       option_remove_all_true: Alles vrij!
       option_keep_definitions_settings: Bewaar instellingen voor definities
       option_keep_materials_settings: Materiaalparameters behouden
@@ -910,9 +920,13 @@ tab:
     objective_slogan: OpenCutList zijn we allemaal
     objective_title:
       default: Doelen
+      docs: Financiering van de documentatie
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **3.0**!
+      docs: |
+        Het is belangrijk voor ons dat * OpenCutList * toegankelijk en intuïtief is. Maar dit vereist een ** volledige en uitgebreide documentatie **.
+        Door ons financieel te steunen voor het te schrijven hiervan, geeft u ons de mogelijkheid om u te helpen het meeste uit * OpenCutList * te halen.
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
@@ -940,9 +954,9 @@ tab:
     mass_unit: Eenheid van massa
     currency_symbol: Valutateken
     menu:
-      dump_global_presets: ""
-      dump_model_presets: ""
-      reset_global_presets: ""
+      dump_global_presets: reset de voorkeursinstellingen
+      dump_model_presets: reset model voorkeursinstellingen
+      reset_global_presets: reset alle voorkeursinstellingen
       reset_global_presets_confirm: |
         U staat op het punt om al uw opgeslagen *OpenCutList* voorinstellingen te resetten.
         Deze actie is definitief. **Alle voorinstellingen gaan verloren**.
@@ -965,18 +979,8 @@ tab:
     credits: Technische verdienste
     credits_authors: |
       *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
+    credits_translations: ""
     credits_translators: |
-      Vertalingen :
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engels*, *Duits*)
-      - Vladimir Badulya (*Russisch*)
-      - Pierluigi Colombo (*Italiaans*)
-      - Nayton Sanches Barbosa, verbeterd en herzien door [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugees*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spaans*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*Tjsechisch*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk et Dominik Szybisz (*Pools*)
-      - Sergey Isupov (*Hebreeuws*), zondeer interface RTL
-      - SOUL Issam (*Arabisch*), zondeer interface RTL
-      - Dany Dhondt, Eric Lugtigheid (*Nederlands*)
     credits_description: |
       De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -43,6 +43,8 @@ default:
   unit_5: Yarda
   unit_mass_0: Kilogramo
   unit_mass_1: Libra
+  instance_single: unidade
+  instance_plural: unidades
   part_single: parte
   part_plural: partes
   setup_model_units: Configurar las unidades del modelo
@@ -67,7 +69,7 @@ core:
     more_extensions: Extensiones
     more_update: Actualizar
   bottombar:
-    report_a_bug: Report a bug
+    report_a_bug: Informar de un error
   warning:
     dev: |
       Está utilizando una versión de **desarrollo** de *OpenCutList*.
@@ -202,8 +204,10 @@ tab:
       remove_edge_material_name_filter: "No filtrar por '{{ material_name }}'"
       not_aligned_on_axes: "Atención, esta parte puede no estar orientada correctamente con respecto a sus ejes"
       instance_count_by_part: "Esta pieza se cuenta en lotes de **{{ count }}** unidades."
-      missing_instance_count: "Tenga en cuenta que no se utilizará **{{ count }}** unidad del último lote."
-      missing_instance_count_plural: "Tenga en cuenta que no se utilizarán **{{ count }}** unidades del último lote."
+      unused_instance_count: "Tenga en cuenta que no se utilizará **{{ count }}** unidad del último lote."
+      unused_instance_count_plural: "Tenga en cuenta que no se utilizarán **{{ count }}** unidades del último lote."
+      used_instance_count: "**{{ count }}** / {{ total }} unidad usada"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} unidades usadas"
       multiple_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas diferentes:<br>{{ layers }}"
       children_warnings: "Precaución, hay {{ count }} alerta en partes agrupadas"
       children_warnings_plural: "Precauciones, hay {{ count }} alertas en partes agrupadas"
@@ -234,8 +238,8 @@ tab:
       group_cuttingdiagram: Diagrama de corte
       group_labels: Imprimir etiquetas
       edit_material: "Editar material '{{ material_name }}'"
-      expand_all: Despliegue las partes similares
-      collapse_all: Doblar las partes similares
+      expand_all: Dividir todas las líneas
+      collapse_all: Doblar todas las líneas
     edit_part:
       title: "Propiedades de la parte '{{ name }}'"
       title_multiple: Propiedades del grupo de partes
@@ -250,12 +254,13 @@ tab:
       cumulable_0: No sumable
       cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
-      instance_count_by_part: Lote
+      instance_count_by_part: Embalaje
       instance_count_by_part_help: |
-        Permite contar las piezas en el número de **conjuntos** necesarios en lugar del número de unidades del modelo.
-        Las piezas de un conjunto deben tener la misma definición.
+        Permite considerar la pieza como un *lote* de una o más *unidades*.
+        La cantidad asociada a la pieza en la lista de partes representará por tanto el número de lotes enteros necesarios para contener el número de unidades realmente presentes en el modelo.
 
-        *Ejemplo: Contar sólo 1 pieza para un par de guías de cajón.*
+        *Ejemplo: Contar sólo 1 pieza para un par de guías de cajón:
+        Embalaje = 2 unidades / pieza*
       instance_count_by_part_1: 1 unidad por pieza
       instance_count_by_part_2: 2 unidades por pieza
       mass: Masa
@@ -437,8 +442,8 @@ tab:
       info_0: |
         Esta función le permite generar un informe de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
       options_general: General
-      option_solid_wood_coefficient: Coeficiente *Madera maciza*
-      option_solid_wood_coefficient_help: Se utiliza para indicar el coeficiente multiplicador aplicado al volumen bruto medido para los materiales de tipo "**Madera maciza**".
+      option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Permite indicar el factor aplicado al volumen bruto medido para los materiales de tipo "**$t(tab.materiales.tipo_1)**" para tener en cuenta los defectos y los residuos.
       raw_materials: Materias primas
       coefficient: Coeficiente
       total: Total
@@ -449,6 +454,7 @@ tab:
       total_area: Σ Areas
       total_length: Σ Longitudes
       error:
+        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** o **$t(tab.materials.type_5)**) para generar el informe."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
@@ -625,6 +631,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descripción
+        part_entity_name: Nombre de instancia
         part_cutting_size: Dimensiones aproximadas
         part_cutting_length: Longitud - cruda
         part_cutting_width: Ancho - crudo
@@ -657,8 +664,8 @@ tab:
       obsolete_cutlist: "Imposible, la lista de piezas está obsoleta. Regenerarlo."
     warning:
       partial_cutlist: "Esta lista de piezas es una representación parcial de su modelo, porque solo se basa en una selección de piezas."
-      no_typed_materials_in_model: Este modelo no utiliza ningún material definido (**Madera maciza** o **Tablero** o **Listones**).
-      no_typed_materials_in_selection: La selección no utiliza ningún material definido (**Madera maciza** o **Tablero** o **Listones**).
+      no_typed_materials_in_model: "Su modelo no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Su selección no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Su exportación no contiene ninguna parte.
     success:
       exported_to: "Exportar a {{ export_path }} exitosa."
@@ -667,7 +674,7 @@ tab:
         Las partes que se incluirán en la *lista de partes* deben ser instancias de un **componente**.
         Si usa solo grupos, conviértalos en componentes.
         Al usar componentes para las piezas, se pueden replicar sin duplicar.
-      no_typed_materials: "Aplique un material a las piezas que se incluirán en la lista de piezas y defina las propiedades de este material (**Madera maciza**, **Tablero** o **Listones**) en la pestaña <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiales**."
+      no_typed_materials: "Aplique un material a las piezas que se incluirán en la lista de piezas y defina las propiedades de este material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) en la pestaña <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiales**."
     obsolete_base: "Para permanecer sincronizado, debe volver a generar la lista de piezas."
   materials:
     label: Materiales
@@ -916,11 +923,15 @@ tab:
     objective_slogan: OpenCutList somos todos
     objective_title:
       default: Objetivo
+      docs: Financiación de la documentación
     objective_details:
       default: |
         ¡La mejora continua de * OpenCutList * es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización ** 3.0 **!
+      docs: |
+        Es importante para nosotros que *OpenCutList* sea accesible e intuitivo. Pero esto requiere una **Documentación completa y exhaustiva**.
+        Al proporcionarnos los medios para escribirla, nos das la oportunidad de ayudarte a sacar el máximo provecho de *OpenCutList*.
     objective_crowdfunding: |
-      El desarrollo de esta nueva funcionalidad se hará mediante **financiamiento participativo** y comenzará cuando se alcance su **Objetivo Financiero**.
+      El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
       ¡Gracias por tu contribución!
     objective_funded_progress: "financiado en {{ progress }}%"
@@ -971,8 +982,8 @@ tab:
     credits: Créditos técnicos
     credits_authors: |
       * OpenCutList * fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Traducciones
     credits_translators: |
-      Traducciones:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
       - Vladimir Badulya (*ruso*)
       - Pierluigi Colombo (*italiano*)
@@ -981,7 +992,8 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk y Dominik Szybisz (*polaco*)
       - Sergey Isupov (*hebreo*), sin interfaz RTL
-      - SOUL Issam (*árabe*), sin interfaz RTL
+      - Soul Issam (*árabe*), sin interfaz RTL
+      - Dany Dhondt, Eric Lugtigheid (*holandés*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
