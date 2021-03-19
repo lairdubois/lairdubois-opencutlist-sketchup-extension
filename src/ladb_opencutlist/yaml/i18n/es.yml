@@ -1,5 +1,5 @@
 _label: Español
-_reload_msg: "Para tener en cuenta todos los cambios, debe ** cerrar ** y ** reabrir ** la ventana OpenCutList."
+_reload_msg: "Para tener en cuenta todos los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList."
 _description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)"
 default:
   minimize: Minimizar
@@ -122,7 +122,7 @@ core:
     delete_confirm_title: Supresión
     delete_confirm: "¿Confirma la eliminación del preajuste **\"{{ name }}\"**?"
     override_confirm_title: Actualización
-    override_confirm: "¿Confirmas la actualización del preajuste** \"{{ name }}\" ** con los parámetros del formulario?"
+    override_confirm: "¿Confirmas la actualización del preajuste **\"{{ name }}\"** con los parámetros del formulario?"
     new_success: "Preajuste **\"{{ name }}\"** creado"
     override_success: "Preajuste **\"{{ name }}\"** actualizado"
     restore_success: "El formulario se ha rellenado con el preajuste **\"{{ name }}\"**."
@@ -250,7 +250,7 @@ tab:
       material: Material
       cumulable: Acumulable
       cumulable_help: |
-        Si seleccionas esta opción, el **largo** o el **ancho** se considerará **unidad de longitud** o * unidad de ancho** multiplicado por el recuento al ordenar la lista de piezas.
+        Si seleccionas esta opción, el **largo** o el **ancho** se considerará **unidad de longitud** o **unidad de ancho** multiplicado por el recuento al ordenar la lista de piezas.
       cumulable_0: No sumable
       cumulable_1: Acumulable a lo largo
       cumulable_2: Sumable a lo ancho
@@ -334,7 +334,7 @@ tab:
       part_number_sequence_by_group: Reinicializar la enumeración de partes para cada grupo
       part_number_sequence_by_group_help: "Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y grosor bruto)."
       part_folding: Agrupar partes similares
-      part_folding_help: "Si esta opción está habilitada, las partes de ** mismo tamaño **, con ** las mismas etiquetas ** y ** la misma superficie terminada ** * (si la visualización de esta superficie no está oculta) * se agruparán en la misma línea."
+      part_folding_help: "Si esta opción está habilitada, las partes de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea."
       hide_entity_names: Ocultar nombres de instancias
       hide_entity_names_help: "Si se selecciona esta opción, no se mostrarán **nombres de instancia** de piezas."
       hide_tags: Ocultar etiquetas
@@ -754,7 +754,7 @@ tab:
       std_sizes: Tamaños de panel estándar
       std_sizes_placeholder: largo x ancho ; ...
       std_sizes_help: |
-        Expected format: **L** x **W**, donde **L** y **W** representan la **longitud** real * y *ancho* del panel.
+        Expected format: **L** x **W**, donde **L** y **W** representan la *longitud* y *ancho* del panel.
         *Los tamaños sin unidades se consideran en unidades modelo.*
       grained: Dirección de fibra
       grained_help: Configura la dirección de la fibra del material.
@@ -880,7 +880,7 @@ tab:
     label: Tutoriales
     title: Tutoriales
     help: |
-      Encuentre aquí una lista no exhaustiva de videos hechos por la comunidad sobre el uso de *OpenCutList *.
+      Encuentre aquí una lista no exhaustiva de videos hechos por la comunidad sobre el uso de *OpenCutList*.
     submit: Enviar un video
     submit_info: |
       ¿Ha hecho un video presentando el uso de **OpenCutList** y le gustaría verlo aquí?
@@ -901,7 +901,7 @@ tab:
     label: Foro
     title: Foro
     help: |
-      Este tablero de mensajes le permite intercambiar con la comunidad de usuarios y el equipo *OpenCutList *.
+      Este tablero de mensajes le permite intercambiar con la comunidad de usuarios y el equipo *OpenCutList*.
     create_conversation: Inicie un tema
     reply: Respuesta
     tags: Etiquetas
@@ -930,7 +930,7 @@ tab:
       docs: Financiación de la documentación
     objective_details:
       default: |
-        ¡La mejora continua de * OpenCutList * es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización ** 3.0 **!
+        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **3.0**!
       docs: |
         Es importante para nosotros que *OpenCutList* sea accesible e intuitivo. Pero esto requiere una **Documentación completa y exhaustiva**.
         Al proporcionarnos los medios para escribirla, nos das la oportunidad de ayudarte a sacar el máximo provecho de *OpenCutList*.
@@ -985,7 +985,7 @@ tab:
     version: Versión
     credits: Créditos técnicos
     credits_authors: |
-      * OpenCutList * fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
@@ -1000,7 +1000,7 @@ tab:
       - Dany Dhondt, Eric Lugtigheid (*holandés*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
-      Esta extensión también es de * código abierto * y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+      Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Tiempo de ejecución
     credits_development: Desarrollo
     credits_vendors: |

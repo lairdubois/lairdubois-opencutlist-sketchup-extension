@@ -338,10 +338,10 @@ tab:
       hide_cutting_dimensions_help: "Pokud je vybrána tato možnost, budou **hrubé** rozměry dílců skryty."
       hide_bbox_dimensions: Skrýt hotové rozměry
       hide_bbox_dimensions_help: "Pokud je vybrána tato možnost, budou **konečné** rozměry dílců skryty."
-      hide_final_areas: Skrýt aktuální dílce typu * Tabule *
-      hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty ** skutečné oblasti ** dílců typu * Tabule *."
+      hide_final_areas: Skrýt aktuální dílce typu *Tabule*
+      hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*."
       hide_edges: Skrýt sloupce pro hranování
-      hide_edges_help: "Pokud je vybrána tato možnost, budou ** sloupce pro hranování ** u dílců typu * Tabule * skryty."
+      hide_edges_help: "Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty."
       minimize_on_highlight: Sbalit po *'$ t (tab.cut list. Zvýraznit část) ...'*
       minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$ t (tab.cutlist.highlight_part)'*."
       general: Všeobecné
@@ -525,9 +525,9 @@ tab:
       option_scrap_bar_lengths_placeholder: délka x množství ; ...
       option_scrap_bar_lengths_help: |
         Seznam zbytků, které by měly být považovány za první v nářezovém plánu
-        Očekávaný formát: ** D ** x ** M **, kde ** D ** je * délka * zbytku a ** M ** množství.
+        Očekávaný formát: **D** x **M**, kde **D** je *délka* zbytku a **M** množství.
         Množství je volitelné.
-        * Velikosti bez jednotek použije jednoty z modelových jednotek. *
+        *Velikosti bez jednotek použije jednoty z modelových jednotek.*
       option_std_sheet: Standardní tabule
       option_std_sheet_help: |
         Vybere standardní panel, který bude duplikován, abychom vypočítali nejlepší možné umístění.
