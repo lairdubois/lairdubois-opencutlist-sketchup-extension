@@ -310,6 +310,9 @@ tab:
       over_width: Na całej szerokości
       edge_disabled_help: "To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni nośnej materiału."
       multiple_values: Wiele wartości
+      export_to_skp: Eksport (.skp)
+    export_to_skp:
+      title: Eksportuj plik .skp
     option:
       auto_orient: Automatyczna orientacja części
       auto_orient_help: |
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: W zaznaczeniu nie znaleziono instancji widocznego komponentu.
       no_component_in_model: W twojej scenie nie znaleziono instancji widocznego komponentu.
       failed_to_write_export_file: "Nie udało się zapisać pliku eksportu. **{{error}}**"
+      failed_export_skp_file: "Błąd podczas eksportu do pliku skp **{{ error }}**"
       unknow_part: Wybrana część nie istnieje na liście części.
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
     warning:

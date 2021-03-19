@@ -89,7 +89,8 @@ core:
   upgrade:
     unavailable: De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
-      Er is een nieuwe versie van *OpenCutList* beschikbaar. Update deze voor de nieuwste functies.
+      Er is een nieuwe versie van *OpenCutList* beschikbaar.
+      Update deze voor de nieuwste functies.
     up_to_date: |
       Je hebt al de laatste versie van *OpenCutList*
 
@@ -253,8 +254,13 @@ tab:
       cumulable_0: Niet cumuleerbaar
       cumulable_1: Cumuleerbaar over de lengte
       cumulable_2: Cumuleerbaar over de breedte
-      instance_count_by_part: ""
+      instance_count_by_part: Verpakking
       instance_count_by_part_help: |
+        Maakt het mogelijk onderdelen te tellen volgens het aantal benodigde **pakketten** in plaats van de in het model aanwezige eenheden.
+        Onderdelen die gegroepeerd zijn in een pack moeten dezelfde definitie hebben.
+
+        *Voorbeeld: Bereken 1 deel voor een paar ladegeleiders:
+        Pack = 2 eenheden / deel.*
       instance_count_by_part_1: 1 per onderdeel
       instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
@@ -270,12 +276,12 @@ tab:
       orientation: Oriëntatie
       orientation_locked_on_axis: Vergrendel orientatie op as
       orientation_locked_on_axis_help: |
-        Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel.
+        Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
 
         En dus,
-        - de * lengte * komt op de rode as
-        - de * breedte * op de groene as
-        - de * dikte * op de blauwe as
+        - de *lengte* komt op de rode as
+        - de *breedte* op de groene as
+        - de *dikte* op de blauwe as
       symmetrical: Schakel detectie van gespiegelde delen op dit deel uit
       symmetrical_help: |
         Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
@@ -292,12 +298,10 @@ tab:
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
-        Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel.
-
-        En dus,
-        - de * lengte * komt op de rode as
-        - de * breedte * op de groene as
-        - de * dikte * op de blauwe as
+        Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel. En dus,
+        - de **lengte** komt op de rode as
+        - de **breedte** op de groene as
+        - de **dikte** op de blauwe as
       axes_origin_position_none: Verander het nulpunt niet
       axes_origin_position_min: Plaats het nulpunt in een hoek
       axes_origin_position_center: Plaats het nulpunt in het midden
@@ -306,28 +310,31 @@ tab:
       over_width: Over de breedte
       edge_disabled_help: Deze randafwerking is niet configureerbaar omdat aan deze rand van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
       multiple_values: Meerdere waarden
+      export_to_skp: Exporteren (.skp)
+    export_to_skp:
+      title: Exporteer een .skp bestand
     option:
       auto_orient: Automatische oriëntatie van de onderdelen
       auto_orient_help: |
         Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel.
 
         En dus,
-        - de * lengte * komt op de rode as
-        - de * breedte * op de groene as
-        - de * dikte * op de blauwe as
+        - de *lengte* komt op de rode as
+        - de *breedte* op de groene as
+        - de *dikte* op de blauwe as
       smart_material: "*Slimme* toekenning van materiaal"
       smart_material_help: "Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component"
       dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component.
       dynamic_attributes_name_help: |
-        Als deze optie is geselecteerd, wordt de aanduiding van onderdelen geëxtraheerd uit het attribuut * Naam *, indien gedefinieerd.
+        Als deze optie is geselecteerd, wordt de aanduiding van onderdelen geëxtraheerd uit het attribuut *Name*, indien gedefinieerd.
 
-        Instanties van onderdelen met dezelfde definitie worden gescheiden als het attribuut * Naam * niet dezelfde waarde heeft.
+        <i class='ladb-opencutlist-icon-warning'></i>Instances van onderdelen met dezelfde definitie worden gescheiden als het attribuut *Name* niet dezelfde waarde heeft.
       part_number_with_letters: Stel de onderdeel nummers opnieuw in
       part_number_with_letters_help: "Als deze optie is geselecteerd, worden onderdelen genummerd met letters (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Stel de onderdeelnummers voor alle groepen opnieuw in
       part_number_sequence_by_group_help: "Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte)"
       part_folding: Groepeer identieke onderdelen
-      part_folding_help: "Wanneer deze optie geselecteerd is, dan zullen onderdelen van ** dezelfde geschikte grootte **, met ** dezelfde tags ** en ** hetzelfde afgewerkte oppervlak ** * (als de weergave van dit oppervlak niet verborgen is) * gegroepeerd worden op éénzelfde lijn."
+      part_folding_help: "Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn."
       hide_entity_names: Verberg instantie namen
       hide_entity_names_help: "Wanneer deze optie ingeschakeld is, dan zullen de **instantie namen** niet weergegeven worden."
       hide_tags: Verberg de tags
@@ -392,7 +399,7 @@ tab:
     export:
       title: Exporteren naar CSV
       info_0: |
-        Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een bestand van het type [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een bestand van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
       options: Exporteer opties
       options_customize: Personalisering
       option_source: Bron
@@ -425,7 +432,7 @@ tab:
       material_type: Type
       material_thickness: Materiaal / Afmeting
       material_name: Materiaal
-      entity_names: Aantal instanties
+      entity_names: Naam instance
       tags: Tags
       edge_ymin: Rend lengte 1
       edge_ymax: Rand lengte 2
@@ -525,7 +532,6 @@ tab:
         Maak hier een lijst van uw plank overschotten die voorrang moeten krijgen in het zaagschema.
         Formaat: **L**x**Q**. of **L** is de *lengte* van het overschot en **Q** de hoeveelheid.
         De hoeveelheid is facultatief.
-
         *Waneer geen enkele eenheid gespecifieerd is, zal de eenheid van het model genomen worden.*
       option_std_sheet: Standaard paneel
       option_std_sheet_help: |
@@ -628,7 +634,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Beschrijving
-        part_entity_name: ""
+        part_entity_name: Naam onderdeel
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
@@ -657,6 +663,7 @@ tab:
       no_component_in_selection: Geen enkele component instantie werd gevonden in uw selectie.
       no_component_in_model: Geen enkele component instantie werd gevonden in uw scène.
       failed_to_write_export_file: "Het is niet gelukt om het bestand te exporteren. **{{ error }}**"
+      failed_export_skp_file: "Er heeft zich een fout voorgedaan bij het exporteren van het .skp bestand. **{{ error }}**"
       unknow_part: Het geselecteerde onderdeel bestaat niet in de stuklijst.
       obsolete_cutlist: Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
     warning:
@@ -668,7 +675,7 @@ tab:
       exported_to: "Export geslaagd naar {{ export_path }}."
     tip:
       no_component: |
-        De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instanties zijn.
+        De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
       no_typed_materials: "Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialen**."
@@ -795,7 +802,7 @@ tab:
     label: Importeren
     title: Onderdelen importeren
     help: |
-      Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV] (https://en.wikipedia.org/wiki/Comma-separated_values) bestand.
+      Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand.
       U kunt dan de functies van * OpenCutList * gebruiken voor onderdelen die zijn gegenereerd door andere software dan * SketchUp *.
       Klik op de knop ** CSV-bestand openen ** om te beginnen.
     open_csv: Open CSV bestand
@@ -824,7 +831,7 @@ tab:
       info_0_plural: |
         U staat op het punt om **{{ count }} onderdelen** te importeren in het model.
         Deze onderdelen zullen in de hoofdscène gestapeld op de oorsprong geplaatst worden.
-      info_1: Klik op  **Import** om door te gaan..
+      info_1: Klik op **Import** om door te gaan..
       options: |
         Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
         Kies de gewenste importeer opties..
@@ -901,7 +908,7 @@ tab:
     redirection: |
       U wordt doorgestuurd naar het **Open Collective** platform dat dit discussieforum host.
       Om gesprekken te *beginnen* of te *beantwoorden*, moet u een account aanmaken en inloggen.
-      *Het is gratis, geen verplichting, en een simpel email adres is voldoende.
+      *Het is gratis, geen verplichting, en een simpel email adres is voldoende.*
 
       Bevestig om door te gaan.
     error:
@@ -976,16 +983,26 @@ tab:
     label: Over
     title: Over
     version: Versie
-    credits: Technische verdienste
+    credits: Ontwikkeling en programmering
     credits_authors: |
       *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
-    credits_translations: ""
+    credits_translations: Vertalingen
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engels*, *Duits*)
+      - Vladimir Badulya (*Russisch*)
+      - Pierluigi Colombo (*Italiaans*)
+      - Nayton Sanches Barbosa, verbeterd en herzien door [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugees*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spaans*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tjsechisch*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk et Dominik Szybisz (*Pools*)
+      - Sergey Isupov (*Hebreeuws*), zondeer interface RTL
+      - Soul Issam (*Arabisch*), zondeer interface RTL
+      - Dany Dhondt, Eric Lugtigheid (*Nederlands*)
     credits_description: |
       De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Runtime
-    credits_development: Ontwikkeling
+    credits_development: Ontwikkelingsomgeving
     credits_vendors: |
       Dit avontuur zou niet mogelijk zijn geweest zonder het werk van de auteurs van de volgende Open Source componenten:
     credits_thanks: |

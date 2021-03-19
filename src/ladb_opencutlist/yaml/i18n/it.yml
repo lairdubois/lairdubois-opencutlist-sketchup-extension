@@ -310,6 +310,9 @@ tab:
       over_width: Sulla larghezza
       edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo *bordatura*.
       multiple_values: Valori multipli
+      export_to_skp: Esporta (.skp)
+    export_to_skp:
+      title: Esporta su file .skp
     option:
       auto_orient: Orientamento automatico delle parti
       auto_orient_help: |
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: Nessuna componente visibile trovato nella selezione corrente.
       no_component_in_model: nessun componente visibile trovato nella scena corrente.
       failed_to_write_export_file: "Scrittura del file di esportazione fallita. **{{ error }}**"
+      failed_export_skp_file: "Errore di esportazione nel file .skp. **{{ error }}**"
       unknow_part: La parte selezionata non esiste nella distinta.
       obsolete_cutlist: "Impossibile, la distinta non è aggiornata. Va rigenerata."
     warning:
