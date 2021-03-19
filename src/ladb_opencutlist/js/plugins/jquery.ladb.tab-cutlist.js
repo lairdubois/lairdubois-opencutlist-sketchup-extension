@@ -1366,6 +1366,7 @@
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
+                var $sortableAxes = $('#ladb_sortable_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
                 var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
                 var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
@@ -1473,6 +1474,23 @@
                         fnUpdateEdgesPreview();
                     }
                 };
+                var fnOnAxiesOrderChanged = function () {
+                    var axes = fnComputeAxesOrder();
+
+                    var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
+                        &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
+
+                    // Check Orientation Locked On Axis option if needed
+                    $inputOrientationLockedOnAxis.prop('checked', !oriented);
+                    fnDisplayAxisDimensions();
+
+                    // By default set origin position to 'min'
+                    $selectPartAxesOriginPosition
+                        .selectpicker('val', 'min')
+                        .trigger('change')
+                    ;
+
+                }
 
                 fnDisplayAxisDimensions();
                 fnUpdateIncreasesPreview();
@@ -1583,26 +1601,21 @@
                 });
 
                 // Bind sorter
+                $sortableAxes.on('dblclick', function () {
+                   var sortedNormals = Object.keys(editedPart.normals_to_values).sort(function (a, b) {
+                       return editedPart.normals_to_values[b] - editedPart.normals_to_values[a]
+                   });
+                   var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
+                   var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
+                   var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
+                    $rowY.insertBefore($rowZ);
+                    $rowX.insertBefore($rowY);
+                    fnOnAxiesOrderChanged();
+                });
                 $sortablePartAxes.sortable({
                     cursor: 'ns-resize',
                     handle: '.ladb-handle',
-                    stop: function (event, ui) {
-                        var axes = fnComputeAxesOrder();
-
-                        var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
-                            &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
-
-                        // Check Orientation Locked On Axis option if needed
-                        $inputOrientationLockedOnAxis.prop('checked', !oriented);
-                        fnDisplayAxisDimensions();
-
-                        // By default set origin position to 'min'
-                        $selectPartAxesOriginPosition
-                            .selectpicker('val', 'min')
-                            .trigger('change')
-                        ;
-
-                    }
+                    stop: fnOnAxiesOrderChanged
                 });
 
                 // Bind checkbox
