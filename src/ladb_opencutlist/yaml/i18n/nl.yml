@@ -72,7 +72,7 @@ core:
     report_a_bug: Meld een bug
   warning:
     dev: |
-      U gebruikt een ** betaversie ** van * OpenCutList *.
+      U gebruikt een **betaversie** van *OpenCutList*.
       Deze versie is alleen beschikbaar om te testen.
       Het wordt niet aanbevolen om deze tijdens productie te gebruiken.
 
@@ -104,7 +104,7 @@ core:
     success: |
       De update van *OpenCutList* is klaar.
 
-      Start Sketchup opnieuw op.
+      START SketchUp opnieuw op.
     error:
       download: Er ging iets mis bij het downloaden van het archief.
       unzip: Er ging iets mis bij het uitpakken van het archief.
@@ -116,11 +116,11 @@ core:
     user_defaults: Mijn standaard presets
     new: nieuwe preset
     new_prompt: |
-      * Door een persoonlijke voorinstelling te maken, kunt u de huidige formulierinstellingen globaal behouden, zodat u ze in al uw modellen opnieuw kunt gebruiken. *
+      *Door een persoonlijke voorinstelling te maken, kunt u de huidige formulierinstellingen globaal behouden, zodat u ze in al uw modellen opnieuw kunt gebruiken.*
 
       Voer de naam van de preset in:
     delete_confirm_title: verwijdering
-    delete_confirm: "Weet u zeker dat u de preset ** \"{{naam}}\" ** wilt verwijderen?"
+    delete_confirm: "Weet u zeker dat u de preset **\"{{ naam }}\"** wilt verwijderen?"
     override_confirm_title: Bijwerken
     override_confirm: "Bevestig je dat je de voorinstelling **\"{{name}}\"** wil bijwerken met de inhoud van het formulier?"
     new_success: "Voorinstelling **\"{{ name }}\"** aangemaakt"
@@ -250,7 +250,7 @@ tab:
       material: Materiaal
       cumulable: Cumulatief
       cumulable_help: |
-        Als deze optie is geselecteerd, wordt de ** lengte** of de **breedte** beschouwd als ** lengte eenheid** of ** breedte eenheid** vermenigvuldigd met het aantal bij het sorteren van de stuklijst.
+        Als deze optie is geselecteerd, wordt de **lengte** of de **breedte** beschouwd als **lengte eenheid** of **breedte eenheid** vermenigvuldigd met het aantal bij het sorteren van de stuklijst.
       cumulable_0: Niet cumuleerbaar
       cumulable_1: Cumuleerbaar over de lengte
       cumulable_2: Cumuleerbaar over de breedte
@@ -269,7 +269,7 @@ tab:
       price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Rapporten**.
       tags: Tags
       tags_help: |
-        Met * Tags * kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
+        Met *Tags* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
         U kunt zoveel tags toevoegen als u wilt.
         De zichtbare delen van uw cutlist kunnen vervolgens worden gefilterd op basis van deze tags.
       tags_multiple_info: Alleen algemene tags zijn zichtbaar
@@ -298,7 +298,7 @@ tab:
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
-        Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel. En dus,
+        Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel. En dus,
         - de **lengte** komt op de rode as
         - de **breedte** op de groene as
         - de **dikte** op de blauwe as
@@ -316,7 +316,7 @@ tab:
     option:
       auto_orient: Automatische oriëntatie van de onderdelen
       auto_orient_help: |
-        Als dit vakje is aangevinkt, heeft de optie * Automatische oriëntatie onderdeel * geen effect op dit onderdeel.
+        Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
 
         En dus,
         - de *lengte* komt op de rode as
@@ -803,8 +803,8 @@ tab:
     title: Onderdelen importeren
     help: |
       Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand.
-      U kunt dan de functies van * OpenCutList * gebruiken voor onderdelen die zijn gegenereerd door andere software dan * SketchUp *.
-      Klik op de knop ** CSV-bestand openen ** om te beginnen.
+      U kunt dan de functies van *OpenCutList* gebruiken voor onderdelen die zijn gegenereerd door andere software dan *SketchUp*.
+      Klik op de knop **CSV-bestand openen** om te beginnen.
     open_csv: Open CSV bestand
     import_to_model: Importeer in het model
     load:
@@ -932,8 +932,8 @@ tab:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **3.0**!
       docs: |
-        Het is belangrijk voor ons dat * OpenCutList * toegankelijk en intuïtief is. Maar dit vereist een ** volledige en uitgebreide documentatie **.
-        Door ons financieel te steunen voor het te schrijven hiervan, geeft u ons de mogelijkheid om u te helpen het meeste uit * OpenCutList * te halen.
+        Het is belangrijk voor ons dat *OpenCutList* toegankelijk en intuïtief is. Maar dit vereist een **volledige en uitgebreide documentatie**.
+        Door ons financieel te steunen voor het te schrijven hiervan, geeft u ons de mogelijkheid om u te helpen het meeste uit *OpenCutList* te halen.
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |

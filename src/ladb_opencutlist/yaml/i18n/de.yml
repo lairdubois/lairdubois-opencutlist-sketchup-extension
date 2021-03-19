@@ -1002,7 +1002,7 @@ tab:
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
     credits_runtime: Laufzeit
-    credits_development: Entwicklung
+    credits_development: Entwicklungsumgebung
     credits_vendors: |
       Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender Open Source Komponenten:
     credits_thanks: |
