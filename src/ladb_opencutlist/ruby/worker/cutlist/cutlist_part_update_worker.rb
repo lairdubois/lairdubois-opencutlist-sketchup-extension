@@ -95,7 +95,7 @@ module Ladb::OpenCutList
               part_data.price != definition_attributes.price ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
               part_data.symmetrical != definition_attributes.symmetrical ||
-              part_data.tags != definition_attributes.tags
+              part_data.tags != definition_attributes.tags ||
               part_data.length_increase != definition_attributes.length_increase ||
               part_data.width_increase != definition_attributes.width_increase ||
               part_data.thickness_increase != definition_attributes.thickness_increase
