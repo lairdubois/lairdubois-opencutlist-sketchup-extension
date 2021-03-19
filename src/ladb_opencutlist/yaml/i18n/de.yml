@@ -5,11 +5,11 @@ default:
   minimize: Minimieren
   maximize: Maximieren
   cancel: Abbrechen
-  validate: Validieren
+  validate: OK
   confirm: Bestätigen
   ok: Ok
   open: Öffnen
-  see: Sehen
+  see: Anzeigen
   close: Schließen
   clear: Löschen
   refresh: Aktualisieren
@@ -112,7 +112,7 @@ core:
     label: Voreinstellungen
     save_to: Speichern als
     restore_from: Wiederherstellen aus
-    app_defaults: ursprüngliche Voreinstellung
+    app_defaults: Ursprüngliche Einstellung
     user_defaults: Meine Voreinstellung
     new: Neue Voreinstellung
     new_prompt: |
@@ -144,7 +144,7 @@ tab:
     not_available_std_width: Breite nicht verfügbar
     not_available_std_thickness: Dicke nicht verfügbar
     not_available_std_section: Querschnitt nicht verfügbar
-    highlight_part: Das Teil im Modell hervorheben
+    highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
@@ -194,7 +194,7 @@ tab:
       number_saved: Die Nummer dieses Teils wurde gespeichert
       number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist."
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
-      resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension verändert
+      resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
       auto_oriented: Dieses Teil wurde automatisch orientiert
@@ -237,7 +237,7 @@ tab:
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
       group_labels: Etiketten drucken
-      edit_material: "Bearbeiten des Materials '{{ material_name }}'"
+      edit_material: "Material '{{ material_name }}' bearbeiten"
       expand_all: Alle Zeilen aufklappen
       collapse_all: Alle Zeilen zuklappen
     edit_part:
@@ -302,14 +302,17 @@ tab:
          - die **Länge** auf der <strong style='color:red'>roten</strong> Achse,
          - die **Breite** auf der <strong style='color:green'>grünen</strong> Achse und
          - die **Dicke** auf der <strong style='color:blue'>blauen</strong> Achse gelesen.
-      axes_origin_position_none: Koordinatenursprung nicht ändern
-      axes_origin_position_min: Den Ursprung an das Ende legen
-      axes_origin_position_center: Den Ursprung ins Zentrum legen
-      axes_origin_position_min_center: Den Ursprung in die Mitte einer Seite legen
+      axes_origin_position_none: Koordinatenursprung nicht verändern
+      axes_origin_position_min: Ursprung an einer Ecke anlegen
+      axes_origin_position_center: Ursprung im Zentrum anlegen
+      axes_origin_position_min_center: Ursprung in der Mitte einer Fläche anlegen
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
+      export_to_skp: Exportieren (.skp)
+    export_to_skp:
+      title: In .skp Datei exportieren
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
@@ -349,11 +352,11 @@ tab:
       general: Allgemein
       part_order_strategy: Sortierung der Teile
       part_order_strategy_help: |
-        Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
-        Die Teile können für jede Eigenschaft <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigend* geordnet werden.
+        Die Sortierreihenfolge der Teile wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       dimension_column_order_strategy: Reihenfolge der Spalten
       dimension_column_order_strategy_help: |
-        Die Reihenfolge der Dimensionsspalten wird durch die Anordnung der folgenden Zeilen definiert.
+        Die Reihenfolge der Dimensionsspalten wird durch die Anordnung der Kacheln definiert.
       property_thickness: Dicke
       property_length: Länge
       property_width: Breite
@@ -396,9 +399,9 @@ tab:
     export:
       title: Exportieren im CSV-Format
       info_0: |
-        Mithilfe dieser Funktion kann die *Holzliste* in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportiert werden.
-      options: Exportoptionen
-      options_customize: Anpassung
+        Hiermit kann die *Holzliste* in eine Datei, im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format, exportiert werden.
+      options: Optionen
+      options_customize: Spalten einrichten
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -493,7 +496,7 @@ tab:
       option_full_width_diagram_help: "Wenn diese Option aktiviert ist, werden die Schnittdiagramme über die gesamte verfügbare Breite angezeigt. Andernfalls wird ihre Breite durch einen festen Skalierungsfaktor der von den anderen Diagrammen abhängt definiert."
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: "Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt."
-      option_hide_cross: Verschnitt
+      option_hide_cross: Verschnittanzeige
       option_hide_cross_0: Dimensionen und Kreuz
       option_hide_cross_1: Nur Dimensionen
       option_hide_cross_help: "Blendet das Kreuz ein oder aus, das die Teile kennzeichnet, die im Diagramm als Verschnitt definiert sind."
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Auswahl gefunden.
       no_component_in_model: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Szene gefunden.
       failed_to_write_export_file: "Das Schreiben der Exportdatei ist fehlgeschlagen. **{{ error }}**"
+      failed_export_skp_file: "Beim Exportieren der .skp Datei ist ein Fehler aufgetreten. **{{ error }}**"
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren."
     warning:
@@ -776,8 +780,8 @@ tab:
     option:
       material_order_strategy: Sortierfolge des Materials
       material_order_strategy_help: |
-        Die Sortierfolge der Teile wird durch die Anordnung der folgenden Zeilen definiert.
-        Die Teile können für jede Eigenschaft <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigend* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigend* geordnet werden.
+        Die Sortierreihenfolge der Materialien wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       property_type: Typ
       property_name: Bezeichnung
     remove:
@@ -789,7 +793,7 @@ tab:
       no_materials: Ihr Modell enthält kein Material.
       material_not_found: Kein Material gefunden.
       failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{Fehler }}**"
-      failed_export_skm_file: "Beim Exportieren der .skm Datei is ein Fehler aufgetreten. **{{ error }}**"
+      failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_removing_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
@@ -798,7 +802,7 @@ tab:
     label: Importieren
     title: Teile importieren
     help: |
-      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren. 
+      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
       Klicken Sie auf **CSV-Datei öffnen** zum Starten.
     open_csv: CSV-Datei öffnen
@@ -823,10 +827,10 @@ tab:
       title: Teile ins Modell importieren
       info_0: |
         Sie sind dabei **{{ count }} Teil** in das Modell zu importieren.
-        Dieses Teil wird im Ursprung der Hauptszene platziert.
+        Dieses Teil wird in einer Gruppe im Ursprung der Hauptszene platziert.
       info_0_plural: |
         Sie sind dabei **{{ count }} Teile** in das Modell zu importieren.
-        Diese Teile werden im Ursprung der Hauptszene platziert.
+        Diese Teile werden in einer Gruppe im Ursprung der Hauptszene platziert.
       info_1: "Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen."
       options: |
         Das Modell enthält schon *Teile*, *Definitionen* oder *Materialien*.
@@ -945,7 +949,7 @@ tab:
     zoom_small: Klein
     zoom_tiny: Sehr klein
     size_and_position: Größe und Position des Fensters
-    model_settings: Modelleinstellungen
+    model_settings: Modell-Einstellungen
     length_unit: Längeneinheit
     length_format: Format
     length_format_0: Dezimal
@@ -955,22 +959,22 @@ tab:
     length_precision: Genauigkeit
     suppress_units_display: Längeneinheiten für jeden Wert anzeigen
     mass_unit: Masseneinheit
-    currency_symbol: Währungszeichen
+    currency_symbol: Währungssymbol
     menu:
       dump_global_presets: Dump der Voreinstellungen
       dump_model_presets: Dump der Modell-Einstellungen
       reset_global_presets: Voreinstellungen reinitialisieren
       reset_global_presets_confirm: |
         Sie sind dabei, alle Ihre gespeicherten *OpenCutList*-Voreinstellungen zurückzusetzen.
-        Diese Aktion ist endgültig. **Alle Voreinstellungen gehen verloren**.
+        Dieser Vorgang ist endgültig. **Alle Voreinstellungen gehen verloren**.
         Bestätigen Sie, um fortzufahren.
       reset_global_presets_success: |
         Die *OpenCutList*-Voreinstellungen wurden zurückgesetzt.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
-      reset_model_presets: Modellvoreinstellungen reinitialiseren
+      reset_model_presets: Modell-Einstellungen reinitialiseren
       reset_model_presets_confirm: |
         Sie sind dabei, alle *OpenCutList*-Einstellungen für das aktuelle Modell zurückzusetzen.
-        Diese Aktion ist endgültig. **Alle Einstellungen werden auf die Standardwerte zurückgesetzt.**
+        Dieser Vorgang ist endgültig. **Alle Einstellungen werden auf die Standardwerte zurückgesetzt.**
         Bestätigen Sie, um fortzufahren.
       reset_model_presets_success: |
         Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.

@@ -305,6 +305,9 @@ tab:
       over_width: Po šířce
       edge_disabled_help: "Toto hranování není konfigurovatelné, protože nebyla nalezena žádná plocha, která by mohla nést materiál pro olepování okrajů v modelu."
       multiple_values: Více hodnot
+      export_to_skp: ""
+    export_to_skp:
+      title: ""
     option:
       auto_orient: Automatická orientace dílců
       auto_orient_help: |
@@ -655,6 +658,7 @@ tab:
       no_component_in_selection: Ve vašem výběru nebyla zjištěna žádná viditelná komponenty.
       no_component_in_model: Ve vaší scéně nebyla zjištěna žádná viditelná komponenty.
       failed_to_write_export_file: "Nepodařilo se vytvořit exportní soubor. **{{ error }}**"
+      failed_export_skp_file: ""
       unknow_part: Vybraný dílec neexistuje v kusovníku.
       obsolete_cutlist: "Je možné, že kusovník je zastaralý. Vygenerujte ho znovu."
     warning:

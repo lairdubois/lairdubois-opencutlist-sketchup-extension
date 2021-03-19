@@ -310,6 +310,9 @@ tab:
       over_width: A lo ancho
       edge_disabled_help: Esta banda de borde no se puede configurar porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
       multiple_values: Varios valores
+      export_to_skp: Exportar (.skp)
+    export_to_skp:
+      title: Exportar a fichero .skp
     option:
       auto_orient: Orientación automática de piezas
       auto_orient_help: |
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: No se detectó ninguna instancia de un componente visible en su selección.
       no_component_in_model: No se detectó ninguna instancia de un componente visible en su escena.
       failed_to_write_export_file: "No se pudo escribir el archivo de exportación. **{{ error }}**"
+      failed_export_skp_file: "Ocurrió un error al exportar el fichero .skp. **{{ error }}**"
       unknow_part: La pieza seleccionada no existe en la lista de piezas.
       obsolete_cutlist: "Imposible, la lista de piezas está obsoleta. Regenerarlo."
     warning:

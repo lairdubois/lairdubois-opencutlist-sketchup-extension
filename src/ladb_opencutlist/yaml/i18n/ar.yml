@@ -69,7 +69,7 @@ core:
     more_extensions: إضافات
     more_update: ترقية
   bottombar:
-    report_a_bug: ""
+    report_a_bug: الإبلاغ عن خطأ
   warning:
     dev: |
       أنت تستعمل نسخة **ما زالت تحت التطوير** من *OpenCutList*.
@@ -254,7 +254,7 @@ tab:
       cumulable_0: غير مجموع
       cumulable_1: مجموع وفقا للطول
       cumulable_2: مجموع وفقا للعرض
-      instance_count_by_part: ""
+      instance_count_by_part: التعبئة والتغليف
       instance_count_by_part_help: |
       instance_count_by_part_1: وحدة لكل قطعة
       instance_count_by_part_2: وحدتان لكل قطعة
@@ -305,6 +305,9 @@ tab:
       over_width: على العرض
       edge_disabled_help: هذه الحاشية غير قابلة للتكوين لأنه لم يُعثر على وجه حامل للخامة في طرف هذه القطعة داخل النموذج.
       multiple_values: قيم متعددة
+      export_to_skp: تصدير (skp.)
+    export_to_skp:
+      title: تصدير إلى ملف skp.
     option:
       auto_orient: توجيه آلي للقطع
       auto_orient_help: |
@@ -655,6 +658,7 @@ tab:
       no_component_in_selection: لم يُعثر على أي مثيل لعنصر ظاهر في تحديدك.
       no_component_in_model: لم يُعثر على أي مثيل لعنصر ظاهر في مشهدك.
       failed_to_write_export_file: "فشل في كتابة ملف التصدير. **{{ خطأ }}**"
+      failed_export_skp_file: " أثناء التصدير إلى الملف .skp حدث خطأ. **{{ error }}**."
       unknow_part: القطعة المحددة غير موجودة في قائمة القطع
       obsolete_cutlist: مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:

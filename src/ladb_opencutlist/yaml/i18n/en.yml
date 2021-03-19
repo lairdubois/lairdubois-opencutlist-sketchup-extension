@@ -310,6 +310,9 @@ tab:
       over_width: Across the width
       edge_disabled_help: This edge banding is not configurable because no material-bearing face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
+      export_to_skp: Export (.skp)
+    export_to_skp:
+      title: Export to .skp file
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
@@ -349,7 +352,7 @@ tab:
       general: General
       part_order_strategy: Part Sorting
       part_order_strategy_help: |
-        Reorganize the following properties to define the sort order within each group.
+        Reorganize the following tiles to define the sort order within each group of parts.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       dimension_column_order_strategy: Dimension Ordering
       dimension_column_order_strategy_help: |
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
       failed_to_write_export_file: "Failed to write the export file. **{{ error }}**"
+      failed_export_skp_file: "An error occurred while exporting to .skp file. **{{ error }}**"
       unknow_part: The selected part does not exist in the parts list.
       obsolete_cutlist: "Impossible, the parts list is obsolete. Please, regenerate it."
     warning:
@@ -776,8 +780,8 @@ tab:
     option:
       material_order_strategy: Material Sorting
       material_order_strategy_help: |
-        Reorder the following properties to define the sorting strategy for the materials in the list..
-        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
+        Reorder the following tiles to define the sorting strategy for the list of materials.
+        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Type
       property_name: Name
     remove:
@@ -823,10 +827,10 @@ tab:
       title: Import Parts into the Model
       info_0: |
         You are about to import **{{ count }} part** into the model.
-        This part will be placed at the origin of the main scene.
+        This part will be placed in a group at the origin of the main scene.
       info_0_plural: |
         You are about to import **{{ count }} parts** into the model.
-        These parts will be stacked starting at the origin of the main scene.
+        These parts will be stacked in a group starting at the origin of the main scene.
       info_1: Click **Import** to confirm the action.
       options: |
         The model already contains *parts*, *definitions* or *materials*.

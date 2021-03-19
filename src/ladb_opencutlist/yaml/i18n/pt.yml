@@ -135,7 +135,7 @@ core:
 tab:
   cutlist:
     label: Peças
-    title: Ficha de Produção
+    title: Planilha de Produção
     help: |
       Selecione as peças na cena atual para incluir na lista e clique no botão **Gerar**.
       Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Planilha de Produção.
@@ -186,7 +186,7 @@ tab:
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Editar propriedades de um grupo de peças
       edit_material: $t(tab.cutlist.menu.edit_material)
-      folding_part: Desdobrar / dobrar
+      folding_part: Expandir / Recolher
       material_origin_1: O material desta peça é definido em suas instâncias
       material_origin_2: O material desta peça é herdado de um de seus elementos pais
       material_origin_3: O material desta peça é extraído de um de seus elementos filho
@@ -238,8 +238,8 @@ tab:
       group_cuttingdiagram: Diagrama de Corte
       group_labels: Imprimir etiquetas
       edit_material: "Editar material '{{ material_name }}'"
-      expand_all: Desdobrar todas as linhas
-      collapse_all: Dobrar todas as linhas
+      expand_all: Expandir todas as linhas
+      collapse_all: Recolher todas as linhas
     edit_part:
       title: "Propriedades da peça '{{ name }}'"
       title_multiple: Propriedades do grupo de peças
@@ -310,6 +310,9 @@ tab:
       over_width: Em toda a largura
       edge_disabled_help: Esta borda não é configurável porque não foi detectada nenhuma face com o mesmo material desta fita de borda no modelo.
       multiple_values: Valores múltiplos
+      export_to_skp: Exportar (.skp)
+    export_to_skp:
+      title: Exportar para arquivo .skp
     option:
       auto_orient: Orientação automática de peças
       auto_orient_help: |
@@ -471,13 +474,13 @@ tab:
       option_sheet_folding: Painéis idênticos de grupo
       option_sheet_folding_0: Não
       option_sheet_folding_1: Sim
-      option_sheet_folding_help: Permite agrupar os pinéis contendo as mesmas peças e as mesmas seções.
+      option_sheet_folding_help: Permite agrupar as chapas contendo as mesmas peças e as mesmas seções.
       option_hide_part_list: Lista de peças
       option_hide_part_list_1d_0: Exibido para cada prancha
-      option_hide_part_list_2d_0: Exibido para cada painel
+      option_hide_part_list_2d_0: Exibido para cada chapa
       option_hide_part_list_1: Mascarado
       option_hide_part_list_1d_help: Exiba ou oculte a lista de peças de cada prancha.
-      option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada placa.
+      option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada chapa.
       option_origin_corner: Posição da origem
       option_origin_corner_1d_0: Para a esquerda
       option_origin_corner_1d_1: Para a direita
@@ -486,7 +489,7 @@ tab:
       option_origin_corner_2d_2: Canto superior direito
       option_origin_corner_2d_3: Canto inferior direito
       option_origin_corner_1d_help: Permite que você escolha o canto original para colocar as peças nas barras.
-      option_origin_corner_2d_help: Permite que você escolha o canto de origem para colocar as peças nos painéis.
+      option_origin_corner_2d_help: Permite que você escolha o canto de origem para colocar as peças nas chapas.
       option_full_width_diagram: Exibir a largura total
       option_full_width_diagram_0: Não
       option_full_width_diagram_1: Sim
@@ -530,29 +533,29 @@ tab:
         Formato esperado: **C**x**Q**, onde **C** é o *comprimento* do corte e **Q** a quantidade.
         A quantidade é opcional.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
-      option_std_sheet: Painel Padrão
+      option_std_sheet: Chapa Padrão
       option_std_sheet_help: |
-        Selecione o painel padrão que será duplicado para conter todas as partes.
+        Selecione a chapa padrão que será duplicado para conter todas as partes.
         Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
         Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_sheet_add: Adicionar um tamanho de painel ...
       option_std_sheet_none: Nenhum
-      option_scrap_sheet_sizes: Restos de painéis
+      option_scrap_sheet_sizes: Restos de chapas
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
-        Indique aqui a lista de sobras de seu painel a ser considerada como prioridade para o diagrama de corte.
-        Formato esperado: **C**x**L**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* do painel e **Q** a quantidade.
+        Indique aqui a lista de sobras da sua chapa a ser considerada como prioridade para o diagrama de corte.
+        Formato esperado: **C**x**L**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* da chapa e **Q** a quantidade.
         A quantidade é opcional.
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
       tooltip:
         scroll_to_block_1d: Role até a primeira prancha
-        scroll_to_block_2d: Role para o primeiro painel
+        scroll_to_block_2d: Role para a primeira chapa
       list:
         unplaced_parts: Peças não colocadas
         summary: Resumo
         count: Qtd.
         bar: Prancha
-        sheet: Painel
+        sheet: Chapa
         length: Comprimento
         width: Largura
         total_length: Σ Comprimentos
@@ -568,8 +571,8 @@ tab:
         cut_through: Corte primário (nível 2)
         bar_type_0: Prancha MLC padrão
         bar_type_1: Sobra de prancha
-        sheet_type_0: Painel de tamanho padrão
-        sheet_type_1: Sobra
+        sheet_type_0: Chapa de tamanho padrão
+        sheet_type_1: Sobra de chapa
         unused: Não utilizado
         parts: "{{ count }} peça"
         parts_plural: "{{ count }} peças"
@@ -578,8 +581,8 @@ tab:
         no_bar: A prancha padrão não foi configurada corretamente e nenhum recorte foi definido.
         parameters: Os parâmetros estão incorretos. O corte é maior que 25% que a prancha mais longa.
         no_parts: Nenhuma peça.
-        no_sheet: Os tamanhos de painel padrão estão configurados incorretamente e não há cortes disponíveis.
-        no_placement_possible: "Todas as suas partes são muito grandes para caber em um painel (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
+        no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
+        no_placement_possible: "Todas as suas partes são muito grandes para caber em uma chapa (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
         unplaced_parts: "**1 peça*** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
@@ -660,6 +663,7 @@ tab:
       no_component_in_selection: Nenhuma instância de um componente visível foi detectada em sua seleção.
       no_component_in_model: Nenhuma instância de um componente visível foi detectada em sua cena.
       failed_to_write_export_file: "Falha ao gravar o arquivo de exportação. **{{ error }}**"
+      failed_export_skp_file: "Ocorreu um erro ao exportar para o arquivo .skp. **{{ error }}**"
       unknow_part: A peça selecionada não existe na Planilha de Produção.
       obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
@@ -682,10 +686,10 @@ tab:
     new: Novo material
     type_0: Indefinido
     type_1: Madeira serrada
-    type_2: Painel
+    type_2: Chapa
     type_3: Dimensional MLC
     type_4: Fita de borda
-    type_5: Accessório
+    type_5: Acessório
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -750,10 +754,10 @@ tab:
       std_sizes: Tamanhos de painel padrão
       std_sizes_placeholder: comprimento x largura ; ...
       std_sizes_help: |
-        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* **reais** do painel.
+        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* **reais** da chapa.
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em consideração.*
       grained: Direção dos veios
-      grained_help: Configura a direção dos veios do material.
+      grained_help: Configura a direção dos veios na chapa.
       grained_0: Sem veios
       grained_1: Os veios seguem o comprimento
       edge_decremented: Reduzir
@@ -913,7 +917,7 @@ tab:
     label: Patrocinador
     title: Patrocinador
     description: |
-      **OpenCutList** é *Open Source* software suportado por seus usuários através da <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      **OpenCutList** é *Open Source* software suportado por seus usuários através da plataforma <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Apoie este projeto fazendo uma contribuição financeira!
     contribute: Contribuir
     backers: "{{ count }} contribuidor financeiro"

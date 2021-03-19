@@ -41,8 +41,8 @@ default:
   unit_3: סנטימטרים
   unit_4: מטרים
   unit_5: יארד
-  unit_mass_0: קִילוֹגרָם
-  unit_mass_1: לִירָה
+  unit_mass_0: קילוגרם
+  unit_mass_1: לירה
   instance_single: יחידה
   instance_plural: יחידות
   part_single: חלק
@@ -254,11 +254,16 @@ tab:
       cumulable_0: לא לצבור
       cumulable_1: לצבור לאורך
       cumulable_2: לצבור לרוחב
-      instance_count_by_part: ""
+      instance_count_by_part: אריזה
       instance_count_by_part_help: |
+        מאפשר להחשיב את החלק כ*סט* מאחת או יותר *יחידות*.
+        הכמות המשויכת לחלק בתוכנית חיתוך תייצג אם כן את מספר הסטים השלמים הדרושים כדי להכיל את מספר היחידות הקיימות בפועל במודל.
+
+        *דוגמה: לספור חלק 1 בלבד עבור זוג מסילות מגירה:
+        אריזה = 2 יחידות / חלק*
       instance_count_by_part_1: פריט 1 ביחידה
       instance_count_by_part_2: 2 פריטים ביחידה
-      mass: מסה
+      mass: משקל
       mass_help: המשקל החלק ישמש בעת הפקת **דוחות**.
       price: מחיר
       price_help: מחיר החלק ישמש בעת הפקת **דוחות**.
@@ -305,6 +310,9 @@ tab:
       over_width: לכל הרוחב
       edge_disabled_help: לא ניתן להגדיר את הקאנט מכיוון שבמודל לא נמצא משטח שכולל חומר הקאנט.
       multiple_values: ערכים מרובים
+      export_to_skp: ייצוא ​​(skp.)
+    export_to_skp:
+      title: ייצוא לקובץ skp.
     option:
       auto_orient: אורינטציה אוטומטית של חלקים
       auto_orient_help: |
@@ -431,28 +439,29 @@ tab:
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
       warning:
-        visible_only: ""
+        visible_only: החלקים הכלולים ב-**הקבוצות הנסתרות** של תוכנית חיתוך לא ייצאו.
     report:
       title: דו"ח
       info_0: |
+        הפונקציונליות מאפשרת ליצור דוח על **משקלים**, **עלויות** ו-**חומרי גלם** הדרושים לייצור החלקים ב*תוכנית חיתוך*.
       options_general: כללי
-      option_solid_wood_coefficient: ""
-      option_solid_wood_coefficient_help: ""
-      raw_materials: ""
-      coefficient: ""
+      option_solid_wood_coefficient: מקדם *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: משמש לציון המקדם הכפל המופעל על הנפח הגולמי שנמדד עבור חומרים מסוג "**$t(tab.materials.type_1)**".
+      raw_materials: חומר גלם
+      coefficient: מקדם
       total: סך הכל
-      total_mass: ""
-      total_cost: ""
+      total_mass: סה"כ משקל
+      total_cost: סה"כ מחיר
       total_count: כמות
-      total_volume: ""
+      total_volume: סה"כ נפח
       total_area: שטח כללי
-      total_length: סכום אורכים
+      total_length: סה"כ אורכים
       error:
-        no_typed_material_parts: ""
-        entry_error: ""
-        entry_error_plural: ""
+        no_typed_material_parts: "אין חלק שיש לו חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** או **$t(tab.materials.type_5)**) שמסופק להפקת הדוח."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
       warning:
-        visible_only: ""
+        visible_only: נספרים רק החלקים הכלולים ב-**הקבוצות הגלויות**.
     cuttingdiagram:
       title: תוכנית חיתוך
       options_material: חומר
@@ -473,13 +482,13 @@ tab:
       option_hide_part_list_1d_help: הצג או הסתר רשימת חלקים לכל קרש.
       option_hide_part_list_2d_help: הצג או הסתר רשימת חלקים לכל פאנל.
       option_origin_corner: עמדת התחלה
-      option_origin_corner_1d_0: ""
-      option_origin_corner_1d_1: ""
-      option_origin_corner_2d_0: עליון שמאל
-      option_origin_corner_2d_1: תחתון שמאל
-      option_origin_corner_2d_2: ""
-      option_origin_corner_2d_3: ""
-      option_origin_corner_1d_help: ""
+      option_origin_corner_1d_0: משמאל
+      option_origin_corner_1d_1: מימין
+      option_origin_corner_2d_0: שמאלי עליון
+      option_origin_corner_2d_1: שמאל תחתון
+      option_origin_corner_2d_2: ימני עליון
+      option_origin_corner_2d_3: ימני תחתון
+      option_origin_corner_1d_help: מאפשר לבחור את הפינה המקורית בה ממוקמים החלקים בתוכנית חיתוך.
       option_origin_corner_2d_help: מאפשר לבחור זווית התחלתית למיקום חלקים על הלוח.
       option_full_width_diagram: תצוגת רוחב מלא
       option_full_width_diagram_0: לא
@@ -625,7 +634,7 @@ tab:
       formula:
         part_number: מספר
         part_name: תיאור
-        part_entity_name: ""
+        part_entity_name: שם פריט
         part_cutting_size: גודל חיתוך
         part_cutting_length: אורך חיתוך
         part_cutting_width: רוחב חיתוך
@@ -640,7 +649,7 @@ tab:
         group_material_name: שם החומר
         group_std_dimension: מדידת תקן
         filename: שם הקובץ
-        model_name: ""
+        model_name: שם מודל
         page_label: שם הסצנה
         length_unit: יחידות
         generated_at: תאריך ושעה
@@ -654,12 +663,13 @@ tab:
       no_component_in_selection: בבחירתך לא נמצא רכיב גלוי.
       no_component_in_model: לא התגלה שום רכיב גלוי על המסך.
       failed_to_write_export_file: "כתיבת קובץ הייצוא נכשלה. **{{ error }}**"
+      failed_export_skp_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skp. "
       unknow_part: החלק שנבחר אינו קיים בתוכנית חיתוך.
       obsolete_cutlist: "לא ניתן, תוכנית חיתוך לא מעודכנת. ליצור מחדש."
     warning:
       partial_cutlist: תוכנית חיתוך כוללת רק מודל חלקי מכיוון שהוא נוצר מאלמנטים שנבחרו.
-      no_typed_materials_in_model: ""
-      no_typed_materials_in_selection: ""
+      no_typed_materials_in_model: "המודל לא משתמש בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "הבחירה אינה משתמשת בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**)."
       export_empty: הייצוא אינו מכיל חלקים כלשהם.
     success:
       exported_to: "הייצוא בוצע אל {{ export_path }}."
@@ -668,7 +678,7 @@ tab:
         החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
         אם משתמשים רק בקבוצות, המירו אותן לרכיבים.
         שימוש ברכיבים מאפשר לעתיק חלקים זהים מבלי לשכפל אותם.
-      no_typed_materials: ""
+      no_typed_materials: "החל חומר על החלקים שצריך לראות בתוכנית חיתוך. הגדר את סוג החומר הזה (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**) בכרטיסייה <i class=\"ladb-opencutlist-icon-materials\"></i>**חומרים**."
     obsolete_base: "כדי לסנכרן שינויים, עליך לחשב מחדש את התוכנית חיתוך."
   materials:
     label: חומרים
@@ -751,15 +761,15 @@ tab:
       grained_0: ללא מרקם
       grained_1: סיבים לאורך
       edge_decremented: הפחתה
-      edge_decremented_help: ""
+      edge_decremented_help: משמש כדי לציין אם יש להפחית את מידות החיתוך של החלקים בעובי הקאנט.
       edge_decremented_0: ללא הפחתה
       edge_decremented_1: הפחתת עובי הקאנט
       volumic_mass: צפיפות
-      volumic_mass_help: ""
+      volumic_mass_help: מאפשר להגדיר את צפיפות החומר.
       std_prices: מחיר
-      std_prices_help: ""
-      std_prices_dim_placeholder: ""
-      std_prices_add: ""
+      std_prices_help: מאפשר להגדיר את המחיר לכל הערכים כמו כן לכל ערך החומר הסטנדרטי.
+      std_prices_dim_placeholder: בחר מידה
+      std_prices_add: הוסף מחיר
       texture_width: רוחב
       texture_height: גובה
       export_to_skm: ייצוא ​​(skm.)
@@ -917,44 +927,58 @@ tab:
     objective_slogan: OpenCutList - זה כולנו
     objective_title:
       default: מטרות
-      docs: ""
+      docs: תקציב
     objective_details:
       default: |
+        השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא **3.0**!
       docs: |
+        חשוב לנו ש-*OpenCutList* יהיה נגיש ואינטואיטיבי. אך גישה זו הולכת יד ביד עם ניסוח **תיעוד מלא ואיכותי**.
+        התמיכה הכספית שלכם בפיתוח התוסף נותן לנו את האפשרות להפיק את המרב מ-*OpenCutList*.
     objective_crowdfunding: |
+      פיתוח אפשרויות חדשות ייעשה באמצעות **מימון המונים** ויכול להתחיל כאשר **היעדים הכספיים** שלו הושגו.
     objective_thanks: |
       תודה על תרומתך !
     objective_funded_progress: "ממומן ב-{{ progress }}%"
   settings:
     label: הגדרות
     title: הגדרות
-    global_settings: ""
+    global_settings: הגדרות כלליות
     language: שפה
     zoom: גודל טקסט
     zoom_normal: רגיל
     zoom_small: קטן
     zoom_tiny: קטן מאוד
     size_and_position: גודל ומיקום חלון
-    model_settings: ""
-    length_unit: ""
+    model_settings: הגדרות מודל
+    length_unit: יחידת אורך
     length_format: פורמט
-    length_format_0: ""
-    length_format_1: ""
-    length_format_2: ""
-    length_format_3: ""
-    length_precision: ""
-    suppress_units_display: ""
-    mass_unit: ""
-    currency_symbol: ""
+    length_format_0: עשרוני
+    length_format_1: ארכיטקטורי
+    length_format_2: הנדסי
+    length_format_3: חלקי
+    length_precision: דיוק
+    suppress_units_display: הצג את יחידת האורך בכל ערך
+    mass_unit: יחידת משקל
+    currency_symbol: סמל המטבע
     menu:
-      dump_global_presets: ""
-      dump_model_presets: ""
-      reset_global_presets: ""
+      dump_global_presets: גיבוי הגדרות קבועות מראש
+      dump_model_presets: גיבוי הגדרות מודל
+      reset_global_presets: אפס הגדרות קבועות מראש
       reset_global_presets_confirm: |
+        אתה עומד לאפס את כל הגדרות ה-*OpenCutList* השמורות.
+        הפעולה בלתי הפיכה. **כל ההגדרות הקבועות מראש יאבדו**.
+        אשר להמשיך.
       reset_global_presets_success: |
-      reset_model_presets: ""
+        הגדרות קבועות מראש של *OpenCutList* אופסו.
+        על מנת להתחל את השינויים, עליך **לסגור** ו-**לפתח** מחדש את חלון OpenCutList.
+      reset_model_presets: אפס את הגדרות המודל
       reset_model_presets_confirm: |
+        אתה עומד לאפס את כל הגדרות *OpenCutList* עבור המודל הנוכחי.
+        הפעולה בלתי הפיכה. **כל ההגדרות ישוחזרו לערכי ברירת המחדל**.
+        אשר להמשיך.
       reset_model_presets_success: |
+        הגדרות *OpenCutList* של המודל הנוכחי אופסו.
+        על מנת להתחל את השינויים, עליך **לסגור** ו-**לפתח** מחדש את חלון OpenCutList.
   about:
     label: אודות
     title: אודות
@@ -982,6 +1006,10 @@ tab:
     credits_vendors: |
       ההרפתקה לא תתאפשר ללא עבודתם של מחברי התוכנה *קוד פתוח* הבאים:
     credits_thanks: |
+      תודה מיוחדת ל:
+      - [JetBrains](https://www.jetbrains.com) על תמיכתם בפרויקט באמצעות [רישיון מיוחד לפרויקטים קוד פתוח](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) על תמיכתם בפרויקט Open Source.
+      - [GitBook](https://www.gitbook.com) על תמיכתם בפרויקט Open Source.
 tool:
   highlight:
     transparency: שקיפות
