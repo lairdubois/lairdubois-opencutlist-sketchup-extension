@@ -210,9 +210,9 @@
                                 </g>
                                 {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
                                     <g class="increase increase-width">
-                                        <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize + partWidth) / 2 - partOutlineWidth - increaseWWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                                        <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + edgeWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 + edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
                                     </g>
                                 {% endif %}
                             {% endblock %}
