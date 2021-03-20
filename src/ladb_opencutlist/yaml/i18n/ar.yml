@@ -206,8 +206,8 @@ tab:
       instance_count_by_part: "هذه القطعة محسوبة في أطقم من **{{ count }}** وحدات"
       unused_instance_count: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم."
       unused_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
-      used_instance_count: ""
-      used_instance_count_plural: ""
+      used_instance_count: "الوحدة المستخدمة **{{ count }}** / {{ total }}"
+      used_instance_count_plural: "الوحدات المستخدمة **{{ count }}** / {{ total }}"
       multiple_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>"
       children_warnings: "تحذير، هناك {{ count }} إنذار في القطع المجموعة"
       children_warnings_plural: "تحذير، هناك {{ count }} إنذارات في القطع المجموعة"
@@ -224,6 +224,7 @@ tab:
       edge_xmin: عرض الحاشية 1
       edge_xmax: عرض الحاشية 2
       dblclick_to_copy_all_edges: انقر هنا نقرا مزدوجا لتكرار هذه القيمة لبقية الحواشي
+      dblclick_to_sort_axes: انقر هنا نقرًا مزدوجًا لإعادة ترتيب المحاور تلقائيًا وفقًا لأبعاد القطعة
       part_axes: محاور القطعةِ الداخليةُ
       select_unselect_all_parts: حدد / أزل التحديد عن كل القطع في المجموعة
       setup_group_cuttingdiagram: "تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -256,6 +257,11 @@ tab:
       cumulable_2: مجموع وفقا للعرض
       instance_count_by_part: التعبئة والتغليف
       instance_count_by_part_help: |
+        يسمح لك باعتبار القطعة *طقمًا* مكوّنًا من *وحدة* أو عدة *وحدات*.
+        و بالتالي فإن العدد المقترن بالقطعة الموجودة في قائمة القِطع سيمثل العدد الكامل للأطقم اللازمة لاحتواء عدد الوحدات الموجودة بالفعل في النموذج.
+
+        *مثال: لحساب زوج من زلاّقات الدُرج على أنه قطعة واحدة فقط :
+        الحُزمة = وحدتان / قطعة*
       instance_count_by_part_1: وحدة لكل قطعة
       instance_count_by_part_2: وحدتان لكل قطعة
       mass: الكتلة
@@ -440,8 +446,9 @@ tab:
       info_0: |
         تتيح لك هذه الوظيفة إنشاء تقرير **بالكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
       options_general: عام
-      option_solid_wood_coefficient: ""
-      option_solid_wood_coefficient_help: ""
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient: "*$t(tab.materials.type_1)* معامل الهدر"
+      option_solid_wood_coefficient_help: تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "**t(tab.materials.type_1)$**" لحساب المهدور.
       raw_materials: المواد الأولية
       coefficient: المعامل
       total: الإجمالي
@@ -452,7 +459,7 @@ tab:
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: لا تتوفر أي قطعة ذات خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) لإنشاء التقرير
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -629,7 +636,7 @@ tab:
       formula:
         part_number: الرقم
         part_name: وصف
-        part_entity_name: ""
+        part_entity_name: اسم المثيل
         part_cutting_size: الأبعاد الأولية
         part_cutting_length: الطول الأولي
         part_cutting_width: العرض الأولي
@@ -663,8 +670,8 @@ tab:
       obsolete_cutlist: مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:
       partial_cutlist: قائمة القِطع هذه هي تمثيل جزئي لنموذجك، لأنه تدخل فيها بعض القطع المحددة فحسب.
-      no_typed_materials_in_model: ""
-      no_typed_materials_in_selection: ""
+      no_typed_materials_in_model: "لا يستعمل نموذجك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) "
+      no_typed_materials_in_selection: "لا تستعمل في تحديدك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) "
       export_empty: تصديرك لا يحتوي أي قطعة.
     success:
       exported_to: "نجح التصدير إلى {{ export_path }}."
@@ -673,7 +680,7 @@ tab:
         يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
         إن كنت تستعمل المجموعات groups فحسب فعليك تحويلها إلى عناصر components.
         استخدام العناصر لإنتاج القِطع، يتيح إعادة إنتاجها بطريقة مماثلة دون نسخها نسخا مطابقا.
-      no_typed_materials: ""
+      no_typed_materials: طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائصها (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) في التبويب<i class="ladb-opencutlist-icon-materials"></i> **الخامات**
     obsolete_base: للبقاء في وضعية مزامنة، ينبغي أن تعيد استحداث قائمة القِطع.
   materials:
     label: الخامات
@@ -922,11 +929,13 @@ tab:
     objective_slogan: OpenCutList، هو نحن كلنا
     objective_title:
       default: الأهداف
-      docs: ""
+      docs: تمويل الدعم بالوثائق
     objective_details:
       default: |
         التحسين المستمر لـ *OpenCutList* مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي **3.0**!
       docs: |
+        يهمنا أن يكون العمل باستخدام *OpenCutList* بديهيا و ممكنا و سهلا. لكن هذا يتطلب توفر **وثائق كاملة و ذات جودة** عنها.
+        من خلال تزويدنا بموارد لكتابتها ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |

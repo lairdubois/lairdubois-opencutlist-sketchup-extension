@@ -122,7 +122,7 @@ core:
     delete_confirm_title: Usunięcie
     delete_confirm: "Czy na pewno chcesz usunąć ustawienia **\"{{ name }}\"**?"
     override_confirm_title: Aktualizacja
-    override_confirm: "Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **\"{{name}}\"**?"
+    override_confirm: "Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **\"{{ name }}\"**?"
     new_success: "Ustawienia **\"{{ name }}\"** zostały utworzone"
     override_success: "Zaktualizowano ustawienia **\"{{ name }}\"**"
     restore_success: "Do formularza wczytano parametry zapisane w ustawieniach **\"{{ name }}\"**"
@@ -224,6 +224,7 @@ tab:
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
+      dblclick_to_sort_axes: "Kliknij dwukrotnie tutaj, aby automatycznie zmienić kolejność osi zgodnie z wymiarami części"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
       setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -310,9 +311,9 @@ tab:
       over_width: Na całej szerokości
       edge_disabled_help: "To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni nośnej materiału."
       multiple_values: Wiele wartości
-      export_to_skp: Eksport (.skp)
+      export_to_skp: Eksportuj (.skp)
     export_to_skp:
-      title: Eksportuj plik .skp
+      title: Eksportuj do pliku .skp
     option:
       auto_orient: Automatyczna orientacja części
       auto_orient_help: |
@@ -445,7 +446,8 @@ tab:
       info_0: |
         Funkcjonalność ta pozwala na wygenerowanie raportu **mas** i **kosztów** **surowców** niezbędnych do produkcji części znajdujących się na *liście części*.
       options_general: Główne
-      option_solid_wood_coefficient: ""
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient: Współczynnik odpadów dla *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Współczynnik do pomnożenia przez objętość surowca typu "**$t(tab.materials.type_1)**" aby uwzględnić defekty i odpady.
       raw_materials: Surowce
       coefficient: Współczynnik
@@ -457,7 +459,7 @@ tab:
       total_area: Σ Powierzchni
       total_length: Σ Długości
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Żadna część ze zdefiniowanym typem materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** lub **$t(tab.materials.type_5)**) nie została dostarczona do wygenerowania raportu."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
@@ -488,7 +490,7 @@ tab:
       option_origin_corner_2d_1: Dolny lewy narożnik
       option_origin_corner_2d_2: Górny prawy róg
       option_origin_corner_2d_3: Dolny prawy róg
-      option_origin_corner_1d_help: ""
+      option_origin_corner_1d_help: Określa położenie początkowe układu współrzędnych do wyświetlania części na wymiarowej tarcicy.
       option_origin_corner_2d_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
       option_full_width_diagram: Wyświetlanie na całej szerokości
       option_full_width_diagram_0: Nie
@@ -668,8 +670,8 @@ tab:
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
     warning:
       partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
-      no_typed_materials_in_model: ""
-      no_typed_materials_in_selection: ""
+      no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**)."
       export_empty: Twója selekcja do eksportu nie zawiera żadnych części.
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
@@ -678,7 +680,7 @@ tab:
         Części które mają być na *liście części* muszą być instancjami **komponentu**.
         Jeżeli używasz tylko grup, przekształć je w komponenty.
         Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
-      no_typed_materials: ""
+      no_typed_materials: "Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**) w zakładce <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiały**."
     obsolete_base: "Aby zachować synchronizację, należy wygenerować listę części."
   materials:
     label: Materiały
@@ -927,11 +929,15 @@ tab:
     objective_slogan: OpenCutList to my wszyscy
     objective_title:
       default: Cele
-      docs: ""
+      docs: Finansowanie dokumentacji
     objective_details:
       default: |
+        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **3.0**!
       docs: |
+        Ważne jest dla nas, aby *OpenCutList* był dostępny i intuicyjny. Wymaga to jednak **kompletnej i wysokiej jakości dokumentacji**.
+        Dostarczając nam środki do jej napisania, dajesz nam możliwość pomocy w maksymalnym wykorzystaniu *OpenCutList*.
     objective_crowdfunding: |
+      Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
     objective_thanks: |
       Dziękujemy za Twój wkład!
     objective_funded_progress: "sfinansowany w {{ progress }}%"
@@ -957,14 +963,24 @@ tab:
     mass_unit: Jednostka masy
     currency_symbol: Symbol waluty
     menu:
-      dump_global_presets: ""
-      dump_model_presets: ""
-      reset_global_presets: ""
+      dump_global_presets: Zrzuć ustawienia wstępne
+      dump_model_presets: Zrzuć ustawienia wstępne modelu
+      reset_global_presets: Ponownie zainicjuj ustawienia wstępne
       reset_global_presets_confirm: |
+        Masz zamiar zresetować wszystkie zapisane ustawienia *OpenCutList*.
+        To działanie jest ostateczne. **Wszystkie ustawienia zostaną utracone.**
+        Potwierdź, aby kontynuować.
       reset_global_presets_success: |
-      reset_model_presets: ""
+        Ustawienia wstępne *OpenCutList* zostały zresetowane.
+        Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+      reset_model_presets: Ponownie zainicjuj ustawienia modelu
       reset_model_presets_confirm: |
+        Masz zamiar zresetować wszystkie ustawienia wstępne *OpenCutList* dla bieżącego modelu.
+        To działanie jest ostateczne. **Wszystkie ustawienia zostaną przywrócone do wartości domyślnych.**
+        Potwierdź, aby kontynuować.
       reset_model_presets_success: |
+        Ustawienia wstępne *OpenCutList* dla bieżącego modelu zostały zresetowane.
+        Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
   about:
     label: O programie
     title: O programie

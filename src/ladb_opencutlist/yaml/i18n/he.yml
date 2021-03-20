@@ -224,6 +224,7 @@ tab:
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
       dblclick_to_copy_all_edges: לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
+      dblclick_to_sort_axes: לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק.
       part_axes: צירים פנימיים של החלק
       select_unselect_all_parts: בחר / בטל את הבחירה בכל החלקים בקבוצה
       setup_group_cuttingdiagram: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -445,6 +446,7 @@ tab:
       info_0: |
         הפונקציונליות מאפשרת ליצור דוח על **משקלים**, **עלויות** ו-**חומרי גלם** הדרושים לייצור החלקים ב*תוכנית חיתוך*.
       options_general: כללי
+      options_solid_wood: ""
       option_solid_wood_coefficient: מקדם *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: משמש לציון המקדם הכפל המופעל על הנפח הגולמי שנמדד עבור חומרים מסוג "**$t(tab.materials.type_1)**".
       raw_materials: חומר גלם

@@ -43,7 +43,7 @@ default:
   unit_5: Yarda
   unit_mass_0: Kilogramo
   unit_mass_1: Libra
-  instance_single: unidade
+  instance_single: unidad
   instance_plural: unidades
   part_single: parte
   part_plural: partes
@@ -224,6 +224,7 @@ tab:
       edge_xmin: Ancho de borde 1
       edge_xmax: Ancho de borde 2
       dblclick_to_copy_all_edges: Haga doble clic aquí para duplicar este valor en todos los demás bordes
+      dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
       setup_group_cuttingdiagram: "Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -445,6 +446,7 @@ tab:
       info_0: |
         Esta función le permite generar un informe de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
       options_general: General
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Permite indicar el factor aplicado al volumen bruto medido para los materiales de tipo "**$t(tab.materiales.tipo_1)**" para tener en cuenta los defectos y los residuos.
       raw_materials: Materias primas

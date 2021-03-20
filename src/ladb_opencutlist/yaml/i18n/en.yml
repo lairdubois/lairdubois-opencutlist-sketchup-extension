@@ -224,6 +224,7 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
+      dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
       select_unselect_all_parts: Select/deselect all parts in the group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -343,10 +344,10 @@ tab:
       hide_cutting_dimensions_help: "If this option is selected, the **rough** dimensions of parts will be hidden."
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: "If this option is selected, the **finished** dimensions of parts will be hidden."
-      hide_final_areas: Hide actual area of parts of type *Sheet Good*
-      hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Good* will be hidden."
+      hide_final_areas: Hide actual area of parts of type *Sheet Goods*
+      hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden."
       hide_edges: Hide the columns of edge bandings
-      hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Good* will be hidden."
+      hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -445,6 +446,7 @@ tab:
       info_0: |
         Reports generate a summary of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
       options_general: General
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
       raw_materials: Raw materials
@@ -686,7 +688,7 @@ tab:
     new: New Material
     type_0: Undefined
     type_1: Solid Wood
-    type_2: Sheet Good
+    type_2: Sheet Goods
     type_3: Dimensional
     type_4: Edge Banding
     type_5: Hardware

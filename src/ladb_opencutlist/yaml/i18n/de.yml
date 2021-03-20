@@ -224,6 +224,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
+      dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile der Gruppe selektieren / deselektieren
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
@@ -445,6 +446,7 @@ tab:
       info_0: |
         Mit dieser Funktion können Sie einen Bericht über die **Massen** und **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden, erstellen.
       options_general: Allgemein
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Faktor für *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: "Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ \"**$t(tab.materials.type_1)**\" angewendet wird, um den Verschnitt zu berücksichtigen."
       raw_materials: Rohmaterial
