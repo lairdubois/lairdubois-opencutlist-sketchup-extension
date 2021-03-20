@@ -10,6 +10,10 @@
 
 ![OpenCutList](docs/img/capture-edge-banding.png)
 
+![OpenCutList](docs/img/capture-labels.png)
+
+![OpenCutList](docs/img/capture-reports.png)
+
 ## Download and Install
 
 You can download and install the signed ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en) page:
