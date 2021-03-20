@@ -36,13 +36,13 @@
         {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
         {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
         {% set axesX = part.flipped ? (areaSize + partLength) / 2 - axisOffset - axisWLength : (areaSize - partLength) / 2 + axisOffset %}
-        {% set axesY = (areaSize - partWidth) / 2 + axisOffset %}
+        {% set axesY = (areaSize + partWidth) / 2 - axisOffset - axisLLength %}
         <svg x="{{ axesX }}" y="{{ axesY }}" class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
             {% if part.flipped %}<g transform="scale(-1,1) translate(-{{ axisWLength }},0)">{% endif %}
                 <rect x="0" y="0" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
-                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
-                <rect x="0" y="{{ axisWidth }}" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
-                <rect x="{{ axisWidth }}" y="0" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                <rect x="0" y="{{ axisWLength - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
+                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
+                <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
             {% if part.flipped %}</g>{% endif %}
         </svg>
     {% endif %}

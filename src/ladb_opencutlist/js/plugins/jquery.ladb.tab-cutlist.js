@@ -106,7 +106,6 @@
             that.usedEdgeMaterialDisplayNames = [];
             that.materialUsages = materialUsages;
             that.groups = groups;
-            that.solidWoodMaterialCount = solidWoodMaterialCount;
 
             // Compute usedEdgeMaterialDisplayNames
             for (var i = 0; i < materialUsages.length; i++) {
@@ -763,7 +762,6 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
                 visible_only: visibleOnly,
                 tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
-                solid_wood_material_count: that.solidWoodMaterialCount
             }, true);
 
             // Fetch UI elements

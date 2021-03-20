@@ -6,9 +6,10 @@
 {% block headerInner %}
     {{ parent() }}
     {% include 'components/_widget-preset.twig' %}
-{#    <ul class="nav nav-tabs nav-justified" role="tablist">#}
-{#        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_report_options_general" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.report.options_general'|i18next }}</a></li>#}
-{#    </ul>#}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_report_options_general" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.report.options_general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'solid_wood' %} class="active"{% endif %}><a href="#tab_report_options_solid_wood" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-solid-wood"></i> {{ 'tab.cutlist.report.options_solid_wood'|i18next }}</a></li>
+    </ul>
 {% endblock %}
 
 {% block bodyInner %}
@@ -22,8 +23,9 @@
                     {{ 'tab.cutlist.report.info_0'|i18next }}
                 </div>
             </div>
-            <hr{% if solid_wood_material_count == 0 %} class="hide"{% endif %}>
-            <div class="form form-horizontal{% if solid_wood_material_count == 0 %} hide{% endif %}" style="margin-top: 15px;">
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'solid_wood' %} active{% endif %}" id="tab_report_options_solid_wood">
+            <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.report.option_solid_wood_coefficient_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label for="ladb_input_solid_wood_coefficient" class="control-label col-xs-5">{{ 'tab.cutlist.report.option_solid_wood_coefficient'|i18next }}</label>

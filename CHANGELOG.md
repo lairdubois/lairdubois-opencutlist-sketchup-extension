@@ -31,6 +31,7 @@ in 2.x, 1.x and 0.x versions.
   * Added "symmetrical" definition attribute
   * Added dump and reset global and model presets for debugging
   * Improved import by putting new instances into a group
+  * Inverted front and back face detection
 
 * 1.9.10 (2020-12-17)
 

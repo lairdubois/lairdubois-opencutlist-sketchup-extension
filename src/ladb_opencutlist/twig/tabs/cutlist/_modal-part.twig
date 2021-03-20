@@ -35,7 +35,7 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             {% if thumbnailFile is not empty %}
                 <div class="ladb-part-thumbnail">
-                    <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200">
+                    <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200"{% if part.flipped %} style="transform: scaleX(-1);"{% endif %}>
                 </div>
             {% endif %}
             <div class="form form-horizontal">
@@ -269,12 +269,12 @@
                             {% set partWidth = (areaSize - 40) * part.w_ratio %}
                             {% block extra %}
                                 <g class="edge edge-ymin{% if part.edge_entity_ids.ymin is empty %} ladb-disabled{% endif %}">
-                                    <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
-                                    <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
-                                </g>
-                                <g class="edge edge-ymax{% if part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">
                                     <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
                                     <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize + partWidth) / 2 - edgeWidth }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
+                                </g>
+                                <g class="edge edge-ymax{% if part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">
+                                    <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 - edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
+                                    <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
                                 </g>
                                 <g class="edge edge-xmin{% if part.edge_entity_ids.xmin is empty %} ladb-disabled{% endif %}">
                                     <rect x="{{ (areaSize - partLength) / 2 - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
@@ -292,24 +292,24 @@
                     <div class="form form-horizontal col-xs-6">
                         <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_length'|i18next }}</h5>
                         <div class="form-group">
-                            {% if part.edge_entity_ids.ymin is empty %}
+                            {% if part.edge_entity_ids.ymax is empty %}
                                 <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
-                            <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                            <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            {% if part.edge_entity_ids.ymax is empty %}
+                            {% if part.edge_entity_ids.ymin is empty %}
                                 <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
-                            <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                            <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
                             </div>
                         </div>
