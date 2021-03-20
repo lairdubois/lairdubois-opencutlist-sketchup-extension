@@ -186,7 +186,7 @@ tab:
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Bewerk eigenschappen van een groep onderdelen
       edit_material: $t(tab.cutlist.menu.edit_material)
-      folding_part: Uitvouwen / vouwen
+      folding_part: Uitklappen / Inklappen
       material_origin_1: Het materiaal van dit onderdeel is bepaald door de instances
       material_origin_2: Het materiaal van dit onderdeel is gekopieerd van een van de bovenliggende componenten
       material_origin_3: Het materiaal van dit component wordt overgenomen van een van de onderliggende componenten
@@ -224,6 +224,7 @@ tab:
       edge_xmin: Rand breedte 1
       edge_xmax: Rand breedte 2
       dblclick_to_copy_all_edges: Dubbelklik hier om deze waarde naar de andere randen te dupliceren
+      dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
       setup_group_cuttingdiagram: "Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -238,8 +239,8 @@ tab:
       group_cuttingdiagram: Zaagschema
       group_labels: Druk etiketten af
       edit_material: "Wijzig materiaal '{{ material }}'..."
-      expand_all: Alle lijnen uitzetten
-      collapse_all: Alle lijnen samenvouwen
+      expand_all: Alle lijnen uitklappen
+      collapse_all: Alle lijnen inklappen
     edit_part:
       title: "Eigenschappen van onderdeel '{{ name }}'"
       title_multiple: Eigenschappen van groep onderdelen
@@ -445,6 +446,7 @@ tab:
       info_0: |
         Deze functionaliteit laat u toe om een rapport te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
       options_general: Algemeen
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: "*$t(tab.materials.type_1)* coëfficient"
       option_solid_wood_coefficient_help: Laat toe om de vermenigvuldigings coëfficient aan te duiden van het bruto gemeten volume voor materialen van het type "**$t(tab.materials.type_1)**".
       raw_materials: Basis materialen

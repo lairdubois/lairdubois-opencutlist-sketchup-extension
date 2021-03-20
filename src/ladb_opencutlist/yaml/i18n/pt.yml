@@ -224,6 +224,7 @@ tab:
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
+      dblclick_to_sort_axes: Faça duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
       part_axes: "Eixos internos da peça "
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
       setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{material_name}} & nbsp; / & nbsp; {{std_dimension}}'"
@@ -445,6 +446,7 @@ tab:
       info_0: |
         Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
       options_general: Geral
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
       raw_materials: Matéria prima

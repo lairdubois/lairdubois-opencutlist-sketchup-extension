@@ -224,6 +224,7 @@ tab:
       edge_xmin: Larghezza del bordo 1
       edge_xmax: Larghezza del bordo 2
       dblclick_to_copy_all_edges: Fare doppio-click qui per duplicare questo valore su tutti gli altri lati
+      dblclick_to_sort_axes: Fare doppio-click qui per riordinare automaticamente gli assi secondo le dimensioni del pezzo
       part_axes: Assi interni della parte
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
       setup_group_cuttingdiagram: "Configura il chema di taglio '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -445,6 +446,7 @@ tab:
       info_0: |-
         Questa funzionalità permette di generare un report delle **masse** e **costi** delle **materie prime** necessarie per la produzione delle parti del *elenco parti*.
       options_general: Generale
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coefficiente per *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Quantifica il fattore applicato al volume lordo per i materiali di tipo "**$t(tab.materials.type_1)**" per tenere conto dei rifiuti.
       raw_materials: Materiali grezzi
