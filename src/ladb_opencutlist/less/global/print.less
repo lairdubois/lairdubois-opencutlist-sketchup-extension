@@ -40,9 +40,10 @@
   .table-bordered {
     border: 1px solid #000 !important;
     font-size: 90%;
+    //break-inside: avoid;
 
-    thead, tr {
-      page-break-inside: avoid !important;
+    & > tbody > tr.table-row-section {
+      background: none !important;
     }
 
     & > thead > tr > th,
@@ -62,19 +63,6 @@
 
     + div {
       display: none !important;
-    }
-
-  }
-
-  .ladb-file-tabs {
-    position: absolute;
-    right: 0;
-    top: 0;
-    font-size: 80%;
-
-    a, .ladb-fake-tab {
-      border: none !important;
-      padding: 10px 0 !important;
     }
 
   }

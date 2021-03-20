@@ -1114,22 +1114,25 @@
     };
 
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
+        var that = this;
         var $group = $('#ladb_group_' + id, this.$page);
-        var $cuttingdiagram1dBtn = $('button.ladb-btn-group-cuttingdiagram1d', $group);
-        var $cuttingdiagram2dBtn = $('button.ladb-btn-group-cuttingdiagram2d', $group);
-        var $labelsBtn = $('button.ladb-btn-group-labels', $group);
-        if (this.selectionPartIds.length > 0) {
-            $('i', $cuttingdiagram1dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
-            $('i', $cuttingdiagram2dBtn).addClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
-            $('i', $labelsBtn).addClass('ladb-opencutlist-icon-labels-selection');
-        } else {
-            $('i', $cuttingdiagram1dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-1d-selection');
-            $('i', $cuttingdiagram2dBtn).removeClass('ladb-opencutlist-icon-cuttingdiagram-2d-selection');
-            $('i', $labelsBtn).removeClass('ladb-opencutlist-icon-labels-selection');
-        }
-        $cuttingdiagram1dBtn.effect('highlight', {}, 1500);
-        $cuttingdiagram2dBtn.effect('highlight', {}, 1500);
-        $labelsBtn.effect('highlight', {}, 1500);
+        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels' ];
+        $.each(defs, function () {
+            var $btn = $('button.ladb-btn-group-' + this, $group);
+            var $i = $('i', $btn);
+            var clazz = 'ladb-opencutlist-icon-' + this + '-selection';
+            var doEffet = false;
+            if (that.selectionPartIds.length > 0) {
+                doEffet = !$i.hasClass(clazz);
+                $i.addClass(clazz);
+            } else {
+                doEffet = $i.hasClass(clazz);
+                $i.removeClass(clazz);
+            }
+            if (doEffet) {
+                $btn.effect('highlight', {}, 1500);
+            }
+        });
     };
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
@@ -1168,7 +1171,9 @@
     };
 
     LadbTabCutlist.prototype.renderSelection = function () {
-        this.renderSelectionOnGroup(this.selectionGroupId);
+        if (this.selectionGroupId) {
+            this.renderSelectionOnGroup(this.selectionGroupId);
+        }
         for (var i = 0; i < this.selectionPartIds.length; i++) {
             this.renderSelectionOnPart(this.selectionPartIds[i], true);
         }

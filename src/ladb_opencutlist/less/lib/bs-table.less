@@ -4,15 +4,6 @@
 
 table.table-bordered {
 
-  & > thead > tr.text-middle > th,
-  & > tbody > tr.text-middle > th,
-  & > tfoot > tr.text-middle > th,
-  & > thead > tr.text-middle > td,
-  & > tbody > tr.text-middle > td,
-  & > tfoot > tr.text-middle > td {
-    vertical-align: middle;
-  }
-
   &.table-danger {
     border-color: darken(spin(#f2dede, -10), 5%);
 
@@ -25,6 +16,21 @@ table.table-bordered {
       border: 1px solid darken(spin(#f2dede, -10), 5%);
     }
 
+  }
+
+  & > thead > tr.text-middle > th,
+  & > tbody > tr.text-middle > th,
+  & > tfoot > tr.text-middle > th,
+  & > thead > tr.text-middle > td,
+  & > tbody > tr.text-middle > td,
+  & > tfoot > tr.text-middle > td {
+    vertical-align: middle;
+  }
+
+  & > tbody > tr.table-row-section {
+    padding: 5px 10px 5px 10px;
+    font-size: 80%;
+    background-color: #fcfcfc;
   }
 
 }

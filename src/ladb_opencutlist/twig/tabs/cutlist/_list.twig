@@ -191,10 +191,10 @@
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     {% if group.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram-2d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     {% if group.material_type == 3 %}    {# 3 = TYPE_BAR #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram-1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-labels" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_labels'|i18next }}..."><i class="ladb-opencutlist-icon-labels" style="font-size: 14px;"></i></button>
@@ -270,14 +270,14 @@
         {% for part in group.parts %}
             {% if showThicknessSeparators and showBoxDimensions and group.material_type == 1 and part.thickness != thickness and group.parts|length > 1 %}
                 {% set thickness = part.thickness %}
-                <tr style="background-color: #fcfcfc;">
-                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
+                <tr class="table-row-section">
+                    <td colspan="8">{{ 'tab.cutlist.list.thickness'|i18next }} {{ part.thickness }}</td>
                 </tr>
             {% endif %}
             {% if showWidthSeparators and showBoxDimensions and group.material_type == 1 and part.width != width and group.parts|length > 1 %}
                 {% set width = part.width %}
-                <tr style="background-color: #fcfcfc;">
-                    <td colspan="8" style="padding: 5px 10px 5px 10px; font-size: 80%;">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
+                <tr class="table-row-section">
+                    <td colspan="8" class="separator">{{ 'tab.cutlist.list.width'|i18next }} {{ part.width }}</td>
                 </tr>
             {% endif %}
             <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %} ladb-minitools-holder">

@@ -310,16 +310,16 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-update:before {
   content: "\e953";
 }
-.ladb-opencutlist-icon-cuttingdiagram-1d:before {
+.ladb-opencutlist-icon-cuttingdiagram1d:before {
   content: "\e954";
 }
-.ladb-opencutlist-icon-cuttingdiagram-1d-selection:before {
+.ladb-opencutlist-icon-cuttingdiagram1d-selection:before {
   content: "\e955";
 }
-.ladb-opencutlist-icon-cuttingdiagram-2d:before {
+.ladb-opencutlist-icon-cuttingdiagram2d:before {
   content: "\e956";
 }
-.ladb-opencutlist-icon-cuttingdiagram-2d-selection:before {
+.ladb-opencutlist-icon-cuttingdiagram2d-selection:before {
   content: "\e957";
 }
 .ladb-opencutlist-icon-asterisk:before {

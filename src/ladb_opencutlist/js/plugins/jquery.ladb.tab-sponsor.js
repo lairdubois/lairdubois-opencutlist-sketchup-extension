@@ -23,7 +23,7 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveGoal = 5895; // Top of KILIMANDJARO Altitude
+        var objectiveGoal = 5000;
         var objectiveCurrency = 'USD';
 
         // Fetch UI elements
