@@ -472,11 +472,11 @@ tab:
       option_bar_folding: Gleiche Stangen zusammenfassen
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja
-      option_bar_folding_help: "Ermöglicht das Gruppieren von Stangen, die dieselben Teile und Schnitte enthalten."
+      option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen, die dieselben Teile und Schnitte enthalten."
       option_sheet_folding: Gleiche Platten zusammenfassen
       option_sheet_folding_0: Nein
       option_sheet_folding_1: Ja
-      option_sheet_folding_help: "Ermöglicht das Gruppieren von Platten, die dieselben Teile und Schnitte enthalten."
+      option_sheet_folding_help: "Ermöglicht das Zusammenfassen von Platten, die dieselben Teile und Schnitte enthalten."
       option_hide_part_list: Liste der Teile
       option_hide_part_list_1d_0: Anzeigen für jede Stange
       option_hide_part_list_2d_0: Anzeigen für jede Platte
@@ -495,7 +495,7 @@ tab:
       option_full_width_diagram: Anzeige in voller Breite
       option_full_width_diagram_0: Nein
       option_full_width_diagram_1: Ja
-      option_full_width_diagram_help: "Wenn diese Option aktiviert ist, werden die Schnittdiagramme über die gesamte verfügbare Breite angezeigt. Andernfalls wird ihre Breite durch einen festen Skalierungsfaktor der von den anderen Diagrammen abhängt definiert."
+      option_full_width_diagram_help: "Wenn diese Option aktiviert ist, werden die einzelnen Schnittdiagramme über die gesamte verfügbare Fensterbreite angezeigt. Andernfalls wird ihre Breite durch einen festen Skalierungsfaktor, der von den anderen Diagrammen abhängt, definiert."
       option_wrap_length: Länge bis zum Umbruch
       option_wrap_length_help: "Maximale Länge, darüber wird eine Stange über mehrere Zeilen dargestellt."
       option_hide_cross: Verschnittanzeige
@@ -511,12 +511,12 @@ tab:
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_optimization: Optimierungsgrad
+      option_optimization: Optimierungsstufe
       option_optimization_help: Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit.
       option_optimization_0: Mittel
       option_optimization_1: Fortgeschritten
       option_stacking: Vorzugsrichtung
-      option_stacking_help: "Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben, pro Platte falls mehrere benötigt werden."
+      option_stacking_help: "Bevorzugte Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben, pro Platte falls mehrere benötigt werden."
       option_stacking_0: Keine Präferenz
       option_stacking_1: Der Länge nach
       option_stacking_2: Der Breite nach
@@ -526,7 +526,7 @@ tab:
         Wählen Sie hier die Standardstangenware welche dupliziert wird um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
-      option_std_bar_add: Eine Länge hinzufügen...
+      option_std_bar_add: Länge hinzufügen...
       option_std_bar_none: Keine
       option_scrap_bar_lengths: Stangenreste
       option_scrap_bar_lengths_placeholder: Länge x Anzahl ; ...
@@ -537,10 +537,10 @@ tab:
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_std_sheet: Standard-Platte
       option_std_sheet_help: |
-        Wählen Sie hier die Standard-Platte welche dupliziert wird um die bestmögliche Platzierung zu berechnen.
+        Wählen Sie die Standard-Platte welche dupliziert wird, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
-        Editieren Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_add: Ein Plattenmaß hinzufügen ...
+        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
+      option_std_sheet_add: Plattenmaß hinzufügen ...
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
@@ -580,10 +580,10 @@ tab:
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
       error:
-        no_bar: Die Standard-Länge wurde nicht richtig angegeben und kein Stangenrest ist definiert.
+        no_bar: Die Standard-Länge ist falsch konfiguriert und es stehen keine Stangenreste zu Verfügung.
         parameters: Die Parameter sind nicht korrekt. Die Randabfallbreite ist grösser als 25 % der längsten Stange.
         no_parts: Kein Teil.
-        no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es sind keine Plattenreste verfügbar.
+        no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es stehen keine Plattenreste zu Verfügung.
         no_placement_possible: "Keine Platzierung möglich (Seitenrand zu groß, Standard-Platte zu klein, Sägeschnitt zu groß, ...)."
         bad_error: "Algorithmusfehler. Bitte kontaktieren Sie die Entwickler, da Sie einen interessanten Fall haben."
         unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."

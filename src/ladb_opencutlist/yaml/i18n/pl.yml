@@ -956,7 +956,7 @@ tab:
     length_format: Format
     length_format_0: Dziesiętny
     length_format_1: Architektoniczny
-    length_format_2: Inżynieryjski
+    length_format_2: Inżynieryjny
     length_format_3: Ułamkowy
     length_precision: Precyzja
     suppress_units_display: Wyświetl jednostkę długości dla każdej wartości

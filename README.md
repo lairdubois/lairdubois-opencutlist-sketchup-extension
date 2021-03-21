@@ -1,6 +1,6 @@
 # OpenCutList by L'Air du Bois
 
-**OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of cut lists and cutting diagrams for woodworking projects.
+**OpenCutList** is a [SketchUp](http://www.sketchup.com) Extension for automating the generation of a parts list, computing cutting diagrams, printing labels and generating cost and weight reports for woodworking projects.
 
 ![OpenCutList](docs/img/capture-solid-wood-part-list.png)
 
@@ -16,17 +16,17 @@
 
 ## Download and Install
 
-You can download and install the signed ***.rbz** package from the [dist](dist) folder or from its official [Extension Warehouse](https://extensions.sketchup.com/en) page:
+The signed ***.rbz** package is available from the [dist](dist) folder or from its official [Trimble Extension Warehouse](https://extensions.sketchup.com/en) page:
 
 https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist
 
 ## Supported Languages
 
-OpenCutList is available in french, english, german, russian, italian, portuguese, spanish, czech, polish and dutch. Experimental versions of arabic and hebrew are also available, although without RTL interface. The interface language of the extension can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
+**OpenCutList** is available in French, English, German, Russian, Italian, Portuguese, Spanish, Polish, Czech and Dutch. Experimental versions of Arabic and Hebrew are also available, although without RTL interface. The interface language of **OpenCutList** can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
 
 ## Supported Units
 
-In addition to the selected SketchUp unit, OpenCutList works with dimensions of solid wood, panels and dimensional lumber in fractional inches, even if the selected SketchUp units are metric and vice versa.
+In addition to the selected SketchUp unit, **OpenCutList** works with dimensions of solid wood, panels and dimensional lumber in fractional inches, even if the selected SketchUp units are metric and vice versa.
 
 ## FAQ
 

@@ -446,7 +446,7 @@ tab:
       info_0: |
         הפונקציונליות מאפשרת ליצור דוח על **משקלים**, **עלויות** ו-**חומרי גלם** הדרושים לייצור החלקים ב*תוכנית חיתוך*.
       options_general: כללי
-      options_solid_wood: ""
+      options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: מקדם *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: משמש לציון המקדם הכפל המופעל על הנפח הגולמי שנמדד עבור חומרים מסוג "**$t(tab.materials.type_1)**".
       raw_materials: חומר גלם
