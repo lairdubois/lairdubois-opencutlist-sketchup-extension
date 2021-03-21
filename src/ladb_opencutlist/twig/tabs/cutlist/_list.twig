@@ -257,8 +257,8 @@
                 <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
             {% endif %}
             {% if showEdges %}
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
@@ -298,8 +298,8 @@
                     <td class="ladb-cutlist-dimension-value">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
                 {% endif %}
                 {% if showEdges %}
-                    <td class="ladb-cutlist-edge{% if part.edge_material_names.ymax in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.ymin in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.ymin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymin }}</span>{% endif %}</td>
+                    <td class="ladb-cutlist-edge{% if part.edge_material_names.ymax in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.xmin in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.xmax in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
                 {% endif %}
