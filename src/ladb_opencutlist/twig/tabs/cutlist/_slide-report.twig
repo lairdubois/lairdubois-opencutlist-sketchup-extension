@@ -124,7 +124,7 @@
                                         <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>
                                     {% endif %}
                                     {% if group.material_type == 2 %} {# TYPE_SOLID_WOOD #}
-                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>
+                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
                                     {% endif %}
                                     {% if group.material_type == 3 %} {# TYPE_DIMENSIONAL #}
                                         <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>

@@ -27,7 +27,6 @@
         this.usedEdgeMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
-        this.solidWoodMaterialCount = 0;
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
@@ -317,7 +316,7 @@
 
                 var materialId = $(this).data('material-id');
                 that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                    material_id: materialId,
+                    materialId: materialId,
                     updatedCallback: function () {
 
                         // Flag to stop ignoring next material change event
@@ -383,7 +382,7 @@
                 var group = that.findGroupById(groupId);
                 if (group) {
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                        material_id: group.material_id,
+                        materialId: group.material_id,
                         updatedCallback: function () {
 
                             // Flag to stop ignoring next material change event
@@ -916,7 +915,8 @@
 
                                 var materialId = $(this).data('material-id');
                                 that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                                    material_id: materialId,
+                                    materialId: materialId,
+                                    propertiesTab: 'attributes',
                                     updatedCallback: function () {
 
                                         // Flag to stop ignoring next material change event
@@ -2023,7 +2023,7 @@
 
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                        material_id: group.material_id,
+                        materialId: group.material_id,
                         callback: callback
                     });
 
@@ -2281,7 +2281,7 @@
 
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                        material_id: group.material_id,
+                        materialId: group.material_id,
                         callback: callback
                     });
 

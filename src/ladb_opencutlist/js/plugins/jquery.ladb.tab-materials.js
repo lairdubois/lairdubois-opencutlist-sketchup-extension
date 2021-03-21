@@ -13,6 +13,7 @@
         this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
+        this.lastMaterialPropertiesTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
@@ -208,11 +209,19 @@
 
     };
 
-    LadbTabMaterials.prototype.editMaterial = function (id, callback, updatedCallback) {
+    LadbTabMaterials.prototype.editMaterial = function (id, propertiesTab, callback, updatedCallback) {
         var that = this;
 
         var material = this.findMaterialById(id);
         if (material) {
+
+            if (propertiesTab === undefined) {
+                propertiesTab = this.lastMaterialPropertiesTab;
+            }
+            if (propertiesTab === null || propertiesTab.length === 0) {
+                propertiesTab = 'cut_options';
+            }
+            this.lastMaterialPropertiesTab = propertiesTab;
 
             // Keep the edited material
             this.editedMaterial = material;
@@ -221,7 +230,8 @@
                 capabilities: that.dialog.capabilities,
                 mass_unit_strippedname: that.massUnitStrippedname,
                 length_unit_strippedname: that.lengthUnitStrippedname,
-                material: material
+                material: material,
+                properties_tab: propertiesTab
             }, true);
 
             // Fetch UI elements
@@ -700,6 +710,7 @@
         var that = this;
 
         // Fetch UI elements
+        var $tabs = $('a[data-toggle="tab"]', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
         var $inputName = $('#ladb_materials_input_name', $modal);
@@ -909,6 +920,10 @@
         });
 
         // Bind tab
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastMaterialPropertiesTab = $(e.target).attr('href').substring('#tab_edit_material_general_'.length);
+        })
+
         $btnTabAttributes.on('shown.bs.tab', function () {
             fnSetStdPricesTypeAndStds();
         });
@@ -1008,12 +1023,13 @@
             }, 1);
         });
         this.registerCommand('edit_material', function (parameters) {
-            var materialId = parameters.material_id;
+            var materialId = parameters.materialId;
+            var propertiesTab = parameters.propertiesTab;
             var callback = parameters.callback;
             var updatedCallback = parameters.updatedCallback;
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
                 that.loadList(function () {
-                    that.editMaterial(materialId, callback, updatedCallback);
+                    that.editMaterial(materialId, propertiesTab, callback, updatedCallback);
                 });
             }, 1);
         });

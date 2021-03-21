@@ -17,7 +17,7 @@
     <div class="form form-horizontal">
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="tab_edit_material_general">
-                {% include 'tabs/materials/_material-properties-form.twig' %}
+                {% include 'tabs/materials/_material-properties-form.twig' with { 'tab':properties_tab } %}
             </div>
             <div role="tabpanel" class="tab-pane" id="tab_edit_material_texture">
                 <div class="ladb-material-texture-preview">

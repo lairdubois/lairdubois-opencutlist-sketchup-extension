@@ -9,7 +9,7 @@
 
 {% block bodyInner %}
     <div class="form form-horizontal">
-        {% include 'tabs/materials/_material-properties-form.twig' %}
+        {% include 'tabs/materials/_material-properties-form.twig' with { 'tab':'cut_options' } %}
     </div>
     <div class="text-center">
         <div class="color-picker"></div>
