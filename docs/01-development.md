@@ -125,13 +125,13 @@ That's it. You can now play with **OpenCutList**.
 
 ### Reflect Code Changes
 
-#### Ruby changes
+#### Ruby Code Changes
 
-**SketchUp loads ruby files and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files you changed (and not `main.rb` if you did not modify it).
-Caution! if you change static or methods definitions, you must restart SketchUp and process from scratch.
+**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `main.rb` if it was not modified).
+Caution! if static or methods definitions were changed, you must restart SketchUp and process from scratch.
 
-#### Yaml or Twig changes
+#### Yaml or Twig Changes
 
-To reflect I18N (yaml) or UI (twig) changes you must run the `gulp compile` (see 4.) command, as well as close and reopen the **OpenCutList** dialog in SketchUp.
+To reflect I18N (yaml) or UI (twig) changes, run the `gulp compile` (see 4.) command, as well as close and reopen the **OpenCutList** dialog in SketchUp.
 
 Enjoy :)

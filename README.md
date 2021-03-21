@@ -16,13 +16,13 @@
 
 ## Download and Install
 
-You can download and install the signed ***.rbz** package from the [dist](dist) folder or from its official [Trimble Extension Warehouse](https://extensions.sketchup.com/en) page:
+The signed ***.rbz** package is available from the [dist](dist) folder or from its official [Trimble Extension Warehouse](https://extensions.sketchup.com/en) page:
 
 https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/opencutlist
 
 ## Supported Languages
 
-OpenCutList is available in French, English, German, Russian, Italian, Portuguese, Spanish, Czech, Polish and Dutch. Experimental versions of Arabic and Hebrew are also available, although without RTL interface. The interface language of **OpenCutList** can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
+**OpenCutList** is available in French, English, German, Russian, Italian, Portuguese, Spanish, Polish, Czech and Dutch. Experimental versions of Arabic and Hebrew are also available, although without RTL interface. The interface language of **OpenCutList** can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
 
 ## Supported Units
 
