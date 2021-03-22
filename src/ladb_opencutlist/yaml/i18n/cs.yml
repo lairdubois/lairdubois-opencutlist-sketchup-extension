@@ -610,7 +610,7 @@ tab:
       option_page_format: Formát
       option_page_format_portrait: Na výšku
       option_page_format_landscape: Na šířku
-      option_page_format_custom: Zvyk
+      option_page_format_custom: Uživatelsky
       option_page_width: Šířka
       option_page_height: Výška
       option_margin: Okraje
@@ -628,7 +628,7 @@ tab:
       option_cutting_marks_0: Žádný
       option_cutting_marks_1: Vytištěno
       option_formula: Název pole
-      option_size: Dimenze
+      option_size: Rozměry
       option_anchor: Kotva
       option_anchor_start: Start
       option_anchor_middle: Střední
@@ -638,9 +638,9 @@ tab:
         part_number: Číslo
         part_name: Popis
         part_entity_name: Název instance
-        part_cutting_size: Drsné rozměry
-        part_cutting_length: Délka - drsná
-        part_cutting_width: Šířka - drsná
+        part_cutting_size: Hrubé rozměry
+        part_cutting_length: Hrubá délka
+        part_cutting_width: Hrubá šířka
         part_size: Rozměry
         part_length: Délka
         part_width: Šířka
