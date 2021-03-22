@@ -120,12 +120,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Return true if this Box is "very" different from another Box, e.g. 10% difference in both directions.
     #
     def different?(box)
-      diff_measure = DIFF_PERCENTAGE_BOX
       return true if box.nil?
 
-      return true if (@length - box.length).abs > box.length * diff_measure || (@width - box.width).abs > box.width * diff_measure
+      return true if (@length - box.length).abs > box.length * DIFF_PERCENTAGE_BOX || (@width - box.width).abs > box.width * DIFF_PERCENTAGE_BOX
 
-      return true if @rotatable && ((@length - box.width).abs >= box.length * diff_measure || (@width - box.length).abs >= box.width * diff_measure)
+      return true if @rotatable && ((@length - box.width).abs >= box.length * DIFF_PERCENTAGE_BOX || (@width - box.length).abs >= box.width * DIFF_PERCENTAGE_BOX)
 
       false
     end

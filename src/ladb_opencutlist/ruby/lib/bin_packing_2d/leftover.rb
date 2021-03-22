@@ -122,7 +122,7 @@ module Ladb::OpenCutList::BinPacking2D
       # When stacking is on, one would be tempted to always do the first cut
       # in the direction of stacking, always!
       # Does not work well in practice!
-
+      #
       case @options.split
       when SPLIT_SHORTERLEFTOVER_AXIS
         @length - box.length < @width - box.width

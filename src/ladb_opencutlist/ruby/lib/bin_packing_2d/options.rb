@@ -28,7 +28,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets debug mode to on.
+    # Sets debug mode to on/off.
     #
     def set_debug(debug)
       @debug = debug

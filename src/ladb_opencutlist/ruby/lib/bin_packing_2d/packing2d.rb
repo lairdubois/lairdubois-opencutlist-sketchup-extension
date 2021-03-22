@@ -24,8 +24,8 @@ module Ladb::OpenCutList
     MAX_TIME = 30
 
     # Number of best solution to carry over for each bin.
-    BEST_X_SMALL = 4
-    BEST_X_LARGE = 3
+    BEST_X_SMALL = 3
+    BEST_X_LARGE = 2
     # With less than this Boxes, use BEST_X_SMALL to keep Packers.
     MAX_BOXES_TIME = 30
 
@@ -87,11 +87,11 @@ module Ladb::OpenCutList
     SPLIT_LONGERLEFTOVER_AXIS = 1
     SPLIT_MINIMIZE_AREA = 2
     SPLIT_MAXIMIZE_AREA = 3
-    SPLIT_HORIZONTAL_FIRST = 4
-    SPLIT_VERTICAL_FIRST = 5
-    SPLIT_SHORTER_AXIS = 6
-    SPLIT_LONGER_AXIS = 7
-    SPLIT = ["shorter leftover", "longer leftover", "min. area", "max. area", "horizontal_first", "vertical_first", "shorter axis", "longer axis"]
+    SPLIT_SHORTER_AXIS = 4
+    SPLIT_LONGER_AXIS = 5
+    SPLIT_HORIZONTAL_FIRST = 6
+    SPLIT_VERTICAL_FIRST = 7
+    SPLIT = ["shorter leftover", "longer leftover", "min. area", "max. area", "shorter axis", "longer axis", "horizontal_first", "vertical_first"]
 
     # Do not try to stack boxes.
     STACKING_NONE = 0
