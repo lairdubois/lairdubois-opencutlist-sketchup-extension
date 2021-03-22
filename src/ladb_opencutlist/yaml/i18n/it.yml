@@ -364,6 +364,7 @@ tab:
       property_name: Descrizione
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
+      property_tags: Tags
       tags: Tags
       tags_help: Elenco personalizzato di tag offerto nella finestra delle proprietà della parte.
       tags_placeholder: Aggiungi un tag

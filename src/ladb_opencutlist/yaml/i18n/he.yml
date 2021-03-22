@@ -364,6 +364,7 @@ tab:
       property_name: תיאור
       property_count: כמות
       property_edge_pattern: כמות קאנטים
+      property_tags: תגים
       tags: תגים
       tags_help: רשימה מותאמת אישית של תגים המוצעים בחלון מאפייני החלק.
       tags_placeholder: הוסף תג

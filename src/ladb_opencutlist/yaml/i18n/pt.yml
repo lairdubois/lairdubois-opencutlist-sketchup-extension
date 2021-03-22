@@ -364,6 +364,7 @@ tab:
       property_name: Descrição
       property_count: Quantidade
       property_edge_pattern: Número de fitas de borda
+      property_tags: Tags
       tags: Tags
       tags_help: Lista personalizada de tags oferecidas na janela de propriedades da peça.
       tags_placeholder: Adicionar uma tag

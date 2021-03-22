@@ -364,6 +364,7 @@ tab:
       property_name: Bezeichnung
       property_count: Anzahl
       property_edge_pattern: Anzahl Kantenbänder
+      property_tags: Tags
       tags: Tags
       tags_help: "Benutzerdefinierte Liste von Tags, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
       tags_placeholder: Tag hinzufügen

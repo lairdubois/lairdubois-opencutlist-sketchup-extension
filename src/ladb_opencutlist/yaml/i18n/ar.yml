@@ -364,6 +364,7 @@ tab:
       property_name: وصف
       property_count: العدد
       property_edge_pattern: عدد الحواشي
+      property_tags: الوسوم
       tags: الوسوم
       tags_help: قائمة الوسوم المخصصة المعروضة في نافذة خصائص القِطع.
       tags_placeholder: أضف وسما

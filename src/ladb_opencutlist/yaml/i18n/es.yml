@@ -364,6 +364,7 @@ tab:
       property_name: Descripción
       property_count: Cantidad
       property_edge_pattern: Número de tiras de cantos
+      property_tags: Etiquetas
       tags: Etiquetas
       tags_help: Lista personalizada de etiquetas propuestas en la ventana de propiedades de las piezas.
       tags_placeholder: Añadir una etiqueta

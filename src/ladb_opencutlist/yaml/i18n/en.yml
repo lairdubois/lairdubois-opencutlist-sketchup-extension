@@ -364,6 +364,7 @@ tab:
       property_name: Description
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
+      property_tags: Tags
       tags: Tags
       tags_help: Custom list of tags proposed in the part properties window.
       tags_placeholder: Add a tag
