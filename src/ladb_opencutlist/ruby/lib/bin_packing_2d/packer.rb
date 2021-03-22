@@ -76,9 +76,11 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_length_cuts] = 0
       @gstat[:total_nb_cuts] = 0
       @gstat[:nb_through_cuts] = 0
-      @gstat[:all_largest_area] = 0
       @gstat[:total_l_measure] = 0
       @gstat[:area_unplaced_boxes] = 0
+      @gstat[:all_largest_area] = 0
+      @gstat[:largest_bottom_parts] = 0
+      @gstat[:rank] = 0
     end
 
     #
@@ -93,21 +95,24 @@ module Ladb::OpenCutList::BinPacking2D
       @previous_packer = previous_packer
       @next_bin_index = previous_packer.next_bin_index
 
+      # Packed bins will not get modified anymore, no need to make own instances
       @previous_packer.packed_bins.each do |bin|
         @packed_bins << bin
       end
 
+      # Make copies of unused bins so that each packer has its own instances
       @previous_packer.unused_bins.each do |bin|
         new_bin = Bin.new(bin.length, bin.width, bin.type, @options, 0)
         @next_bin_index = new_bin.set_index(bin.index)
         @bins << new_bin
       end
 
-      # Theses bins will not be used anymore, thus no need to copy them.
+      # Theses bins will not be used anymore, thus no need to clone them.
       @previous_packer.invalid_bins.each do |bin|
         @invalid_bins << bin
       end
 
+      # Make copies of unplaced boxes so that each packer has its own instances.
       @previous_packer.unplaced_boxes.each do |box|
         new_box = Box.new(box.length, box.width, box.rotatable, box.data)
         new_box.set_rotated if box.rotated?
@@ -117,7 +122,7 @@ module Ladb::OpenCutList::BinPacking2D
       # Invalid boxes for one bin, may be valid for the next bin.
       @previous_packer.invalid_boxes.each do |box|
         new_box = Box.new(box.length, box.width, box.rotatable, box.data)
-        @invalid_boxes << new_box
+        @boxes << new_box
       end
 
       # Update start statistics for this packer
@@ -188,7 +193,7 @@ module Ladb::OpenCutList::BinPacking2D
         @boxes.sort_by! { |box| [-box.length - box.width, -box.length] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
-        wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
+        wl, ws = @boxes.partition { |box| box.width >= (@_maxwidth - w_max.width) }
         wl.sort_by! { |box| -box.width }
         ws.sort_by! { |box| -box.width }
         if wl.empty? || ws.empty?
@@ -201,7 +206,7 @@ module Ladb::OpenCutList::BinPacking2D
         end
       when PRESORT_ALTERNATING_LENGTHS
         l_max = @boxes.max_by(&:length)
-        ll, ls = @boxes.partition { |box| box.length >= (@stacking_maxlength - l_max.length) }
+        ll, ls = @boxes.partition { |box| box.length >= (@_maxlength - l_max.length) }
         ll.sort_by! { |box| -box.length }
         ls.sort_by! { |box| -box.length }
         if ll.empty? || ls.empty?
@@ -359,6 +364,10 @@ module Ladb::OpenCutList::BinPacking2D
             current_bin.keep_signature(@options.signature)
             @packed_bins << current_bin
             @unplaced_boxes = unmake_superboxes(@boxes)
+            if !@invalid_boxes.empty?
+              @unplaced_boxes += @invalid_boxes
+              @invalid_boxes = []
+            end
             postprocess(current_bin)
             @unused_bins += @bins
             @bins = []
@@ -372,6 +381,10 @@ module Ladb::OpenCutList::BinPacking2D
           if !bins_can_be_added?
             # We are done with packing.
             @unplaced_boxes = @boxes
+            if !@invalid_boxes.empty?
+              @unplaced_boxes += @invalid_boxes
+              @invalid_boxes = []
+            end
             @boxes = []
             return ERROR_NO_BIN
           end
@@ -399,12 +412,15 @@ module Ladb::OpenCutList::BinPacking2D
           box = @boxes.shift
 
           # Recompute bounding box, while packing!
+          # Remove this until version 2.1 and further tests.
+=begin
           if current_bin.boxes.size > 1 && box.different?(previous_box)
             current_bin.bounding_box(box, false)
             # This would be a good place to make a rectangle merge, but
             # 26.txt shows that this is not possible!
             # Only recompute bounding box when no merge is possible!
           end
+=end
           score = current_bin.best_ranked_score(box)
 
           # No placement possible in current bin.
@@ -471,11 +487,23 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_through_cuts] += @stat[:nb_h_through_cuts] + @stat[:nb_v_through_cuts]
       @gstat[:total_l_measure] += @stat[:l_measure]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
+      @gstat[:largest_bottom_parts] += current_bin.stat[:largest_bottom_part]
+    end
+
+    #
+    # Checks if all Boxes
+    #
+    def no_box_left_behind(must_have_nb)
+      have_nb = @gstat[:nb_packed_boxes] + @gstat[:nb_invalid_boxes] + @gstat[:nb_unplaced_boxes]
+      if have_nb != must_have_nb
+        p(to_str)
+        raise(Packing2DError, "Lost boxes in packing process have=#{have_nb} <> must_have=#{must_have_nb}!")
+      end
     end
 
     def all_signatures
       @packed_bins.each do |bin|
-        puts("#{bin.stat[:signature]}, L=#{bin.length}, W=#{bin.width}")
+        dbg("#{bin.stat[:signature]}, L=#{bin.length}, W=#{bin.width}")
       end
     end
 
@@ -490,7 +518,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging! Prints stuff to terminal.
     #
-    def to_term
+    def to_str
       debug_old = @options.debug
       @options.set_debug(true)
 
@@ -551,8 +579,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging!
     #
-    def to_str
-      "packer id=#{@options.fingerprint}"
+    def signature
+      "packer id=#{@options.signature}"
     end
 
     #

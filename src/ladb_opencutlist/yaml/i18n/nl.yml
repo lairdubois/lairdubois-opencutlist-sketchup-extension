@@ -46,7 +46,7 @@ default:
   instance_single: eenheid
   instance_plural: eenheden
   part_single: deel
-  part_plural: delen
+  part_plural: onderdelen
   setup_model_units: Configureer modeleenheden
   load_more: "Meer laden"
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
@@ -134,7 +134,7 @@ core:
     please_wait: Even geduld aub
 tab:
   cutlist:
-    label: Delen
+    label: Onderdelen
     title: Onderdelenlijst
     help: |
       Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
@@ -208,7 +208,7 @@ tab:
       unused_instance_count_plural: "Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt."
       used_instance_count: "**{{ count }}** / {{ total }} gebruikte eenheden"
       used_instance_count_plural: "**{{ count }}** / {{ total }} gebruikte eenheden"
-      multiple_layers: "Let op! dit component is opgebouwd uit delen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
+      multiple_layers: "Let op! dit component is opgebouwd uit onderdelen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
       children_warnings: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_warnings_plural: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_size_increase: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
@@ -283,7 +283,7 @@ tab:
         - de *lengte* komt op de rode as
         - de *breedte* op de groene as
         - de *dikte* op de blauwe as
-      symmetrical: Schakel detectie van gespiegelde delen op dit deel uit
+      symmetrical: Schakel detectie van gespiegelde onderdelen op dit deel uit
       symmetrical_help: |
         Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
       size_increase: Overlengtes
@@ -974,7 +974,7 @@ tab:
       reset_global_presets_success: |
         De *OpenCutList* voorkeuren zijn opnieuw ingesteld.
         Om de wijzigingen weer te geven, moet u het venster OpenCutList **sluiten** en **opnieuw openen**.
-      reset_model_presets: Herinitialiseren modelvoorinstellingen
+      reset_model_presets: Reset modelvoorinstellingen
       reset_model_presets_confirm: |
         U staat op het punt om alle *OpenCutList* instellingen voor het huidige model te resetten.
         Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.
@@ -1015,5 +1015,5 @@ tab:
       - [GitBook](https://www.gitbook.com) voor hun steun aan open source projecten.
 tool:
   highlight:
-    transparency: Doorzichtigheid
+    transparency: Transparant
     zoom_extents: Alles tonen
