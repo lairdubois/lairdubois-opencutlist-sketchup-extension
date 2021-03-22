@@ -237,7 +237,7 @@ module Ladb::OpenCutList::BinPacking2D
       crit_coll.reverse! if !ascending
 
       ranks = crit_coll.map { |e| crit_coll.index(e) + 1}
-      h = [crit_coll, ranks].transpose.to_h
+      h = Hash[[crit_coll, ranks].transpose]
       packers.each do |b|
         b.gstat[:rank] += h[b.gstat[crit]]
       end
@@ -274,7 +274,7 @@ module Ladb::OpenCutList::BinPacking2D
       crit_coll = packers.collect { |packer| packer.stat[crit] }.uniq.sort
       crit_coll.reverse! if !ascending
       ranks = crit_coll.map { |e| crit_coll.index(e) + 1}
-      h = [crit_coll, ranks].transpose.to_h
+      h = Hash[[crit_coll, ranks].transpose]
       packers.each do |b|
         b.stat[:rank] += h[b.stat[crit]]
       end
