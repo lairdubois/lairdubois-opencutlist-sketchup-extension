@@ -5,9 +5,9 @@ default:
   minimize: Minimaliseren
   maximize: Maximaliseren
   cancel: Annuleer
-  validate: OK
-  confirm: ok
-  ok: Ok
+  validate: Bevestigen
+  confirm: Bevestigen
+  ok: OK
   open: Open
   see: Bekijk
   close: Sluiten
@@ -364,6 +364,7 @@ tab:
       property_name: Beschrijving
       property_count: Hoeveelheid
       property_edge_pattern: Aantal kantenbanden
+      property_tags: Tags
       tags: Tags
       tags_help: Lijst van eigen tags voorgesteld in het venster van de eigenschappen van onderdelen.
       tags_placeholder: Voeg trefwoord toe

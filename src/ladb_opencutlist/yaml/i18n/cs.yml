@@ -264,10 +264,10 @@ tab:
         Balení = 2 kusy / díl*
       instance_count_by_part_1: 1 jednotka na díl
       instance_count_by_part_2: 2 jednotky na díl
-      mass: Masa
+      mass: Hmotnost
       mass_help: Hmotnost součásti bude použita při generování **Zpráv**.
       price: Cena
-      price_help: Cena dílu bude použita při generování **Zpráv**.
+      price_help: Cena dílu bude použita při generování **Výsledků**.
       tags: Štítky
       tags_help: |
         *Dílcům* můžete přidávat štítky pro lepší definici dílců.
@@ -364,6 +364,7 @@ tab:
       property_name: Popis
       property_count: Počet
       property_edge_pattern: Počet hranování
+      property_tags: Štítky
       tags: Štítky
       tags_help: Vlastní seznam tags nabízených v okně vlastností součásti.
       tags_placeholder: Přidejte tag
@@ -449,15 +450,15 @@ tab:
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Koeficient pro *$t(tab.materials.type_1)*
       option_solid_wood_coefficient_help: Vyčísluje faktor použitý na hrubý objem materiálů typu "**$t(tab.materials.type_1)**" pro zohlednění odpadu.
-      raw_materials: Suroviny
+      raw_materials: Sortiment
       coefficient: Koeficient
       total: Celkový
-      total_mass: Σ Hmotností
-      total_cost: Σ Nákladů
+      total_mass: Σ Hmotnost
+      total_cost: Σ Náklady
       total_count: Množství
-      total_volume: Σ Objemů
+      total_volume: Σ Objem
       total_area: Σ Oblasti
-      total_length: Σ Délky
+      total_length: Σ Délka
       error:
         no_typed_material_parts: "Pro vygenerování sestavy nebyl zadán žádný díl s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** nebo **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
@@ -490,8 +491,8 @@ tab:
       option_origin_corner_2d_1: Levý dolní roh
       option_origin_corner_2d_2: Pravý horní roh
       option_origin_corner_2d_3: Pravý dolní roh
-      option_origin_corner_1d_help: Určuje polohu počátku souřadnic pro zobrazení dílů na sloupcích.
-      option_origin_corner_2d_help: Určuje polohu počátku souřadnic pro zobrazení dílů na panelech.
+      option_origin_corner_1d_help: Určuje polohu počátku souřadnic pro zobrazení dílů ve sloupcích.
+      option_origin_corner_2d_help: Určuje polohu počátku souřadnic pro zobrazení dílů v panelech.
       option_full_width_diagram: Zobrazení na celou šířku
       option_full_width_diagram_0: Ne
       option_full_width_diagram_1: Ano
@@ -614,7 +615,7 @@ tab:
       option_page_height: Výška
       option_margin: Okraje
       option_margin_top: Horní
-      option_margin_right: Že jo
+      option_margin_right: Vpravo
       option_margin_bottom: Dno
       option_margin_left: Vlevo
       option_spacing: Velikost mezery
@@ -640,7 +641,7 @@ tab:
         part_cutting_size: Drsné rozměry
         part_cutting_length: Délka - drsná
         part_cutting_width: Šířka - drsná
-        part_size: Dimenze
+        part_size: Rozměry
         part_length: Délka
         part_width: Šířka
         part_tags: Štítky

@@ -364,6 +364,7 @@ tab:
       property_name: Opis
       property_count: Ilość
       property_edge_pattern: Liczba obrzeży
+      property_tags: Oznaczenia
       tags: Oznaczenia
       tags_help: Własna lista oznaczeń dostępna w oknie właściwości części
       tags_placeholder: Dodaj oznaczenie

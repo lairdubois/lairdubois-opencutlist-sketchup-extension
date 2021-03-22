@@ -364,6 +364,7 @@ tab:
       property_name: Описание
       property_count: Количество
       property_edge_pattern: Количество кромок
+      property_tags: Теги
       tags: Теги
       tags_help: "Настраиваемый список тегов, предлагаемый в окне свойств детали."
       tags_placeholder: Добавить тег
