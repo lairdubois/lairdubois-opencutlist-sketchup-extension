@@ -43,6 +43,22 @@ div.ladb-textinput {
     .ladb-textinput-tool {
       display: inline-block;
       vertical-align: middle;
+
+      &.ladb-textinput-tool-btn {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        line-height: 16px;
+        font-size: 10px;
+        text-align: center;
+        color: @ladb-global-light-color;
+
+        &:hover {
+          color: #888;
+        }
+
+      }
+
     }
 
     &.ladb-textinput-tools-left .ladb-textinput-tool {
@@ -51,21 +67,6 @@ div.ladb-textinput {
 
     &.ladb-textinput-tools-right .ladb-textinput-tool {
         margin-right: 6px;
-    }
-
-  }
-
-  div.ladb-btn-reset {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    line-height: 16px;
-    font-size: 10px;
-    text-align: center;
-    color: @ladb-global-light-color;
-
-    &:hover {
-      color: #888;
     }
 
   }

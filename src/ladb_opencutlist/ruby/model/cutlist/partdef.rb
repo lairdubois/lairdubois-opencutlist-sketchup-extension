@@ -128,6 +128,9 @@ module Ladb::OpenCutList
             when 'edge_pattern'
               a_value = [ part_def_a.edge_count, part_def_a.edge_pattern.nil? ? '' : part_def_a.edge_pattern ]
               b_value = [ part_def_b.edge_count, part_def_b.edge_pattern.nil? ? '' : part_def_b.edge_pattern ]
+            when 'tags'
+              a_value = [ part_def_a.tags ]
+              b_value = [ part_def_b.tags ]
             else
               next
           end

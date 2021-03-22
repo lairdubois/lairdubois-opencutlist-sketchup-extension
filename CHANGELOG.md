@@ -18,20 +18,19 @@ in 2.x, 1.x and 0.x versions.
   * Added part unit price and weight fields for hardware
   * Added part export to skp
   * Added bars and sheets waste's cross display / hide in cutting diagram options
-  * Added cutting diagram 2D option to select origin corner - all four corners
   * Added new 2D bin packing library
   * Added cutting diagram 1D/2D option to render full width diagrams
   * Added cutting diagram 1D/2D option to define the origin corner
   * Added cutting diagram 2D primary cuts
   * Added cutting diagram 2D edge banding infos in part tooltips
-  * Added comments display on news
-  * Added settings option to choose dialog global zoom, **removed due to incompatibilities**
   * Added SketchUp 2021 Tag folders compatibility
   * Added custom proposal list of tags in cutlist options
-  * Added "symmetrical" definition attribute
+  * Added _tags_ sorter in cutlist options
+  * Added _Disable mirrored part detection on this part_ part's property
+  * Added comments display on news
   * Added dump and reset global and model presets for debugging
   * Improved import by putting new instances into a group
-  * Inverted front and back face detection
+  * **Inverted** front and back face detection. Front face is not the _Top_ face
 
 * 1.9.10 (2020-12-17)
 
