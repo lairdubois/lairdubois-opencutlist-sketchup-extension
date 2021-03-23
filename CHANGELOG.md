@@ -8,7 +8,7 @@ in 2.x, 1.x and 0.x versions.
 
   * Added printable **Labels** feature
   * Added printable **Reports** feature
-  * Added **Polish** language (thanks to Jarek Ostaszewski, Greg Gregosky, Patryk Grzyb, Andrzej Smyk and Dominik Szybisz)
+  * Added **Polish** language (thanks to Jarek Ostaszewski and Greg Gregosky)
   * Added **Czech** language (thanks to Radek Rýznar for joining the translators team)
   * Added **Hebrew** language, experimental without RTL interface (thanks to Sergey Isupov for joining the translators team)
   * Added **Arabic** language, experimental without RTL interface (thanks to Soul Issam for joining the translators team)
