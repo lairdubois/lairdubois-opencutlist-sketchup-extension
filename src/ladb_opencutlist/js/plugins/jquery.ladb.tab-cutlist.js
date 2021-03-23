@@ -2024,6 +2024,7 @@
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         materialId: group.material_id,
+                        propertiesTab: 'cut_options',
                         callback: callback
                     });
 
@@ -2282,6 +2283,7 @@
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         materialId: group.material_id,
+                        propertiesTab: 'cut_options',
                         callback: callback
                     });
 
