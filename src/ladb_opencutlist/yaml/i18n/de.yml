@@ -128,7 +128,7 @@ core:
     restore_success: "Das Formular wurde mit der Voreinstellung **\"{{ name }}\"** ausgefüllt"
     delete_success: "Voreinstellung **\"{{ name }}\"** gelöscht"
     tooltip:
-      save_to: "Voreinstellung '{{name}}' aktualisieren"
+      save_to: "Voreinstellung '{{ name }}' aktualisieren"
       delete: "Voreinstellung '{{ name }}' löschen"
   progress:
     please_wait: Bitte warten
@@ -351,7 +351,7 @@ tab:
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
-      part_order_strategy: Sortierung der Teile
+      part_order_strategy: Teile-Sortierung
       part_order_strategy_help: |
         Die Sortierreihenfolge der Teile wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
@@ -781,7 +781,7 @@ tab:
     export_to_skm:
       title: In .skm Datei exportieren
     option:
-      material_order_strategy: Sortierfolge des Materials
+      material_order_strategy: Material-Sortierung
       material_order_strategy_help: |
         Die Sortierreihenfolge der Materialien wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.

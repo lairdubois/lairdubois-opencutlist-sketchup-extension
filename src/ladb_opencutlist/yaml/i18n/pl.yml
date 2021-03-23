@@ -63,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Więcej
-    more_docs: Dokumenty
+    more_docs: Dok
     more_reviews: Recenzje
     more_plans: Plany
     more_extensions: Rozszerzenia
@@ -129,7 +129,7 @@ core:
     delete_success: "Ustawienia **\"{{ name }}\"** zostały usunięte"
     tooltip:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
-      delete: "Usuń ustawienia '{{name}}'"
+      delete: "Usuń ustawienia '{{ name }}'"
   progress:
     please_wait: Proszę czekać
 tab:
@@ -588,7 +588,7 @@ tab:
         no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...). "
         bad_error: "Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek."
         unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
-        unplaced_parts_plural: "Istnieją **{{count}} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
+        unplaced_parts_plural: "Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
       warning:
         selection_only: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: |
@@ -665,7 +665,7 @@ tab:
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
       no_component_in_selection: W zaznaczeniu nie znaleziono instancji widocznego komponentu.
       no_component_in_model: W twojej scenie nie znaleziono instancji widocznego komponentu.
-      failed_to_write_export_file: "Nie udało się zapisać pliku eksportu. **{{error}}**"
+      failed_to_write_export_file: "Nie udało się zapisać pliku eksportu. **{{ error }}**"
       failed_export_skp_file: "Błąd podczas eksportu do pliku skp **{{ error }}**"
       unknow_part: Wybrana część nie istnieje na liście części.
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
@@ -999,7 +999,7 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Patryk Grzyb, Andrzej Smyk i Dominik Szybisz (*Polski*)
       - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
-      - SOUL Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
+      - Soul Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
       - Dany Dhondt, Eric Lugtigheid (*Holenderski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).

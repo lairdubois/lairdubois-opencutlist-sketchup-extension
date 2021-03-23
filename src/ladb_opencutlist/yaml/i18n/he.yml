@@ -203,7 +203,7 @@ tab:
       add_edge_material_name_filter: "לסנן לפי '{{ material_name }}'"
       remove_edge_material_name_filter: "לא לסנן לפי '{{ material_name }}'"
       not_aligned_on_axes: " שימו לב, החלק עשוי להיות מכוון בצורה לא נכונה ביחס לצירים שלו."
-      instance_count_by_part: "החלק נספר בקבוצות של **{{count}}** יחידות."
+      instance_count_by_part: "החלק נספר בקבוצות של **{{ count }}** יחידות."
       unused_instance_count: "לידיעתך, לא תעשה שימוש ביחידה **{{ count }}** מהקבוצה האחרונה."
       unused_instance_count_plural: "לידיעתך, ש-**{{ count }}** יחידות מהקבוצה האחרונה לא ישמשו."
       used_instance_count: "נעשה שימוש ביחידה **{{ count }}** / {{ total }}"

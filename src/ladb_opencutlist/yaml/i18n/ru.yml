@@ -43,7 +43,7 @@ default:
   unit_5: Ярд
   unit_mass_0: Килограмм
   unit_mass_1: Фунт
-  instance_single: Единица
+  instance_single: единица
   instance_plural: единицы
   part_single: деталь
   part_plural: детали
@@ -196,16 +196,16 @@ tab:
       number_generated: Нумерация этой детали сгенерирована автоматически
       resized: Эта часть была изменена в соответствии с определением ее компонентов
       flipped: Эта часть зеркально отображена в сравнении с определением ее компонентов
-      symmetrical: "Для этого элемента отключено опция обнаружения *зеркальной детали* "
+      symmetrical: "Для этого элемента отключена опция обнаружения *зеркальной детали* "
       auto_oriented: Эта деталь была автоматически переориентирована
       add_label_filter: "Фильтровать по '{{ label }}'"
       remove_label_filter: "Удалить фильтрацию по '{{ label }}'"
       add_edge_material_name_filter: "Фильтровать '{{ material_name }}'"
       remove_edge_material_name_filter: "Не фильтровать '{{ material_name }}'"
       not_aligned_on_axes: Внимание! Эта деталь возможно неправильно ориентирована относительно осей компонента
-      instance_count_by_part: "Эта деталь учитывается партиями по **{{count}}** штук."
-      unused_instance_count: "Обратите внимание, что **{{count}}** штука из последней партии не будет использоваться."
-      unused_instance_count_plural: "Обратите внимание, что **{{count}}** штук из последней партии не будут использоваться."
+      instance_count_by_part: "Эта деталь учитывается комплектом по **{{ count }}** ед."
+      unused_instance_count: "Обратите внимание, что **{{ count }}** единица из последнего комплекта не образует комплект"
+      unused_instance_count_plural: "Обратите внимание, что **{{ count }}** единицы из последнего комплекта не образуют комплект."
       used_instance_count: "**{{ count }}** / {{ total }} используемая единица"
       used_instance_count_plural: "**{{ count }}** / {{ total }} используемые единицы"
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
@@ -515,7 +515,7 @@ tab:
       option_optimization: Уровень оптимизации
       option_optimization_help: "Уровень оптимизации определяет объем цифровой обработки данных модели, что влияет на продолжительность расчета."
       option_optimization_0: Средний
-      option_optimization_1: Дополнительно
+      option_optimization_1: Глубокий
       option_stacking: Сложить идентичные детали
       option_stacking_help: "Способ предварительного планирования размещения деталей, имеющих равную ширину или длину."
       option_stacking_0: Не учитывать
