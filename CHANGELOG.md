@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
-* 2.0.0 (WIP)
+* 2.0.0 (2021-03-23)
 
   * Added printable **Labels** feature
   * Added printable **Reports** feature
