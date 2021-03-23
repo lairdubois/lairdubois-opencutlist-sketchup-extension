@@ -63,7 +63,7 @@ core:
     title: OpenCutList por L'Air du Bois
   leftbar:
     more: Mais
-    more_docs: Docs
+    more_docs: Docum.
     more_reviews: Avaliações
     more_plans: Planos
     more_extensions: Extensões
@@ -122,7 +122,7 @@ core:
     delete_confirm_title: Remoção
     delete_confirm: "Tem certeza que você quer apagar as definições **\"{{ name }}\"**?"
     override_confirm_title: Atualizar
-    override_confirm: "Confirma a atualização das definições **\"{{name}}\"** com os parâmetros do formulário?"
+    override_confirm: "Confirma a atualização das definições **\"{{ name }}\"** com os parâmetros do formulário?"
     new_success: "Predefinições **\"{{ name }}\"** criadas"
     override_success: "Predefinições **\"{{ name }}\"** atualizadas"
     restore_success: "O formulário foi preenchido com as definições **\"{{ name }}\"**"
@@ -192,7 +192,7 @@ tab:
       material_origin_3: O material desta peça é extraído de um de seus elementos filho
       orientation_locked_on_axis: A orientação desta peça está bloqueada em seu sistema de coordenadas
       number_saved: O número desta peça foi salvo
-      number_hidden: "O número salvo '{{number}}' desta peça não pode ser usado porque já foi atribuído"
+      number_hidden: "O número salvo '{{ number }}' desta peça não pode ser usado porque já foi atribuído"
       number_generated: O número desta peça é gerado automaticamente
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
@@ -227,7 +227,7 @@ tab:
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
       part_axes: "Eixos internos da peça "
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
-      setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{material_name}} & nbsp; / & nbsp; {{std_dimension}}'"
+      setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
     menu:
       show_all_groups: Mostrar todos os grupos
       hide_all_other_groups: Esconder todos os outros grupos
@@ -335,7 +335,7 @@ tab:
       part_number_sequence_by_group: Reinicie a enumeração de peças para cada grupo
       part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
       part_folding: Grupo de partes idênticas
-      part_folding_help: "Se esta opção estiver ativada, as peças com **mesmo tamanho**, com as mesmas tags, e a \"mesma superfície final\" (se o display naquela superfície não estiver oculto) serão agrupadas na mesma linha."
+      part_folding_help: "Se esta opção estiver ativada, as peças com **mesmo tamanho**, com as **mesmas tags**, e a **mesma superfície final** (se o display naquela superfície não estiver oculto) serão agrupadas na mesma linha."
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: "Se esta opção for selecionada, **nomes de instância** de peças não serão exibidos."
       hide_tags: Esconder tags
@@ -789,7 +789,7 @@ tab:
       property_name: Nome
     remove:
       message: |
-        Você está prestes a suprimir o material **{{material_name}}** de seu modelo.
+        Você está prestes a suprimir o material **{{ material_name }}** de seu modelo.
         Confirme para continuar.
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)

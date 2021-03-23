@@ -122,7 +122,7 @@ core:
     delete_confirm_title: إزالة
     delete_confirm: "هل أنت واثق من رغبتك في إزالة الإعداد المسبق **\"{{ name }}\"**؟"
     override_confirm_title: ترقية
-    override_confirm: "هل تؤكد تحديث الإعداد المسبق **\"{{name}}\"** بمُعلِّمات النموذج؟"
+    override_confirm: "هل تؤكد تحديث الإعداد المسبق **\"{{ name }}\"** بمُعلِّمات النموذج؟"
     new_success: "لقد اكتمل إنشاء الإعداد **\"{{ name }}\"**"
     override_success: "لقد اكتمل تحديث الإعداد **\"{{ name }}\"**"
     restore_success: "لقد مُلِئ النموذج بالإعداد المسبق **\"{{ name }}\"**"

@@ -63,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: More
-    more_docs: Doc
+    more_docs: Doc.
     more_reviews: Reviews
     more_plans: Plans
     more_extensions: Extensions
@@ -122,14 +122,14 @@ core:
     delete_confirm_title: Removal
     delete_confirm: "Are you sure you want to delete the preset **\"{{ name }}\"**?"
     override_confirm_title: Update
-    override_confirm: "Do you confirm the update of the preset **\"{{name}}\"** with the form parameters?"
+    override_confirm: "Do you confirm the update of the preset **\"{{ name }}\"** with the form parameters?"
     new_success: "Preset **\"{{ name }}\"** created"
     override_success: "Preset **\"{{ name }}\"** updated"
     restore_success: "The form has been filled with the preset **\"{{ name }}\"**"
     delete_success: "Preset **\"{{ name }}\"** deleted"
     tooltip:
       save_to: "Update preset '{{ name }}'"
-      delete: "Delete preset '{{name}}'"
+      delete: "Delete preset '{{ name }}'"
   progress:
     please_wait: Please wait
 tab:
@@ -353,7 +353,7 @@ tab:
       general: General
       part_order_strategy: Part Sorting
       part_order_strategy_help: |
-        Reorganize the following tiles to define the sort order within each group of parts.
+        Reorganize the tiles to define the sort order within each group of parts.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       dimension_column_order_strategy: Dimension Ordering
       dimension_column_order_strategy_help: |
@@ -783,7 +783,7 @@ tab:
     option:
       material_order_strategy: Material Sorting
       material_order_strategy_help: |
-        Reorder the following tiles to define the sorting strategy for the list of materials.
+        Reorder the tiles to define the sorting strategy for the list of materials.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Type
       property_name: Name

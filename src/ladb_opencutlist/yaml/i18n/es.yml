@@ -63,7 +63,7 @@ core:
     title: OpenCutList por L'Air du Bois
   leftbar:
     more: Más
-    more_docs: Documentos
+    more_docs: Doc.
     more_reviews: Reseñas
     more_plans: Planos
     more_extensions: Extensiones
@@ -270,7 +270,7 @@ tab:
       price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
       tags: Etiquetas
       tags_help: |
-        Con las *etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
+        Con las *Etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
         Puede agregar tantas etiquetas como desees.
         Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
       tags_multiple_info: Solo se muestran las etiquetas comunes
@@ -342,7 +342,7 @@ tab:
       hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
       hide_cutting_dimensions: Ocultar dimensiones aproximadas
       hide_cutting_dimensions_help: "Si se selecciona esta opción, se ocultarán las dimensiones **aproximadas** de las piezas."
-      hide_bbox_dimensions: Ocultar dimensiones Finales
+      hide_bbox_dimensions: Ocultar dimensiones finales
       hide_bbox_dimensions_help: "Si se selecciona esta opción, se ocultarán las dimensiones **finales** de las piezas."
       hide_final_areas: Ocultar el área real de las piezas del tipo *Tablero*
       hide_final_areas_help: "Si se selecciona esta opción, se ocultarán las **áreas reales** de las partes del tipo *Tablero*."
@@ -853,7 +853,7 @@ tab:
       bbox_width: Anchura
       bbox_thickness: Grosor
       material: Material
-      tags: Tags
+      tags: Etiquetas
     tooltip:
       errors: Esta pieza no se importará porque produjo los siguientes errores
       warnings: Esta parte se importará pero produjo las siguientes advertencias

@@ -63,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Více
-    more_docs: Dokumenty
+    more_docs: Dokumentace
     more_reviews: Recenze
     more_plans: Plány
     more_extensions: Rozšíření
@@ -209,8 +209,8 @@ tab:
       used_instance_count: "**{{ počet }}** položka {{ celkem }} použita"
       used_instance_count_plural: "**{{ počet }}** použitých položek {{ celkem }}"
       multiple_layers: "Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}"
-      children_warnings: "Pozor, v seskupených částech je upozornění {{count}}"
-      children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{count}}"
+      children_warnings: "Pozor, v seskupených částech je upozornění {{ count }}"
+      children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{ count }}"
       children_size_increase: "Tento rozměr je zvětšen o nadmíru pro {{ count }} seskupené dílce"
       invalid_final_area: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílec (z {{ total }}) má neplatnou oblast"
       invalid_final_area_plural: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílce (z {{ total }}) mají neplatnou oblast"
@@ -577,8 +577,8 @@ tab:
         sheet_type_0: Standardní velikost tabule
         sheet_type_1: Odřezky
         unused: Nepoužitý
-        parts: "{{count}} díl"
-        parts_plural: "{{count}} dílců"
+        parts: "{{ count }} díl"
+        parts_plural: "{{ count }} dílců"
         settings: Nastavení
       error:
         no_bar: Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.

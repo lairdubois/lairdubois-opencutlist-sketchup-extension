@@ -63,9 +63,9 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Meer
-    more_docs: Bestanden
+    more_docs: Doc.
     more_reviews: Recensies
-    more_plans: voorbeelden
+    more_plans: Plans
     more_extensions: plugin
     more_update: Bijwerken
   bottombar:
@@ -122,14 +122,14 @@ core:
     delete_confirm_title: verwijdering
     delete_confirm: "Weet u zeker dat u de preset **\"{{ naam }}\"** wilt verwijderen?"
     override_confirm_title: Bijwerken
-    override_confirm: "Bevestig je dat je de voorinstelling **\"{{name}}\"** wil bijwerken met de inhoud van het formulier?"
+    override_confirm: "Bevestig je dat je de voorinstelling **\"{{ name }}\"** wil bijwerken met de inhoud van het formulier?"
     new_success: "Voorinstelling **\"{{ name }}\"** aangemaakt"
     override_success: "Voorinstelling **\"{{ name }}\"** bijgewerkt"
     restore_success: "Het formulier werd ingevuld met de voorinstelling **\"{{ name }}\"**"
     delete_success: "Voorinstelling **\"{{ name }}\"** verwijderd"
     tooltip:
       save_to: "Voorinstelling '{{ name }}' bijwerken"
-      delete: "Voorinstelling '{{name}}' verwijderen"
+      delete: "Voorinstelling '{{ name }}' verwijderen"
   progress:
     please_wait: Even geduld aub
 tab:
@@ -157,10 +157,10 @@ tab:
       not_available_std_thickness: "De dikte *{{ std_dimension }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
       not_available_std_section: "De doorsnede *{{ std_dimension }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
       add_std_width_to_material: |
-        Breedte toevoegen *{{std_dimension}}*
-        naar materiaal '{{ material_name }}'
-      add_std_thickness_to_material: |
         Breedte toevoegen *{{ std_dimension }}*
+        aan materiaal '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Dikte toevoegen *{{ std_dimension }}*
         aan materiaal '{{ material_name }}'
       add_std_section_to_material: |
         Doorsnede toevoegen *{{ std_dimension }}*
@@ -214,7 +214,7 @@ tab:
       children_size_increase: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
       invalid_final_area: "Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft"
       invalid_final_area_plural: "Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben"
-      is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component.
+      is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
       size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
@@ -291,18 +291,18 @@ tab:
         Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
         ("Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.")
       length_increase: Lengte overmaat
-      length_increase_help: Overmaat wordt toegepast op de uiteindelijke lengte om de **raw length** te bepalen.
+      length_increase_help: Overmaat wordt toegepast op de uiteindelijke lengte om de **brutto lengte** te bepalen.
       width_increase: Breedte overmaat
-      width_increase_help: Overmaat wordt toegepast op de uiteindelijke breedte om de **raw width** te bepalen.
+      width_increase_help: Overmaat wordt toegepast op de uiteindelijke breedte om de **brutto breedte** te bepalen.
       thickness_increase: Dikte overmaat
-      thickness_increase_help: Overmaat wordt toegepast op de uiteindelijke dikte om de **raw thickness** te bepalen.
+      thickness_increase_help: Overmaat wordt toegepast op de uiteindelijke dikte om de **brutto dikte** te bepalen.
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
         Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel. En dus,
-        - de **lengte** komt op de rode as
-        - de **breedte** op de groene as
-        - de **dikte** op de blauwe as
+        - de **lengte** komt op de <span style='color:red'>rode</span> as
+        - de **breedte** op de <span style='color:green'>groene</span> as
+        - de **dikte** op de <span style='color:blue'>blauwe</span> as
       axes_origin_position_none: Verander het nulpunt niet
       axes_origin_position_min: Plaats het nulpunt in een hoek
       axes_origin_position_center: Plaats het nulpunt in het midden
@@ -320,9 +320,9 @@ tab:
         Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
 
         En dus,
-        - de *lengte* komt op de rode as
-        - de *breedte* op de groene as
-        - de *dikte* op de blauwe as
+        - de *lengte* komt op de <span style='color:red'>rode</span> as
+        - de *breedte* op de <span style='color:green'>groene</span> as
+        - de *dikte* op de <span style='color:blue'>blauwe</span> as
       smart_material: "*Slimme* toekenning van materiaal"
       smart_material_help: "Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component"
       dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component.
@@ -729,11 +729,11 @@ tab:
       attributes: Attributen
       thickness: Dikte
       length_increase: Lengte overmaat
-      length_increase_help: Overmaat wordt opgeteld bij de uiteindelijke lengte om de **raw length** te bepalen.
+      length_increase_help: Overmaat wordt opgeteld bij de uiteindelijke lengte om de **brutto lengte** te bepalen.
       width_increase: Breedte overmaat
-      width_increase_help: Overmaat wordt opgeteld bij de uiteindelijke breedte om de **raw width** te bepalen.
+      width_increase_help: Overmaat wordt opgeteld bij de uiteindelijke breedte om de **brutto breedte** te bepalen.
       thickness_increase: Dikte overmaat
-      thickness_increase_help: Overmaat wordt opgeteld bij de uiteindelijke dikte om de **raw thickness** te bepalen.
+      thickness_increase_help: Overmaat wordt opgeteld bij de uiteindelijke dikte om de **brutto dikte** te bepalen.
       std_lengths: Standaard lengtes
       std_lengths_placeholder: lengte ; ...
       std_lengths_help: |
