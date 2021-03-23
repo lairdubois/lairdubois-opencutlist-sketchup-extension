@@ -164,7 +164,7 @@
                 name: $inputs.inputName.val().trim(),
                 color: $inputs.inputColor.val(),
                 attributes: {
-                    type: $inputs.selectType.val(),
+                    type: parseInt($inputs.selectType.val()),
                     thickness: $inputs.inputThickness.val(),
                     length_increase: $inputs.inputLengthIncrease.val(),
                     width_increase: $inputs.inputWidthIncrease.val(),
@@ -255,7 +255,7 @@
 
             // Define usefull functions
             var fnFetchAttributes = function (attributes) {
-                attributes.type = $inputs.selectType.val();
+                attributes.type = parseInt($inputs.selectType.val());
                 attributes.thickness = $inputs.inputThickness.val();
                 attributes.length_increase = $inputs.inputLengthIncrease.val();
                 attributes.width_increase = $inputs.inputWidthIncrease.val();
