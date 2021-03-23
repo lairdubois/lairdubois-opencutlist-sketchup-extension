@@ -60,7 +60,7 @@ LadbAbstractTab.prototype.bind = function () {
 };
 
 LadbAbstractTab.prototype.processInitializedCallback = function (initializedCallback) {
-    if (initializedCallback && typeof(initializedCallback) == 'function') {
+    if (initializedCallback && typeof(initializedCallback) === 'function') {
         initializedCallback(this.$element);
     } else {
         this.defaultInitializedCallback();
@@ -119,7 +119,7 @@ LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
                     that.removeSlide($topSlide);
                 }
             }
-            if (typeof(callback) == 'function') {
+            if (typeof callback === 'function') {
                 callback();
             }
         }
@@ -136,10 +136,10 @@ LadbAbstractTab.prototype.popToRootSlide = function () {
             $removedSlides[i].remove(); // Remove from DOM
         }
     }
-    this.popSlide();
+    this.popSlide(true);
 };
 
-LadbAbstractTab.prototype.popSlide = function () {
+LadbAbstractTab.prototype.popSlide = function (noAnimation) {
     if (this._$slides.length > 1) {
         var $poppedSlide = this._$slides.pop();
         var $topSlide = this.topSlide();
@@ -147,15 +147,19 @@ LadbAbstractTab.prototype.popSlide = function () {
             $topSlide.show();
             this.computeStuckSlideHeaderWidth($topSlide);
         }
-        this.unstickSlideHeader($poppedSlide);
-        $poppedSlide.addClass('animated');
-        $poppedSlide.switchClass('in', 'out', {
-            duration: 300,
-            complete: function () {
-                $poppedSlide.removeClass('animated');
-                $poppedSlide.remove();
-            }
-        });
+        if (noAnimation) {
+            $poppedSlide.remove();
+        } else {
+            this.unstickSlideHeader($poppedSlide);
+            $poppedSlide.addClass('animated');
+            $poppedSlide.switchClass('in', 'out', {
+                duration: 300,
+                complete: function () {
+                    $poppedSlide.removeClass('animated');
+                    $poppedSlide.remove();
+                }
+            });
+        }
     }
 };
 
@@ -278,7 +282,7 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
 // Action /////
 
 LadbAbstractTab.prototype.registerCommand = function (command, block) {
-    if (typeof(block) == 'function') {
+    if (typeof block === 'function') {
         this._commands[command] = block;
     } else {
         alert('Action\'s block must be a function');
@@ -295,7 +299,7 @@ LadbAbstractTab.prototype.executeCommand = function (command, parameters, callba
         block(parameters);
 
         // Invoke the callback
-        if (typeof(callback) == 'function') {
+        if (typeof callback === 'function') {
             callback();
         }
 

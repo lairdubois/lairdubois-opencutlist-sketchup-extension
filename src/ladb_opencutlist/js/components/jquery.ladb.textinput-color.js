@@ -115,17 +115,17 @@
     // PLUGIN DEFINITION
     // =======================
 
-    function Plugin(option, _parameter) {
+    function Plugin(option, params) {
         return this.each(function () {
             var $this   = $(this);
             var data    = $this.data('ladb.textinputColor');
-            var options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputColor', (data = new LadbTextinputColor(this, options)));
             }
-            if (typeof option == 'string') {
-                data[option](_parameter);
+            if (typeof option === 'string') {
+                data[option].apply(data, Array.isArray(params) ? params : [ params ]);
             } else {
                 data.init();
             }

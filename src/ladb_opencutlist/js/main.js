@@ -46,7 +46,7 @@ function rubyCallCommand(command, params, callback) {
 
 function rubyCommandCallback(id, encodedResponse) {
     var callback = commandCallbacks[id];
-    if (callback && typeof callback == 'function') {
+    if (typeof callback == 'function') {
         var response = encodedResponse ? JSON.parse(Base64.decode(encodedResponse)) : {};
         callback(response);
         commandCallbacks[id] = null;

@@ -112,7 +112,7 @@
             that.stickSlideHeader(that.$rootSlide);
 
             // Callback
-            if (callback && typeof callback == 'function') {
+            if (typeof callback === 'function') {
                 callback();
             }
 
@@ -397,7 +397,7 @@
                         that.dialog.notifyErrors(response['errors']);
                     } else {
 
-                        if (typeof(updatedCallback) === 'function') {
+                        if (typeof updatedCallback === 'function') {
                             updatedCallback();
                         } else {
 
@@ -440,7 +440,7 @@
             this.dialog.setupPopovers();
 
             // Callback
-            if (callback && typeof(callback) == 'function') {
+            if (typeof callback === 'function') {
                 callback($modal);
             }
 
@@ -563,7 +563,7 @@
             that.generateOptions = response.preset;
 
             // Callback
-            if (callback && typeof(callback) == 'function') {
+            if (typeof callback === 'function') {
                 callback();
             }
 
@@ -1120,7 +1120,7 @@
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -1128,7 +1128,7 @@
                 }
                 $this.data('ladb.tab.plugin', (data = new LadbTabMaterials(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);

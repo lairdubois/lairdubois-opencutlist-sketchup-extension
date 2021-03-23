@@ -223,12 +223,12 @@
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.leftbar');
-            var options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.leftbar', (data = new LadbLeftbar(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();

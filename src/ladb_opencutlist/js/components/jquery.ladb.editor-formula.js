@@ -66,7 +66,7 @@
             replaceTextSuffix: '<span></span>',
             lookup: 'label',
             selectTemplate: function(item) {
-                if (typeof item === "undefined") return null;
+                if (typeof item === 'undefined') return null;
                 if (this.range.isContentEditable(this.current.element)) {
                     return that.tagFromWordDef(item.original);
                 }
@@ -92,12 +92,12 @@
         var elements = this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.formulaeditor');
-            var options = $.extend({}, LadbEditorFormula.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbEditorFormula.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.formulaeditor', (data = new LadbEditorFormula(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();

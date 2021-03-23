@@ -134,12 +134,12 @@
         var elements = this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.textinputNumberWithUnit');
-            var options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputNumberWithUnit', (data = new LadbTextinputNumberWithUnit(this, options)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();

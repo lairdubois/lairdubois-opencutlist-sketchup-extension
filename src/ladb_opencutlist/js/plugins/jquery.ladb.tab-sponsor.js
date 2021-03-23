@@ -244,7 +244,7 @@
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabSponsor.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbTabSponsor.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -252,7 +252,7 @@
                 }
                 $this.data('ladb.tab.plugin', (data = new LadbTabSponsor(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);

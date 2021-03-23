@@ -530,7 +530,7 @@
             that.stickSlideHeader(that.$rootSlide);
 
             // Callback
-            if (callback && typeof callback == 'function') {
+            if (typeof callback === 'function') {
                 callback();
             } else {
                 if (errors.length === 0 && warnings.length === 0 && tips.length === 0) {
@@ -843,7 +843,7 @@
                                 that.dialog.setupTooltips();
 
                                 // Callback
-                                if (callback && typeof callback == 'function') {
+                                if (typeof callback === 'function') {
                                     callback();
                                 }
 
@@ -1727,7 +1727,7 @@
 
                         } else {
 
-                            if (typeof(updatedCallback) === 'function') {
+                            if (typeof updatedCallback === 'function') {
                                 updatedCallback()
                             } else {
 
@@ -2087,7 +2087,7 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_options', values: cuttingdiagram1dOptions, section: groupId });
 
-                    if (typeof(generateCallback) === 'function') {
+                    if (typeof generateCallback === 'function') {
                         generateCallback();
                     } else {
                         rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null}, cuttingdiagram1dOptions, that.generateOptions), function (response) {
@@ -2347,7 +2347,7 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_options', values: cuttingdiagram2dOptions, section: groupId });
 
-                    if (typeof(generateCallback) === 'function') {
+                    if (typeof generateCallback === 'function') {
                         generateCallback();
                     } else {
                         rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
@@ -2846,7 +2846,7 @@
             that.generateOptions = response.preset;
 
             // Callback
-            if (callback && typeof(callback) == 'function') {
+            if (typeof callback == 'function') {
                 callback();
             }
 
@@ -3211,7 +3211,7 @@
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -3219,7 +3219,7 @@
                 }
                 $this.data('ladb.tab.plugin', (data = new LadbTabCutlist(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init(option.initializedCallback);

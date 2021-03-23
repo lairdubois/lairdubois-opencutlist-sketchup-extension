@@ -166,7 +166,7 @@
         var elements = this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.widgetPreset');
-            var options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -174,7 +174,7 @@
                 }
                 $this.data('ladb.widgetPreset', (data = new LadbWidgetPreset(this, options, options.dialog)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();

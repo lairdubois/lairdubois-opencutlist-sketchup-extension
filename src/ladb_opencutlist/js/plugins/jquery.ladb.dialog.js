@@ -265,7 +265,7 @@
                 var value = values[i];
                 that.settings[value.key] = value.value;
             }
-            if (callback && typeof callback == 'function') {
+            if (typeof callback === 'function') {
                 callback();
             }
         });
@@ -288,7 +288,7 @@
         var value = this.settings[key];
         if (value != null) {
             if (defaultValue !== undefined) {
-                if (typeof(defaultValue) === 'number' && isNaN(value)) {
+                if (typeof defaultValue === 'number' && isNaN(value)) {
                     return defaultValue;
                 }
             }
@@ -389,7 +389,7 @@
         } else {
 
             // Callback
-            if (callback && typeof(callback) == 'function') {
+            if (typeof callback === 'function') {
                 callback($tab);
             }
 
@@ -440,7 +440,7 @@
         if (!$freshTab) {
 
             // Callback
-            if (callback && typeof(callback) == 'function') {
+            if (typeof callback === 'function') {
                 callback($tab);
             } else {
 
@@ -1005,12 +1005,12 @@
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('ladb.dialog');
-            var options = $.extend({}, LadbDialog.DEFAULTS, $this.data(), typeof option == 'object' && option);
+            var options = $.extend({}, LadbDialog.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.dialog', (data = new LadbDialog(this, options)));
             }
-            if (typeof option == 'string') {
+            if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
             } else {
                 data.init();
