@@ -692,7 +692,7 @@ tab:
     type_2: Листовой
     type_3: Погонаж
     type_4: Кромочный
-    type_5: Дополнение
+    type_5: Фурнитура
     tooltip:
       type_0: Тип материала '$t(tab.materials.type_0)'
       type_1: Тип материала '$t(tab.materials.type_1)'

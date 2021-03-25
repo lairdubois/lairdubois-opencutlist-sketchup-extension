@@ -198,8 +198,8 @@ tab:
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
       auto_oriented: Esta parte se ha reorientado automáticamente
-      add_label_filter: "Filtrado en '{{ label }}'"
-      remove_label_filter: "Elimina el filtrado en '{{ label }}'"
+      add_label_filter: "Filtrar por '{{ label }}'"
+      remove_label_filter: "No filtrar por '{{ label }}'"
       add_edge_material_name_filter: "Filtrar por '{{ material_name }}'"
       remove_edge_material_name_filter: "No filtrar por '{{ material_name }}'"
       not_aligned_on_axes: "Atención, esta parte puede no estar orientada correctamente con respecto a sus ejes"
@@ -691,7 +691,7 @@ tab:
     type_1: Madera maciza
     type_2: Tablero
     type_3: Liston
-    type_4: Laminado
+    type_4: Canto
     type_5: Accesorio
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
