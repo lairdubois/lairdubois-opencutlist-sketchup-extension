@@ -416,19 +416,19 @@ module Ladb::OpenCutList
 
     def list_global_preset_dictionaries
       read_global_presets if @global_presets_cache.nil?
-      @global_presets_cache.keys
+      @global_presets_cache.keys.sort
     end
 
     def list_global_preset_sections(dictionary)
       read_global_presets if @global_presets_cache.nil?
-      return @global_presets_cache[dictionary].keys if @global_presets_cache.has_key?(dictionary)
+      return @global_presets_cache[dictionary].keys.sort if @global_presets_cache.has_key?(dictionary)
       []
     end
 
     def list_global_preset_names(dictionary, section = nil)
       section = '0' if section.nil?
       read_global_presets if @global_presets_cache.nil?
-      return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME } if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
+      return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME }.sort if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
       []
     end
 
@@ -528,12 +528,12 @@ module Ladb::OpenCutList
 
     def list_model_preset_dictionaries
       read_model_presets if @model_presets_cache.nil?
-      @model_presets_cache.keys
+      @model_presets_cache.keys.sort
     end
 
     def list_model_preset_sections(dictionary)
       read_model_presets if @model_presets_cache.nil?
-      return @model_presets_cache[dictionary].keys if @model_presets_cache.has_key?(dictionary)
+      return @model_presets_cache[dictionary].keys.sort if @model_presets_cache.has_key?(dictionary)
       []
     end
 

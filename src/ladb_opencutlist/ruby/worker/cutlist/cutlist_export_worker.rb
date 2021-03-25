@@ -43,6 +43,11 @@ module Ladb::OpenCutList
       export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
       if export_path
 
+        # Force "csv" file extension
+        unless export_path.end_with?('.csv')
+          export_path = export_path + '.csv'
+        end
+
         begin
 
           # Convert col_sep

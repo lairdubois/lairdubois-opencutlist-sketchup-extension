@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
+* 2.0.1 (WIP)
+
+  * Global and Model preset are now sorted
+  
 * 2.0.0 (2021-03-23)
 
   * Added printable **Labels** feature
