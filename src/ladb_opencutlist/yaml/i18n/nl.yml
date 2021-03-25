@@ -219,10 +219,10 @@ tab:
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
       edge_decremented: "Verminderd met de dikte van de randafwerking ({{ decrement }})"
-      edge_ymin: Rend lengte 1
-      edge_ymax: Rand lengte 2
-      edge_xmin: Rand breedte 1
-      edge_xmax: Rand breedte 2
+      edge_ymin: Kantenband lengte 1
+      edge_ymax: Kantenband lengte 2
+      edge_xmin: Kantenband breedte 1
+      edge_xmax: Kantenband breedte 2
       dblclick_to_copy_all_edges: Dubbelklik hier om deze waarde naar de andere randen te dupliceren
       dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
@@ -436,10 +436,10 @@ tab:
       material_name: Materiaal
       entity_names: Naam instance
       tags: Tags
-      edge_ymin: Rend lengte 1
-      edge_ymax: Rand lengte 2
-      edge_xmin: Rand breedte 1
-      edge_xmax: lijndikte 2
+      edge_ymin: Kantenband lengte 1
+      edge_ymax: Kantenband lengte 2
+      edge_xmin: Kantenband breedte 1
+      edge_xmax: Kantenband 2
       warning:
         visible_only: De onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
     report:

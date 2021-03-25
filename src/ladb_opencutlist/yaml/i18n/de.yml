@@ -809,7 +809,7 @@ tab:
       Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
       Klicken Sie auf **CSV-Datei öffnen** zum Starten.
     open_csv: CSV-Datei öffnen
-    import_to_model: Importieren ins Modell
+    import_to_model: Ins Modell importieren
     load:
       title: Laden einer CSV-Datei
       info_0: |
