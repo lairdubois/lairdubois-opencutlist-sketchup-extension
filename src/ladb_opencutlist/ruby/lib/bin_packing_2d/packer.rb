@@ -376,7 +376,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
         elsif current_bin.type == BIN_TYPE_USER_DEFINED
           # Boxes cannot fit into Bin, mark this Bin as unused.
-          @invalid_bins << current_bin
+          @unused_bins << current_bin
           @boxes = unmake_superboxes(@boxes)
           if !bins_can_be_added?
             # We are done with packing.
@@ -387,8 +387,13 @@ module Ladb::OpenCutList::BinPacking2D
             end
             @boxes = []
             return ERROR_NO_BIN
+          else
+            # Reassign invalid boxes to boxes and hope they will find a Bin.
+            # This is the case when an offcut cannot fit any Box, but a
+            # Standard Bin can still be generated.
+            @boxes += @invalid_boxes
+            @invalid_boxes = []
           end
-          @boxes += @invalid_boxes
         else
           # Silently drop the last Bin, not used.
           return ERROR_NO_BIN
