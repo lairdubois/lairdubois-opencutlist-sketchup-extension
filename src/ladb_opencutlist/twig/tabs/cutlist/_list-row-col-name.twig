@@ -13,8 +13,11 @@
             {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
             {% if part.symmetrical %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.symmetrical'|i18next }}"><i class="ladb-opencutlist-icon-symmetrical"></i></a>{% endif %}
+
+            {% if part.ignore_grain_direction %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.ignore_grain_direction'|i18next }}"><i class="ladb-opencutlist-icon-grained-0"></i></a>{% endif %}
+
             {% if showCuttingDimensions or showBoxDimensions %}
-                {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}               
                 {% if part.auto_oriented %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
                 {% if part.resized %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
                 {% if part.orientation_locked_on_axis %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}

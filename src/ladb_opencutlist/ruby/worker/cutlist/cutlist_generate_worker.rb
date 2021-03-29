@@ -299,6 +299,7 @@ module Ladb::OpenCutList
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
+          part_def.ignore_grain_direction = definition_attributes.ignore_grain_direction
           part_def.length_increase = definition_attributes.length_increase
           part_def.width_increase = definition_attributes.width_increase
           part_def.thickness_increase = definition_attributes.thickness_increase

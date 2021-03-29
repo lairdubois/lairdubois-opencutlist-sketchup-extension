@@ -1368,6 +1368,7 @@
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
+                var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
                 var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
                 var $sortableAxes = $('#ladb_sortable_axes', $modal);
                 var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
@@ -1670,6 +1671,7 @@
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
+                            editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
                             editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
                             editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
 

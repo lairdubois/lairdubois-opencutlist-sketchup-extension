@@ -160,6 +160,13 @@
                                 <input type="checkbox" id="ladb_cutlist_part_input_symmetrical"{% if part.symmetrical %} checked{% endif %}> <i class="ladb-opencutlist-icon-symmetrical"></i> {{ 'tab.cutlist.edit_part.symmetrical'|i18next }}
                             </label>
                         </div>
+                        <div class="checkbox">
+                            <div class="ladb-minitools ladb-minitools-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.ignore_grain_direction_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <label>
+                                <input type="checkbox" id="ladb_cutlist_part_input_ignore_grain_direction"{% if part.ignore_grain_direction %} checked{% endif %}> <i class="ladb-opencutlist-icon-grained-0"></i> {{ 'tab.cutlist.edit_part.ignore_grain_direction'|i18next }}
+                            </label>
+                        </div>
+
                     </div>
                     <div class="col-xs-offset-1 col-xs-10 alert alert-info ladb-alert-tips" style="margin-top: 20px;">
                         <div class="media">
@@ -402,6 +409,15 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if part.ignore_grain_direction %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-grained-0 ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.ignore_grain_direction'|i18next }}
+                            </div>
+                        </div>
+                    {% endif %}
+
                 </div>
             </div>
         {% endif %}
