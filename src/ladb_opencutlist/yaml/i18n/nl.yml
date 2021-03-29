@@ -439,7 +439,7 @@ tab:
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
-      edge_xmax: Kantenband 2
+      edge_xmax: Kantenband breedte 2
       warning:
         visible_only: De onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
     report:

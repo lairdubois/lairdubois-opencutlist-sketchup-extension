@@ -991,16 +991,16 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglês*, *alemão*)
-      - Vladimir Badulya (*russiano*)
-      - Pierluigi Colombo (*italiano*)
-      - Nayton Sanches Barbosa, corrigido, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*português*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espanhol*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polonês*)
-      - Sergey Isupov (*hebraico*), sem interface RTL
-      - Soul Issam (*árabe*), sem interface RTL
-      - Dany Dhondt, Eric Lugtigheid (*holandês*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
+      - Vladimir Badulya (*Russo*)
+      - Pierluigi Colombo (*Italiano*)
+      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polonês*)
+      - Sergey Isupov (*Hebraico*), sem interface RTL
+      - Soul Issam (*Árabe*), sem interface RTL
+      - Dany Dhondt, Eric Lugtigheid (*Holandês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
