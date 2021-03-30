@@ -197,6 +197,7 @@ tab:
       resized: This part was resized with respect to its component definition
       flipped: This part is mirrored compared to its component definition
       symmetrical: Mirrored part detection is disabled on this part
+      ignore_grain_direction: Grain direction is ignored on this part
       auto_oriented: This part has been reoriented automatically
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this box is checked, the detection of a *mirrored part* will have no effect on the part.
+      ignore_grain_direction: Ignore grain direction on this part
+      ignore_grain_direction_help: |
+        If this box is checked, the grain direction of the material will be ignored for this part.
       size_increase: Oversizes
       size_increase_help: |
         Oversizes increase the dimensions of a single part.

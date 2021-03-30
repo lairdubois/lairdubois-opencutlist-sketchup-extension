@@ -21,6 +21,7 @@ module Ladb::OpenCutList
         :tags,
         :orientation_locked_on_axis,
         :symmetrical,
+        :ignore_grain_direction,
         :axes_order,
         :axes_origin_position,
         :length_increase,
@@ -35,7 +36,9 @@ module Ladb::OpenCutList
       @parts_data = []
 
       parts_data = settings['parts_data']
+
       parts_data.each { |part_data|
+
         @parts_data << PartData.new(
             part_data['definition_id'],
             part_data['name'],
@@ -48,6 +51,7 @@ module Ladb::OpenCutList
             DefinitionAttributes.valid_tags(part_data['tags']),
             part_data['orientation_locked_on_axis'],
             part_data['symmetrical'],
+            part_data['ignore_grain_direction'],
             part_data['axes_order'],
             part_data['axes_origin_position'],
             part_data['length_increase'],
@@ -95,6 +99,7 @@ module Ladb::OpenCutList
               part_data.price != definition_attributes.price ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
               part_data.symmetrical != definition_attributes.symmetrical ||
+              part_data.ignore_grain_direction != definition_attributes.ignore_grain_direction ||
               part_data.tags != definition_attributes.tags ||
               part_data.length_increase != definition_attributes.length_increase ||
               part_data.width_increase != definition_attributes.width_increase ||
@@ -106,6 +111,7 @@ module Ladb::OpenCutList
             definition_attributes.tags = part_data.tags
             definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
             definition_attributes.symmetrical = part_data.symmetrical
+            definition_attributes.ignore_grain_direction = part_data.ignore_grain_direction
             definition_attributes.length_increase = part_data.length_increase
             definition_attributes.width_increase = part_data.width_increase
             definition_attributes.thickness_increase = part_data.thickness_increase

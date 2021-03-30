@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :symmetrical, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase
+    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :symmetrical, :ignore_grain_direction, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -155,6 +155,7 @@ module Ladb::OpenCutList
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', ''))
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
+        @ignore_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', false);
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
@@ -177,6 +178,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', @ignore_grain_direction)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))

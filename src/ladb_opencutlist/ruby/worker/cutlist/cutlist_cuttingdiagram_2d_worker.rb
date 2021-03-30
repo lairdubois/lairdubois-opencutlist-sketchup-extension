@@ -76,7 +76,14 @@ module Ladb::OpenCutList
       # they inherit the attribute from options
       parts.each { |part|
         for i in 1..part.count
-          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
+
+          # allow overriding grain direction by part
+          can_rotate_part = options.rotatable
+          if part.ignore_grain_direction
+            can_rotate_part = true
+          end
+
+          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, can_rotate_part, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
         end
       }
 
