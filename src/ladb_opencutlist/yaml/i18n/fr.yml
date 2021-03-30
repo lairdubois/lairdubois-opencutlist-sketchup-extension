@@ -197,6 +197,7 @@ tab:
       resized: Cette pièce est redimensionnée par rapport à sa définition
       flipped: Cette pièce est en miroir par rapport à sa définition
       symmetrical: La détection de pièce en miroir est désactivée sur cette pièce
+      ignore_grain_direction: La direction du fil est ignorée sur cette pièce
       auto_oriented: Cette pièce a été réorientée automatiquement
       add_label_filter: Filtrer sur '{{ label }}'
       remove_label_filter: Ne plus filtrer sur '{{ label }}'
@@ -286,6 +287,9 @@ tab:
       symmetrical: Désactiver la détection en miroir sur cette pièce
       symmetrical_help: |
         Si cette case est cochée, la détection de *pièce en miroir* ne sera pas appliquée sur cette pièce.
+      ignore_grain_direction: Ignorer la direction du fil
+      ignore_grain_direction_help: |
+        Si cette case est cochée, la direction du fil est ignorée sur cette pièce.
       size_increase: Surcotes
       size_increase_help: |
         Les surcotes vous permettent de majorer les dimensions capables de la pièce.
