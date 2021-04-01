@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -33,6 +33,7 @@ module Ladb::OpenCutList
       @mass = part_def.mass
       @price = part_def.price
       @tags = part_def.tags
+      @ignore_grain_direction = part_def.ignore_grain_direction
       @edge_count = part_def.edge_count
       @edge_pattern = part_def.edge_pattern
       @edge_material_names = part_def.edge_material_names
@@ -90,7 +91,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -103,7 +104,6 @@ module Ladb::OpenCutList
       @material_origins = part_def.material_origins
       @orientation_locked_on_axis = part_def.orientation_locked_on_axis
       @symmetrical = part_def.symmetrical
-      @ignore_grain_direction = part_def.ignore_grain_direction
       @length_increase = part_def.length_increase
       @width_increase = part_def.width_increase
       @thickness_increase = part_def.thickness_increase

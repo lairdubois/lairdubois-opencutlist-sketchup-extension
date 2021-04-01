@@ -555,7 +555,8 @@ module Ladb::OpenCutList
                 (folder_part_def.tags == part_def.tags || @hide_tags) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 || @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                folder_part_def.cumulable == part_def.cumulable
+                folder_part_def.cumulable == part_def.cumulable &&
+                folder_part_def.ignore_grain_direction == part_def.ignore_grain_direction
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
@@ -570,13 +571,14 @@ module Ladb::OpenCutList
                 folder_part_def.mass = first_child_part_def.mass
                 folder_part_def.price = first_child_part_def.price
                 folder_part_def.tags = first_child_part_def.tags
-                folder_part_def.final_area = first_child_part_def.final_area
+                folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
                 folder_part_def.edge_count = first_child_part_def.edge_count
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
                 folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
                 folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
                 folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
+                folder_part_def.final_area = first_child_part_def.final_area
 
                 folder_part_def.children.push(first_child_part_def)
                 folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
