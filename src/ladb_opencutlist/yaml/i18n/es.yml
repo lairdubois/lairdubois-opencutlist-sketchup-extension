@@ -197,6 +197,7 @@ tab:
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
+      ignore_grain_direction: La dirección de la fibra se ignora en esta parte.
       auto_oriented: Esta parte se ha reorientado automáticamente
       add_label_filter: "Filtrar por '{{ label }}'"
       remove_label_filter: "No filtrar por '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Deshabilitar la detección de espejos en esta parte
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
+      ignore_grain_direction: Ignora la dirección de la fibra
+      ignore_grain_direction_help: |
+        Si esta casilla está marcada, la dirección de la fibra se ignora en esta parte.
       size_increase: Aumento de tamaño
       size_increase_help: |
         El aumento de tamaño permite aumentar las dimensiones de una sola pieza.

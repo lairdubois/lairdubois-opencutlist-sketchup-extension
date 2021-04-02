@@ -197,6 +197,7 @@ tab:
       resized: החלק שונה על פי הגדרת מרכיביו.
       flipped: החלק משתקף מהגדרתיו
       symmetrical: בחלק הזה לא מופעל זיהוי *חלק משתקף*
+      ignore_grain_direction: כיוון המרקם בחלק זה מתעלם
       auto_oriented: החלק עבר הכוונה אוטומטית
       add_label_filter: "לסנן לפי '{{ label }}'"
       remove_label_filter: "הסר סינון לפי '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: השבת זיהוי חלקים משתקפים
       symmetrical_help: |
         אם התיבה מסומנת, זיהוי *חלק משתקף* לא יופעל.
+      ignore_grain_direction: אל תשים לב על כיוון המרקם
+      ignore_grain_direction_help: |
+        אם תיבה זו מסומנת, כיוון המרקם בחלק זה מתעלם.
       size_increase: תוספות
       size_increase_help: |
         תוספות מאפשרות להגדיל מידות מחושבות של החלק.
