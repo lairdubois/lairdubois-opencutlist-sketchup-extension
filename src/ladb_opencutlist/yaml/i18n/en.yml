@@ -821,7 +821,7 @@ tab:
         **{{ filename }}**.
       info_1: |
         *The unit configured in the model is: **{{ unit }}**.
-        This unit will be used for dimensions for which the unit is not specified*.
+        This unit will be used for dimensions where the unit is not specified*.
       options: Loading Options
       option_col_sep: Separator
       option_col_sep_tab: Tabulator

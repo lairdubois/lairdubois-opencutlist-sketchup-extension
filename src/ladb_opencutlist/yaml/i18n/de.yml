@@ -197,6 +197,7 @@ tab:
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
+      ignore_grain_direction: Die Faserrichtung wird für dieses Teil nicht beachtet
       auto_oriented: Dieses Teil wurde automatisch orientiert
       add_label_filter: "Nach '{{ label }}' auswählen"
       remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Spiegelerkennung für dieses Teil deaktivieren
       symmetrical_help: |
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
+      ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
+      ignore_grain_direction_help: |
+        Wird dieses Kästchen aktiviert, wird die Faserrichtung für dieses Teil nicht beachtet.
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -817,7 +821,7 @@ tab:
         **{{ Dateinamen }}**.
       info_1: |
         *Die Einheit des Modells ist : **{{ unit }}**.
-        Diese Einheit wird für Dimensionen verwendet, für die die Einheit nicht angegeben ist*.
+        Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
       options: Optionen zum Laden
       option_col_sep: Trennzeichen
       option_col_sep_tab: Tabulator
