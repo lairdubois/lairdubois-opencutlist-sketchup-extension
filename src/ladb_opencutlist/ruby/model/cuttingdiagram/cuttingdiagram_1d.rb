@@ -176,7 +176,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :cutting_length, :count
+    attr_reader :id, :number, :saved_number, :name, :length, :cutting_length, :count, :tags
 
     def initialize(_def)
       @_def = _def
@@ -188,6 +188,7 @@ module Ladb::OpenCutList
       @length = _def.cutlist_part.length
       @cutting_length = _def.cutlist_part.cutting_length
       @count = _def.count
+      @tags = _def.cutlist_part.tags
 
     end
 

@@ -363,6 +363,13 @@
                                 </div>
                                 {% if part.edge_count > 0 and part.edge_pattern %}<span class="no-screen pull-right"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></span>{% endif %}
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
+                                {% if not generateOptions.hide_tags and part.tags is not empty %}
+                                    <ul class="ladb-cutlist-part-tags">
+                                        {% for label in part.tags %}
+                                            <li><a href="#" class="no-hover">{{ label }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </td>
                             <td class="text-center">{{ part.count }}</td>
                             {% if showCuttingDimensions %}

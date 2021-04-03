@@ -334,6 +334,13 @@
                                     <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                                 </div>
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
+                                {% if not generateOptions.hide_tags and part.tags is not empty %}
+                                    <ul class="ladb-cutlist-part-tags">
+                                        {% for label in part.tags %}
+                                            <li><a href="#" class="no-hover">{{ label }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </td>
                             <td class="text-center">{{ part.count }}</td>
                             {% if showCuttingDimensions %}

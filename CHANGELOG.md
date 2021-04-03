@@ -9,6 +9,7 @@ in 2.x, 1.x and 0.x versions.
   * Global and Model preset are now sorted
   * Added Ignore grain direction part attribute
   * Added edges fields to Labels
+  * Added tags in cutting diagram part list
   * Fixed export skp and skm path on win platform
   
 * 2.0.0 (2021-03-23)
