@@ -197,6 +197,7 @@ tab:
       resized: Dit component is aangepast aan de maten van de definitie
       flipped: Dit component is gespiegeld ten opzichte van het origineel.
       symmetrical: Gespiegelde herkenning staat uit voor dit onderdeel
+      ignore_grain_direction: De nerfrichting wordt op dit onderdeel genegeerd
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
       add_label_filter: "Filter op '{{ label }}'"
       remove_label_filter: "verwijder filter '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Schakel detectie van gespiegelde onderdelen op dit deel uit
       symmetrical_help: |
         Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
+      ignore_grain_direction: Negeer de nerfrichting op dit onderdeel
+      ignore_grain_direction_help: |
+        Als dit vakje is aangevinkt, wordt de nerfrichting van het materiaal voor dit onderdeel genegeerd.
       size_increase: Overlengtes
       size_increase_help: |
         Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
@@ -344,7 +348,7 @@ tab:
       hide_cutting_dimensions_help: "Wanneer deze optie is ingeschakeld, dan zullen de afmetingen van de **onderdelen** niet getoond worden."
       hide_bbox_dimensions: Verberg de netto afmetingen
       hide_bbox_dimensions_help: "Wanneer deze optie ingeschakeld is, dan zullen de **netto** afmetingen niet weergegeven worden."
-      hide_final_areas: Verberg de afgewerkte oppervlaten van *Plaatmateriaal*
+      hide_final_areas: Verberg de afgewerkte oppervlakten van *Plaatmateriaal*
       hide_final_areas_help: "Wanneer deze optie ingeschakeld is, dan zullen de **afgewerkte oppervlakten** van het type *Plaatmateriaal* niet getoond worden."
       hide_edges: Verberg de kolommen met kantenbanden
       hide_edges_help: "Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden."
@@ -620,7 +624,7 @@ tab:
       option_margin_left: Links
       option_spacing: Kolomwit
       option_spacing_h: Horizontaal
-      option_spacing_v: Vertikaal
+      option_spacing_v: Verticaal
       option_grid: Aantal etiketten per pagina
       option_col_count: Kolommen
       option_row_count: Rijen
