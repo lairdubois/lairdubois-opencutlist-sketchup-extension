@@ -650,6 +650,10 @@ tab:
         part_width: Largeur capable
         part_tags: Tags
         part_batch: Lot
+        part_edge_ymin: Chant longueur 1
+        part_edge_ymax: Chant longueur 2
+        part_edge_xmin: Chant largeur 1
+        part_edge_xmax: Chant largeur 2
         thumbnail_proportional: Vignette proportionnelle
         thumbnail_square: Vignette carrée
         group_material: Matière / Dimension

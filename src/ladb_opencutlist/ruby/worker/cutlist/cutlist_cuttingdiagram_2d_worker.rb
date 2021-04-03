@@ -223,8 +223,8 @@ module Ladb::OpenCutList
           bin.cuts.each { |cut|
 
             cut_def = Cuttingdiagram2dCutDef.new
-            cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : 0, bin.length))
-            cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? 0 : cut.length, bin.width))
+            cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : @saw_kerf, bin.length))
+            cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? @saw_kerf : cut.length, bin.width))
             cut_def.px_length = _to_px(cut.length)
             cut_def.x = cut.x
             cut_def.y = cut.y

@@ -28,8 +28,8 @@
     <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.cutting_length|escape('html') }}&nbsp;x&nbsp;{{ part.cutting_width|escape('html') }}</div>
     {% if part.edge_count > 0 %}
         <div class='tt-section'>
-            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymax }}&nbsp;<small>{{ part.edge_std_dimensions.ymax }}</small></div>{% endif %}
             {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-0010'></i>&nbsp;{{ part.edge_material_names.ymin }}&nbsp;<small>{{ part.edge_std_dimensions.ymin }}</small></div>{% endif %}
+            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymax }}&nbsp;<small>{{ part.edge_std_dimensions.ymax }}</small></div>{% endif %}
             {% if part.edge_material_names.xmin %}<div><i class='ladb-opencutlist-icon-edge-0001'></i>&nbsp;{{ part.edge_material_names.xmin }}&nbsp;<small>{{ part.edge_std_dimensions.xmin }}</small></div>{% endif %}
             {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax }}&nbsp;<small>{{ part.edge_std_dimensions.xmax }}</small></div>{% endif %}
         </div>

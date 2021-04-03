@@ -54,6 +54,9 @@
             {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
         {% elseif key == 'tags' %}
             {% set value = part_info.part.tags|join(' | ') %}
+        {% elseif key == 'edge' %}
+            {% set edgeKey = terms[2] %}
+            {% set value = part_info.part.edge_material_names[edgeKey]~' '~part_info.part.edge_std_dimensions[edgeKey] %}
         {% else %}
             {% set value = part_info.part[key] %}
         {% endif %}
@@ -75,7 +78,7 @@
     {% elseif terms[0] == 'generated_at' %}
         {% set value = generatedAt|date(('default.date_format'|i18next())) %}
     {% endif %}
-    {% if value is empty and noEmptyValue|default(false) %}
+    {% if value|trim is empty and noEmptyValue|default(false) %}
         {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}
     {% endif %}
     <text class="ladb-label-element" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
