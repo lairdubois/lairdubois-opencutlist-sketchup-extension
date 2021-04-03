@@ -197,6 +197,7 @@ tab:
       resized: Questa parte è stata ridimensionata rispetto alla definizione del suo componente
       flipped: Questa parte è specchiata rispetto alla definizione del suo componente
       symmetrical: Il rilevamento della parte specchiata è disabilitato su questa parte
+      ignore_grain_direction: La direzione della venatura è ignorata su questa parte
       auto_oriented: Questa parte è stata automaticamente re-orientata
       add_label_filter: "Filtro su '{{ label }}'"
       remove_label_filter: "Rimuovi filtro su '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: "Disattivare il rilevamento dello specchio su questa parte "
       symmetrical_help: |
         Se questa casella è selezionata, il rilevamento della *parte specchiata* non avrà alcun effetto su questa parte.
+      ignore_grain_direction: Ignorare la direzione della venatura
+      ignore_grain_direction_help: |
+        Se questa casella è selezionata, la direzione della venatura è ignorata su questa parte.
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.
