@@ -7,6 +7,8 @@ in 2.x, 1.x and 0.x versions.
 * 2.0.1 (WIP)
 
   * Global and Model preset are now sorted
+  * Added Ignore grain direction part attribute
+  * Fixed export skp and skm path on win platform
   
 * 2.0.0 (2021-03-23)
 

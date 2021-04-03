@@ -33,11 +33,13 @@ module Ladb::OpenCutList
         dir = File.dirname(model.path)
       end
 
+      dir = URI::escape(dir) if Plugin.instance.current_os == :MAC
+
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_skp.title'), URI::escape(dir), @definition_id + '.skp')
+      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_skp.title'), dir, @definition_id + '.skp')
       if path
 
-        # Force "skm" file extension
+        # Force "skp" file extension
         unless path.end_with?('.skp')
           path = path + '.skp'
         end
