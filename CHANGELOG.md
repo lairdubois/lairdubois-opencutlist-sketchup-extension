@@ -10,6 +10,7 @@ in 2.x, 1.x and 0.x versions.
   * Added Ignore grain direction part attribute
   * Added edges fields to Labels
   * Added tags in cutting diagram part list
+  * Added edges in cutting diagram 2D part list
   * Improved cutting diagram 2d dimensions display
   * Fixed export skp and skm path on win platform
   * Fixed offcut bug (Issue #285)
