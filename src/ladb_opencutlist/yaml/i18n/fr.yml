@@ -761,7 +761,7 @@ tab:
       std_lengths: Longueurs standards
       std_lengths_placeholder: longueur ; ...
       std_lengths_help: |
-        Longueurs standards des barres.
+        Longueurs standards des barres ou bandes.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       std_widths: Largeurs standards
       std_widths_placeholder: largeur ; ...

@@ -18,6 +18,7 @@
 {% set edgeWidth = 3 %}
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
+{% set showEdges = group.show_edges and not generateOptions.hide_edges %}
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
 
@@ -224,9 +225,12 @@
         {% if options.hide_part_list %}
             {% set colspan = 1 %}
         {% else %}
-            {% set colspan = 7 %}
+            {% set colspan = 11 %}
             {% if not showCuttingDimensions %}
                 {% set colspan = colspan - 2 %}
+            {% endif %}
+            {% if not showEdges %}
+                {% set colspan = colspan - 4 %}
             {% endif %}
         {% endif %}
         {% set maxSheetLength = 0 %}
@@ -351,6 +355,9 @@
                             <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                         {% endif %}
                         <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                        {% if showEdges %}
+                            <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+                        {% endif %}
                     </tr>
                     <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
@@ -361,6 +368,12 @@
                         {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
                             <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                         {% endfor %}
+                        {% if showEdges %}
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                        {% endif %}
                     </tr>
                     {% for part in sheet.grouped_parts %}
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
@@ -390,6 +403,12 @@
                             {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
                                 {% include 'tabs/cutlist/_list-row-box-dimension.twig' %}
                             {% endfor %}
+                            {% if showEdges %}
+                                <td class="ladb-cutlist-edge">{% if part.edge_material_names.ymin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymin }}</span>{% endif %}</td>
+                                <td class="ladb-cutlist-edge">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
+                                <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
+                                <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 {% endif %}
