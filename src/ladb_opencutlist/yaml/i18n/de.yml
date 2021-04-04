@@ -650,6 +650,10 @@ tab:
         part_width: Breite
         part_tags: Tags
         part_batch: Los
+        part_edge_ymin: Kantenband Länge 1
+        part_edge_ymax: Kantenband Länge 2
+        part_edge_xmin: Kantenband Breite 1
+        part_edge_xmax: Kantenband Breite 2
         thumbnail_proportional: Proportionale Vignette
         thumbnail_square: Quadratische Vignette
         group_material: Material / Dicke

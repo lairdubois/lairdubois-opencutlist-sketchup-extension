@@ -197,6 +197,7 @@ tab:
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
       symmetrical: A detecção de peças espelhadas está desativada nesta parte
+      ignore_grain_direction: A direção dos veios é ignorada nesta parte
       auto_oriented: Esta peça foi reorientada automaticamente
       add_label_filter: "Filtrando em '{{ label }}'"
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
@@ -214,7 +215,7 @@ tab:
       children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ contagem }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
-      is_dynamic_attributes_name: A descrição desta peça é extraída do atributo 'Name' do componente dinâmico
+      is_dynamic_attributes_name: Descrição extraída do atributo 'Name' do componente dinâmico
       size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
@@ -286,6 +287,9 @@ tab:
       symmetrical: "Desativar a detecção de peças espelhadas nesta parte "
       symmetrical_help: |
         Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
+      ignore_grain_direction: Ignorar a direção dos veios
+      ignore_grain_direction_help: |
+        Se esta caixa estiver marcada, a direção dos veios é ignorada.
       size_increase: Superdimensionar
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
@@ -646,13 +650,17 @@ tab:
         part_width: Largura
         part_tags: Tags
         part_batch: Grupo
+        part_edge_ymin: Comprimento da borda 1
+        part_edge_ymax: Comprimento da borda 2
+        part_edge_xmin: Largura da borda 1
+        part_edge_xmax: Largura da borda 2
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura quadrada
         group_material: Espessura do material
         group_material_name: Nome do material
         group_std_dimension: Dimensões padrão
         filename: Nome do arquivo
-        model_name: Costumização
+        model_name: Nome do modelo
         page_label: Nome da cena
         length_unit: Unidades
         generated_at: Data e hora

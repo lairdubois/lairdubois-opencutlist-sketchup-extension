@@ -650,6 +650,10 @@ tab:
         part_width: Larghezza
         part_tags: Tags
         part_batch: Lotto
+        part_edge_ymin: Bordo Lunghezza 1
+        part_edge_ymax: Bordo Lunghezza 2
+        part_edge_xmin: Bordo Larghezza 1
+        part_edge_xmax: Bordo Larghezza 2
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Spessore

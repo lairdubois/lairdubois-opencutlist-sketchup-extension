@@ -650,6 +650,10 @@ tab:
         part_width: רוחב סופי
         part_tags: תגים
         part_batch: קבוצה
+        part_edge_ymin: קאנט לאורך 1
+        part_edge_ymax: קאנט לאורך 2
+        part_edge_xmin: קאנט לרוחב 1
+        part_edge_xmax: קאנט לרוחב 2
         thumbnail_proportional: מדבקה פרופורציונלית
         thumbnail_square: מדבקה מרובעת
         group_material: חומר / עובי
