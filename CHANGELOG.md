@@ -12,7 +12,8 @@ in 2.x, 1.x and 0.x versions.
   * Added tags in cutting diagram part list
   * Improved cutting diagram 2d dimensions display
   * Fixed export skp and skm path on win platform
-  
+  * Fixed offcut bug (Issue #285)
+
 * 2.0.0 (2021-03-23)
 
   * Added printable **Labels** feature

@@ -650,6 +650,10 @@ tab:
         part_width: Width
         part_tags: Tags
         part_batch: Batch
+        part_edge_ymin: Edge length 1
+        part_edge_ymax: Edge length 2
+        part_edge_xmin: Edge width 1
+        part_edge_xmax: Edge width 2
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness

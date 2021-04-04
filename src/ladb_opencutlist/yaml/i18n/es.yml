@@ -650,6 +650,10 @@ tab:
         part_width: Anchura
         part_tags: Etiquetas
         part_batch: Lote
+        part_edge_ymin: Longitud del borde 1
+        part_edge_ymax: Longitud de borde 2
+        part_edge_xmin: Ancho de borde 1
+        part_edge_xmax: Ancho de borde 2
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material

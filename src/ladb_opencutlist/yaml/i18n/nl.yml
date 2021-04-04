@@ -650,6 +650,10 @@ tab:
         part_width: Breedte
         part_tags: Tags
         part_batch: Lot
+        part_edge_ymin: Kantenband lengte 1
+        part_edge_ymax: Kantenband lengte 2
+        part_edge_xmin: Kantenband breedte 1
+        part_edge_xmax: Kantenband breedte 2
         thumbnail_proportional: Proportionele voorvertoning
         thumbnail_square: Vierkante voorvertoning
         group_material: Materiaal / Afmeting

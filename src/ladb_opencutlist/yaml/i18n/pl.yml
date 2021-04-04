@@ -197,6 +197,7 @@ tab:
       resized: Rozmiar tej części został zmieniony zgodnie z definicją komponentu
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
       symmetrical: Wykrywanie lustrzanej części jest nieaktywne dla tej części
+      ignore_grain_direction: Kierunek wzoru jest ignorowany na tej części
       auto_oriented: Ta część została automatycznie obrócona
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Wyłącz wykrywanie lustrzanych części dla tej części
       symmetrical_help: |
         Jeśli to pole jest zaznaczone, wykrywanie *lustrzanych części* nie będzie miało żadnego wpływu na część.
+      ignore_grain_direction: Ignoruj kierunek wzoru na tej części
+      ignore_grain_direction_help: |
+        Jeśli ta opcja jest zaznaczona, kierunek wzoru materiału będzie ignorowany dla tej części.
       size_increase: Ponadwymiarowe
       size_increase_help: |
         Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
@@ -385,7 +389,7 @@ tab:
       volume: Obiętość
       number: Ob.
       name: Opis
-      count: Opis
+      count: Ilość
       cutting: Wstępny
       bbox: Końcowa
       final: Rzeczywisty
@@ -469,7 +473,7 @@ tab:
       title: Schemat cięcia
       options_material: Materiał
       options_config: Konfiguracja
-      options_display: Pokaz
+      options_display: Wyświetlanie
       option_bar_folding: Grupuj podobne płyty
       option_bar_folding_0: Nie
       option_bar_folding_1: Tak
@@ -646,6 +650,10 @@ tab:
         part_width: Szerokość
         part_tags: Oznaczenia
         part_batch: Partia
+        part_edge_ymin: Długość krawędzi 1
+        part_edge_ymax: Długość krawędzi 2
+        part_edge_xmin: Szerokość krawędzi 1
+        part_edge_xmax: Szerokość krawędzi 2
         thumbnail_proportional: Miniaturka prostokątna
         thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
