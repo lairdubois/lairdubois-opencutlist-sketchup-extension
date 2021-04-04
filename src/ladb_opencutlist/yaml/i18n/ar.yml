@@ -650,6 +650,10 @@ tab:
         part_width: العرض
         part_tags: الوسوم
         part_batch: طقم
+        part_edge_ymin: طول الحاشية 1
+        part_edge_ymax: طول الحاشية 2
+        part_edge_xmin: عرض الحاشية 1
+        part_edge_xmax: عرض الحاشية 2
         thumbnail_proportional: ملصق متناسب
         thumbnail_square: ملصق مربع
         group_material: الخامة / السُمك

@@ -650,6 +650,10 @@ tab:
         part_width: Ширина
         part_tags: Теги
         part_batch: Партия
+        part_edge_ymin: Кромка по длине 1
+        part_edge_ymax: Кромка по длине 2
+        part_edge_xmin: Кромка по ширине 1
+        part_edge_xmax: Кромка по ширине 2
         thumbnail_proportional: Пропорциональная
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
