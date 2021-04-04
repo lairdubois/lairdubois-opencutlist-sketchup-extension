@@ -540,6 +540,20 @@ tab:
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+      option_std_band: Bande standard
+      option_std_band_help: |
+        Sélectionnez ici la taille de la bande standard qui sera dupliquée pour contenir au mieux tous les chants.
+        Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
+        Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
+      option_std_band_add: Ajouter une taille...
+      option_std_band_none: Aucune
+      option_scrap_band_lengths: Restes de bande
+      option_scrap_band_lengths_placeholder: longueur x quantité ; ...
+      option_scrap_band_lengths_help: |
+        Indiquez ici la liste de vos restes de bande à considérer en priorité pour le calepinage.
+        Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
+        La quantité est facultative.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       option_std_sheet: Panneau standard
       option_std_sheet_help: |
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -578,6 +592,8 @@ tab:
         cut_through: Coupe primaire (niveau 2)
         bar_type_0: Barre standard
         bar_type_1: Reste de barre
+        band_type_0: Bande standard
+        band_type_1: Reste de bande
         sheet_type_0: Panneau standard
         sheet_type_1: Reste de panneau
         unused: Inutilisée

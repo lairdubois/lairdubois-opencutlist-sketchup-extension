@@ -1,6 +1,6 @@
 {
   "0": {
-    "currency_symbol": { "metric" : "€", "imperial" : "$" },
-    "mass_unit": { "metric" : 0 /* KILOGRAM */, "imperial" : 1 /* POUND */ }
+    "currency_symbol": { "metric": "€", "imperial": "$" },
+    "mass_unit": { "metric": 0 /* KILOGRAM */, "imperial": 1 /* POUND */ }
   }
 }

@@ -2,6 +2,7 @@
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram_1d' %}
 {% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% set barStrippedname = group.material_type == 4 ? 'band' : 'bar' %}  {# 4 = TYPE_EDGE #}
 
 {% block headerInner %}
     {{ parent() }}
@@ -21,8 +22,8 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_cuttingdiagram_options_material">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_bar_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label for="ladb_select_std_bar" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_std_bar'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.cuttingdiagram.option_std_'~barStrippedname~'_help')|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label for="ladb_select_std_bar" class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_std_'~barStrippedname)|i18next }}</label>
                     <div class="col-xs-7">
                         <select class="form-control" id="ladb_select_std_bar">
                             {% if material_attributes.std_lengths|length > 0 %}
@@ -31,18 +32,18 @@
                                 {% endfor %}
                                 <option data-divider="true"></option>
                             {% endif %}
-                            <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.cutlist.cuttingdiagram.option_std_bar_add'|i18next }}"></option>
+                            <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ ('tab.cutlist.cuttingdiagram.option_std_'~barStrippedname~'_add')|i18next }}"></option>
                             <option data-divider="true"></option>
-                            <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_bar_none'|i18next }}"{% if material_attributes.std_lengths|length == 0 %} selected{% endif %}></option>
+                            <option value="0" data-content="{{ ('tab.cutlist.cuttingdiagram.option_std_'~barStrippedname~'_none')|i18next }}"{% if material_attributes.std_lengths|length == 0 %} selected{% endif %}></option>
                         </select>
                         <input type="hidden" class="form-control" id="ladb_input_std_bar_length">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_scrap_bar_lengths_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label for="ladb_input_scrap_bar_lengths" class="control-label col-xs-4">{{ 'tab.cutlist.cuttingdiagram.option_scrap_bar_lengths'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.cuttingdiagram.option_scrap_'~barStrippedname~'_lengths_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label for="ladb_input_scrap_bar_lengths" class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_scrap_'~barStrippedname~'_lengths')|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_input_scrap_bar_lengths" placeholder="{{ 'tab.cutlist.cuttingdiagram.option_scrap_bar_lengths_placeholder'|i18next }}">
+                        <input type="text" class="form-control" id="ladb_input_scrap_bar_lengths" placeholder="{{ ('tab.cutlist.cuttingdiagram.option_scrap_'~barStrippedname~'_lengths_placeholder')|i18next }}">
                     </div>
                 </div>
             </div>

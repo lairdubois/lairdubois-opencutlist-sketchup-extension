@@ -181,7 +181,7 @@
                         {% elseif group.material_type == 4 %} {# 4 = TYPE_EDGE #}
                             {% for bar in entry.bars %}
                                 <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
-                                    <td style="padding-left: 40px;">{{ bar.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.bar_type_'~bar.type)|i18next }}</em></td>
+                                    <td style="padding-left: 40px;">{{ bar.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.band_type_'~bar.type)|i18next }}</em></td>
                                     <td class="text-center">{{ bar.count }}</td>
                                     <td class="ladb-cutlist-dimension-value">{{ bar.total_length }}</td>
                                     <td class="ladb-cutlist-dimension-value"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ entry.volumic_mass }}"{% endif %}>{{ bar.total_mass ? bar.total_mass : '-' }}</td>
