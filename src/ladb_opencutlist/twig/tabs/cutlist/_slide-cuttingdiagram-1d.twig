@@ -108,10 +108,12 @@
                             {{ part.number }}
                         </td>
                         <td>
-                            <div class="ladb-minitools ladb-minitools-right no-print">
-                                <span class="ladb-separator"></span>
-                                <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
-                            </div>
+                            {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
+                                <div class="ladb-minitools ladb-minitools-right no-print">
+                                    <span class="ladb-separator"></span>
+                                    <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                                </div>
+                            {% endif %}
                             {{ part.name|escape }}
                         </td>
                         <td class="text-center">
@@ -240,8 +242,8 @@
                         {% set viewBoxY = (barOutlineWidth + barDimensionOffset + barDimensionFontSize) * -1 %}
                         {% set viewBoxWidth = bar.slices[0].px_length + (barOutlineWidth + barDimensionOffset + barDimensionFontSize + viewBoxOffsetX) * 2 %}
                         {% set viewBoxHeight = barDimensionOffset + barDimensionFontSize + sliceHeight * bar.slices|length %}
-                        {% set originCornerIsLeft = options.origin_corner == 0 %}{# 0 = ORIGIN_CORNER_LEFT #}
-                        {% set originCornerIsRight = options.origin_corner == 1 %}{# 1 = ORIGIN_CORNER_RIGHT #}
+                        {% set originCornerIsLeft = options.origin_corner == 0 %}   {# 0 = ORIGIN_CORNER_LEFT #}
+                        {% set originCornerIsRight = options.origin_corner == 1 %}  {# 1 = ORIGIN_CORNER_RIGHT #}
 
                         <svg viewBox="{{ viewBoxX }} {{ viewBoxY }} {{ viewBoxWidth }} {{ viewBoxHeight }}"{% if fullWidthCompatible %}{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ viewBoxHeight }}px"{% endif %}{% else %} height="{{ viewBoxHeight }}"{% endif %}>
                             <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}{% if bar.slices|length > 1 %}&hellip;{% endif %}</text>
@@ -329,10 +331,12 @@
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                             <td>
-                                <div class="ladb-minitools ladb-minitools-right no-print">
-                                    <span class="ladb-separator"></span>
-                                    <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
-                                </div>
+                                {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
+                                    <div class="ladb-minitools ladb-minitools-right no-print">
+                                        <span class="ladb-separator"></span>
+                                        <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                                    </div>
+                                {% endif %}
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
                                 {% if not generateOptions.hide_tags and part.tags is not empty %}
                                     <ul class="ladb-cutlist-part-tags">
