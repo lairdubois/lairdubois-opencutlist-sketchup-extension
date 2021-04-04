@@ -151,16 +151,45 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
           volumic_mass = material_attributes.h_volumic_mass
-          std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l ], material_attributes)
+
+          settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
+          settings['group_id'] = cutlist_group.id
+          settings['bar_folding'] = false     # Remove unneeded computations
+          settings['hide_part_list'] = true   # Remove unneeded computations
+
+          if settings['std_bar'] == ''
+            std_sizes = material_attributes.std_lengths.split(';')
+            settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
+          end
+
+          worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
+          cuttingdiagram1d = worker.run
 
           report_entry_def = EdgeReportEntryDef.new(cutlist_group)
+          report_entry_def.errors += cuttingdiagram1d.errors
           report_entry_def.volumic_mass = volumic_mass
-          report_entry_def.std_price = std_price
-          report_entry_def.total_length = cutlist_group.def.total_cutting_length
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * cutlist_group.def.std_thickness * cutlist_group.def.std_width * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_length * cutlist_group.def.std_thickness * cutlist_group.def.std_width * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width) unless std_price[:val] == 0
+          report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
+          report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
+
+          cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
+
+            next unless cuttingdiagram1d_summary_bar.is_used
+
+            std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l, cuttingdiagram1d_summary_bar.def.length ], material_attributes)
+
+            report_entry_bar_def = EdgeReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
+            report_entry_bar_def.std_price = std_price
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_summary_bar.def.length) unless std_price[:val] == 0
+            report_entry_def.bar_defs << report_entry_bar_def
+
+            report_entry_def.total_mass += report_entry_bar_def.total_mass
+            report_entry_def.total_cost += report_entry_bar_def.total_cost
+
+          end
 
           report_group_def.entry_defs << report_entry_def
+          report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_length += report_entry_def.total_length
 
         when MaterialAttributes::TYPE_HARDWARE

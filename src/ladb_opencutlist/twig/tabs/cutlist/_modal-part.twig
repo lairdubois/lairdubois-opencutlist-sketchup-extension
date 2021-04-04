@@ -12,7 +12,7 @@
         {% if not multiple %}
             <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
         {% endif %}
-        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
             <li role="presentation"{% if tab == 'size_increase' %} class="active"{% endif %}><a href="#tab_edit_part_size_increase" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-size-increase"></i>&nbsp;{{ 'tab.cutlist.edit_part.size_increase'|i18next }}</a></li>
         {% endif %}
         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
@@ -182,7 +182,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_BAR #}
+        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
             <div role="tabpanel" class="tab-pane{% if tab == 'size_increase' %} active{% endif %}" id="tab_edit_part_size_increase">
                 {% if not multiple %}
                     <div class="text-center">

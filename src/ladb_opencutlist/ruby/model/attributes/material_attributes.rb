@@ -189,7 +189,7 @@
 
     def std_lengths
       case @type
-      when TYPE_DIMENSIONAL
+      when TYPE_DIMENSIONAL, TYPE_EDGE
         @std_lengths
       else
         Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_lengths']

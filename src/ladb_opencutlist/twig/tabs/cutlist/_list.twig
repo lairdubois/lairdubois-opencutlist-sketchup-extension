@@ -193,7 +193,7 @@
                     {% if group.material_type == 2 %}    {# 2 = TYPE_SHEET_GOOD #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
-                    {% if group.material_type == 3 %}    {# 3 = TYPE_BAR #}
+                    {% if group.material_type == 3 or group.material_type == 4 %}    {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
                     {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE #}

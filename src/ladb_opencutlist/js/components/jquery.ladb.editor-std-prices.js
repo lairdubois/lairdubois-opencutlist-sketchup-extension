@@ -233,8 +233,11 @@
                 for (i = 0; i < stds.stdWidths.length; i++) {
                     stdsA[stds.stdWidths[i]] = stds.stdWidths[i];
                 }
+                for (i = 0; i < stds.stdLengths.length; i++) {
+                    stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
+                }
                 this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
-                enabledUnitKeys = [ '$_m', '$_ft' ];
+                enabledUnitKeys = [ '$_m', '$_ft', '$_i' ];
                 break;
 
         }

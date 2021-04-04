@@ -92,11 +92,12 @@ module Ladb::OpenCutList
 
   class EdgeReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_length
+    attr_accessor :total_count, :total_length
 
     def initialize
       super
 
+      @total_count = 0
       @total_length = 0
 
     end

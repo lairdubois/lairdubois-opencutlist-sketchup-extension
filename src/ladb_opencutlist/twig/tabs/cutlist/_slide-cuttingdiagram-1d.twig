@@ -281,12 +281,11 @@
                                     {% set displayedDimensions = false %}
                                     {% for slice in part.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
-                                        {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1))) %}
                                         <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
                                         <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
                                         {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1))) %}
                                         {% if not hideNumber %}
-                                            <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2)) }}px" text-anchor="middle" dominant-baseline="central">{% if (not loop.first and originCornerIsLeft) or (not loop.last and originCornerIsRight) %}&hellip;{% endif %}{{ part.number }}{% if (not loop.last and originCornerIsLeft) or (not loop.first and originCornerIsRight) %}&hellip;{% endif %}</text>
+                                            <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ max(8, min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2))) }}px" text-anchor="middle" dominant-baseline="central">{% if (not loop.first and originCornerIsLeft) or (not loop.last and originCornerIsRight) %}&hellip;{% endif %}{{ part.number }}{% if (not loop.last and originCornerIsLeft) or (not loop.first and originCornerIsRight) %}&hellip;{% endif %}</text>
                                         {% endif %}
                                         {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * part.cutting_length|length * textFontWidthFactor) %}
                                         {% if not hideDimensions %}

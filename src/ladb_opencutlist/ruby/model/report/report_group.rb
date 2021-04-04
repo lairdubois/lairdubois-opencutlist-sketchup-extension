@@ -42,7 +42,7 @@ module Ladb::OpenCutList
 
   class SheetGoodReportGroup < AbstractReportGroup
 
-    attr_reader :total_area
+    attr_reader :total_count, :total_area
 
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_SHEET_GOOD)
@@ -58,7 +58,7 @@ module Ladb::OpenCutList
 
   class DimensionalReportGroup < AbstractReportGroup
 
-    attr_reader :total_length
+    attr_reader :total_count, :total_length
 
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_DIMENSIONAL)
@@ -74,11 +74,12 @@ module Ladb::OpenCutList
 
   class EdgeReportGroup < AbstractReportGroup
 
-    attr_reader :total_length
+    attr_reader :total_count, :total_length
 
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_EDGE)
 
+      @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
     end

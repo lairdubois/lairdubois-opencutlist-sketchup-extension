@@ -162,15 +162,18 @@ module Ladb::OpenCutList
 
   class EdgeReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :total_length, :std_price
+    attr_accessor :volumic_mass, :total_count, :total_length
+    attr_reader :bar_defs
 
     def initialize(cutlist_group)
       super(cutlist_group)
 
       @volumic_mass = nil
-      @std_price = nil
 
+      @total_count = 0
       @total_length = 0
+
+      @bar_defs = []
 
     end
 
@@ -178,6 +181,28 @@ module Ladb::OpenCutList
 
     def create_entry
       EdgeReportEntry.new(self)
+    end
+
+  end
+
+  class EdgeReportEntryBarDef < AbstractReportItemDef
+
+    attr_accessor :std_price
+    attr_reader :cuttingdiagram1d_summary_bar
+
+    def initialize(cuttingdiagram1d_summary_bar)
+      super()
+
+      @cuttingdiagram1d_summary_bar = cuttingdiagram1d_summary_bar
+
+      @std_price = nil
+
+    end
+
+    # ---
+
+    def create_bar
+      EdgeReportEntryBar.new(self)
     end
 
   end
