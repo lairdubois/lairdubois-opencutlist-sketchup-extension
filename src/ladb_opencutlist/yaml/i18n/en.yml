@@ -227,7 +227,7 @@ tab:
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
-      select_unselect_all_parts: Select/deselect all parts in the group
+      select_unselect_all_parts: Select/deselect all parts in this group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Show all groups
@@ -540,6 +540,20 @@ tab:
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
+      option_std_band: Standard Edge Band
+      option_std_band_help: |
+        Select the standard edge band, which will be duplicated to contain all the parts.
+        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
+      option_std_band_add: Add a length ...
+      option_std_band_none: None
+      option_scrap_band_lengths: Offcut Edge Bands
+      option_scrap_band_lengths_placeholder: length x quantity ; ...
+      option_scrap_band_lengths_help: |
+        List the offcut edge bands which should be considered first in the cutting plan.
+        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
+        Quantity is optional.
+        *Sizes without units are considered to be in model units.*
       option_std_sheet: Standard Panel
       option_std_sheet_help: |
         Select the standard panel which will be duplicated to calculate the best possible placement.
@@ -578,6 +592,8 @@ tab:
         cut_through: Primary cut (level 2)
         bar_type_0: Standard Dimensional
         bar_type_1: Offcut
+        band_type_0: Standard Edge Band
+        band_type_1: Offcut Edge Band
         sheet_type_0: Standard Panel
         sheet_type_1: Offcut
         unused: Unused
@@ -745,7 +761,7 @@ tab:
       std_lengths: Standard Lengths
       std_lengths_placeholder: length ; ...
       std_lengths_help: |
-        Standard lengths of boards.
+        Standard lengths of boards or edge bands.
         *Sizes without units are considered to be in model units.*
       std_widths: Standard Widths
       std_widths_placeholder: width ; ...
