@@ -227,7 +227,7 @@ tab:
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
       part_axes: Interne Achsen des Teils
-      select_unselect_all_parts: Alle Teile der Gruppe selektieren / deselektieren
+      select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
     menu:
       show_all_groups: Alle Gruppen einblenden
@@ -540,6 +540,20 @@ tab:
         Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_std_band: Standard-Kantenband
+      option_std_band_help: |
+        Wählen Sie hier das Standard-Kantenband welches dupliziert wird um alle Teile zu enthalten.
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+      option_std_band_add: Kantenbandlänge hinzufügen ...
+      option_std_band_none: Kein
+      option_scrap_band_lengths: Kantenbandreste
+      option_scrap_band_lengths_placeholder: Länge x Anzahl ; ...
+      option_scrap_band_lengths_help: |
+        Geben Sie hier die Kantenbandreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_std_sheet: Standard-Platte
       option_std_sheet_help: |
         Wählen Sie die Standard-Platte welche dupliziert wird, um die bestmögliche Platzierung zu berechnen.
@@ -578,6 +592,8 @@ tab:
         cut_through: Primärschnitt (Stufe 2)
         bar_type_0: Standard-Stange
         bar_type_1: Stangenrest
+        band_type_0: Standard-Kantenband
+        band_type_1: Kantenbandrest
         sheet_type_0: Standard-Platte
         sheet_type_1: Plattenrest
         unused: Nicht verwendet
@@ -745,7 +761,7 @@ tab:
       std_lengths: Standard-Längen
       std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
-        Standard-Stangenlängen.
+        Standard-Stangen oder -Kantenbandlängen.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_widths: Standard-Breiten
       std_widths_placeholder: Breite ; ...
