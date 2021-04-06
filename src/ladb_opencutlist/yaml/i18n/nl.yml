@@ -540,6 +540,20 @@ tab:
         Formaat: **L**x**Q**. of **L** is de *lengte* van het overschot en **Q** de hoeveelheid.
         De hoeveelheid is facultatief.
         *Waneer geen enkele eenheid gespecifieerd is, zal de eenheid van het model genomen worden.*
+      option_std_band: Standaard kantenband
+      option_std_band_help: |
+        Selecteer hier de standaard afmeting van de kantenband die gedupliceerd zal worden om optimaal alle kanten te bevatten.
+        Deze lijst wordt gedefinieerd in het veld **$t(tab.materials.edit_material.std_lengths)** van het materiaal.
+        Wijzig het materiaal '{{ material_name }}' om deze lijst aan te passen.
+      option_std_band_add: Voeg een afmeting toe...
+      option_std_band_none: Geen
+      option_scrap_band_lengths: Kantenband overschotten
+      option_scrap_band_lengths_placeholder: lengte x aantal ; ...
+      option_scrap_band_lengths_help: |
+        Lijst van uw kantenband overschotten om voorrang te geven in het zaagplan.
+        Verwacht formaat: **L**x**A**. Waar **L** de *lengte* is en **A** het aantal.
+        Aantal is facultatief.
+        *Wanneer geen enkele eenheid gespecificeerd werd, dan wordt de eenheid van het model genomen.*
       option_std_sheet: Standaard paneel
       option_std_sheet_help: |
         Selecteer hier het standaard paneel dat gedupliceerd zal worden om zo goed mogelijke alle onderdelen te bevatten.
@@ -578,6 +592,8 @@ tab:
         cut_through: Primaire zaagsnedes (niveau 2)
         bar_type_0: Standaard plank
         bar_type_1: Plank overschot
+        band_type_0: Standaard kantenband
+        band_type_1: Kantenband overschot
         sheet_type_0: Standaard paneel
         sheet_type_1: Paneel overschot
         unused: Ongebruikt
@@ -745,8 +761,8 @@ tab:
       std_lengths: Standaard lengtes
       std_lengths_placeholder: lengte ; ...
       std_lengths_help: |
-        Standaard lengtes van de planken.
-        *Wanneer geen enkele eenhdie aangeduid word, dan wordt de eenheid van het model genomen.*
+        Standaar lengte van de kantenband.
+        *Wanneer geen eenheid gespecificeerd wordt, dan wordt de eenheid van het model genomen.*
       std_widths: Standaard breedtes
       std_widths_placeholder: breedte ; ...
       std_widths_help: |

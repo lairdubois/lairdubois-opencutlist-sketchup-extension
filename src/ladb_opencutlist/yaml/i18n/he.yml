@@ -43,11 +43,11 @@ default:
   unit_5: יארד
   unit_mass_0: קילוגרם
   unit_mass_1: לירה
-  instance_single: יחידה
-  instance_plural: יחידות
+  instance_single: פריט
+  instance_plural: פריטים
   part_single: חלק
   part_plural: חלקים
-  setup_model_units: הגדרת יחידות
+  setup_model_units: הגדרת יחידות במודל
   load_more: "טען עוד ..."
   reset_to_app_defaults: לשחזר ערכים מקוריים
 core:
@@ -146,10 +146,10 @@ tab:
     not_available_std_section: חתך לא מוגדר
     highlight_part: ראה את החלק במודל
     highlight_parts: ראה את החלקים במודל
-    edit_part_properties: לערוך מאפייני חלקים
+    edit_part_properties: לערוך מאפייני חלק
     edit_part_axes_properties: ערוך את המאפיינים (צירים) של החלק
-    edit_part_size_increase_properties: ערוך את המאפיינים (מידות) של החלק
-    edit_part_edges_properties: ערוך את המאפיינים (קאנט) של החלק
+    edit_part_size_increase_properties: ערוך את המאפיינים (מידות יתר) של החלק
+    edit_part_edges_properties: ערוך את המאפיינים (קאנטים) של החלק
     tooltip:
       show_hide_block: הצג / הסתר קבוצה
       scroll_to_block: גלול לקבוצה
@@ -180,45 +180,45 @@ tab:
         חתך בפועל: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: התאימו את הדיוק ב- *Model Info* או בדקו את מידות החלקים בקבוצה זו.
+      rounded_std_footer: התאם את הדיוק ב-*Model Info* או בדוק את מידות החלקים בקבוצה זו.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: עריכת מאפיינים של קבוצת חלקים
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: הגדל / מזער
-      material_origin_1: חומר של החלק נקבע לפי עותקיו
-      material_origin_2: חומר של החלק עבר בירושה מאחת האלמנטיים המקוריים.
-      material_origin_3: חומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים.
+      material_origin_1: החומר של החלק מוגדר על מקריו
+      material_origin_2: החומר של החלק עבר בירושה מאחת האלמנטיים המקוריים.
+      material_origin_3: החומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים.
       orientation_locked_on_axis: אוריינטציה של החלק קשורה לציריו
-      number_saved: מספר החלק נרשם
+      number_saved: מספר החלק נשמר
       number_hidden: "לא ניתן להשתמש במספר '{{ number }}' של החלק מכיוון שהוא כבר מוקצה"
       number_generated: מספר החלק נוצר באופן אוטומטי
       resized: החלק שונה על פי הגדרת מרכיביו.
-      flipped: החלק משתקף מהגדרתיו
-      symmetrical: בחלק הזה לא מופעל זיהוי *חלק משתקף*
-      ignore_grain_direction: כיוון המרקם בחלק זה מתעלם
+      flipped: החלק משתקף בהתאם להגדרות שלו
+      symmetrical: בחלק הזה לא מופעל זיהוי חלק משתקף
+      ignore_grain_direction: בחלק הזה מתעלמים מכיוון המרקם
       auto_oriented: החלק עבר הכוונה אוטומטית
       add_label_filter: "לסנן לפי '{{ label }}'"
       remove_label_filter: "הסר סינון לפי '{{ label }}'"
       add_edge_material_name_filter: "לסנן לפי '{{ material_name }}'"
       remove_edge_material_name_filter: "לא לסנן לפי '{{ material_name }}'"
-      not_aligned_on_axes: " שימו לב, החלק עשוי להיות מכוון בצורה לא נכונה ביחס לצירים שלו."
-      instance_count_by_part: "החלק נספר בקבוצות של **{{ count }}** יחידות."
-      unused_instance_count: "לידיעתך, לא תעשה שימוש ביחידה **{{ count }}** מהקבוצה האחרונה."
-      unused_instance_count_plural: "לידיעתך, ש-**{{ count }}** יחידות מהקבוצה האחרונה לא ישמשו."
-      used_instance_count: "נעשה שימוש ביחידה **{{ count }}** / {{ total }}"
-      used_instance_count_plural: "נעשה שימוש ביחידות **{{ count }}** / {{ total }}"
-      multiple_layers: "שימו לב, החלק מורכב מקבוצות משנה הקיימות ב-{{ count }} שכבות שונות: <br> {{ layers }}"
-      children_warnings: "שימו לב, קיימת התראה בחלקים המקובצים {{ count }}"
-      children_warnings_plural: "שימו לב, קיימות התראות בחלקים המקובצים {{ count }}"
-      children_size_increase: "המידה עולה במידה {{ count }} של חלקים מקובצים"
-      invalid_final_area: "שימו לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי"
-      invalid_final_area_plural: "שימו לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים המרכיבים (מתוך {{ total }}) יש שטח שגוי"
-      is_dynamic_attributes_name: ייעוד החלק נלקח מהתכונה 'Name' של הרכיב הדינמי
+      not_aligned_on_axes: "שים לב, יתכן והחלק אינו מכוון נכון ביחס לציריו"
+      instance_count_by_part: "החלק נספר בחבילות של **{{ count }}** פריטים."
+      unused_instance_count: "שים לב, כי לא ייעשה שימוש בפריט **{{ count }}** מהחבילה האחרונה."
+      unused_instance_count_plural: "שים לב, כי לא ייעשה שימוש ב-**{{ count }}** פריטים מהחבילה האחרונה."
+      used_instance_count: "פריט **{{ count }}** מתוך {{ total }} בשימוש"
+      used_instance_count_plural: "**{{ count }}** פריטים מתוך {{ total }} בשימוש"
+      multiple_layers: "שים לב, החלק מורכב מתת-חלקים הקיימים ב-{{ count }} שכבות שונות: <br> {{ layers }}"
+      children_warnings: "שים לב, קיימת התראה {{count}} בחלקים מקובצים"
+      children_warnings_plural: "שים לב, קיימות {{count}} התראות בחלקים מקובצים"
+      children_size_increase: "המידה מוגדלת במידת יתר עבור {{ count }} חלקים מקובצים"
+      invalid_final_area: "שים לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי"
+      invalid_final_area_plural: "שים לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים (מתוך {{ total }}) יש שטח שגוי"
+      is_dynamic_attributes_name: התיאור של החלק מופק מהתכונה 'Name' של הרכיב הדינמי
       size_increased: "המידה עלתה ב-{{ value }}"
-      has_edges: "החלק מכיל {{ count }} קאנטים"
-      has_edges_plural: "החלקים מכילים {{ count }} קאנטים"
+      has_edges: "החלק מכיל קאנט {{ count }}"
+      has_edges_plural: "החלק מכיל {{ count }} קאנטים"
       edge_decremented: "עובי קאנט מופחת ({{ decrement }})"
       edge_ymin: קאנט לאורך 1
       edge_ymax: קאנט לאורך 2
@@ -227,16 +227,16 @@ tab:
       dblclick_to_copy_all_edges: לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
       dblclick_to_sort_axes: לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק.
       part_axes: צירים פנימיים של החלק
-      select_unselect_all_parts: בחר / בטל את הבחירה בכל החלקים בקבוצה
+      select_unselect_all_parts: בחר / בטל את כל החלקים בקבוצה
       setup_group_cuttingdiagram: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: הצג את כל הקבוצות
       hide_all_other_groups: הסתר את כל שאר הקבוצות
-      numbers_save: שמור מספרי החלקים
-      numbers_reset: עדכן את מספור החלקים
+      numbers_save: שמור את מספרי החלקים
+      numbers_reset: עדכן את מספרי החלקים
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_numbers_save: שמור מספרי החלקים בקבוצה
-      group_numbers_reset: עדכן מספרי החלקים בקבוצה
+      group_numbers_save: שמור את מספרי החלקים בקבוצה
+      group_numbers_reset: עדכן את מספרי החלקים בקבוצה
       group_cuttingdiagram: תוכנית חיתוך
       group_labels: הדפסת תוויות
       edit_material: "ערוך חומר '{{ material_name }}'"
@@ -258,17 +258,17 @@ tab:
       cumulable_2: לצבור לרוחב
       instance_count_by_part: אריזה
       instance_count_by_part_help: |
-        מאפשר להחשיב את החלק כ*סט* מאחת או יותר *יחידות*.
-        הכמות המשויכת לחלק בתוכנית חיתוך תייצג אם כן את מספר הסטים השלמים הדרושים כדי להכיל את מספר היחידות הקיימות בפועל במודל.
+        מאפשר להחשיב את החלק כ-*חבילה* של אחד או יותר *פריטים*.
+        הכמות המשויכת לחלק בתוכנית חיתוך תייצג לכן את מספר החבילות השלמות הדרושות להשגת מספר הפריטים שנמצאים בפועל במודל.
 
-        *דוגמה: לספור חלק 1 בלבד עבור זוג מסילות מגירה:
-        אריזה = 2 יחידות / חלק*
-      instance_count_by_part_1: פריט 1 ביחידה
-      instance_count_by_part_2: 2 פריטים ביחידה
+        *דוגמה: לספור רק חלק 1 בלבד עבור זוג מסילות מגירה:
+        חבילה = 2 פריטים / חלק*
+      instance_count_by_part_1: פריט 1 בחלק
+      instance_count_by_part_2: 2 פריטים בחלק
       mass: משקל
       mass_help: המשקל החלק ישמש בעת הפקת **דוחות**.
       price: מחיר
-      price_help: מחיר החלק ישמש בעת הפקת **דוחות**.
+      price_help: המחיר החלק ישמש בעת הפקת **דוחות**.
       tags: תגים
       tags_help: |
         בעזרת האפשרות *תגים*, תוכלו להוסיף מילות מפתח לאינדקס כדי לזהות טוב יותר חלקים בתוכנית חיתוך.
@@ -338,7 +338,7 @@ tab:
       part_number_with_letters_help: "אם האפשרות מופעלת, חלקים בקבוצה ממוספרים באמצעות אותיות (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: מספור של כל קבוצה
       part_number_sequence_by_group_help: "אם האפשרות מופעלת, מספור החלקים מאופס ל- 1 (או A) עבור כל קבוצה (רשימת חלקים בעלי אותו חומר ועובי)."
-      part_folding: לערוך מחדש חלקים זהים
+      part_folding: קבץ מחדש חלקים זהים
       part_folding_help: "אם האפשרות מופעלת, חלקים עם **מידה זהה**, **תגים זהים** ו-**אותו משטח מוגמר** *(אם התצוגה של משטח זה אינו מוסתר)* יקובצו על אותו קו."
       hide_entity_names: הסתר שמות מופעים
       hide_entity_names_help: "אם האפשרות מופעלת, **שמות מופעים** של החלקים אינם מוצגים."
@@ -434,7 +434,7 @@ tab:
       bbox_thickness: עובי - אפשרי
       final_area: שטח - אפשרי
       count: כמות
-      part_count: מספר חלקים
+      part_count: כמות חלקים
       material_type: סוג
       material_thickness: חומר / עובי
       material_name: חומר
@@ -520,7 +520,7 @@ tab:
       option_optimization_help: "רמת האופטימיזציה מגדירה את מספר האפשרויות המחושבות, ולכן גם את זמן החישוב."
       option_optimization_0: בינוני
       option_optimization_1: מתקדם
-      option_stacking: לערום חלקים זהים
+      option_stacking: לכלול חלקים זהים
       option_stacking_help: כיוון הערימה של חלקים בעלי אורך או רוחב משותפים.
       option_stacking_0: ללא העדפות
       option_stacking_1: לכל האורך
@@ -536,10 +536,24 @@ tab:
       option_scrap_bar_lengths: פחת הקרש
       option_scrap_bar_lengths_placeholder: אורך x כמות ; ...
       option_scrap_bar_lengths_help: |
-        ציינו פחת הקרש שנותרו כדי להיחשב כעדיפות לפריסה.
+        ציין פחת הקרשים שיש לקחת בחשבון תחילה בתכנית החיתוך.
         פורמט צפוי: **א**x**כ**. כאשר **א** הוא *אורך* של הפחת ו **כ** הכמות.
         הכמות אופציונלית.
-        *אם לא צוינו שום יחידות מדידה, יחידות המודל ילקחו בחשבון.*
+        *מידות ללא יחידות יהיו ביחידות המודל.*
+      option_std_band: קאנט סטנדרטי
+      option_std_band_help: |
+        בחר קאנט סטנדרטי שישוכפל בכדי להכיל בצורה הטובה ביותר את כל הקאנטים.
+        הרשימה מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_lengths)** של החומר.
+        ערוך את החומר '{{ material_name }}' כדי לעדכן רשימה זו.
+      option_std_band_add: הוסף אורך...
+      option_std_band_none: אין
+      option_scrap_band_lengths: פחת קאנטים
+      option_scrap_band_lengths_placeholder: אורך x כמות ; ...
+      option_scrap_band_lengths_help: |
+        ציין פחת הקאנטים שיש לקחת בחשבון תחילה בתכנית החיתוך.
+        פורמט צפוי: **א**x**כ**. כאשר **א** הוא *אורך* של הפחת ו **כ** הכמות.
+        הכמות אופציונלית.
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       option_std_sheet: לוח סטנדרטי
       option_std_sheet_help: |
         בחר לוח סטנדרטי שישוכפל בכדי להכיל בצורה הטובה ביותר את כל החלקים.
@@ -550,10 +564,10 @@ tab:
       option_scrap_sheet_sizes: פחת מטר מרובע
       option_scrap_sheet_sizes_placeholder: אורך x רוחב x כמות ; ...
       option_scrap_sheet_sizes_help: |
-        ציינו פחת הלוח שצריך להוסיף בעדיפות לפריסה.
+        ציין פחת הלוחות שיש לקחת בחשבון תחילה בתכנית החיתוך.
         פורמט צפוי: **א**x**ר**x**כ**. כאשר **א** ו- **ר** הם בהתאם *אורך* ו-*רוחב* של הפחת ו-**כ** הכמות.
         הכמות אופציונלית.
-        *אם לא צוינו שום יחידות מדידה, יחידות המודל ילקחו בחשבון.*
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       tooltip:
         scroll_to_block_1d: גלול לפריט הראשון
         scroll_to_block_2d: גלול ללוח הראשונה
@@ -578,6 +592,8 @@ tab:
         cut_through: חיתוך ראשוני (רמה 2)
         bar_type_0: לוח סטנדרטי
         bar_type_1: פחת הקרש
+        band_type_0: קאנט סטנדרטי
+        band_type_1: פחת קאנט
         sheet_type_0: לוח סטנדרטי
         sheet_type_1: פחת הלוח
         unused: לא בשימוש
@@ -745,28 +761,28 @@ tab:
       std_lengths: אורכים סטנדרטיים
       std_lengths_placeholder: אורך ; ...
       std_lengths_help: |
-        אורכי לוחות סטנדרטיים.
-        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+        אורכים סטנדרטיים של לוחות או קאנטים.
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       std_widths: רוחבים סטנדרטיים
       std_widths_placeholder: רוחב ; ...
       std_widths_help: |
         רוחבי קאנטים סטנדרטיים.
-        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       std_thicknesses: עוביים סטנדרטיים
       std_thicknesses_placeholder: עובי ; ...
       std_thicknesses_help: |
-        עוביי ניסור סטנדרטיים.
-        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+        עובי **גולמי** סטנדרטי.
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       std_sections: מידות חתך סטנדרטיות
       std_sections_placeholder: רוחב x גובה ; ...
       std_sections_help: |
         פורמט צפוי: **ר**x**ג**. כאשר **ר** ו-**ג** הם *רוחב* ו-*גובה* של החתך בהתאם.
-        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       std_sizes: גדלים סטנדרטיים
       std_sizes_placeholder: אורך x רוחב ; ...
       std_sizes_help: |
         פורמט צפוי: **א**x**ר**. כאשר **א** ו-**ר** הם *אורך* ו-*רוחב* של הלוח בהתאם.
-        *אם לא צוינה שום יחידת מדידה, יחידות המודל ילקחו בחשבון.*
+        *מידות ללא יחידות יהיו ביחידות המודל.*
       grained: כיוון סיבים
       grained_help: מגדיר את כיוון הסיבים של מרקם החומר.
       grained_0: ללא מרקם
@@ -824,7 +840,7 @@ tab:
         בחר באפשרויות הדרושות לקריאה נכונה של הקובץ:
         **{{ filename }}**.
       info_1: |
-        *היחידה שהוגדרה בתבנית היא: **{{ unit }}**.
+        *היחידה שהוגדרה במודל היא: **{{ unit }}**.
         היחידה תשמש למידות שעבורן לא מוגדרות יחידות*.
       options: אפשרויות טעינה
       option_col_sep: חוצץ
@@ -968,7 +984,7 @@ tab:
     length_format_2: הנדסי
     length_format_3: חלקי
     length_precision: דיוק
-    suppress_units_display: הצג את יחידת האורך בכל ערך
+    suppress_units_display: הצגת יחידת אורך לכל ערך
     mass_unit: יחידת משקל
     currency_symbol: סמל המטבע
     menu:

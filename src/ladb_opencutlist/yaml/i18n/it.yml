@@ -539,7 +539,21 @@ tab:
         Elenca gli avanzi di tavole che saranno considerate per prime nello schema di taglio.
         Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
         La quantità è facoltativa.
-        *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
+        *Dimensioni senza unità si intendono in unità del modello.*
+      option_std_band: Bordatura Standard
+      option_std_band_help: |
+        Seleziona una bordatura standard, che sarà duplicata in modo da contenere tutte le parti.
+        Questo elenco è definito alla voce **$t(tab.materials.edit_material.std_lengths)** del menu Materiali.
+        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
+      option_std_band_add: Aggiungi una lunghezza ...
+      option_std_band_none: Nessuna
+      option_scrap_band_lengths: Avanzi di bordatura
+      option_scrap_band_lengths_placeholder: lunghezza x quantità ; ...
+      option_scrap_band_lengths_help: |
+        Elenca gli avanzi di bordature che saranno considerate per prime nello schema di taglio.
+        Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
+        La quantità è facoltativa.
+        *Dimensioni senza unità si intendono in unità del modello.*
       option_std_sheet: Pannelli Standard
       option_std_sheet_help: |
         Seleziona il pannello predefinito che verrà duplicato per contenere tutte le parti nel miglior modo possibile.
@@ -550,10 +564,10 @@ tab:
       option_scrap_sheet_sizes: Ritagli di pannelli
       option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...
       option_scrap_sheet_sizes_help: |
-        Elenco dei ritagli di pannelli da usare nello schema di taglio.
-        Formato: **L**x**W**x**Q**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello e **Q** la quantità.
+        Elenco gli avanzi di pannelli che saranno considerate per prime nello schema di taglio.
+        Formato: **L**x**W**x**Q**, dove **L** è la *lunghezza* del ritaglio, **W** la *larghezza* e **Q** la quantità.
         La quantità è facoltativa.
-        *Dimensioni senza unita di misura sono considerate pari alle unità del modello.*
+        *Dimensioni senza unità si intendono in unità del modello.*
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola
         scroll_to_block_2d: Scorri al primo pannello
@@ -578,6 +592,8 @@ tab:
         cut_through: Taglio principale (livello 2)
         bar_type_0: Dimensioni Standard Barre
         bar_type_1: Ritagli
+        band_type_0: Bordatura Standard
+        band_type_1: Avanzi di bordatura
         sheet_type_0: Dimensioni Standard dei Pannelli
         sheet_type_1: Ritagli
         unused: Inutilizzato
@@ -745,7 +761,7 @@ tab:
       std_lengths: Lunghezze predefinite
       std_lengths_placeholder: lunghezza ; ...
       std_lengths_help: |
-        Lunghezze predefinite delle tavole.
+        Lunghezze standard die barre o bordature.
         *Dimensioni senza unità si intendono in unità del modello.*
       std_widths: Larghezze predefinite
       std_widths_placeholder: larghezza ; ...
@@ -762,10 +778,10 @@ tab:
       std_sections_help: |
         Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* della barra (*dimensioni effettive e non nominali*).
         *Dimensioni senza unità si intendono in unità del modello.*
-      std_sizes: Dimensioni pannelli disponibili
+      std_sizes: Dimensioni standard
       std_sizes_placeholder: lunghezza x larghezza ; ...
       std_sizes_help: |
-        Formato: **L**x**W**, in cui **L** and **W** rappesentano la *lunghezza* e la *larghezza* del pannello.
+        Formato: **L**x**W**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello.
         *Dimensioni senza unità si intendono in unità del modello.*
       grained: Direzione venatura
       grained_help: Configura la direzione della venatura del materiale.
