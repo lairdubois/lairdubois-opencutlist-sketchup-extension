@@ -536,7 +536,7 @@ tab:
       option_scrap_bar_lengths: Offcut Boards
       option_scrap_bar_lengths_placeholder: length x quantity ; ...
       option_scrap_bar_lengths_help: |
-        List the offcut boards which should be considered first in the cutting plan.
+        List the offcut boards which should be considered first in the cutting diagram.
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -550,7 +550,7 @@ tab:
       option_scrap_band_lengths: Offcut Edge Bands
       option_scrap_band_lengths_placeholder: length x quantity ; ...
       option_scrap_band_lengths_help: |
-        List the offcut edge bands which should be considered first in the cutting plan.
+        List the offcut edge bands which should be considered first in the cutting diagram.
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*

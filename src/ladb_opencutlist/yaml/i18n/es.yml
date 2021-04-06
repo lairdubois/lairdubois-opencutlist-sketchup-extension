@@ -539,7 +539,21 @@ tab:
         Enumere las tablas sobrantes que se deben considerar primero en el plan de corte.
         Formato esperado: **L** x **Q**, donde **L** es la *longitud* del recorte y **Q** la cantidad.
         La cantidad es opcional.
-        *Los tamaños sin unidades se consideran en unidades modelo.*
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
+      option_std_band: Banda estándar
+      option_std_band_help: |
+        Seleccione aquí el tamaño del canto estándar que se duplicará para contener mejor todos los bordes.
+        Esta lista está definida por el campo **$t(tab.materials.edit_material.std_lengths)** del material.
+        Edite el material '{{ material_name }}' para actualizar esta lista.
+      option_std_band_add: Añade una longitud...
+      option_std_band_none: Ninguna
+      option_scrap_band_lengths: Restos de Canto
+      option_scrap_band_lengths_placeholder: largo x cantidad ; ...
+      option_scrap_band_lengths_help: |
+        Indique aquí la lista de los restos de su cinta a considerar como una prioridad para el diseño.
+        Formato esperado: **L** x **Q**. Donde **L** es la *longitud* del resto y **Q** la cantidad.
+        La cantidad es opcional.
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       option_std_sheet: Panel estándar
       option_std_sheet_help: |
         Seleccione el panel estándar que se duplicará para contener todas las partes.
@@ -553,7 +567,7 @@ tab:
         Enumere todos los productos de Piezas cortadas que le gustaría que se consideren en el diagrama de corte.
         Formato esperado: **L** x **W** x **Q**, donde **L** y **W** representan el *largo* y el *ancho* del panel y **Q** la cantidad.
         La cantidad es opcional.
-        *Los tamaños sin unidades se consideran en unidades modelo.*
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla
         scroll_to_block_2d: Desplazate al primer tablero
@@ -578,6 +592,8 @@ tab:
         cut_through: Corte primario (nivel 2)
         bar_type_0: Dimensiones estándar
         bar_type_1: Trozo
+        band_type_0: Canto estándar
+        band_type_1: Resto de canto
         sheet_type_0: Panel de tamaño estándar
         sheet_type_1: Trozo
         unused: No usado
@@ -745,8 +761,8 @@ tab:
       std_lengths: Longitudes estándar
       std_lengths_placeholder: longitud ; ...
       std_lengths_help: |
-        Longitudes estándar de tablas.
-        *Los tamaños sin unidades se consideran en unidades modelo.*
+        Longitudes estándar de barras o cantos.
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       std_widths: Anchos estándar
       std_widths_placeholder: anchura ; ...
       std_widths_help: |
@@ -761,12 +777,12 @@ tab:
       std_sections_placeholder: ancho x espesor ; ...
       std_sections_help: |
         Formato esperado: **W** x **T**, donde **W** y **T** representan el **real** *ancho* y *espesor* de la pieza laminada.
-        *Los tamaños sin unidades se consideran en unidades modelo.*
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       std_sizes: Tamaños de panel estándar
       std_sizes_placeholder: largo x ancho ; ...
       std_sizes_help: |
         Expected format: **L** x **W**, donde **L** y **W** representan la *longitud* y *ancho* del panel.
-        *Los tamaños sin unidades se consideran en unidades modelo.*
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       grained: Dirección de fibra
       grained_help: Configura la dirección de la fibra del material.
       grained_0: Sin fibra

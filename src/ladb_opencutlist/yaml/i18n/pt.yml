@@ -197,7 +197,7 @@ tab:
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
       symmetrical: A detecção de peças espelhadas está desativada nesta parte
-      ignore_grain_direction: A direção dos veios é ignorada nesta parte
+      ignore_grain_direction: A direção dos veios é ignorada nesta peça
       auto_oriented: Esta peça foi reorientada automaticamente
       add_label_filter: "Filtrando em '{{ label }}'"
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
@@ -540,6 +540,20 @@ tab:
         Formato esperado: **C**x**Q**, onde **C** é o *comprimento* do corte e **Q** a quantidade.
         A quantidade é opcional.
         *Os tamanhos sem unidades são considerados em unidades modelo.*
+      option_std_band: Fita padrão
+      option_std_band_help: |
+        Selecione aqui o tamanho da fita padrão que será duplicada para melhor conter todas as bordas.
+        Esta lista é definida pelo campo **$t(tab.materials.edit_material.std_lengths)** do material.
+        Edite o material  '{{ material_name }}' para atualizar esta lista.
+      option_std_band_add: Adicione um tamanho...
+      option_std_band_none: Nenhum
+      option_scrap_band_lengths: Sobras de fita
+      option_scrap_band_lengths_placeholder: comprimento x quantidade ; ...
+      option_scrap_band_lengths_help: |
+        Indique aqui a lista de suas sobras de fitas a serem consideradas em prioridade para o layout.
+        Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* do restante e **Q** é a quantidade.
+        A quantidade é opcional.
+        *Se nenhuma unidade for especificada, a unidade modelo será utilizada.*
       option_std_sheet: Chapa Padrão
       option_std_sheet_help: |
         Selecione a chapa padrão que será duplicado para conter todas as partes.
@@ -578,6 +592,8 @@ tab:
         cut_through: Corte primário (nível 2)
         bar_type_0: Prancha MLC padrão
         bar_type_1: Sobra de prancha
+        band_type_0: Fita padrão
+        band_type_1: Sobra de fita
         sheet_type_0: Chapa de tamanho padrão
         sheet_type_1: Sobra de chapa
         unused: Não utilizado
@@ -745,8 +761,8 @@ tab:
       std_lengths: Comprimento Padrão
       std_lengths_placeholder: comprimento ; ...
       std_lengths_help: |
-        Comprimentos padrão das prancha MLC.
-        *Os tamanhos sem unidades são considerados em unidades modelo.*
+        Comprimentos padrão de pranchas ou fitas.
+        *Se nenhuma unidade for especificada, a unidade do modelo será utilizada.*
       std_widths: Larguras Padrão
       std_widths_placeholder: largura ; ...
       std_widths_help: |
