@@ -540,6 +540,20 @@ tab:
         Oczekiwany format: **długość x ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
         Ilość jest opcjonalna
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      option_std_band: Obrzeża standardowe
+      option_std_band_help: |
+        Wybierz rozmiar standardowego obrzeża, które zostanie powielone, i dopasowane do wszystkich krawędzi.
+        Lista jest definowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
+        Edytuj material '{{ material_name }}' aby zaktualizować listę.
+      option_std_band_add: Dodaj długość ...
+      option_std_band_none: Brak
+      option_scrap_band_lengths: Odpady obrzeży
+      option_scrap_band_lengths_placeholder: długość x ilość ; ...
+      option_scrap_band_lengths_help: |
+        Lista odpadów obrzeży, które powinny być najpierw brane pod uwagę w rozkroju.
+        Oczekiwany format: **Dł**x**Il.**, gdzie **Dł** to *długość* odpadu, a **Il.** to ilość.
+        Ilość jest opcjonalna.
+        *Rozmiary bez jednostek są traktowane jakby były w jednostkach modelu.*
       option_std_sheet: Arkusz standardowy
       option_std_sheet_help: |
         Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
@@ -578,6 +592,8 @@ tab:
         cut_through: Cięcie główne (poziom 2)
         bar_type_0: Płyta o standardowych wymiarach
         bar_type_1: Odpad
+        band_type_0: Standardowy rozmiar obrzeża
+        band_type_1: Odpady obrzeży
         sheet_type_0: Arkusz o standardowych wymiarach
         sheet_type_1: Odpad
         unused: Nieużywane
@@ -745,8 +761,8 @@ tab:
       std_lengths: Standardowe długości
       std_lengths_placeholder: długość ; ...
       std_lengths_help: |
-        Standardowe długości płyt.
-        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+        Standardowe długości desek lub obrzeży.
+        *Rozmiary bez podanych jednostek są traktowane jak w jednostkach modelu.*
       std_widths: Standardowe szerokości
       std_widths_placeholder: szerokość ; ...
       std_widths_help: |
