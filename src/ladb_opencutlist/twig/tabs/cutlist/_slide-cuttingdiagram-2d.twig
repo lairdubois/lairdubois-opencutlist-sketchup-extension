@@ -6,6 +6,7 @@
 {% set sheetDimensionFontSize = 16 %}
 {% set dimensionFontSize = 12 %}
 {% set numberFontSize = 26 %}
+{% set minNumberFontSize = 8 %}
 
 {% set textFontWidthFactor = 0.6 %}
 
@@ -28,10 +29,10 @@
     <div class='tt-data'><i class='ladb-opencutlist-icon-size-length-width'></i> {{ part.cutting_length|escape('html') }}&nbsp;x&nbsp;{{ part.cutting_width|escape('html') }}</div>
     {% if part.edge_count > 0 %}
         <div class='tt-section'>
-            {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-0010'></i>&nbsp;{{ part.edge_material_names.ymin }}&nbsp;<small>{{ part.edge_std_dimensions.ymin }}</small></div>{% endif %}
-            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymax }}&nbsp;<small>{{ part.edge_std_dimensions.ymax }}</small></div>{% endif %}
-            {% if part.edge_material_names.xmin %}<div><i class='ladb-opencutlist-icon-edge-0001'></i>&nbsp;{{ part.edge_material_names.xmin }}&nbsp;<small>{{ part.edge_std_dimensions.xmin }}</small></div>{% endif %}
-            {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax }}&nbsp;<small>{{ part.edge_std_dimensions.xmax }}</small></div>{% endif %}
+            {% if part.edge_material_names.ymin %}<div><i class='ladb-opencutlist-icon-edge-0010'></i>&nbsp;{{ part.edge_material_names.ymin|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.ymin|escape('html') }}</small></div>{% endif %}
+            {% if part.edge_material_names.ymax %}<div><i class='ladb-opencutlist-icon-edge-1000'></i>&nbsp;{{ part.edge_material_names.ymax|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.ymax|escape('html') }}</small></div>{% endif %}
+            {% if part.edge_material_names.xmin %}<div><i class='ladb-opencutlist-icon-edge-0001'></i>&nbsp;{{ part.edge_material_names.xmin|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.xmin|escape('html') }}</small></div>{% endif %}
+            {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.xmax|escape('html') }}</small></div>{% endif %}
         </div>
     {% endif %}
 {% endspaceless %}
@@ -313,7 +314,7 @@
                                     {% set _numberTextLength = part.number|length %}
                                     {% set _numberFontSize = min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? _numberTextLength : 1)) %}
                                     {% set _numberFontWidth = _numberFontSize * _numberTextLength * textFontWidthFactor %}
-                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ _numberFontSize }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
+                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ max(minNumberFontSize, _numberFontSize) }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
                                     {% set _dimensionFontSize = min(dimensionFontSize, _numberFontSize) %}
                                     {% set _value = part.rotated ? part.cutting_width : part.cutting_length %}
                                     {% set _valuePxWidth = _value|length * _dimensionFontSize * textFontWidthFactor %}
