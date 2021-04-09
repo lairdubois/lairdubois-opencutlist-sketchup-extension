@@ -63,7 +63,7 @@ core:
     title: OpenCutList by L'Air du Bois
   leftbar:
     more: Více
-    more_docs: Dokumentace
+    more_docs: Dok.
     more_reviews: Recenze
     more_plans: Plány
     more_extensions: Rozšíření
@@ -197,6 +197,7 @@ tab:
       resized: Tato část byla změněna s ohledem na definici její součásti
       flipped: Tato část je zrcadlena ve srovnání s definicí komponenty
       symmetrical: Detekce zrcadleného dílu je u této součásti zakázána
+      ignore_grain_direction: Směr zrna je v této části ignorován
       auto_oriented: Tato část byla automaticky přeorientována
       add_label_filter: "Filtrování zapnuto '{{ label }}'"
       remove_label_filter: "Odstranit filtrování '{{ label }}'"
@@ -286,6 +287,9 @@ tab:
       symmetrical: Zakázat detekci zrcadleného dílu na tomto dílu
       symmetrical_help: |
         Pokud je toto políčko zaškrtnuto, detekce *zrcadlené části* nebude mít na tuto část žádný vliv.
+      ignore_grain_direction: Na této části ignorujte směr zrna
+      ignore_grain_direction_help: |
+        Pokud je toto políčko zaškrtnuto, bude směr zrna materiálu pro tuto část ignorován.
       size_increase: Nadmíry
       size_increase_help: |
         Nadmíra vám umožní zvětšit rozměry tohoto dílce.
@@ -536,6 +540,20 @@ tab:
         Očekávaný formát: **D** x **M**, kde **D** je *délka* zbytku a **M** množství.
         Množství je volitelné.
         *Velikosti bez jednotek použije jednoty z modelových jednotek.*
+      option_std_band: Standardní hrana
+      option_std_band_help: |
+        Vyberte standardní hrana, která bude duplikována tak, aby obsahovala všechny součásti.
+        Tento seznam je definován v poli **$t(tab.materials.edit_material.std_lengths)** materiálu.
+        Upravte materiál '{{ material_name }}' a aktualizujte tento seznam.
+      option_std_band_add: Přidat délku ...
+      option_std_band_none: Ne skládat
+      option_scrap_band_lengths: Odříznuté okrajové pásy
+      option_scrap_band_lengths_placeholder: délka x množství ; ...
+      option_scrap_band_lengths_help: |
+        Seznam pásů odříznutých hran, které by měly být považovány za první v nářezovém plánu
+        Očekávaný formát: **D** x **M**, kde **D** je *délka* zbytku a **M** množství.
+        Množství je volitelné.
+        *Velikosti bez jednotek použije jednoty z modelových jednotek.*
       option_std_sheet: Standardní tabule
       option_std_sheet_help: |
         Vybere standardní panel, který bude duplikován, abychom vypočítali nejlepší možné umístění.
@@ -574,6 +592,8 @@ tab:
         cut_through: Primární řez (úroveň 2)
         bar_type_0: Standardní velikost desky
         bar_type_1: Odřezky
+        band_type_0: Standardní hrana
+        band_type_1: Odříznutý okrajový pás
         sheet_type_0: Standardní velikost tabule
         sheet_type_1: Odřezky
         unused: Nepoužitý
@@ -646,6 +666,10 @@ tab:
         part_width: Šířka
         part_tags: Štítky
         part_batch: Šarže
+        part_edge_ymin: Hrana podél 1
+        part_edge_ymax: Hrana podél 2
+        part_edge_xmin: Hrana napříč 1
+        part_edge_xmax: Hrana napříč 2
         thumbnail_proportional: Proporcionální miniatura
         thumbnail_square: Čtvercová miniatura
         group_material: Materíál / Tloušťka
@@ -737,7 +761,7 @@ tab:
       std_lengths: Standardní délky
       std_lengths_placeholder: délka ; ...
       std_lengths_help: |
-        Standardní délky desek.
+        Standardní délky desek nebo okrajových pásů.
         *Velikosti bez jednotek považují velikost z modelových jednotek.*
       std_widths: Standardní šířky
       std_widths_placeholder: šířka ; ...
