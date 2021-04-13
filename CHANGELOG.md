@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
-* 2.0.1 (WIP)
+* 2.0.1 (2021-04-13)
 
   * Global and Model preset are now sorted
   * Added Ignore grain direction part attribute
