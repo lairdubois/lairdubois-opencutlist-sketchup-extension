@@ -1,4 +1,7 @@
 {
+  "_storages": {
+    "offset": 2 /* PRESETS_STORAGE_MODEL_ONLY */
+  },
   "_preprocessors": {
     "page_width": 1, /* PRESETS_PREPROCESSOR_D */
     "page_height": 1, /* PRESETS_PREPROCESSOR_D */
@@ -20,6 +23,7 @@
     "spacing_v": { "metric": "0", "imperial": "0" },
     "col_count": 2,
     "row_count": 4,
+    "offset": 0,
     "cutting_marks": false,
     "layout": [
       {

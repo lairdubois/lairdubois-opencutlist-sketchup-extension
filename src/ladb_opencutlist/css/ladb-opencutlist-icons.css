@@ -55,6 +55,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-labels-selection:before {
   content: "\e901";
 }
+.ladb-opencutlist-icon-labels-offset:before {
+  content: "\e989";
+}
 .ladb-opencutlist-icon-anchor-end:before {
   content: "\e902";
 }

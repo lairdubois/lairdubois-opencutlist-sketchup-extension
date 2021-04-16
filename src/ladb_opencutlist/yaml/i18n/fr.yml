@@ -623,9 +623,13 @@ tab:
       title: Etiquettes
       options_layout: Composition
       options_settings: Configuration
+      options_offset: Décalage
       size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
       remove_element: Retirer
+      offset_help: |
+        Le *décalage* vous permet de définir la position de la **première étiquette** sur la **première page**.
+        Sélectionnez la case qui correspond à votre choix.
       option_page: Papier
       option_page_format: Format
       option_page_format_portrait: Portrait

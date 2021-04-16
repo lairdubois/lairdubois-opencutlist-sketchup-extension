@@ -1,0 +1,31 @@
+//
+// Editor Label Offset
+//
+
+.ladb-editor-label-offset {
+
+  .ladb-editor-label-offset-preview {
+    text-align: center;
+  }
+
+  svg {
+    border: 1px solid #ddd;
+    box-shadow: 3px 3px 10px #999;
+
+    rect {
+      fill: #eee;
+      stroke: none;
+
+      &.active {
+        fill: @ladb-global-color-focus;
+      }
+
+      &:hover {
+        stroke: @ladb-brand-primary;
+      }
+
+    }
+
+  }
+
+}

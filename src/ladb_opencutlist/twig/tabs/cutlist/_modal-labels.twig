@@ -9,6 +9,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'offset' %} class="active"{% endif %}><a href="#tab_labels_options_offset" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels-offset"></i> {{ 'tab.cutlist.labels.options_offset'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -18,7 +19,7 @@
     {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'layout' %} active{% endif %}" id="tab_labels_options_layout">
-            <div id="ladb_editor_label" class="ladb-editor-label"></div>
+            <div id="ladb_editor_label_layout" class="ladb-editor-label-layout"></div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'settings' %} active{% endif %}" id="tab_labels_options_settings">
             <div class="row">
@@ -121,6 +122,11 @@
                     </section>
                 </div>
             </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'offset' %} active{% endif %}" id="tab_labels_options_offset">
+            <div id="ladb_editor_label_offset" class="ladb-editor-label-offset"></div>
+            <br>
+            <p class="help-block text-center">{{ 'tab.cutlist.labels.offset_help'|i18next }}</p>
         </div>
     </div>
 {% endblock %}

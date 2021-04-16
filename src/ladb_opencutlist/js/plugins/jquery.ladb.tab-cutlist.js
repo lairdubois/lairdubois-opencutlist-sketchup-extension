@@ -2499,7 +2499,7 @@
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $editorLabel = $('#ladb_editor_label', $modal);
+            var $editorLabelLayout = $('#ladb_editor_label_layout', $modal);
             var $selectPageFormat = $('#ladb_select_page_format', $modal);
             var $inputPageWidth = $('#ladb_input_page_width', $modal);
             var $inputPageHeight = $('#ladb_input_page_height', $modal);
@@ -2512,6 +2512,7 @@
             var $inputColCount = $('#ladb_input_col_count', $modal);
             var $inputRowCount = $('#ladb_input_row_count', $modal);
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
+            var $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
             var $btnGenerate = $('#ladb_btn_generate', $modal);
 
             var fnPageSizeVisibility = function () {
@@ -2524,7 +2525,7 @@
                     $inputPageHeight.ladbTextinputDimension('disable');
                 }
             }
-            var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
+            var fnConvertPageSettings = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
                 rubyCallCommand('core_length_to_float', {
                     page_width: pageWidth,
                     page_height: pageHeight,
@@ -2537,6 +2538,11 @@
                 }, function (response) {
                     colCount = parseInt(colCount);
                     rowCount = parseInt(rowCount);
+                    callback(response, colCount, rowCount);
+                });
+            }
+            var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
+                fnConvertPageSettings(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, function (response, colCount, rowCount) {
                     var labelWidth = (response.page_width - response.margin_left - response.margin_right - response.spacing_v * (colCount - 1)) / colCount;
                     var labelHeight = (response.page_height - response.margin_top - response.margin_bottom - response.spacing_h * (rowCount - 1)) / rowCount;
                     callback(labelWidth, labelHeight, response);
@@ -2553,8 +2559,9 @@
                 options.spacing_v = $inputSpacingV.val();
                 options.col_count = Math.max(1, parseInt($inputColCount.val() === '' ? 1 : $inputColCount.val()));
                 options.row_count = Math.max(1, parseInt($inputRowCount.val() === '' ? 1 : $inputRowCount.val()));
+                options.offset = $editorLabelOffset.ladbEditorLabelOffset('getOffset');
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
-                options.layout = $editorLabel.ladbEditorLabel('getElementDefs');
+                options.layout = $editorLabelLayout.ladbEditorLabelLayout('getElementDefs');
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -2568,9 +2575,12 @@
                 $inputSpacingV.val(options.spacing_v);
                 $inputColCount.val(options.col_count);
                 $inputRowCount.val(options.row_count);
+                fnConvertPageSettings(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (response, colCount, rowCount) {
+                    $editorLabelOffset.ladbEditorLabelOffset('updateSizeAndOffset', [ response.page_width, response.page_height, response.margin_top, response.margin_right, response.margin_bottom, response.margin_left, response.spacing_h, response.spacing_v, colCount, rowCount, options.offset ]);
+                });
                 $selectCuttingMarks.selectpicker('val', options.cutting_marks ? '1' : '0');
                 fnComputeLabelSize(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (labelWidth, labelHeight) {
-                    $editorLabel.ladbEditorLabel('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
+                    $editorLabelLayout.ladbEditorLabelLayout('updateSizeAndElementDefs', [ labelWidth, labelHeight, options.layout ]);
                 });
                 fnPageSizeVisibility();
             }
@@ -2581,7 +2591,7 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $editorLabel.ladbEditorLabel({
+            $editorLabelLayout.ladbEditorLabelLayout({
                 filename: that.filename,
                 modelName: that.modelName,
                 pageLabel: that.pageLabel,
@@ -2606,6 +2616,7 @@
                 resetValue: '1'
             });
             $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
+            $editorLabelOffset.ladbEditorLabelOffset();
 
             fnFillInputs(labelsOptions);
 
@@ -2616,7 +2627,14 @@
                 if (that.lastLabelsOptionsTab === 'layout') {
 
                     fnComputeLabelSize($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (labelWidth, labelHeight) {
-                        $editorLabel.ladbEditorLabel('updateSize', [ labelWidth, labelHeight ]);
+                        $editorLabelLayout.ladbEditorLabelLayout('updateSize', [ labelWidth, labelHeight ]);
+                    });
+
+                }
+                if (that.lastLabelsOptionsTab === 'offset') {
+
+                    fnConvertPageSettings($inputPageWidth.val(), $inputPageHeight.val(), $inputMarginTop.val(), $inputMarginRight.val(), $inputMarginBottom.val(), $inputMarginLeft.val(), $inputSpacingH.val(), $inputSpacingV.val(), $inputColCount.val(), $inputRowCount.val(), function (response, colCount, rowCount) {
+                        $editorLabelOffset.ladbEditorLabelOffset('updateSize', [ response.page_width, response.page_height, response.margin_top, response.margin_right, response.margin_bottom, response.margin_left, response.spacing_h, response.spacing_v, colCount, rowCount ]);
                     });
 
                 }
@@ -2670,6 +2688,18 @@
                         // Split parts into pages
                         var page;
                         var gIndex = 0;
+                        for (var i = 1; i <= labelsOptions.offset; i++) {
+                            if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                page = {
+                                    part_infos: []
+                                }
+                                pages.push(page);
+                            }
+                            page.part_infos.push({
+                                part: null
+                            });
+                            gIndex++;
+                        }
                         $.each(parts, function (index) {
                             var entityNames = [];
                             $.each(this.entity_names, function () {
