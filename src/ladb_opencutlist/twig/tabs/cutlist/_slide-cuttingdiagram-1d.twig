@@ -246,17 +246,17 @@
                         {% set originCornerIsRight = options.origin_corner == 1 %}  {# 1 = ORIGIN_CORNER_RIGHT #}
 
                         <svg viewBox="{{ viewBoxX }} {{ viewBoxY }} {{ viewBoxWidth }} {{ viewBoxHeight }}"{% if fullWidthCompatible %}{% if options.full_width_diagram %} class="full-width-diagram"{% else %} style="max-height: {{ viewBoxHeight }}px"{% endif %}{% else %} height="{{ viewBoxHeight }}"{% endif %}>
-                            <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ bar.length }}{% if bar.slices|length > 1 %}&hellip;{% endif %}</text>
-                            <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ barOutlineWidth + barDimensionOffset }},{{ bar.px_width / 2 }})">{{ bar.width }}</text>
+                            <text class="bar-dimension" x="{{ bar.slices[0].px_length / 2 }}" y="-{{ barOutlineWidth + barDimensionOffset }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{% if bar.slices|length > 1 and originCornerIsRight %}&hellip;{% endif %}{{ bar.length }}{% if bar.slices|length > 1 and originCornerIsLeft %}&hellip;{% endif %}</text>
+                            <text class="bar-dimension" x="{% if originCornerIsLeft %}-{{ barOutlineWidth + barDimensionOffset }}{% else %}{{ bar.slices[0].px_length + barOutlineWidth + barDimensionFontSize }}{% endif %}" y="{{ bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 {% if originCornerIsLeft %}-{{ barOutlineWidth + barDimensionOffset }}{% else %}{{ bar.slices[0].px_length + barOutlineWidth + barDimensionFontSize }}{% endif %},{{ bar.px_width / 2 }})">{{ bar.width }}</text>
                             <g class="bar" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
                                 {% for slice in bar.slices %}
                                     {% set yOffset = sliceHeight * loop.index0 %}
                                     <rect class="bar-outer" x="{{ slice.px_x - (loop.first or (loop.last and originCornerIsRight) ? 1 : 0) }}" y="{{ yOffset - 1 }}" width="{{ slice.px_length + (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width + 2 }}"></rect>
                                     <rect class="bar-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
-                                    {% if not loop.first and not (loop.last and originCornerIsRight) %}
+                                    {% if not (loop.first and originCornerIsLeft) and not (loop.last and originCornerIsRight) %}
                                         <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
-                                    {% if not loop.last and originCornerIsLeft or not (loop.first and loop.last) and originCornerIsRight %}
+                                    {% if not loop.last and originCornerIsLeft or not loop.first and originCornerIsRight %}
                                         <text class="bar-dimension" x="{{ slice.px_x + slice.px_length + barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
                                 {% endfor %}
