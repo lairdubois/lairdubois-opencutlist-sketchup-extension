@@ -623,9 +623,13 @@ tab:
       title: Etiquetas
       options_layout: Composición
       options_settings: Configuración
+      options_offset: Desplazamiento
       size: Tamaño real de la etiqueta
       add_element: Añadir un elemento
       remove_element: Eliminar
+      offset_help: |
+        El *desplazamiento* permite definir la posición de la **primera etiqueta** en la **primera página**.
+        Seleccione la casilla correspondiente a su elección.
       option_page: Tamaño de papel
       option_page_format: Formato
       option_page_format_portrait: Retrato

@@ -623,9 +623,13 @@ tab:
       title: Labels
       options_layout: Layout
       options_settings: Configuration
+      options_offset: Offset
       size: Real size of label
       add_element: Add an element
       remove_element: Remove
+      offset_help: |
+        The *offset* allows you to define the position of the **first label** on the **first page**.
+        Select the box that corresponds to your choice.
       option_page: Paper Size
       option_page_format: Format
       option_page_format_portrait: Portrait
