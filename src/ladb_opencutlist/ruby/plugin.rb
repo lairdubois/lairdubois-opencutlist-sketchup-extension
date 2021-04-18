@@ -318,18 +318,20 @@ module Ladb::OpenCutList
 
     def _merge_preset_values_with_defaults(values, default_values)
       merged_values = {}
+      contains_default_values = false
       if default_values
         default_values.keys.each do |key|
           if values.has_key?(key)
             merged_values[key] = values[key]
           else
             merged_values[key] = default_values[key]
+            contains_default_values = true
           end
         end
       else
         merged_values = values
       end
-      merged_values
+      return merged_values, contains_default_values
     end
 
     def read_global_presets
@@ -403,7 +405,7 @@ module Ladb::OpenCutList
       if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section) && @global_presets_cache[dictionary][section].has_key?(name)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values = _merge_preset_values_with_defaults(@global_presets_cache[dictionary][section][name], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(@global_presets_cache[dictionary][section][name], default_values)
 
       else
 
@@ -515,12 +517,13 @@ module Ladb::OpenCutList
       if @model_presets_cache.has_key?(dictionary) && @model_presets_cache[dictionary].has_key?(section)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values = _merge_preset_values_with_defaults(@model_presets_cache[dictionary][section], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(@model_presets_cache[dictionary][section], default_values)
 
       else
 
         # Preset doesn't exists, return default_values
         values = default_values.clone
+        contains_default_values = true
 
       end
       values

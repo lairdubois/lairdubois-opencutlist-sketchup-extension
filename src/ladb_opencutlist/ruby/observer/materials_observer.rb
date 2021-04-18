@@ -13,22 +13,34 @@ module Ladb::OpenCutList
 
     def onMaterialAdd(materials, material)
       # puts "onMaterialAdd: #{material}"
+
+      # Trigger event to JS
       Plugin.instance.trigger_event(ON_MATERIAL_ADD, { :material_name => material.name })
+
     end
 
     def onMaterialRemove(materials, material)
       # puts "onMaterialRemove: #{material}"
+
+      # Trigger event to JS
       Plugin.instance.trigger_event(ON_MATERIAL_REMOVE, nil)
+
     end
 
     def onMaterialChange(materials, material)
       # puts "onMaterialChange: #{material}"
+
+      # Trigger event to JS
       Plugin.instance.trigger_event(ON_MATERIAL_CHANGE, { :material_name => material.name })
+
     end
 
     def onMaterialSetCurrent(materials, material)
       # puts "onMaterialSetCurrent: #{material}"
+
+      # Trigger event to JS
       Plugin.instance.trigger_event(ON_MATERIAL_SET_CURRENT, { :material_name => material.name })
+
     end
 
   end

@@ -10,7 +10,10 @@ module Ladb::OpenCutList
 
     def onContentsModified(pages)
       # puts "onContentsModified: #{pages}"
+
+      # Trigger event to JS
       Plugin.instance.trigger_event(ON_PAGES_CONTENTS_MODIFIED, { :pages => pages })
+
     end
 
   end
