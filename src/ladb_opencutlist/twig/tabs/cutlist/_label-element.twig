@@ -56,7 +56,11 @@
             {% set value = part_info.part.tags|join(' | ') %}
         {% elseif key == 'edge' %}
             {% set edgeKey = terms[2] %}
-            {% set value = [part_info.part.edge_material_names[edgeKey], part_info.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
+            {% if part_info.part.edge_material_names[edgeKey] is not null and part_info.part.edge_std_dimensions[edgeKey] is not null %}
+                {% set value = [part_info.part.edge_material_names[edgeKey], part_info.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
+            {% else %}
+                {% set value = '' %}
+            {% endif %}
         {% else %}
             {% set value = part_info.part[key] %}
         {% endif %}
