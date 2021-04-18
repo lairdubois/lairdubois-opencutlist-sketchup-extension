@@ -86,7 +86,7 @@ module Ladb::OpenCutList
 
         case err
         when BinPacking1D::ERROR_NO_BIN
-          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_bar'
+          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_bar_' + (group.material_type == MaterialAttributes::TYPE_EDGE ? 'band' : 'bar')
         when BinPacking1D::ERROR_PARAMETERS
           cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.parameters'
         when BinPacking1D::ERROR_NO_BOX
