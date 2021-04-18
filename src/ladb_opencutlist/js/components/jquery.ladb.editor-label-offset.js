@@ -101,7 +101,19 @@
 
     };
 
-    LadbEditorLabelOffset.prototype.updateSize = function (pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount) {
+    LadbEditorLabelOffset.prototype.updateSizeAndOffset = function (pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, offset) {
+
+        if (offset == null) {
+            if (this.options.colCount !== colCount ||
+                this.options.rowCount !== rowCount
+            ) {
+                // Reset offset if new col or row count
+                offset = 0
+            } else {
+                offset = this.offset;
+            }
+        }
+        this.offset = offset;
 
         this.options.pageWidth = pageWidth;
         this.options.pageHeight = pageHeight;
@@ -117,21 +129,8 @@
         // Empty the container
         this.$element.empty();
 
-        // Adapt offset
-        if (this.offset >= colCount * rowCount) {
-            this.offset = 0;
-        }
-
         // Recreate the SVG
         this.createSvg();
-
-    };
-
-    LadbEditorLabelOffset.prototype.updateSizeAndOffset = function (pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, offset) {
-        this.offset = offset;
-
-        // Empty the container
-        this.updateSize(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount);
 
     };
 
