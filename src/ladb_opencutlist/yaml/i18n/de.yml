@@ -623,9 +623,13 @@ tab:
       title: Etiketten
       options_layout: Gestaltung
       options_settings: Konfiguration
+      options_offset: Versatz
       size: Tatsächliche Etikettengröße
       add_element: Element hinzufügen
       remove_element: Entfernen
+      offset_help: |
+        Mit dem *Versatz* können Sie die Position des **ersten Etiketts** auf der **ersten Seite** festlegen.
+        Wählen Sie das Kästchen aus, das Ihrer Wahl entspricht.
       option_page: Papierformat
       option_page_format: Format
       option_page_format_portrait: Hochformat

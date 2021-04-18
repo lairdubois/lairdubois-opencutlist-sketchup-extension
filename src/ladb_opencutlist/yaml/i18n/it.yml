@@ -623,9 +623,13 @@ tab:
       title: Etichette
       options_layout: Schema
       options_settings: Configurazione
+      options_offset: Spostamento
       size: Dimensioni reali etichetta
       add_element: Aggiungi elemento
       remove_element: Elimina
+      offset_help: |
+        Lo *spostamento* permette di definire la posizione della **prima etichetta** sulla **prima pagina**.
+        Seleziona la casella che corrisponde alla tua scelta.
       option_page: Formato del foglio
       option_page_format: Formato
       option_page_format_portrait: Verticale
