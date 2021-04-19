@@ -474,19 +474,21 @@ tab:
       options_material: Material
       options_config: Configuração
       options_display: Exibição
-      option_bar_folding: Agrupar pranchas similares
+      option_bar_folding_dimensional: Agrupar pranchas similares
+      option_bar_folding_edge: Agrupamento de fitas de borda idênticas
       option_bar_folding_0: Não
       option_bar_folding_1: Sim
-      option_bar_folding_help: Permite agrupar as pranchas contendo as mesmas peças e as mesmas seções.
+      option_bar_folding_help: Permite agrupar pranchas ou fitas de borda contendo peças iguais ou os mesmos cortes.
       option_sheet_folding: Painéis idênticos de grupo
       option_sheet_folding_0: Não
       option_sheet_folding_1: Sim
       option_sheet_folding_help: Permite agrupar as chapas contendo as mesmas peças e as mesmas seções.
       option_hide_part_list: Lista de peças
-      option_hide_part_list_1d_0: Exibido para cada prancha
+      option_hide_part_list_1d_dimensional_0: Exibido para cada prancha
+      option_hide_part_list_1d_edge_0: Exibido para cada fita de borda
       option_hide_part_list_2d_0: Exibido para cada chapa
       option_hide_part_list_1: Mascarado
-      option_hide_part_list_1d_help: Exiba ou oculte a lista de peças de cada prancha.
+      option_hide_part_list_1d_help: Apresenta ou esconde a lista de peças para cada prancha ou fita de borda.
       option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada chapa.
       option_origin_corner: Posição da origem
       option_origin_corner_1d_0: Para a esquerda
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Canto inferior esquerdo
       option_origin_corner_2d_2: Canto superior direito
       option_origin_corner_2d_3: Canto inferior direito
-      option_origin_corner_1d_help: Permite que você escolha o canto original para colocar as peças nas barras.
+      option_origin_corner_1d_help: Permite-lhe escolher o canto de origem para colocar as peças nas pranchas ou fitas de borda.
       option_origin_corner_2d_help: Permite que você escolha o canto de origem para colocar as peças nas chapas.
       option_full_width_diagram: Exibir a largura total
       option_full_width_diagram_0: Não
       option_full_width_diagram_1: Sim
       option_full_width_diagram_help: "Se esta opção for ativada, os diagramas são exibidos com toda a largura disponível. Caso contrário, sua largura é definida por um fator de escala fixo de seu tamanho real."
       option_wrap_length: Comprimento do corte
-      option_wrap_length_help: Comprimento máximo após o qual uma prancha será exibida em várias linhas.
+      option_wrap_length_help: Comprimento máximo em que uma prancha ou fita de borda será agrupada em mais de uma linha.
       option_hide_cross: Sobra
       option_hide_cross_0: Dimensions et Cruz de marcação
       option_hide_cross_1: Somente dimensões
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Espessura da serra
       option_saw_kerf_help: A largura do material removido pelo corte da serra.
       option_trimming: Tamanho da apara
-      option_trimming_help_1d: Margem em cada extremidade da prancha a ser considerada como sobra.
+      option_trimming_help_1d: Margem em cada extremidade da prancha ou fita de borda a ser considerada como sobra.
       option_trimming_help_2d: A quantidade de material ao redor do painel bruto a ser tratada como sobra.
       option_optimization: Nível de otimização
       option_optimization_help: "O nível de otimização define o número de possibilidades computadas e, portanto, também o tempo de cálculo."
@@ -526,34 +528,22 @@ tab:
       option_stacking_1: Longitudinalmente
       option_stacking_2: Transversalmente
       option_stacking_3: Todas as possibilidades
-      option_std_bar: Prancha Padrão
+      option_std_bar_dimensional: Prancha MLC padrão
+      option_std_bar_edge: Fita de borda padrão
       option_std_bar_help: |
-        Selecione aqui o tamanho da prancha padrão que será duplicada para melhor acomodar todas as peças..
-        Esta lista é definida no campo **$t(tab.materials.edit_material.std_lengths)** do material.
-        Edite o material '{{ material_name }}' para atualizar esta lista.
+        Selecione aqui o tamanho padrão da prancha ou fita de borda que será duplicada para melhor conter todas as partes.
+        Esta lista é definida pelo campo **$t(tab.materials.edit_material.std_lengths)** do material.
+        Editar o material '{{ material_name }}' para atualizar esta lista.
       option_std_bar_add: Adicione um comprimento ...
       option_std_bar_none: Nenhum
-      option_scrap_bar_lengths: "Sobras de prancha "
+      option_scrap_bar_dimensional_lengths: "Sobras de prancha "
+      option_scrap_bar_edge_lengths: Sobras de fita
       option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
-        Indique aqui a lista das sobras de suas prancha a serem considerados prioridade para o layout.
-        Formato esperado: **C**x**Q**, onde **C** é o *comprimento* do corte e **Q** a quantidade.
+        Indique aqui a lista das sobras da sua prancha ou fita de borda consideradas prioritárias para o layout.
+        Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* da sobra e **Q** a quantidade.
         A quantidade é opcional.
-        *Os tamanhos sem unidades são considerados em unidades modelo.*
-      option_std_band: Fita padrão
-      option_std_band_help: |
-        Selecione aqui o tamanho da fita padrão que será duplicada para melhor conter todas as bordas.
-        Esta lista é definida pelo campo **$t(tab.materials.edit_material.std_lengths)** do material.
-        Edite o material  '{{ material_name }}' para atualizar esta lista.
-      option_std_band_add: Adicione um tamanho...
-      option_std_band_none: Nenhum
-      option_scrap_band_lengths: Sobras de fita
-      option_scrap_band_lengths_placeholder: comprimento x quantidade ; ...
-      option_scrap_band_lengths_help: |
-        Indique aqui a lista de suas sobras de fitas a serem consideradas em prioridade para o layout.
-        Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* do restante e **Q** é a quantidade.
-        A quantidade é opcional.
-        *Se nenhuma unidade for especificada, a unidade modelo será utilizada.*
+        *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.
       option_std_sheet: Chapa Padrão
       option_std_sheet_help: |
         Selecione a chapa padrão que será duplicado para conter todas as partes.
@@ -569,7 +559,7 @@ tab:
         A quantidade é opcional.
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
       tooltip:
-        scroll_to_block_1d: Role até a primeira prancha
+        scroll_to_block_1d: Ir até a primeira prancha ou fita de borda
         scroll_to_block_2d: Role para a primeira chapa
       list:
         unplaced_parts: Peças não colocadas
@@ -590,10 +580,10 @@ tab:
         cut: Cortar
         cut_final: Corte primário (nível 1)
         cut_through: Corte primário (nível 2)
-        bar_type_0: Prancha MLC padrão
-        bar_type_1: Sobra de prancha
-        band_type_0: Fita padrão
-        band_type_1: Sobra de fita
+        bar_dimensional_type_0: Prancha MLC padrão
+        bar_dimensional_type_1: Sobra de prancha
+        bar_edge_type_0: Fita de borda padrão
+        bar_edge_type_1: Sobra de fita de borda
         sheet_type_0: Chapa de tamanho padrão
         sheet_type_1: Sobra de chapa
         unused: Não utilizado
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} peças"
         settings: Configurações
       error:
-        no_bar: A prancha padrão não foi configurada corretamente e nenhum recorte foi definido.
-        parameters: Os parâmetros estão incorretos. O corte é maior que 25% que a prancha mais longa.
+        no_bar_dimensional: A prancha padrão não foi configurada corretamente e nenhum recorte foi definido.
+        no_bar_edge: A fita de borda padrão não está devidamente configurada e nenhum resto está definido.
+        parameters: Os parâmetros são incorretos. A margem excede 25% da maior prancha ou fita de borda.
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
         no_placement_possible: "Todas as suas partes são muito grandes para caber em uma chapa (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
@@ -623,9 +614,13 @@ tab:
       title: Etiquetas
       options_layout: Composição
       options_settings: Configuração
+      options_offset: Diferença
       size: Tamanho real da etiqueta
       add_element: Adicionar um elemento
       remove_element: Remover
+      offset_help: |
+        O *deslocamento* permite definir a posição da **primeira etiqueta** na **primeira página**.
+        Selecione a caixa que corresponde à sua escolha.
       option_page: Tamanho do papel
       option_page_format: Formato
       option_page_format_portrait: Retrato

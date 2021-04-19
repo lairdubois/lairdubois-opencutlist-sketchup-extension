@@ -474,19 +474,21 @@ tab:
       options_material: Material
       options_config: Configuración
       options_display: Mostrar
-      option_bar_folding: Agrupar tableros similares
+      option_bar_folding_dimensional: Agrupar tableros similares
+      option_bar_folding_edge: Agrupar tiros de canto similares
       option_bar_folding_0: No
       option_bar_folding_1: Si
-      option_bar_folding_help: Agrupar tableros que tengan las mismas partes y cortes.
+      option_bar_folding_help: Agrupar tableros o tiros de canto que tengan las mismas partes y cortes.
       option_sheet_folding: Agrupar paneles similares
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
       option_sheet_folding_help: Agrupar paneles que tengan las mismas partes y cortes.
       option_hide_part_list: Lista de partes
-      option_hide_part_list_1d_0: Mostrado para cada tablero
+      option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
+      option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
       option_hide_part_list_2d_0: Mostrado para cada panel
       option_hide_part_list_1: Enmascarado
-      option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero.
+      option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero o tira de canto.
       option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada panel.
       option_origin_corner: Posición del origen
       option_origin_corner_1d_0: A la izquierda
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Esquina inferior izquierda
       option_origin_corner_2d_2: Esquina superior derecha
       option_origin_corner_2d_3: Esquina inferior derecha
-      option_origin_corner_1d_help: Le permite elegir la esquina original de la colocación de piezas en barras.
+      option_origin_corner_1d_help: Le permite elegir la esquina original de la colocación de piezas en barras o en tiras de canto.
       option_origin_corner_2d_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
       option_full_width_diagram: Pantalla de ancho total
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Si
       option_full_width_diagram_help: "Si esta opción está activada, los diagramas de corte se muestran utilizando el ancho disponible. De lo contrario, su ancho se define mediante un factor de escala que depende de todos los diagramas."
       option_wrap_length: Longitud del tablero envolvente
-      option_wrap_length_help: Longitud máxima después de la cual una tabla se envolverá en varias líneas.
+      option_wrap_length_help: Longitud máxima después de la cual una tabla o una tira de canto se envolverá en varias líneas.
       option_hide_cross: Desperdicios
       option_hide_cross_0: Dimensiones y Cruz
       option_hide_cross_1: Solo dimensiones
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Tamaño de recorte
-      option_trimming_help_1d: La cantidad de material en cada extremo del tablero que se tratará como desecho.
+      option_trimming_help_1d: La cantidad de material en cada extremo del tablero o tira de canto que se tratará como desecho.
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
       option_optimization: Nivel de optimización
       option_optimization_help: "El nivel de optimización define el número de posibilidades calculadas y, por tanto, también el tiempo de cálculo."
@@ -526,32 +528,20 @@ tab:
       option_stacking_1: Longitudinal
       option_stacking_2: A lo ancho
       option_stacking_3: Todas las posibilidades
-      option_std_bar: Tablero Estándar
+      option_std_bar_dimensional: Dimensiones estándar
+      option_std_bar_edge: Canto estándar
       option_std_bar_help: |
-        Seleccione el tablero estándar, que se duplicará para contener todas las partes.
+        Seleccione el tablero o la tira de canto estándar, que se duplicará para contener todas las partes.
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_lengths)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
       option_std_bar_add: Añade una longitud ...
       option_std_bar_none: Ninguno
-      option_scrap_bar_lengths: Tableros de corte
+      option_scrap_bar_dimensional_lengths: Tableros de corte
+      option_scrap_bar_edge_lengths: Restos de Canto
       option_scrap_bar_lengths_placeholder: largo x cantidad ; ...
       option_scrap_bar_lengths_help: |
-        Enumere las tablas sobrantes que se deben considerar primero en el plan de corte.
+        Enumere las tablas o las tiras de canto sobrantes que se deben considerar primero en el plan de corte.
         Formato esperado: **L** x **Q**, donde **L** es la *longitud* del recorte y **Q** la cantidad.
-        La cantidad es opcional.
-        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
-      option_std_band: Banda estándar
-      option_std_band_help: |
-        Seleccione aquí el tamaño del canto estándar que se duplicará para contener mejor todos los bordes.
-        Esta lista está definida por el campo **$t(tab.materials.edit_material.std_lengths)** del material.
-        Edite el material '{{ material_name }}' para actualizar esta lista.
-      option_std_band_add: Añade una longitud...
-      option_std_band_none: Ninguna
-      option_scrap_band_lengths: Restos de Canto
-      option_scrap_band_lengths_placeholder: largo x cantidad ; ...
-      option_scrap_band_lengths_help: |
-        Indique aquí la lista de los restos de su cinta a considerar como una prioridad para el diseño.
-        Formato esperado: **L** x **Q**. Donde **L** es la *longitud* del resto y **Q** la cantidad.
         La cantidad es opcional.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       option_std_sheet: Panel estándar
@@ -569,7 +559,7 @@ tab:
         La cantidad es opcional.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       tooltip:
-        scroll_to_block_1d: Desplazate al primer tabla
+        scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
         scroll_to_block_2d: Desplazate al primer tablero
       list:
         unplaced_parts: Piezas no colocadas
@@ -590,10 +580,10 @@ tab:
         cut: Cortar
         cut_final: Corte primario (nivel 1)
         cut_through: Corte primario (nivel 2)
-        bar_type_0: Dimensiones estándar
-        bar_type_1: Trozo
-        band_type_0: Canto estándar
-        band_type_1: Resto de canto
+        bar_dimensional_type_0: Dimensiones estándar
+        bar_dimensional_type_1: Trozo
+        bar_edge_type_0: Canto estándar
+        bar_edge_type_1: Resto de canto
         sheet_type_0: Panel de tamaño estándar
         sheet_type_1: Trozo
         unused: No usado
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} partes"
         settings: Configuraciones
       error:
-        no_bar: La tabla estándar no se configuró correctamente y no se definieron cortes.
-        parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tabla más larga.
+        no_bar_dimensional: La tabla estándar no se configuró correctamente y no se definieron cortes.
+        no_bar_edge: La tira de canto estándar no se configuró correctamente y no se definieron cortes.
+        parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tira de canto más larga.
         no_parts: Ninguna parte.
         no_sheet: Los tamaños de panel estándar están configurados incorrectamente y no hay cortes disponibles.
         no_placement_possible: "Todas sus piezas son demasiado grandes para caber en un panel (recorte demasiado grande, panel estándar demasiado pequeño, corte de sierra demasiado grande, ...)."
