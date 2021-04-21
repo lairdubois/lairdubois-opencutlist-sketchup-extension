@@ -474,19 +474,21 @@ tab:
       options_material: Materiale
       options_config: Configurazione
       options_display: Visualizzazione
-      option_bar_folding: Raggruppa tavole identiche
+      option_bar_folding_dimensional: Raggruppa tavole identiche
+      option_bar_folding_edge: Raggruppa tavole o bordi identiche
       option_bar_folding_0: No
       option_bar_folding_1: Si
-      option_bar_folding_help: Raggruppa tavole con dimensioni e tagli identici.
+      option_bar_folding_help: Raggruppa tavole o bordi con dimensioni e tagli identici.
       option_sheet_folding: Raggruppa pannelli identici
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
       option_sheet_folding_help: Raggruppa pannelli con dimensioni e tagli identici.
       option_hide_part_list: Distinta
-      option_hide_part_list_1d_0: Visualizza per ogni tavola
+      option_hide_part_list_1d_dimensional_0: Visualizza per ogni tavola
+      option_hide_part_list_1d_edge_0: Visualizza per ogni bordo
       option_hide_part_list_2d_0: Visualizza per ogni pannello
       option_hide_part_list_1: Nascosta
-      option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola.
+      option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola o bordo.
       option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
       option_origin_corner: Posizione dell'origine
       option_origin_corner_1d_0: A sinistra
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: In basso a sinistra
       option_origin_corner_2d_2: In alto a destra
       option_origin_corner_2d_3: In basso a destra
-      option_origin_corner_1d_help: Permette di scegliere l'angolo originale per posizionare i pezzi nelle barre.
+      option_origin_corner_1d_help: Permette di scegliere l'angolo originale per posizionare i pezzi nelle barre o bordi.
       option_origin_corner_2d_help: Permette di scegliere la fine originale del posizionamento dei pezzi nelle barre.
       option_full_width_diagram: Modalità schermo intero
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Si
       option_full_width_diagram_help: "Se questa opzione viene attivata, i diagrammi di taglio verranno mostrati utilizzando le larghezze disponibili. Altrimenti, la loro larghezza viene definita da un fattore di scala calcolata su tutti i diagrammi."
       option_wrap_length: Lunghezza massima della tavola
-      option_wrap_length_help: Lunghezza massima dopo la quale una tavola viene definita su linee multiple.
+      option_wrap_length_help: Lunghezza massima dopo la quale una tavola o un bordo viene definita su linee multiple.
       option_hide_cross: Rimanente
       option_hide_cross_0: Dimensioni e croce
       option_hide_cross_1: Solo dimensioni
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
-      option_trimming_help_1d: La quantita di materiale da scartare sul perimetro della tavola.
+      option_trimming_help_1d: La quantita di materiale da scartare ad ogni estremità della tavola o del bordo.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_optimization: Livello di ottimizzazione
       option_optimization_help: Il livello di ottimizzazione stabilisce il numero di possibilità calcolate e quindi anche il tempo necessario.
@@ -526,31 +528,19 @@ tab:
       option_stacking_1: Per lunghezza
       option_stacking_2: Per larghezza
       option_stacking_3: Tutte le possibilità
-      option_std_bar: Tavola Standard
+      option_std_bar_dimensional: Dimensioni Standard Barre
+      option_std_bar_edge: Bordatura Standard
       option_std_bar_help: |
-        Seleziona una tavola standard, che sarà duplicata in modo da contenere tutte le parti.
+        Seleziona una tavola o un bordo standard, che sarà duplicata in modo da contenere tutte le parti.
         Questo elenco è definito alla voce **$t(tab.materials.edit_material.std_lengths)** del menu Materiali.
         Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
       option_std_bar_add: Aggiungi una lunghezza ...
       option_std_bar_none: Nessuna
-      option_scrap_bar_lengths: Avanzi di tavole
+      option_scrap_bar_dimensional_lengths: Avanzi di tavole
+      option_scrap_bar_edge_lengths: Avanzi di bordatura
       option_scrap_bar_lengths_placeholder: lunghezza x quantità ; ...
       option_scrap_bar_lengths_help: |
-        Elenca gli avanzi di tavole che saranno considerate per prime nello schema di taglio.
-        Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
-        La quantità è facoltativa.
-        *Dimensioni senza unità si intendono in unità del modello.*
-      option_std_band: Bordatura Standard
-      option_std_band_help: |
-        Seleziona una bordatura standard, che sarà duplicata in modo da contenere tutte le parti.
-        Questo elenco è definito alla voce **$t(tab.materials.edit_material.std_lengths)** del menu Materiali.
-        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
-      option_std_band_add: Aggiungi una lunghezza ...
-      option_std_band_none: Nessuna
-      option_scrap_band_lengths: Avanzi di bordatura
-      option_scrap_band_lengths_placeholder: lunghezza x quantità ; ...
-      option_scrap_band_lengths_help: |
-        Elenca gli avanzi di bordature che saranno considerate per prime nello schema di taglio.
+        Elenca gli avanzi di tavole o bordi che saranno considerate per prime nello schema di taglio.
         Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
         La quantità è facoltativa.
         *Dimensioni senza unità si intendono in unità del modello.*
@@ -569,7 +559,7 @@ tab:
         La quantità è facoltativa.
         *Dimensioni senza unità si intendono in unità del modello.*
       tooltip:
-        scroll_to_block_1d: Scorri alla prima tavola
+        scroll_to_block_1d: Scorri alla prima tavola o bordo
         scroll_to_block_2d: Scorri al primo pannello
       list:
         unplaced_parts: Parti non inserite
@@ -590,10 +580,10 @@ tab:
         cut: Taglio
         cut_final: Taglio principale (livello 1)
         cut_through: Taglio principale (livello 2)
-        bar_type_0: Dimensioni Standard Barre
-        bar_type_1: Ritagli
-        band_type_0: Bordatura Standard
-        band_type_1: Avanzi di bordatura
+        bar_dimensional_type_0: Dimensioni Standard Barre
+        bar_dimensional_type_1: Ritagli
+        bar_edge_type_0: Bordatura Standard
+        bar_edge_type_1: Avanzi di bordatura
         sheet_type_0: Dimensioni Standard dei Pannelli
         sheet_type_1: Ritagli
         unused: Inutilizzato
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} parti"
         settings: Impostazioni
       error:
-        no_bar: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
-        parameters: Impostazioni non corrette. La squadratura è più grande del 25% della tavola + lunga.
+        no_bar_dimensional: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
+        no_bar_edge: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
+        parameters: Impostazioni non corrette. La squadratura supera il 25% della tavola o del bordo più grande.
         no_parts: Nessuna parte.
         no_sheet: Le dimensioni dei pannelli non sono correttamente configurate e non ci sono ritagli disponibili.
         no_placement_possible: "Le dimensioni delle parti sono troppo grandi per essere contenute in un pannello (squadratura troppo larga, dimensioni insufficienti del pannello, taglio della lama troppo grande, ...)."

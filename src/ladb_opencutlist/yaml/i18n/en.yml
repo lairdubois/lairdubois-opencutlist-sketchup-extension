@@ -474,19 +474,21 @@ tab:
       options_material: Material
       options_config: Configuration
       options_display: Display
-      option_bar_folding: Group similar boards
+      option_bar_folding_dimensional: Group similar boards
+      option_bar_folding_edge: Group similar edges
       option_bar_folding_0: No
       option_bar_folding_1: Yes
-      option_bar_folding_help: Group boards having the same parts and cuts.
+      option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
       option_sheet_folding: Group similar panels
       option_sheet_folding_0: No
       option_sheet_folding_1: Yes
       option_sheet_folding_help: Group panels having the same parts and cuts.
       option_hide_part_list: Parts List
-      option_hide_part_list_1d_0: Displayed for each board
+      option_hide_part_list_1d_dimensional_0: Displayed for each board
+      option_hide_part_list_1d_edge_0: Displayed for each edge banding
       option_hide_part_list_2d_0: Displayed for each panel
       option_hide_part_list_1: Masked
-      option_hide_part_list_1d_help: Display or mask the list of parts for each board.
+      option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
       option_origin_corner: Position of the origin
       option_origin_corner_1d_0: From the left
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Bottom left corner
       option_origin_corner_2d_2: Top right corner
       option_origin_corner_2d_3: Bottom right corner
-      option_origin_corner_1d_help: Determines the start position of the coordinate system for displaying parts on dimensional lumber.
+      option_origin_corner_1d_help: Determines the start position of the coordinate system for displaying parts of dimensional lumber or edge banding.
       option_origin_corner_2d_help: "Determines the start position of the coordinate system for displaying parts on panels. "
       option_full_width_diagram: Full width display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
       option_full_width_diagram_help: "If this option is activated, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
       option_wrap_length: Wrap Board Length
-      option_wrap_length_help: Maximal length after which a board will be wrapped over multiple lines.
+      option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Offcuts
       option_hide_cross_0: Dimensions and Cross
       option_hide_cross_1: Dimensions only
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
-      option_trimming_help_1d: The amount of material at each end of the board to be treated as waste.
+      option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
       option_optimization: Optimisation level
       option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
@@ -526,31 +528,19 @@ tab:
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All Possibilities
-      option_std_bar: Standard Board
+      option_std_bar_dimensional: Standard Dimensional
+      option_std_bar_edge: Standard Edge Band
       option_std_bar_help: |
-        Select the standard board, which will be duplicated to contain all the parts.
+        Select the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_bar_add: Add a length ...
       option_std_bar_none: None
-      option_scrap_bar_lengths: Offcut Boards
+      option_scrap_bar_dimensional_lengths: Offcut Boards
+      option_scrap_bar_edge_lengths: Offcut Edge Bands
       option_scrap_bar_lengths_placeholder: length x quantity ; ...
       option_scrap_bar_lengths_help: |
-        List the offcut boards which should be considered first in the cutting diagram.
-        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
-        Quantity is optional.
-        *Sizes without units are considered to be in model units.*
-      option_std_band: Standard Edge Band
-      option_std_band_help: |
-        Select the standard edge band, which will be duplicated to contain all the parts.
-        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
-      option_std_band_add: Add a length ...
-      option_std_band_none: None
-      option_scrap_band_lengths: Offcut Edge Bands
-      option_scrap_band_lengths_placeholder: length x quantity ; ...
-      option_scrap_band_lengths_help: |
-        List the offcut edge bands which should be considered first in the cutting diagram.
+        List the offcut boards or edge bandings which should be considered first in the cutting diagram.
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -569,7 +559,7 @@ tab:
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
       tooltip:
-        scroll_to_block_1d: Scroll to first board
+        scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel
       list:
         unplaced_parts: Unplaced Parts
@@ -590,10 +580,10 @@ tab:
         cut: Cut
         cut_final: Primary cut (level 1)
         cut_through: Primary cut (level 2)
-        bar_type_0: Standard Dimensional
-        bar_type_1: Offcut
-        band_type_0: Standard Edge Band
-        band_type_1: Offcut Edge Band
+        bar_dimensional_type_0: Standard Dimensional
+        bar_dimensional_type_1: Offcut
+        bar_edge_type_0: Standard Edge Band
+        bar_edge_type_1: Offcut Edge Band
         sheet_type_0: Standard Panel
         sheet_type_1: Offcut
         unused: Unused
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
-        no_bar: The standard board was not correctly configured and no offcuts were defined.
-        parameters: Parameters are incorrect. The trimming size is larger than 25% of the longest board.
+        no_bar_dimensional: The standard board was not correctly configured and no offcuts were defined.
+        no_bar_edge: The standard edge banding was not correctly configured and no offcuts were defined.
+        parameters: Parameters are incorrect. The trimming size is larger than 25% of the longest board or edge banding.
         no_parts: No part.
         no_sheet: Standard panel sizes are misconfigured and no offcuts are available.
         no_placement_possible: "No placement possible (trimming size too large, standard panel too small, saw kerf too large, ...)."
