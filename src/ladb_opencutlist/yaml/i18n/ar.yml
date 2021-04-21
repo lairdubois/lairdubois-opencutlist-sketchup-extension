@@ -474,19 +474,21 @@ tab:
       options_material: الخامة
       options_config: إعداد
       options_display: عرض
-      option_bar_folding: اجمع القضبان المتماثلة
+      option_bar_folding_dimensional: اجمع القضبان المتماثلة
+      option_bar_folding_edge: اجمع الحواشي المتماثلة
       option_bar_folding_0: لا
       option_bar_folding_1: نعم
-      option_bar_folding_help: اجمع القضبان المحتوية على نفس القِطع و التقطيعات.
+      option_bar_folding_help: اجمع القضبان أو أشرطة الحواشي المحتوية على نفس القِطع و التقطيعات.
       option_sheet_folding: اجمع الألواح المتماثلة
       option_sheet_folding_0: لا
       option_sheet_folding_1: نعم
       option_sheet_folding_help: اجمع الألواح المحتوية على نفس القِطع و التقطيعات
       option_hide_part_list: قائمة القطع
-      option_hide_part_list_1d_0: معروض لكل قضيب
+      option_hide_part_list_1d_dimensional_0: معروض لكل قضيب
+      option_hide_part_list_1d_edge_0: معروض لكل شريط حاشية
       option_hide_part_list_2d_0: معروض لكل لوح
       option_hide_part_list_1: مخفي
-      option_hide_part_list_1d_help: اعرض أو أخف قائمة القِطع لكل قضيب.
+      option_hide_part_list_1d_help: اعرض أو أخف قائمة القِطع لكل قضيب أو شريط حاشية.
       option_hide_part_list_2d_help: اعرض أو أخف قائمة القِطع لكل لوح
       option_origin_corner: موضع المبدأ
       option_origin_corner_1d_0: إلى اليسار
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: الزاوية السفلية اليسرى
       option_origin_corner_2d_2: الزاوية العلوية اليمنى
       option_origin_corner_2d_3: الزاوية السفلية اليمنى
-      option_origin_corner_1d_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على القضبان الخشبية.
+      option_origin_corner_1d_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على القضبان الخشبية أو أشرطة الحواشي.
       option_origin_corner_2d_help: يحدد موضع مبدإ الإحداثيات لعرض القطع على الألواح.
       option_full_width_diagram: عَرض كامل للعُرض
       option_full_width_diagram_0: لا
       option_full_width_diagram_1: نعم
       option_full_width_diagram_help: إن كانت هذه الخاصية مفعلة فإن رسومات التقطيع التخطيطية ستعرض باستخدام العُرض المتاح. و إلا، فإن عُرضها سيُحدد وفقا لمقياس ثابت اعتمادا على كل الرسومات التخطيطية.
       option_wrap_length: محيط اللوح
-      option_wrap_length_help: الحد الأقصى للطول الذي ستقسّم اللوحة وفقه إلى عدة أسطر.
+      option_wrap_length_help: الحد الأقصى للطول الذي سيقسّم قضيب أو شريط حاشية وفقه إلى عدة أسطر.
       option_hide_cross: بواقي التقطيع
       option_hide_cross_0: أبعاد و تقاطع
       option_hide_cross_1: أبعاد فقط
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: سُمك الشَفرة
       option_saw_kerf_help: عرض المادة المزالة بفعل شفرة المنشار
       option_trimming: تقليم
-      option_trimming_help_1d: كمية المادّة التي ستعتبر كبواقٍ في طرف كل لوح.
+      option_trimming_help_1d: كمية المادّة التي ستعتبر كبواقٍ في طرف كل لوح أو شريط حاشية.
       option_trimming_help_2d: كمية المادّة التي ستعتبر كبواقٍ حول اللوح.
       option_optimization: مستوى الاستخدام الأمثل
       option_optimization_help: يحدد مستوى الاستخدام الأمثل عدد الاحتمالات المحسوبة، و أيضا زمن الحساب.
@@ -526,32 +528,20 @@ tab:
       option_stacking_1: على الطول
       option_stacking_2: على العرض
       option_stacking_3: كل الاحتمالات
-      option_std_bar: قضيب نظامي
+      option_std_bar_dimensional: قضيب نظامي
+      option_std_bar_edge: شريط حاشية نظامي
       option_std_bar_help: |
-        حدد اللوح النظامي الذي سيُنسخ لاحتواء جميع القِطع
+        حدد القضيب النظامي الذي سيُنسخ لاحتواء جميع القِطع
         هذه القائمة محددة وفقا لحقل الخامة **t(tab.materials.edit_material.std_lengths)$**
         لتحديث هذه القائمة، عدّل الخامة '{{ material_name }}'
       option_std_bar_add: أضف طولا...
       option_std_bar_none: لا شيء
-      option_scrap_bar_lengths: بواقي تقطيع القضبان
+      option_scrap_bar_dimensional_lengths: بواقي تقطيع القضبان
+      option_scrap_bar_edge_lengths: بواقي تقطيع أشرطة الحواشي
       option_scrap_bar_lengths_placeholder: الطول x العدد ؛ ...
       option_scrap_bar_lengths_help: |
-        عيّن هنا قائمة الألواح الباقية ذات الأولوية في رسم التقطيع التخطيطي.
+        عيّن هنا قائمة القضبان أو أشرطة الحواشي الباقية ذات الأولوية في رسم التقطيع التخطيطي.
         الشكل المتوقع **ط**x**عد**، حيث يشير **ط** إلى *الطول* و **عد** إلى *العدد*.
-        العدد اختياري.
-        *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
-      option_std_band: شريط حاشية نظامي
-      option_std_band_help: |
-        حدد الشريط النظامي الذي سيُنسخ لحساب أفضل احتواء ممكن للحواشي.
-        هذه القائمة محددة وفق حقل الخامة **t(tab.materials.edit_material.std_lengths)$**
-        عدّل الخامة '{{ material_name }}' لتحديث هذه القائمة.
-      option_std_band_add: أضف طولا...
-      option_std_band_none: لا شيء
-      option_scrap_band_lengths: بواقي تقطيع أشرطة الحواشي
-      option_scrap_band_lengths_placeholder: الطول x العدد ؛ ...
-      option_scrap_band_lengths_help: |
-        عيّن هنا قائمة بواقي تقطيع أشرطة الحواشي ذات الأولوية في رسم التقطيع التخطيطي.
-        الشكل المتوقع: **ط**x**عد**، حيث يشير **ط** إلى *الطول* و **عد** إلى *العدد*.
         العدد اختياري.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
       option_std_sheet: لوح نظامي
@@ -569,7 +559,7 @@ tab:
         العدد اختياري.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
       tooltip:
-        scroll_to_block_1d: مرور إلى القضيب الأول
+        scroll_to_block_1d: مرور إلى القضيب أو شريط الحاشية الأول
         scroll_to_block_2d: مرور إلى اللوح الأول
       list:
         unplaced_parts: قِطع غير مُدرجة
@@ -590,10 +580,10 @@ tab:
         cut: قطع
         cut_final: القَطع الابتدائي (المستوى 1)
         cut_through: القَطع الابتدائي (المستوى 2)
-        bar_type_0: قضيب نظامي
-        bar_type_1: باقي تقطيع القضيب
-        band_type_0: شريط حاشية نظامي
-        band_type_1: باقي تقطيع شريط الحاشية
+        bar_dimensional_type_0: قضيب نظامي
+        bar_dimensional_type_1: باقي تقطيع القضيب
+        bar_edge_type_0: شريط حاشية نظامي
+        bar_edge_type_1: باقي تقطيع شريط الحاشية
         sheet_type_0: لوح نظامي
         sheet_type_1: باقي التقطيع
         unused: غير مستعمل
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} قِطع"
         settings: الإعدادات
       error:
-        no_bar: لم يكوَّن القضيب النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
-        parameters: المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب الأكبر
+        no_bar_dimensional: لم يكوَّن القضيب النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
+        no_bar_edge: لم يكوَّن شريط الحاشية النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
+        parameters: المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب أو شريط الحاشية الأكبر
         no_parts: لا قطعة.
         no_sheet: لم يكوَّن اللوح النظامي بشكل صحيح و لا بواقيَ للقِطع محددةٌ.
         no_placement_possible: لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...).
@@ -623,9 +614,13 @@ tab:
       title: الملصقات
       options_layout: النموذج الطباعي
       options_settings: إعداد
+      options_offset: إزاحة
       size: الحجم الحقيقي للملصق
       add_element: أضف عنصرا
       remove_element: أزل
+      offset_help: |
+        تتيح لك *الإزاحة* تعيين موضع **الملصق الأول** في **الصفحة الأولى**.
+        حدد المربع الموافق لاختيارك.
       option_page: حجم الورق
       option_page_format: المقاس
       option_page_format_portrait: اتجاه عمودي
