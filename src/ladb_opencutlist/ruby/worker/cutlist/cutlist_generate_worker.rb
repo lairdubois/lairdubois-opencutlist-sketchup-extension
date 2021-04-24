@@ -245,7 +245,7 @@ module Ladb::OpenCutList
           group_def.std_dimension_rounded = std_info[:dimension_rounded]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
-          group_def.show_cutting_dimensions = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN && (material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0)
+          group_def.show_cutting_dimensions = material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
 
           _store_group_def(group_def)
 
@@ -307,6 +307,11 @@ module Ladb::OpenCutList
           part_def.width_increased = width_increased
           part_def.thickness_increased = thickness_increased
           part_def.auto_oriented = size.auto_oriented
+
+          # Propose cutting dimensions display if part is flaged as cumulable
+          if definition_attributes.cumulable != DefinitionAttributes::CUMULABLE_NONE
+            group_def.show_cutting_dimensions = true
+          end
 
           # Compute axes alignment, final area and edges
           case group_def.material_type
