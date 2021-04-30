@@ -176,18 +176,6 @@ module Ladb::OpenCutList
       # Draw defs
       @draw_defs.each do |draw_def|
 
-        # Draw faces
-        face_color = draw_def[:face_color]
-        if @hover_part
-          if @hover_part == draw_def[:part]
-            face_color = COLOR_FACE_HOVER
-          elsif @hover_part.definition_id == draw_def[:part].definition_id
-            face_color = COLOR_FACE_HOVER_SMILAR
-          end
-        end
-        view.drawing_color = face_color
-        view.draw(GL_TRIANGLES, draw_def[:face_triangles])
-
         # Draw arrows
         view.line_width = 3
         view.drawing_color = draw_def[:line_color]
@@ -199,6 +187,18 @@ module Ladb::OpenCutList
         draw_def[:back_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
+
+        # Draw faces
+        face_color = draw_def[:face_color]
+        if @hover_part
+          if @hover_part == draw_def[:part]
+            face_color = COLOR_FACE_HOVER
+          elsif @hover_part.definition_id == draw_def[:part].definition_id
+            face_color = COLOR_FACE_HOVER_SMILAR
+          end
+        end
+        view.drawing_color = face_color
+        view.draw(GL_TRIANGLES, draw_def[:face_triangles])
 
       end
 
