@@ -43,7 +43,20 @@
     <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
     {% if not part.children and not generateOptions.hide_entity_names %}
         {% if part.entity_names is not empty %}
-            <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name[0]|escape }}{% if entity_name[1]|length > 1 %} <small class="text-muted">x{{ entity_name[1]|length }}</small>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
+            {% set entity_names = [] %}
+            {% set blank_entity_name_count = 0 %}
+            {% for entity_name in part.entity_names %}
+                {% if entity_name[0] is empty %}
+                    {% set blank_entity_name_count = blank_entity_name_count + 1 %}
+                {% else %}
+                    {% set name = entity_name[0]|escape %}
+                    {% set counter = entity_name[1]|length > 1 ? ('&nbsp;<small class="text-muted">x'~(entity_name[1]|length)~'</small>') : '' %}
+                    {% set entity_names = entity_names|merge([ name~counter ]) %}
+                {% endif %}
+            {% endfor %}
+            {% if entity_names is not empty %}
+                <span class="ladb-cutlist-part-entity-names">(&nbsp;{{ entity_names|join(', ') }}{% if blank_entity_name_count > 0 and part.entity_names|length > blank_entity_name_count %}, ...{% endif %}&nbsp;)</span>
+            {% endif %}
         {% endif %}
     {% endif %}
     {% if not isChild %}
