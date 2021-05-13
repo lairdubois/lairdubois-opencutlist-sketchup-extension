@@ -70,8 +70,6 @@
 
         rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
-            console.log(response);
-
             that.generateAt = new Date().getTime() / 1000;
             that.setObsolete(false);
 
@@ -2709,15 +2707,30 @@
                             gIndex++;
                         }
                         $.each(parts, function (index) {
-                            var entityNamedPaths = [];
-                            var entityNames = [];
+                            var flatPathsAndNames = [];
                             $.each(this.entity_names, function () {
-                                var entityName = this[0];
                                 var count = this[1].length;
                                 for (var i = 0; i < count; i++) {
-                                    entityNamedPaths.push(this[1][i])
-                                    entityNames.push(entityName)
+                                    flatPathsAndNames.push({
+                                        path: this[1][i],
+                                        name: this[0],
+                                    });
                                 }
+                            });
+                            flatPathsAndNames.sort(function (a, b) {    // Sort on Path ASC and Name ASC
+                                if (a.path < b.path) {
+                                    return -1;
+                                }
+                                if (a.path > b.path) {
+                                    return 1;
+                                }
+                                if (a.name < b.name) {
+                                    return -1;
+                                }
+                                if (a.name > b.name) {
+                                    return 1;
+                                }
+                                return 0;
                             });
                             for (var i = 1; i <= this.count; i++) {
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
@@ -2728,8 +2741,8 @@
                                 }
                                 page.part_infos.push({
                                     position_in_batch: i,
-                                    entity_named_path: entityNamedPaths[i - 1],
-                                    entity_name: entityNames[i - 1],
+                                    entity_named_path: flatPathsAndNames[i - 1].path,
+                                    entity_name: flatPathsAndNames[i - 1].name,
                                     part: this
                                 });
                                 gIndex++;

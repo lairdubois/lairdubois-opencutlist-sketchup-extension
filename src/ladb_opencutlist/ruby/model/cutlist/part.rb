@@ -109,7 +109,7 @@ module Ladb::OpenCutList
       @thickness_increase = part_def.thickness_increase
       @entity_ids = part_def.entity_ids
       @entity_serialized_paths = part_def.entity_serialized_paths
-      @entity_names = part_def.entity_names.sort_by { |k, v| [ v, k ] }
+      @entity_names = part_def.entity_names.sort_by { |k, v| [ k ] }
       @length_increased = part_def.length_increased
       @width_increased = part_def.width_increased
       @thickness_increased = part_def.thickness_increased
