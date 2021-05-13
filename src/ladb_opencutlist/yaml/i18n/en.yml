@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Number
         part_name: Description
+        part_entity_named_path: Instance path
         part_entity_name: Instance name
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough

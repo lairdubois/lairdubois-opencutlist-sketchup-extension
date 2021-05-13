@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Номер
         part_name: Описание
+        part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента

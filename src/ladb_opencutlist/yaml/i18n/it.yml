@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Numero
         part_name: Descrizione
+        part_entity_named_path: Percorso istanza
         part_entity_name: Nome dell'istanza
         part_cutting_size: Dimensioni grezze
         part_cutting_length: Lunghezza grezza

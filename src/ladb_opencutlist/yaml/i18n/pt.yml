@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descrição
+        part_entity_named_path: ""
         part_entity_name: Nome da instância
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado

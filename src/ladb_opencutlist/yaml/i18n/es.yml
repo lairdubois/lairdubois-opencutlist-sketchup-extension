@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descripción
+        part_entity_named_path: Ruta de instancia
         part_entity_name: Nombre de instancia
         part_cutting_size: Dimensiones aproximadas
         part_cutting_length: Longitud - cruda
