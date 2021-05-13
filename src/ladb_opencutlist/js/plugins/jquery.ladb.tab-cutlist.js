@@ -2709,11 +2709,13 @@
                             gIndex++;
                         }
                         $.each(parts, function (index) {
+                            var entityNamedPaths = [];
                             var entityNames = [];
                             $.each(this.entity_names, function () {
                                 var entityName = this[0];
-                                var count = this[1];
+                                var count = this[1].length;
                                 for (var i = 0; i < count; i++) {
+                                    entityNamedPaths.push(this[1][i])
                                     entityNames.push(entityName)
                                 }
                             });
@@ -2726,7 +2728,7 @@
                                 }
                                 page.part_infos.push({
                                     position_in_batch: i,
-                                    entity_named_path: this.entity_named_paths[i - 1],
+                                    entity_named_path: entityNamedPaths[i - 1],
                                     entity_name: entityNames[i - 1],
                                     part: this
                                 });

@@ -43,7 +43,7 @@
     <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
     {% if not part.children and not generateOptions.hide_entity_names %}
         {% if part.entity_names is not empty %}
-            <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name[0]|escape }}{% if entity_name[1] > 1 %} <small class="text-muted">x{{ entity_name[1] }}</small>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
+            <span class="ladb-cutlist-part-entity-names">(&nbsp;{% for entity_name in part.entity_names %}{{ entity_name[0]|escape }}{% if entity_name[1]|length > 1 %} <small class="text-muted">x{{ entity_name[1]|length }}</small>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if part.contains_blank_entity_names and part.entity_names is not empty %}, ...{% endif %}&nbsp;)</span>
         {% endif %}
     {% endif %}
     {% if not isChild %}

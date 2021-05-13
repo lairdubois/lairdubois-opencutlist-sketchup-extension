@@ -91,7 +91,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :entity_named_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :entity_names, :contains_blank_entity_names, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -109,8 +109,7 @@ module Ladb::OpenCutList
       @thickness_increase = part_def.thickness_increase
       @entity_ids = part_def.entity_ids
       @entity_serialized_paths = part_def.entity_serialized_paths
-      @entity_named_paths = part_def.entity_named_paths
-      @entity_names = part_def.entity_names.sort
+      @entity_names = part_def.entity_names.sort_by { |k, v| [ -v.size, k ] }
       @contains_blank_entity_names = part_def.contains_blank_entity_names
       @length_increased = part_def.length_increased
       @width_increased = part_def.width_increased
