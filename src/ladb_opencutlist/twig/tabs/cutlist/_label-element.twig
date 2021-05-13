@@ -44,7 +44,9 @@
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}
-        {% if key == 'entity_name' %}
+        {% if key == 'entity_named_path' %}
+            {% set value = part_info.entity_named_path %}
+        {% elseif key == 'entity_name' %}
             {% set value = part_info.entity_name %}
         {% elseif key == 'cutting_size' %}
             {% set value = part_info.part.cutting_length~' x '~part_info.part.cutting_width %}

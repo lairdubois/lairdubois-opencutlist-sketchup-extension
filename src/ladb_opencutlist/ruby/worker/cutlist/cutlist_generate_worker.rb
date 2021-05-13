@@ -449,6 +449,7 @@ module Ladb::OpenCutList
         part_def.add_material_origin(material_origin)
         part_def.add_entity_id(entity.entityID)
         part_def.add_entity_serialized_path(instance_info.serialized_path)
+        part_def.add_entity_named_path(instance_info.named_path)
         part_def.add_entity_name(entity.name)
         part_def.store_instance_info(instance_info)
 
@@ -747,7 +748,7 @@ module Ladb::OpenCutList
             face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
           }
 
-          # Treat cuts_opening behavior component instances as group
+          # Treat cuts_opening behavior component instances as simple group
           if entity.definition.behavior.cuts_opening?
             return face_count
           end

@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PathUtils
 
-    SEPARATOR = '>'
+    SEPARATOR = '>'.freeze
 
     # -- Serialization --
 
@@ -29,6 +29,17 @@ module Ladb::OpenCutList
         end
       }
       path
+    end
+
+    # -- Named --
+
+    def self.get_named_path(path, ignored_leaf_count = 1, separator = '.')  # path is Array<ComponentInstance>
+      return nil if path.nil?
+      path_names = []
+      path.first(path.size - ignored_leaf_count).each { |entity|
+        path_names.push(entity.name) unless entity.name.empty?  # ignore empty names
+      }
+      path_names.join(separator)
     end
 
     # -- Geom --

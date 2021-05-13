@@ -35,6 +35,13 @@ module Ladb::OpenCutList
       @serialized_path = PathUtils.serialize_path(@path)
     end
 
+    def named_path
+      if @named_path
+        return @named_path
+      end
+      @named_path = PathUtils.get_named_path(@path)
+    end
+
     def transformation
       if @transformation
         return @transformation

@@ -4,9 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
-* 2.0.1 (WIP)
+* 2.0.2 (WIP)
 
   * Added labels start offset
+  * Added entity named path field in Labels
 
 * 2.0.1 (2021-04-13)
 

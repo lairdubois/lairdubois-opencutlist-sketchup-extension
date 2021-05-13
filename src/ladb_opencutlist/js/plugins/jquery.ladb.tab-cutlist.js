@@ -70,6 +70,8 @@
 
         rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
+            console.log(response);
+
             that.generateAt = new Date().getTime() / 1000;
             that.setObsolete(false);
 
@@ -2724,6 +2726,7 @@
                                 }
                                 page.part_infos.push({
                                     position_in_batch: i,
+                                    entity_named_path: this.entity_named_paths[i - 1],
                                     entity_name: entityNames[i - 1],
                                     part: this
                                 });
