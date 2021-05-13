@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: الرقم
         part_name: وصف
+        part_entity_named_path: مسار المثيل
         part_entity_name: اسم المثيل
         part_cutting_size: الأبعاد الأولية
         part_cutting_length: الطول الأولي

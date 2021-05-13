@@ -652,6 +652,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Bezeichnung
+        part_entity_named_path: Instanzpfad
         part_entity_name: Instanzbezeichnung
         part_cutting_size: Rohmaße
         part_cutting_length: Länge - roh
