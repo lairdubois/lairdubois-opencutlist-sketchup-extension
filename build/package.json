@@ -20,7 +20,7 @@
     "js-yaml": "3.14.0",
     "markdown-it": "12.0.2",
     "markdown-it-external-links": "0.0.6",
-    "merge": "1.2.1",
+    "merge": "2.1.1",
     "minimist": "1.2.5",
     "plugin-error": "1.0.1",
     "slash": "3.0.0",
