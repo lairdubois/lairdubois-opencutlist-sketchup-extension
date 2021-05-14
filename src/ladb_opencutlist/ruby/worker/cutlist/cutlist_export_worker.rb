@@ -181,19 +181,10 @@ module Ladb::OpenCutList
                         # Ungroup parts
                         part.def.instance_infos.each { |serialized_path, instance_info|
 
-                          # Compute path with entities names (from root group to final entity)
-                          path_names = []
-                          instance_info.path.each { |entity|
-                            # Uses entityID if instance name is empty
-                            path_names.push(entity.name.empty? ? "##{entity.entityID}" : entity.name)
-                          }
-                          # Pop the instance name to put it in a separated column
-                          instance_name = path_names.pop
-
                           vars = {
                             :number => part.number,
-                            :path => path_names.join('/'),
-                            :instance_name => instance_name,
+                            :path => PathUtils.get_named_path(instance_info.path, false, 1, '/'),
+                            :instance_name => instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name,
                             :definition_name => part.name,
                             :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
                             :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
