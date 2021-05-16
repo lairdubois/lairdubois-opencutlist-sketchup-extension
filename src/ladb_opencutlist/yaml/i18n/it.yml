@@ -289,7 +289,7 @@ tab:
         Se questa casella è selezionata, il rilevamento della *parte specchiata* non avrà alcun effetto su questa parte.
       ignore_grain_direction: Ignorare la direzione della venatura
       ignore_grain_direction_help: |
-        Se questa casella è selezionata, la direzione della venatura è ignorata su questa parte.
+        Selezionando questa opzione, viene ignorata la direzione della venatura solo su questa parte.
       size_increase: Sovramateriale
       size_increase_help: |
         "Sovramateriale" consente di incrementare la dimensione delle singole parti.
@@ -301,7 +301,7 @@ tab:
       thickness_increase: Sovramateriale sullo spessore
       thickness_increase_help: Il sovramateriale viene applicato allo spessore per calcolare lo **spessore semilavorato**.
       axes: Assi
-      axes_help: Modifica le dimensioni in modo da farle coincidere agli assi (colori) della parte.
+      axes_help: Riposiziona le dimensioni in modo da farle coincidere agli assi (colori) della parte.
       axes_tip: |
         Attenzione che se l'opzione *Orientamento automatico delle parti* non è attiva o la parte è *bloccata sui propri assi* si avrà che:
          - la **lunghezza** si legge sull'asse <strong style='color:red'>rosso</strong>,
@@ -321,23 +321,23 @@ tab:
     option:
       auto_orient: Orientamento automatico delle parti
       auto_orient_help: |
-        Se questa opzione è attivata, le 3 dimensioni di una parte vengono ordinate in modo che la più grande rappresenti la *lunghezza* e la più piccola rappresenti lo *spessore*.
+        Selezionando questa opzione, le 3 dimensioni delle parti vengono ordinate in modo che la più grande rappresenti la *lunghezza* e la più piccola rappresenti lo *spessore*.
 
         Se questa opzione è deselezionata, gli assi locali della parte definiscono la dimensioni in questo modo:
          - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
          - *larghezza* è sull'asse <span style='color:green'>verde</span>
          - *spessore* è sull'asse <span style='color:blue'>blu</span>
-      smart_material: Assegnazione materiali *Smart*
-      smart_material_help: "Se questa opzione è attivata, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli."
+      smart_material: Assegnazione *Intelligente* dei materiali
+      smart_material_help: "Selezionando questa opzione, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli."
       dynamic_attributes_name: Usa l'attributo *Nome* dei componenti dinamici
       dynamic_attributes_name_help: |
-        Se questa opzione è attivata, la classificazione delle parti sarà estratta dall'attributo *Name*, se esiste.
+        Selezionando questa opzione, la classificazione delle parti sarà estratta, se esiste, dall'attributo *Name*.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Name* 'è differente.
+        <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Nome* è differente.
       part_number_with_letters: Usa le lettere per contrassegnare le parti
-      part_number_with_letters_help: "Se questa opzione è attivata, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...)."
+      part_number_with_letters_help: "Selezionando questa opzione, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Fai ripartire la numerazione ad ogni gruppo
-      part_number_sequence_by_group_help: "Se questa opzione è attivata, la classificazione delle parti viene fatta ripartire (1 o A) per ogni gruppo con lo stesso materiale e spessore."
+      part_number_sequence_by_group_help: "Selezionando questa opzione, la classificazione delle parti viene fatta ripartire 1 (o A) per ogni gruppo (parti con materiale e spessore identico)."
       part_folding: Raggruppa parti uguali
       part_folding_help: "Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche** *(se la visualizzazione di quest'area non è nascosta)*."
       hide_entity_names: Nascondi i nomi delle occorrenze
@@ -345,15 +345,15 @@ tab:
       hide_tags: Nascondi Tags
       hide_tags_help: "Se questa opzione è attivata, non verranno visualizzate le **tags**."
       hide_cutting_dimensions: Nascondi le dimensioni semilavorate
-      hide_cutting_dimensions_help: "Se questa opzione è attivata, verranno escluse le dimensioni **semilavorate**."
+      hide_cutting_dimensions_help: "Selezionando questa opzione, verranno escluse le dimensioni **semilavorate**."
       hide_bbox_dimensions: Nascondi le dimensioni finite
-      hide_bbox_dimensions_help: "Se questa opzione è attivata, verranno nascoste le dimensioni **finite** delle parti."
+      hide_bbox_dimensions_help: "Selezionando questa opzione, verranno nascoste le dimensioni **finite** delle parti."
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
-      hide_final_areas_help: "Se questa opzione è attivata, verrà nascosta **l'area** delle parti di tipo *Pannelli*."
+      hide_final_areas_help: "Selezionando questa opzione, verrà nascosta **l'area** delle parti di tipo *Pannelli*."
       hide_edges: Nascondi la colonna "Bordature"
-      hide_edges_help: "Se questa opzione è attivata, verranno nascosta la colonne **Bordature** delle parti di tipo *Pannelli*."
+      hide_edges_help: "Selezionando questa opzione, verranno nascosta la colonne **Bordature** delle parti di tipo *Pannelli*."
       minimize_on_highlight: Minimizza dopo *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: "Se questa opzione è attivata, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.cutlist.highlight_part)'* ."
+      minimize_on_highlight_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.cutlist.highlight_part)'* ."
       general: Generale
       part_order_strategy: Ordinamento parti
       part_order_strategy_help: |
@@ -361,7 +361,7 @@ tab:
         Le proprietà possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
       dimension_column_order_strategy: Ordinamento delle dimensioni
       dimension_column_order_strategy_help: |
-        Modifica le seguenti proprietà per cambiare i criteri di ordinamento delle colonne.
+        Modifica le proprietà seguenti per cambiare i criteri di ordinamento delle colonne.
       property_thickness: Spessore
       property_length: Lunghezza
       property_width: Larghezza
@@ -725,7 +725,7 @@ tab:
       grain_direction: Direzione della venatura
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_colorized: Aggiungi in modo permanente questa tonalita alla struttura dell'immagine
-      edit: Modifica le proprietà del materiale
+      edit: "Modifica le proprietà di '{{ name }}'"
       set_current: |
         Seleziona '{{ name }}'
         *Doppio-click per applicarlo*
@@ -757,7 +757,7 @@ tab:
       std_lengths: Lunghezze predefinite
       std_lengths_placeholder: lunghezza ; ...
       std_lengths_help: |
-        Lunghezze standard die barre o bordature.
+        Lunghezze standard delle barre o bordature.
         *Dimensioni senza unità si intendono in unità del modello.*
       std_widths: Larghezze predefinite
       std_widths_placeholder: larghezza ; ...
