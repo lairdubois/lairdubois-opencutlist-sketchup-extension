@@ -474,19 +474,21 @@ tab:
       options_material: Materiaal
       options_config: Configuratie
       options_display: Weergave
-      option_bar_folding: Groepeer identieke planken
+      option_bar_folding_dimensional: Groepeer identieke planken
+      option_bar_folding_edge: Groepeer overeenkomstige randen
       option_bar_folding_0: Nee
       option_bar_folding_1: Ja
-      option_bar_folding_help: Laat toe om planken met dezelfde stukken en snedes te groeperen.
+      option_bar_folding_help: Groepeer panelen of kantenband met gelijke delen en zaagsneden
       option_sheet_folding: Groepeer identieke panelen
       option_sheet_folding_0: Nee
       option_sheet_folding_1: Ja
       option_sheet_folding_help: Maakt het mogelijk om panelen die dezelfde onderdelen en dezelfde zaagsnedes bevatten te groeperen.
       option_hide_part_list: Onderdelen lijst
-      option_hide_part_list_1d_0: Weergegeven voor elke plank
+      option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
+      option_hide_part_list_1d_edge_0: Toon voor alle kantenband
       option_hide_part_list_2d_0: Weergegeven voor elk paneel
       option_hide_part_list_1: Verborgen
-      option_hide_part_list_1d_help: Toon of verberg de lijst van onderdelen in elke plank.
+      option_hide_part_list_1d_help: Toon of verberg de lijst van onderdelen in elke plank of kantenband.
       option_hide_part_list_2d_help: Toon of verberg de lijst met onderdelen in elk paneel.
       option_origin_corner: Positie van de oorsprong
       option_origin_corner_1d_0: Links
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Linker benedenhoek
       option_origin_corner_2d_2: Rechter bovenhoek
       option_origin_corner_2d_3: Rechter benedenhoek
-      option_origin_corner_1d_help: Bepaalt de positie van de coördinaten oorsprong voor het weergeven van de onderdelen op balken.
+      option_origin_corner_1d_help: Laat toe om de coördinaten oorsprong in te stellen van bekantrecht hout of kantenband
       option_origin_corner_2d_help: Laat toe om de bronhoek in te stellen waarmee onderdelen in de panelen worden geplaatst.
       option_full_width_diagram: Toon volledige breedte
       option_full_width_diagram_0: Nee
       option_full_width_diagram_1: Ja
       option_full_width_diagram_help: "Wanneer deze optie ingeschakeld is, dan zullen de zaagschema's weergegeven worden met de volledig beschikbare breedte. Zoniet zal hun breedte gedefinieerd worden door een shaal die gebaseerd is op hun effectieve afmeting."
       option_wrap_length: Afbrekingslengte
-      option_wrap_length_help: Maximale lengte waarna een plank zal weergegeven worden op meerdere lijnen.
+      option_wrap_length_help: Maximale lengte waarbij bekantrecht hout of kantenband over meerdere lijnen weergegeven zal worden
       option_hide_cross: Overschot
       option_hide_cross_0: Afmetingen en kruis
       option_hide_cross_1: Enkel afmetingen
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Dikte van het zaagblad
       option_saw_kerf_help: Breedte van verwijderd materiaal door het zaagblad.
       option_trimming: Marge
-      option_trimming_help_1d: Marge aan elk uiteinde van de plank om als afval te worden beschouwd.
+      option_trimming_help_1d: Marge aan beide uiteinden van bekantrecht hout of kantenband dat als overschot behandeld wordt.
       option_trimming_help_2d: Marge rondom het paneel dat beschouwd wordt als afval.
       option_optimization: Optimalisatieniveau
       option_optimization_help: "Het optimalisatie niveau bepaalt het aantal berekende mogelijkheden, dus ook de berekeningstijd."
@@ -526,34 +528,22 @@ tab:
       option_stacking_1: Over de lengte
       option_stacking_2: Over de breedte
       option_stacking_3: Alle mogelijkheden
-      option_std_bar: Standaard plank
+      option_std_bar_dimensional: Standaard plank
+      option_std_bar_edge: Standaard kantenband
       option_std_bar_help: |
-        Selecteer hier de afmeting van de standaard plank die gedupliceerd zal worden om zo goed mogelijk alle onderdelen te bevatten.
-        Deze lijst wordt bepaald door het veld **$t(tab.materials.edit_material.std_lengths)** van het materiaal.
-        Wijzig het materiaal '{{ material_name }}' om de lijst te updaten.
+        Selecteer hier de standaard afmeting van bekantrecht hout of kantenband die gedupliceerd zal worden om optimaal alle onderdelen te bevatten.
+        Deze lijst wordt gedefinieerd door het veld **$t(tab.materials.edit_material.std_lengths)** van het materiaal.
+        Wijzig het materiaal '{{ material_name }}' om deze lijst up te daten.
       option_std_bar_add: Voeg een afmeting toe...
       option_std_bar_none: Geen enkele
-      option_scrap_bar_lengths: Overschot van de plank
+      option_scrap_bar_dimensional_lengths: Overschot van de plank
+      option_scrap_bar_edge_lengths: Kantenband overschotten
       option_scrap_bar_lengths_placeholder: lengte x aantal ; ...
-      option_scrap_bar_lengths_help: |
-        Maak hier een lijst van uw plank overschotten die voorrang moeten krijgen in het zaagschema.
-        Formaat: **L**x**Q**. of **L** is de *lengte* van het overschot en **Q** de hoeveelheid.
-        De hoeveelheid is facultatief.
-        *Waneer geen enkele eenheid gespecifieerd is, zal de eenheid van het model genomen worden.*
-      option_std_band: Standaard kantenband
-      option_std_band_help: |
-        Selecteer hier de standaard afmeting van de kantenband die gedupliceerd zal worden om optimaal alle kanten te bevatten.
-        Deze lijst wordt gedefinieerd in het veld **$t(tab.materials.edit_material.std_lengths)** van het materiaal.
-        Wijzig het materiaal '{{ material_name }}' om deze lijst aan te passen.
-      option_std_band_add: Voeg een afmeting toe...
-      option_std_band_none: Geen
-      option_scrap_band_lengths: Kantenband overschotten
-      option_scrap_band_lengths_placeholder: lengte x aantal ; ...
-      option_scrap_band_lengths_help: |
-        Lijst van uw kantenband overschotten om voorrang te geven in het zaagplan.
-        Verwacht formaat: **L**x**A**. Waar **L** de *lengte* is en **A** het aantal.
-        Aantal is facultatief.
-        *Wanneer geen enkele eenheid gespecificeerd werd, dan wordt de eenheid van het model genomen.*
+      option_scrap_bar_lengths_help: |-
+        Duidt hier de lijst van resten van bekantrecht hout of kantenband die voorang krijgt in het zaagschema.
+        Verwacht formaat : **L**x**A**. waarbij **L** de *lengte* et **A** het aantal is.
+        Het aantal is facultatief
+        *Wanneer geen eenheid wordt ingegeven, dan zal de eenheid van het model genomen worden.*
       option_std_sheet: Standaard paneel
       option_std_sheet_help: |
         Selecteer hier het standaard paneel dat gedupliceerd zal worden om zo goed mogelijke alle onderdelen te bevatten.
@@ -569,7 +559,7 @@ tab:
         Het aantal is facultatief.
         *Wanneer geen enkele maat gespecifiëerd werd, dan zal de eenheid van het model genomen worden.
       tooltip:
-        scroll_to_block_1d: Scroll naar de eerste plank
+        scroll_to_block_1d: Scroll naar de eerste plank of kantenband
         scroll_to_block_2d: Scroll naar eerste paneel
       list:
         unplaced_parts: Ongeplaatste onderdelen
@@ -590,10 +580,10 @@ tab:
         cut: Snede
         cut_final: Primaire zaagsnedes (niveau 1)
         cut_through: Primaire zaagsnedes (niveau 2)
-        bar_type_0: Standaard plank
-        bar_type_1: Plank overschot
-        band_type_0: Standaard kantenband
-        band_type_1: Kantenband overschot
+        bar_dimensional_type_0: Standaard plank
+        bar_dimensional_type_1: Plank overschot
+        bar_edge_type_0: Standaard kantenband
+        bar_edge_type_1: Kantenband overschot
         sheet_type_0: Standaard paneel
         sheet_type_1: Paneel overschot
         unused: Ongebruikt
@@ -601,7 +591,8 @@ tab:
         parts_plural: "{{ count }} onderdelen"
         settings: Instellingen
       error:
-        no_bar: De standaard plank is niet correct geconfigureerd en er zijn geen overschotten gedefinieerd.
+        no_bar_dimensional: De standaard plank is niet correct geconfigureerd en er zijn geen overschotten gedefinieerd.
+        no_bar_edge: De standaard kantenband is niet correct geconfigureerd en er zijn geen overschotten gedefinieerd.
         parameters: De parameters zijn niet correct. De trimmaat overschrijdt 25% van de grootste plank.
         no_parts: Geen enkel onderdeel.
         no_sheet: Het standaard paneel is niet correct geconfigureerd en geen enkel overschot is gedefinieerd.
@@ -623,9 +614,13 @@ tab:
       title: Etiketten
       options_layout: Layout
       options_settings: Configuratie
+      options_offset: Offset
       size: Ware grootte van het etiket
       add_element: Voeg een element toe
       remove_element: Verwijder
+      offset_help: |
+        De *marge* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
+        Selecteer de box die overeenkomt met uw keuze.
       option_page: Papier
       option_page_format: Formaat
       option_page_format_portrait: Portret
@@ -657,6 +652,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Beschrijving
+        part_entity_named_path: Instantie pad
         part_entity_name: Naam onderdeel
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
