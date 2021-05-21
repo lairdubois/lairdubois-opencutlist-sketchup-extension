@@ -137,7 +137,7 @@ tab:
     label: Części
     title: Lista części
     help: |
-      Wybierz części z listy w bieżącej scenie i kliknij klawisz **Wygeneruj**.
+      Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
       Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części
     selection_only: Wybór
     material_undefined: Brak zdefiniowanego materiału
@@ -393,7 +393,7 @@ tab:
       cutting: Wstępny
       bbox: Końcowa
       final: Rzeczywisty
-      total_cutting: Σ Wstępny
+      total_cutting: Σ - wymiary przybliżone
       total_final: Σ Rzeczywisty
       length: Długość
       length_short: dł.
@@ -474,19 +474,21 @@ tab:
       options_material: Materiał
       options_config: Konfiguracja
       options_display: Wyświetlanie
-      option_bar_folding: Grupuj podobne płyty
+      option_bar_folding_dimensional: Grupuj podobne płyty
+      option_bar_folding_edge: Grupuj podobne obrzeża
       option_bar_folding_0: Nie
       option_bar_folding_1: Tak
-      option_bar_folding_help: "Grupuj płyty mające te same części lub cięcia. "
+      option_bar_folding_help: Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
       option_sheet_folding: Grupuj podobne arkusze
       option_sheet_folding_0: Nie
       option_sheet_folding_1: Tak
       option_sheet_folding_help: Grupuj arkusze zawierające te same części i cięcia.
       option_hide_part_list: Lista części
-      option_hide_part_list_1d_0: Wyświetlana dla każdej płyty
+      option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
+      option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
       option_hide_part_list_2d_0: Wyświetlane dla każdego arkusza
       option_hide_part_list_1: Zamaskowana
-      option_hide_part_list_1d_help: Wyświetl lub zamaskuj listę części dla każdej płyty.
+      option_hide_part_list_1d_help: Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
       option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
       option_origin_corner: Pozycja początku
       option_origin_corner_1d_0: Z lewej
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Dolny lewy narożnik
       option_origin_corner_2d_2: Górny prawy róg
       option_origin_corner_2d_3: Dolny prawy róg
-      option_origin_corner_1d_help: Określa położenie początkowe układu współrzędnych do wyświetlania części na wymiarowej tarcicy.
+      option_origin_corner_1d_help: Określa początek współrzędnych do wyświetlania części płyt lub obrzeży.
       option_origin_corner_2d_help: Określa początek współrzędnych do wyświetlania części na arkuszach.
       option_full_width_diagram: Wyświetlanie na całej szerokości
       option_full_width_diagram_0: Nie
       option_full_width_diagram_1: Tak
       option_full_width_diagram_help: "Jeśli ta opcja jest włączona, schematy cięć są wyświetlane na całej szerokości. W przeciwnym razie ich szerokość jest zdefiniowana przez stały współczynnik skalowania."
       option_wrap_length: Długość deski w jednej lini
-      option_wrap_length_help: Maksymalna długość powyżej której deska będzie rozdzielona na wiele linii.
+      option_wrap_length_help: Maksymalna długość po której deska lub obrzeże będzie dzielone na wiele lini.
       option_hide_cross: Ścinki
       option_hide_cross_0: Wymiary i Przekreślenie
       option_hide_cross_1: Tylko wymiary
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Grubość linii cięcia
       option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
       option_trimming: Rozmiar przycinania
-      option_trimming_help_1d: Ilość materiału na każdym końcu płyty potraktowana jako odpad.
+      option_trimming_help_1d: Ilość materiału na każdym końcu deski lub obrzeża traktowany jako odpad.
       option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.
       option_optimization: Poziom optymalizacji
       option_optimization_help: "Poziom optymalizacji określa ilość obliczanych możliwości, a tym samym również czas obliczeń."
@@ -526,34 +528,22 @@ tab:
       option_stacking_1: Na całej długości
       option_stacking_2: Na całej szerokości
       option_stacking_3: Wszystkie możliwości
-      option_std_bar: Płyta standardowa
+      option_std_bar_dimensional: Płyta o standardowych wymiarach
+      option_std_bar_edge: Standardowy rozmiar obrzeża
       option_std_bar_help: |
-        Wybierz deskę standardową, która zostanie zduplikowana, aby zawierała wszystkie części.
-        Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
-        Edytuj materiał '{{ material_name }}' aby uzupełnić tę listę.
+        Wybierz standardową płytę lub obrzeże, która będzie duplikowana aby najlepiej pomieścić wszystkie części.
+        Ta lista jest zdefiniowana w polu **$t(tab.materials.edit_material.std_lengths)** materiału.
+        Aby uaktualnić tą listę edytuj materiał '{{ material_name }}'.
       option_std_bar_add: Dodaj długość ...
       option_std_bar_none: Żaden
-      option_scrap_bar_lengths: Odpady do wykorzystania
+      option_scrap_bar_dimensional_lengths: Odpady do wykorzystania
+      option_scrap_bar_edge_lengths: Odpady obrzeży
       option_scrap_bar_lengths_placeholder: długość x ilość ; ...
       option_scrap_bar_lengths_help: |
-        Podaj wszystkie odpady które chcesz uwzględnić jako pierwsze w rozkroju.
-        Oczekiwany format: **długość x ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
-        Ilość jest opcjonalna
-        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
-      option_std_band: Obrzeża standardowe
-      option_std_band_help: |
-        Wybierz rozmiar standardowego obrzeża, które zostanie powielone, i dopasowane do wszystkich krawędzi.
-        Lista jest definowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
-        Edytuj material '{{ material_name }}' aby zaktualizować listę.
-      option_std_band_add: Dodaj długość ...
-      option_std_band_none: Brak
-      option_scrap_band_lengths: Odpady obrzeży
-      option_scrap_band_lengths_placeholder: długość x ilość ; ...
-      option_scrap_band_lengths_help: |
-        Lista odpadów obrzeży, które powinny być najpierw brane pod uwagę w rozkroju.
-        Oczekiwany format: **Dł**x**Il.**, gdzie **Dł** to *długość* odpadu, a **Il.** to ilość.
+        Podaj wszystkie odpady płyt lub obrzeży które chcesz uwzględnić jako pierwsze w rozkroju.
+        Oczekiwany format: **długość**x**ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
         Ilość jest opcjonalna.
-        *Rozmiary bez jednostek są traktowane jakby były w jednostkach modelu.*
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       option_std_sheet: Arkusz standardowy
       option_std_sheet_help: |
         Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
@@ -569,7 +559,7 @@ tab:
         Ilość jest opcjonalna
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       tooltip:
-        scroll_to_block_1d: Przewiń do pierwszej deski
+        scroll_to_block_1d: Przewiń do pierwszej deski lub obrzeża
         scroll_to_block_2d: Przewiń do pierwszego arkusza
       list:
         unplaced_parts: Elementy nie rozmieszczone na rozkroju
@@ -590,10 +580,10 @@ tab:
         cut: Cięcie
         cut_final: Cięcie główne (poziom 1)
         cut_through: Cięcie główne (poziom 2)
-        bar_type_0: Płyta o standardowych wymiarach
-        bar_type_1: Odpad
-        band_type_0: Standardowy rozmiar obrzeża
-        band_type_1: Odpady obrzeży
+        bar_dimensional_type_0: Płyta o standardowych wymiarach
+        bar_dimensional_type_1: Odpad
+        bar_edge_type_0: Standardowy rozmiar obrzeża
+        bar_edge_type_1: Odpady obrzeży
         sheet_type_0: Arkusz o standardowych wymiarach
         sheet_type_1: Odpad
         unused: Nieużywane
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} części"
         settings: Ustawienia
       error:
-        no_bar: Standardowa płyta nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
-        parameters: Parametry są błędne. Margines jest większy o 25% niż najdłuższa płyta.
+        no_bar_dimensional: Standardowa płyta nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
+        no_bar_edge: Standardowe obrzeże nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
+        parameters: Parametry są niepoprawne. Rozmiar przycinania jest większy niż 25% najdłuższej płyty lub obrzeża.
         no_parts: Brak części
         no_sheet: Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
         no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...). "
@@ -623,9 +614,13 @@ tab:
       title: Etykiety
       options_layout: Układ
       options_settings: Konfiguracja
+      options_offset: Przesunięcie
       size: Rzeczywisty rozmiar etykiety
       add_element: Dodaj element
       remove_element: Usuń
+      offset_help: |
+        *Przesunięcie* pozwala zdefiniować pozycję **pierwszej etykiety** na **pierwszej stronie**.
+        Wybierz opcję zgodną ze swoim wyboremm.
       option_page: Rozmiar Papieru
       option_page_format: Format
       option_page_format_portrait: Orientacja pionowa
@@ -657,6 +652,7 @@ tab:
       formula:
         part_number: Numer
         part_name: Opis
+        part_entity_named_path: Scieżka instancji
         part_entity_name: Nazwa instancji
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
