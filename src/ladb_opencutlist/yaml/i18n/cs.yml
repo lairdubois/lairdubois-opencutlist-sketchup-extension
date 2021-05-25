@@ -197,7 +197,7 @@ tab:
       resized: Tato část byla změněna s ohledem na definici její součásti
       flipped: Tato část je zrcadlena ve srovnání s definicí komponenty
       symmetrical: Detekce zrcadleného dílu je u této součásti zakázána
-      ignore_grain_direction: Směr zrna je v této části ignorován
+      ignore_grain_direction: Směr let je v této části ignorován
       auto_oriented: Tato část byla automaticky přeorientována
       add_label_filter: "Filtrování zapnuto '{{ label }}'"
       remove_label_filter: "Odstranit filtrování '{{ label }}'"
@@ -224,7 +224,7 @@ tab:
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
-      dblclick_to_copy_all_edges: 2x kliknutím zde duplikujete tuto hodnotu na ostatní hrany
+      dblclick_to_copy_all_edges: Dvojklikem zde duplikujete tuto hodnotu na ostatní hrany
       dblclick_to_sort_axes: Dvojklikem zde automaticky změníte pořadí os podle rozměrů dílu.
       part_axes: Vnitřní osy dílu
       select_unselect_all_parts: Výberte/zruště výběr dílců ve skupině
@@ -287,7 +287,7 @@ tab:
       symmetrical: Zakázat detekci zrcadleného dílu na tomto dílu
       symmetrical_help: |
         Pokud je toto políčko zaškrtnuto, detekce *zrcadlené části* nebude mít na tuto část žádný vliv.
-      ignore_grain_direction: Na této části ignorujte směr zrna
+      ignore_grain_direction: Na této části ignorujte směr let
       ignore_grain_direction_help: |
         Pokud je toto políčko zaškrtnuto, bude směr zrna materiálu pro tuto část ignorován.
       size_increase: Nadmíry
@@ -474,19 +474,21 @@ tab:
       options_material: Materiál
       options_config: Konfigurace
       options_display: Zobrazit
-      option_bar_folding: Seskupit podobné desky
+      option_bar_folding_dimensional: Seskupit podobné desky
+      option_bar_folding_edge: Seskupte podobné hrany
       option_bar_folding_0: Ne
       option_bar_folding_1: Ano
-      option_bar_folding_help: Seskupit desky se stejnými dílci a řezy.
+      option_bar_folding_help: Seskupte desky nebo hrany obsahující stejné části a řezy.
       option_sheet_folding: Seskupte podobné panely
       option_sheet_folding_0: Ne
       option_sheet_folding_1: Ano
       option_sheet_folding_help: Seskupte panely se stejnými dílci a řezy.
       option_hide_part_list: Kusovník
-      option_hide_part_list_1d_0: Zobrazit všechny desky
+      option_hide_part_list_1d_dimensional_0: Zobrazit všechny desky
+      option_hide_part_list_1d_edge_0: Zobrazit všechno hranování
       option_hide_part_list_2d_0: Zobrazit pro všechny panely
       option_hide_part_list_1: Skrytý
-      option_hide_part_list_1d_help: Zobrazit nebo skrýt seznam dílců pro každou desku.
+      option_hide_part_list_1d_help: Zobrazit nebo skrýt seznam dílů pro každou desku nebo olepování hran.
       option_hide_part_list_2d_help: Zobrazte nebo skryjte seznam dílů pro každý panel.
       option_origin_corner: Původní pozice
       option_origin_corner_1d_0: Zleva
@@ -495,14 +497,14 @@ tab:
       option_origin_corner_2d_1: Levý dolní roh
       option_origin_corner_2d_2: Pravý horní roh
       option_origin_corner_2d_3: Pravý dolní roh
-      option_origin_corner_1d_help: Určuje polohu počátku souřadnic pro zobrazení dílů ve sloupcích.
+      option_origin_corner_1d_help: Určuje počáteční polohu souřadnicového systému pro zobrazení částí přířezů nebo olepování hran.
       option_origin_corner_2d_help: Určuje polohu počátku souřadnic pro zobrazení dílů v panelech.
       option_full_width_diagram: Zobrazení na celou šířku
       option_full_width_diagram_0: Ne
       option_full_width_diagram_1: Ano
       option_full_width_diagram_help: "Pokud je tato možnost aktivována, zobrazí se řezné diagramy s dostupnou šířkou. Jinak je jejich šířka definována měřítkem v závislosti na všech diagramech."
       option_wrap_length: Délka balení
-      option_wrap_length_help: "Maximální délka, po které bude deska seskupena z více desek."
+      option_wrap_length_help: "Maximální délka, po které bude dílec nebo ořezání zabaleno do více řádků."
       option_hide_cross: Odřezky
       option_hide_cross_0: Rozměry a kříž
       option_hide_cross_1: Pouze rozměry
@@ -514,7 +516,7 @@ tab:
       option_saw_kerf: Tloušťka pilového kotouče
       option_saw_kerf_help: Šířka materiálu ztraceného ořezáním.
       option_trimming: Okraj
-      option_trimming_help_1d: "Množství materiálu na každém konci desky, který má být zpracován jako odpad."
+      option_trimming_help_1d: "Množství materiálu na každém konci desky nebo olepování hran, které má být zpracováno jako odpad."
       option_trimming_help_2d: "Množství materiálu kolem hrubého panelu, které má být zpracován jako odpad."
       option_optimization: Úroveň optimalizace
       option_optimization_help: "Úroveň optimalizace definuje počet vypočítaných možností, a tedy i dobu výpočtu."
@@ -526,34 +528,22 @@ tab:
       option_stacking_1: Po délce
       option_stacking_2: Po šířce
       option_stacking_3: Všechny možnosti
-      option_std_bar: Standardní deska
+      option_std_bar_dimensional: Standardní rozměry
+      option_std_bar_edge: Standardní hrana
       option_std_bar_help: |
-        Vyberte standardní desku, která bude duplikována tak, aby obsahovala všechny součásti.
+        Vyberte standardní desku nebo hranu, které budou duplikovány, aby obsahovaly všechny části.
         Tento seznam je definován v poli **$t(tab.materials.edit_material.std_lengths)** materiálu.
         Upravte materiál '{{ material_name }}' a aktualizujte tento seznam.
       option_std_bar_add: Přidat délku ...
       option_std_bar_none: Žádný
-      option_scrap_bar_lengths: Zbytky
+      option_scrap_bar_dimensional_lengths: Zbytky
+      option_scrap_bar_edge_lengths: Odříznuté okrajové pásy
       option_scrap_bar_lengths_placeholder: délka x množství ; ...
       option_scrap_bar_lengths_help: |
-        Seznam zbytků, které by měly být považovány za první v nářezovém plánu
-        Očekávaný formát: **D** x **M**, kde **D** je *délka* zbytku a **M** množství.
+        Seznam řezaných desek nebo okrajových pásků, které je třeba vzít v úvahu jako první v řezacím diagramu.
+        Očekávaný formát: **D** x **M**, kde **D** je *délka* odřezku a **M** množství.
         Množství je volitelné.
-        *Velikosti bez jednotek použije jednoty z modelových jednotek.*
-      option_std_band: Standardní hrana
-      option_std_band_help: |
-        Vyberte standardní hrana, která bude duplikována tak, aby obsahovala všechny součásti.
-        Tento seznam je definován v poli **$t(tab.materials.edit_material.std_lengths)** materiálu.
-        Upravte materiál '{{ material_name }}' a aktualizujte tento seznam.
-      option_std_band_add: Přidat délku ...
-      option_std_band_none: Ne skládat
-      option_scrap_band_lengths: Odříznuté okrajové pásy
-      option_scrap_band_lengths_placeholder: délka x množství ; ...
-      option_scrap_band_lengths_help: |
-        Seznam pásů odříznutých hran, které by měly být považovány za první v nářezovém plánu
-        Očekávaný formát: **D** x **M**, kde **D** je *délka* zbytku a **M** množství.
-        Množství je volitelné.
-        *Velikosti bez jednotek použije jednoty z modelových jednotek.*
+        *Velikosti bez jednotek se považují za velikosti v modelových jednotkách.*
       option_std_sheet: Standardní tabule
       option_std_sheet_help: |
         Vybere standardní panel, který bude duplikován, abychom vypočítali nejlepší možné umístění.
@@ -569,7 +559,7 @@ tab:
         Množství je volitelné.
         *Velikosti bez jednotek použije jednoty z modelových jednotek.*
       tooltip:
-        scroll_to_block_1d: Přejít na první desku
+        scroll_to_block_1d: Přejděte na první dílec nebo hranu
         scroll_to_block_2d: Přejít na první panel
       list:
         unplaced_parts: Neumístěné dílce
@@ -590,10 +580,10 @@ tab:
         cut: Řez
         cut_final: Primární řez (úroveň 1)
         cut_through: Primární řez (úroveň 2)
-        bar_type_0: Standardní velikost desky
-        bar_type_1: Odřezky
-        band_type_0: Standardní hrana
-        band_type_1: Odříznutý okrajový pás
+        bar_dimensional_type_0: Standardní rozměry
+        bar_dimensional_type_1: Odřezky
+        bar_edge_type_0: Standardní hrana
+        bar_edge_type_1: Odříznutý okrajový pás
         sheet_type_0: Standardní velikost tabule
         sheet_type_1: Odřezky
         unused: Nepoužitý
@@ -601,8 +591,9 @@ tab:
         parts_plural: "{{ count }} dílců"
         settings: Nastavení
       error:
-        no_bar: Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
-        parameters: Parametry nejsou správné. Velikost ořezu je větší než 25% desky.
+        no_bar_dimensional: Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
+        no_bar_edge: Standardní olepování hran nebylo správně nakonfigurováno a nebyly definovány žádné zbytky.
+        parameters: Parametry jsou nesprávné. Velikost ořezu je větší než 25% nejdelší desky nebo hrany.
         no_parts: Žádný dílec
         no_sheet: Standardní velikosti panelů je špatně nakonfigurována a nejsou k dispozici žádné zbytky.
         no_placement_possible: "Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...)."
@@ -623,9 +614,13 @@ tab:
       title: Štítky
       options_layout: Rozložení
       options_settings: Konfigurace
+      options_offset: Offset
       size: Skutečná velikost štítku
       add_element: Přidejte prvek
       remove_element: Odstranit
+      offset_help: |
+        *Offset* umožňuje definovat pozici **prvního štítku** na **první stránce**.
+        Zaškrtněte políčko, které odpovídá vašemu výběru.
       option_page: Velikost papíru
       option_page_format: Formát
       option_page_format_portrait: Na výšku
@@ -657,6 +652,7 @@ tab:
       formula:
         part_number: Číslo
         part_name: Popis
+        part_entity_named_path: Cesta instance
         part_entity_name: Název instance
         part_cutting_size: Hrubé rozměry
         part_cutting_length: Hrubá délka
