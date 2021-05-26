@@ -1936,7 +1936,6 @@
     };
 
     LadbTabCutlist.prototype.showAllGroups = function ($slide, doNotSaveState) {
-        console.log('showAllGroups', $slide, doNotSaveState);
         var that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
             that.showGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
@@ -1946,7 +1945,6 @@
     };
 
     LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId, $slide, doNotSaveState) {
-        console.log('hideAllGroups', exceptedGroupId, $slide, doNotSaveState);
         var that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
             var groupId = $(this).data('group-id');
@@ -2474,17 +2472,25 @@
         var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve parts to use
-        var parts;
-        if (selectionOnly) {
-            parts = [];
-            $.each(group.parts, function (index) {
-                if (that.selectionPartIds.includes(this.id)) {
+        var fnAppendPart = function(parts, part) {
+            if (part.children) {
+                $.each(part.children, function (index) {
                     parts.push(this);
+                });
+            } else {
+                parts.push(part);
+            }
+        };
+        var parts = [];
+        $.each(group.parts, function (index) {
+            if (selectionOnly) {
+                if (that.selectionPartIds.includes(this.id)) {
+                    fnAppendPart(parts, this);
                 }
-            });
-        } else {
-            parts = group.parts;
-        }
+            } else {
+                fnAppendPart(parts, this);
+            }
+        });
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {
@@ -2741,8 +2747,8 @@
                                 }
                                 page.part_infos.push({
                                     position_in_batch: i,
-                                    entity_named_path: flatPathsAndNames[i - 1].path,
-                                    entity_name: flatPathsAndNames[i - 1].name,
+                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
+                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
                                     part: this
                                 });
                                 gIndex++;
