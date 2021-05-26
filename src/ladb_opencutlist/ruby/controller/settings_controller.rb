@@ -48,11 +48,13 @@ module Ladb::OpenCutList
       top = settings['top']
       left = settings['left']
       zoom = settings['zoom']
+      print_margin = settings['print_margin']
 
       Plugin.instance.set_language(language, true)
       Plugin.instance.dialog_set_size(width, height, true)
       Plugin.instance.dialog_set_position(left, top, true)
       Plugin.instance.dialog_set_zoom(zoom, true)
+      Plugin.instance.dialog_set_print_margin(print_margin, true)
 
     end
 

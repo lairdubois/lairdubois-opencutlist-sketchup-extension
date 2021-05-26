@@ -279,6 +279,28 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
     return this._$modal;
 };
 
+// Print /////
+
+LadbAbstractTab.prototype.print = function (margin) {
+
+    if (margin === undefined) {
+        if (this.dialog.capabilities.dialog_print_margin === '1') {     /* 1 = Small */
+            margin = '5mm 5mm 15mm 5mm';
+        }
+    }
+
+    // Retrieve and modifiy Page rule to set margin to desired one
+    var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
+    cssPageRuleStyle.margin = margin;
+
+    // Print
+    window.print();
+
+    // Retore margin
+    cssPageRuleStyle.margin = '';
+
+};
+
 // Action /////
 
 LadbAbstractTab.prototype.registerCommand = function (command, block) {

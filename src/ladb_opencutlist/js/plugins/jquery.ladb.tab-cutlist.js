@@ -859,7 +859,7 @@
                                 that.reportCutlist();
                             });
                             $btnPrint.on('click', function () {
-                                window.print();
+                                that.print();
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
@@ -2117,7 +2117,7 @@
                                 that.cuttingdiagram1dGroup(groupId);
                             });
                             $btnPrint.on('click', function () {
-                                window.print();
+                                that.print();
                             });
                             $btnLabels.on('click', function () {
                                 that.labelsGroup(groupId);
@@ -2378,7 +2378,7 @@
                             that.cuttingdiagram2dGroup(groupId);
                         });
                         $btnPrint.on('click', function () {
-                            window.print();
+                            that.print();
                         });
                         $btnLabels.on('click', function () {
                             that.labelsGroup(groupId);
@@ -2780,18 +2780,7 @@
                         that.labelsGroup(groupId);
                     });
                     $btnPrint.on('click', function () {
-
-                        // Retrieve and modifiy Page rule to set margin to 0
-                        var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
-                        var tmpMargin = cssPageRuleStyle.margin;
-                        cssPageRuleStyle.margin = '0';
-
-                        // Print
-                        window.print();
-
-                        // Retore margin
-                        cssPageRuleStyle.margin = tmpMargin;
-
+                        that.print('0');
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
@@ -3170,7 +3159,7 @@
             this.blur();
         });
         this.$btnPrint.on('click', function () {
-            window.print();
+            that.print();
             this.blur();
         });
         this.$btnExport.on('click', function () {

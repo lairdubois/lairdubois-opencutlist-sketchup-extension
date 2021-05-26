@@ -101,6 +101,7 @@
         var $btnLeftDown = $('#ladb_btn_left_down', this.$element);
         var $btnTopUp = $('#ladb_btn_top_up', this.$element);
         var $btnTopDown = $('#ladb_btn_top_down', this.$element);
+        var $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
 
         var fnUpdate = function () {
 
@@ -117,7 +118,8 @@
                 height: that.dialog.capabilities.dialog_maximized_height,
                 left: that.dialog.capabilities.dialog_left,
                 top: that.dialog.capabilities.dialog_top,
-                zoom: that.dialog.capabilities.dialog_zoom
+                zoom: that.dialog.capabilities.dialog_zoom,
+                print_margin: that.dialog.capabilities.dialog_print_margin
             });
 
         };
@@ -136,6 +138,11 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
         ;
 
+        $selectPrintMargin
+            .val(this.dialog.capabilities.dialog_print_margin)
+            .selectpicker(SELECT_PICKER_OPTIONS)
+        ;
+
         // Bind
         $selectLanguage.on('change', function () {
             that.dialog.capabilities.language = $selectLanguage.val();
@@ -146,6 +153,10 @@
             that.dialog.capabilities.dialog_zoom = $selectZoom.val();
             fnUpdate();
         });
+        $selectPrintMargin.on('change', function () {
+            that.dialog.capabilities.dialog_print_margin = $selectPrintMargin.val();
+            fnUpdate();
+        });
         $btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
@@ -154,6 +165,7 @@
             that.dialog.capabilities.dialog_left = 60;
             that.dialog.capabilities.dialog_top = 100;
             that.dialog.capabilities.dialog_zoom = '100%';
+            that.dialog.capabilities.dialog_print_margin = '0';
             fnUpdate();
             that.showReloadAlert();
             return false;

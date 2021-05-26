@@ -49,6 +49,7 @@
             dialog_left: options.dialog_left,
             dialog_top: options.dialog_top,
             dialog_zoom: options.dialog_zoom,
+            dialog_print_margin: options.dialog_print_margin,
         };
 
         this.settings = {};

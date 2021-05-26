@@ -50,6 +50,7 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
     SETTINGS_KEY_DIALOG_ZOOM = 'settings.dialog_zoom'
+    SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
 
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
     DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
@@ -58,6 +59,7 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_DEFAULT_ZOOM = '100%'
+    DIALOG_DEFAULT_PRINT_MARGIN = '0'   # 0 = Normal, 1 = Small
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     # -----
@@ -89,6 +91,7 @@ module Ladb::OpenCutList
       @dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, DIALOG_DEFAULT_LEFT)
       @dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, DIALOG_DEFAULT_TOP)
       @dialog_zoom = read_default(SETTINGS_KEY_DIALOG_ZOOM, DIALOG_DEFAULT_ZOOM)
+      @dialog_print_margin = read_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, DIALOG_DEFAULT_PRINT_MARGIN)
 
     end
 
@@ -959,6 +962,15 @@ module Ladb::OpenCutList
       end
     end
 
+    def dialog_set_print_margin(print_margin, persist = false)
+      if @dialog
+        if persist
+          @dialog_print_margin = print_margin
+          write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin)
+        end
+      end
+    end
+
     def execute_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
 
       show_dialog(nil, true) do
@@ -1223,6 +1235,7 @@ module Ladb::OpenCutList
           :dialog_left => @dialog_left,
           :dialog_top => @dialog_top,
           :dialog_zoom => @dialog_zoom,
+          :dialog_print_margin => @dialog_print_margin,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
     end

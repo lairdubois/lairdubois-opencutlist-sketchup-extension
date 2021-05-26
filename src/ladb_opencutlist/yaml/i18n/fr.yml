@@ -971,6 +971,9 @@ tab:
     zoom_normal: Normale
     zoom_small: Petite
     zoom_tiny: Très petite
+    print_margin: Marges d'impression
+    print_margin_normal: Normales
+    print_margin_small: Petites
     size_and_position: Taille et position de la fenêtre
     model_settings: Préférences du modèle
     length_unit: Unité de longueur

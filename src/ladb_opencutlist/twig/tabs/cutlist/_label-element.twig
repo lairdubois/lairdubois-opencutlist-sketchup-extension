@@ -15,7 +15,7 @@
     {% set rectPartWidth = areaSize * (proportional ? part_info.part.l_ratio : 1) - plainStrokeWidth %}
     {% set rectPartHeight = areaSize * (proportional ? part_info.part.w_ratio : 1) - plainStrokeWidth %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
-        <rect x="0" y="0" width="{{ rectPartWidth }}" height="{{ rectPartHeight }}" fill="#ffffff" stroke="none" />
+        <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
         <g>
             {% set arrowMargin = minUnit / 4 %}
             {% set arrowX = arrowMargin %}
