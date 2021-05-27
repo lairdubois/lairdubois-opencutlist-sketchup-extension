@@ -59,7 +59,7 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_DEFAULT_ZOOM = '100%'
-    DIALOG_DEFAULT_PRINT_MARGIN = '0'   # 0 = Normal, 1 = Small
+    DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     # -----
@@ -963,11 +963,9 @@ module Ladb::OpenCutList
     end
 
     def dialog_set_print_margin(print_margin, persist = false)
-      if @dialog
-        if persist
-          @dialog_print_margin = print_margin
-          write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin)
-        end
+      if persist
+        @dialog_print_margin = print_margin
+        write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin)
       end
     end
 

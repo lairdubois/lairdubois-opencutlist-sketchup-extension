@@ -153,7 +153,7 @@
             fnGlobalUpdate();
         });
         $selectPrintMargin.on('change', function () {
-            that.dialog.capabilities.dialog_print_margin = $selectPrintMargin.val();
+            that.dialog.capabilities.dialog_print_margin = parseInt($selectPrintMargin.val());
             fnGlobalUpdate();
         });
         $btnReset.on('click', function () {
@@ -164,7 +164,7 @@
             that.dialog.capabilities.dialog_left = 60;
             that.dialog.capabilities.dialog_top = 100;
             that.dialog.capabilities.dialog_zoom = '100%';
-            that.dialog.capabilities.dialog_print_margin = '0';
+            that.dialog.capabilities.dialog_print_margin = 0;
             fnGlobalUpdate();
             fnGlobalFillInputs();
             that.showReloadAlert();
