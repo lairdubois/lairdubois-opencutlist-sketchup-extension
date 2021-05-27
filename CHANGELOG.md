@@ -8,6 +8,7 @@ in 2.x, 1.x and 0.x versions.
 
   * Added labels start offset
   * Added entity named path field in Labels
+  * Added print margin option in settings tab
 
 * 2.0.1 (2021-04-13)
 
