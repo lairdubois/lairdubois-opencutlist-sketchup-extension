@@ -652,7 +652,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descrição
-        part_entity_named_path: ""
+        part_entity_named_path: Caminho da instância
         part_entity_name: Nome da instância
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado
@@ -967,10 +967,14 @@ tab:
     title: Preferências
     global_settings: Preferências Globais
     language: Idioma
+    language_auto: Automático
     zoom: Tamanho da fonte
     zoom_normal: Normal
     zoom_small: Pequena
     zoom_tiny: Minúscula
+    print_margin: Margens de impressão
+    print_margin_normal: Normais
+    print_margin_small: Pequenas
     size_and_position: Tamanho e posição da janela
     model_settings: Preferências de modelo
     length_unit: Unidade de comprimento

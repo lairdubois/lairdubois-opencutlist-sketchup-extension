@@ -967,10 +967,14 @@ tab:
     title: Benutzereinstellungen
     global_settings: Globale Einstellungen
     language: Sprache
+    language_auto: Automatisch
     zoom: Schriftgröße
     zoom_normal: Normal
     zoom_small: Klein
     zoom_tiny: Sehr klein
+    print_margin: Druckränder
+    print_margin_normal: Normal
+    print_margin_small: Klein
     size_and_position: Größe und Position des Fensters
     model_settings: Modell-Einstellungen
     length_unit: Längeneinheit

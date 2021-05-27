@@ -967,10 +967,14 @@ tab:
     title: Gebruikersinstellingen
     global_settings: Globale instellingen
     language: Taal
+    language_auto: Automaat
     zoom: Lettergrootte
     zoom_normal: Normaal
     zoom_small: Klein
     zoom_tiny: Zeer klein
+    print_margin: Marges afdrukken
+    print_margin_normal: Normale
+    print_margin_small: Kleine
     size_and_position: Grootte en positie van het venster
     model_settings: Modelinstellingen
     length_unit: Lengte-eenheid

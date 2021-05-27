@@ -967,10 +967,14 @@ tab:
     title: Preferencias
     global_settings: Preferencias Globales
     language: Idioma
+    language_auto: Automático
     zoom: Tamaño de letra
     zoom_normal: Normal
     zoom_small: Pequeño
     zoom_tiny: Minúsculo
+    print_margin: Márgenes de impresión
+    print_margin_normal: Normales
+    print_margin_small: Pequeños
     size_and_position: Tamaño y posición de la ventana
     model_settings: Preferencias del modelo
     length_unit: Unidad de longitud

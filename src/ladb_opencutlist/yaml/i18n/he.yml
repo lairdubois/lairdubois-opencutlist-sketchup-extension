@@ -967,10 +967,14 @@ tab:
     title: הגדרות
     global_settings: הגדרות כלליות
     language: שפה
+    language_auto: אוֹטוֹמָטִי
     zoom: גודל טקסט
     zoom_normal: רגיל
     zoom_small: קטן
     zoom_tiny: קטן מאוד
+    print_margin: שוליים להדפסה
+    print_margin_normal: נוֹרמָלִי
+    print_margin_small: קָטָן
     size_and_position: גודל ומיקום חלון
     model_settings: הגדרות מודל
     length_unit: יחידת אורך
