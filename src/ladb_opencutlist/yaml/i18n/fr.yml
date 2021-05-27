@@ -967,6 +967,7 @@ tab:
     title: Préférences
     global_settings: Préférences globales
     language: Langue
+    language_auto: Automatique
     zoom: Taille de texte
     zoom_normal: Normale
     zoom_small: Petite

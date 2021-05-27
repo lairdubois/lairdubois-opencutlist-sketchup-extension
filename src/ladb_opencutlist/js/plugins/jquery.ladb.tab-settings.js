@@ -103,7 +103,7 @@
         var $btnTopDown = $('#ladb_btn_top_down', this.$element);
         var $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
 
-        var fnUpdate = function () {
+        var fnGlobalUpdate = function () {
 
             // Adjust min limits
             that.dialog.capabilities.dialog_maximized_width = Math.max(580, that.dialog.capabilities.dialog_maximized_width);
@@ -123,39 +123,38 @@
             });
 
         };
+        var fnGlobalFillInputs = function () {
+            $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
+            $selectZoom.selectpicker('val', that.dialog.capabilities.dialog_zoom);
+            $selectPrintMargin.selectpicker('val', that.dialog.capabilities.dialog_print_margin);
+        }
 
-        $selectLanguage
-            .val(this.dialog.capabilities.language)
-            .selectpicker(SELECT_PICKER_OPTIONS)
-        ;
+        $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, {
+            noneSelectedText: i18next.t('tab.settings.language_auto')
+        }));
+        $selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
 
         $selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
         if (this.dialog.capabilities.dialog_zoom !== '100%') {
             $selectZoom.show();
         }
-        $selectZoom
-            .val(this.dialog.capabilities.dialog_zoom)
-            .selectpicker(SELECT_PICKER_OPTIONS)
-        ;
 
-        $selectPrintMargin
-            .val(this.dialog.capabilities.dialog_print_margin)
-            .selectpicker(SELECT_PICKER_OPTIONS)
-        ;
+        fnGlobalFillInputs();
 
         // Bind
         $selectLanguage.on('change', function () {
             that.dialog.capabilities.language = $selectLanguage.val();
-            fnUpdate();
+            fnGlobalUpdate();
             that.showReloadAlert();
         });
         $selectZoom.on('change', function () {
             that.dialog.capabilities.dialog_zoom = $selectZoom.val();
-            fnUpdate();
+            fnGlobalUpdate();
         });
         $selectPrintMargin.on('change', function () {
             that.dialog.capabilities.dialog_print_margin = $selectPrintMargin.val();
-            fnUpdate();
+            fnGlobalUpdate();
         });
         $btnReset.on('click', function () {
             $(this).blur();
@@ -166,56 +165,57 @@
             that.dialog.capabilities.dialog_top = 100;
             that.dialog.capabilities.dialog_zoom = '100%';
             that.dialog.capabilities.dialog_print_margin = '0';
-            fnUpdate();
+            fnGlobalUpdate();
+            fnGlobalFillInputs();
             that.showReloadAlert();
             return false;
         });
         $btnWidthUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_width += 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnWidthDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_width -= 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnHeightUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_height += 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnHeightDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_maximized_height -= 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnLeftUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_left += 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnLeftDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_left -= 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnTopUp.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_top += 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
         $btnTopDown.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.dialog_top -= 20;
-            fnUpdate();
+            fnGlobalUpdate();
             return false;
         });
 
