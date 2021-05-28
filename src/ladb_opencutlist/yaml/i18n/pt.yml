@@ -1,5 +1,5 @@
 _label: Português
-_reload_msg: "Para levar em consideração todas as mudanças, você deve **fechar** e **reabrir** a janela OpenCutList."
+_reload_msg: "Para que as mudanças tenha efeito, você deve **fechar** e **reabrir** a janela OpenCutList."
 _description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:
   minimize: Minimizar

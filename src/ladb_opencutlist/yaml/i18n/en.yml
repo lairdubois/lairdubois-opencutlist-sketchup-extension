@@ -973,7 +973,7 @@ tab:
     zoom_small: Small
     zoom_tiny: Tiny
     print_margin: Print margins
-    print_margin_normal: Normale
+    print_margin_normal: Normal
     print_margin_small: Small
     size_and_position: Size and Position of the Window
     model_settings: Model Preferences
