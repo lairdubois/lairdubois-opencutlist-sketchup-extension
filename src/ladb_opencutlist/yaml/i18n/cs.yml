@@ -967,10 +967,14 @@ tab:
     title: Předvolby
     global_settings: Globální preference
     language: Jazyk
+    language_auto: Automatický
     zoom: Velikost písma
     zoom_normal: Normální
     zoom_small: Malý
     zoom_tiny: Drobný
+    print_margin: Tisk okrajů
+    print_margin_normal: Normální
+    print_margin_small: Malé
     size_and_position: Velikost a umístění okna
     model_settings: Předvolby modelu
     length_unit: Jednotka délky

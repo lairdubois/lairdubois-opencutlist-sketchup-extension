@@ -967,10 +967,14 @@ tab:
     title: التفضيلات
     global_settings: التفضيلات العامة
     language: اللغة
+    language_auto: تلقائي
     zoom: حجم الخط
     zoom_normal: عادي
     zoom_small: صغير
     zoom_tiny: بالغ الصغر
+    print_margin: هوامش الطباعة
+    print_margin_normal: العادية
+    print_margin_small: صغيرة
     size_and_position: حجم و موضع النافذة
     model_settings: تفضيلات النموذج
     length_unit: وحدة الطول
