@@ -4,11 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
-* 2.1.0 (WIP)
+* 2.1.0 (2021-05-28)
 
   * Added labels start offset
   * Added entity named path field in Labels
   * Added print margin option in settings tab
+  * Cleaner drawing of the arrow in the highlight tool for front and back view
+  * Better handling of summable length/width in the parts list. _Rough dimensions are shown when part is summable, even if the part has no oversize to make the sorting order more obvious._
 
 * 2.0.1 (2021-04-13)
 
