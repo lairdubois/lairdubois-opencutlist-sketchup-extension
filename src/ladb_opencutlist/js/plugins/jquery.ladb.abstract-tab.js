@@ -286,6 +286,8 @@ LadbAbstractTab.prototype.print = function (margin) {
     if (margin === undefined) {
         if (this.dialog.capabilities.dialog_print_margin === 1) {     /* 1 = Small */
             margin = '0.25in 0.25in 0.5in 0.25in';
+        } else {
+            margin = '';
         }
     }
 
@@ -297,7 +299,7 @@ LadbAbstractTab.prototype.print = function (margin) {
     window.print();
 
     // Retore margin
-    cssPageRuleStyle.margin = undefined;
+    cssPageRuleStyle.margin = '';
 
 };
 
