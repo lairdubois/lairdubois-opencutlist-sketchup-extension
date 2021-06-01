@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
+* 2.1.1 (WIP)
+
+  * Fixed forum conversation tag filter
+  
 * 2.1.0 (2021-05-28)
 
   * Added labels start offset

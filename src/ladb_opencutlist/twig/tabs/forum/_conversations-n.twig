@@ -15,7 +15,7 @@
                         <div class="ladb-forum-conversation-summary">{{ conversation.summary|sanitize_links }}</div>
                         <ul class="ladb-forum-conversation-tags">
                             {% for tag in conversation.tags %}
-                                <li><a href="#" class="ladb-forum-tag{% if tag == tagFilter %} ladb-active{% endif %}" data-tag="{{ conversationsTag.tag }}">{{ tag }}</a></li>
+                                <li><a href="#" class="ladb-forum-tag{% if tag == tagFilter %} ladb-active{% endif %}" data-tag="{{ tag }}">{{ tag }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
