@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit
+        part_cutting_thickness: Epaisseur de débit
         part_size: Taille capable
         part_length: Longueur capable
         part_width: Largeur capable
+        part_thickness: Epaisseur capable
         part_tags: Tags
         part_batch: Lot
         part_edge_ymin: Chant longueur 1
