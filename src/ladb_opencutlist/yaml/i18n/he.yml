@@ -657,9 +657,11 @@ tab:
         part_cutting_size: גודל חיתוך
         part_cutting_length: אורך חיתוך
         part_cutting_width: רוחב חיתוך
+        part_cutting_thickness: עובי - חיתוך
         part_size: גודל אפשרי
         part_length: אורך סופי
         part_width: רוחב סופי
+        part_thickness: עובי סופי
         part_tags: תגים
         part_batch: קבוצה
         part_edge_ymin: קאנט לאורך 1

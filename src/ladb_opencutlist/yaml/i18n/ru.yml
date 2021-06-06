@@ -619,8 +619,8 @@ tab:
       add_element: Добавить элемент
       remove_element: Удалить
       offset_help: |
-        *Смещение* позволяет вам установить положение **первой метки** на **первой странице**.
-        Установите флажок, соответствующий вашему выбору.
+        *Смещение* позволяет вам задать положение **первой этикетки** на **первой странице**.
+        Выделите или снимите выделение с позиций, соответствующих вашему выбору.
       option_page: Бумага
       option_page_format: Формат
       option_page_format_portrait: Книжный
@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента
         part_cutting_width: Ширина элемента
+        part_cutting_thickness: Точность раскроя
         part_size: Доступный размер
         part_length: Длина
         part_width: Ширина
+        part_thickness: Толщина
         part_tags: Теги
         part_batch: Партия
         part_edge_ymin: Кромка по длине 1

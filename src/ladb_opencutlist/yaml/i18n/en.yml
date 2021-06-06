@@ -475,7 +475,7 @@ tab:
       options_config: Configuration
       options_display: Display
       option_bar_folding_dimensional: Group similar boards
-      option_bar_folding_edge: Group similar edges
+      option_bar_folding_edge: Group similar edge bandings
       option_bar_folding_0: No
       option_bar_folding_1: Yes
       option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
@@ -537,7 +537,7 @@ tab:
       option_std_bar_add: Add a length ...
       option_std_bar_none: None
       option_scrap_bar_dimensional_lengths: Offcut Boards
-      option_scrap_bar_edge_lengths: Offcut Edge Bands
+      option_scrap_bar_edge_lengths: Offcut Edge Bandings
       option_scrap_bar_lengths_placeholder: length x quantity ; ...
       option_scrap_bar_lengths_help: |
         List the offcut boards or edge bandings which should be considered first in the cutting diagram.
@@ -581,9 +581,9 @@ tab:
         cut_final: Primary cut (level 1)
         cut_through: Primary cut (level 2)
         bar_dimensional_type_0: Standard Dimensional
-        bar_dimensional_type_1: Offcut
-        bar_edge_type_0: Standard Edge Band
-        bar_edge_type_1: Offcut Edge Band
+        bar_dimensional_type_1: Offcut Board
+        bar_edge_type_0: Standard Edge Banding
+        bar_edge_type_1: Offcut Edge Banding
         sheet_type_0: Standard Panel
         sheet_type_1: Offcut
         unused: Unused
@@ -591,12 +591,12 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       error:
-        no_bar_dimensional: The standard board was not correctly configured and no offcuts were defined.
+        no_bar_dimensional: The standard board was not configured correctly and no offcuts were defined.
         no_bar_edge: The standard edge banding was not correctly configured and no offcuts were defined.
-        parameters: Parameters are incorrect. The trimming size is larger than 25% of the longest board or edge banding.
+        parameters: Parameters are incorrect. The trim size is larger than 25% of the longest board or edge banding.
         no_parts: No part.
         no_sheet: Standard panel sizes are misconfigured and no offcuts are available.
-        no_placement_possible: "No placement possible (trimming size too large, standard panel too small, saw kerf too large, ...)."
+        no_placement_possible: "No placement possible (trim size too large, standard panel too small, saw kerf too large, ...)."
         bad_error: "Algorithm error. Please contact the developers, as this is an interesting case."
         unplaced_parts: "**1 part** could not be placed, because it is too large to fit."
         unplaced_parts_plural: "There are **{{ count }} parts** which could not be placed because they are too large to fit."
@@ -619,7 +619,7 @@ tab:
       add_element: Add an element
       remove_element: Remove
       offset_help: |
-        The *offset* allows you to define the position of the **first label** on the **first page**.
+        The *offset* defines the position of the **first label** to be printed on the **first page**.
         Select the box that corresponds to your choice.
       option_page: Paper Size
       option_page_format: Format
@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
+        part_cutting_thickness: Thickness - rough
         part_size: Dimension
         part_length: Length
         part_width: Width
+        part_thickness: Thickness
         part_tags: Tags
         part_batch: Batch
         part_edge_ymin: Edge length 1
@@ -757,7 +759,7 @@ tab:
       std_lengths: Standard Lengths
       std_lengths_placeholder: length ; ...
       std_lengths_help: |
-        Standard lengths of boards or edge bands.
+        Standard lengths of boards or edge bandings.
         *Sizes without units are considered to be in model units.*
       std_widths: Standard Widths
       std_widths_placeholder: width ; ...

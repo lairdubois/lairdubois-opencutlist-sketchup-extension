@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
+        part_cutting_thickness: Grubość - wstępna
         part_size: Wymiar
         part_length: Długość
         part_width: Szerokość
+        part_thickness: Grubość
         part_tags: Oznaczenia
         part_batch: Partia
         part_edge_ymin: Długość krawędzi 1

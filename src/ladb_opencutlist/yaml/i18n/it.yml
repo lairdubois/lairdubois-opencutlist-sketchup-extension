@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Dimensioni grezze
         part_cutting_length: Lunghezza grezza
         part_cutting_width: Larghezza grezza
+        part_cutting_thickness: Spessore grezzo
         part_size: Dimensione
         part_length: Lunghezza
         part_width: Larghezza
+        part_thickness: Spessore
         part_tags: Tags
         part_batch: Lotto
         part_edge_ymin: Bordo Lunghezza 1

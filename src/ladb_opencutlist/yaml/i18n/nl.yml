@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
+        part_cutting_thickness: Ruwe dikte
         part_size: Afmeting
         part_length: Lengte
         part_width: Breedte
+        part_thickness: Dikte
         part_tags: Tags
         part_batch: Lot
         part_edge_ymin: Kantenband lengte 1

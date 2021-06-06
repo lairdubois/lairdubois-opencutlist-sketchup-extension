@@ -657,9 +657,11 @@ tab:
         part_cutting_size: الأبعاد الأولية
         part_cutting_length: الطول الأولي
         part_cutting_width: العرض الأولي
+        part_cutting_thickness: السُمك - أولي
         part_size: البعد النهائي
         part_length: الطول
         part_width: العرض
+        part_thickness: السُّمك
         part_tags: الوسوم
         part_batch: طقم
         part_edge_ymin: طول الحاشية 1
