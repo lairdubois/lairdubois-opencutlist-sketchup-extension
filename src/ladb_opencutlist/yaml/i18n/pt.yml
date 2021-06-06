@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado
         part_cutting_width: Largura - aproximada
+        part_cutting_thickness: Espessura - aproximada
         part_size: Dimensão
         part_length: Comprimento
         part_width: Largura
+        part_thickness: Espessura
         part_tags: Tags
         part_batch: Grupo
         part_edge_ymin: Comprimento da borda 1

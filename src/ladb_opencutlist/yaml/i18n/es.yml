@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Dimensiones aproximadas
         part_cutting_length: Longitud - cruda
         part_cutting_width: Ancho - crudo
+        part_cutting_thickness: Espesor crudo
         part_size: Dimensiones
         part_length: Longitud
         part_width: Anchura
+        part_thickness: Espesor
         part_tags: Etiquetas
         part_batch: Lote
         part_edge_ymin: Longitud del borde 1

@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Hrubé rozměry
         part_cutting_length: Hrubá délka
         part_cutting_width: Hrubá šířka
+        part_cutting_thickness: Hrubá tloušťka
         part_size: Rozměry
         part_length: Délka
         part_width: Šířka
+        part_thickness: Tloušťka
         part_tags: Štítky
         part_batch: Šarže
         part_edge_ymin: Hrana podél 1

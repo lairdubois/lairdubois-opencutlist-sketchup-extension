@@ -657,9 +657,11 @@ tab:
         part_cutting_size: Rohmaße
         part_cutting_length: Länge - roh
         part_cutting_width: Breite - roh
+        part_cutting_thickness: Rohdicke
         part_size: Fertigmaße
         part_length: Länge
         part_width: Breite
+        part_thickness: Dicke
         part_tags: Tags
         part_batch: Los
         part_edge_ymin: Kantenband Länge 1
