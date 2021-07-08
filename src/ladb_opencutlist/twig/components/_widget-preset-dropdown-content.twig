@@ -12,7 +12,7 @@
     <li role="separator" class="divider"></li>
 {% endif %}
 {% for name in names %}
-    <li class="ladb-widget-preset-item with-minitools" data-name="{{ name }}">
+    <li class="ladb-widget-preset-item with-minitools" data-name="{{ name|escape('html') }}">
         <a href="#" class="ladb-widget-preset-btn-restore">{{ name|escape('html') }}</a>
         <div class="ladb-minitools">
             <a href="#" class="ladb-widget-preset-btn-save ladb-tool-dark" data-toggle="tooltip" title="{{ 'core.preset.tooltip.save_to'|i18next({ 'name':name }) }}"><i class="ladb-opencutlist-icon-refresh"></i></a>
