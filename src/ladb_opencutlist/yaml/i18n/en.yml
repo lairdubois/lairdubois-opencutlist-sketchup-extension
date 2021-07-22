@@ -338,7 +338,7 @@ tab:
       part_number_with_letters_help: "If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group (list of parts with same material type and thickness)."
-      part_folding: Group similar parts
+      part_folding: Group Similar Parts
       part_folding_help: "If this option is selected, parts with **identical size** and with **identical tags** will be grouped (as long as the display of this area is not hidden)."
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
@@ -474,23 +474,23 @@ tab:
       options_material: Material
       options_config: Configuration
       options_display: Display
-      option_bar_folding_dimensional: Group similar boards
-      option_bar_folding_edge: Group similar edge bandings
+      option_bar_folding_dimensional: Group Similar Boards
+      option_bar_folding_edge: Group Similar Edge Bandings
       option_bar_folding_0: No
       option_bar_folding_1: Yes
       option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
-      option_sheet_folding: Group similar panels
+      option_sheet_folding: Group Similar Panels
       option_sheet_folding_0: No
       option_sheet_folding_1: Yes
       option_sheet_folding_help: Group panels having the same parts and cuts.
       option_hide_part_list: Parts List
-      option_hide_part_list_1d_dimensional_0: Displayed for each board
-      option_hide_part_list_1d_edge_0: Displayed for each edge banding
-      option_hide_part_list_2d_0: Displayed for each panel
+      option_hide_part_list_1d_dimensional_0: Displayed for each Board
+      option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
+      option_hide_part_list_2d_0: Displayed for Each Panel
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
-      option_origin_corner: Position of the origin
+      option_origin_corner: Position of the Origin
       option_origin_corner_1d_0: From the left
       option_origin_corner_1d_1: From the right
       option_origin_corner_2d_0: Top left corner
@@ -499,7 +499,7 @@ tab:
       option_origin_corner_2d_3: Bottom right corner
       option_origin_corner_1d_help: Determines the start position of the coordinate system for displaying parts of dimensional lumber or edge banding.
       option_origin_corner_2d_help: "Determines the start position of the coordinate system for displaying parts on panels. "
-      option_full_width_diagram: Full width display
+      option_full_width_diagram: Full Width Display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
       option_full_width_diagram_help: "If this option is activated, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
@@ -507,7 +507,7 @@ tab:
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Offcuts
       option_hide_cross_0: Dimensions and Cross
-      option_hide_cross_1: Dimensions only
+      option_hide_cross_1: Dimensions Only
       option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
       option_highlight_primary_cuts: Primary cuts
       option_highlight_primary_cuts_0: Flyover only
@@ -518,13 +518,13 @@ tab:
       option_trimming: Trimming Size
       option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_optimization: Optimisation level
+      option_optimization: Optimization Level
       option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
       option_optimization_0: Medium
       option_optimization_1: Advanced
       option_stacking: Preferred Direction
       option_stacking_help: "Stacking direction of parts that have a common length or width, per panel if more than one required."
-      option_stacking_0: No preference
+      option_stacking_0: No Preference
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All Possibilities
