@@ -39,8 +39,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @px_saw_kerf = _def.px_saw_kerf
-      @saw_kerf = _def.saw_kerf.to_l.to_s
-      @trimming = _def.trimming.to_l.to_s
+      @saw_kerf = DimensionUtils.instance.format_to_readable_length(_def.saw_kerf)
+      @trimming = DimensionUtils.instance.format_to_readable_length(_def.trimming)
       @bar_folding = _def.bar_folding
       @hide_part_list = _def.hide_part_list
       @full_width_diagram = _def.full_width_diagram
@@ -59,7 +59,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :bars
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :bars
 
     def initialize(_def)
       @_def = _def
@@ -67,6 +67,9 @@ module Ladb::OpenCutList
       @total_used_count = _def.total_used_count
       @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
       @total_used_part_count = _def.total_used_part_count
+
+      @total_cut_count = _def.total_cut_count
+      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_summary_bar }.sort_by { |bar| [ -bar.type ] }
 
@@ -103,7 +106,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency
+    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -116,6 +119,7 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
+      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
 
       @slices = _def.slice_defs.map { |slice_def| slice_def.create_slice }
       @parts = _def.part_defs.map { |part_def| part_def.create_part }

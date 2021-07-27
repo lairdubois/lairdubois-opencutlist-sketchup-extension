@@ -146,6 +146,10 @@ module Ladb::OpenCutList
           cuttingdiagram1d_def.summary_def.total_used_count += 1
           cuttingdiagram1d_def.summary_def.total_used_length += bin.length
           cuttingdiagram1d_def.summary_def.total_used_part_count += bin.boxes.count
+          bin.cuts.each { |cut|
+            cuttingdiagram1d_def.summary_def.total_cut_count += 1
+            cuttingdiagram1d_def.summary_def.total_cut_length += group.def.std_width
+          }
         }
 
         # Bars
@@ -176,6 +180,9 @@ module Ladb::OpenCutList
           bar_def.length = bin.length
           bar_def.width = group.def.std_width
           bar_def.efficiency = bin.efficiency
+          bin.cuts.each { |cut|
+            bar_def.total_cut_length += group.def.std_width
+          }
 
           slice_count = (bin.length / wrap_length).ceil
           i = 0

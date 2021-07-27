@@ -39,8 +39,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @px_saw_kerf = _def.px_saw_kerf
-      @saw_kerf = _def.saw_kerf.to_l.to_s
-      @trimming = _def.trimming.to_l.to_s
+      @saw_kerf = DimensionUtils.instance.format_to_readable_length(_def.saw_kerf)
+      @trimming = DimensionUtils.instance.format_to_readable_length(_def.trimming)
       @optimization = _def.optimization
       @stacking = _def.stacking
       @sheet_folding = _def.sheet_folding
@@ -61,7 +61,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :sheets
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :sheets
 
     def initialize(_def)
       @_def = _def
@@ -69,6 +69,9 @@ module Ladb::OpenCutList
       @total_used_count = _def.total_used_count
       @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
       @total_used_part_count = _def.total_used_part_count
+
+      @total_cut_count = _def.total_cut_count
+      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_summary_sheet }.sort_by { |sheet| [ -sheet.type ] }
 
@@ -106,7 +109,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_length_cuts
+    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -119,7 +122,7 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
-      @total_length_cuts = DimensionUtils.instance.format_to_readable_length(_def.total_length_cuts)
+      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
 
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
       @grouped_parts = _def.grouped_part_defs.values.map { |part_def| part_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }

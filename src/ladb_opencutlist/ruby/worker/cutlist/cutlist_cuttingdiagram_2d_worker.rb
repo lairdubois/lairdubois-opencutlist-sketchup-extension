@@ -162,6 +162,10 @@ module Ladb::OpenCutList
           cuttingdiagram2d_def.summary_def.total_used_count += 1
           cuttingdiagram2d_def.summary_def.total_used_area += Size2d.new(bin.length.to_l, bin.width.to_l).area
           cuttingdiagram2d_def.summary_def.total_used_part_count += bin.boxes.count
+          bin.cuts.each { |cut|
+            cuttingdiagram2d_def.summary_def.total_cut_count += 1
+            cuttingdiagram2d_def.summary_def.total_cut_length += cut.length
+          }
         }
 
         # Sheets
@@ -189,7 +193,7 @@ module Ladb::OpenCutList
           sheet_def.length = bin.length
           sheet_def.width = bin.width
           sheet_def.efficiency = bin.efficiency
-          sheet_def.total_length_cuts = bin.total_length_cuts
+          sheet_def.total_cut_length = bin.total_length_cuts
 
           # Parts
           bin.boxes.each { |box|

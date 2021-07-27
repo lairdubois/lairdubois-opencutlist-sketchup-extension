@@ -142,12 +142,19 @@
                 <tr>
                     <td colspan="6">
                         <small>
-                            <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
                             <div class="row">
                                 <div class="col-xs-6">
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
                                     <ul>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.cuts'|i18next }}</span>
+                                    <ul>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_length_cuts'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -356,7 +363,8 @@
                 {% endif %}
                 <tr>
                     <td colspan="{{ colspan }}">
-                        <span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bar.efficiency|number_format(2, ',', ' ') }}%</span>
+                        <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ bar.efficiency|number_format(2, ',', ' ') }}%</span>
+                        <span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_length_cuts'|i18next }} : </strong>{{ bar.total_cut_length }}</span>
                         {% if not options.trimming|slice(0, 1) == '0' %}<span class="pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}
                         <span class="{% if not options.trimming|slice(0, 1) == '0' %}ladb-horizontal-left-separator {% endif %}pull-left">{{ ('tab.cutlist.cuttingdiagram.list.parts')|i18next({ 'count':bar.parts|length }) }}</span>
                     </td>
