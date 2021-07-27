@@ -657,7 +657,7 @@ tab:
         part_cutting_size: גודל חיתוך
         part_cutting_length: אורך חיתוך
         part_cutting_width: רוחב חיתוך
-        part_cutting_thickness: עובי - חיתוך
+        part_cutting_thickness: עובי חיתוך
         part_size: גודל אפשרי
         part_length: אורך סופי
         part_width: רוחב סופי
@@ -969,14 +969,14 @@ tab:
     title: הגדרות
     global_settings: הגדרות כלליות
     language: שפה
-    language_auto: אוֹטוֹמָטִי
+    language_auto: אוטומטי
     zoom: גודל טקסט
     zoom_normal: רגיל
     zoom_small: קטן
     zoom_tiny: קטן מאוד
     print_margin: שוליים להדפסה
-    print_margin_normal: נוֹרמָלִי
-    print_margin_small: קָטָן
+    print_margin_normal: נורמלי
+    print_margin_small: קטן
     size_and_position: גודל ומיקום חלון
     model_settings: הגדרות מודל
     length_unit: יחידת אורך
