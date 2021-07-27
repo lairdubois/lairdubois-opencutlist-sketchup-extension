@@ -63,7 +63,7 @@
     "std_lengths": { "metric": "2400mm;6000mm;13000mm", "imperial": "6';8';10';12';14';16';18';20';22';24'" },
     "std_widths": "",
     "std_thicknesses": "",
-    "std_sections": { "metric": "30mm x 40mm;40mm x 50mm", "imperial": "3/4\" x 1 1/2\";1 1/2\" x 5 1/2\";1 1/2\" x 7 1/4\"; 1 1/2\" x 9 1/4\"" },
+    "std_sections": { "metric": "30mm x 40mm;40mm x 50mm", "imperial": "1 1/2\" x 3/4\"; 3 1/2\" x 1 1/2\";5 1/2\" x 1 1/2\";7 1/2\" x 1 1/2\"" },
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
