@@ -6,17 +6,16 @@
   "directories": {
     "doc": "../docs"
   },
-  "dependencies": {},
   "devDependencies": {
     "gulp": "4.0.2",
-    "gulp-clean-css": "^4.3.0",
+    "gulp-clean-css": "4.3.0",
     "gulp-concat": "2.6.1",
     "gulp-if": "3.0.0",
     "gulp-less": "4.0.1",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "1.0.0",
     "gulp-touch-custom": "1.0.3",
-    "gulp-zip": "5.0.2",
+    "gulp-zip": "4.2.0",
     "js-yaml": "3.14.0",
     "markdown-it": "12.0.2",
     "markdown-it-external-links": "0.0.6",
