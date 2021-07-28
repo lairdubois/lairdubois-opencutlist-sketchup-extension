@@ -575,11 +575,11 @@ tab:
         total_used: Total utilisé
         trimming: Marge
         total_cut_count: Nombre de coupes
-        total_length_cuts: Longueur de coupe
+        total_cut_length: Longueur de coupe
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe
-        cuts: Coupes
+        cut_plural: Coupes
         cut_final: Coupe primaire (niveau 1)
         cut_through: Coupe primaire (niveau 2)
         bar_dimensional_type_0: Barre standard

@@ -9,6 +9,7 @@ in 2.x, 1.x and 0.x versions.
   * Added thickness fields to labels
   * Fixed forum conversation tag filter
   * Fixed bug in preset names with quote
+  * Added total cut length in cutting diagram summary
   
 * 2.1.0 (2021-05-28)
 
