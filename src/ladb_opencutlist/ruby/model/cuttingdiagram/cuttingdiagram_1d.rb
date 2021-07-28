@@ -39,8 +39,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @px_saw_kerf = _def.px_saw_kerf
-      @saw_kerf = DimensionUtils.instance.format_to_readable_length(_def.saw_kerf)
-      @trimming = DimensionUtils.instance.format_to_readable_length(_def.trimming)
+      @saw_kerf = _def.saw_kerf.to_l.to_s
+      @trimming = _def.trimming.to_l.to_s
       @bar_folding = _def.bar_folding
       @hide_part_list = _def.hide_part_list
       @full_width_diagram = _def.full_width_diagram

@@ -39,8 +39,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @px_saw_kerf = _def.px_saw_kerf
-      @saw_kerf = DimensionUtils.instance.format_to_readable_length(_def.saw_kerf)
-      @trimming = DimensionUtils.instance.format_to_readable_length(_def.trimming)
+      @saw_kerf = _def.saw_kerf.to_l.to_s
+      @trimming = _def.trimming.to_l.to_s
       @optimization = _def.optimization
       @stacking = _def.stacking
       @sheet_folding = _def.sheet_folding

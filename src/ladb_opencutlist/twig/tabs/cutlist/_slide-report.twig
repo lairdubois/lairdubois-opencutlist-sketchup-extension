@@ -194,6 +194,8 @@
                                     <td style="padding-left: 40px;">
                                         {{ part.name }}
                                         <div class="ladb-minitools ladb-minitools-right no-print">
+                                            {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
+                                            {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
                                             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                             <span class="ladb-separator"></span>
                                             <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>

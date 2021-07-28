@@ -82,6 +82,7 @@
             var currencySymbol = response.currency_symbol;
             var filename = response.filename;
             var modelName = response.model_name;
+            var modelDescription = response.model_description;
             var pageLabel = response.page_label;
             var instanceCount = response.instance_count;
             var ignoredInstanceCount = response.ignored_instance_count;
@@ -97,6 +98,7 @@
             // Keep usefull data
             that.filename = filename;
             that.modelName = modelName;
+            that.modelDescription = modelDescription;
             that.pageLabel = pageLabel;
             that.lengthUnit = lengthUnit;
             that.currencySymbol = currencySymbol;
@@ -119,6 +121,7 @@
                 selectionOnly: selectionOnly,
                 filename: filename,
                 modelName: modelName,
+                modelDescription: modelDescription,
                 pageLabel: pageLabel,
                 generateAt: that.generateAt,
                 lengthUnit: lengthUnit
@@ -834,6 +837,7 @@
                                 errors: response.errors,
                                 filename: that.filename,
                                 modelName: that.modelName,
+                                modelDescription: that.modelDescription,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
@@ -2098,6 +2102,7 @@
                                 dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                                 filename: that.filename,
                                 modelName: that.modelName,
+                                modelDescription: that.modelDescription,
                                 pageLabel: that.pageLabel,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
@@ -2359,6 +2364,7 @@
                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                             filename: that.filename,
                             modelName: that.modelName,
+                            modelDescription: that.modelDescription,
                             pageLabel: that.pageLabel,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
