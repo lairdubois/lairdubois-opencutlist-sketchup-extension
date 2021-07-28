@@ -267,7 +267,7 @@ tab:
       instance_count_by_part_2: 2 unidades por pieza
       mass: Masa
       mass_help: La masa de la pieza se utilizará al generar los **Reportes**.
-      price: Premio
+      price: Precio
       price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
       tags: Etiquetas
       tags_help: |
@@ -791,10 +791,10 @@ tab:
       edge_decremented_1: Reducir por el grosor de las tiras del canto
       volumic_mass: Densidad
       volumic_mass_help: Le permite definir la densidad del material.
-      std_prices: Premio
+      std_prices: Precio
       std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
       std_prices_dim_placeholder: Elige una talla
-      std_prices_add: Añade un premio
+      std_prices_add: Añade un precio
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
