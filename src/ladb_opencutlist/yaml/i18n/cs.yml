@@ -574,10 +574,12 @@ tab:
         total_part_count: Σ Dílů
         total_used: Celkem použito
         trimming: Okraj
-        total_length_cuts: Délka řezů
+        total_cut_count: Počet řezů
+        total_cut_length: Délka řezů
         efficiency: Účinnost
         leftover: Zbytek
         cut: Řez
+        cut_plural: Řezy
         cut_final: Primární řez (úroveň 1)
         cut_through: Primární řez (úroveň 2)
         bar_dimensional_type_0: Standardní rozměry

@@ -516,7 +516,7 @@ tab:
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
       option_trimming: Randabfallbreite
-      option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbands.
+      option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_optimization: Optimierungsstufe
       option_optimization_help: Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit.
@@ -574,10 +574,12 @@ tab:
         total_part_count: "# Teile"
         total_used: Insgesamt verwendet
         trimming: Seitenrand
-        total_length_cuts: Schnittlänge
+        total_cut_count: Anzahl Schnitte
+        total_cut_length: Schnittlänge
         efficiency: Effizienz
         leftover: Verschnitt
         cut: Schnitt
+        cut_plural: Schnitte
         cut_final: Primärschnitt (Stufe 1)
         cut_through: Primärschnitt (Stufe 2)
         bar_dimensional_type_0: Standard-Stange

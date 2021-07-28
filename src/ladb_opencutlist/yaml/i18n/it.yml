@@ -574,10 +574,12 @@ tab:
         total_part_count: Σ Parti
         total_used: Totale utilizzato
         trimming: Ritaglio
-        total_length_cuts: Lunghezza dei tagli
+        total_cut_count: Numero dei tagli
+        total_cut_length: Lunghezza dei tagli
         efficiency: Efficienza
         leftover: Rimanente
         cut: Taglio
+        cut_plural: Tagli
         cut_final: Taglio principale (livello 1)
         cut_through: Taglio principale (livello 2)
         bar_dimensional_type_0: Dimensioni Standard Barre

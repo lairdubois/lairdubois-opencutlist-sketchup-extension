@@ -574,10 +574,12 @@ tab:
         total_part_count: Σ Partes
         total_used: Total utilizado
         trimming: Margen
-        total_length_cuts: Longitud de cortes
+        total_cut_count: Número de cortes
+        total_cut_length: Longitud de cortes
         efficiency: Eficiencia
         leftover: Sobrante
         cut: Cortar
+        cut_plural: Cortes
         cut_final: Corte primario (nivel 1)
         cut_through: Corte primario (nivel 2)
         bar_dimensional_type_0: Dimensiones estándar
