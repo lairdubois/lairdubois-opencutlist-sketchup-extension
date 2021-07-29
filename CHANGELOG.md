@@ -11,6 +11,7 @@ in 2.x, 1.x and 0.x versions.
   * Fixed bug in preset names with quote
   * Added total cut length in cutting diagram summary
   * Added model description in printable headers if it's defined
+  * Improved dimensions display for small parts in cutting diagrams
   
 * 2.1.0 (2021-05-28)
 

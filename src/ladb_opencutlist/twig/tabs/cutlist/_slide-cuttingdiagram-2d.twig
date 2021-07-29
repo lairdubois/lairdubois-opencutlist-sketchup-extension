@@ -315,25 +315,29 @@
                                         <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% endif %}
                                     {% set _numberTextLength = part.number|length %}
-                                    {% set _numberFontSize = min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? _numberTextLength : 1)) %}
+                                    {% set _numberFontSize = max(minNumberFontSize, min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? _numberTextLength : 1))) %}
                                     {% set _numberFontWidth = _numberFontSize * _numberTextLength * textFontWidthFactor %}
-                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ max(minNumberFontSize, _numberFontSize) }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
+                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ _numberFontSize }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
                                     {% set _dimensionFontSize = min(dimensionFontSize, _numberFontSize) %}
                                     {% set _value = part.rotated ? part.cutting_width : part.cutting_length %}
                                     {% set _valuePxWidth = _value|length * _dimensionFontSize * textFontWidthFactor %}
                                     {% set _hideLength = part.px_width < (_numberFontSize + (partOutlineWidth + dimensionOffset + _dimensionFontSize) * 2) and (part.px_length - _numberFontSize) / 2 < _valuePxWidth or part.px_length < _valuePxWidth %}
                                     {% if not _hideLength %}
-                                        {% set _centeredValue = _valuePxWidth + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_length %}
-                                        <text class="part-dimension" x="{{ part.px_x + (_centeredValue ? part.px_length / 2 : part.px_length - partOutlineWidth - dimensionOffset - edgeWidth) }}" y="{{ part.px_y + partOutlineWidth + dimensionOffset + _dimensionFontSize }}" font-size="{{ _dimensionFontSize }}px" text-anchor="{% if _centeredValue %}middle{% else %}end{% endif %}"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ _value }}</text>
+                                        {% set _xCenteredValue = _valuePxWidth + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_length %}
+                                        {% set _yCenteredValue = _dimensionFontSize + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_width %}
+                                        {% set _x = part.px_x + (_xCenteredValue ? part.px_length / 2 : part.px_length - partOutlineWidth - dimensionOffset - edgeWidth) %}
+                                        {% set _y = part.px_y + (_yCenteredValue ? part.px_width / 2 : partOutlineWidth + dimensionOffset + _dimensionFontSize) %}
+                                        <text class="part-dimension" data-x="{{ _yCenteredValue }}" x="{{ _x }}" y="{{ _y }}" font-size="{{ _dimensionFontSize }}px" text-anchor="{% if _xCenteredValue %}middle{% else %}end{% endif %}"{% if _yCenteredValue %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ _value }}</text>
                                     {% endif %}
                                     {% set _value = part.rotated ? part.cutting_length : part.cutting_width %}
                                     {% set _valuePxWidth = _value|length * _dimensionFontSize * textFontWidthFactor %}
                                     {% set _hideWidth = part.px_length < (_numberFontWidth + (partOutlineWidth + dimensionOffset + _dimensionFontSize) * 2) and (part.px_width - _numberFontSize) / 2 < _valuePxWidth or part.px_width < _valuePxWidth %}
                                     {% if not _hideWidth %}
-                                        {% set _centeredValue = _valuePxWidth + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_width %}
-                                        {% set _x = part.px_x + partOutlineWidth + dimensionOffset + _dimensionFontSize %}
-                                        {% set _y = part.px_y + (_centeredValue ? part.px_width / 2 : part.px_width - partOutlineWidth - dimensionOffset - edgeWidth) %}
-                                        <text class="part-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ _dimensionFontSize }}px" text-anchor="{% if _centeredValue %}middle{% else %}start{% endif %}"{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ _x }},{{ _y }})">{{ _value }}</text>
+                                        {% set _xCenteredValue = _dimensionFontSize + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_length %}
+                                        {% set _yCenteredValue = _valuePxWidth + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_width %}
+                                        {% set _x = part.px_x + (_xCenteredValue ? part.px_length / 2 : partOutlineWidth + dimensionOffset + _dimensionFontSize) %}
+                                        {% set _y = part.px_y + (_yCenteredValue ? part.px_width / 2 : part.px_width - partOutlineWidth - dimensionOffset - edgeWidth) %}
+                                        <text class="part-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ _dimensionFontSize }}px" text-anchor="{% if _yCenteredValue %}middle{% else %}start{% endif %}"{% if _xCenteredValue %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %} transform="rotate(-90 {{ _x }},{{ _y }})">{{ _value }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}
