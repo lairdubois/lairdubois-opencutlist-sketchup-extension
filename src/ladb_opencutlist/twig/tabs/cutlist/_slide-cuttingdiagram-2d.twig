@@ -290,11 +290,17 @@
                                     {% endif %}
                                     {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length < leftover.length|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideLength %}
-                                        <text class="leftover-dimension" x="{{ leftover.px_x + leftover.px_length / 2 }}" y="{{ leftover.px_y + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle">{{ leftover.length }}</text>
+                                        {% set _yCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_width %}
+                                        {% set _x = leftover.px_x + leftover.px_length / 2 %}
+                                        {% set _y = leftover.px_y + (_yCenteredValue ? leftover.px_width / 2 : dimensionOffset + dimensionFontSize) %}
+                                        <text class="leftover-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if _yCenteredValue %} dominant-baseline="central"{% endif %}>{{ leftover.length }}</text>
                                     {% endif %}
                                     {% set _hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width < leftover.width|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideWidth %}
-                                        <text class="leftover-dimension" x="{{ leftover.px_x + dimensionOffset + dimensionFontSize }}" y="{{ leftover.px_y + leftover.px_width / 2 }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" transform="rotate(-90 {{ leftover.px_x + dimensionOffset + dimensionFontSize }},{{ leftover.px_y + leftover.px_width / 2 }})">{{ leftover.width }}</text>
+                                        {% set _xCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_length %}
+                                        {% set _x = leftover.px_x + (_xCenteredValue ? leftover.px_length / 2 : dimensionOffset + dimensionFontSize) %}
+                                        {% set _y = leftover.px_y + leftover.px_width / 2 %}
+                                        <text class="leftover-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if _xCenteredValue %} dominant-baseline="central"{% endif %} transform="rotate(-90 {{ _x }},{{ _y }})">{{ leftover.width }}</text>
                                     {% endif %}
                                 </g>
                             {% endfor %}
