@@ -574,10 +574,12 @@ tab:
         total_part_count: Σ Деталей
         total_used: Всего использовано
         trimming: Обрезка
-        total_length_cuts: Длина пропила
+        total_cut_count: Количество распилов
+        total_cut_length: Длина пропила
         efficiency: Эффективность
         leftover: Остаток
         cut: Пропил
+        cut_plural: Распилы
         cut_final: Первичный рез (уровень 1)
         cut_through: Первичный рез (уровень 2)
         bar_dimensional_type_0: Стандартный размер
