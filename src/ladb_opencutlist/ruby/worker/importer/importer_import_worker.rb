@@ -93,9 +93,10 @@ module Ladb::OpenCutList
         # Retrieve material (or create it)
         material = nil
         unless part[:material].nil?
-          material = materials[part[:material].strip()]
+          material_name = part[:material].strip
+          material = materials[material_name]
           unless material
-            material = materials.add(part[:material].strip())
+            material = materials.add(material_name)
             material.color = MATERIALS_PALETTE[material_palette_index]
             material_palette_index = (material_palette_index + 1) % MATERIALS_PALETTE.length
           end
