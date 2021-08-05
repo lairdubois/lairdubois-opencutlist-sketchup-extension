@@ -4,13 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
-* 2.1.1 (WIP)
+* 2.1.1 (2021-08-02)
 
   * Added thickness fields to labels
-  * Fixed forum conversation tag filter
-  * Fixed bug in preset names with quote
   * Added total cut length in cutting diagram summary
   * Added model description in printable headers if it's defined
+  * Fixed forum conversation tag filter
+  * Fixed bug in preset when names contains quote
   * Improved dimensions display for small parts in cutting diagrams
   * Leading/trailing spaces of material names removed during import
 
