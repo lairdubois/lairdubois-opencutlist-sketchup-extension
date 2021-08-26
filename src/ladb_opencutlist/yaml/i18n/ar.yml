@@ -579,7 +579,7 @@ tab:
         efficiency: الفاعلية
         leftover: البواقي
         cut: قطع
-        cut_plural: ""
+        cut_plural: قطع
         cut_final: القَطع الابتدائي (المستوى 1)
         cut_through: القَطع الابتدائي (المستوى 2)
         bar_dimensional_type_0: قضيب نظامي
