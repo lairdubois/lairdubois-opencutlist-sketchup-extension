@@ -355,6 +355,9 @@ module Ladb::OpenCutList
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
 
+      # Force name to be string
+      name = name.to_s unless name.is_a? String
+
       # Read global presets cache if not previouly cached
       read_global_presets if @global_presets_cache.nil?
 
