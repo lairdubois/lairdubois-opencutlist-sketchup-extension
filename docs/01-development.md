@@ -64,7 +64,7 @@ From the project directory, change to the `build/` directory. We have placed a `
     $ cd build
     $ npm install
 ```
-What about warnings? You may get some warnings. `gulp-less depends on `request` (to be fixed) and many modules rely on `fsevents`, which is only intended for OSX file events.
+What about warnings? You may get some warnings. `gulp-less` depends on `request` (to be fixed) and many modules rely on `fsevents`, which is only intended for OSX file events.
 
 ## 4. Compiling Templates And Distribution Archive
 
