@@ -18,6 +18,7 @@ module Ladb::OpenCutList
       @height = height
       @text_options = text_options
       @text_font_size = text_options[:size] ? text_options[:size] : 12
+      @text_y_offset = text_options[:y_offset] ? text_options[:y_offset] : 0
       @callback = callback
       @is_hover = false
       @is_down = false
@@ -90,7 +91,7 @@ module Ladb::OpenCutList
           Geom::Point3d.new(x + @width , y + @height , 0),
           Geom::Point3d.new(x          , y + @height , 0)
       ]
-      @text_point = Geom::Point3d.new(x + @width / 2, y + (@height - @text_font_size - 10) / 2, 0)
+      @text_point = Geom::Point3d.new(x + @width / 2, y + (@height - @text_font_size - @text_y_offset) / 2, 0)
     end
 
   end

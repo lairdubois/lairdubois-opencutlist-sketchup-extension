@@ -44,34 +44,41 @@ module Ladb::OpenCutList
       # Add tool as observer of the cutlist
       @cutlist.add_observer(self)
 
+      @screen_scale_factor = Sketchup.version_number >= 17000000 ? UI::scale_factor : 1.0
+
       @text_line_1 = ''
       @text_line_2 = ''
       @text_line_3 = ''
+
+      @text_line_1_height = _screen_scale(30)
+      @text_line_2_height = _screen_scale(20)
+      @text_line_3_height = _screen_scale(30)
 
       # Define text options
       @line_1_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.instance.current_os == :MAC ? 20 : 15,
+          size: _screen_scale(Plugin.instance.current_os == :MAC ? 20 : 15),
           align: TextAlignCenter
       }
       @line_2_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.instance.current_os == :MAC ? 12 : 8,
+          size: _screen_scale(Plugin.instance.current_os == :MAC ? 12 : 8),
           align: TextAlignCenter
       }
       @line_3_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.instance.current_os == :MAC ? 15 : 10,
+          size: _screen_scale(Plugin.instance.current_os == :MAC ? 15 : 10),
           align: TextAlignCenter
       }
       button_text_options = {
           color: COLOR_TEXT,
           font: FONT_TEXT,
-          size: Plugin.instance.current_os == :MAC ? 15 : 12,
-          align: TextAlignCenter
+          size: _screen_scale(Plugin.instance.current_os == :MAC ? 15 : 12),
+          align: TextAlignCenter,
+          y_offset: _screen_scale(10)
       }
 
       @initial_model_transparency = false
@@ -129,10 +136,10 @@ module Ladb::OpenCutList
         }
 
         # Define buttons
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), 130, 50, 120, 40, button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), _screen_scale(130), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options) do |flags, x, y, view|
           view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
         end)
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), 260, 50, 120, 40, button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), _screen_scale(260), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options) do |flags, x, y, view|
           view.zoom_extents
         end)
 
@@ -204,16 +211,16 @@ module Ladb::OpenCutList
 
       # Draw text lines and buttons (only if Sketchup > 2016)
       if Sketchup.version_number >= 16000000
-        bg_height = 30 + (@text_line_2.empty? ? 0 : 20) + (@text_line_3.empty? ? 0 : 30)
+        bg_height = @text_line_1_height + (@text_line_2.empty? ? 0 : @text_line_2_height) + (@text_line_3.empty? ? 0 : @text_line_3_height)
         _draw_rect(view, 0, view.vpheight - bg_height, view.vpwidth, bg_height, COLOR_TEXT_BG)
         unless @text_line_1.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30 - (@text_line_2.empty? ? 0 : 20) - (@text_line_3.empty? ? 0 : 30), 0), @text_line_1, @line_1_text_options)
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_1_height - (@text_line_2.empty? ? 0 : @text_line_2_height) - (@text_line_3.empty? ? 0 : @text_line_3_height), 0), @text_line_1, @line_1_text_options)
         end
         unless @text_line_2.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 20 - (@text_line_3.empty? ? 0 : 30), 0), @text_line_2, @line_2_text_options)
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_2_height - (@text_line_3.empty? ? 0 : @text_line_3_height), 0), @text_line_2, @line_2_text_options)
         end
         unless @text_line_3.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - 30, 0), @text_line_3, @line_3_text_options)
+          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_3_height, 0), @text_line_3, @line_3_text_options)
         end
         @buttons.each { |button|
           button.draw(view)
@@ -526,6 +533,10 @@ module Ladb::OpenCutList
         }
       end
       _reset(view)
+    end
+
+    def _screen_scale(value)
+      value * @screen_scale_factor
     end
 
   end
