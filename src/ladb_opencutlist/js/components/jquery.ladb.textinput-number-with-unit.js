@@ -19,19 +19,26 @@
         units: null
     };
 
-    LadbTextinputNumberWithUnit.prototype.reset = function () {
+    LadbTextinputNumberWithUnit.prototype.resetUnit = function () {
 
         this.unit = this.options.defaultUnit;
         if (this.$spanUnit) {
             this.$spanUnit.html(this.getUnitLabel(this.unit));
         }
 
+    };
+
+    LadbTextinputNumberWithUnit.prototype.reset = function () {
+        this.resetUnit();
         LadbTextinputAbstract.prototype.reset.call(this);
     };
 
     LadbTextinputNumberWithUnit.prototype.val = function (value) {
         if (value === undefined) {
             var val = this.$element.val();
+            if (val !== undefined) {
+                val = val.trim();
+            }
             return val ? val + ' ' + this.unit : '';
         }
 
@@ -116,11 +123,10 @@
 
     LadbTextinputNumberWithUnit.prototype.init = function () {
         LadbTextinputAbstract.prototype.init.call(this);
-        var that = this;
 
         var value = this.$element.val();
         if (!value) {
-            this.reset();
+            this.resetUnit();
         }
 
     };

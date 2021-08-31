@@ -1517,6 +1517,7 @@
                     ]
                 });
                 $inputMass.ladbTextinputNumberWithUnit({
+                    resetValue: ' ',
                     defaultUnit: that.massUnitStrippedname + '_p',
                     units: [
                         { kg_p: 'kg / ' + i18next.t('default.part_single') },
@@ -1524,6 +1525,7 @@
                     ]
                 });
                 $inputPrice.ladbTextinputNumberWithUnit({
+                    resetValue: ' ',
                     defaultUnit: '$_p',
                     units: [
                         { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
@@ -1691,10 +1693,10 @@
                             editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
                         }
                         if ($inputMass.val() !== undefined && $inputMass.val() !== '') {
-                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
+                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val').trim();
                         }
                         if ($inputPrice.val() !== undefined && $inputPrice.val() !== '') {
-                            editedParts[i].price = $inputPrice.val();
+                            editedParts[i].price = $inputPrice.val().trim();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });

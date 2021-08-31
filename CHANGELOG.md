@@ -7,6 +7,7 @@ in 2.x, 1.x and 0.x versions.
 * 2.1.2 (WIP)
 
   * Fixed bug when preset's name contains numbers only
+  * Fixed text input reset value
   * Added retina screen support for highlight part tool
   
 * 2.1.1 (2021-08-02)
