@@ -96,7 +96,7 @@ module Ladb::OpenCutList
           :length_format => model.options['UnitsOptions']['LengthFormat'],
           :length_precision => model.options['UnitsOptions']['LengthPrecision'],
           :suppress_units_display => model.options['UnitsOptions']['SuppressUnitsDisplay'],
-          :suppress_units_display_disabled => length_format == DimensionUtils::FRACTIONAL || length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
+          :suppress_units_display_disabled => length_format == DimensionUtils::ARCHITECTURAL || length_format == DimensionUtils::ENGINEERING,
       }
     end
 
