@@ -1310,6 +1310,9 @@
                 if (editedPart.price !== editedParts[i].price) {
                     editedPart.price = MULTIPLE_VALUE;
                 }
+                if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
+                    editedPart.thickness_layer_count = MULTIPLE_VALUE;
+                }
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
                 });
@@ -1369,6 +1372,7 @@
                 var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
                 var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
                 var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+                var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
@@ -1529,6 +1533,13 @@
                     defaultUnit: '$_p',
                     units: [
                         { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
+                    ]
+                });
+                $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
+                    resetValue: '1',
+                    defaultUnit: 'l_p',
+                    units: [
+                        { l_p: 'Couche' + ' / ' + i18next.t('default.part_single') },
                     ]
                 });
                 $inputLengthIncrease.on('change', function() {
@@ -1697,6 +1708,9 @@
                         }
                         if ($inputPrice.val() !== undefined && $inputPrice.val() !== '') {
                             editedParts[i].price = $inputPrice.val().trim();
+                        }
+                        if ($inputThicknessLayerCount.val() !== undefined && $inputThicknessLayerCount.val() !== '') {
+                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });

@@ -18,6 +18,7 @@ module Ladb::OpenCutList
         :instance_count_by_part,
         :mass,
         :price,
+        :thickness_layer_count,
         :tags,
         :orientation_locked_on_axis,
         :symmetrical,
@@ -48,6 +49,7 @@ module Ladb::OpenCutList
             part_data['instance_count_by_part'],
             part_data['mass'],
             part_data['price'],
+            part_data['thickness_layer_count'],
             DefinitionAttributes.valid_tags(part_data['tags']),
             part_data['orientation_locked_on_axis'],
             part_data['symmetrical'],
@@ -97,6 +99,7 @@ module Ladb::OpenCutList
               part_data.instance_count_by_part != definition_attributes.instance_count_by_part ||
               part_data.mass != definition_attributes.mass ||
               part_data.price != definition_attributes.price ||
+              part_data.thickness_layer_count != definition_attributes.thickness_layer_count ||
               part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
               part_data.symmetrical != definition_attributes.symmetrical ||
               part_data.ignore_grain_direction != definition_attributes.ignore_grain_direction ||
@@ -108,6 +111,7 @@ module Ladb::OpenCutList
             definition_attributes.instance_count_by_part = part_data.instance_count_by_part
             definition_attributes.mass = part_data.mass
             definition_attributes.price = part_data.price
+            definition_attributes.thickness_layer_count = part_data.thickness_layer_count
             definition_attributes.tags = part_data.tags
             definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
             definition_attributes.symmetrical = part_data.symmetrical

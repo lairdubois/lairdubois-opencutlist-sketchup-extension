@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -32,6 +32,7 @@ module Ladb::OpenCutList
       @instance_count_by_part = part_def.instance_count_by_part
       @mass = part_def.mass
       @price = part_def.price
+      @thickness_layer_count = part_def.thickness_layer_count
       @tags = part_def.tags
       @ignore_grain_direction = part_def.ignore_grain_direction
       @edge_count = part_def.edge_count

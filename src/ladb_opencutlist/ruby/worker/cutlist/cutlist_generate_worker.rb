@@ -158,6 +158,7 @@ module Ladb::OpenCutList
         # Compute transformation, scale and sizes
 
         size = instance_info.size.clone
+        size.thickness = (size.thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
         length_increased = false
         width_increased = false
         thickness_increased = false
@@ -297,6 +298,7 @@ module Ladb::OpenCutList
           part_def.instance_count_by_part = definition_attributes.instance_count_by_part
           part_def.mass = definition_attributes.mass
           part_def.price = definition_attributes.price
+          part_def.thickness_layer_count = definition_attributes.thickness_layer_count
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
@@ -446,7 +448,7 @@ module Ladb::OpenCutList
           end
 
         end
-        part_def.count += 1
+        part_def.count += definition_attributes.thickness_layer_count
         part_def.add_material_origin(material_origin)
         part_def.add_entity_id(entity.entityID)
         part_def.add_entity_serialized_path(instance_info.serialized_path)

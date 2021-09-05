@@ -99,6 +99,15 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if group.material_type == 2 %}   {# 2 = TYPE_SHEET_GOOD #}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_layer_count_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_cutlist_part_select_thickness_layer_count" class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.thickness_layer_count'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-thickness-layers"></i></label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_thickness_layer_count" {% if part.thickness_layer_count == -1 %}placeholder="{{ 'tab.cutlist.edit_part.multiple_values'|i18next }}"{% else %}value="{{ part.thickness_layer_count }}"{% endif %}>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.tags_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.tags'|i18next }}</label>

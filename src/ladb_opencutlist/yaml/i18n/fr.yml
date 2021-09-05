@@ -209,6 +209,7 @@ tab:
       unused_instance_count_plural: Attention, **{{ count }}** unités du dernier lot ne seront pas utilisées.
       used_instance_count: "**{{ count }}** / {{ total }} unité utilisée"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unités utilisées"
+      thickness_layer_count: "Cette pièce est divisée en **{{ count }}** couches dans son épaisseur"
       multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
@@ -269,6 +270,8 @@ tab:
       mass_help: La masse de la pièce sera utilisée lors de la génération des **Rapports**.
       price: Prix
       price_help: Le prix de la pièce sera utilisé lors de la génération des **Rapports**.
+      thickness_layer_count: Nb couches
+      thickness_layer_count_help: Définissez ici le nombre de couche.
       tags: Tags
       tags_help: |
         Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
