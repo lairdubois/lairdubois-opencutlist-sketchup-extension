@@ -320,10 +320,11 @@
                                     {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmax %}
                                         <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% endif %}
-                                    {% set _numberTextLength = part.number|length %}
+                                    {% set _numberText = options.use_names ? part.name : part.number %}
+                                    {% set _numberTextLength = _numberText|length %}
                                     {% set _numberFontSize = max(minNumberFontSize, min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2) / (part.rotated ? _numberTextLength : 1))) %}
                                     {% set _numberFontWidth = _numberFontSize * _numberTextLength * textFontWidthFactor %}
-                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ _numberFontSize }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ part.number }}</text>
+                                    <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ _numberFontSize }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ _numberText }}</text>
                                     {% set _dimensionFontSize = min(dimensionFontSize, _numberFontSize) %}
                                     {% set _value = part.rotated ? part.cutting_width : part.cutting_length %}
                                     {% set _valuePxWidth = _value|length * _dimensionFontSize * textFontWidthFactor %}

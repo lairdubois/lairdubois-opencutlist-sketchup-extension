@@ -18,6 +18,7 @@ module Ladb::OpenCutList
       @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
       @bar_folding = settings['bar_folding']
       @hide_part_list = settings['hide_part_list']
+      @use_names = settings['use_names']
       @full_width_diagram = settings['full_width_diagram']
       @hide_cross = settings['hide_cross']
       @origin_corner = settings['origin_corner']
@@ -84,6 +85,7 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.trimming = @trimming
       cuttingdiagram1d_def.options_def.bar_folding = @bar_folding
       cuttingdiagram1d_def.options_def.hide_part_list = @hide_part_list
+      cuttingdiagram1d_def.options_def.use_names = @use_names
       cuttingdiagram1d_def.options_def.full_width_diagram = @full_width_diagram
       cuttingdiagram1d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram1d_def.options_def.origin_corner = @origin_corner

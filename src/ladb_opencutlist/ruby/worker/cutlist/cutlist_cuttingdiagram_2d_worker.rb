@@ -24,6 +24,7 @@ module Ladb::OpenCutList
       @optimization = settings['optimization']
       @stacking = settings['stacking']
       @sheet_folding = settings['sheet_folding']
+      @use_names = settings['use_names']
       @full_width_diagram = settings['full_width_diagram']
       @hide_part_list = settings['hide_part_list']
       @hide_cross = settings['hide_cross']
@@ -100,6 +101,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.optimization = @optimization
       cuttingdiagram2d_def.options_def.stacking = @stacking
       cuttingdiagram2d_def.options_def.sheet_folding = @sheet_folding
+      cuttingdiagram2d_def.options_def.use_names = @use_names
       cuttingdiagram2d_def.options_def.hide_part_list = @hide_part_list
       cuttingdiagram2d_def.options_def.full_width_diagram = @full_width_diagram
       cuttingdiagram2d_def.options_def.hide_cross = @hide_cross

@@ -493,6 +493,10 @@ tab:
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
       option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
+      option_use_names: Identification des pièces
+      option_use_names_0: Utiliser le numéro
+      option_use_names_1: Utiliser la désignation
+      option_use_names_help: Permet de choisir entre le numéro et la désignation pour identifier les pièces sur le schéma de callepinage.
       option_origin_corner: Position de l'origine
       option_origin_corner_1d_0: A gauche
       option_origin_corner_1d_1: A droite

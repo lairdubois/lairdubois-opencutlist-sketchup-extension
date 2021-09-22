@@ -17,6 +17,7 @@
     "stacking": 3,            /* STACKING_ALL */
     "sheet_folding": true,
     "hide_part_list": false,
+    "use_names": false,
     "full_width_diagram": false,
     "hide_cross": false,
     "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */

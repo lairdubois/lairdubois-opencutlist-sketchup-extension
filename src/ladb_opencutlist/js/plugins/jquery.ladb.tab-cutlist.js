@@ -2007,6 +2007,7 @@
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $selectBarFolding = $('#ladb_select_bar_folding', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                var $selectUseNames = $('#ladb_select_use_names', $modal);
                 var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
@@ -2021,6 +2022,7 @@
                     options.trimming = $inputTrimming.val();
                     options.bar_folding = $selectBarFolding.val() === '1';
                     options.hide_part_list = $selectHidePartList.val() === '1';
+                    options.use_names = $selectUseNames.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
@@ -2029,6 +2031,7 @@
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
                     $inputTrimming.val(options.trimming);
+                    $selectUseNames.selectpicker('val', options.use_names ? '1' : '0');
                     $selectBarFolding.selectpicker('val', options.bar_folding ? '1' : '0');
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectFullWidthDiagram.selectpicker('val', options.full_width_diagram ? '1' : '0');
@@ -2074,6 +2077,7 @@
                 $inputTrimming.ladbTextinputDimension();
                 $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUseNames.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
@@ -2263,6 +2267,7 @@
                 var $selectStacking = $('#ladb_select_stacking', $modal);
                 var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                var $selectUseNames = $('#ladb_select_use_names', $modal);
                 var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
@@ -2279,6 +2284,7 @@
                     options.stacking = parseInt($selectStacking.val());
                     options.sheet_folding = $selectSheetFolding.val() === '1';
                     options.hide_part_list = $selectHidePartList.val() === '1';
+                    options.use_names = $selectUseNames.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
@@ -2291,6 +2297,7 @@
                     $selectStacking.selectpicker('val', options.stacking);
                     $selectSheetFolding.selectpicker('val', options.sheet_folding ? '1' : '0');
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
+                    $selectUseNames.selectpicker('val', options.use_names ? '1' : '0');
                     $selectFullWidthDiagram.selectpicker('val', options.full_width_diagram ? '1' : '0');
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
@@ -2336,6 +2343,7 @@
                 $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUseNames.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);

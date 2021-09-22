@@ -31,7 +31,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dOptionsDef
 
-    attr_accessor :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length
+    attr_accessor :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length
 
     def initialize
 
@@ -40,6 +40,7 @@ module Ladb::OpenCutList
       @trimming = 0
       @bar_folding = false
       @hide_part_list = false
+      @use_names = false
       @full_width_diagram = false
       @hide_cross = false
       @origin_corner = 0
