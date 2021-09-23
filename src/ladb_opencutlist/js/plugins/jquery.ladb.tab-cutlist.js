@@ -1537,9 +1537,9 @@
                 });
                 $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
                     resetValue: '1',
-                    defaultUnit: 'l_p',
+                    defaultUnit: 'l',
                     units: [
-                        { l_p: 'Couche' + ' / ' + i18next.t('default.part_single') },
+                        { l: i18next.t('default.thickness_layers') },
                     ]
                 });
                 $inputLengthIncrease.on('change', function() {

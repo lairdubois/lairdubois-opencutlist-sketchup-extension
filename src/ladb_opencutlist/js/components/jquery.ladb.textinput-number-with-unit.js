@@ -113,8 +113,7 @@
             .append(
                 $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
                     .append($span)
-                    .append('&nbsp;')
-                    .append('<span class="caret" />')
+                    .append(this.options.units.length > 1 ? '&nbsp;<span class="caret" />' : '')
             )
             .append($dropdown)
         );
