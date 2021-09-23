@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 2.x, 1.x and 0.x versions.
 
+* 3.0.0 (WIP)
+
+  * Added thickness layer count
+  * Added description display on parts
+  * Added Number or Name part's identifier option on cutting diagrams
+
 * 2.1.2 (WIP)
 
   * Fixed display units from Preferences when using fractional inches

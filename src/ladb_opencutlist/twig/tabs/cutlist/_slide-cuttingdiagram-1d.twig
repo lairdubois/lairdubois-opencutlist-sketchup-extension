@@ -346,6 +346,9 @@
                                     </div>
                                 {% endif %}
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
+                                {% if not generateOptions.hide_descriptions and part.description is not empty %}
+                                    <div class="ladb-part-description">{{ part.description }}</div>
+                                {% endif %}
                                 {% if not generateOptions.hide_tags and part.tags is not empty %}
                                     <ul class="ladb-cutlist-part-tags">
                                         {% for label in part.tags %}

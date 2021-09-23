@@ -273,6 +273,9 @@ tab:
       price_help: Le prix de la pièce sera utilisé lors de la génération des **Rapports**.
       thickness_layer_count: Nb couches
       thickness_layer_count_help: Définissez ici le nombre de couche.
+      description: Description
+      description_help: |
+        La *Description* permet d'apporter des informations personnalisées sur chaque définition de pièce.
       tags: Tags
       tags_help: |
         Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
@@ -346,6 +349,8 @@ tab:
       part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
       hide_entity_names: Masquer les noms d'instance
       hide_entity_names_help: Si cette option est activée, les **noms d'instances** des pièces ne sont pas affichés.
+      hide_descriptions: Masquer les descriptions
+      hide_descriptions_help: Si cette option est activée, les **descriptions** placées sur les pièces ne sont pas affichées.
       hide_tags: Masquer les tags
       hide_tags_help: Si cette option est activée, les **tags** placés sur les pièces ne sont pas affichés.
       hide_cutting_dimensions: Masquer les dimensions de débit

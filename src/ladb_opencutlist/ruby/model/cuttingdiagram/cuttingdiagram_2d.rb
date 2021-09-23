@@ -154,7 +154,6 @@ module Ladb::OpenCutList
       @edge_count = _def.cutlist_part.edge_count
       @edge_material_names = _def.cutlist_part.edge_material_names
       @edge_std_dimensions = _def.cutlist_part.edge_std_dimensions
-      @tags = _def.cutlist_part.tags
 
       @px_x = _def.px_x
       @px_y = _def.px_y
@@ -171,7 +170,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :length, :width, :cutting_length, :cutting_width, :count, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :count, :tags, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements
 
     def initialize(_def)
       @_def = _def
@@ -180,6 +179,7 @@ module Ladb::OpenCutList
       @number = _def.cutlist_part.number
       @saved_number = _def.cutlist_part.saved_number
       @name = _def.cutlist_part.name
+      @description = _def.cutlist_part.description
       @length = _def.cutlist_part.length
       @width = _def.cutlist_part.width
       @cutting_length = _def.cutlist_part.cutting_length

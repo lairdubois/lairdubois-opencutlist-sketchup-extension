@@ -19,6 +19,7 @@ module Ladb::OpenCutList
         :mass,
         :price,
         :thickness_layer_count,
+        :description,
         :tags,
         :orientation_locked_on_axis,
         :symmetrical,
@@ -50,6 +51,7 @@ module Ladb::OpenCutList
             part_data['mass'],
             part_data['price'],
             part_data['thickness_layer_count'],
+            part_data['description'],
             DefinitionAttributes.valid_tags(part_data['tags']),
             part_data['orientation_locked_on_axis'],
             part_data['symmetrical'],
@@ -91,6 +93,11 @@ module Ladb::OpenCutList
           # Update definition's name
           if definition.name != part_data.name && !part_data.is_dynamic_attributes_name
             definition.name = part_data.name
+          end
+
+          # Update definition's description
+          if definition.description != part_data.description
+            definition.description = part_data.description
           end
 
           # Update definition's attributes

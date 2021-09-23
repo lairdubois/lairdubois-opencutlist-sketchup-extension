@@ -1373,6 +1373,7 @@
                 var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
                 var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
                 var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
+                var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
                 var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
                 var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
                 var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
@@ -1711,6 +1712,9 @@
                         }
                         if ($inputThicknessLayerCount.val() !== undefined && $inputThicknessLayerCount.val() !== '') {
                             editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
+                        }
+                        if ($inputDescription.val() !== undefined) {
+                            editedParts[i].description = $inputDescription.val();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
@@ -2951,6 +2955,7 @@
         var $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
         var $inputPartFolding = $('#ladb_input_part_folding', $modal);
         var $inputHideInstanceNames = $('#ladb_input_hide_entity_names', $modal);
+        var $inputHideDescriptions = $('#ladb_input_hide_descriptions', $modal);
         var $inputHideTags = $('#ladb_input_hide_tags', $modal);
         var $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
@@ -2972,6 +2977,7 @@
             options.part_number_sequence_by_group = $inputPartNumberSequenceByGroup.is(':checked');
             options.part_folding = $inputPartFolding.is(':checked');
             options.hide_entity_names = $inputHideInstanceNames.is(':checked');
+            options.hide_descriptions = $inputHideDescriptions.is(':checked');
             options.hide_tags = $inputHideTags.is(':checked');
             options.hide_cutting_dimensions = $inputHideCuttingDimensions.is(':checked');
             options.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
@@ -3004,6 +3010,7 @@
             $inputPartNumberSequenceByGroup.prop('checked', options.part_number_sequence_by_group);
             $inputPartFolding.prop('checked', options.part_folding);
             $inputHideInstanceNames.prop('checked', options.hide_entity_names);
+            $inputHideDescriptions.prop('checked', options.hide_descriptions);
             $inputHideTags.prop('checked', options.hide_tags);
             $inputHideCuttingDimensions.prop('checked', options.hide_cutting_dimensions);
             $inputHideBBoxDimensions.prop('checked', options.hide_bbox_dimensions);

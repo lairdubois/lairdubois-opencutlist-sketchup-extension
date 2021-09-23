@@ -34,6 +34,7 @@ module Ladb::OpenCutList
       @part_number_sequence_by_group = settings['part_number_sequence_by_group']
       @part_folding = settings['part_folding']
       @part_order_strategy = settings['part_order_strategy']
+      @hide_descriptions = settings['hide_descriptions']
       @hide_tags = settings['hide_tags']
       @hide_final_areas = settings['hide_final_areas']
       @tags_filter = settings['tags_filter']
@@ -289,6 +290,7 @@ module Ladb::OpenCutList
           part_def.number = number
           part_def.saved_number = saved_number
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(@dynamic_attributes_name)
+          part_def.description = definition.description
           part_def.scale = instance_info.scale
           part_def.flipped = definition_attributes.symmetrical ? false : instance_info.flipped
           part_def.cutting_size = cutting_size
@@ -560,6 +562,7 @@ module Ladb::OpenCutList
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
+                (folder_part_def.description == part_def.description || @hide_descriptions) &&
                 (folder_part_def.tags == part_def.tags || @hide_tags) &&
                 (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 || @hide_final_areas) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
