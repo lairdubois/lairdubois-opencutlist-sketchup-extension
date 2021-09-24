@@ -135,7 +135,7 @@
                             {% endfor %}
                         {% endif %}
                         {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            <td class="ladb-cutlist-dimension-value">{{ part[property] }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{{ part[property] }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -199,16 +199,16 @@
                         <td class="text-center">
                             {{ sheet.count }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ sheet.length }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ sheet.width }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ sheet.total_area }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ sheet.total_part_count ? sheet.total_part_count : '-' }}
                         </td>
                     </tr>
@@ -219,7 +219,7 @@
                         <td class="text-center">{{ summary.total_used_count }}</td>
                         <td></td>
                         <td></td>
-                        <td class="ladb-cutlist-dimension-value">{{ summary.total_used_area }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{{ summary.total_used_area }}</td>
                         <td class="text-right">{{ summary.total_used_part_count }}</td>
                     </tr>
                 {% endif %}

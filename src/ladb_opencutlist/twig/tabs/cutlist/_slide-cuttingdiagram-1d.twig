@@ -122,7 +122,7 @@
                         {% if showCuttingDimensions %}
                             {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' with { property:'length' } %}
                         {% endif %}
-                        <td class="ladb-cutlist-dimension-value">{{ part.length }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{{ part.length }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -182,13 +182,13 @@
                         <td class="text-center">
                             {{ bar.count }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ bar.length }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ bar.total_length }}
                         </td>
-                        <td class="ladb-cutlist-dimension-value">
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">
                             {{ bar.total_part_count ? bar.total_part_count : '-' }}
                         </td>
                     </tr>
@@ -198,7 +198,7 @@
                         <td class="text-right">{{ 'tab.cutlist.cuttingdiagram.list.total_used'|i18next }}</td>
                         <td class="text-center">{{ summary.total_used_count }}</td>
                         <td></td>
-                        <td class="ladb-cutlist-dimension-value">{{ summary.total_used_length }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{{ summary.total_used_length }}</td>
                         <td class="text-right">{{ summary.total_used_part_count }}</td>
                     </tr>
                 {% endif %}

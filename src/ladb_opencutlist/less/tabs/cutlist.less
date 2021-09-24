@@ -162,9 +162,17 @@
       opacity: 0.6;
     }
 
-    td.ladb-cutlist-dimension-value {
+    td.ladb-cutlist-value {
       white-space: nowrap;
-      text-align: right;
+      text-align: center;
+
+      &.ladb-cutlist-value-highlighted {
+        color: red;
+      }
+
+      &.ladb-cutlist-value-dimension {
+        text-align: right;
+      }
 
       i.ladb-opencutlist-icon-asterisk {
         color: @ladb-brand-info;
@@ -174,10 +182,6 @@
         }
       }
 
-    }
-
-    td.ladb-cutlist-highlighted-value {
-      color: red;
     }
 
     .ladb-cutlist-part-entity-names {
