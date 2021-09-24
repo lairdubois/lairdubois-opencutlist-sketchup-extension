@@ -47,7 +47,8 @@ default:
   instance_plural: unités
   part_single: pièce
   part_plural: pièces
-  thickness_layers: Couches
+  thickness_layer_single: couche
+  thickness_layer_plural: couches
   setup_model_units: Configurer les unités du modèle
   load_more: "Charger la suite..."
   reset_to_app_defaults: Restaurer aux valeurs d'origine

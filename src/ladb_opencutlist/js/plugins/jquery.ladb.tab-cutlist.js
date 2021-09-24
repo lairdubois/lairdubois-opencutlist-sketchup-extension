@@ -1540,7 +1540,7 @@
                     resetValue: '1',
                     defaultUnit: 'l',
                     units: [
-                        { l: i18next.t('default.thickness_layers') },
+                        { l: i18next.t('default.thickness_layer_plural') },
                     ]
                 });
                 $inputLengthIncrease.on('change', function() {
@@ -2748,15 +2748,18 @@
                         }
                         $.each(parts, function (index) {
                             var flatPathsAndNames = [];
-                            $.each(this.entity_names, function () {
-                                var count = this[1].length;
-                                for (var i = 0; i < count; i++) {
-                                    flatPathsAndNames.push({
-                                        path: this[1][i],
-                                        name: this[0],
-                                    });
-                                }
-                            });
+                            var layered = this.thickness_layer_count > 1;
+                            for (var l = 1; l <= this.thickness_layer_count; l++) {
+                                $.each(this.entity_names, function () {
+                                    var count = this[1].length;
+                                    for (var i = 0; i < count; i++) {
+                                        flatPathsAndNames.push({
+                                            path: this[1][i],
+                                            name: this[0] + (layered ? (this[0].length > 0 ? '.' : '') + i18next.t('default.thickness_layer_single') + '-' + l : ''),
+                                        });
+                                    }
+                                });
+                            }
                             flatPathsAndNames.sort(function (a, b) {    // Sort on Path ASC and Name ASC
                                 if (a.path < b.path) {
                                     return -1;
