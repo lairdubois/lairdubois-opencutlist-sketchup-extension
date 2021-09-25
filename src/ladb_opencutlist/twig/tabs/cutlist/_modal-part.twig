@@ -111,7 +111,7 @@
                         <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.description_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.description'|i18next }}</label>
                         <div class="col-xs-7">
-                            <textarea class="form-control" id="ladb_cutlist_part_input_description" rows="2" style="resize: vertical;">{{ part.description }}</textarea>
+                            <textarea class="form-control" id="ladb_cutlist_part_input_description" rows="{{ max(2, part.description|split('\n')|length) }}" style="resize: vertical;">{{ part.description }}</textarea>
                         </div>
                     </div>
                 {% endif %}
