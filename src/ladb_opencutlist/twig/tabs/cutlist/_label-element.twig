@@ -44,7 +44,9 @@
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}
-        {% if key == 'entity_named_path' %}
+        {% if key == 'description' %}
+            {% set value = part_info.part[key]|split('\n') %}
+        {% elseif key == 'entity_named_path' %}
             {% set value = part_info.entity_named_path %}
         {% elseif key == 'entity_name' %}
             {% set value = part_info.entity_name %}
@@ -55,7 +57,7 @@
         {% elseif key == 'batch' %}
             {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
         {% elseif key == 'tags' %}
-            {% set value = part_info.part.tags|join(' | ') %}
+            {% set value = part_info.part.tags %}
         {% elseif key == 'edge' %}
             {% set edgeKey = terms[2] %}
             {% if part_info.part.edge_material_names[edgeKey] is not null and part_info.part.edge_std_dimensions[edgeKey] is not null %}
@@ -87,5 +89,13 @@
     {% if value|trim is empty and noEmptyValue|default(false) %}
         {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}
     {% endif %}
-    <text class="ladb-label-element" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">{{ value|escape }}</text>
+    <text class="ladb-label-element" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">
+        {% if value is iterable %}
+            {% for line in value %}
+                <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|escape }}</tspan>
+            {% endfor %}
+        {% else %}
+            {{ value|escape }}
+        {% endif %}
+    </text>
 {% endif %}
