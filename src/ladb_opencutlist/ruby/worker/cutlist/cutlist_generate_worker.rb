@@ -562,9 +562,9 @@ module Ladb::OpenCutList
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
-                (folder_part_def.description == part_def.description || @hide_descriptions) &&
-                (folder_part_def.tags == part_def.tags || @hide_tags) &&
-                (((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001 || @hide_final_areas) &&      # final_area workaround for rounding error
+                (@hide_descriptions || folder_part_def.description == part_def.description) &&
+                (@hide_tags || folder_part_def.tags == part_def.tags) &&
+                (@hide_final_areas || ((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
                 folder_part_def.cumulable == part_def.cumulable &&
                 folder_part_def.ignore_grain_direction == part_def.ignore_grain_direction
@@ -573,6 +573,7 @@ module Ladb::OpenCutList
 
                 folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
                 folder_part_def.name = first_child_part_def.name
+                folder_part_def.description = first_child_part_def.description
                 folder_part_def.count = first_child_part_def.count
                 folder_part_def.cutting_size = first_child_part_def.cutting_size
                 folder_part_def.size = first_child_part_def.size

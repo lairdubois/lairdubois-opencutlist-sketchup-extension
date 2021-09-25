@@ -212,7 +212,7 @@ tab:
       used_instance_count: "**{{ count }}** / {{ total }} unité utilisée"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unités utilisées"
       thickness_layer_count: "La pièce finale est constituée en **{{ count }}** couches dans son épaisseur"
-      thickness_layered: "La quantité finales de pièces est multipliée par le nombre de couches par pièce."
+      thickness_layered: "La quantité représente ici le nombre de pièces à débiter pour obtenir toutes les couches."
       thickness_layered_equation: "**{{ count }}** *pièce* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *pièces* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
       multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
