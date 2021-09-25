@@ -1,0 +1,6 @@
+{% if part.instance_count_by_part > 1 %}
+    {% set tt = 'tab.cutlist.tooltip.used_instance_count'|i18next({ 'count':(part.instance_count_by_part * part.count - part.unused_instance_count), 'total':(part.instance_count_by_part * part.count) }) %}
+{% elseif part.thickness_layer_count > 1 %}
+    {% set tt = ('tab.cutlist.tooltip.thickness_layered'|i18next)~'<br>'~('tab.cutlist.tooltip.thickness_layered_equation'|i18next({ 'count':(part.count / part.thickness_layer_count), 'layerCount':part.thickness_layer_count, 'cuttingPartCount':part.count })) %}
+{% endif %}
+<td class="ladb-cutlist-value"{% if tt is defined %} data-toggle="tooltip" data-html="true" title="{{ tt }}"{% endif %}>{% if tt is defined %}<i class="ladb-opencutlist-icon-asterisk"></i>{% endif %}{{ part.count }}</td>

@@ -378,6 +378,14 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if part.thickness_layer_count > 1 %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-thickness-layers ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if part.is_dynamic_attributes_name %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-dynamic-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>

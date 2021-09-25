@@ -138,11 +138,11 @@
                     {% include 'tabs/cutlist/_group-label.twig' %}
                 </td>
                 <td class="text-center">{% if group.part_count == 0 %}-{% else %}{{ group.part_count }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{% if group.total_cutting_length is null %}-{% else %}{{ group.total_cutting_length }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{% if group.total_cutting_area is null %}-{% else %}{{ group.total_cutting_area }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{% if group.total_cutting_volume is null %}-{% else %}{{ group.total_cutting_volume }}{% endif %}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_length is null %}-{% else %}{{ group.total_cutting_length }}{% endif %}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_area is null %}-{% else %}{{ group.total_cutting_area }}{% endif %}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_volume is null %}-{% else %}{{ group.total_cutting_volume }}{% endif %}</td>
                 {% if not generateOptions.hide_final_areas %}
-                    <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{% if group.invalid_final_area_part_count > 0 %}<div class="ladb-minitools ladb-minitools-left no-print"><a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.invalid_final_area')|i18next({ 'count':group.invalid_final_area_part_count, 'total':group.part_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>{% endif %}{% if group.total_final_area is null or group.invalid_final_area_part_count > 0 %}-{% else %}{{ group.total_final_area }}{% endif %}</td>
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.invalid_final_area_part_count > 0 %}<div class="ladb-minitools ladb-minitools-left no-print"><a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.invalid_final_area')|i18next({ 'count':group.invalid_final_area_part_count, 'total':group.part_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>{% endif %}{% if group.total_final_area is null or group.invalid_final_area_part_count > 0 %}-{% else %}{{ group.total_final_area }}{% endif %}</td>
                 {% endif %}
             </tr>
         {% endfor %}
@@ -283,7 +283,7 @@
             <tr id="ladb_part_{{ part.id }}" data-part-id="{{ part.id }}" class="ladb-cutlist-row{% if part.children %} ladb-cutlist-row-folder{% endif %} ladb-minitools-holder">
                 {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                 {% include 'tabs/cutlist/_list-row-col-name.twig' %}
-                <td class="ladb-cutlist-value ladb-cutlist-value-center"{% if part.instance_count_by_part > 1 %} data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.used_instance_count'|i18next({ 'count':(part.instance_count_by_part * part.count - part.unused_instance_count), 'total':(part.instance_count_by_part * part.count) }) }}"{% endif %}>{% if part.instance_count_by_part > 1 %}<i class="ladb-opencutlist-icon-asterisk"></i>{% endif %}{{ part.count }}</td>
+                {% include 'tabs/cutlist/_list-row-col-count.twig' %}
                 {% if showCuttingDimensions %}
                     {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
                         {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' %}
@@ -295,7 +295,7 @@
                     {% endfor %}
                 {% endif %}
                 {% if showFinalAreas %}
-                    <td class="ladb-cutlist-value ladb-cutlist-value-dimension">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if part.final_area %}{{ part.final_area }}{% else %}-{% endif %}</td>
                 {% endif %}
                 {% if showEdges %}
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.ymin in generateFilters.edge_material_names_filter %} ladb-active{% endif %}">{% if part.edge_material_names.ymin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymin }}</span>{% endif %}</td>
@@ -309,7 +309,7 @@
                     <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
                         {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
                         {% include 'tabs/cutlist/_list-row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
-                        <td class="text-center">{{ partChild.count }}</td>
+                        {% include 'tabs/cutlist/_list-row-col-count.twig' with { 'part':partChild } %}
                         {% if showCuttingDimensions %}
                             {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
                                 <td></td>
