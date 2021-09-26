@@ -1313,6 +1313,9 @@
                 if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
                     editedPart.thickness_layer_count = MULTIPLE_VALUE;
                 }
+                if (editedPart.description !== editedParts[i].description) {
+                    editedPart.description = MULTIPLE_VALUE;
+                }
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
                 });
@@ -1537,12 +1540,9 @@
                     ]
                 });
                 $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
-                    resetValue: '1',
-                    defaultUnit: 'l',
-                    units: [
-                        { l: i18next.t('default.thickness_layer_plural') },
-                    ]
+                    resetValue: '1'
                 });
+                $inputDescription.ladbTextinputArea();
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
@@ -1701,32 +1701,32 @@
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
                             editedParts[i].cumulable = parseInt($selectCumulable.val());
                         }
-                        if ($inputInstanceCountByPart.val() !== undefined && $inputInstanceCountByPart.val() !== '') {
+                        if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
                         }
-                        if ($inputMass.val() !== undefined && $inputMass.val() !== '') {
-                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val').trim();
+                        if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
                         }
-                        if ($inputPrice.val() !== undefined && $inputPrice.val() !== '') {
+                        if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].price = $inputPrice.val().trim();
                         }
-                        if ($inputThicknessLayerCount.val() !== undefined && $inputThicknessLayerCount.val() !== '') {
+                        if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
                         }
-                        if ($inputDescription.val() !== undefined) {
+                        if (!$inputDescription.ladbTextinputArea('isMultiple')) {
                             editedParts[i].description = $inputDescription.val();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
-                        if ($inputLengthIncrease.val() !== undefined && $inputLengthIncrease.val() !== '') {
+                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
                         }
-                        if ($inputWidthIncrease.val() !== undefined && $inputWidthIncrease.val() !== '') {
+                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
                             editedParts[i].width_increase = $inputWidthIncrease.val();
                         }
-                        if ($inputThicknessIncrease.val() !== undefined && $inputThicknessIncrease.val() !== '') {
+                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
                             editedParts[i].thickness_increase = $inputThicknessIncrease.val();
                         }
 

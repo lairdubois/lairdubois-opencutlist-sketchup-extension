@@ -37,6 +37,10 @@ LadbTextinputAbstract.prototype.val = function (value) {
     return this.$element.val(value);
 };
 
+LadbTextinputAbstract.prototype.isMultiple = function () {
+    return this.$element.data('multiple') === true;
+};
+
 /////
 
 LadbTextinputAbstract.prototype.createLeftToolsContainer = function () {
@@ -110,6 +114,22 @@ LadbTextinputAbstract.prototype.init = function () {
                     this.value = '';
                 }
             });
+        });
+
+    }
+
+    // Multiple value
+    if (this.$element.data('multiple')) {
+
+        // Set placeholder if value are multiple
+        this.$element.attr('placeholder', i18next.t('tab.cutlist.edit_part.multiple_values'));
+
+        // Remove placeholder and set multiple to false on value edited
+        this.$element.on('input change', function () {
+            that.$element
+                .attr('placeholder', '')
+                .data('multiple', false)
+            ;
         });
 
     }

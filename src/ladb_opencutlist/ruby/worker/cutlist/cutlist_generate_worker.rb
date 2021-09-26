@@ -129,7 +129,7 @@ module Ladb::OpenCutList
         # Populate used tags
         cutlist.add_used_tags(definition_attributes.tags)
 
-        # Labels filter
+        # Tags filter
         if !@tags_filter.empty? && !definition_attributes.has_tags(@tags_filter)
           cutlist.ignored_instance_count += 1
           next
@@ -154,6 +154,27 @@ module Ladb::OpenCutList
             next
           end
 
+        end
+
+        # Sanitize definition attributes according to material type
+        case material_attributes.type
+          when MaterialAttributes::TYPE_UNKNOWN
+            definition_attributes.instance_count_by_part = 1
+            definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
+            definition_attributes.length_increase = 0
+            definition_attributes.width_increase = 0
+            definition_attributes.thickness_increase = 0
+            definition_attributes.thickness_layer_count = 1
+          when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL
+            definition_attributes.instance_count_by_part = 1
+            definition_attributes.mass = ''
+            definition_attributes.price = ''
+          when MaterialAttributes::TYPE_HARDWARE
+            definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
+            definition_attributes.length_increase = 0
+            definition_attributes.width_increase = 0
+            definition_attributes.thickness_increase = 0
+            definition_attributes.thickness_layer_count = 1
         end
 
         # Compute transformation, scale and sizes
