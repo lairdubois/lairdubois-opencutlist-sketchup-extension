@@ -75,6 +75,8 @@
                             </select>
                         </div>
                     </div>
+                {% endif %}
+                {% if group.material_type == 2 %}   {# 2 = TYPE_SHEET_GOOD #}
                     <div class="form-group">
                         <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_layer_count_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label for="ladb_cutlist_part_select_thickness_layer_count" class="control-label col-xs-3"><i class="ladb-opencutlist-icon-thickness-layers"></i>&nbsp;{{ 'tab.cutlist.edit_part.thickness_layer_count'|i18next }}</label>

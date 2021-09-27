@@ -2755,7 +2755,7 @@
                                     for (var i = 0; i < count; i++) {
                                         flatPathsAndNames.push({
                                             path: this[1][i],
-                                            name: this[0] + (layered ? (this[0].length > 0 ? '.' : '') + i18next.t('default.thickness_layer_single') + '-' + l : ''),
+                                            name: this[0] + (layered ? ' // ' + l : ''),
                                         });
                                     }
                                 });
@@ -2952,6 +2952,7 @@
         // Fetch UI elements
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
+        var $inputFlippedDetection = $('#ladb_input_flipped_detection', $modal);
         var $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
         var $inputDynamicAttributesName = $('#ladb_input_dynamic_attributes_name', $modal);
         var $inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', $modal);
@@ -2974,6 +2975,7 @@
         // Define useful functions
         var fnFetchOptions = function (options) {
             options.auto_orient = $inputAutoOrient.is(':checked');
+            options.flipped_detection = $inputFlippedDetection.is(':checked');
             options.smart_material = $inputSmartMaterial.is(':checked');
             options.dynamic_attributes_name = $inputDynamicAttributesName.is(':checked');
             options.part_number_with_letters = $inputPartNumberWithLetters.is(':checked');
@@ -3007,6 +3009,7 @@
             // Checkboxes
 
             $inputAutoOrient.prop('checked', options.auto_orient);
+            $inputFlippedDetection.prop('checked', options.flipped_detection);
             $inputSmartMaterial.prop('checked', options.smart_material);
             $inputDynamicAttributesName.prop('checked', options.dynamic_attributes_name);
             $inputPartNumberWithLetters.prop('checked', options.part_number_with_letters);

@@ -28,6 +28,7 @@ module Ladb::OpenCutList
     def initialize(settings)
 
       @auto_orient = settings['auto_orient']
+      @flipped_detection = settings['flipped_detection']
       @smart_material = settings['smart_material']
       @dynamic_attributes_name = settings['dynamic_attributes_name']
       @part_number_with_letters = settings['part_number_with_letters']
@@ -161,19 +162,24 @@ module Ladb::OpenCutList
           when MaterialAttributes::TYPE_UNKNOWN
             definition_attributes.instance_count_by_part = 1
             definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
-            definition_attributes.length_increase = 0
-            definition_attributes.width_increase = 0
-            definition_attributes.thickness_increase = 0
+            definition_attributes.length_increase = '0'
+            definition_attributes.width_increase = '0'
+            definition_attributes.thickness_increase = '0'
             definition_attributes.thickness_layer_count = 1
-          when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL
+          when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_DIMENSIONAL
+            definition_attributes.instance_count_by_part = 1
+            definition_attributes.mass = ''
+            definition_attributes.price = ''
+            definition_attributes.thickness_layer_count = 1
+          when MaterialAttributes::TYPE_SHEET_GOOD
             definition_attributes.instance_count_by_part = 1
             definition_attributes.mass = ''
             definition_attributes.price = ''
           when MaterialAttributes::TYPE_HARDWARE
             definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
-            definition_attributes.length_increase = 0
-            definition_attributes.width_increase = 0
-            definition_attributes.thickness_increase = 0
+            definition_attributes.length_increase = '0'
+            definition_attributes.width_increase = '0'
+            definition_attributes.thickness_increase = '0'
             definition_attributes.thickness_layer_count = 1
         end
 
@@ -277,7 +283,7 @@ module Ladb::OpenCutList
 
         # Define part
 
-        part_id = PartDef.generate_part_id(group_id, definition, definition_attributes, instance_info, @dynamic_attributes_name)
+        part_id = PartDef.generate_part_id(group_id, definition, definition_attributes, instance_info, @dynamic_attributes_name, @flipped_detection)
         part_def = group_def.get_part_def(part_id)
         unless part_def
 
@@ -313,7 +319,7 @@ module Ladb::OpenCutList
           part_def.name, part_def.is_dynamic_attributes_name = instance_info.read_name(@dynamic_attributes_name)
           part_def.description = definition.description
           part_def.scale = instance_info.scale
-          part_def.flipped = definition_attributes.symmetrical ? false : instance_info.flipped
+          part_def.flipped = @flipped_detection && (definition_attributes.symmetrical ? false : instance_info.flipped)
           part_def.cutting_size = cutting_size
           part_def.size = size
           part_def.material_name = material_name
@@ -363,7 +369,7 @@ module Ladb::OpenCutList
               # -- Edges --
 
               # Grab min/max face infos
-              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, instance_info.flipped)
+              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, @flipped_detection && instance_info.flipped)
               ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               # Grab edge materials

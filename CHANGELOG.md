@@ -9,13 +9,14 @@ in 2.x, 1.x and 0.x versions.
   * Added thickness layer count
   * Added description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
+  * Added a cutlist's option to disable flipped part detection
 
 * 2.1.2 (WIP)
 
   * Fixed display units from Preferences when using fractional inches
   * Fixed bug when preset's name contains numbers only
   * Fixed text input reset value
-  * Added retina screen support for highlight part tool
+  * Added better retina screen support for highlight part tool
 
 * 2.1.1 (2021-08-02)
 

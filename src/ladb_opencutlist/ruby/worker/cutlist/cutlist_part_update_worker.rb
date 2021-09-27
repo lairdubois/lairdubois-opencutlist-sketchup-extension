@@ -40,7 +40,6 @@ module Ladb::OpenCutList
       parts_data = settings['parts_data']
 
       parts_data.each { |part_data|
-
         @parts_data << PartData.new(
             part_data['definition_id'],
             part_data['name'],

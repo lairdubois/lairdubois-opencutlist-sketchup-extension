@@ -4,6 +4,7 @@
   },
   "0": {
     "auto_orient": true,
+    "flipped_detection": true,
     "smart_material": true,
     "dynamic_attributes_name": false,
     "part_number_with_letters": true,

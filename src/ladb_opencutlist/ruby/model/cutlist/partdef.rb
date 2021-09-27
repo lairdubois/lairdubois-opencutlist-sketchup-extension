@@ -79,7 +79,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.generate_part_id(group_id, definition, definition_attributes, instance_info, dynamic_attributes_name = false)
+    def self.generate_part_id(group_id, definition, definition_attributes, instance_info, dynamic_attributes_name = false, flipped_detection = true)
 
       # Uses name for dynamic components to separate instances with the same definition, but different name
       entity_id = definition_attributes.uuid.nil? ? definition.entityID : definition_attributes.uuid
@@ -89,7 +89,7 @@ module Ladb::OpenCutList
       end
 
       # Include scale into part_id to separate instances with the same definition, but different scale
-      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.length).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.width).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.thickness).to_s}|#{definition_attributes.symmetrical ? false : instance_info.flipped.to_s}")
+      Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.length).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.width).to_s}|#{DimensionUtils.instance.to_ocl_precision_f(instance_info.size.thickness).to_s}|#{flipped_detection && (definition_attributes.symmetrical ? false : instance_info.flipped)}")
 
     end
 
