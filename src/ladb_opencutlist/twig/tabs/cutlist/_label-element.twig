@@ -16,25 +16,27 @@
     {% set rectPartHeight = areaSize * (proportional ? part_info.part.w_ratio : 1) - plainStrokeWidth %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
         <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
-        <g>
-            {% set arrowMargin = minUnit / 4 %}
-            {% set arrowX = arrowMargin %}
-            {% set arrowY = arrowMargin %}
-            {% set arrowWidth = rectPartWidth - arrowMargin * 2 %}
-            {% set arrowLength = rectPartHeight - arrowMargin * 2 %}
-            {% set arrowStrokeWidth = minUnit / 20 %}
-            {% set arrowPattern = [
-                [     0 , 1/3.0 ],
-                [ 1/2.0 , 1/3.0 ],
-                [ 1/2.0 ,     0 ],
-                [     1 , 1/2.0 ],
-                [ 1/2.0 ,     1 ],
-                [ 1/2.0 , 2/3.0 ],
-                [     0 , 2/3.0 ],
-                [     0 , 1/3.0 ],
-            ] %}
-            <polyline points="{% for point in arrowPattern %}{{ arrowX + arrowWidth * point[0] }},{{ arrowY + arrowLength * point[1] }} {% endfor %}" stroke="#000" stroke-width="{{ arrowStrokeWidth }}" fill="none" />
-        </g>
+        {% if group.material_grained %}
+            <g>
+                {% set arrowMargin = minUnit / 4 %}
+                {% set arrowX = arrowMargin %}
+                {% set arrowY = arrowMargin %}
+                {% set arrowWidth = rectPartWidth - arrowMargin * 2 %}
+                {% set arrowLength = rectPartHeight - arrowMargin * 2 %}
+                {% set arrowStrokeWidth = minUnit / 20 %}
+                {% set arrowPattern = [
+                    [     0 , 1/3.0 ],
+                    [ 1/2.0 , 1/3.0 ],
+                    [ 1/2.0 ,     0 ],
+                    [     1 , 1/2.0 ],
+                    [ 1/2.0 ,     1 ],
+                    [ 1/2.0 , 2/3.0 ],
+                    [     0 , 2/3.0 ],
+                    [     0 , 1/3.0 ],
+                ] %}
+                <polyline points="{% for point in arrowPattern %}{{ arrowX + arrowWidth * point[0] }},{{ arrowY + arrowLength * point[1] }} {% endfor %}" stroke="#000" stroke-width="{{ arrowStrokeWidth }}" fill="none" />
+            </g>
+        {% endif %}
         <g>
             <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.ymax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
             <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if part_info.part.edge_material_names.xmax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />

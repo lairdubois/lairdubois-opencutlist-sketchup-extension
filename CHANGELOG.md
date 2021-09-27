@@ -10,6 +10,7 @@ in 2.x, 1.x and 0.x versions.
   * Added description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
   * Added a cutlist's option to disable flipped part detection
+  * Improved arrow display in labels part thumbnail
 
 * 2.1.2 (WIP)
 
