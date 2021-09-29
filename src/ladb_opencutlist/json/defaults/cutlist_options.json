@@ -11,6 +11,7 @@
     "part_number_sequence_by_group": true,
     "part_folding": false,
     "hide_entity_names": false,
+    "hide_descriptions": false,
     "hide_tags": false,
     "hide_cutting_dimensions": false,
     "hide_bbox_dimensions": false,

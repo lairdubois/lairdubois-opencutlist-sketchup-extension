@@ -1346,6 +1346,7 @@
                 tab = this.lastEditPartTab;
             }
             if (tab === null || tab.length === 0
+                || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'infos'

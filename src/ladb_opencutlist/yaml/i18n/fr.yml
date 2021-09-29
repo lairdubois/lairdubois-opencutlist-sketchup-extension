@@ -253,6 +253,7 @@ tab:
       title_multiple: Propriétés du groupe de pièces
       multiple_alert: Propriétés communes du groupe de {{ part_count }} pièces.
       general: Générales
+      extra_help: Liste des propriétés spécifiques au type de matière "**$t(tab.materials.type_{{ material_type }})**".
       edges: Chants
       name: Nom
       material: Matière
