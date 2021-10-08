@@ -284,7 +284,7 @@ module Ladb::OpenCutList::BinPacking2D
           new_leftovers = leftovers_v
           new_cuts = cuts_v
         else
-          return false
+          return false if !finalbb
         end
       end
 
