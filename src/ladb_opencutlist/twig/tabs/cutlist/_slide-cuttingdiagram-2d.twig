@@ -46,8 +46,13 @@
 {% macro cut_tooltip(cut, options) %}
 {% spaceless %}
     <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_final ? '_final' : (cut.is_through ? '_through' : '')))|i18next }}</span></div>
-    <div class='tt-data'>{% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 or options.origin_corner == 3 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut-{% if options.origin_corner == 2 or options.origin_corner == 3 %}{# 2 = ORIGIN_CORNER_TOP_RIGHT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}left{% else %}right{% endif %}'></i> {{ cut.x|escape('html') }}{% endif %}</div>
-    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ saw_kerf.saw_kerf|escape('html') }}</div>
+    <div class='tt-data'>{{ _self.cut_position(cut, options) }}</div>
+    <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}</div>
+{% endspaceless %}
+{% endmacro %}
+{% macro cut_position(cut, options) %}
+{% spaceless %}
+    {% if cut.is_horizontal %}<i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 or options.origin_corner == 3 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}top{% else %}bottom{% endif %}'></i> {{ cut.y|escape('html') }}{% else %}<i class='ladb-opencutlist-icon-vertical-cut-{% if options.origin_corner == 2 or options.origin_corner == 3 %}{# 2 = ORIGIN_CORNER_TOP_RIGHT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}left{% else %}right{% endif %}'></i> {{ cut.x|escape('html') }}{% endif %}
 {% endspaceless %}
 {% endmacro %}
 
@@ -358,6 +363,21 @@
                                 {% include 'core/_grain-direction-arrow.twig' with { 'centerX':sheet.px_length / 2, 'centerY':sheet.px_width + 20 } %}
                             {% endif %}
                         </svg>
+
+                        {% if options.highlight_primary_cuts %}
+                            <div class="col-xs-3 col-xs-offset-3 ladb-cuttingdiagram-cuts-final">
+                                {% for cut in sheet.cuts if cut.is_final %}
+                                    {% if loop.first %}<div>{{ 'tab.cutlist.cuttingdiagram.list.cut_final'|i18next }}</div>{% endif %}
+                                    <div>{{ fn.cut_position(cut, options) }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-xs-3 ladb-cuttingdiagram-cuts-through">
+                                {% for cut in sheet.cuts if cut.is_through and not cut.is_final %}
+                                    {% if loop.first %}<div>{{ 'tab.cutlist.cuttingdiagram.list.cut_through'|i18next }}</div>{% endif %}
+                                    <div>{{ fn.cut_position(cut, options) }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
                     </td>
                 </tr>

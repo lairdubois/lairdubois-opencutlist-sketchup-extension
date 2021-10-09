@@ -839,11 +839,11 @@
         $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
 
             // Show Objective modal
-            that.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'docs' }, null, true);
+            // that.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'docs' }, null, true);
 
-            // $.getJSON(that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL), function (data) {
-            //     rubyCallCommand('core_open_url', data);
-            // });
+            $.getJSON(that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL), function (data) {
+                rubyCallCommand('core_open_url', data);
+            });
             return false;
         });
 
