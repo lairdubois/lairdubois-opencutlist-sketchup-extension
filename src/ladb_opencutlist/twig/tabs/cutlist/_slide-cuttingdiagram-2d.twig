@@ -365,16 +365,20 @@
                         </svg>
 
                         {% if options.highlight_primary_cuts %}
-                            <div class="col-xs-3 col-xs-offset-3 ladb-cuttingdiagram-cuts-final">
+                            <div class="col-xs-3 col-xs-offset-3 ladb-cuttingdiagram-cuts-summary ladb-cuttingdiagram-cuts-summary-final">
+                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_final_plural'|i18next }}</div>
                                 {% for cut in sheet.cuts if cut.is_final %}
-                                    {% if loop.first %}<div>{{ 'tab.cutlist.cuttingdiagram.list.cut_final'|i18next }}</div>{% endif %}
                                     <div>{{ fn.cut_position(cut, options) }}</div>
+                                {% else %}
+                                    <div><em>{{ 'tab.cutlist.cuttingdiagram.list.cut_none'|i18next }}</em></div>
                                 {% endfor %}
                             </div>
-                            <div class="col-xs-3 ladb-cuttingdiagram-cuts-through">
+                            <div class="col-xs-3 ladb-cuttingdiagram-cuts-summary ladb-cuttingdiagram-cuts-summary-through">
+                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_through_plural'|i18next }}</div>
                                 {% for cut in sheet.cuts if cut.is_through and not cut.is_final %}
-                                    {% if loop.first %}<div>{{ 'tab.cutlist.cuttingdiagram.list.cut_through'|i18next }}</div>{% endif %}
                                     <div>{{ fn.cut_position(cut, options) }}</div>
+                                {% else %}
+                                    <div><em>{{ 'tab.cutlist.cuttingdiagram.list.cut_none'|i18next }}</em></div>
                                 {% endfor %}
                             </div>
                         {% endif %}

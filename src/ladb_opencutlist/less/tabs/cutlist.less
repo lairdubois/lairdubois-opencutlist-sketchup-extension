@@ -701,26 +701,21 @@ body.no-ie, body.ie-gt11 {
 
 // Cuts summary
 
-.ladb-cuttingdiagram-cuts-final {
-  border-left: 2px solid #F5486E;
+.ladb-cuttingdiagram-cuts-summary {
+  border-left-width: 2px;
+  border-left-style: solid;
+  margin-bottom: 4px;
 
-  &:first-child {
-    margin-bottom: 5px;
+  &.ladb-cuttingdiagram-cuts-summary-final {
+    border-color: #F5486E;
   }
-  &:last-child {
-    margin-bottom: 5px;
+  &.ladb-cuttingdiagram-cuts-summary-through {
+    border-color: #2DB84D;
   }
 
-}
-
-.ladb-cuttingdiagram-cuts-through {
-  border-left: 2px solid #2DB84D;
-
-  &:first-child {
-    margin-bottom: 5px;
-  }
-  &:last-child {
-    margin-bottom: 5px;
+  > div:first-child {
+    font-size: 16px;
+    margin-bottom: 4px;
   }
 
 }
