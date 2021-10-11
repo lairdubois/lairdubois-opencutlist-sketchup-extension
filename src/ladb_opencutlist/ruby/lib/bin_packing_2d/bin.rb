@@ -210,9 +210,47 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Merge cuts to produce through cuts, only single pass
+    #
+    def merge_cuts
+      cuts = @cuts_h.sort_by {|cut| [cut.y, cut.x]}
+      new_cuts = []
+      cuts.each_slice(2) do |c1, c2|
+        if c2.nil?
+          new_cuts << c1
+        elsif (c1.y - c2.y).abs <= EPS && (c1.x + c1.length - c2.x).abs <= @options.saw_kerf + EPS
+          c1.set_length(c1.length + @options.saw_kerf + c2.length)
+          new_cuts << c1
+        else
+          new_cuts << c1
+          new_cuts << c2
+        end
+      end
+      @cuts_h = new_cuts
+
+      cuts = @cuts_v.sort_by {|cut| [cut.x, cut.y]}
+      new_cuts = []
+
+      cuts.each_slice(2) do |c1, c2|
+        if c2.nil?
+          new_cuts << c1
+        elsif (c1.x - c2.x).abs <= EPS && (c1.y + c1.length - c2.y).abs <= @options.saw_kerf + EPS
+          c1.set_length(c1.length + @options.saw_kerf + c2.length)
+          new_cuts << c1
+        else
+          new_cuts << c1
+          new_cuts << c2
+        end
+      end
+      @cuts_v = new_cuts
+    end
+
+    #
     # Collects information about this Bin's packing.
     #
     def summarize
+
+      merge_cuts
       # Compute additional through cuts (primary cuts into the bounding box).
       h_cuts = @cuts_h.select { |cut|
         (cut.x - @options.trimsize).abs <= EPS &&
@@ -322,13 +360,13 @@ module Ladb::OpenCutList::BinPacking2D
       @bounding_box_done = false
       # Make two dummy boxes that represent the leftovers after the bounding
       # box has been done. Select the combination giving the largest leftover area.
-#      if @max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width
+      if @max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width
         dummy1 = Box.new(@max_length, very_small_dim, false, nil)
         dummy2 = Box.new(very_small_dim, @max_width, false, nil)
-#      else
-#        dummy1 = Box.new(very_small_dim, @max_width, false, nil)
-#        dummy2 = Box.new(@max_length, very_small_dim, false, nil)
-#      end
+      else
+        dummy1 = Box.new(very_small_dim, @max_width, false, nil)
+        dummy2 = Box.new(@max_length, very_small_dim, false, nil)
+      end
 
       if !bounding_box(dummy1, true)
         if !bounding_box(dummy2, true)
