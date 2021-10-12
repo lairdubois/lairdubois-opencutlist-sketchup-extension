@@ -47,6 +47,8 @@ default:
   instance_plural: Stücke
   part_single: Teil
   part_plural: Teile
+  thickness_layer_single: Schicht
+  thickness_layer_plural: Schichten
   setup_model_units: Modelleinheiten konfigurieren
   load_more: "Weitere laden ..."
   reset_to_app_defaults: Originalwerte wiederherstellen
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Achtung, **{{ count }}** Stücke der letzten Packung werden nicht verwendet."
       used_instance_count: "**{{ count }}** / {{ total }} Stücken verwendet"
       used_instance_count_plural: "**{{ count }}** / {{ total }} Stücken verwendet"
+      thickness_layer_count: "Das fertige Teil besteht aus **{{ Anzahl }}** Schichten in seiner Dicke"
+      thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Schichten zu erhalten."
+      thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Schichten* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Schichten* = **{{ cuttingPartCount }}**"
       multiple_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die in {{ count }} verschiedenen Ebenen vorhanden sind:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Eigenschaften der Gruppe von Teilen
       multiple_alert: "Gemeinsame Eigenschaften von {{ part_count }} Teilen."
       general: Allgemein
+      extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Kantenbänder
       name: Bezeichnung
       material: Material
@@ -269,6 +276,11 @@ tab:
       mass_help: Die Masse des Teils wird bei der Erstellung von **Berichten** verwendet.
       price: Preis
       price_help: Der Preis des Teils wird bei der Erstellung von **Berichten** verwendet.
+      thickness_layer_count: Anzahl Schichten
+      thickness_layer_count_help: "Legen Sie hier die Anzahl der Schichten fest. "
+      description: Beschreibung
+      description_help: |
+        Die *Beschreibung* ermöglicht es Ihnen, persönliche Informationen zu jeder Teildefinition anzugeben.
       tags: Tags
       tags_help: |
         Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
@@ -327,6 +339,9 @@ tab:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
         - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
+      flipped_detection: Erkennung von gespiegelten Teilen
+      flipped_detection_help: |
+        Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als neues Teil angezeigt.
       smart_material: "*Intelligente* Zuweisung des Materials"
       smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen."
       dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Tags** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist)."
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
+      hide_descriptions: "Beschreibungen ausblenden "
+      hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt. "
       hide_tags: Tags ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden die auf den Teilen platzierten **Tags** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
@@ -490,6 +507,10 @@ tab:
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
+      option_use_names: Identifizierung der Teile
+      option_use_names_0: Nummer verwenden
+      option_use_names_1: Bezeichnung verwenden
+      option_use_names_help: "Hier können Sie zwischen **Nummer** und **Beschreibung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
       option_origin_corner: Position des Ursprungs
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
@@ -581,7 +602,10 @@ tab:
         cut: Schnitt
         cut_plural: Schnitte
         cut_final: Primärschnitt (Stufe 1)
+        cut_final_plural: Primäre Schnitte (Stufe 1)
         cut_through: Primärschnitt (Stufe 2)
+        cut_through_plural: Primäre Schnitte (Stufe 2)
+        cut_none: Kein
         bar_dimensional_type_0: Standard-Stange
         bar_dimensional_type_1: Stangenrest
         bar_edge_type_0: Standard-Kantenband
@@ -654,6 +678,7 @@ tab:
       formula:
         part_number: Nummer
         part_name: Bezeichnung
+        part_description: Beschreibung
         part_entity_named_path: Instanzpfad
         part_entity_name: Instanzbezeichnung
         part_cutting_size: Rohmaße

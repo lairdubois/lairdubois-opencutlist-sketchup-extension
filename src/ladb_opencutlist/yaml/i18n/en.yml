@@ -47,6 +47,8 @@ default:
   instance_plural: items
   part_single: part
   part_plural: parts
+  thickness_layer_single: layer
+  thickness_layer_plural: layers
   setup_model_units: Setup the model units
   load_more: "Load more ..."
   reset_to_app_defaults: Restore to original values
@@ -209,13 +211,17 @@ tab:
       unused_instance_count_plural: "Note that **{{ count }}** items from the last package will not be used."
       used_instance_count: "**{{ count }}** item of {{ total }} used"
       used_instance_count_plural: "**{{ count }}** items of {{ total }} used"
+      thickness_layer_count: "The final part is made of **{{ count }}** layers in thickness"
+      thickness_layered: "The quantity here represents the number of pieces to be cut to obtain all the layers."
+      thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
       children_size_increase: "This dimension is increased by an oversize for {{ count }} grouped parts"
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because {{ count }} parts (of {{ total }}) have an invalid area"
-      is_dynamic_attributes_name: The description of this part is extracted from the attribute 'Name' of the dynamic component
+      is_dynamic_attributes_name: The designation of this part is extracted from the attribute 'Name' of the dynamic component
       size_increased: "Dimension is increased by an oversize of {{ value }}"
       has_edges: "This part contains {{ count }} edge banding"
       has_edges_plural: "This part contains {{ count }} edge bandings"
@@ -247,8 +253,9 @@ tab:
       title_multiple: Properties of the Group of Parts
       multiple_alert: "Shared properties of {{ part_count }} parts."
       general: General
+      extra_help: "List of properties specific to the type of material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Edge Bandings
-      name: Description
+      name: Name
       material: Material
       cumulable: Summable
       cumulable_help: |
@@ -269,6 +276,11 @@ tab:
       mass_help: The weight of the part will be used when generating **Reports**.
       price: Price
       price_help: The price of the part will be used when generating **Reports**.
+      thickness_layer_count: Nb of layers
+      thickness_layer_count_help: Set the number of layers here.
+      description: Description
+      description_help: |
+        The *Description* allows you to provide personalized information on each part definition.
       tags: Tags
       tags_help: |
         *Tags* are custom keywords that can be added to each part definition.
@@ -327,6 +339,9 @@ tab:
          - the *length* is read on the <span style='color:red'>red</span> axis,
          - the *width* on the <span style='color:green'>green</span> axis and
          - the *thickness* on the <span style='color:blue'>blue</span> axis
+      flipped_detection: "Detection of mirrored parts "
+      flipped_detection_help: |
+        If this option is selected, mirrored parts will be detected and displayed as a new part.
       smart_material: "*Smart* assignment of material"
       smart_material_help: "If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child."
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
@@ -338,10 +353,12 @@ tab:
       part_number_with_letters_help: "If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group (list of parts with same material type and thickness)."
-      part_folding: Group Similar Parts
+      part_folding: Group similar parts
       part_folding_help: "If this option is selected, parts with **identical size** and with **identical tags** will be grouped (as long as the display of this area is not hidden)."
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
+      hide_descriptions: Hide descriptions
+      hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
       hide_tags: Hide tags
       hide_tags_help: "If this option is selected, **tags** will not be displayed."
       hide_cutting_dimensions: Hide rough dimensions
@@ -365,7 +382,7 @@ tab:
       property_thickness: Thickness
       property_length: Length
       property_width: Width
-      property_name: Description
+      property_name: Designation
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
       property_tags: Tags
@@ -388,7 +405,7 @@ tab:
       area_short: Area
       volume: Volume
       number: No.
-      name: Description
+      name: Designation
       count: Qty.
       cutting: Rough
       bbox: Finished
@@ -490,6 +507,10 @@ tab:
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
+      option_use_names: Part identification
+      option_use_names_0: Use the number
+      option_use_names_1: Use the designation
+      option_use_names_help: Allows you to choose between **number** and **designation** to identify parts on the cutting diagram.
       option_origin_corner: Position of the Origin
       option_origin_corner_1d_0: From the left
       option_origin_corner_1d_1: From the right
@@ -502,7 +523,7 @@ tab:
       option_full_width_diagram: Full Width Display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
-      option_full_width_diagram_help: "If this option is activated, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
+      option_full_width_diagram_help: "If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Offcuts
@@ -581,7 +602,10 @@ tab:
         cut: Cut
         cut_plural: Cuts
         cut_final: Primary cut (level 1)
+        cut_final_plural: Primary cuts (level 1)
         cut_through: Primary cut (level 2)
+        cut_through_plural: Primary cuts (level 2)
+        cut_none: None
         bar_dimensional_type_0: Standard Dimensional
         bar_dimensional_type_1: Offcut Board
         bar_edge_type_0: Standard Edge Banding
@@ -653,7 +677,8 @@ tab:
       option_color: Color
       formula:
         part_number: Number
-        part_name: Description
+        part_name: Designation
+        part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
         part_cutting_size: Rough dimensions
@@ -871,7 +896,7 @@ tab:
       unused: Unused
       mandatory: Mandatory fields
       optional: Optional fields
-      name: Description
+      name: Designation
       count: Quantity
       bbox_length: Length
       bbox_width: Width
@@ -890,7 +915,7 @@ tab:
         *Verify that you have selected the appropriate field separator.*
       empty_file: The file seems empty or could not be interpreted.
       no_importable_part: No part can be imported. Assign the mandatory fields to the corresponding columns.
-      invalid_name: Invalid description
+      invalid_name: Invalid designation
       invalid_length: Invalid length
       invalid_width: Invalid width
       invalid_thickness: Invalid thickness
