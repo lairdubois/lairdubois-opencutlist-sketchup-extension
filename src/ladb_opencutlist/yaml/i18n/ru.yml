@@ -47,6 +47,8 @@ default:
   instance_plural: единицы
   part_single: деталь
   part_plural: детали
+  thickness_layer_single: слой
+  thickness_layer_plural: слои
   setup_model_units: Установка единиц измерения
   load_more: "Загрузить больше ..."
   reset_to_app_defaults: Восстановить исходные значения
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Обратите внимание, что **{{ count }}** единицы из последнего комплекта не образуют комплект."
       used_instance_count: "**{{ count }}** / {{ total }} используемая единица"
       used_instance_count_plural: "**{{ count }}** / {{ total }} используемые единицы"
+      thickness_layer_count: "Последняя деталь состоит из **{{ count }}** слоев по своей толщине"
+      thickness_layered: "Количество здесь представляет собой число частей детали в раскрое для получения всех слоев."
+      thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слои* = **{{ CutPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *частей* x **{{ layerCount }}** *слоев* = **{{ CutPartCount }}**"
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
       children_warnings: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждение"
       children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждения"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Свойства группы деталей
       multiple_alert: "Общие свойства группы {{ part_count }} деталей."
       general: Общие
+      extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
       name: Описание
       material: Материал
@@ -269,6 +276,11 @@ tab:
       mass_help: Масса детали будет учтена при формировании **Отчета**.
       price: Цена
       price_help: Цена деталей будет учтена при формировании **Отчета**.
+      thickness_layer_count: Кол-во слоев
+      thickness_layer_count_help: Задайте количество слоев
+      description: Описание
+      description_help: |
+        Параметр *Описание* позволяет вам предоставить индивидуальную информацию о каждом параметре детали.
       tags: Теги
       tags_help: |
         С опцией *Теги* вы можете добавлять ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
@@ -327,6 +339,9 @@ tab:
          - *длина* будет по <span style='color:red'>красной</span> оси
          - *ширина* будет по <span style='color:green'>зелёной</span> оси
          - *толщина* будет по <span style='color:blue'>синей</span> оси
+      flipped_detection: Обнаружение зеркальных деталей
+      flipped_detection_help: |
+        Если этот параметр включен, зеркальные детали будут обнаружены и отображены как новые детали.
       smart_material: "*Умное* назначение материала"
       smart_material_help: "Если эта опция активна, детали без заданного материала может быть назначен материал детали на основе которой она создавалась."
       dynamic_attributes_name: Использовать атрибут *Name* динамических компонентов
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Если эта опция выбрана, части с **одинаковым размером** , с **одинаковыми тегами** и **одинаковой фактурой** будут сгруппированы. "
       hide_entity_names: Скрыть случайные имена
       hide_entity_names_help: "Если эта опция выбрана, **случайные имена** деталей не будут отображаться."
+      hide_descriptions: Скрыть описания
+      hide_descriptions_help: "Если этот параметр включен, **описания**, размещенные на деталях, будут скрыты."
       hide_tags: Скрыть Теги
       hide_tags_help: "Если эта опция активирована, **Теги** будут скрыты."
       hide_cutting_dimensions: Скрыть пильные размеры
@@ -490,6 +507,10 @@ tab:
       option_hide_part_list_1: Скрыть
       option_hide_part_list_1d_help: "Показывает или скрывает список деталей, присутствующих в отдельной кромочной ленте или в группе."
       option_hide_part_list_2d_help: Отобразить или скрыть список деталей раскраиваемой панели исходного материала под каждой картой раскроя
+      option_use_names: Идентификация деталей
+      option_use_names_0: Использовать число
+      option_use_names_1: Использовать обозначение
+      option_use_names_help: Позволяет выбирать между **числом** и **обозначением** для идентификации частей на карте раскроя.
       option_origin_corner: Исходный угол
       option_origin_corner_1d_0: Слева
       option_origin_corner_1d_1: Справа
@@ -574,14 +595,17 @@ tab:
         total_part_count: Σ Деталей
         total_used: Всего использовано
         trimming: Обрезка
-        total_cut_count: Количество распилов
-        total_cut_length: Длина пропила
+        total_cut_count: Σ Число резов
+        total_cut_length: Σ Длина пропилов
         efficiency: Эффективность
         leftover: Остаток
         cut: Пропил
         cut_plural: Распилы
         cut_final: Первичный рез (уровень 1)
+        cut_final_plural: Первичные разрезы (уровень 1)
         cut_through: Первичный рез (уровень 2)
+        cut_through_plural: Первичные разрезы (уровень 2)
+        cut_none: Нет
         bar_dimensional_type_0: Стандартный размер
         bar_dimensional_type_1: Обрезок
         bar_edge_type_0: Стандартный диапазон
@@ -654,6 +678,7 @@ tab:
       formula:
         part_number: Номер
         part_name: Описание
+        part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
         part_cutting_size: Размеры элемента

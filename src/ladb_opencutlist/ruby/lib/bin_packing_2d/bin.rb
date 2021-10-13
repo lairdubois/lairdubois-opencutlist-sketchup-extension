@@ -210,36 +210,43 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Merge cuts to produce through cuts, only single pass
+    # Merge cuts to produce through cuts
     #
     def merge_cuts
       cuts = @cuts_h.sort_by {|cut| [cut.y, cut.x]}
       new_cuts = []
-      cuts.each_slice(2) do |c1, c2|
+      c1 = cuts.shift
+      while (!c1.nil?)
+        c2 = cuts.shift
         if c2.nil?
           new_cuts << c1
+          c1 = nil
         elsif (c1.y - c2.y).abs <= EPS && (c1.x + c1.length - c2.x).abs <= @options.saw_kerf + EPS
           c1.set_length(c1.length + @options.saw_kerf + c2.length)
           new_cuts << c1
+          c1 = cuts.shift
         else
           new_cuts << c1
-          new_cuts << c2
+          c1 = c2
         end
       end
       @cuts_h = new_cuts
 
       cuts = @cuts_v.sort_by {|cut| [cut.x, cut.y]}
       new_cuts = []
-
-      cuts.each_slice(2) do |c1, c2|
+      c1 = cuts.shift
+      while (!c1.nil?)
+        c2 = cuts.shift
         if c2.nil?
           new_cuts << c1
+          c1 = nil
         elsif (c1.x - c2.x).abs <= EPS && (c1.y + c1.length - c2.y).abs <= @options.saw_kerf + EPS
           c1.set_length(c1.length + @options.saw_kerf + c2.length)
           new_cuts << c1
+          c1 = cuts.shift
         else
           new_cuts << c1
-          new_cuts << c2
+          c1 = c2
         end
       end
       @cuts_v = new_cuts
