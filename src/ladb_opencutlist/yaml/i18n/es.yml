@@ -45,8 +45,10 @@ default:
   unit_mass_1: Libra
   instance_single: unidad
   instance_plural: unidades
-  part_single: parte
-  part_plural: partes
+  part_single: pieza
+  part_plural: piezas
+  thickness_layer_single: capa
+  thickness_layer_plural: capas
   setup_model_units: Configurar las unidades del modelo
   load_more: "Carga más ..."
   reset_to_app_defaults: Restaurar a los valores originales
@@ -144,8 +146,8 @@ tab:
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido
     not_available_std_section: Sección transversal no definida
-    highlight_part: Resalta parte en el modelo
-    highlight_parts: Resalta partes en el modelo
+    highlight_part: Resalta pieza en el modelo
+    highlight_parts: Resalta piezas en el modelo
     edit_part_properties: Editar las propiedades de la pieza
     edit_part_axes_properties: Edita las propiedades (tiras de los cantos) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
@@ -189,11 +191,11 @@ tab:
       folding_part: Desplegar / Plegar
       material_origin_1: El material de esta pieza se define en sus instancias
       material_origin_2: El material de esta pieza se hereda de uno de sus elementos principales
-      material_origin_3: El material de esta parte se extrae de uno de sus elementos secundarios
+      material_origin_3: El material de esta pieza se extrae de uno de sus elementos secundarios
       orientation_locked_on_axis: La orientación de esta pieza está bloqueada en su sistema de coordenadas.
       number_saved: El número de esta parte se guardó
       number_hidden: "El número guardado '{{ number }}' de esta parte no se puede usar porque ya ha sido asignado"
-      number_generated: El número de esta parte se genera automáticamente
+      number_generated: El número de esta pieza se genera automáticamente
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
@@ -209,13 +211,17 @@ tab:
       unused_instance_count_plural: "Tenga en cuenta que no se utilizarán **{{ count }}** unidades del último lote."
       used_instance_count: "**{{ count }}** / {{ total }} unidad usada"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unidades usadas"
+      thickness_layer_count: "La parte final se compone de **{{ count }}** capas de espesor"
+      thickness_layered: "La cantidad aquí representa el número de piezas que hay que cortar para obtener todas las capas."
+      thickness_layered_equation: "**{{ count }}** *parte* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *partes* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
       multiple_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas diferentes:<br>{{ layers }}"
       children_warnings: "Precaución, hay {{ count }} alerta en partes agrupadas"
       children_warnings_plural: "Precauciones, hay {{ count }} alertas en partes agrupadas"
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
       invalid_final_area: "Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida"
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
-      is_dynamic_attributes_name: La descripción de esta parte se extrae del atributo 'Name' del componente dinámico
+      is_dynamic_attributes_name: La designación de esta parte se extrae del atributo 'Name' del componente dinámico
       size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Propiedades del grupo de partes
       multiple_alert: "Propiedades comunes del grupo de {{ part_count }} partes."
       general: General
+      extra_help: "Lista de propiedades específicas del tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Tiras de cantos
       name: Descripción
       material: Material
@@ -269,6 +276,11 @@ tab:
       mass_help: La masa de la pieza se utilizará al generar los **Reportes**.
       price: Precio
       price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
+      thickness_layer_count: Nb de capas
+      thickness_layer_count_help: Establezca aquí el número de capas.
+      description: Descripción
+      description_help: |
+        La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
       tags: Etiquetas
       tags_help: |
         Con las *Etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
@@ -327,6 +339,9 @@ tab:
          - *longitud* está en el eje <span style='color:red'>rojo</span>
          - *ancho* está en el eje <span style='color:green'>verde</span>
          - *espesor* está en el eje <span style='color:blue'>azul</span>.
+      flipped_detection: Detección de piezas de espejo
+      flipped_detection_help: |
+        Si se selecciona esta opción, las partes reflejadas serán detectadas y mostradas como una nueva parte.
       smart_material: "*Asignación inteligente* de material"
       smart_material_help: "Si seleccionas esta opción, a las partes sin material definido se les puede asignar el material asignado a uno de sus padres o hijos."
       dynamic_attributes_name: Utilice el atributo *Nombre* de componentes dinámicos
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Si esta opción está habilitada, las partes de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea."
       hide_entity_names: Ocultar nombres de instancias
       hide_entity_names_help: "Si se selecciona esta opción, no se mostrarán **nombres de instancia** de piezas."
+      hide_descriptions: Oculte las descripciones
+      hide_descriptions_help: "Si se selecciona esta opción, no se mostrarán las **descripciones** colocadas en las piezas."
       hide_tags: Ocultar etiquetas
       hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
       hide_cutting_dimensions: Ocultar dimensiones aproximadas
@@ -365,7 +382,7 @@ tab:
       property_thickness: Espesor
       property_length: Longitud
       property_width: Anchura
-      property_name: Descripción
+      property_name: Designación
       property_count: Cantidad
       property_edge_pattern: Número de tiras de cantos
       property_tags: Etiquetas
@@ -388,7 +405,7 @@ tab:
       area_short: Area
       volume: Volumen
       number: No.
-      name: Descripción
+      name: Designación
       count: Cant.
       cutting: Ajustadas
       bbox: Finales
@@ -421,7 +438,7 @@ tab:
       path: Camino
       instance_name: Instancia
       definition_name: Definición
-      name: Descripción
+      name: Designación
       total_cutting_length: Longitud - crudo
       total_cutting_area: Área - cruda
       total_cutting_volume: Volumen - cruda
@@ -490,6 +507,10 @@ tab:
       option_hide_part_list_1: Enmascarado
       option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero o tira de canto.
       option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada panel.
+      option_use_names: Identificación de la parte
+      option_use_names_0: Utilice el número
+      option_use_names_1: Utilice la designación
+      option_use_names_help: "Permite elegir entre **número** y **designación** para identificar las piezas en el diagrama de corte. "
       option_origin_corner: Posición del origen
       option_origin_corner_1d_0: A la izquierda
       option_origin_corner_1d_1: A la derecha
@@ -581,7 +602,10 @@ tab:
         cut: Cortar
         cut_plural: Cortes
         cut_final: Corte primario (nivel 1)
+        cut_final_plural: Cortes primarios (nivel 1)
         cut_through: Corte primario (nivel 2)
+        cut_through_plural: Cortes primarios (nivel 2)
+        cut_none: Ninguna
         bar_dimensional_type_0: Dimensiones estándar
         bar_dimensional_type_1: Trozo
         bar_edge_type_0: Canto estándar
@@ -654,6 +678,7 @@ tab:
       formula:
         part_number: Número
         part_name: Descripción
+        part_description: Descripción
         part_entity_named_path: Ruta de instancia
         part_entity_name: Nombre de instancia
         part_cutting_size: Dimensiones aproximadas
@@ -890,7 +915,7 @@ tab:
         *Verifique que haya seleccionado el separador de campo correcto.*
       empty_file: El fichero parece vacío o no se pudo interpretar.
       no_importable_part: No se puede importar ninguna pieza. Asigne los campos obligatorios a las columnas correspondientes.
-      invalid_name: Descripción inválida
+      invalid_name: Designación inválida
       invalid_length: Longitud inválida
       invalid_width: Ancho inválido
       invalid_thickness: Espesor no válido

@@ -47,6 +47,8 @@ default:
   instance_plural: unità
   part_single: pezzo
   part_plural: pezzi
+  thickness_layer_single: strato
+  thickness_layer_plural: strati
   setup_model_units: Impostare le unità del modello
   load_more: "Carica di più ..."
   reset_to_app_defaults: Ripristina i valori originali
@@ -209,13 +211,17 @@ tab:
       unused_instance_count_plural: "Attenzione, le unità **{{ count }}** dell'ultimo lotto non saranno utilizzate."
       used_instance_count: "**{{ count }}** su {{ total }} unità utilizzate"
       used_instance_count_plural: "**{{ count }}** su {{ total }} unità utilizzate"
+      thickness_layer_count: "La parte finale è composta da strati **{{ count }}** nel suo spessore"
+      thickness_layered: "La quantità qui corrisponde al numero di parte da tagliare per ottenere tutti gli strati."
+      thickness_layered_equation: "**{{ count }}** *parte* x **{{ layerCount }}** *strati* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *parti* x **{{ layerCount }}** *strati* = **{{ cuttingPartCount }}**"
       multiple_layers: "Attenzione, questa parte è costituita da sotto-insiemi definiti su {{ count }} layer differenti:<br>{{ layers }}"
       children_warnings: "Attenzione, c'è {{ count }} avvertimento nelle parti raggruppate"
       children_warnings_plural: "Attenzione, ci sono {{ count }} avvertimenti nelle parti raggruppate"
       children_size_increase: "Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate"
       invalid_final_area: "Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida"
       invalid_final_area_plural: "Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida"
-      is_dynamic_attributes_name: La descrizione usa l'attributo 'Name' del componente dinamico
+      is_dynamic_attributes_name: La designazione usa l'attributo 'Name' del componente dinamico
       size_increased: "Dimensione maggiorata di {{ value }}"
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Elenca proprietà di un gruppo di parti
       multiple_alert: "Proprietà comuni al gruppo {{ part_count }} di parti."
       general: Generale
+      extra_help: "Elenco delle proprietà specifiche del tipo di materiale \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Finitura bordi
       name: Descrizione
       material: Materiale
@@ -269,6 +276,11 @@ tab:
       mass_help: La massa del pezzo sarà usata quando si generano i **Rapporti**.
       price: Prezzo
       price_help: Il prezzo del pezzo sarà utilizzato quando si generano i **Rapporti**.
+      thickness_layer_count: No. di strati
+      thickness_layer_count_help: Imposta qui il numero di strati.
+      description: Descrizione
+      description_help: |
+        La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte. 
       tags: Tags
       tags_help: |
         Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
@@ -327,6 +339,9 @@ tab:
          - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
          - *larghezza* è sull'asse <span style='color:green'>verde</span>
          - *spessore* è sull'asse <span style='color:blue'>blu</span>
+      flipped_detection: Rilevamento di parti specchiate
+      flipped_detection_help: |
+        Selezionando questa opzione, le parti specchiate saranno rilevate e visualizzate come una nuova parte
       smart_material: Assegnazione *Intelligente* dei materiali
       smart_material_help: "Selezionando questa opzione, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli."
       dynamic_attributes_name: Usa l'attributo *Nome* dei componenti dinamici
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche** *(se la visualizzazione di quest'area non è nascosta)*."
       hide_entity_names: Nascondi i nomi delle occorrenze
       hide_entity_names_help: "Se questa opzione è attivata, il **nome occorrenza** delle parti non verrà mostrata."
+      hide_descriptions: Nascondere le descrizioni
+      hide_descriptions_help: "Selezionando questa opzione, le **descrizioni** poste sulle parte non vengono visualizzate."
       hide_tags: Nascondi Tags
       hide_tags_help: "Se questa opzione è attivata, non verranno visualizzate le **tags**."
       hide_cutting_dimensions: Nascondi le dimensioni semilavorate
@@ -365,7 +382,7 @@ tab:
       property_thickness: Spessore
       property_length: Lunghezza
       property_width: Larghezza
-      property_name: Descrizione
+      property_name: Designazione
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
       property_tags: Tags
@@ -388,7 +405,7 @@ tab:
       area_short: Area
       volume: Volume
       number: N.
-      name: Descrizione
+      name: Designazione
       count: Qtà
       cutting: Grezzo
       bbox: Finito
@@ -421,7 +438,7 @@ tab:
       path: Path
       instance_name: Occorrenza
       definition_name: Definizione
-      name: Descrizione
+      name: Designazione
       total_cutting_length: Lunghezza - grezzo
       total_cutting_area: Area - grezzo
       total_cutting_volume: Volume - grezzo
@@ -490,6 +507,10 @@ tab:
       option_hide_part_list_1: Nascosta
       option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola o bordo.
       option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
+      option_use_names: Identificazione delle parti
+      option_use_names_0: Usa il numero
+      option_use_names_1: Usa la designazione
+      option_use_names_help: Permette di scegliere tra **numero** e **designazione** per identificare le parti sul schema di taglio.
       option_origin_corner: Posizione dell'origine
       option_origin_corner_1d_0: A sinistra
       option_origin_corner_1d_1: A destra
@@ -581,7 +602,10 @@ tab:
         cut: Taglio
         cut_plural: Tagli
         cut_final: Taglio principale (livello 1)
+        cut_final_plural: Tagli primari (livello 1)
         cut_through: Taglio principale (livello 2)
+        cut_through_plural: Tagli primari (livello 2)
+        cut_none: Nessuna
         bar_dimensional_type_0: Dimensioni Standard Barre
         bar_dimensional_type_1: Ritagli
         bar_edge_type_0: Bordatura Standard
@@ -653,7 +677,8 @@ tab:
       option_color: Colore
       formula:
         part_number: Numero
-        part_name: Descrizione
+        part_name: Designazione
+        part_description: Descrizione
         part_entity_named_path: Percorso istanza
         part_entity_name: Nome dell'istanza
         part_cutting_size: Dimensioni grezze
@@ -871,7 +896,7 @@ tab:
       unused: Non utilizzato
       mandatory: Campo obbligatorio
       optional: Campi facoltativi
-      name: Descrizione
+      name: Designazione
       count: Quantità
       bbox_length: Lunghezza
       bbox_width: Larghezza
@@ -890,7 +915,7 @@ tab:
         *Verifica di aver selezionato il separatore corretto.*
       empty_file: Il file sembra vuoto e non può essere correttamente interpretato.
       no_importable_part: Nessuna parte può essere importata. Assegnare i campi obbligatori alle colonne corrispondenti.
-      invalid_name: Descrizione invalida
+      invalid_name: Designazione invalida
       invalid_length: Lunghezza invalida
       invalid_width: Larghezza invalida
       invalid_thickness: Spessore invalido

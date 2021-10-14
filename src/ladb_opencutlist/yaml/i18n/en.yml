@@ -438,7 +438,7 @@ tab:
       path: Path
       instance_name: Instance
       definition_name: Definition
-      name: Description
+      name: Designation
       total_cutting_length: Length - raw
       total_cutting_area: Area - raw
       total_cutting_volume: Volume - raw
