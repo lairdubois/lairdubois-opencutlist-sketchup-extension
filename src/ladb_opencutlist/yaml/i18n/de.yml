@@ -510,7 +510,7 @@ tab:
       option_use_names: Identifizierung der Teile
       option_use_names_0: Nummer verwenden
       option_use_names_1: Bezeichnung verwenden
-      option_use_names_help: "Hier können Sie zwischen **Nummer** und **Beschreibung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
+      option_use_names_help: "Hier können Sie zwischen **Nummer** und **Bezeichnung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
       option_origin_corner: Position des Ursprungs
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
