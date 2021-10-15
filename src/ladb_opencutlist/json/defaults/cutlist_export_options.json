@@ -103,6 +103,11 @@
           "formula": ""
         },
         {
+          "name": "description",
+          "hidden": false,
+          "formula": ""
+        },
+        {
           "name": "tags",
           "hidden": false,
           "formula": ""
@@ -191,6 +196,11 @@
         },
         {
           "name": "material_name",
+          "hidden": false,
+          "formula": ""
+        },
+        {
+          "name": "description",
           "hidden": false,
           "formula": ""
         },

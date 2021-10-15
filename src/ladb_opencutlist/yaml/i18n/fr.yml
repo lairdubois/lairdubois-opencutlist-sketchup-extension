@@ -456,6 +456,7 @@ tab:
       material_thickness: Matière / Dimension
       material_name: Matière
       entity_names: Noms d'instance
+      description: Description
       tags: Tags
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2

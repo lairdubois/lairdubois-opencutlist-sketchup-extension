@@ -133,6 +133,7 @@ module Ladb::OpenCutList
                       vars = {
                         :number => part.number,
                         :name => part.name,
+                        :description => part.description,
                         :count => part.count,
                         :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
                         :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
@@ -186,6 +187,7 @@ module Ladb::OpenCutList
                             :path => PathUtils.get_named_path(instance_info.path, false, 1, '/'),
                             :instance_name => instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name,
                             :definition_name => part.name,
+                            :description => part.description,
                             :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
                             :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
                             :cutting_thickness => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
