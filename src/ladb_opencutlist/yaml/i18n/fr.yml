@@ -672,9 +672,12 @@ tab:
       option_formula: Valeur
       option_size: Taille
       option_anchor: Ancrage
-      option_anchor_start: Début
-      option_anchor_middle: Milieu
-      option_anchor_end: Fin
+      option_anchor_start: Début - Bas
+      option_anchor_middle: Milieu - Bas
+      option_anchor_end: Fin - Bas
+      option_anchor_start_top: Début - Haut
+      option_anchor_middle_top: Milieu - Haut
+      option_anchor_end_top: Fin - Haut
       option_color: Couleur
       formula:
         part_number: Numéro

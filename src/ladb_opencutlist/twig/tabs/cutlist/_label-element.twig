@@ -2,13 +2,18 @@
 {% if terms[0] == 'thumbnail' %}
     {% set proportional = terms[1] == 'proportional' %}
     {% set areaSize = elementDef.size * minUnit %}
-    {% set transX = 0 %}
-    {% if elementDef.anchor == 'middle' %}
+    {% if elementDef.anchor starts with 'middle' %}
         {% set transX = areaSize * -0.5 %}
-    {% elseif elementDef.anchor == 'end' %}
+    {% elseif elementDef.anchor starts with 'end' %}
         {% set transX = areaSize * -1 %}
+    {% else %}
+        {% set transX = 0 %}
     {% endif %}
-    {% set transY = areaSize * -1 %}
+    {% if elementDef.anchor ends with 'top' %}
+        {% set transY = 0 %}
+    {% else %}
+        {% set transY = areaSize * -1 %}
+    {% endif %}
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     {% set dashedStrokeWidth = minUnit / 10 %}
     {% set plainStrokeWidth = minUnit / 5 %}
@@ -92,7 +97,14 @@
     {% if value|trim is empty and noEmptyValue|default(false) %}
         {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}
     {% endif %}
-    <text class="ladb-label-element" x="0" y="0" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ elementDef.anchor }}" fill="{{ elementDef.color }}">
+    {% if elementDef.anchor ends with 'top' %}
+        {% set textAnchor = elementDef.anchor|split('-')[0] %}
+        {% set transY = elementDef.size * minUnit * (value is iterable ? value|length : 1) %}
+    {% else %}
+        {% set textAnchor = elementDef.anchor %}
+        {% set transY = 0 %}
+    {% endif %}
+    <text class="ladb-label-element" x="0" y="{{ transY }}" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ textAnchor }}" fill="{{ elementDef.color }}">
         {% if value is iterable %}
             {% for line in value %}
                 <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|escape }}</tspan>

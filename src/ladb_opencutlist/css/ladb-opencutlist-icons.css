@@ -61,14 +61,23 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-labels-offset:before {
   content: "\e989";
 }
-.ladb-opencutlist-icon-anchor-end:before {
-  content: "\e902";
+.ladb-opencutlist-icon-anchor-start:before {
+  content: "\e904";
 }
 .ladb-opencutlist-icon-anchor-middle:before {
   content: "\e903";
 }
-.ladb-opencutlist-icon-anchor-start:before {
-  content: "\e904";
+.ladb-opencutlist-icon-anchor-end:before {
+  content: "\e902";
+}
+.ladb-opencutlist-icon-anchor-start-top:before {
+  content: "\e98b";
+}
+.ladb-opencutlist-icon-anchor-middle-top:before {
+  content: "\e98c";
+}
+.ladb-opencutlist-icon-anchor-end-top:before {
+  content: "\e98d";
 }
 .ladb-opencutlist-icon-reset:before {
   content: "\e905";
