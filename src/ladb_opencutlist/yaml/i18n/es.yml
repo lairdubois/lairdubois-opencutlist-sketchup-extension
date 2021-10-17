@@ -456,6 +456,7 @@ tab:
       material_thickness: Espesor / Material
       material_name: Material
       entity_names: Nombres de instancias
+      description: Descripción
       tags: Etiquetas
       edge_ymin: Longitud de borde 1
       edge_ymax: Longitud de borde 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Valor
       option_size: Dimensión
       option_anchor: Ancla
-      option_anchor_start: Inicio
-      option_anchor_middle: Medio
-      option_anchor_end: Fin
+      option_anchor_start: Inicio - Abajo
+      option_anchor_middle: Medio - Abajo
+      option_anchor_end: Fin - Abajo
+      option_anchor_start_top: Inicio - Arriba
+      option_anchor_middle_top: Medio - Arriba
+      option_anchor_end_top: Fin - Arriba
       option_color: Color
       formula:
         part_number: Número

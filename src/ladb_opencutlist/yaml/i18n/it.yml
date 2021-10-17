@@ -280,7 +280,7 @@ tab:
       thickness_layer_count_help: Imposta qui il numero di strati.
       description: Descrizione
       description_help: |
-        La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte. 
+        La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
       tags: Tags
       tags_help: |
         Con la funzione *Tags* si possono aggiungere identificatori per personalizzare la definizione delle parti.
@@ -456,6 +456,7 @@ tab:
       material_thickness: Materiale / Spessore
       material_name: Materiale
       entity_names: Nomi delle occorrenze
+      description: Descrizione
       tags: Tags
       edge_ymin: Bordo Lunghezza 1
       edge_ymax: Bordo Lunghezza 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Campo
       option_size: Dimensione
       option_anchor: Ancoraggio
-      option_anchor_start: Avvia
-      option_anchor_middle: Mediano
-      option_anchor_end: Fine
+      option_anchor_start: Avvia - Basso
+      option_anchor_middle: Mediano - Basso
+      option_anchor_end: Fine - Basso
+      option_anchor_start_top: Avvia - Alto
+      option_anchor_middle_top: Mediano - Alto
+      option_anchor_end_top: Fine - Alto
       option_color: Colore
       formula:
         part_number: Numero

@@ -456,6 +456,7 @@ tab:
       material_thickness: Material / Dicke
       material_name: Material
       entity_names: Instanzbezeichnungen
+      description: Beschreibung
       tags: Tags
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Feld
       option_size: Grösse
       option_anchor: Anker
-      option_anchor_start: Anfang
-      option_anchor_middle: Mitte
-      option_anchor_end: Ende
+      option_anchor_start: Anfang - Unten
+      option_anchor_middle: Mitte - Unten
+      option_anchor_end: Ende - Unten
+      option_anchor_start_top: Anfang - Oben
+      option_anchor_middle_top: Mitte - Oben
+      option_anchor_end_top: Ende - Oben
       option_color: Farbe
       formula:
         part_number: Nummer

@@ -456,6 +456,7 @@ tab:
       material_thickness: Material / Thickness
       material_name: Material
       entity_names: Instance names
+      description: Description
       tags: Tags
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Fieldname
       option_size: Dimension
       option_anchor: Anchor
-      option_anchor_start: Start
-      option_anchor_middle: Middle
-      option_anchor_end: End
+      option_anchor_start: Start - Bottom
+      option_anchor_middle: Middle - Bottom
+      option_anchor_end: End - Bottom
+      option_anchor_start_top: Start - Top
+      option_anchor_middle_top: Middle - Top
+      option_anchor_end_top: End - Top
       option_color: Color
       formula:
         part_number: Number
