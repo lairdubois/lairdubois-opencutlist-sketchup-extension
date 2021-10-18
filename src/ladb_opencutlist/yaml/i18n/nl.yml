@@ -47,6 +47,8 @@ default:
   instance_plural: eenheden
   part_single: deel
   part_plural: onderdelen
+  thickness_layer_single: Laag
+  thickness_layer_plural: Lagen
   setup_model_units: Configureer modeleenheden
   load_more: "Meer laden"
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt."
       used_instance_count: "**{{ count }}** / {{ total }} gebruikte eenheden"
       used_instance_count_plural: "**{{ count }}** / {{ total }} gebruikte eenheden"
+      thickness_layer_count: "Het afgewerkte onderdeel bestaat uit **{{ count }}** lagen in zijn dikte"
+      thickness_layered: "De hier aangegeven hoeveelheid komt overeen met het aantal stukken dat moet worden gesneden om alle lagen te verkrijgen."
+      thickness_layered_equation: "**{{ count }}** *deel* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *delen* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
       multiple_layers: "Let op! dit component is opgebouwd uit onderdelen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
       children_warnings: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_warnings_plural: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Eigenschappen van groep onderdelen
       multiple_alert: "Gemeenschappelijke eigenschappen van de groep van {{ part_count }} onderdelen."
       general: Algemeen
+      extra_help: "Lijst van materiaalsoort-specifieke eigenschappen \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Randafwerkingen
       name: Beschrijving
       material: Materiaal
@@ -269,6 +276,11 @@ tab:
       mass_help: De gewicht van het deel zal worden gebruikt bij het genereren van **Rapporten**.
       price: Prijs
       price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Rapporten**.
+      thickness_layer_count: Aantal lagen
+      thickness_layer_count_help: Stel hier het aantal lagen in.
+      description: Beschrijving
+      description_help: |
+        In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
       tags: Tags
       tags_help: |
         Met *Tags* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
@@ -327,6 +339,9 @@ tab:
         - de *lengte* komt op de <span style='color:red'>rode</span> as
         - de *breedte* op de <span style='color:green'>groene</span> as
         - de *dikte* op de <span style='color:blue'>blauwe</span> as
+      flipped_detection: Detectie van gespiegelde delen
+      flipped_detection_help: |
+        Als deze optie is geselecteerd, worden gespiegelde onderdelen gedetecteerd en weergegeven als een nieuw onderdeel.
       smart_material: "*Slimme* toekenning van materiaal"
       smart_material_help: "Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component"
       dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component.
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn."
       hide_entity_names: Verberg instantie namen
       hide_entity_names_help: "Wanneer deze optie ingeschakeld is, dan zullen de **instantie namen** niet weergegeven worden."
+      hide_descriptions: Beschrijvingen verbergen
+      hide_descriptions_help: "Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven."
       hide_tags: Verberg de tags
       hide_tags_help: "Wanneer deze optie ingeschakeld is, dan zullen de **tags** die op de onderdelen geplaatst werden niet weergegeven worden."
       hide_cutting_dimensions: Verberg de afmetingen van de onderdelen
@@ -439,6 +456,7 @@ tab:
       material_thickness: Materiaal / Afmeting
       material_name: Materiaal
       entity_names: Naam instance
+      description: Beschrijving
       tags: Tags
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: Verborgen
       option_hide_part_list_1d_help: Toon of verberg de lijst van onderdelen in elke plank of kantenband.
       option_hide_part_list_2d_help: Toon of verberg de lijst met onderdelen in elk paneel.
+      option_use_names: Identificatie van onderdelen
+      option_use_names_0: Gebruik nummer
+      option_use_names_1: Gebruik de beschrijving
+      option_use_names_help: Hiermee kunt u kiezen tussen **nummer** en **beschrijwing** om onderdelen op het zaagschema identificeren.
       option_origin_corner: Positie van de oorsprong
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
@@ -539,7 +561,7 @@ tab:
       option_scrap_bar_dimensional_lengths: Overschot van de plank
       option_scrap_bar_edge_lengths: Kantenband overschotten
       option_scrap_bar_lengths_placeholder: lengte x aantal ; ...
-      option_scrap_bar_lengths_help: |-
+      option_scrap_bar_lengths_help: |
         Duidt hier de lijst van resten van bekantrecht hout of kantenband die voorang krijgt in het zaagschema.
         Verwacht formaat : **L**x**A**. waarbij **L** de *lengte* et **A** het aantal is.
         Het aantal is facultatief
@@ -581,7 +603,10 @@ tab:
         cut: Snede
         cut_plural: Sneden
         cut_final: Primaire zaagsnedes (niveau 1)
+        cut_final_plural: Primaire snijwonden (niveau 1)
         cut_through: Primaire zaagsnedes (niveau 2)
+        cut_through_plural: "Primaire snijwonden (niveau 2) "
+        cut_none: Geen
         bar_dimensional_type_0: Standaard plank
         bar_dimensional_type_1: Plank overschot
         bar_edge_type_0: Standaard kantenband
@@ -647,13 +672,17 @@ tab:
       option_formula: Waarde
       option_size: Afmeting
       option_anchor: Anker
-      option_anchor_start: Start
-      option_anchor_middle: Midden
-      option_anchor_end: Einde
+      option_anchor_start: Start - Bodem
+      option_anchor_middle: Midden - Bodem
+      option_anchor_end: Einde - Bodem
+      option_anchor_start_top: Start - Top
+      option_anchor_middle_top: Middem - Top
+      option_anchor_end_top: Einde - Top
       option_color: Kleur
       formula:
         part_number: Nummer
         part_name: Beschrijving
+        part_description: Beschrijving
         part_entity_named_path: Instantie pad
         part_entity_name: Naam onderdeel
         part_cutting_size: Ruwe afmetingen
@@ -890,7 +919,7 @@ tab:
         *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.
       empty_file: Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
       no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
-      invalid_name: Ongeldige aanwijzing
+      invalid_name: Ongeldige beschrijving
       invalid_length: Ongeldige lengte
       invalid_width: Ongeldige breedte
       invalid_thickness: Ongeldige dikte
