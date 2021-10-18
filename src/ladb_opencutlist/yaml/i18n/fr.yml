@@ -339,9 +339,9 @@ tab:
         - la *longueur* est lue sur l'axe <span style='color:red'>rouge</span>
         - la *largeur* sur l'axe <span style='color:green'>vert</span>
         - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
-      flipped_detection: Détection des pièces en mirroir
+      flipped_detection: Détection des pièces en miroir
       flipped_detection_help: |
-        Si cette option est activée, les pièces en mirroir seront détectés et affichées comme une nouvelle pièce.
+        Si cette option est activée, les pièces en miroir seront détectés et affichées comme une nouvelle pièce.
       smart_material: Attribution *intelligente* des matières
       smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques

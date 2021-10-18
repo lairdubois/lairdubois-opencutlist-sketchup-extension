@@ -276,7 +276,7 @@ tab:
       mass_help: The weight of the part will be used when generating **Reports**.
       price: Price
       price_help: The price of the part will be used when generating **Reports**.
-      thickness_layer_count: Nb of layers
+      thickness_layer_count: Nb of Layers
       thickness_layer_count_help: Set the number of layers here.
       description: Description
       description_help: |
@@ -341,7 +341,7 @@ tab:
          - the *thickness* on the <span style='color:blue'>blue</span> axis
       flipped_detection: "Detection of mirrored parts "
       flipped_detection_help: |
-        If this option is selected, mirrored parts will be detected and displayed as a new part.
+        If this option is selected, mirrored parts will be detected and displayed as a distinct part.
       smart_material: "*Smart* assignment of material"
       smart_material_help: "If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child."
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
@@ -456,6 +456,7 @@ tab:
       material_thickness: Material / Thickness
       material_name: Material
       entity_names: Instance names
+      description: Description
       tags: Tags
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Fieldname
       option_size: Dimension
       option_anchor: Anchor
-      option_anchor_start: Start
-      option_anchor_middle: Middle
-      option_anchor_end: End
+      option_anchor_start: Start - Bottom
+      option_anchor_middle: Middle - Bottom
+      option_anchor_end: End - Bottom
+      option_anchor_start_top: Start - Top
+      option_anchor_middle_top: Middle - Top
+      option_anchor_end_top: End - Top
       option_color: Color
       formula:
         part_number: Number

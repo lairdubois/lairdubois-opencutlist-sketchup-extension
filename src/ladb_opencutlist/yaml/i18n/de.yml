@@ -47,8 +47,8 @@ default:
   instance_plural: Stücke
   part_single: Teil
   part_plural: Teile
-  thickness_layer_single: Schicht
-  thickness_layer_plural: Schichten
+  thickness_layer_single: Lage
+  thickness_layer_plural: Lagen
   setup_model_units: Modelleinheiten konfigurieren
   load_more: "Weitere laden ..."
   reset_to_app_defaults: Originalwerte wiederherstellen
@@ -211,10 +211,10 @@ tab:
       unused_instance_count_plural: "Achtung, **{{ count }}** Stücke der letzten Packung werden nicht verwendet."
       used_instance_count: "**{{ count }}** / {{ total }} Stücken verwendet"
       used_instance_count_plural: "**{{ count }}** / {{ total }} Stücken verwendet"
-      thickness_layer_count: "Das fertige Teil besteht aus **{{ Anzahl }}** Schichten in seiner Dicke"
-      thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Schichten zu erhalten."
-      thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Schichten* = **{{ cuttingPartCount }}**"
-      thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Schichten* = **{{ cuttingPartCount }}**"
+      thickness_layer_count: "Das fertige Teil besteht aus **{{ count }}** Lagen in seiner Dicke"
+      thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Lagen zu erhalten."
+      thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
       multiple_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die in {{ count }} verschiedenen Ebenen vorhanden sind:<br>{{ layers }}"
       children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
       children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
@@ -276,8 +276,8 @@ tab:
       mass_help: Die Masse des Teils wird bei der Erstellung von **Berichten** verwendet.
       price: Preis
       price_help: Der Preis des Teils wird bei der Erstellung von **Berichten** verwendet.
-      thickness_layer_count: Anzahl Schichten
-      thickness_layer_count_help: "Legen Sie hier die Anzahl der Schichten fest. "
+      thickness_layer_count: Anzahl Lagen
+      thickness_layer_count_help: "Legen Sie hier die Anzahl der Lagen fest. "
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, persönliche Informationen zu jeder Teildefinition anzugeben.
@@ -341,7 +341,7 @@ tab:
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       flipped_detection: Erkennung von gespiegelten Teilen
       flipped_detection_help: |
-        Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als neues Teil angezeigt.
+        Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
       smart_material: "*Intelligente* Zuweisung des Materials"
       smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen."
       dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
@@ -456,6 +456,7 @@ tab:
       material_thickness: Material / Dicke
       material_name: Material
       entity_names: Instanzbezeichnungen
+      description: Beschreibung
       tags: Tags
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
@@ -492,7 +493,7 @@ tab:
       options_config: Konfiguration
       options_display: Anzeige
       option_bar_folding_dimensional: Gleiche Stangen zusammenfassen
-      option_bar_folding_edge: Gleiche Stangen zusammenfassen
+      option_bar_folding_edge: Gleiche Kantenbänder zusammenfassen
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja
       option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen oder Kantenbänder, die dieselben Teile und Schnitte enthalten."
@@ -502,7 +503,7 @@ tab:
       option_sheet_folding_help: "Ermöglicht das Zusammenfassen von Platten, die dieselben Teile und Schnitte enthalten."
       option_hide_part_list: Liste der Teile
       option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
-      option_hide_part_list_1d_edge_0: Anzeigen für jede Kantenband
+      option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
       option_hide_part_list_2d_0: Anzeigen für jede Platte
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
@@ -510,7 +511,7 @@ tab:
       option_use_names: Identifizierung der Teile
       option_use_names_0: Nummer verwenden
       option_use_names_1: Bezeichnung verwenden
-      option_use_names_help: "Hier können Sie zwischen **Nummer** und **Bezeichnung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
+      option_use_names_help: "Wählen Sie zwischen **Nummer** und **Bezeichnung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
       option_origin_corner: Position des Ursprungs
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
@@ -552,7 +553,7 @@ tab:
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
-        Wählen Sie hier die Standardstangenware oder Standardkantenband welche dupliziert wird um alle Teile zu enthalten.
+        Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
       option_std_bar_add: Länge hinzufügen...
@@ -671,9 +672,12 @@ tab:
       option_formula: Feld
       option_size: Grösse
       option_anchor: Anker
-      option_anchor_start: Anfang
-      option_anchor_middle: Mitte
-      option_anchor_end: Ende
+      option_anchor_start: Anfang - Unten
+      option_anchor_middle: Mitte - Unten
+      option_anchor_end: Ende - Unten
+      option_anchor_start_top: Anfang - Oben
+      option_anchor_middle_top: Mitte - Oben
+      option_anchor_end_top: Ende - Oben
       option_color: Farbe
       formula:
         part_number: Nummer
