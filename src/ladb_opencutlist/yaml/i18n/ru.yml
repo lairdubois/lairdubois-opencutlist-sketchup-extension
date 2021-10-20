@@ -213,8 +213,8 @@ tab:
       used_instance_count_plural: "**{{ count }}** / {{ total }} используемые единицы"
       thickness_layer_count: "Последняя деталь состоит из **{{ count }}** слоев по своей толщине"
       thickness_layered: "Количество здесь представляет собой число частей детали в раскрое для получения всех слоев."
-      thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слои* = **{{ CutPartCount }}**"
-      thickness_layered_equation_plural: "**{{ count }}** *частей* x **{{ layerCount }}** *слоев* = **{{ CutPartCount }}**"
+      thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слои* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *частей* x **{{ layerCount }}** *слоев* = **{{ cuttingPartCount }}**"
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
       children_warnings: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждение"
       children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждения"
@@ -456,6 +456,7 @@ tab:
       material_thickness: Материал / Толщина
       material_name: Материал
       entity_names: Имена инстанций
+      description: Описание
       tags: Теги
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
@@ -671,9 +672,12 @@ tab:
       option_formula: Тип маркировки
       option_size: Размер
       option_anchor: Позиция
-      option_anchor_start: От начала
-      option_anchor_middle: От середины
-      option_anchor_end: По окончанию
+      option_anchor_start: Начало - от низа
+      option_anchor_middle: Середина - от низа
+      option_anchor_end: Окончание - от низа
+      option_anchor_start_top: Начало - по верху
+      option_anchor_middle_top: Середина - по верху
+      option_anchor_end_top: Окончание - по верху
       option_color: Цвет
       formula:
         part_number: Номер
