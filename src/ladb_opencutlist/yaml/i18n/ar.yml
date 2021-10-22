@@ -47,6 +47,8 @@ default:
   instance_plural: الوحدات
   part_single: قطعة
   part_plural: القطع
+  thickness_layer_single: طبقة
+  thickness_layer_plural: طبقات
   setup_model_units: تكوين وحدات النموذج
   load_more: "رفع إضافي..."
   reset_to_app_defaults: استعادة القيم الأصلية
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
       used_instance_count: "الوحدة المستخدمة **{{ count }}** / {{ total }}"
       used_instance_count_plural: "الوحدات المستخدمة **{{ count }}** / {{ total }}"
+      thickness_layer_count: "سمك القطعة النهائية مكون من **{{ count }}** من الطبقات "
+      thickness_layered: "العدد هنا يمثل عدد القطع اللازمة للحصول على كل الطبقات."
+      thickness_layered_equation: "**{{ count }}** *قطعة* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *قِطَع* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
       multiple_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>"
       children_warnings: "تحذير، هناك {{ count }} إنذار في القطع المجموعة"
       children_warnings_plural: "تحذير، هناك {{ count }} إنذارات في القطع المجموعة"
@@ -247,6 +253,7 @@ tab:
       title_multiple: خصائص مجموعة القطع
       multiple_alert: "الخصائص المشتركة لعدد {{ part_count }} من القطع."
       general: عام
+      extra_help: "\"**$t(tab.materials.type_{{ material_type }})**\". قائمة الخصائص المحددة لنوع الخامة "
       edges: الحواشي
       name: وصف
       material: الخامة
@@ -269,6 +276,11 @@ tab:
       mass_help: ستُستعمل كتلة القطعة عند استحداث **التقارير**.
       price: السعر
       price_help: سيُستعمل سعر القطعة عند استحداث **التقارير**.
+      thickness_layer_count: عدد الطبقات
+      thickness_layer_count_help: اضبط عدد الطبقات هنا.
+      description: وصف
+      description_help: |
+        يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
       tags: الوسوم
       tags_help: |
         تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
@@ -327,6 +339,9 @@ tab:
         - *الطول* يُقرأ على المحور <span style='color:red'>الأحمر</span>
         - *العرض* يُقرأ على المحور <span style='color:green'>الأخضر</span>
         - *السُّمك* يُقرأ على المحور <span style='color:blue'>الأزرق</span>
+      flipped_detection: اكتشاف القطع المنعكسة
+      flipped_detection_help: |
+        إن كان هذا الخيار محددا، فإن القطع المنعكسة ستحدد و تعرض على أنها قطع جديدة.
       smart_material: تخصيص خامات *ذكي*
       smart_material_help: إن كانت هذه الخاصية محددة، فإن القطع التي بدون خامة يمكن أن تعيّن وفقا لخامة عنصرها الأساسي أو الفرعي.
       dynamic_attributes_name: استخدم السمة *Name* للعناصر الديناميكية
@@ -342,6 +357,8 @@ tab:
       part_folding_help: إن كانت هذه الخاصية محددة فإن القطع ذات **الحجم المتطابق** و **الوسوم المتطابقة** ستُجمع مع بعض (طالما أن عَرض هذه المساحة غير مخفي).
       hide_entity_names: أخف أسماء المثيلات
       hide_entity_names_help: إن كانت هذه الخاصية محددة فإن **أسماء المثيلات** الخاصة بالقِطع لن تعرض.
+      hide_descriptions: أخف الأوصاف
+      hide_descriptions_help: إن كان هذا الخيار محددا، فإن **الأوصاف** الموضوعة على القِطَع لن تعرض.
       hide_tags: أخف الوسوم
       hide_tags_help: إن كانت هذه الخاصية محددة، فستخفى **الوسوم**.
       hide_cutting_dimensions: أخف الأبعاد الأولية
@@ -439,6 +456,7 @@ tab:
       material_thickness: الخامة / السُمك
       material_name: الخامة
       entity_names: أسماء المثيلات
+      description: وصف
       tags: الوسوم
       edge_ymin: طول الحاشية 1
       edge_ymax: طول الحاشية 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: مخفي
       option_hide_part_list_1d_help: اعرض أو أخف قائمة القِطع لكل قضيب أو شريط حاشية.
       option_hide_part_list_2d_help: اعرض أو أخف قائمة القِطع لكل لوح
+      option_use_names: التعريف بالقطع
+      option_use_names_0: استعمل الرقم
+      option_use_names_1: استعمل التسمية
+      option_use_names_help: تتيح لك الاختيار بين **الرقم** و **التسمية** لتحديد القِطَع في رسم التقطيعِ التخطيطيّ.
       option_origin_corner: موضع المبدأ
       option_origin_corner_1d_0: إلى اليسار
       option_origin_corner_1d_1: إلى اليمين
@@ -581,7 +603,10 @@ tab:
         cut: قطع
         cut_plural: قطع
         cut_final: القَطع الابتدائي (المستوى 1)
+        cut_final_plural: التقطيعات الابتدائية (المستوى 1)
         cut_through: القَطع الابتدائي (المستوى 2)
+        cut_through_plural: التقطيعات الابتدائية (المستوى 2)
+        cut_none: لا شيء
         bar_dimensional_type_0: قضيب نظامي
         bar_dimensional_type_1: باقي تقطيع القضيب
         bar_edge_type_0: شريط حاشية نظامي
@@ -647,13 +672,17 @@ tab:
       option_formula: القيمة
       option_size: البعد
       option_anchor: نقطة الإرساء
-      option_anchor_start: البداية
-      option_anchor_middle: المنتصف
-      option_anchor_end: النهاية
+      option_anchor_start: بداية - سفلي
+      option_anchor_middle: وسط - سفلي
+      option_anchor_end: نهاية - سفلي
+      option_anchor_start_top: بداية - علوي
+      option_anchor_middle_top: وسط - علوي
+      option_anchor_end_top: نهاية - علوي
       option_color: اللون
       formula:
         part_number: الرقم
         part_name: وصف
+        part_description: وصف
         part_entity_named_path: مسار المثيل
         part_entity_name: اسم المثيل
         part_cutting_size: الأبعاد الأولية
@@ -994,7 +1023,7 @@ tab:
     menu:
       dump_global_presets: مَكَبّ الإعدادات المسبقة
       dump_model_presets: مَكَبّ إعدادات النموذج المسبقة
-      reset_global_presets: إعادت تهيئة الإعدادات المسبقة
+      reset_global_presets: إعادة تهيئة الإعدادات المسبقة
       reset_global_presets_confirm: |
         أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* المسبقة المحفوظة.
         هذا الإجراء نهائي. **ستضيع كل الإعدادات المسبقة.**
@@ -1002,7 +1031,7 @@ tab:
       reset_global_presets_success: |
         لقد أُعيد تعيين إعدادات *OpenCutList* المسبقة.
         لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
-      reset_model_presets: إعادت تهيئة إعدادات النموذج المسبقة
+      reset_model_presets: إعادة تهيئة إعدادات النموذج المسبقة
       reset_model_presets_confirm: |
         أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* للنموذج الحالي.
         هذا الإجراء نهائي. **ستعاد كل الإعدادات إلى القيم الافتراضية.**

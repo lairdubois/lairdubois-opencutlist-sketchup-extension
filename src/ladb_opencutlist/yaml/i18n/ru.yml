@@ -1006,8 +1006,8 @@ tab:
     zoom_small: Малый
     zoom_tiny: Маленький
     print_margin: Поля печати
-    print_margin_normal: Обычный
-    print_margin_small: Небольшой
+    print_margin_normal: Обычные
+    print_margin_small: Малые
     size_and_position: Размер и позиция окна
     model_settings: Параметры модели
     length_unit: Единица длины
