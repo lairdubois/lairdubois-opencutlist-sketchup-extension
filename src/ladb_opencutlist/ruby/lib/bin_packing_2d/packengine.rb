@@ -251,8 +251,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def select_best_packing(packers)
       return nil if packers.size == 0
-
-      packers.sort_by! { |packer| [packer.gstat[:rank], packer.gstat[:total_l_measure], packer.gstat[:nb_leftovers]] }
+      packers.sort_by! { |packer| [packer.gstat[:rank]]}
       print_final_packers(packers)
       packers.first
     end
@@ -280,6 +279,7 @@ module Ladb::OpenCutList::BinPacking2D
       return nil if packers.empty?
 
       stacking_pref = packers[0].options.stacking_pref
+      rotatable = packers[0].options.rotatable
 
       best_packers = []
 
@@ -297,7 +297,7 @@ module Ladb::OpenCutList::BinPacking2D
       # l_measure Packers, sort best_packers by ascending l_measure.
       packers_group = packers.group_by { |packer| packer.stat[:l_measure] }
       packers_group.keys.sort.each_with_index do |k, i|
-        b = packers_group[k].sort_by { |p| [-p.stat[:efficiency], p.stat[:l_measure]] }.first
+        b = packers_group[k].sort_by { |p| [p.stat[:l_measure], -p.stat[:efficiency]] }.first
         b.stat[:rank] = i + 1
         best_packers << b
       end
@@ -310,15 +310,18 @@ module Ladb::OpenCutList::BinPacking2D
       case stacking_pref
       when STACKING_NONE
         update_rank_per_bin(packers, :largest_bottom_part, false)
-        update_rank_per_bin(packers, :nb_cuts, true)
+        update_rank_per_bin(packers, :longest_right_part, false) if rotatable
+        update_rank_per_bin(packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(packers, :nb_v_through_cuts, false)
       when STACKING_LENGTH
         update_rank_per_bin(packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(packers, :nb_v_through_cuts, false) if rotatable
       when STACKING_WIDTH
         update_rank_per_bin(packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(packers, :nb_h_through_cuts, false) if rotatable
       when STACKING_ALL
         update_rank_per_bin(packers, :nb_h_through_cuts, false)
         update_rank_per_bin(packers, :nb_v_through_cuts, false)
-        update_rank_per_bin(packers, :nb_cuts, true)
       end
 
       # Sort the Packers by their rank.
