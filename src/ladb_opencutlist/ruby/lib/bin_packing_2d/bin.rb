@@ -62,6 +62,7 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:outer_leftover_area] = 0        # area of leftover outside of bounding box
       @stat[:largest_leftover_area] = 0      # area of largest leftover outside bounding box
       @stat[:largest_bottom_part] = 0        # largest full length bottom leftover
+      @stat[:longest_right_part] = 0         # longest full width right leftover
 
       @stat[:nb_cuts] = 0
       @stat[:nb_h_through_cuts] = 0
@@ -293,12 +294,15 @@ module Ladb::OpenCutList::BinPacking2D
           if (leftover.length - @max_length).abs < EPS
             @stat[:largest_bottom_part] = leftover.area
           end
+          if (leftover.width - @max_width).abs < EPS
+            @stat[:longest_right_part] = leftover.area
+          end
         end
       end
       # Normalize the l_measure
       @stat[:l_measure] = @stat[:l_measure] / (@stat[:bbox_area] * (@max_x + @max_y))
 
-      @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(3)
+      @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(4)
     end
 
     #
@@ -367,7 +371,7 @@ module Ladb::OpenCutList::BinPacking2D
       @bounding_box_done = false
       # Make two dummy boxes that represent the leftovers after the bounding
       # box has been done. Select the combination giving the largest leftover area.
-      if @max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width
+      if (@max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width)
         dummy1 = Box.new(@max_length, very_small_dim, false, nil)
         dummy2 = Box.new(very_small_dim, @max_width, false, nil)
       else
