@@ -125,13 +125,13 @@ module Ladb::OpenCutList::BinPacking2D
       #
       case @options.split
       when SPLIT_SHORTERLEFTOVER_AXIS
-        @length - box.length < @width - box.width
+        @length - box.length <= @width - box.width
       when SPLIT_LONGERLEFTOVER_AXIS
-        @length - box.length >= @width - box.width
+        @length - box.length > @width - box.width
       when SPLIT_MINIMIZE_AREA
-        @length * (@width - box.width) < @width * (@length - box.length)
+        @length * (@width - box.width) <= @width * (@length - box.length)
       when SPLIT_MAXIMIZE_AREA
-        @length * (@width - box.width) >= @width * (@length - box.length)
+        @length * (@width - box.width) > @width * (@length - box.length)
       when SPLIT_SHORTER_AXIS
         box.length < box.width
       when SPLIT_LONGER_AXIS

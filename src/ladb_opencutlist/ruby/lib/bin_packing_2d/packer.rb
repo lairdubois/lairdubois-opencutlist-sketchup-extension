@@ -80,6 +80,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:area_unplaced_boxes] = 0
       @gstat[:all_largest_area] = 0
       @gstat[:largest_bottom_parts] = 0
+      @gstat[:cuts_together_count] = 0
       @gstat[:rank] = 0
     end
 
@@ -134,6 +135,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:nb_through_cuts] = @previous_packer.gstat[:nb_through_cuts]
       @gstat[:all_largest_area] = @previous_packer.gstat[:all_largest_area]
       @gstat[:total_l_measure] = @previous_packer.gstat[:total_l_measure]
+      @gstat[:cuts_together_count] = @previous_packer.gstat[:cuts_together_count]
     end
 
     #
@@ -410,22 +412,11 @@ module Ladb::OpenCutList::BinPacking2D
       # List of boxes that could not be placed during this run.
       unused_boxes = []
 
-      previous_box = nil
       begin
         until @boxes.empty?
           # Select next box and get ranked score from current_bin.
           box = @boxes.shift
 
-          # Recompute bounding box, while packing!
-          # Remove this until version 2.1 and further tests.
-=begin
-          if current_bin.boxes.size > 1 && box.different?(previous_box)
-            current_bin.bounding_box(box, false)
-            # This would be a good place to make a rectangle merge, but
-            # 26.txt shows that this is not possible!
-            # Only recompute bounding box when no merge is possible!
-          end
-=end
           score = current_bin.best_ranked_score(box)
 
           # No placement possible in current bin.
@@ -455,7 +446,6 @@ module Ladb::OpenCutList::BinPacking2D
             box.rotate if score[2] == ROTATED
             # Caution! once the box has been placed, the leftover index is NOT VALID anymore!
             current_bin.add_box(box, leftover_index)
-            previous_box = box
             nb_placed_boxes += 1
           end
         end
@@ -491,6 +481,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_nb_cuts] += @stat[:nb_cuts]
       @gstat[:nb_through_cuts] += @stat[:nb_h_through_cuts] + @stat[:nb_v_through_cuts]
       @gstat[:total_l_measure] += @stat[:l_measure]
+      @gstat[:cuts_together_count] += @stat[:v_together] + @stat[:h_together]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
       @gstat[:largest_bottom_parts] += current_bin.stat[:largest_bottom_part]
     end

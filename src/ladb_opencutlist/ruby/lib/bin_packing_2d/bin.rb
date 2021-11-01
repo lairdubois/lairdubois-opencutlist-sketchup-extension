@@ -67,8 +67,10 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:nb_cuts] = 0
       @stat[:nb_h_through_cuts] = 0
       @stat[:nb_v_through_cuts] = 0
+      @stat[:h_together] = 0
+      @stat[:v_together] = 0
 
-      @stat[:length_cuts] = 0
+      @stat[:length_cuts] = 0                # total length of cuts, excl. trimming cut
 
       @stat[:l_measure] = 0
       @stat[:signature] = "not packed"
@@ -224,8 +226,6 @@ module Ladb::OpenCutList::BinPacking2D
           c1 = nil
         elsif (c1.y - c2.y).abs <= EPS && (c1.x + c1.length - c2.x).abs <= @options.saw_kerf + EPS
           c1.set_length(c1.length + @options.saw_kerf + c2.length)
-          new_cuts << c1
-          c1 = cuts.shift
         else
           new_cuts << c1
           c1 = c2
@@ -243,8 +243,6 @@ module Ladb::OpenCutList::BinPacking2D
           c1 = nil
         elsif (c1.x - c2.x).abs <= EPS && (c1.y + c1.length - c2.y).abs <= @options.saw_kerf + EPS
           c1.set_length(c1.length + @options.saw_kerf + c2.length)
-          new_cuts << c1
-          c1 = cuts.shift
         else
           new_cuts << c1
           c1 = c2
@@ -254,24 +252,59 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Return 1 if through cuts are together, 0 if they are not
+    #
+    def qualify_cuts(c, width)
+      together = c.length
+      if width
+        cuts = c.map(&:y)
+        cuts.unshift(@options.trimsize)
+        cuts.push(@max_y)
+      else
+        cuts = c.map(&:x)
+        cuts.unshift(@options.trimsize)
+        cuts.push(@max_x)
+      end
+      cuts = cuts.each_cons(2).map {|a, b| b - a}
+      seen = {}
+      prev = 0
+      cuts.each do |e|
+        if seen.has_key?(e)
+          if e != prev
+            together = 0
+            break
+          else
+            prev = e
+          end
+        else
+          seen[e] = 1
+          prev = e
+        end
+      end
+      return together
+    end
+
+    #
     # Collects information about this Bin's packing.
     #
     def summarize
-
-      merge_cuts
       # Compute additional through cuts (primary cuts into the bounding box).
+      merge_cuts
       h_cuts = @cuts_h.select { |cut|
         (cut.x - @options.trimsize).abs <= EPS &&
           (@options.trimsize + cut.length - @max_x).abs <= EPS &&
           cut.y < @max_y
       }
       h_cuts.map(&:mark_through)
+      @stat[:h_together] += qualify_cuts(h_cuts, true)
+
       v_cuts = @cuts_v.select { |cut|
         (cut.y - @options.trimsize).abs <= EPS &&
           (@options.trimsize + cut.length - @max_y).abs <= EPS &&
           cut.x < @max_x
       }
       v_cuts.map(&:mark_through)
+      @stat[:v_together] += qualify_cuts(v_cuts, false)
 
       @stat[:nb_h_through_cuts] = h_cuts.size unless h_cuts.nil?
       @stat[:nb_v_through_cuts] = v_cuts.size unless v_cuts.nil?
@@ -283,7 +316,6 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:nb_packed_boxes] = @boxes.size
       @stat[:nb_leftovers] = @leftovers.size
       @stat[:bbox_area] = (@max_x - @options.trimsize) * (@max_y - @options.trimsize)
-
 
       @leftovers.each do |leftover|
         # Compute l_measure over Leftovers inside the bounding box only!
@@ -301,7 +333,6 @@ module Ladb::OpenCutList::BinPacking2D
       end
       # Normalize the l_measure
       @stat[:l_measure] = @stat[:l_measure] / (@stat[:bbox_area] * (@max_x + @max_y))
-
       @stat[:efficiency] = ((@stat[:used_area] * 100) / @stat[:net_area]).round(4)
     end
 
@@ -336,7 +367,6 @@ module Ladb::OpenCutList::BinPacking2D
           return false if !finalbb
         end
       end
-
       new_cuts.map(&:mark_final) if finalbb
 
       # Shortens all cuts that go beyond the @max_x and @max_y point.
