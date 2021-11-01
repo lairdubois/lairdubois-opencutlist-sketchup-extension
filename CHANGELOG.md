@@ -9,9 +9,10 @@ in 2.x, 1.x and 0.x versions.
   * Added thickness layer count
   * Added description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
-  * Added a cutlist's option to disable flipped part detection
-  * Added primary cuts summary bellow cutting diagrams
+  * Added a global option to disable mirrored part detection
+  * Added primary cuts summary below cutting diagrams
   * Improved arrow display in labels part thumbnail
+  * Improved 2D cutting diagram selection strategy
 
 * 2.1.2 (WIP)
 

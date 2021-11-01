@@ -47,6 +47,8 @@ default:
   instance_plural: פריטים
   part_single: חלק
   part_plural: חלקים
+  thickness_layer_single: שכבה
+  thickness_layer_plural: שכבות
   setup_model_units: הגדרת יחידות במודל
   load_more: "טען עוד ..."
   reset_to_app_defaults: לשחזר ערכים מקוריים
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "שים לב, כי לא ייעשה שימוש ב-**{{ count }}** פריטים מהחבילה האחרונה."
       used_instance_count: "פריט **{{ count }}** מתוך {{ total }} בשימוש"
       used_instance_count_plural: "**{{ count }}** פריטים מתוך {{ total }} בשימוש"
+      thickness_layer_count: "החלק האחרון בנוי מ-**{{ count }}** שכבות בעובי"
+      thickness_layered: "הכמות כאן מייצגת את מספר החלקים שיש לחתוך כדי לקבל את כל השכבות."
+      thickness_layered_equation: "**{{ count }}** *חלק* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *חלקים* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**"
       multiple_layers: "שים לב, החלק מורכב מתת-חלקים הקיימים ב-{{ count }} שכבות שונות: <br> {{ layers }}"
       children_warnings: "שים לב, קיימת התראה {{ count }} בחלקים מקובצים"
       children_warnings_plural: "שים לב, קיימות {{ count }} התראות בחלקים מקובצים"
@@ -247,6 +253,7 @@ tab:
       title_multiple: מאפייני קבוצת חלקים
       multiple_alert: "מאפייני קבוצה של {{ part_count }} חלקים."
       general: כללי
+      extra_help: "רשימת מאפיינים ספציפיים לסוג החומר \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: קאנטים
       name: תיאור
       material: חומר
@@ -269,6 +276,11 @@ tab:
       mass_help: המשקל החלק ישמש בעת הפקת **דוחות**.
       price: מחיר
       price_help: המחיר החלק ישמש בעת הפקת **דוחות**.
+      thickness_layer_count: Nb של שכבות
+      thickness_layer_count_help: הגדר כאן את מספר השכבות.
+      description: תיאור
+      description_help: |
+        *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
       tags: תגים
       tags_help: |
         בעזרת האפשרות *תגים*, תוכלו להוסיף מילות מפתח לאינדקס כדי לזהות טוב יותר חלקים בתוכנית חיתוך.
@@ -327,6 +339,9 @@ tab:
         - *אורך* יהיה על הציר <span style='color:red'>אדום</span>
         - *רוחב* יהיה על הציר <span style='color:green'>ירוק</span>
         - *עובי* יהיה על הציר <span style='color:blue'>כחול</span>
+      flipped_detection: זיהוי חלקים משתקפים
+      flipped_detection_help: |
+        אם נבחרת אפשרות זו, חלקים משתקפים יאותרו ויוצגו כחלק חדש.
       smart_material: הגדרת חומר *חכמה*
       smart_material_help: "אם האפשרות מופעלת, ניתן להקצות לחלקים שאין להם חומר מוגדר את החומר העיקרי של אלמנטים צאצאים או את זה שעובר בירושה מאלמנטים האב שלהם."
       dynamic_attributes_name: השתמש בתכונה *Name* של רכיבים דינמיים
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "אם האפשרות מופעלת, חלקים עם **מידה זהה**, **תגים זהים** ו-**אותו משטח מוגמר** *(אם התצוגה של משטח זה אינו מוסתר)* יקובצו על אותו קו."
       hide_entity_names: הסתר שמות מופעים
       hide_entity_names_help: "אם האפשרות מופעלת, **שמות מופעים** של החלקים אינם מוצגים."
+      hide_descriptions: הסתר תיאורים
+      hide_descriptions_help: "אם בוחרים באפשרות זו, **התיאורים** המוצבים על החלקים לא יוצגו."
       hide_tags: הסתר תגים
       hide_tags_help: "אם האפשרות מופעלת, **תגים** יוסתרו."
       hide_cutting_dimensions: הסתר מידות חיתוך
@@ -439,6 +456,7 @@ tab:
       material_thickness: חומר / עובי
       material_name: חומר
       entity_names: שמות עותקים
+      description: תיאור
       tags: תגים
       edge_ymin: קאנט לאורך 1
       edge_ymax: קאנט לאורך 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: הסתר
       option_hide_part_list_1d_help: הצג או הסר את רשימת החלקים לכל לוח או קאנט.
       option_hide_part_list_2d_help: הצג או הסתר רשימת חלקים לכל פאנל.
+      option_use_names: זיהוי חלקים
+      option_use_names_0: השתמש במספר
+      option_use_names_1: השתמש בייעוד
+      option_use_names_help: מאפשר לך לבחור בין **מספר** ל-**ייעוד** לזיהוי חלקים ברשימת חיתוך.
       option_origin_corner: עמדת התחלה
       option_origin_corner_1d_0: משמאל
       option_origin_corner_1d_1: מימין
@@ -574,14 +596,17 @@ tab:
         total_part_count: סה"כ חלקים
         total_used: סה"כ בשימוש
         trimming: שוליים
-        total_cut_count: מספר קיצוצים
+        total_cut_count: מספר חיתוכים
         total_cut_length: אורך חיתוך
         efficiency: יעילות
         leftover: פחת
         cut: חיתוך
-        cut_plural: קיצוצים
+        cut_plural: חיתוכים
         cut_final: חיתוך ראשוני (רמה 1)
+        cut_final_plural: חתכים ראשוניים (רמה 1)
         cut_through: חיתוך ראשוני (רמה 2)
+        cut_through_plural: חתכים ראשוניים (רמה 2)
+        cut_none: אין
         bar_dimensional_type_0: לוח סטנדרטי
         bar_dimensional_type_1: פחת הקרש
         bar_edge_type_0: קאנט סטנדרטי
@@ -647,13 +672,17 @@ tab:
       option_formula: מחיר
       option_size: גודל
       option_anchor: עגינה
-      option_anchor_start: התחלה
-      option_anchor_middle: אמצע
-      option_anchor_end: סוף
+      option_anchor_start: התחלה - תחתית
+      option_anchor_middle: אמצע - תחתית
+      option_anchor_end: סיום - תחתית
+      option_anchor_start_top: התחלה - עילית
+      option_anchor_middle_top: אמצע - עילית
+      option_anchor_end_top: סיום - עילית
       option_color: צבע
       formula:
         part_number: מספר
         part_name: תיאור
+        part_description: תיאור
         part_entity_named_path: מסלול פריט
         part_entity_name: שם פריט
         part_cutting_size: גודל חיתוך
