@@ -47,6 +47,8 @@ default:
   instance_plural: unidades
   part_single: peça
   part_plural: peças
+  thickness_layer_single: camada
+  thickness_layer_plural: camadas
   setup_model_units: Configure as unidades do modelo
   load_more: "Carregue mais ..."
   reset_to_app_defaults: Restaurar os valores originais
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
       used_instance_count: "**{{ count }}** / {{ total }} unidade utilizada"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unidades utilizadas"
+      thickness_layer_count: "A parte final é composta de **{{ count }}** camadas em sua espessura"
+      thickness_layered: "A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas."
+      thickness_layered_equation: "**{{ count }}** *peça* x **{{ layerCount }}** *camada* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *peças* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
       multiple_layers: "Cuidado, esta peça é composta de subpeças presentes em {{ contagem }} camadas diferentes:<br>{{ camadas }}"
       children_warnings: "Atenção, há {{ contagem }} alerta em partes agrupadas"
       children_warnings_plural: "Atenção, existem {{ count }} alertas em peças agrupadas"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Propriedades do grupo de peças
       multiple_alert: "Propriedades comuns do grupo de {{ part_count }} peças."
       general: Geral
+      extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Fita de Borda
       name: Descrição
       material: Material
@@ -269,6 +276,11 @@ tab:
       mass_help: A massa da peça será utilizada na geração de **Relatórios**.
       price: Preço
       price_help: O preço da peça será utilizado na geração de **Relatórios**.
+      thickness_layer_count: No. de camadas
+      thickness_layer_count_help: Defina aqui o número de camadas.
+      description: Descrição
+      description_help: |
+        A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
       tags: Tags
       tags_help: |
         Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
@@ -327,6 +339,9 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
+      flipped_detection: Detecção de peças espelhadas
+      flipped_detection_help: |
+        Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como uma peça nova.
       smart_material: Atribuição *inteligente* de material
       smart_material_help: "Se esta opção estiver ativada, as peças sem um material definido podem ter o material principal de seus elementos filhos ou aquele herdado de seus elementos pais automaticamente atribuídos à elas."
       dynamic_attributes_name: Use o atributo *Name* dos componentes dinâmicos
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Se esta opção estiver ativada, as peças com **mesmo tamanho**, com as **mesmas tags**, e a **mesma superfície final** (se o display naquela superfície não estiver oculto) serão agrupadas na mesma linha."
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: "Se esta opção for selecionada, **nomes de instância** de peças não serão exibidos."
+      hide_descriptions: Ocultar descrições
+      hide_descriptions_help: "Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas."
       hide_tags: Esconder tags
       hide_tags_help: "Se esta opção for selecionada, **tags** serão ocultados."
       hide_cutting_dimensions: Ocultar dimensões aproximadas
@@ -439,6 +456,7 @@ tab:
       material_thickness: Espessura do material
       material_name: Material
       entity_names: Nomes de instância
+      description: Descrição
       tags: Tags
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: Mascarado
       option_hide_part_list_1d_help: Apresenta ou esconde a lista de peças para cada prancha ou fita de borda.
       option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada chapa.
+      option_use_names: Identificação das peças
+      option_use_names_0: Use o número
+      option_use_names_1: Use a designação
+      option_use_names_help: Permite que você escolha entre **número** e **designação** para identificar peças no diagrama de corte.
       option_origin_corner: Posição da origem
       option_origin_corner_1d_0: Para a esquerda
       option_origin_corner_1d_1: Para a direita
@@ -581,7 +603,10 @@ tab:
         cut: Corte
         cut_plural: Cortes
         cut_final: Corte primário (nível 1)
+        cut_final_plural: Cortes primários (nível 1)
         cut_through: Corte primário (nível 2)
+        cut_through_plural: Cortes primários (nível 2)
+        cut_none: Nenhum
         bar_dimensional_type_0: Prancha MLC padrão
         bar_dimensional_type_1: Sobra de prancha
         bar_edge_type_0: Fita de borda padrão
@@ -647,13 +672,17 @@ tab:
       option_formula: Valor
       option_size: Dimensão
       option_anchor: Âncora
-      option_anchor_start: Início
-      option_anchor_middle: Meio
-      option_anchor_end: Fim
+      option_anchor_start: Início - Fundo
+      option_anchor_middle: Melo - Fundo
+      option_anchor_end: Fim - Fundo
+      option_anchor_start_top: Início - Alto
+      option_anchor_middle_top: Melo - Alto
+      option_anchor_end_top: Fim - Alto
       option_color: Cor
       formula:
         part_number: Número
         part_name: Descrição
+        part_description: Descrição
         part_entity_named_path: Caminho da instância
         part_entity_name: Nome da instância
         part_cutting_size: Dimensões aproximadas

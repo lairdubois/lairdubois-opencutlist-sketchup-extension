@@ -71,14 +71,14 @@ core:
     more_extensions: Estensioni
     more_update: Aggiorna
   bottombar:
-    report_a_bug: Segnala un bug
+    report_a_bug: Segnala un errore
   warning:
     dev: |
       Stai utilizzando una versione **in fase di sviluppo** di *OpenCutList*.
       Questa versione è disponibile solo per il test.
       Si sconsiglia di utilizzarlo in produzione.
 
-      Per segnalare un bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Per segnalare un errore: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
       Stai utilizzando una vecchia versione di SketchUp ({{ sketchup_version }}). Questo plugin puo' funzionare, ma con qualche problema.
       Per utilizzare al meglio OpenCutList, si raccomanda di aggiornare alla versione **SketchUp 2017** o superiore.
@@ -394,7 +394,7 @@ tab:
       filters_warning_0: "Questo filtro esclude tutte le parti!"
       filters_warning: "Questo filtro mostra solo **{{ count }}** parte su un totale di {{ total }}."
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
-      edge_material_names_filter: Materiale delle bordature da filtrare
+      edge_material_names_filter: Filtro su materiale delle bordature
       tags_filter: Tags da filtrare
       dimensions_help: Schema delle dimensioni...
       summary: Sommario
@@ -409,7 +409,7 @@ tab:
       count: Qtà
       cutting: Grezzo
       bbox: Finito
-      final: Finito
+      final: Effettiva
       total_cutting: Σ Grezzo
       total_final: Σ Effettiva
       length: Lunghezza
@@ -466,8 +466,8 @@ tab:
         visible_only: "*Le parti contenute nei gruppi nascosti non saranno esportate*."
     report:
       title: Resoconto
-      info_0: |-
-        Questa funzionalità permette di generare un report delle **masse** e **costi** delle **materie prime** necessarie per la produzione delle parti del *elenco parti*.
+      info_0: |
+        Questa funzionalità permette di generare un report dei **pesi** e dei **costi** delle **materie prime** necessarie per realizzazione degli elementi dell' *elenco parti*.
       options_general: Generale
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coefficiente per *$t(tab.materials.type_1)*
