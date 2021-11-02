@@ -483,6 +483,7 @@ module Ladb::OpenCutList::BinPacking2D
         @start_msg = start_msg
         @end_msg = end_msg
         @status = 1
+        Sketchup.status_text = (@start_msg + " " + "."*@status)
       end
       return nil, @errors.first if !valid_input? && @errors.size > 0
 
@@ -561,7 +562,11 @@ module Ladb::OpenCutList::BinPacking2D
         return nil, ERROR_BAD_ERROR
       end
 
-      Sketchup.status_text = @end_msg if @status > 0
+      if @status > 0
+        msg = "#{@end_msg} : #{"%4.1f" % (Time.now - @start_time)} s"
+        Sketchup.status_text = msg
+      end
+
       @errors << ERROR_NONE if @errors.empty?
       return opt, @errors.first
     end

@@ -74,7 +74,7 @@ module Ladb::OpenCutList
       }
 
       # Compute the cutting diagram
-      result, err = e.run
+      result, err = e.run(Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.start_msg'), Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.end_msg'))
 
       # Response
       # --------
@@ -107,14 +107,14 @@ module Ladb::OpenCutList
         else
           puts('funky error, contact developpers', err)
         end
-        
+
       else
 
         # Errors
         if result.unplaced_boxes.length > 0
           cuttingdiagram1d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
         end
-        
+
         # Warnings
         materials = Sketchup.active_model.materials
         material = materials[group.material_name]

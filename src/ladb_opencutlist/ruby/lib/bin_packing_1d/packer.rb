@@ -54,6 +54,9 @@ module Ladb::OpenCutList::BinPacking1D
       # Smallest box length to pack.
       @smallest = 0
 
+      @start_msg = ""
+      @status = 0
+
       # Statistics collected for final report.
       @gstat = {}
       @gstat[:nb_input_boxes] = 0 # Total number of boxes to pack

@@ -43,7 +43,10 @@ module Ladb::OpenCutList::BinPacking1D
     #
     # run the bin packing optimization.
     #
-    def run
+    def run(start_msg, status)
+      @start_msg = start_msg
+      @status = status
+
       @gstat[:algorithm] = ALG_SUBSET_SUM
       err = ERROR_NONE
 
@@ -180,6 +183,11 @@ module Ladb::OpenCutList::BinPacking1D
             epsilon = 0.0
           end
           y, y_list = allsubsetsums(valid_lengths, target_length, @options.saw_kerf, epsilon)
+          if @status > 0
+            @status += 1
+            Sketchup.status_text = (@start_msg + " " + "."*@status)
+          end
+
           if y.zero?
             # Should only happen if we have a very wide
             # saw kerf and we cannot fit any box.
