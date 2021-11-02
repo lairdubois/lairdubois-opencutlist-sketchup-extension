@@ -89,6 +89,7 @@ module Ladb::OpenCutList
       }
 
       # Compute the cutting diagram
+      # Start and end message to keep user happy!
       result, err = e.run
 
       # Response
