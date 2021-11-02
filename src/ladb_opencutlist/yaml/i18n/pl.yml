@@ -489,6 +489,8 @@ tab:
         visible_only: Uwzględniane są tylko części zawarte w **widocznych grupach**.
     cuttingdiagram:
       title: Schemat cięcia
+      start_msg: Optymalizacja w toku
+      end_msg: Optymalizacja zakończona
       options_material: Materiał
       options_config: Konfiguracja
       options_display: Wyświetlanie

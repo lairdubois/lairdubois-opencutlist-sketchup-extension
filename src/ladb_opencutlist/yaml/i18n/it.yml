@@ -489,6 +489,8 @@ tab:
         visible_only: Solo le parti contenute nei **gruppi visibili** sono pubblicati.
     cuttingdiagram:
       title: Schema di taglio
+      start_msg: Ottimizzazione in corso
+      end_msg: Ottimizzazione completata
       options_material: Materiale
       options_config: Configurazione
       options_display: Visualizzazione

@@ -211,9 +211,9 @@ tab:
       unused_instance_count_plural: "Обратите внимание, что **{{ count }}** единицы из последнего комплекта не образуют комплект."
       used_instance_count: "**{{ count }}** / {{ total }} используемая единица"
       used_instance_count_plural: "**{{ count }}** / {{ total }} используемые единицы"
-      thickness_layer_count: "Последняя деталь состоит из **{{ count }}** слоев по своей толщине"
-      thickness_layered: "Количество здесь представляет собой число частей детали в раскрое для получения всех слоев."
-      thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слои* = **{{ cuttingPartCount }}**"
+      thickness_layer_count: "Готовая деталь состоит из **{{ count }}** слоев по толщине"
+      thickness_layered: "Здесь отражено общее количество частей по заданному числу слоев многослойной детали в раскрое."
+      thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слоя* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *частей* x **{{ layerCount }}** *слоев* = **{{ cuttingPartCount }}**"
       multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
       children_warnings: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждение"
@@ -276,11 +276,11 @@ tab:
       mass_help: Масса детали будет учтена при формировании **Отчета**.
       price: Цена
       price_help: Цена деталей будет учтена при формировании **Отчета**.
-      thickness_layer_count: Кол-во слоев
-      thickness_layer_count_help: Задайте количество слоев
+      thickness_layer_count: Число слоев
+      thickness_layer_count_help: Задайте необходимое количество слоев для формирования многослойной детали
       description: Описание
       description_help: |
-        Параметр *Описание* позволяет вам предоставить индивидуальную информацию о каждом параметре детали.
+        Параметр *Описание* дет возможность задать необходимую уточняющую информацию по детали.
       tags: Теги
       tags_help: |
         С опцией *Теги* вы можете добавлять ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
@@ -489,6 +489,8 @@ tab:
         visible_only: "Учитываются только детали, содержащиеся в **видимых группах**."
     cuttingdiagram:
       title: Карта раскроя
+      start_msg: Оптимизация в процессе
+      end_msg: Оптимизация завершена
       options_material: Материал
       options_config: Конфигурация
       options_display: Просмотр
@@ -509,9 +511,9 @@ tab:
       option_hide_part_list_1d_help: "Показывает или скрывает список деталей, присутствующих в отдельной кромочной ленте или в группе."
       option_hide_part_list_2d_help: Отобразить или скрыть список деталей раскраиваемой панели исходного материала под каждой картой раскроя
       option_use_names: Идентификация деталей
-      option_use_names_0: Использовать число
-      option_use_names_1: Использовать обозначение
-      option_use_names_help: Позволяет выбирать между **числом** и **обозначением** для идентификации частей на карте раскроя.
+      option_use_names_0: Использовать код
+      option_use_names_1: Использовать определение
+      option_use_names_help: Позволяет выбрать тип обозначения деталей на карте раскроя между **кодом** и **определением** для удобства идентификации.
       option_origin_corner: Исходный угол
       option_origin_corner_1d_0: Слева
       option_origin_corner_1d_1: Справа
@@ -672,12 +674,12 @@ tab:
       option_formula: Тип маркировки
       option_size: Размер
       option_anchor: Позиция
-      option_anchor_start: Начало - от низа
-      option_anchor_middle: Середина - от низа
-      option_anchor_end: Окончание - от низа
-      option_anchor_start_top: Начало - по верху
-      option_anchor_middle_top: Середина - по верху
-      option_anchor_end_top: Окончание - по верху
+      option_anchor_start: От левого нижнего края
+      option_anchor_middle: От середины нижнего края
+      option_anchor_end: От правого нижнего края
+      option_anchor_start_top: От верхнего левого края
+      option_anchor_middle_top: От середины верхнего края
+      option_anchor_end_top: От правого верхнего края
       option_color: Цвет
       formula:
         part_number: Номер

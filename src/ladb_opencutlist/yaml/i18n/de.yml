@@ -489,6 +489,8 @@ tab:
         visible_only: "Es werden nur die Teile gezählt, die in den **eingeblendeten Gruppen** enthalten sind."
     cuttingdiagram:
       title: Schnittplan
+      start_msg: Optimierung läuft
+      end_msg: Optmierung abgeschlossen
       options_material: Material
       options_config: Konfiguration
       options_display: Anzeige
