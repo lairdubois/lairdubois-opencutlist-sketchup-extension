@@ -47,6 +47,8 @@ default:
   instance_plural: položky
   part_single: pokoj
   part_plural: pokoje
+  thickness_layer_single: hladina
+  thickness_layer_plural: hladiny
   setup_model_units: Nakonfigurujte modelové jednotky
   load_more: "Více ..."
   reset_to_app_defaults: Obnovit původní hodnoty
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Upozorňujeme, že **{{ count }}** jednotky z poslední sady nebudou použity."
       used_instance_count: "**{{ počet }}** položka {{ celkem }} použita"
       used_instance_count_plural: "**{{ počet }}** použitých položek {{ celkem }}"
+      thickness_layer_count: "Finální část je vytvořena z **{{ count }}** hladin v tloušťce"
+      thickness_layered: "Množství zde představuje počet kusů, které se mají nařezat, abychom získaly všechny hladiny."
+      thickness_layered_equation: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin = **{{ cuttingPartCount }}**"
       multiple_layers: "Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}"
       children_warnings: "Pozor, v seskupených částech je upozornění {{ count }}"
       children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{ count }}"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Vlastnosti skupiny dílců
       multiple_alert: "Společné vlastnosti skupiny {{ part_count }} dílců."
       general: Všeobecné
+      extra_help: "Seznam vlastností specifických pro typ materiálu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Hranování
       name: Popis
       material: Materiál
@@ -269,6 +276,11 @@ tab:
       mass_help: Hmotnost součásti bude použita při generování **Zpráv**.
       price: Cena
       price_help: Cena dílu bude použita při generování **Výsledků**.
+      thickness_layer_count: Počet hladin
+      thickness_layer_count_help: Zde nastavte počet hladin.
+      description: popis
+      description_help: |
+        *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
       tags: Štítky
       tags_help: |
         *Dílcům* můžete přidávat štítky pro lepší definici dílců.
@@ -327,6 +339,9 @@ tab:
         - *Délka* je na <span style='color:red'>červené</span> ose
         - *Šířka* je na <span style='color:green'>zelené</span> ose
         - *Tloušťka* je na <span style='color:blue'>modré</span> ose
+      flipped_detection: Detekce zrcadlených dílců
+      flipped_detection_help: |
+        Pokud je vybrána tato možnost, zrcadlené dílce budou detekovány a zobrazeny jako samostatné dílce.
       smart_material: "*Chytré* přiřazení materiálu"
       smart_material_help: "Pokud je vybrána tato možnost, lze dílcům bez definovaného materiálu přiřadit materiál z jejich skupiny nebo podskupiny."
       dynamic_attributes_name: Použijte atribut *Název* dynamických komponent
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Je-li vybrána tato možnost, budou seskupeny součásti s **identickou velikostí** a **stejnými značkami** (pokud nebude zobrazení této oblasti skryté)."
       hide_entity_names: Skrýt názvy instancí
       hide_entity_names_help: "Pokud je vybrána tato možnost, **názvy instancí** dílců se nezobrazí."
+      hide_descriptions: Skrýt popisy
+      hide_descriptions_help: "Pokud je vybrána tato možnost, **popisy** umístěné na dílcích se nezobrazí."
       hide_tags: Skrýt štítky
       hide_tags_help: "Pokud je vybrána tato možnost, budou **štítky** skryty."
       hide_cutting_dimensions: Skrýt hrubé rozměry
@@ -439,6 +456,7 @@ tab:
       material_thickness: Materíál / Tloušťka
       material_name: Materiál
       entity_names: Názvy instancí
+      description: popis
       tags: Štítky
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: Skrytý
       option_hide_part_list_1d_help: Zobrazit nebo skrýt seznam dílů pro každou desku nebo olepování hran.
       option_hide_part_list_2d_help: Zobrazte nebo skryjte seznam dílů pro každý panel.
+      option_use_names: Identifikace dílu
+      option_use_names_0: Použijte číslo
+      option_use_names_1: Použijte označení
+      option_use_names_help: Umožňuje vám vybrat si mezi **číslem** a **označením** pro identifikaci dílů na nářezovém plánu.
       option_origin_corner: Původní pozice
       option_origin_corner_1d_0: Zleva
       option_origin_corner_1d_1: Zprava
@@ -581,7 +603,10 @@ tab:
         cut: Řez
         cut_plural: Řezy
         cut_final: Primární řez (úroveň 1)
+        cut_final_plural: primárních řezů (úroveň 1)
         cut_through: Primární řez (úroveň 2)
+        cut_through_plural: primárních řezů (úroveň 2)
+        cut_none: Ne skládat
         bar_dimensional_type_0: Standardní rozměry
         bar_dimensional_type_1: Odřezky
         bar_edge_type_0: Standardní hrana
@@ -647,13 +672,17 @@ tab:
       option_formula: Název pole
       option_size: Rozměry
       option_anchor: Kotva
-      option_anchor_start: Start
-      option_anchor_middle: Střední
-      option_anchor_end: Konec
+      option_anchor_start: Začátek - Dole
+      option_anchor_middle: Uprostřed - Dole
+      option_anchor_end: Konec - Dole
+      option_anchor_start_top: Začátek – Nahoře
+      option_anchor_middle_top: Uprostřed - Nahoře
+      option_anchor_end_top: Konec - Nahoře
       option_color: Barva
       formula:
         part_number: Číslo
         part_name: Popis
+        part_description: popis
         part_entity_named_path: Cesta instance
         part_entity_name: Název instance
         part_cutting_size: Hrubé rozměry

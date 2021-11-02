@@ -58,6 +58,10 @@ module Ladb::OpenCutList::BinPacking2D
       @level = 0
       @nb_best_selection = BEST_X_LARGE
 
+      @status = 0
+      @start_msg = ""
+      @end_msg = ""
+
       @warnings = []
       @errors = []
     end
@@ -363,8 +367,12 @@ module Ladb::OpenCutList::BinPacking2D
     # Packs next Bins, returns a list of Packers.
     #
     def pack_next_bin(previous_packer, signatures)
-      packers = []
+      if @status > 0
+        @status += 1
+        Sketchup.status_text = (@start_msg + " " + "."*@status)
+      end
 
+      packers = []
       signatures.each do |signature|
         options = @options.clone
         options.presort, options.score, options.split, options.stacking = signature
@@ -470,7 +478,12 @@ module Ladb::OpenCutList::BinPacking2D
     # Checks for consistency, creates multiple Packers and runs them.
     # Returns best packing by selecting best packing at each stage.
     #
-    def run
+    def run(start_msg="Optimizing", end_msg="Optimization done")
+      if Object.const_defined?("Sketchup")
+        @start_msg = start_msg
+        @end_msg = end_msg
+        @status = 1
+      end
       return nil, @errors.first if !valid_input? && @errors.size > 0
 
       return nil, @errors.first if !bins_available?
@@ -548,6 +561,7 @@ module Ladb::OpenCutList::BinPacking2D
         return nil, ERROR_BAD_ERROR
       end
 
+      Sketchup.status_text = @end_msg if @status > 0
       @errors << ERROR_NONE if @errors.empty?
       return opt, @errors.first
     end

@@ -47,6 +47,8 @@ default:
   instance_plural: Pozycje
   part_single: część
   part_plural: części
+  thickness_layer_single: warstwa
+  thickness_layer_plural: warstwy
   setup_model_units: Ustaw jednostki modelu
   load_more: "Załaduj więcej ..."
   reset_to_app_defaults: Przywróć oryginalne wartości
@@ -209,6 +211,10 @@ tab:
       unused_instance_count_plural: "Uwaga, **{{ count }}** pozycji z ostatniego pakietu nie będzie użyte."
       used_instance_count: "Użyto **{{ count }}** pozycję z {{ total }}"
       used_instance_count_plural: "Użyto **{{ count }}** pozycji z {{ total }}"
+      thickness_layer_count: "Część końcowa jest wykonana z **{{ count }}** warstw o grubości"
+      thickness_layered: "Podana tutaj ilość oznacza liczbę elementów, które należy wyciąć, aby uzyskać wszystkie warstwy."
+      thickness_layered_equation: "**{{ count }}** *część* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *części* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
       multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
       children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
@@ -247,6 +253,7 @@ tab:
       title_multiple: Właściwości grupy części
       multiple_alert: "Wspólne właściwości grupy {{ part_count }} części."
       general: Główne
+      extra_help: "Lista właściwości charakterystycznych dla danego typu materiału \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Obrzeża
       name: Opis
       material: Materiał
@@ -269,6 +276,11 @@ tab:
       mass_help: Waga części będzie użyta podczas tworzenia **Reportów**.
       price: Cena
       price_help: Cena części będzie użyta podczas tworzenia **Reportów**.
+      thickness_layer_count: Nb warstw
+      thickness_layer_count_help: Ustaw tutaj liczbę warstw.
+      description: Opis
+      description_help: |
+        Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
       tags: Oznaczenia
       tags_help: |
         *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
@@ -327,6 +339,9 @@ tab:
         - *długość* jest odczytywana na osi <span style='color:red'>czerwonej</span>
         - *szerokość* jest odczytywana na osi <span style='color:green'>zielonej</span>
         - *grubość* jest odczytywana na osi <span style='color:blue'>niebieskiej</span>
+      flipped_detection: Wykrywanie części lustrzanych
+      flipped_detection_help: |
+        Jeśli ta opcja jest włączona, lustrzane części zostaną wykryte i wyświetlone jako nowa część.
       smart_material: "*Inteligentne* przypisanie materiału"
       smart_material_help: "Jeśli ta opcja jest zaznaczona, do części bez zdefiniowanego materiału można przypisać materiał przypisany do jednego z ich rodziców lub dzieci."
       dynamic_attributes_name: Użyj atrybutu *Nazwa* komponentów dynamicznych
@@ -342,6 +357,8 @@ tab:
       part_folding_help: "Jeśli ta opcja jest wybrana, części z **identycznym rozmiarem** oraz z **identycznymi oznakowaniem** będą grupowane (o ile wyświetlanie tego obszaru nie jest ukryte)."
       hide_entity_names: Ukryj nazwy instancji
       hide_entity_names_help: "Jeśli ta opcja jest zaznaczona, **nazwy instancji** części nie będą wyświetlane."
+      hide_descriptions: Ukryj opisy
+      hide_descriptions_help: "Jeśli ta opcja zostanie wybrana, **opis** umieszczony na częściach nie będzie wyświetlany."
       hide_tags: Ukryj oznakowania
       hide_tags_help: "Jeśli ta opcja jest zaznaczona, **oznakowania** zostaną ukryte."
       hide_cutting_dimensions: Ukryj przybliżone wymiary
@@ -439,6 +456,7 @@ tab:
       material_thickness: Materiał / Grubość
       material_name: Materiał
       entity_names: Nazwy instancji
+      description: Opis
       tags: Oznaczenia
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
@@ -490,6 +508,10 @@ tab:
       option_hide_part_list_1: Zamaskowana
       option_hide_part_list_1d_help: Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
       option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
+      option_use_names: Identyfikacja części
+      option_use_names_0: Użyj numeru
+      option_use_names_1: Stosować oznaczenie
+      option_use_names_help: Umożliwia wybór pomiędzy **numerem** i **oznaczeniem** w celu identyfikacji części na schemacie cięcia.
       option_origin_corner: Pozycja początku
       option_origin_corner_1d_0: Z lewej
       option_origin_corner_1d_1: Z prawej
@@ -581,7 +603,10 @@ tab:
         cut: Cięcie
         cut_plural: Cięcia
         cut_final: Cięcie główne (poziom 1)
+        cut_final_plural: Cięcia podstawowe (poziom 1)
         cut_through: Cięcie główne (poziom 2)
+        cut_through_plural: Cięcia podstawowe (poziom 2)
+        cut_none: Brak
         bar_dimensional_type_0: Płyta o standardowych wymiarach
         bar_dimensional_type_1: Odpad
         bar_edge_type_0: Standardowy rozmiar obrzeża
@@ -647,13 +672,17 @@ tab:
       option_formula: Nazwa pola
       option_size: Wymiar
       option_anchor: Punkt zaczepienia
-      option_anchor_start: Początek
-      option_anchor_middle: Środek
-      option_anchor_end: Koniec
+      option_anchor_start: Początek - Dół
+      option_anchor_middle: Środek - Dół
+      option_anchor_end: Koniec - Dół
+      option_anchor_start_top: Początek - Góra
+      option_anchor_middle_top: Środek - Góra
+      option_anchor_end_top: Koniec - Góra
       option_color: Kolor
       formula:
         part_number: Numer
         part_name: Opis
+        part_description: Opis
         part_entity_named_path: Scieżka instancji
         part_entity_name: Nazwa instancji
         part_cutting_size: Wymiary wstępne
