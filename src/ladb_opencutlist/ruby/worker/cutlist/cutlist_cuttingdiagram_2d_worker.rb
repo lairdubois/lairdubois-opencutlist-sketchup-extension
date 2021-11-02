@@ -90,7 +90,7 @@ module Ladb::OpenCutList
 
       # Compute the cutting diagram
       # Start and end message to keep user happy!
-      result, err = e.run
+      result, err = e.run(Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.start_msg'), Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.end_msg'))
 
       # Response
       # --------

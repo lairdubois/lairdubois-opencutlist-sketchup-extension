@@ -489,6 +489,8 @@ tab:
         visible_only: Seules les pièces contenues dans les **groupes visibles** sont comptabilisées.
     cuttingdiagram:
       title: Calepinage
+      start_msg: Optimisation en cours
+      end_msg: Optimisation terminée
       options_material: Matière
       options_config: Configuration
       options_display: Affichage
