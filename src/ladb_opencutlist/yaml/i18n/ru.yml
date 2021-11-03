@@ -141,7 +141,7 @@ tab:
     help: |
       Выделите в сцене необходимые детали для раскроя и нажмите кнопку **Рассчитать**.
       Если выбор не осуществлен, то все видимые компоненты сцены будут включены в расчет.
-    selection_only: Выбор
+    selection_only: Выборка
     material_undefined: Материал не задан
     not_available_std_width: Ширина не задана
     not_available_std_thickness: Толщина не задана
@@ -513,7 +513,7 @@ tab:
       option_use_names: Идентификация деталей
       option_use_names_0: Использовать код
       option_use_names_1: Использовать определение
-      option_use_names_help: Позволяет выбрать тип обозначения деталей на карте раскроя между **кодом** и **определением** для удобства идентификации.
+      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **определение**. Определение будет соответствовать одноименной графе "Данные объекта" в SkethUP.
       option_origin_corner: Исходный угол
       option_origin_corner_1d_0: Слева
       option_origin_corner_1d_1: Справа
@@ -673,7 +673,7 @@ tab:
       option_cutting_marks_1: Распечатать
       option_formula: Тип маркировки
       option_size: Размер
-      option_anchor: Позиция
+      option_anchor: Позиция привязки
       option_anchor_start: От левого нижнего края
       option_anchor_middle: От середины нижнего края
       option_anchor_end: От правого нижнего края
@@ -690,7 +690,7 @@ tab:
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента
         part_cutting_width: Ширина элемента
-        part_cutting_thickness: Точность раскроя
+        part_cutting_thickness: Толщина раскроя
         part_size: Доступный размер
         part_length: Длина
         part_width: Ширина

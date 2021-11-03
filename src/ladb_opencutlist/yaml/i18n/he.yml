@@ -489,6 +489,8 @@ tab:
         visible_only: נספרים רק החלקים הכלולים ב-**הקבוצות הגלויות**.
     cuttingdiagram:
       title: תוכנית חיתוך
+      start_msg: אופטימיזציה פועלת
+      end_msg: נעשה אופטימיזציה
       options_material: חומר
       options_config: תצורה
       options_display: להציג
