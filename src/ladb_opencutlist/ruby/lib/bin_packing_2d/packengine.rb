@@ -258,7 +258,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def select_best_packing(packers)
       return nil if packers.size == 0
-      packers.sort_by! { |packer| [-packer.gstat[:all_largest_area], -packer.gstat[:cuts_together_count], packer.gstat[:total_l_measure]]}
+      packers.sort_by! { |packer| [packer.gstat[:total_l_measure], -packer.gstat[:cuts_together_count]]}
       print_final_packers(packers)
       packers.first
     end
@@ -302,12 +302,11 @@ module Ladb::OpenCutList::BinPacking2D
       # L_measure is a measure that uniquely identifies the shape of
       # a packing if it is not perfectly compact, i.e. = 0. Select unique
       # l_measure Packers, sort best_packers by ascending l_measure.
-      packers_group = packers.group_by { |packer| -packer.stat[:efficiency] }
+      packers_group = packers.group_by { |packer| packer.stat[:l_measure] }
 
       # In each group of packers
       packers_group.keys.sort.each_with_index do |k, i|
-        # Pick the packer with shortest cuts and most compact
-        b = packers_group[k].sort_by { |p| [p.stat[:length_cuts], p.stat[:l_measure]] }.first
+        b = packers_group[k].sort_by { |p| [-p.stat[:efficiency], -p.stat[:length_cuts], -p.stat[:largest_bottom_part]] }.first
         b.stat[:rank] = i + 1
         best_packers << b
       end
@@ -332,6 +331,10 @@ module Ladb::OpenCutList::BinPacking2D
         update_rank_per_bin(packers, :nb_h_through_cuts, false) if rotatable
         update_rank_per_bin(packers, :v_together, false)
       when STACKING_ALL
+        update_rank_per_bin(packers, :v_together, false)
+        update_rank_per_bin(packers, :h_together, false)
+        update_rank_per_bin(packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(packers, :nb_v_through_cuts, false)
       end
 
       # Sort the Packers by their rank.

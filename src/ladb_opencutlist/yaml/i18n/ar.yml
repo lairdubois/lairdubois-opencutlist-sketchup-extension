@@ -489,6 +489,8 @@ tab:
         visible_only: القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
     cuttingdiagram:
       title: رسم التقطيعِ التخطيطيُ
+      start_msg: تشغيل التحسين
+      end_msg: تم التحسين
       options_material: الخامة
       options_config: إعداد
       options_display: عرض
