@@ -489,6 +489,8 @@ tab:
         visible_only: Apenas as partes contidas nos **grupos visíveis** são contadas.
     cuttingdiagram:
       title: Diagrama de Corte
+      start_msg: Otimização em progresso
+      end_msg: Otimização completada
       options_material: Material
       options_config: Configuração
       options_display: Exibição

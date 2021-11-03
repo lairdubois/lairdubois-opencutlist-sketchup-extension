@@ -489,6 +489,8 @@ tab:
         visible_only: Only the parts contained in the **visible groups** are considered.
     cuttingdiagram:
       title: Cutting Diagram
+      start_msg: Optimization running
+      end_msg: Optimization done
       options_material: Material
       options_config: Configuration
       options_display: Display

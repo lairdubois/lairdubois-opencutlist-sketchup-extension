@@ -489,6 +489,8 @@ tab:
         visible_only: Sólo se cuentan las piezas contenidas en los **grupos visibles**.
     cuttingdiagram:
       title: Diagrama de corte
+      start_msg: Optimización en curso
+      end_msg: Optimización completada
       options_material: Material
       options_config: Configuración
       options_display: Mostrar

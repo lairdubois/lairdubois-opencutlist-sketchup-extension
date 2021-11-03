@@ -124,7 +124,12 @@ module Ladb::OpenCutList::BinPacking1D
     #
     # Checks for consistency, creates a Packer and runs it.
     #
-    def run
+    def run(start_msg="Optimizing", end_msg="Optimization done")
+      if Object.const_defined?("Sketchup")
+        start_time = Time.now
+        status = 1
+        Sketchup.status_text = (start_msg + " " + "."*status)
+      end
 
       error = ERROR_BAD_ERROR
       @options.set_debug(false)
@@ -159,7 +164,7 @@ module Ladb::OpenCutList::BinPacking1D
         packerDP = PackerDP.new(@options)
         packerDP.add_leftovers(@leftovers)
         packerDP.add_boxes(@boxes)
-        errDP = packerDP.run
+        errDP = packerDP.run(start_msg, 1)
       rescue Packing1DError => err
         puts ("Rescued in PackEngine packerDP: #{err.inspect}")
         errDP = ERROR_BAD_ERROR
@@ -183,6 +188,11 @@ module Ladb::OpenCutList::BinPacking1D
       dbg(packer.to_str)
       if packer.nil?
         error = ERROR_BAD_ERROR
+      else
+        if status > 0
+          msg = "#{end_msg} : #{"%4.1f" % (Time.now - start_time)} s"
+          Sketchup.status_text = msg
+        end
       end
       return packer, error
     end

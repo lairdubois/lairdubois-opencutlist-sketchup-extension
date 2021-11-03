@@ -489,6 +489,8 @@ tab:
         visible_only: Počítají se pouze části obsažené ve **viditelných skupinách**.
     cuttingdiagram:
       title: Nářezový plán
+      start_msg: Optimalizace probíhá
+      end_msg: Optimalizace dokončena
       options_material: Materiál
       options_config: Konfigurace
       options_display: Zobrazit

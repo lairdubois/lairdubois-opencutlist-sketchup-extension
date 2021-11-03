@@ -489,6 +489,8 @@ tab:
         visible_only: Enkel de onderdelen in de **zichtbare groepen** worden meegerekend.
     cuttingdiagram:
       title: Zaagschema
+      start_msg: Optimalisatie aan de gang
+      end_msg: Optimalisatie voltooid
       options_material: Materiaal
       options_config: Configuratie
       options_display: Weergave
