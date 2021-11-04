@@ -11,7 +11,7 @@ in 2.x, 1.x and 0.x versions.
   * Added description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
   * Added a global option to disable mirrored part detection
-  * Added primary cuts summary below cutting diagrams
+  * Added primary cuts summary below cutting diagrams if always show option is activated
   * Improved arrow display in labels part thumbnail
   * Improved 2D cutting diagram selection strategy
   * Fixed display units from Preferences when using fractional inches
