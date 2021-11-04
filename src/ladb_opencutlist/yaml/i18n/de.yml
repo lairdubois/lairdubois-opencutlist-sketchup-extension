@@ -463,7 +463,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       warning:
-        visible_only: "*Die in ausgeblendeten Gruppen enthaltenen Teile werden nicht exportiert*."
+        visible_only: Die in **ausgeblendeten Gruppen** enthaltenen Teile werden nicht exportiert.
     report:
       title: Bericht
       info_0: |
@@ -802,7 +802,7 @@ tab:
       std_thicknesses: Standard-Dicken
       std_thicknesses_placeholder: Dicke ; ...
       std_thicknesses_help: |
-        Rohmaße der verfügbaren Dicken.
+        **Rohmaße** der verfügbaren Dicken.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Standard-Querschnitte
       std_sections_placeholder: Breite x Dicke ; ...

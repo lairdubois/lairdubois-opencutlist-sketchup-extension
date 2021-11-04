@@ -463,7 +463,7 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       warning:
-        visible_only: "*Parts inside hidden groups of your parts list will not be exported*."
+        visible_only: Parts inside **hidden groups** of your parts list will not be exported.
     report:
       title: Report
       info_0: |

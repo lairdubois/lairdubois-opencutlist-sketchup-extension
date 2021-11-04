@@ -316,9 +316,9 @@ tab:
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
         Note-se que se a opção *A orientação automática das peças* não estiver ativa ou a peça estiver *bloqueada nos seus eixos* então:
-        - *comprimento* está no eixo <span style='color:red'>vermelho</span>
-        - *largura* está no eixo <span style='color:green'>verde</span>
-        - *espessura* está no eixo <span style='color:blue'>azul</span>
+        - **comprimento** está no eixo <span style='color:red'>vermelho</span>
+        - **largura** está no eixo <span style='color:green'>verde</span>
+        - **espessura** está no eixo <span style='color:blue'>azul</span>
       axes_origin_position_none: Não mude a origem
       axes_origin_position_min: Coloque a origem em um canto
       axes_origin_position_center: Coloque a origem no centro
@@ -463,7 +463,7 @@ tab:
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
       warning:
-        visible_only: "*As partes contidas nos grupos ocultos do sua Planilha de Produção não serão exportadas*."
+        visible_only: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
     report:
       title: Relatório
       info_0: |
@@ -802,7 +802,7 @@ tab:
       std_thicknesses: Espessuras Padrão
       std_thicknesses_placeholder: espessura ; ...
       std_thicknesses_help: |
-        Espessuras aproximadas disponíveis.
+        Espessuras **aproximadas** disponíveis.
         *Os tamanhos sem unidades são considerados nas unidades do modelo.*
       std_sections: Seções Cruzadas Padrão
       std_sections_placeholder: largura x espessura ; ...

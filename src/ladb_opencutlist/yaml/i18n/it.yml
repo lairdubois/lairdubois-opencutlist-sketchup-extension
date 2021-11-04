@@ -463,7 +463,7 @@ tab:
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
       warning:
-        visible_only: "*Le parti contenute nei gruppi nascosti non saranno esportate*."
+        visible_only: Le parti contenute nei **gruppi nascosti** non saranno esportate.
     report:
       title: Resoconto
       info_0: |
@@ -802,7 +802,7 @@ tab:
       std_thicknesses: Spessori disponibili
       std_thicknesses_placeholder: spessore ; ...
       std_thicknesses_help: |
-        Spessori grezzi disponibili.
+        Spessori **grezzi** disponibili.
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sections: Sezioni disponibili
       std_sections_placeholder: Altezza x spessore ; ...
