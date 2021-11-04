@@ -1,5 +1,5 @@
 _label: Polski
-_reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć** to okno."
+_reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć to okno."
 _description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;) "
 default:
   minimize: Minimalizuj
@@ -463,7 +463,7 @@ tab:
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
       warning:
-        visible_only: "*Części w ukrytych grupach twojej listy części nie będą wyeksportowane*."
+        visible_only: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
     report:
       title: Raport
       info_0: |

@@ -463,7 +463,7 @@ tab:
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
       warning:
-        visible_only: "*Las piezas dentro de grupos ocultos de su lista de piezas no se exportarán*."
+        visible_only: Las piezas dentro de **grupos ocultos** de su lista de piezas no se exportarán.
     report:
       title: Reporte
       info_0: |
@@ -632,7 +632,7 @@ tab:
       warning:
         selection_only: Este diagrama de corte está limitado a **piezas seleccionadas**.
         cutting_dimensions: |
-          Este diagrama de corte muestra las piezas con sus dimensiones en bruto.
+          Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
         cutting_dimensions_increase_1d: |
           *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**).*
         cutting_dimensions_increase_2d: |
