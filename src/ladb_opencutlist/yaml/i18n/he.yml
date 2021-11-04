@@ -632,7 +632,7 @@ tab:
       warning:
         selection_only: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
         cutting_dimensions: |
-          תוכנית חיתוך מציגה את החלקים במידות חיתוך שלהם.
+          תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
         cutting_dimensions_increase_1d: |
           *המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'.*
         cutting_dimensions_increase_2d: |

@@ -79,9 +79,9 @@ core:
       Het wordt niet aanbevolen om deze tijdens productie te gebruiken.
 
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |+
-      U gebruikt een oudere versie van SketchUp ({{ sketchup_version }}). Deze plug-in zal werken, maar kan bepaalde bugs vertonen. Om volledig te profiteren van OpenCutList, raden we aan om te upgraden naar ten minste **SketchUp 2017**.
-
+    old_su: |
+      U gebruikt een oudere versie van SketchUp ({{ sketchup_version }}). Deze plug-in zal werken, maar kan bepaalde bugs vertonen. 
+      Om volledig te profiteren van OpenCutList, raden we aan om te upgraden naar ten minste **SketchUp 2017**.
     feature_locked: "*Niet de-activeerbaar in deze versie van SketchUp*"
   event:
     model_change: Er zijn veranderingen aangebracht
@@ -206,7 +206,7 @@ tab:
       add_edge_material_name_filter: "Filter op '{{ label }}'"
       remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
       not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
-      instance_count_by_part: "Dit onderdeel wordt geteld als set van {{ count }} eenheden"
+      instance_count_by_part: "Dit onderdeel wordt geteld als set van **{{ count }}** eenheden"
       unused_instance_count: "Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt."
       unused_instance_count_plural: "Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt."
       used_instance_count: "**{{ count }}** / {{ total }} gebruikte eenheden"
@@ -632,7 +632,7 @@ tab:
       warning:
         selection_only: Het zaagplan beperkt zich tot **geselecteerde onderdelen**
         cutting_dimensions: |
-          Dit zaagplan geeft de afmetingen van de onderdelen weer in gebaseerd op de afmetingen in uw model.
+          Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
         cutting_dimensions_increase_1d: |
           *Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.*
         cutting_dimensions_increase_2d: |
