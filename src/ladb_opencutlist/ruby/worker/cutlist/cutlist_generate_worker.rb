@@ -456,7 +456,7 @@ module Ladb::OpenCutList
 
             # Update max_number in group_def
             if group_def.max_number
-              if number > group_def.max_number
+              if self._comparable_number(number) > self._comparable_number(group_def.max_number)
                 group_def.max_number = number
               end
             else
@@ -466,7 +466,7 @@ module Ladb::OpenCutList
             # Update max_number in cutlist
             if group_def.max_number
               if cutlist.max_number
-                if group_def.max_number > cutlist.max_number
+                if self._comparable_number(group_def.max_number) > self._comparable_number(cutlist.max_number)
                   cutlist.max_number = group_def.max_number
                 end
               else
@@ -1136,6 +1136,11 @@ module Ladb::OpenCutList
       edge_group_def.part_count += 1
 
       edge_part_def
+    end
+
+    def _comparable_number(number, pad = 4)
+      return number.rjust(pad) if number.is_a?(String)  # Add space padding to given number if it is a string ('Z' to '   Z') to be able to compare with an other alphabetical number
+      number
     end
 
   end
