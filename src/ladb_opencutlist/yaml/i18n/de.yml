@@ -134,6 +134,12 @@ core:
       delete: "Voreinstellung '{{ name }}' löschen"
   progress:
     please_wait: Bitte warten
+  component:
+    textinput:
+      reset: Wert zurücksetzen
+    textinput_color:
+      store: Farbe speichern
+      remove: Farbe vergessen
 tab:
   cutlist:
     label: Holzliste
@@ -277,7 +283,11 @@ tab:
       price: Preis
       price_help: Der Preis des Teils wird bei der Erstellung von **Berichten** verwendet.
       thickness_layer_count: Anzahl Lagen
-      thickness_layer_count_help: "Legen Sie hier die Anzahl der Lagen fest. "
+      thickness_layer_count_help: |
+        Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
+
+        *Beispiel:* Wenn Sie ein Stück mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
+        *OpenCutList zählt dann 2 Stücke von 19 mm Dicke anstelle von 1 Stück von 38 mm Dicke.
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, persönliche Informationen zu jeder Teildefinition anzugeben.
@@ -759,7 +769,7 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
       colorized: Diese Farbton wird beim Rendern im Modell auf die Textur des Material angewendet
-      texture_colorized: Farbton definitiv mit der Textur kombinieren
+      texture_colorized: Farbton mit der Textur kombinieren
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
       set_current: |
         Auswählen '{{ name }}'
@@ -988,7 +998,7 @@ tab:
       docs: Finanzierung der Dokumentation
     objective_details:
       default: |
-        Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update **3.0**!
+        Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update **4.0**!
       docs: |
         Es ist uns wichtig, dass *OpenCutList* zugänglich und intuitiv ist. Dies geht jedoch Hand in Hand mit dem Schreiben einer **vollständigen und qualitativ hochwertigen Dokumentation**.
         Indem Sie uns die Mittel zum Schreiben zur Verfügung stellen, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
