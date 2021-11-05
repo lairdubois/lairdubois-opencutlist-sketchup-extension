@@ -104,13 +104,13 @@
         {% set textAnchor = elementDef.anchor %}
         {% set transY = 0 %}
     {% endif %}
-    <text class="ladb-label-element" x="0" y="{{ transY }}" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ textAnchor }}" fill="{{ elementDef.color }}">
+    <text class="ladb-label-element" x="0" y="{{ transY }}" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ textAnchor }}" fill="{{ elementDef.color }}">{% spaceless %}
         {% if value is iterable %}
             {% for line in value %}
-                <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|escape }}</tspan>
+                <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|trim|escape }}</tspan>
             {% endfor %}
         {% else %}
-            {{ value|escape }}
+            {{ value|trim|escape }}
         {% endif %}
-    </text>
+    {% endspaceless %}</text>
 {% endif %}
