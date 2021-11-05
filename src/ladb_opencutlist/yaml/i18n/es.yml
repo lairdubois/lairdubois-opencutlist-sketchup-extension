@@ -134,6 +134,12 @@ core:
       delete: "Eliminar la configuración '{{ name }}'"
   progress:
     please_wait: "Por favor, espere"
+  component:
+    textinput:
+      reset: Restablecer este valor
+    textinput_color:
+      store: Memorizar este color
+      remove: Olvidar el color
 tab:
   cutlist:
     label: Partes
@@ -277,7 +283,11 @@ tab:
       price: Precio
       price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
       thickness_layer_count: Nb de capas
-      thickness_layer_count_help: Establezca aquí el número de capas.
+      thickness_layer_count_help: |
+        Defina aquí el número de capas que dividen la parte dibujada en su espesor.
+
+        *Ejemplo:* Si tienes una pieza dibujada de *38mm* de grosor y quieres hacerla pegando dos paneles de *19mm*, introduce **2** en este campo.
+        *OpenCutList contará entonces 2 piezas de 19mm de grosor en lugar de 1 pieza de 38mm.*
       description: Descripción
       description_help: |
         La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
@@ -988,7 +998,7 @@ tab:
       docs: Financiación de la documentación
     objective_details:
       default: |
-        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **3.0**!
+        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **4.0**!
       docs: |
         Es importante para nosotros que *OpenCutList* sea accesible e intuitivo. Pero esto requiere una **Documentación completa y exhaustiva**.
         Al proporcionarnos los medios para escribirla, nos das la oportunidad de ayudarte a sacar el máximo provecho de *OpenCutList*.

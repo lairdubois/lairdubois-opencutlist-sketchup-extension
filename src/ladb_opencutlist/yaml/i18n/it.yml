@@ -134,6 +134,12 @@ core:
       delete: "Elimina le impostazioni **\"{{ name }}\"**"
   progress:
     please_wait: Per favore aspetta
+  component:
+    textinput:
+      reset: Azzerare questo valore
+    textinput_color:
+      store: Memorizzare questo colore
+      remove: Dimenticare il colore
 tab:
   cutlist:
     label: Parti
@@ -277,7 +283,11 @@ tab:
       price: Prezzo
       price_help: Il prezzo del pezzo sarà utilizzato quando si generano i **Rapporti**.
       thickness_layer_count: No. di strati
-      thickness_layer_count_help: Imposta qui il numero di strati.
+      thickness_layer_count_help: |
+        Definisci qui il numero di strati che dividono la parte disegnata nel suo spessore.
+
+        *Esempio:* Se avete un pezzo disegnato spesso *38mm* e volete realizzarlo incollando insieme due pannelli *19mm*, inserite **2** in questo campo.
+        *OpenCutList conterà allora 2 pezzi di 19 mm di spessore invece di 1 pezzo di 38 mm di spessore.
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -759,7 +769,7 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
-      texture_colorized: Aggiungi in modo permanente questa tonalita alla struttura dell'immagine
+      texture_colorized: Aggiungi questa tonalita alla struttura dell'immagine
       edit: "Modifica le proprietà di '{{ name }}'"
       set_current: |
         Seleziona '{{ name }}'
@@ -988,7 +998,7 @@ tab:
       docs: Finanziamento della documentazione
     objective_details:
       default: |
-        Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **3.0**!
+        Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **4.0**!
       docs: |
         Per noi è importante che *OpenCutList* sia accessibile e intuitivo. Tuttavia, questo va di pari passo con la scrittura di **Documentazione Completa e di alta Qualità**.
         Dandoci i mezzi per scriverlo, ci dai l'opportunità di aiutarti ad ottenere il massimo da *OpenCutList*.
