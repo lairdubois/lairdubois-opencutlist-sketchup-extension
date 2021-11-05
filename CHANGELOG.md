@@ -6,19 +6,24 @@ in 2.x, 1.x and 0.x versions.
 
 * 3.0.0 (WIP)
 
-  * Added "Docs" button to access online documentation
-  * Added thickness layer count
-  * Added description display on parts
+  * Added **Docs** button to access online documentation
+  * Added capability to consider a part as multiple layers along its thickness
+  * Added Description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
-  * Added a global option to disable mirrored part detection
-  * Added primary cuts summary below cutting diagrams if always show option is activated
-  * Improved arrow display in labels part thumbnail
+  * Added a global cutlist option to disable mirrored part detection
+  * Added primary cuts summary below cutting diagrams if *always visible* option is activated
+  * Added retina screen support for highlight part tool
+  * Added *top* anchors position for label's elements
+  * Added *Description* field to labels elements list
+  * Added a new tab in cutlist part property modal to groups material dependent properties
+  * Added buttons to store and remove custom colors values from color inputs
   * Improved 2D cutting diagram selection strategy
+  * Improved arrow display in labels part thumbnail
+  * Improved tags render on labels from single line to one tag by line
   * Fixed display units from Preferences when using fractional inches
   * Fixed bug when preset's name contains numbers only
   * Fixed text input reset value
   * Fixed stored part number increment if letter and greater than 'Z'
-  * Added better retina screen support for highlight part tool
 
 * 2.1.1 (2021-08-02)
 

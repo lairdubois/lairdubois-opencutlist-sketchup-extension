@@ -66,7 +66,7 @@ LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
     var that = this;
 
     var $resetBtn =
-        $('<div class="ladb-textinput-tool ladb-textinput-tool-btn ladb-btn-reset" tabindex="-1"><i class="ladb-opencutlist-icon-clear"></i></div>')
+        $('<div class="ladb-textinput-tool ladb-textinput-tool-btn ladb-btn-reset" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput.reset') + '"><i class="ladb-opencutlist-icon-clear"></i></div>')
             .on('click', function() {
                 that.reset();
                 $(this).blur();

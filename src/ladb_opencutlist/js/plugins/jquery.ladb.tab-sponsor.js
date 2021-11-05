@@ -23,7 +23,7 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveGoal = 3500;
+        var objectiveGoal = 4500;
         var objectiveCurrency = 'USD';
 
         // Fetch UI elements
