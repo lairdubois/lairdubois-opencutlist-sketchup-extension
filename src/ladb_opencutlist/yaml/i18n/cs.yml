@@ -134,6 +134,12 @@ core:
       delete: "Smazat předvolbu '{{ name }}'"
   progress:
     please_wait: "Prosím, čekejte"
+  component:
+    textinput:
+      reset: Vynulování hodnoty
+    textinput_color:
+      store: Uložit barvu
+      remove: Zapomeňte na barvu
 tab:
   cutlist:
     label: Kusovník
@@ -277,7 +283,12 @@ tab:
       price: Cena
       price_help: Cena dílu bude použita při generování **Výsledků**.
       thickness_layer_count: Počet hladin
-      thickness_layer_count_help: Zde nastavte počet hladin.
+      thickness_layer_count_help: |
+        Zde určete počet vrstev, které dělí nakreslenou část na tloušťku.
+
+        *Příklad:* Pokud máte navržený díl o tloušťce *38 mm* a chcete jej vyrobit slepením dvou panelů o tloušťce *19 mm*, zadejte do tohoto pole **2**.
+        *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
+        ok
       description: popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
@@ -988,7 +999,7 @@ tab:
       docs: Financování dokumentace
     objective_details:
       default: |
-        Neustálé zlepšování *OpenCutList* je pro nás důležité a projekt stále potřebuje vaši pomoc pro další aktualizaci **3.0**!
+        Neustálé zlepšování *OpenCutList* je pro nás důležité a projekt stále potřebuje vaši pomoc pro další aktualizaci **4.0**!
       docs: |
         Je pro nás důležité, aby byl *OpenCutList* přístupný a intuitivní. To však jde ruku v ruce s psaním **úplné a kvalitní dokumentace**.
         Tím, že nám poskytnete prostředky k jeho napsání, nám dáváte příležitost pomoci vám získat co nejvíce z *OpenCutList*.

@@ -134,6 +134,12 @@ core:
       delete: "Apagar as definições '{{ name }}'"
   progress:
     please_wait: Por favor espere
+  component:
+    textinput:
+      reset: Mudar para valores originais
+    textinput_color:
+      store: Memorizar esta cor
+      remove: Esquecer esta cor
 tab:
   cutlist:
     label: Peças
@@ -211,7 +217,7 @@ tab:
       unused_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
       used_instance_count: "**{{ count }}** / {{ total }} unidade utilizada"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unidades utilizadas"
-      thickness_layer_count: "A parte final é composta de **{{ count }}** camadas em sua espessura"
+      thickness_layer_count: "A peça final é composta de **{{ count }}** camadas em sua espessura"
       thickness_layered: "A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas."
       thickness_layered_equation: "**{{ count }}** *peça* x **{{ layerCount }}** *camada* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *peças* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
@@ -277,7 +283,11 @@ tab:
       price: Preço
       price_help: O preço da peça será utilizado na geração de **Relatórios**.
       thickness_layer_count: No. de camadas
-      thickness_layer_count_help: Defina aqui o número de camadas.
+      thickness_layer_count_help: |
+        Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
+
+        Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2*** neste campo.
+        OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -341,7 +351,7 @@ tab:
         - *espessura* está no eixo <span style='color:blue'>azul</span>
       flipped_detection: Detecção de peças espelhadas
       flipped_detection_help: |
-        Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como uma peça nova.
+        Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como peças novas.
       smart_material: Atribuição *inteligente* de material
       smart_material_help: "Se esta opção estiver ativada, as peças sem um material definido podem ter o material principal de seus elementos filhos ou aquele herdado de seus elementos pais automaticamente atribuídos à elas."
       dynamic_attributes_name: Use o atributo *Name* dos componentes dinâmicos
@@ -490,7 +500,7 @@ tab:
     cuttingdiagram:
       title: Diagrama de Corte
       start_msg: Otimização em progresso
-      end_msg: Otimização completada
+      end_msg: Otimização terminada
       options_material: Material
       options_config: Configuração
       options_display: Exibição
@@ -675,7 +685,7 @@ tab:
       option_size: Dimensão
       option_anchor: Âncora
       option_anchor_start: Início - Fundo
-      option_anchor_middle: Melo - Fundo
+      option_anchor_middle: Meio - Fundo
       option_anchor_end: Fim - Fundo
       option_anchor_start_top: Início - Alto
       option_anchor_middle_top: Melo - Alto
@@ -988,7 +998,7 @@ tab:
       docs: Financiamento da documentação
     objective_details:
       default: |
-        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua a precisar de sua ajuda para sua próxima atualização **3.0***!
+        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0***!
       docs: |
         É importante para nós que a *OpenCutList* seja acessível e intuitiva. Mas isto vai de mãos dadas com a escrita de uma **Documentação Completa e de Qualidade**.
         Ao nos fornecer os meios para escrevê-lo, você nos dá a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.

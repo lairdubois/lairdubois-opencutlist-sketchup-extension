@@ -231,13 +231,6 @@ module Ladb::OpenCutList::BinPacking2D
     # TODO: try to rebalance stacks, this leads to more compact bounding boxes!
     #
     def make_superboxes_length
-      # Trying to make them as long as possible
-      @boxes.each do |box|
-        if box.rotatable && box.length < box.width
-          box.rotate
-        end
-      end
-
       # Stack the boxes by decreasing length.
       @boxes.sort_by!(&:length).reverse!
 
@@ -256,12 +249,7 @@ module Ladb::OpenCutList::BinPacking2D
     # that they will be placed as a single box.
     #
     def make_superboxes_width
-      # Trying to make them as wide as possible
-      @boxes.each do |box|
-        box.rotate if box.rotatable && box.width < box.length
-      end
-
-      # Start with width decreasing!
+      # Stack the boxes by decreasing width.
       @boxes.sort_by!(&:width).reverse!
 
       sboxes = []
@@ -359,10 +347,17 @@ module Ladb::OpenCutList::BinPacking2D
         if can_be_packed?(current_bin)
           nb_packed_boxes = pack_single(current_bin)
           # @boxes contains all Boxes that have NOT been placed, they may be
-          # Superboxes. This packer is now done!
-
+          # Superboxes. This packer is now almost done!
           if nb_packed_boxes > 0
             current_bin.final_bounding_box
+            # Second pass after final bounding box has been applied
+            if current_bin.any_fit_into_leftovers(@boxes)
+              nb = pack_single(current_bin)
+              if nb > 0
+                current_bin.final_bounding_box
+                nb_packed_boxes += nb
+              end
+            end
             current_bin.keep_signature(@options.signature)
             @packed_bins << current_bin
             @unplaced_boxes = unmake_superboxes(@boxes)
