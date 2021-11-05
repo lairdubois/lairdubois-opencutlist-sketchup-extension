@@ -126,6 +126,28 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Checks whether at least one box would fit into a leftover
+    #
+    def any_fit_into_leftovers(boxes)
+      @boxes.each do |box|
+        # This should probably never happen since superboxes have been
+        # destroyed in the main loop, but one never knows!
+        if box.is_a?(SuperBox)
+          box.sboxes.each do |sbox|
+            @leftovers.each do |leftover|
+              return true if sbox.fits_into?(leftover.length, leftover.width)
+            end
+          end
+        else
+          @leftovers.each do |leftover|
+            return true if box.fits_into?(leftover.length, leftover.width)
+          end
+        end
+      end
+      return false
+    end
+
+    #
     # Computes the scores in free Leftovers for a given Box.
     #
     def best_ranked_score(box)
