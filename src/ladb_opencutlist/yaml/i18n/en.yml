@@ -138,8 +138,8 @@ core:
     textinput:
       reset: Reset this value
     textinput_color:
-      store: "Memorize this color "
-      remove: Forget this color
+      store: "Save color "
+      remove: Forget color
 tab:
   cutlist:
     label: Parts

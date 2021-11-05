@@ -134,6 +134,12 @@ core:
       delete: "Usuń ustawienia '{{ name }}'"
   progress:
     please_wait: Proszę czekać
+  component:
+    textinput:
+      reset: Wartość resetowania
+    textinput_color:
+      store: Zapisz kolor
+      remove: Kolor zapomniany
 tab:
   cutlist:
     label: Części
@@ -277,7 +283,11 @@ tab:
       price: Cena
       price_help: Cena części będzie użyta podczas tworzenia **Reportów**.
       thickness_layer_count: Nb warstw
-      thickness_layer_count_help: Ustaw tutaj liczbę warstw.
+      thickness_layer_count_help: |
+        Zdefiniuj tutaj liczbę warstw, które podzielą rysowaną część na grubości.
+
+        *Przykład:* Jeśli masz część zaprojektowaną o grubości *38mm* i chcesz ją wykonać poprzez sklejenie dwóch paneli o grubości *19mm*, wpisz **2** w tym polu.
+        *Wtedy OpenCutList policzy 2 części o grubości 19mm zamiast 1 części o grubości 38mm.*
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
@@ -988,7 +998,7 @@ tab:
       docs: Finansowanie dokumentacji
     objective_details:
       default: |
-        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **3.0**!
+        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **4.0**!
       docs: |
         Ważne jest dla nas, aby *OpenCutList* był dostępny i intuicyjny. Wymaga to jednak **kompletnej i wysokiej jakości dokumentacji**.
         Dostarczając nam środki do jej napisania, dajesz nam możliwość pomocy w maksymalnym wykorzystaniu *OpenCutList*.

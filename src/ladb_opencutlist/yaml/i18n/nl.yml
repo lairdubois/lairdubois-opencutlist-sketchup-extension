@@ -80,7 +80,7 @@ core:
 
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
-      U gebruikt een oudere versie van SketchUp ({{ sketchup_version }}). Deze plug-in zal werken, maar kan bepaalde bugs vertonen. 
+      U gebruikt een oudere versie van SketchUp ({{ sketchup_version }}). Deze plug-in zal werken, maar kan bepaalde bugs vertonen.
       Om volledig te profiteren van OpenCutList, raden we aan om te upgraden naar ten minste **SketchUp 2017**.
     feature_locked: "*Niet de-activeerbaar in deze versie van SketchUp*"
   event:
@@ -134,6 +134,12 @@ core:
       delete: "Voorinstelling '{{ name }}' verwijderen"
   progress:
     please_wait: Even geduld aub
+  component:
+    textinput:
+      reset: Reset waarde
+    textinput_color:
+      store: Bewaar kleur
+      remove: "Kleur vergeten "
 tab:
   cutlist:
     label: Onderdelen
@@ -277,7 +283,11 @@ tab:
       price: Prijs
       price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Rapporten**.
       thickness_layer_count: Aantal lagen
-      thickness_layer_count_help: Stel hier het aantal lagen in.
+      thickness_layer_count_help: |
+        Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
+
+        *Voorbeeld:* Als u een stuk met een dikte van *38mm* hebt getekend en het wilt maken door twee *19mm* platen aan elkaar te lijmen, vult u **2** in dit veld in.
+        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
@@ -988,7 +998,7 @@ tab:
       docs: Financiering van de documentatie
     objective_details:
       default: |
-        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **3.0**!
+        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **4.0**!
       docs: |
         Het is belangrijk voor ons dat *OpenCutList* toegankelijk en intuïtief is. Maar dit vereist een **volledige en uitgebreide documentatie**.
         Door ons financieel te steunen voor het te schrijven hiervan, geeft u ons de mogelijkheid om u te helpen het meeste uit *OpenCutList* te halen.
