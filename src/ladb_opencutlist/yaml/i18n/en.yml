@@ -364,7 +364,10 @@ tab:
       part_number_sequence_by_group: Reinitialize the enumeration of parts for each group
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group (list of parts with same material type and thickness)."
       part_folding: Group similar parts
-      part_folding_help: "If this option is selected, parts with **identical size** and with **identical tags** will be grouped (as long as the display of this area is not hidden)."
+      part_folding_help: |
+        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same tags** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+
+        The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
       hide_descriptions: Hide descriptions
@@ -995,13 +998,14 @@ tab:
     objective_slogan: OpenCutList is all of us
     objective_title:
       default: Objectives
-      docs: Funding for Documentation
+      cuttingdiagram_export: Funding of cutting diagram exports
     objective_details:
       default: |
         The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **4.0**!
-      docs: |
-        It is important to us that *OpenCutList* is accessible and intuitive. But this requires a **Complete and Quality Documentation**.
-        By providing us with the means to write it, you give us the opportunity to help you get the most out of *OpenCutList*.
+      cuttingdiagram_export: |
+        It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
+        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
+        By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |
