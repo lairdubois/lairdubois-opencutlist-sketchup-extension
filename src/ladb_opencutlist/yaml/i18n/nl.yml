@@ -364,7 +364,10 @@ tab:
       part_number_sequence_by_group: Stel de onderdeelnummers voor alle groepen opnieuw in
       part_number_sequence_by_group_help: "Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte)"
       part_folding: Groepeer identieke onderdelen
-      part_folding_help: "Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn."
+      part_folding_help: |
+        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn.
+
+        De onderdelen worden nog steeds als verschillend beschouwd voor labels en snijplannen.
       hide_entity_names: Verberg instantie namen
       hide_entity_names_help: "Wanneer deze optie ingeschakeld is, dan zullen de **instantie namen** niet weergegeven worden."
       hide_descriptions: Beschrijvingen verbergen
@@ -995,13 +998,14 @@ tab:
     objective_slogan: OpenCutList zijn we allemaal
     objective_title:
       default: Doelen
-      docs: Financiering van de documentatie
+      cuttingdiagram_export: Financiering van de uitvoer van snijschema's
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **4.0**!
-      docs: |
-        Het is belangrijk voor ons dat *OpenCutList* toegankelijk en intuïtief is. Maar dit vereist een **volledige en uitgebreide documentatie**.
-        Door ons financieel te steunen voor het te schrijven hiervan, geeft u ons de mogelijkheid om u te helpen het meeste uit *OpenCutList* te halen.
+      cuttingdiagram_export: |
+        Het is voor ons belangrijk dat *OpenCutList* kan worden aangepast aan het brede scala van gebruikerseisen voor de *squaring* functie.
+        Om de mogelijkheden verder uit te breiden, zouden we graag de export van lay-out diagrammen in **SVG** formaat mogelijk maken.
+        Door ons de middelen te geven om aan deze export te werken, geeft u ons de kans om u te helpen het meeste uit *OpenCutList* te halen.
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
