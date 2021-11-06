@@ -364,7 +364,10 @@ tab:
       part_number_sequence_by_group: Reinicializar la enumeración de partes para cada grupo
       part_number_sequence_by_group_help: "Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y grosor bruto)."
       part_folding: Agrupar partes similares
-      part_folding_help: "Si esta opción está habilitada, las partes de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea."
+      part_folding_help: |
+        Si esta opción está habilitada, las partes de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea.
+
+        Las partes seguirán considerándose diferentes para las etiquetas y el diagrama de corte.
       hide_entity_names: Ocultar nombres de instancias
       hide_entity_names_help: "Si se selecciona esta opción, no se mostrarán **nombres de instancia** de piezas."
       hide_descriptions: Oculte las descripciones
@@ -995,13 +998,14 @@ tab:
     objective_slogan: OpenCutList somos todos
     objective_title:
       default: Objetivo
-      docs: Financiación de la documentación
+      cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
     objective_details:
       default: |
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **4.0**!
-      docs: |
-        Es importante para nosotros que *OpenCutList* sea accesible e intuitivo. Pero esto requiere una **Documentación completa y exhaustiva**.
-        Al proporcionarnos los medios para escribirla, nos das la oportunidad de ayudarte a sacar el máximo provecho de *OpenCutList*.
+      cuttingdiagram_export: |
+        Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
+        Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG**.
+        Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
