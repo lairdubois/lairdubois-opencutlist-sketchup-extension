@@ -7,7 +7,7 @@
     {{ parent() }}
     {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sheet-good"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'display' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_display" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.cuttingdiagram.options_display'|i18next }}</a></li>
     </ul>

@@ -172,7 +172,7 @@
                 {% for bar in summary.bars  %}
                     <tr class="ladb-cutlist-row{% if bar.is_used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bar.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                         <td>
-                            <i class="ladb-opencutlist-icon-bar"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.bar_'~barStrippedname~'_type_'~bar.type)|i18next }}
+                            <i class="ladb-opencutlist-icon-material-type-3"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.bar_'~barStrippedname~'_type_'~bar.type)|i18next }}
                             {% if bar.is_used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
                                     <a href="#ladb_cuttingdiagram_group_{{ bar.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.scroll_to_block_1d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
@@ -235,7 +235,7 @@
                         {% if bar.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bar.count }}</div>
                         {% endif %}
-                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-bar"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bar.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.bar_'~barStrippedname~'_type_'~bar.type)|i18next }}</span></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-3"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bar.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.bar_'~barStrippedname~'_type_'~bar.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>
@@ -341,9 +341,11 @@
                             <td>
                                 {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
                                     <div class="ladb-minitools ladb-minitools-right no-print">
+                                        {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         <span class="ladb-separator"></span>
                                         <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                                     </div>
+                                    {% if part.flipped %}<span class="no-screen pull-right"><i class="ladb-opencutlist-icon-flipped"></i></span>{% endif %}
                                 {% endif %}
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
                                 {% if not generateOptions.hide_descriptions and part.description is not empty %}

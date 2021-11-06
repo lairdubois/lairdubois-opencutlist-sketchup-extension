@@ -195,6 +195,7 @@ module Ladb::OpenCutList
       @cutting_length = _def.cutlist_part.cutting_length
       @count = _def.count
       @tags = _def.cutlist_part.tags
+      @flipped = _def.cutlist_part.flipped
 
     end
 

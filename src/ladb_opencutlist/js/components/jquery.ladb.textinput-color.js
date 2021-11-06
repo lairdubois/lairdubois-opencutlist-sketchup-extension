@@ -15,13 +15,13 @@
 
     LadbTextinputColor.DEFAULTS = {
         resetValue: '#000000',
-        colors: ['#000000', '#FFFFFF'],
+        colors: ['#000000', '#ffffff'],
         colorsPerLine: 6
     };
 
     LadbTextinputColor.prototype.sanitizeColor = function(color) {
         if (color && typeof(color) === 'string') {
-            return color.toUpperCase();
+            return color.toLowerCase();
         }
         return color;
     };

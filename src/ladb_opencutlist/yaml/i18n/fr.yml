@@ -364,7 +364,10 @@ tab:
       part_number_sequence_by_group: Réinitialiser les numéros de pièces par groupe
       part_number_sequence_by_group_help: Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute).
       part_folding: Regrouper les pièces identiques
-      part_folding_help: Si cette option est activée, les pièces de **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne.
+      part_folding_help: |
+        Si cette option est activée, les pièces de **matière Bois massif, Panneau ou Barre**, ayant la **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne dans la *fiche de débit*.
+
+        Les pièces resterons considérées différentes pour l'édition d'étiquettes et le calepinage.
       hide_entity_names: Masquer les noms d'instance
       hide_entity_names_help: Si cette option est activée, les **noms d'instances** des pièces ne sont pas affichés.
       hide_descriptions: Masquer les descriptions
