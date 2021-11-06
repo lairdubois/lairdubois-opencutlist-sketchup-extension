@@ -1,12 +1,12 @@
 // CONSTANTS
 // ======================
 
-var EXTENSION_BUILD = '202111060727';   // /!\ Auto-generated line, do not edit //
+var EXTENSION_BUILD = '202111062120';   // /!\ Auto-generated line, do not edit //
 
 // UI /////
 
 var SELECT_PICKER_OPTIONS = {
-    size: 10,
+    size: 13,
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
     showTick: true,
