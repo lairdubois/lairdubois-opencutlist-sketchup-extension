@@ -364,7 +364,10 @@ tab:
       part_number_sequence_by_group: Ponownie zainicjuj numerowanie części dla każdej grupy
       part_number_sequence_by_group_help: "Jeśli ta opcja jest wybrana, numeracja części jest ponownie inicjowana do 1 (lub A) dla każdej grupy (lista części o tym samym typie materiału i grubości)."
       part_folding: Grupuj identyczne części
-      part_folding_help: "Jeśli ta opcja jest wybrana, części z **identycznym rozmiarem** oraz z **identycznymi oznakowaniem** będą grupowane (o ile wyświetlanie tego obszaru nie jest ukryte)."
+      part_folding_help: |
+        Jeśli ta opcja jest wybrana, części z **identycznym rozmiarem** oraz z **identycznymi oznakowaniem** będą grupowane (o ile wyświetlanie tego obszaru nie jest ukryte).
+
+        Części będą nadal uważane za różne dla celów etykietowania i schematu cięcia.
       hide_entity_names: Ukryj nazwy instancji
       hide_entity_names_help: "Jeśli ta opcja jest zaznaczona, **nazwy instancji** części nie będą wyświetlane."
       hide_descriptions: Ukryj opisy
@@ -995,13 +998,14 @@ tab:
     objective_slogan: OpenCutList to my wszyscy
     objective_title:
       default: Cele
-      docs: Finansowanie dokumentacji
+      cuttingdiagram_export: Finansowanie wywozu schematów cięcia
     objective_details:
       default: |
         Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **4.0**!
-      docs: |
-        Ważne jest dla nas, aby *OpenCutList* był dostępny i intuicyjny. Wymaga to jednak **kompletnej i wysokiej jakości dokumentacji**.
-        Dostarczając nam środki do jej napisania, dajesz nam możliwość pomocy w maksymalnym wykorzystaniu *OpenCutList*.
+      cuttingdiagram_export: |
+        Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
+        Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG**.
+        Udostępniając nam środki do pracy nad tym eksportem, dajesz nam szansę, aby pomóc Ci w pełni wykorzystać możliwości *OpenCutList*.
     objective_crowdfunding: |
       Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
     objective_thanks: |

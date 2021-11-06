@@ -139,7 +139,7 @@ core:
       reset: Vynulování hodnoty
     textinput_color:
       store: Uložit barvu
-      remove: Zapomeňte na barvu
+      remove: Smazat barvu
 tab:
   cutlist:
     label: Kusovník
@@ -288,7 +288,6 @@ tab:
 
         *Příklad:* Pokud máte navržený díl o tloušťce *38 mm* a chcete jej vyrobit slepením dvou panelů o tloušťce *19 mm*, zadejte do tohoto pole **2**.
         *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
-        ok
       description: popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
@@ -365,7 +364,10 @@ tab:
       part_number_sequence_by_group: Resetujte čísla dílů podle skupiny
       part_number_sequence_by_group_help: "Pokud je tato možnost aktivována, číslování dílů se resetuje na 1 (nebo A) pro každou skupinu (seznam dílů se stejným materiálem a hrubou tloušťkou)."
       part_folding: Seskupte stejné díly
-      part_folding_help: "Je-li vybrána tato možnost, budou seskupeny součásti s **identickou velikostí** a **stejnými značkami** (pokud nebude zobrazení této oblasti skryté)."
+      part_folding_help: |
+        Je-li vybrána tato možnost, budou seskupeny součásti s **identickou velikostí** a **stejnými značkami** (pokud nebude zobrazení této oblasti skryté).
+
+        Díly jsou stále považovány za odlišné pro štítky a řezací plány.
       hide_entity_names: Skrýt názvy instancí
       hide_entity_names_help: "Pokud je vybrána tato možnost, **názvy instancí** dílců se nezobrazí."
       hide_descriptions: Skrýt popisy
@@ -500,7 +502,7 @@ tab:
         visible_only: Počítají se pouze části obsažené ve **viditelných skupinách**.
     cuttingdiagram:
       title: Nářezový plán
-      start_msg: Optimalizace probíhá
+      start_msg: Probíhá optimalizace
       end_msg: Optimalizace dokončena
       options_material: Materiál
       options_config: Konfigurace
@@ -996,13 +998,14 @@ tab:
     objective_slogan: OpenCutList je pro všechny
     objective_title:
       default: Objekty
-      docs: Financování dokumentace
+      cuttingdiagram_export: Financování vývozu řezných diagramů
     objective_details:
       default: |
-        Neustálé zlepšování *OpenCutList* je pro nás důležité a projekt stále potřebuje vaši pomoc pro další aktualizaci **4.0**!
-      docs: |
-        Je pro nás důležité, aby byl *OpenCutList* přístupný a intuitivní. To však jde ruku v ruce s psaním **úplné a kvalitní dokumentace**.
-        Tím, že nám poskytnete prostředky k jeho napsání, nám dáváte příležitost pomoci vám získat co nejvíce z *OpenCutList*.
+        Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci **4.0**!
+      cuttingdiagram_export: |
+        Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
+        Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG**.
+        Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
     objective_crowdfunding: |
       Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
     objective_thanks: |

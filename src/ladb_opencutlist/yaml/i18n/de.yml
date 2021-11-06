@@ -367,7 +367,7 @@ tab:
       part_folding_help: |
         Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Tags** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
 
-        Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet. 
+        Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
       hide_descriptions: "Beschreibungen ausblenden "
