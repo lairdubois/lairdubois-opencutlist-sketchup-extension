@@ -139,7 +139,7 @@ module Ladb::OpenCutList
       Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
-      available_languages
+      available_languages.sort
     end
 
     def current_os
