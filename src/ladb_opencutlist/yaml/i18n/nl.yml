@@ -251,7 +251,7 @@ tab:
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
       group_labels: Druk etiketten af
-      edit_material: "Wijzig materiaal '{{ material }}'..."
+      edit_material: "Wijzig materiaal '{{ material_name }}'..."
       expand_all: Alle lijnen uitklappen
       collapse_all: Alle lijnen inklappen
     edit_part:

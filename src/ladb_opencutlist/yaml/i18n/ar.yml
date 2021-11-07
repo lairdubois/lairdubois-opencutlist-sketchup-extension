@@ -251,7 +251,7 @@ tab:
       group_numbers_reset: أعد تهيئة أرقام القطع في هذه المجموعة
       group_cuttingdiagram: رسم التقطيعِ التخطيطيُ
       group_labels: اطبع الملصقات
-      edit_material: "عدّل الخامة '{{ material }}'..."
+      edit_material: "عدّل الخامة '{{ material_name }}'"
       expand_all: نشر كل الأسطر
       collapse_all: طيّ كل الأسطر
     edit_part:

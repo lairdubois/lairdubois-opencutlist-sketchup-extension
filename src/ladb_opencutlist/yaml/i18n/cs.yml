@@ -251,7 +251,7 @@ tab:
       group_numbers_reset: Znovu inicializujte čísla dílců této skupiny
       group_cuttingdiagram: Nářezový plán
       group_labels: Tisk štítků
-      edit_material: "Upravit materiál ‘{{ material }}’…"
+      edit_material: "Upravit materiál ‘{{ material_name }}'"
       expand_all: Rozložení všech řádků
       collapse_all: Přeložte všechny řádky
     edit_part:
@@ -382,8 +382,8 @@ tab:
       hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*."
       hide_edges: Skrýt sloupce pro hranování
       hide_edges_help: "Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty."
-      minimize_on_highlight: Sbalit po *'$ t (tab.cut list. Zvýraznit část) ...'*
-      minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$ t (tab.cutlist.highlight_part)'*."
+      minimize_on_highlight: Sbalit po *'$t(tab.cut list. Zvýraznit část) ...'*
+      minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.cutlist.highlight_part)'*."
       general: Všeobecné
       part_order_strategy: Třídění dílců
       part_order_strategy_help: |
@@ -480,7 +480,7 @@ tab:
     report:
       title: Zpráva
       info_0: |
-        Tato funkce umožňuje generovat zprávu o **hmotnosti** a **nákladech** surovin** nezbytných pro výrobu částí *debetního listu*.
+        Tato funkce umožňuje generovat zprávu o **hmotnosti** a **nákladech** surovin nezbytných pro výrobu částí *debetního listu*.
       options_general: Všeobecné
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Koeficient pro *$t(tab.materials.type_1)*
@@ -762,12 +762,12 @@ tab:
     type_4: Hrana
     type_5: Kování
     tooltip:
-      type_0: Typ materiálu '$ t (tab.materials.type_0)'
-      type_1: Typ materiálu '$ t (tab.materials.type_1)'
-      type_2: Typ materiálu '$ t (tab.materials.type_2)'
-      type_3: Typ materiálu '$ t (tab.materials.type_3)'
-      type_4: Typ materiálu '$ t (tab.materials.type_4)'
-      type_5: Typ materiálu '$ t (tab.materials.type_5)'
+      type_0: Typ materiálu '$t(tab.materials.type_0)'
+      type_1: Typ materiálu '$t(tab.materials.type_1)'
+      type_2: Typ materiálu '$t(tab.materials.type_2)'
+      type_3: Typ materiálu '$t(tab.materials.type_3)'
+      type_4: Typ materiálu '$t(tab.materials.type_4)'
+      type_5: Typ materiálu '$t(tab.materials.type_5)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Směr let
