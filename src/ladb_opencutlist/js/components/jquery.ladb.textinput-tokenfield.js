@@ -20,7 +20,8 @@
     };
 
     LadbTextinputTokenfield.DEFAULTS = $.extend(TOKENFIELD_OPTIONS, {
-        format: FORMAT_DEFAULT
+        format: FORMAT_DEFAULT,     // Define waiting format value
+        unique: false               // Define if value must be unique
     });
 
     LadbTextinputTokenfield.prototype.getTokenRegExp = function() {
@@ -39,7 +40,7 @@
                 pattern = REGEXP_PATTERN_LENGTH + '\\s*' + REGEXP_PATTERN_MULTIPLICATOR + '\\s*' + REGEXP_PATTERN_LENGTH + REGEXP_PATTERN_QUANTITY;
                 break;
             default:
-                pattern = '';
+                pattern = '.+';
         }
         return new RegExp('^' + pattern + '$');
     }
@@ -94,7 +95,6 @@
         return valid;
     };
 
-
     LadbTextinputTokenfield.prototype.destroy = function () {
         this.$element.tokenfield('destroy');
     };
@@ -105,6 +105,14 @@
         this.$element.tokenfield(this.options)
             .on('tokenfield:createtoken', function (e) {
                 that.tokenfieldSanitizer(e);
+                if (that.options.unique) {
+                    var existingTokens = $(this).tokenfield('getTokens');
+                    $.each(existingTokens, function (index, token) {
+                        if (token.value === e.attrs.value) {
+                            e.preventDefault();
+                        }
+                    });
+                }
             })
             .on('tokenfield:createdtoken', function (e) {
                 that.tokenfieldValidator(e);

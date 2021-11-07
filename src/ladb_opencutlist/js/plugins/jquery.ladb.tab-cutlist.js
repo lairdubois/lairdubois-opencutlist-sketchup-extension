@@ -63,6 +63,10 @@
     LadbTabCutlist.prototype.generateCutlist = function (callback) {
         var that = this;
 
+        // Destroy previously created tokenfields
+        $('#ladb_cutlist_tags_filter', that.$page).tokenfield('destroy');
+        $('#ladb_cutlist_edge_material_names_filter', that.$page).tokenfield('destroy');
+
         this.groups = [];
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
@@ -1544,6 +1548,13 @@
                     resetValue: '1'
                 });
                 $inputDescription.ladbTextinputArea();
+                $inputTags.ladbTextinputTokenfield({
+                    unique: true,
+                    autocomplete: {
+                        source: that.usedTags.concat(that.generateOptions.tags).unique(),
+                        delay: 100
+                    }
+                });
                 $inputLengthIncrease.on('change', function() {
                     fnUpdateIncreasesPreview();
                 });
@@ -1789,7 +1800,7 @@
 
                 // Bind modal
                 $modal.on('hide.bs.modal', function () {
-                    $inputTags.tokenfield('destroy');
+                    $inputTags.ladbTextinputTokenfield('destroy');
                 });
 
                 // Init edges preview
@@ -1800,23 +1811,6 @@
 
                 // Focus
                 $inputName.focus();
-
-                // Init tokenfields (this must done after modal shown for correct token tag max width measurement)
-                $inputTags
-                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                        autocomplete: {
-                            source: that.usedTags.concat(that.generateOptions.tags).unique(),
-                            delay: 100
-                        }
-                    }))
-                    .on('tokenfield:createtoken', function (e) {
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
-                    });
 
                 // Setup popovers and tooltips
                 that.dialog.setupPopovers();
@@ -3108,6 +3102,15 @@
             fnFillInputs: fnFillInputs
         });
 
+        // Bind input
+        $inputTags.ladbTextinputTokenfield({
+            unique: true,
+            autocomplete: {
+                source: that.usedTags,
+                delay: 100
+            }
+        });
+
         // Bind buttons
         $btnSetupModelUnits.on('click', function () {
             $(this).blur();
@@ -3133,28 +3136,11 @@
 
         // Bind modal
         $modal.on('hide.bs.modal', function () {
-            $inputTags.tokenfield('destroy');
+            $inputTags.ladbTextinputTokenfield('destroy');
         });
 
         // Show modal
         $modal.modal('show');
-
-        // Init tokenfields (this must done after modal shown for correct token tag max width measurement)
-        $inputTags
-            .tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                autocomplete: {
-                    source: that.usedTags,
-                    delay: 100
-                }
-            }))
-            .on('tokenfield:createtoken', function (e) {
-                var existingTokens = $(this).tokenfield('getTokens');
-                $.each(existingTokens, function (index, token) {
-                    if (token.value === e.attrs.value) {
-                        e.preventDefault();
-                    }
-                });
-            });
 
         // Populate inputs
         fnFillInputs(that.generateOptions);
