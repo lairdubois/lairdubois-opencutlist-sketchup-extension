@@ -113,7 +113,7 @@ core:
   preset:
     label: Predefinições
     save_to: Salvar como
-    restore_from: Reataurar a partir de
+    restore_from: Restaurar a partir de
     app_defaults: Definições de fábrica
     user_defaults: Minhas definições padrão
     new: Novas definições
@@ -286,7 +286,7 @@ tab:
       thickness_layer_count_help: |
         Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
 
-        Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
+        Exemplo: *Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
         OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
       description: Descrição
       description_help: |
@@ -315,7 +315,7 @@ tab:
       size_increase: Superdimensionar
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
-        (*Exemplo : Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação. *)
+        (*Exemplo: Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação.*)
       length_increase: Superdimensionamento do comprimento
       length_increase_help: O superdimensionamento é aplicado ao comprimento real para definir o **comprimento bruto**.
       width_increase: Superdimensionamento da largura
