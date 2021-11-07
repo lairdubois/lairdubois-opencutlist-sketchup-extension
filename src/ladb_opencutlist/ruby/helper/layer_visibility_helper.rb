@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'layer0_caching_helper'
 
-  module BoundingBoxHelper
+  module LayerVisibilityHelper
 
     include Layer0CachingHelper
 

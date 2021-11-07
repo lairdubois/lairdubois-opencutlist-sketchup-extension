@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   module BoundingBoxHelper
 
     include Layer0CachingHelper
+    include LayerVisibilityHelper
 
     def _compute_faces_bounds(definition_or_group, transformation = nil)
       bounds = Geom::BoundingBox.new

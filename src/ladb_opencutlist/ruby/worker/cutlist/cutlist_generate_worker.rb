@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
-  require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/boundingbox_helper'
+  require_relative '../../helper/layer_visibility_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/geom/size3d'
@@ -19,6 +19,7 @@ module Ladb::OpenCutList
   class CutlistGenerateWorker
 
     include BoundingBoxHelper
+    include LayerVisibilityHelper
 
     MATERIAL_ORIGIN_UNKNOW = 0
     MATERIAL_ORIGIN_OWNED = 1

@@ -1,9 +1,12 @@
 module Ladb::OpenCutList
 
+  require_relative '../helper/layer_visibility_helper'
   require_relative '../gl/gl_button'
   require_relative '../model/cutlist/cutlist'
 
   class HighlightPartTool < CutlistObserver
+
+    include LayerVisibilityHelper
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
@@ -426,12 +429,15 @@ module Ladb::OpenCutList
     def _compute_children_faces_tirangles(view, entities, transformation = nil)
       triangles = []
       entities.each { |entity|
-        if entity.is_a? Sketchup::Face and entity.visible?
-          triangles.concat(_compute_face_triangles(view, entity, transformation))
-        elsif entity.is_a? Sketchup::Group and entity.visible?
-          triangles.concat(_compute_children_faces_tirangles(view, entity.entities, transformation ? transformation * entity.transformation : entity.transformation))
-        elsif entity.is_a? Sketchup::ComponentInstance and entity.visible? and entity.definition.behavior.cuts_opening?
-          triangles.concat(_compute_children_faces_tirangles(view, entity.definition.entities, transformation ? transformation * entity.transformation : entity.transformation))
+        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+        if entity.visible? && _layer_visible?(entity.layer)
+          if entity.is_a?(Sketchup::Face)
+            triangles.concat(_compute_face_triangles(view, entity, transformation))
+          elsif entity.is_a?(Sketchup::Group)
+            triangles.concat(_compute_children_faces_tirangles(view, entity.entities, transformation ? transformation * entity.transformation : entity.transformation))
+          elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
+            triangles.concat(_compute_children_faces_tirangles(view, entity.definition.entities, transformation ? transformation * entity.transformation : entity.transformation))
+          end
         end
       }
       triangles
