@@ -947,40 +947,52 @@
         $selectEdgeDecremented.selectpicker(SELECT_PICKER_OPTIONS);
 
         // Bind inputs
-        $inputName.on('keyup change', function() { fnCheckInputNameValue(true); });
-        $inputColor.on('keyup change', function() { fnCheckInputColorValue(true); });
+        $inputName.on('keyup change', function () { fnCheckInputNameValue(true); });
+        $inputColor.on('keyup change', function () { fnCheckInputColorValue(true); });
         $inputColor.ladbTextinputColor();
 
         // Bind modal event
-        $modal.on('shown.bs.modal', function() {
+        $modal
+            .on('shown.bs.modal', function () {
 
-            // Init textinputs
-            $inputThickness.ladbTextinputDimension();
-            $inputLengthIncrease.ladbTextinputDimension();
-            $inputWidthIncrease.ladbTextinputDimension();
-            $inputThicknessIncrease.ladbTextinputDimension();
+                // Init textinputs
+                $inputThickness.ladbTextinputDimension();
+                $inputLengthIncrease.ladbTextinputDimension();
+                $inputWidthIncrease.ladbTextinputDimension();
+                $inputThicknessIncrease.ladbTextinputDimension();
 
-            // Init tokenfields (this must done after modal shown for correct token label max width measurement)
-            $inputStdLengths.ladbTextinputTokenfield({ format: 'd' });
-            $inputStdWidths.ladbTextinputTokenfield({ format: 'd' });
-            $inputStdThicknesses.ladbTextinputTokenfield({ format: 'd' });
-            $inputStdSections.ladbTextinputTokenfield({ format: 'dxd' });
-            $inputStdSizes.ladbTextinputTokenfield({ format: 'dxd' });
+                // Init tokenfields (this must done after modal shown for correct token label max width measurement)
+                $inputStdLengths.ladbTextinputTokenfield({ format: 'd' });
+                $inputStdWidths.ladbTextinputTokenfield({ format: 'd' });
+                $inputStdThicknesses.ladbTextinputTokenfield({ format: 'd' });
+                $inputStdSections.ladbTextinputTokenfield({ format: 'dxd' });
+                $inputStdSizes.ladbTextinputTokenfield({ format: 'dxd' });
 
-            if (setAttributeToDefaults) {
-                $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
-            } else {
-                fnFillInputs(material.attributes);
-            }
+                if (setAttributeToDefaults) {
+                    $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
+                } else {
+                    fnFillInputs(material.attributes);
+                }
 
-            if (inputChangeCallback) {
-                // Bind change
-                $('input', $modal).on('change', function () {
-                    inputChangeCallback();
-                });
-            }
+                if (inputChangeCallback) {
+                    // Bind change
+                    $('input', $modal).on('change', function () {
+                        inputChangeCallback();
+                    });
+                }
 
-        });
+            })
+            .on('hide.bs.modal', function () {
+
+                // Destroy tokenfields
+                $inputStdLengths.ladbTextinputTokenfield('destroy');
+                $inputStdWidths.ladbTextinputTokenfield('destroy');
+                $inputStdThicknesses.ladbTextinputTokenfield('destroy');
+                $inputStdSections.ladbTextinputTokenfield('destroy');
+                $inputStdSizes.ladbTextinputTokenfield('destroy');
+
+            })
+        ;
 
         // Initials
         fnComputeFieldsVisibility(material.attributes.type);

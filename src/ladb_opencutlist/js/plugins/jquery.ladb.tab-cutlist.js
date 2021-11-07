@@ -1787,6 +1787,11 @@
 
                 });
 
+                // Bind modal
+                $modal.on('hide.bs.modal', function () {
+                    $inputTags.tokenfield('destroy');
+                });
+
                 // Init edges preview
                 fnUpdateEdgesPreview();
 
@@ -2235,6 +2240,11 @@
 
                 });
 
+                // Bind modal
+                $modal.on('hide.bs.modal', function () {
+                    $inputScrapBarLengths.ladbTextinputTokenfield('destroy');
+                });
+
                 // Show modal
                 $modal.modal('show');
 
@@ -2500,6 +2510,11 @@
                     // Hide modal
                     $modal.modal('hide');
 
+                });
+
+                // Bind modal
+                $modal.on('hide.bs.modal', function () {
+                    $inputScrapSheetSizes.ladbTextinputTokenfield('destroy');
                 });
 
                 // Show modal
@@ -3114,6 +3129,11 @@
                 that.generateCutlist();
             }
 
+        });
+
+        // Bind modal
+        $modal.on('hide.bs.modal', function () {
+            $inputTags.tokenfield('destroy');
         });
 
         // Show modal

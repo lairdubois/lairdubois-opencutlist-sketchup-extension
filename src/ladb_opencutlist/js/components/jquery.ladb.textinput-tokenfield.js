@@ -95,6 +95,10 @@
     };
 
 
+    LadbTextinputTokenfield.prototype.destroy = function () {
+        this.$element.tokenfield('destroy');
+    };
+
     LadbTextinputTokenfield.prototype.init = function () {
         var that = this;
 
@@ -106,7 +110,7 @@
                 that.tokenfieldValidator(e);
             })
         ;
-    
+
     };
 
 
