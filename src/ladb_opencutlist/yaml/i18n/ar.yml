@@ -217,7 +217,7 @@ tab:
       unused_instance_count_plural: "انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم."
       used_instance_count: "الوحدة المستخدمة **{{ count }}** / {{ total }}"
       used_instance_count_plural: "الوحدات المستخدمة **{{ count }}** / {{ total }}"
-      thickness_layer_count: "سمك القطعة النهائية مكون من **{{ count }}** من الطبقات "
+      thickness_layer_count: "سمك القطعة النهائية مكون من **{{ count }}** من الطبقات"
       thickness_layered: "العدد هنا يمثل عدد القطع اللازمة للحصول على كل الطبقات."
       thickness_layered_equation: "**{{ count }}** *قطعة* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *قِطَع* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
@@ -259,7 +259,7 @@ tab:
       title_multiple: خصائص مجموعة القطع
       multiple_alert: "الخصائص المشتركة لعدد {{ part_count }} من القطع."
       general: عام
-      extra_help: "\"**$t(tab.materials.type_{{ material_type }})**\". قائمة الخصائص المحددة لنوع الخامة "
+      extra_help: "\"**$t(tab.materials.type_{{ material_type }})**\". قائمة الخصائص المحددة لنوع الخامة"
       edges: الحواشي
       name: وصف
       material: الخامة
@@ -383,7 +383,7 @@ tab:
       hide_edges: أخف خانات الحواشي
       hide_edges_help: إن كانت هذه الخاصية محددة فإن **أعمدة الحواشي** ضمن التصنيف *لوح* لن تُعرض.
       minimize_on_highlight: "*'$t(tab.cutlist.highlight_part)...'* تصغير بعد"
-      minimize_on_highlight_help: "تحديد هذه الخاصية سيُصغّر OpenCutList \n عند استخدام الوظيفة *'$t(tab.cutlist.highlight_part)'* "
+      minimize_on_highlight_help: "تحديد هذه الخاصية سيُصغّر OpenCutList\nعند استخدام الوظيفة *'$t(tab.cutlist.highlight_part)'*"
       general: عام
       part_order_strategy: فرز القطع
       part_order_strategy_help: |
@@ -739,7 +739,7 @@ tab:
       obsolete_cutlist: مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:
       partial_cutlist: قائمة القِطع هذه هي تمثيل جزئي لنموذجك، لأنه تدخل فيها بعض القطع المحددة فحسب.
-      no_typed_materials_in_model: "لا يستعمل نموذجك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) "
+      no_typed_materials_in_model: لا يستعمل نموذجك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**)
       no_typed_materials_in_selection: "لا تستعمل في تحديدك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$**) "
       export_empty: تصديرك لا يحتوي أي قطعة.
     success:

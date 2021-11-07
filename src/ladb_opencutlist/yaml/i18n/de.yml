@@ -370,8 +370,8 @@ tab:
         Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
-      hide_descriptions: "Beschreibungen ausblenden "
-      hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt. "
+      hide_descriptions: Beschreibungen ausblenden
+      hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
       hide_tags: Tags ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden die auf den Teilen platzierten **Tags** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
@@ -534,8 +534,8 @@ tab:
       option_origin_corner_2d_1: Untere linke Ecke
       option_origin_corner_2d_2: Obere rechte Ecke
       option_origin_corner_2d_3: Untere rechte Ecke
-      option_origin_corner_1d_help: "Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Stangen oder Kantenbänder. "
-      option_origin_corner_2d_help: "Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Platten. "
+      option_origin_corner_1d_help: Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Stangen oder Kantenbänder.
+      option_origin_corner_2d_help: Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Platten.
       option_full_width_diagram: Anzeige in voller Breite
       option_full_width_diagram_0: Nein
       option_full_width_diagram_1: Ja
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
-        selection_only: "Diese Etiketten beschränken sich auf **ausgewählte Teile** "
+        selection_only: Diese Etiketten beschränken sich auf **ausgewählte Teile**
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -998,7 +998,7 @@ tab:
     objective_slogan: OpenCutList sind wir alle
     objective_title:
       default: Ziele
-      cuttingdiagram_export: "Finanzierung von Schnittplan-Exporten "
+      cuttingdiagram_export: Finanzierung von Schnittplan-Exporten
     objective_details:
       default: |
         Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update **4.0**!

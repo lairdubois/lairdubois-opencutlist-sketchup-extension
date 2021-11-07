@@ -1,6 +1,6 @@
 _label: Polski
 _reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć to okno."
-_description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;) "
+_description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;)"
 default:
   minimize: Minimalizuj
   maximize: Maksymalizuj
@@ -221,8 +221,8 @@ tab:
       thickness_layered: "Podana tutaj ilość oznacza liczbę elementów, które należy wyciąć, aby uzyskać wszystkie warstwy."
       thickness_layered_equation: "**{{ count }}** *część* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *części* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }} "
-      children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }} "
+      multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }}"
+      children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }}"
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
       children_size_increase: "Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części"
       invalid_final_area: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar"
@@ -410,7 +410,7 @@ tab:
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
       tags_filter: Filtruj według oznakowań
       dimensions_help: Zrozumienie wymiarów ...
-      summary: "Podsumowanie "
+      summary: Podsumowanie
       material_type: Rodzaj
       material_thickness: Materiał / Grubość
       part_count: Ilość
@@ -600,7 +600,7 @@ tab:
         scroll_to_block_2d: Przewiń do pierwszego arkusza
       list:
         unplaced_parts: Elementy nie rozmieszczone na rozkroju
-        summary: "Podsumowanie "
+        summary: Podsumowanie
         count: Ilość
         bar: Płyta
         sheet: Arkusz
@@ -638,7 +638,7 @@ tab:
         parameters: Parametry są niepoprawne. Rozmiar przycinania jest większy niż 25% najdłuższej płyty lub obrzeża.
         no_parts: Brak części
         no_sheet: Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
-        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...). "
+        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...)."
         bad_error: "Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek."
         unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
         unplaced_parts_plural: "Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
@@ -926,7 +926,7 @@ tab:
       errors: Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
       warnings: Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
     error:
-      no_model: "Brak otwartego modelu. Nie da się zaimportować części do próżni ;) "
+      no_model: Brak otwartego modelu. Nie da się zaimportować części do próżni ;)
       file_not_found: "Nie znaleziono pliku: **{{ filename }}**"
       bad_extension: "Plik *{{ filename }}* nie ma rozszerzenia **.CSV** lub **.TSV**."
       failed_to_load_csv_file: |
