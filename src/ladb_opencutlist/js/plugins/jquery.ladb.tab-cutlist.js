@@ -1697,7 +1697,7 @@
 
                         if (!multiple) {
 
-                            editedParts[i].name = $inputName.val();
+                            editedParts[i].name = $inputName.val().trim();
 
                             editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                             editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
@@ -1726,7 +1726,7 @@
                             editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
                         }
                         if (!$inputDescription.ladbTextinputArea('isMultiple')) {
-                            editedParts[i].description = $inputDescription.val();
+                            editedParts[i].description = $inputDescription.val().trim();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });

@@ -882,7 +882,15 @@
 
         // Bind validate with enter on modals
         $('body').on('keydown', function (e) {
-            if (e.keyCode === 13 && $(e.target).is('input[type=text]')) {   // Only intercept "enter" key on input[type=text] field
+            if (e.keyCode === 13) {   // Only intercept "enter" key
+
+                var $target = $(e.target);
+                if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field
+                    return;
+                }
+                $target.blur(); // Blur target to be sure "change" event occur before
+
+                // Prevent default behavior
                 e.preventDefault();
 
                 // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
