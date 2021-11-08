@@ -1,6 +1,6 @@
 _label: Português
 _reload_msg: "Para que as mudanças tenha efeito, você deve **fechar** e **reabrir** a janela OpenCutList."
-_description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para Marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
+_description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -286,8 +286,8 @@ tab:
       thickness_layer_count_help: |
         Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
 
-        Exemplo: *Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
-        OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
+        *Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
+        *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
