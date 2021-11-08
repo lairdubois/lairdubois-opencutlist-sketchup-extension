@@ -382,7 +382,7 @@ tab:
       hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*."
       hide_edges: Skrýt sloupce pro hranování
       hide_edges_help: "Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty."
-      minimize_on_highlight: Sbalit po *'$t(tab.cut list. Zvýraznit část) ...'*
+      minimize_on_highlight: Minimalizovat po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.cutlist.highlight_part)'*."
       general: Všeobecné
       part_order_strategy: Třídění dílců
