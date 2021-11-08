@@ -9,9 +9,10 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorLabelLayout = function (element, options) {
+    var LadbEditorLabelLayout = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
+        this.dialog = dialog;
 
         this.$editingSvgGroup = null;
         this.$editingForm = null;
@@ -444,6 +445,8 @@
             })
         ;
 
+        this.dialog.setupTooltips();
+
     };
 
     LadbEditorLabelLayout.prototype.updateSize = function (labelWidth, labelHeight) {
@@ -488,7 +491,7 @@
             var options = $.extend({}, LadbEditorLabelLayout.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('ladb.editorLabelLayout', (data = new LadbEditorLabelLayout(this, options)));
+                $this.data('ladb.editorLabelLayout', (data = new LadbEditorLabelLayout(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

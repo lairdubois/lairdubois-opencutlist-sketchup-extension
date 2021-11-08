@@ -137,7 +137,7 @@
             mass_unit_strippedname: that.massUnitStrippedname,
             length_unit_strippedname: that.lengthUnitStrippedname,
             material: material
-        }, true);
+        });
 
         // Fetch UI elements
         var $btnCreate = $('#ladb_materials_create', $modal);
@@ -232,7 +232,7 @@
                 length_unit_strippedname: that.lengthUnitStrippedname,
                 material: material,
                 properties_tab: propertiesTab
-            }, true);
+            });
 
             // Fetch UI elements
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);

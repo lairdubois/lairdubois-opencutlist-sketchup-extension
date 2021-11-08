@@ -768,7 +768,7 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
                 visible_only: visibleOnly,
                 tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
-            }, true);
+            });
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
@@ -1370,7 +1370,7 @@
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
                     tab: tab
-                }, true);
+                });
 
                 // Fetch UI elements
                 var $tabs = $('a[data-toggle="tab"]', $modal);
@@ -2000,7 +2000,7 @@
                     group: group,
                     selection_only: selectionOnly,
                     tab: forceDefaultTab || that.lastCuttingdiagram1dOptionsTab == null ? 'material' : that.lastCuttingdiagram1dOptionsTab
-                }, true);
+                });
 
                 // Fetch UI elements
                 var $tabs = $('a[data-toggle="tab"]', $modal);
@@ -2270,7 +2270,7 @@
                     group: group,
                     selection_only: selectionOnly,
                     tab: forceDefaultTab || that.lastCuttingdiagram2dOptionsTab == null ? 'material' : that.lastCuttingdiagram2dOptionsTab
-                }, true);
+                });
 
                 // Fetch UI elements
                 var $tabs = $('a[data-toggle="tab"]', $modal);
@@ -2559,7 +2559,7 @@
                 group: group,
                 selection_only: selectionOnly,
                 tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
-            }, true);
+            });
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);
@@ -2662,11 +2662,7 @@
                 fnFillInputs: fnFillInputs
             });
             $editorLabelLayout.ladbEditorLabelLayout({
-                filename: that.filename,
-                modelName: that.modelName,
-                pageLabel: that.pageLabel,
-                lengthUnit: that.lengthUnit,
-                generatedAt: new Date().getTime() / 1000,
+                dialog: that.dialog,
                 group: group,
                 part: parts[0],
             });

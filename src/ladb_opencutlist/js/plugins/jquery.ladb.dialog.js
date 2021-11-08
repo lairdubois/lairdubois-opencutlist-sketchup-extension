@@ -339,15 +339,29 @@
         return null;
     };
 
+    LadbDialog.prototype.getActiveTab = function () {
+        return this.$tabs[this.activeTabName];
+    };
+
+    LadbDialog.prototype.getActiveTabBtn = function () {
+        return this.$tabBtns[this.activeTabName];
+    };
+
+    LadbDialog.prototype.getTabPlugin = function ($tab) {
+        if ($tab) {
+            return $tab.data('ladb.tab.plugin');
+        }
+    };
+
     LadbDialog.prototype.unselectActiveTab = function () {
         if (this.activeTabName) {
 
             // Flag as inactive
-            this.$tabBtns[this.activeTabName].removeClass('ladb-active');
+            this.getActiveTabBtn().removeClass('ladb-active');
             $('[data-ladb-tab-name="' + this.activeTabName + '"]').removeClass('ladb-active');
 
             // Hide active tab
-            this.$tabs[this.activeTabName].hide();
+            this.getActiveTab().hide();
 
         }
     };
@@ -445,7 +459,7 @@
                 callback($tab);
             } else {
 
-                var jQueryPlugin = $tab.data('ladb.tab.plugin');
+                var jQueryPlugin = this.getTabPlugin($tab);
                 if (jQueryPlugin && !jQueryPlugin.defaultInitializedCallbackCalled) {
                     jQueryPlugin.defaultInitializedCallback();
                 }
@@ -474,9 +488,10 @@
     };
 
     LadbDialog.prototype.executeCommandOnTab = function (tabName, command, parameters, callback, keepTabInBackground) {
+        var that = this;
 
         var fnExecute = function ($tab) {
-            var jQueryPlugin = $tab.data('ladb.tab.plugin');
+            var jQueryPlugin = that.getTabPlugin($tab);
             if (jQueryPlugin) {
                 jQueryPlugin.executeCommand(command, parameters, callback);
             }
@@ -743,6 +758,16 @@
             }
         });
 
+        // Bind enter keyup on text input if configured
+        $('input[type=text]', $modal).on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                if ($btnValidate && $btnValidate.is(':enabled')) {
+                    $btnValidate.click();
+                }
+            }
+        });
+
         // Show modal
         $modal.modal('show');
 
@@ -853,6 +878,32 @@
         this.$element.on('maximized.ladb.dialog', function() {
             that.loadManifest();
             that.checkNews();
+        });
+
+        // Bind validate with enter on modals
+        $('body').on('keydown', function (e) {
+            if (e.keyCode === 13 && $(e.target).is('input[type=text]')) {   // Only intercept "enter" key on input[type=text] field
+                e.preventDefault();
+
+                // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
+                var $modal = null;
+                if (that._$modal) {
+                    $modal = that._$modal;
+                } else {
+                    var jQueryPlugin = that.getTabPlugin(that.getActiveTab());
+                    if (jQueryPlugin) {
+                        $modal = jQueryPlugin._$modal;
+                    }
+                }
+
+                if ($modal) {
+                    var $btnValidate = $('.btn-validate-modal', that._$modal).first();
+                    if ($btnValidate && $btnValidate.is(':enabled')) {
+                        $btnValidate.click();
+                    }
+                }
+
+            }
         });
 
     };

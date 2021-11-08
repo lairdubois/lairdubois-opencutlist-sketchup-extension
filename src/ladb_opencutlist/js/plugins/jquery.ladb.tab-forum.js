@@ -129,7 +129,6 @@
                         $(this).parent().remove();
                     });
                     $('.ladb-forum-tag', $list).on('click', function () {
-                        console.log('hop', $(this).data('tag'));
                         that.loadConversations($(this).hasClass('ladb-active') ? null : $(this).data('tag'));
                         return false;
                     });
