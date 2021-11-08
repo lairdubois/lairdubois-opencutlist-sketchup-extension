@@ -526,7 +526,7 @@ tab:
       option_use_names: Identificación de la parte
       option_use_names_0: Utilice el número
       option_use_names_1: Utilice la designación
-      option_use_names_help: "Permite elegir entre **número** y **designación** para identificar las piezas en el diagrama de corte. "
+      option_use_names_help: Permite elegir entre **número** y **designación** para identificar las piezas en el diagrama de corte.
       option_origin_corner: Posición del origen
       option_origin_corner_1d_0: A la izquierda
       option_origin_corner_1d_1: A la derecha
@@ -944,7 +944,7 @@ tab:
       invalid_material: Material inválido
     success:
       imported_title: Importación realizada
-      imported_body: "{{ count }} La pieza se importo correctamente! "
+      imported_body: "{{ count }} La pieza se importo correctamente!"
       imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
     obsolete_base: "Para permanecer sincronizado, debe volver a cargar el fichero CSV."
   tutorials:
@@ -1038,8 +1038,8 @@ tab:
     currency_symbol: Símbolo de moneda
     menu:
       dump_global_presets: Volcado de preajustes
-      dump_model_presets: "Volcado de preajustes de modelos "
-      reset_global_presets: "Reiniciar los preajustes "
+      dump_model_presets: Volcado de preajustes de modelos
+      reset_global_presets: Reiniciar los preajustes
       reset_global_presets_confirm: |
         Está a punto de restablecer todos sus preajustes *OpenCutList* guardados.
         Esta acción es definitiva. **Todos los preajustes se perderán.
@@ -1047,7 +1047,7 @@ tab:
       reset_global_presets_success: |
         Los preajustes de *OpenCutList* se han restablecido.
         Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
-      reset_model_presets: "Reiniciar los preajustes del modelo "
+      reset_model_presets: Reiniciar los preajustes del modelo
       reset_model_presets_confirm: |
         Está a punto de restablecer todos los preajustes de *OpenCutList* para el modelo actual.
         Esta acción es definitiva. **Todos los ajustes serán restaurados a los valores por defecto.**

@@ -113,7 +113,7 @@ core:
   preset:
     label: Predefinições
     save_to: Salvar como
-    restore_from: "Reataurar a partir de "
+    restore_from: Restaurar a partir de
     app_defaults: Definições de fábrica
     user_defaults: Minhas definições padrão
     new: Novas definições
@@ -238,14 +238,14 @@ tab:
       edge_xmax: Largura da borda 2
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
-      part_axes: "Eixos internos da peça "
+      part_axes: Eixos internos da peça
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
       setup_group_cuttingdiagram: "Defina o diagrama de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
     menu:
       show_all_groups: Mostrar todos os grupos
       hide_all_other_groups: Esconder todos os outros grupos
-      numbers_save: "Salve os números das peças "
-      numbers_reset: "Reinicialize os números da peça "
+      numbers_save: Salve os números das peças
+      numbers_reset: Reinicialize os números da peça
       highlight_parts: $t(tab.cutlist.highlight_parts)
       group_numbers_save: Salve os números de peça deste grupo
       group_numbers_reset: Reinicialize os números de peça deste grupo
@@ -286,7 +286,7 @@ tab:
       thickness_layer_count_help: |
         Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
 
-        Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2*** neste campo.
+        Exemplo: *Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
         OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
       description: Descrição
       description_help: |
@@ -306,7 +306,7 @@ tab:
         - *comprimento* está no eixo <span style='color:red'>vermelho</span>
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
-      symmetrical: "Desativar a detecção de peças espelhadas nesta parte "
+      symmetrical: Desativar a detecção de peças espelhadas nesta parte
       symmetrical_help: |
         Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
       ignore_grain_direction: Ignorar a direção dos veios
@@ -315,7 +315,7 @@ tab:
       size_increase: Superdimensionar
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
-        (*Exemplo : Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação. *)
+        (*Exemplo: Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação.*)
       length_increase: Superdimensionamento do comprimento
       length_increase_help: O superdimensionamento é aplicado ao comprimento real para definir o **comprimento bruto**.
       width_increase: Superdimensionamento da largura
@@ -573,7 +573,7 @@ tab:
         Editar o material '{{ material_name }}' para atualizar esta lista.
       option_std_bar_add: Adicione um comprimento ...
       option_std_bar_none: Nenhum
-      option_scrap_bar_dimensional_lengths: "Sobras de prancha "
+      option_scrap_bar_dimensional_lengths: Sobras de prancha
       option_scrap_bar_edge_lengths: Sobras de fita
       option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
@@ -640,7 +640,7 @@ tab:
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
         no_placement_possible: "Todas as suas partes são muito grandes para caber em uma chapa (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
-        unplaced_parts: "**1 peça*** é muito grande para colocar."
+        unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
       warning:
         selection_only: Este diagrama de corte é limitado a **peças selecionadas**.
@@ -746,7 +746,7 @@ tab:
       exported_to: "Exportação para {{ export_path }} com sucesso."
     tip:
       no_component: |
-        As peças que você deseja que apareçam na *Planilha de Produção* devem ser instâncias de **componente***.
+        As peças que você deseja que apareçam na *Planilha de Produção* devem ser instâncias de **componente**.
         Se você usar apenas grupos, converta-os em componentes.
         Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
       no_typed_materials: "Aplique um material nas peças que você deseja ver em sua Planilha de Produção e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiais**."
@@ -820,7 +820,7 @@ tab:
       std_sections: Seções Cruzadas Padrão
       std_sections_placeholder: largura x espessura ; ...
       std_sections_help: |
-        Formato esperado : **L**x**H****. Onde **L*** e **H*** são respectivamente a *largura* e *altura* da seção..
+        Formato esperado : **L**x**H**. Onde **L** e **H** são respectivamente a *largura* e *altura* da seção..
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
       std_sizes: Tamanhos de painel padrão
       std_sizes_placeholder: comprimento x largura ; ...
@@ -1001,13 +1001,13 @@ tab:
       cuttingdiagram_export: Financiamento das exportações de diagramas de corte
     objective_details:
       default: |
-        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0***!
+        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0**!
       cuttingdiagram_export: |
         É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *digrama de corte*.
-        Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG***.
+        Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
         Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
     objective_crowdfunding: |
-      O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo*** e poderá começar quando seu **Objetivo financeiro** for alcançado.
+      O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
       Obrigado por sua contribuição!
     objective_funded_progress: "financiado a {{ progress }}%"
@@ -1038,7 +1038,7 @@ tab:
     currency_symbol: Símbolo da moeda
     menu:
       dump_global_presets: Lixeira de predefinições
-      dump_model_presets: "Lixeira de predefinições de modelo "
+      dump_model_presets: Lixeira de predefinições de modelo
       reset_global_presets: Reinicializar as predefinições
       reset_global_presets_confirm: |
         Está prestes a reiniciar todas as suas predefinições *OpenCutList* guardadas.

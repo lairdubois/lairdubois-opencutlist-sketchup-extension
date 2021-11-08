@@ -734,7 +734,7 @@ tab:
       no_component_in_selection: בבחירתך לא נמצא רכיב גלוי.
       no_component_in_model: לא התגלה שום רכיב גלוי על המסך.
       failed_to_write_export_file: "כתיבת קובץ הייצוא נכשלה. **{{ error }}**"
-      failed_export_skp_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skp. "
+      failed_export_skp_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skp."
       unknow_part: החלק שנבחר אינו קיים בתוכנית חיתוך.
       obsolete_cutlist: "לא ניתן, תוכנית חיתוך לא מעודכנת. ליצור מחדש."
     warning:
@@ -864,7 +864,7 @@ tab:
       no_materials: המודל אינו מכיל שום חומר.
       material_not_found: חומר לא נמצא.
       failed_import_skm_file: "**{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm."
-      failed_export_skm_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skm. "
+      failed_export_skm_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skm."
       failed_removing_material: "אירעה שגיאה בעת מחיקת החומר. **{{ error }}**"
     success:
       exported_to: "הייצוא בוצע אל {{ export_path }}."

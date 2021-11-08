@@ -102,7 +102,7 @@ core:
     ignore_update: Sla deze update over
     download_rescue: "Lukt het downloaden niet?"
     manual_download: Handmatig downloaden
-    zzz: "Er is een update geweest en Sketchup moet opnieuw gestart worden. "
+    zzz: Er is een update geweest en Sketchup moet opnieuw gestart worden.
     success: |
       De update van *OpenCutList* is klaar.
 
@@ -113,7 +113,7 @@ core:
   preset:
     label: Voorkeuren
     save_to: Opslaan als
-    restore_from: "Terugzetten vanaf "
+    restore_from: Terugzetten vanaf
     app_defaults: oorspronkelijke presets
     user_defaults: Mijn standaard presets
     new: nieuwe preset
@@ -139,7 +139,7 @@ core:
       reset: Reset waarde
     textinput_color:
       store: Bewaar kleur
-      remove: "Kleur vergeten "
+      remove: Kleur vergeten
 tab:
   cutlist:
     label: Onderdelen
@@ -210,7 +210,7 @@ tab:
       add_label_filter: "Filter op '{{ label }}'"
       remove_label_filter: "verwijder filter '{{ label }}'"
       add_edge_material_name_filter: "Filter op '{{ label }}'"
-      remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
+      remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
       not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
       instance_count_by_part: "Dit onderdeel wordt geteld als set van **{{ count }}** eenheden"
       unused_instance_count: "Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt."
@@ -251,7 +251,7 @@ tab:
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
       group_labels: Druk etiketten af
-      edit_material: "Wijzig materiaal '{{ material }}'..."
+      edit_material: "Wijzig materiaal '{{ material_name }}'"
       expand_all: Alle lijnen uitklappen
       collapse_all: Alle lijnen inklappen
     edit_part:
@@ -620,7 +620,7 @@ tab:
         cut_final: Primaire zaagsnedes (niveau 1)
         cut_final_plural: Primaire snijwonden (niveau 1)
         cut_through: Primaire zaagsnedes (niveau 2)
-        cut_through_plural: "Primaire snijwonden (niveau 2) "
+        cut_through_plural: Primaire snijwonden (niveau 2)
         cut_none: Geen
         bar_dimensional_type_0: Standaard plank
         bar_dimensional_type_1: Plank overschot
@@ -1033,7 +1033,7 @@ tab:
     length_format_2: Ingenieur
     length_format_3: Fractioneel
     length_precision: Nauwkeurigheid
-    suppress_units_display: "Toon de lengte-eenheid voor elke waarde "
+    suppress_units_display: Toon de lengte-eenheid voor elke waarde
     mass_unit: Eenheid van massa
     currency_symbol: Valutateken
     menu:

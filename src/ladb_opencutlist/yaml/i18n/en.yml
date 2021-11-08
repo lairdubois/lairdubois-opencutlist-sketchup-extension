@@ -138,7 +138,7 @@ core:
     textinput:
       reset: Reset this value
     textinput_color:
-      store: "Save color "
+      store: Save color
       remove: Forget color
 tab:
   cutlist:
@@ -349,7 +349,7 @@ tab:
          - the *length* is read on the <span style='color:red'>red</span> axis,
          - the *width* on the <span style='color:green'>green</span> axis and
          - the *thickness* on the <span style='color:blue'>blue</span> axis
-      flipped_detection: "Detection of mirrored parts "
+      flipped_detection: Detection of mirrored parts
       flipped_detection_help: |
         If this option is selected, mirrored parts will be detected and displayed as a distinct part.
       smart_material: "*Smart* assignment of material"
@@ -535,7 +535,7 @@ tab:
       option_origin_corner_2d_2: Top right corner
       option_origin_corner_2d_3: Bottom right corner
       option_origin_corner_1d_help: Determines the start position of the coordinate system for displaying parts of dimensional lumber or edge banding.
-      option_origin_corner_2d_help: "Determines the start position of the coordinate system for displaying parts on panels. "
+      option_origin_corner_2d_help: Determines the start position of the coordinate system for displaying parts on panels.
       option_full_width_diagram: Full Width Display
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Yes
