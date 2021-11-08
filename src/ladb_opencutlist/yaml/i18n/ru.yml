@@ -998,7 +998,7 @@ tab:
     objective_slogan: OpenCutList - это все мы
     objective_title:
       default: Цель
-      cuttingdiagram_export: Финансирование экспорта раскроя
+      cuttingdiagram_export: Финансирование разработки новой функции
     objective_details:
       default: |
         Постоянное совершенствование *OpenCutList* очень важно для нас, и Ваша помощь по-прежнему будет нужна проекту для следующего обновления **4.0** !
