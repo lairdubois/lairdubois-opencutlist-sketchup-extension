@@ -139,7 +139,7 @@ core:
       reset: Azzerare questo valore
     textinput_color:
       store: Memorizzare questo colore
-      remove: Dimenticare il colore
+      remove: Rimuovi il colore
 tab:
   cutlist:
     label: Parti
@@ -284,10 +284,10 @@ tab:
       price_help: Il prezzo del pezzo sarà utilizzato quando si generano i **Rapporti**.
       thickness_layer_count: No. di strati
       thickness_layer_count_help: |
-        Definisci qui il numero di strati che dividono la parte disegnata nel suo spessore.
+        Definire qui il numero di strati che compongono lo spessore totale dell'elemento disegnato.
 
-        *Esempio:* Se avete un pezzo disegnato spesso *38mm* e volete realizzarlo incollando insieme due pannelli *19mm*, inserite **2** in questo campo.
-        *OpenCutList conterà allora 2 pezzi di 19 mm di spessore invece di 1 pezzo di 38 mm di spessore.
+        *Esempio:* Per un elemento disegnato di spessore *38mm* che si desideri realizzare incollando insieme due pannelli da *19mm*, inserire **2** in questo campo.
+        *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -367,7 +367,7 @@ tab:
       part_folding_help: |
         Se questa opzione è attivata, verranno raggruppate le parti con **dimensioni identiche** e con **definizioni identiche** *(se la visualizzazione di quest'area non è nascosta)*.
 
-        Le parti saranno ancora considerate diverse per gli etichettee il schema di taglio.
+        Le parti saranno ancora considerate diverse nella stampa delle etichette e nello schema di taglio.
       hide_entity_names: Nascondi i nomi delle occorrenze
       hide_entity_names_help: "Se questa opzione è attivata, il **nome occorrenza** delle parti non verrà mostrata."
       hide_descriptions: Nascondere le descrizioni
@@ -998,14 +998,14 @@ tab:
     objective_slogan: OpenCutList è tutti noi
     objective_title:
       default: Obiettivo
-      cuttingdiagram_export: Finanziamento delle esportazioni del piano di taglio
+      cuttingdiagram_export: Finanziamento della funzionalità di esportare lo schema di taglio
     objective_details:
       default: |
         Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **4.0**!
       cuttingdiagram_export: |
-        Per noi è importante che *OpenCutList* possa essere adattato alla vasta gamma di esigenze degli utenti per la funzione *squadratura*.
-        Per ampliare ulteriormente le possibilità, vorremmo permettere l'esportazione di schemi di layout in formato **SVG**.
-        Dandoci i mezzi per lavorare su queste esportazioni, ci stai dando l'opportunità di aiutarti ad ottenere il massimo da *OpenCutList*.
+        Riteniamo importante che l'opzione "schema di taglio" di OpenCutList possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG**.
+        Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
+        Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di OpenCutList.
     objective_crowdfunding: |
       Lo sviluppo di nuove funzionalità grazie al **finanziamento collettivo (crowfunding)** avrà luogo e potrà iniziare non appena il **Finanziamento** sarà raggiunto.
     objective_thanks: |
