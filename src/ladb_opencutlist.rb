@@ -8,8 +8,8 @@ module Ladb
 
       # Create extension
       ex = SketchupExtension.new('OpenCutList', 'ladb_opencutlist/ruby/main')
-      ex.version     = "3.0.0"  ## /!\ Auto-generated line, do not edit ##
-      ex.copyright   = '2016-2020 - GNU GPLv3'
+      ex.version     = "3.0.1-dev"  ## /!\ Auto-generated line, do not edit ##
+      ex.copyright   = "2016-#{Date.today.year} - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'
 
       # Localize description
