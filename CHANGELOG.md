@@ -9,7 +9,7 @@ in 2.x, 1.x and 0.x versions.
 
 * 3.0.0 (2021-11-14)
 
-  * Added **Docs** button to access online documentation : https://docs.opencurlist.org
+  * Added **Docs** button to access online documentation : https://docs.opencutlist.org
   * Added capability to consider a part as multiple layers along its thickness
   * Added Description display on parts
   * Added Number or Name part's identifier option on cutting diagrams
