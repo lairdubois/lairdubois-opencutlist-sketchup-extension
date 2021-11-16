@@ -3,6 +3,7 @@ module Ladb
 
     require 'sketchup.rb'
     require 'extensions.rb'
+    require 'date'
 
     unless file_loaded?(__FILE__)
 
