@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Implements storage for guillotine cuts.
   #
   class Cut < Packing2D
-
     # Starting position of this Cut and its length.
     attr_reader :x, :y, :length
 
@@ -37,7 +37,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Sets a new length for this Cut. Used by bounding box.
     #
-    def set_length(length)
+    def update_length(length)
       @length = length
     end
 
@@ -72,9 +72,9 @@ module Ladb::OpenCutList::BinPacking2D
       return false unless @x < max_x && @y < max_y
 
       if @is_horizontal && @x + @length > max_x
-        set_length(max_x - @x)
+        update_length(max_x - @x)
       elsif !@is_horizontal && @y + @length > max_y
-        set_length(max_y - @y)
+        update_length(max_y - @y)
       end
       valid?
     end
@@ -83,10 +83,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      dir = @is_horizontal ? "H" : "V"
-      "cut : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, " \
-      "#{"%9.2f" % @length}], #{dir}, #{"%3d" % @level}, #{@is_through}, " \
-      " #{@is_final}]"
+      dir = @is_horizontal ? 'H' : 'V'
+      s = "cut : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
+      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}], "
+      s << "#{dir}, #{format('%3d', @level)}, #{@is_through}, #{@is_final}]"
+      s
     end
 
     #
@@ -96,10 +97,10 @@ module Ladb::OpenCutList::BinPacking2D
       linewidth = 2
       if @is_horizontal
         "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", " \
-        "red, \"linewidth\", #{linewidth}) # horizontal cut"
+          "red, \"linewidth\", #{linewidth}) # horizontal cut"
       else
         "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", " \
-        "red,  \"linewidth\", #{linewidth}) # vertical cut"
+          "red,  \"linewidth\", #{linewidth}) # vertical cut"
       end
     end
   end

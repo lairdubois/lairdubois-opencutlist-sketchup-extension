@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Ladb::OpenCutList
   module BinPacking2D
-
     # Number of bytes of computer running code
     # from https://gist.github.com/pithyless/9738125
-    N_BYTES = [42].pack("i").size
+    N_BYTES = [42].pack('i').size
 
     # Number of bits.
     N_BITS = N_BYTES * 16
@@ -11,7 +12,7 @@ module Ladb::OpenCutList
     # Largest integer on this platform. This is actually wrong since
     # ruby merged Fixnum and Bignum into Integer. We just want a rather
     # large number.
-    MAX_INT = 2 ** (N_BITS - 2) - 1
+    MAX_INT = (2**(N_BITS - 2)) - 1
 
     # Working precision to compare decimal inches (this represents around
     # 0.00254 mm)
@@ -71,7 +72,8 @@ module Ladb::OpenCutList
     PRESORT_LONGEST_SIDE_DECR = 5
     # Sort by shortest side increasing.
     PRESORT_SHORTEST_SIDE_DECR = 6
-    PRESORT = ["input", "width", "length", "area", "longest", "shortest", "perimeter"]
+    PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest',
+               'perimeter'].freeze
 
     # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0
@@ -80,7 +82,8 @@ module Ladb::OpenCutList
     SCORE_WORSTAREA_FIT = 3
     SCORE_WORSTSHORTSIDE_FIT = 4
     SCORE_WORSTLONGSIDE_FIT = 5
-    SCORE = [" best area", "short side", "long side", "worst area", "worst short side", "worst long side"]
+    SCORE = ['best area', 'short side', 'long side', 'worst area',
+             'worst short side', 'worst long side'].freeze
 
     # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
@@ -91,7 +94,9 @@ module Ladb::OpenCutList
     SPLIT_LONGER_AXIS = 5
     SPLIT_HORIZONTAL_FIRST = 6
     SPLIT_VERTICAL_FIRST = 7
-    SPLIT = ["shorter leftover", "longer leftover", "min. area", "max. area", "shorter axis", "longer axis", "horizontal_first", "vertical_first"]
+    SPLIT = ['shorter leftover', 'longer leftover', 'min. area', 'max. area',
+             'shorter axis', 'longer axis', 'horizontal_first',
+             'vertical_first'].freeze
 
     # Do not try to stack boxes.
     STACKING_NONE = 0
@@ -101,7 +106,7 @@ module Ladb::OpenCutList
     STACKING_WIDTH = 2
     # Stack none, length and width.
     STACKING_ALL = 3
-    STACKING = ["do not care", "lengthwise", "widthwise", "stacking all"]
+    STACKING = ['do not care', 'lengthwise', 'widthwise', 'stacking all'].freeze
 
     # Orientation of a box. Better for sorting than boolean value.
     NOT_ROTATED = 0
@@ -110,7 +115,7 @@ module Ladb::OpenCutList
     # Optimization levels.
     OPT_MEDIUM = 0
     OPT_ADVANCED = 1
-    OPTIMIZATION = ["light", "advanced"]
+    OPTIMIZATION = ['light', 'advanced'].freeze
     #
     # Exception raised in this module.
     #
@@ -137,12 +142,10 @@ module Ladb::OpenCutList
       #
       def dbg(msg, debug = false)
         # Assuming @options exists.
-        if debug
-          puts(msg)
-        elsif !@options.nil? && @options.debug
-          puts(msg)
-        end
-        STDOUT.flush
+        return unless debug || (!@options.nil? && @options.debug)
+
+        puts(msg)
+        $stdout.flush
       end
     end
   end

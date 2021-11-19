@@ -1,5 +1,6 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Implements configuration options.
   #
@@ -39,10 +40,10 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def set_optimization(optimization)
       @optimization = if (OPT_MEDIUM..OPT_ADVANCED).cover?(optimization)
-          optimization
-        else
-          OPT_MEDIUM
-        end
+                        optimization
+                      else
+                        OPT_MEDIUM
+                      end
     end
 
     #
@@ -50,10 +51,10 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def set_stacking_pref(stacking_pref)
       @stacking_pref = if (STACKING_NONE..STACKING_ALL).cover?(stacking_pref)
-          stacking_pref
-        else
-          STACKING_NONE
-        end
+                         stacking_pref
+                       else
+                         STACKING_NONE
+                       end
     end
 
     #
@@ -74,11 +75,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets global property rotatable = no grain.
     #
     def set_rotatable(rotatable)
-      if [true, false].include?(rotatable)
-        @rotatable = rotatable
-      else
-        @rotatable = false
-      end
+      @rotatable = [true, false].include?(rotatable)
     end
 
     #
@@ -99,22 +96,23 @@ module Ladb::OpenCutList::BinPacking2D
     # Makes a signature string of the options.
     #
     def signature
-      "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{"%5.2f" % @saw_kerf}/#{"%5.2f" % @trimsize}"
+      "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{format('%5.2f', @saw_kerf)}/#{format('%5.2f', @trimsize)}"
     end
 
     #
     # Debugging!
     #
     def to_str
-      "-> options\n" \
-      "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n" \
-      "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n" \
-      "   computations     = #{get_computations(@optimization, @stacking_pref)}\n" \
-      "   base_length      = #{@base_length}\n" \
-      "   base_width       = #{@base_width}\n" \
-      "   trimsize         = #{@trimsize}\n" \
-      "   saw_kerf         = #{@saw_kerf}\n" \
-      "   global rotatable = #{@rotatable}\n"
+      s = "-> options\n"
+      s << "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n"
+      s << "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n"
+      s << "   computations     = #{get_computations(@optimization, @stacking_pref)}\n"
+      s << "   base_length      = #{@base_length}\n"
+      s << "   base_width       = #{@base_width}\n"
+      s << "   trimsize         = #{@trimsize}\n"
+      s << "   saw_kerf         = #{@saw_kerf}\n"
+      s << "   global rotatable = #{@rotatable}\n"
+      s
     end
   end
 end

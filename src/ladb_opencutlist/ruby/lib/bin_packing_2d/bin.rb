@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Implements a Bin for packing Boxes.
   #
   class Bin < Packing2D
-
     # Length and width of this Bin.
     attr_reader :length, :width
 
@@ -73,14 +73,14 @@ module Ladb::OpenCutList::BinPacking2D
       @stat[:length_cuts] = 0                # total length of cuts, excl. trimming cut
 
       @stat[:l_measure] = 0
-      @stat[:signature] = "not packed"
+      @stat[:signature] = 'not packed'
       @stat[:rank] = 0
     end
 
     #
     # Sets the index of this Bin, increments and returns index.
     #
-    def set_index(index)
+    def update_index(index)
       @index = index
       index + 1
     end
@@ -96,11 +96,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns a readable string for our signature.
     #
     def signature_to_readable
-      if matches = @stat[:signature].match(/^(\d)\/(\d)\/(\d)\/(\d)\/(.*)$/)
+      if (matches = @stat[:signature].match(%r{^(\d)/(\d)/(\d)/(\d)/(.*)$}))
         "#{PRESORT[matches[1].to_i]} - #{SCORE[matches[2].to_i]} - " \
-        "#{SPLIT[matches[3].to_i]} - #{STACKING[matches[4].to_i]}"
+          "#{SPLIT[matches[3].to_i]} - #{STACKING[matches[4].to_i]}"
       else
-        "no match found"
+        'no match found'
       end
     end
 
@@ -129,7 +129,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Checks whether at least one box would fit into a leftover
     #
     def any_fit_into_leftovers(boxes)
-      @boxes.each do |box|
+      boxes.each do |box|
         # This should probably never happen since superboxes have been
         # destroyed in the main loop, but one never knows!
         if box.is_a?(SuperBox)
@@ -144,7 +144,7 @@ module Ladb::OpenCutList::BinPacking2D
           end
         end
       end
-      return false
+      false
     end
 
     #
@@ -155,8 +155,8 @@ module Ladb::OpenCutList::BinPacking2D
       if @leftovers.nil?
         @leftovers = []
         l = Leftover.new(@options.trimsize,
-                         @options.trimsize, @length - 2 * @options.trimsize,
-                         @width - 2 * @options.trimsize, 1, @options)
+                         @options.trimsize, @length - (2 * @options.trimsize),
+                         @width - (2 * @options.trimsize), 1, @options)
         @leftovers << l
         @max_length = l.length
         @max_width = l.width
@@ -183,12 +183,12 @@ module Ladb::OpenCutList::BinPacking2D
     # Adds a Cut to this Bin.
     #
     def add_cut(cut)
-      if !cut.nil? && cut.valid?
-        if cut.is_horizontal
-          @cuts_h << cut
-        else
-          @cuts_v << cut
-        end
+      return unless !cut.nil? && cut.valid?
+
+      if cut.is_horizontal
+        @cuts_h << cut
+      else
+        @cuts_v << cut
       end
     end
 
@@ -238,16 +238,16 @@ module Ladb::OpenCutList::BinPacking2D
     # Merge cuts to produce through cuts
     #
     def merge_cuts
-      cuts = @cuts_h.sort_by {|cut| [cut.y, cut.x]}
+      cuts = @cuts_h.sort_by { |cut| [cut.y, cut.x] }
       new_cuts = []
       c1 = cuts.shift
-      while (!c1.nil?)
+      until c1.nil?
         c2 = cuts.shift
         if c2.nil?
           new_cuts << c1
           c1 = nil
         elsif (c1.y - c2.y).abs <= EPS && (c1.x + c1.length - c2.x).abs <= @options.saw_kerf + EPS
-          c1.set_length(c1.length + @options.saw_kerf + c2.length)
+          c1.update_length(c1.length + @options.saw_kerf + c2.length)
         else
           new_cuts << c1
           c1 = c2
@@ -255,16 +255,16 @@ module Ladb::OpenCutList::BinPacking2D
       end
       @cuts_h = new_cuts
 
-      cuts = @cuts_v.sort_by {|cut| [cut.x, cut.y]}
+      cuts = @cuts_v.sort_by { |cut| [cut.x, cut.y] }
       new_cuts = []
       c1 = cuts.shift
-      while (!c1.nil?)
+      until c1.nil?
         c2 = cuts.shift
         if c2.nil?
           new_cuts << c1
           c1 = nil
         elsif (c1.x - c2.x).abs <= EPS && (c1.y + c1.length - c2.y).abs <= @options.saw_kerf + EPS
-          c1.set_length(c1.length + @options.saw_kerf + c2.length)
+          c1.update_length(c1.length + @options.saw_kerf + c2.length)
         else
           new_cuts << c1
           c1 = c2
@@ -276,34 +276,32 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Return 1 if through cuts are together, 0 if they are not
     #
-    def qualify_cuts(c, width)
-      together = c.length
+    def qualify_cuts(h_or_v_cuts, width)
+      together = h_or_v_cuts.length
       if width
-        cuts = c.map(&:y)
+        cuts = h_or_v_cuts.map(&:y)
         cuts.unshift(@options.trimsize)
         cuts.push(@max_y)
       else
-        cuts = c.map(&:x)
+        cuts = h_or_v_cuts.map(&:x)
         cuts.unshift(@options.trimsize)
         cuts.push(@max_x)
       end
-      cuts = cuts.each_cons(2).map {|a, b| b - a}
+      cuts = cuts.each_cons(2).map { |a, b| b - a }
       seen = {}
       prev = 0
       cuts.each do |e|
-        if seen.has_key?(e)
+        if seen.key?(e)
           if e != prev
             together = 0
             break
-          else
-            prev = e
           end
         else
           seen[e] = 1
           prev = e
         end
       end
-      return together
+      together
     end
 
     #
@@ -312,19 +310,19 @@ module Ladb::OpenCutList::BinPacking2D
     def summarize
       # Compute additional through cuts (primary cuts into the bounding box).
       merge_cuts
-      h_cuts = @cuts_h.select { |cut|
+      h_cuts = @cuts_h.select do |cut|
         (cut.x - @options.trimsize).abs <= EPS &&
           (@options.trimsize + cut.length - @max_x).abs <= EPS &&
           cut.y < @max_y
-      }
+      end
       h_cuts.map(&:mark_through)
       @stat[:h_together] += qualify_cuts(h_cuts, true)
 
-      v_cuts = @cuts_v.select { |cut|
+      v_cuts = @cuts_v.select do |cut|
         (cut.y - @options.trimsize).abs <= EPS &&
           (@options.trimsize + cut.length - @max_y).abs <= EPS &&
           cut.x < @max_x
-      }
+      end
       v_cuts.map(&:mark_through)
       @stat[:v_together] += qualify_cuts(v_cuts, false)
 
@@ -342,15 +340,12 @@ module Ladb::OpenCutList::BinPacking2D
       @leftovers.each do |leftover|
         # Compute l_measure over Leftovers inside the bounding box only!
         if leftover.x + leftover.length < @max_x + EPS && leftover.y + leftover.width < @max_y + EPS
-          @stat[:l_measure] += (@max_x - leftover.x + leftover.length / 2.0 + @max_y - leftover.y + leftover.width / 2.0) * leftover.area
+          @stat[:l_measure] += (@max_x - leftover.x + (leftover.length / 2.0) +
+            @max_y - leftover.y + (leftover.width / 2.0)) * leftover.area
         else
           @stat[:largest_leftover_area] = [@stat[:largest_leftover_area], leftover.area].max
-          if (leftover.length - @max_length).abs < EPS
-            @stat[:largest_bottom_part] = leftover.area
-          end
-          if (leftover.width - @max_width).abs < EPS
-            @stat[:longest_right_part] = leftover.area
-          end
+          @stat[:largest_bottom_part] = leftover.area if (leftover.length - @max_length).abs < EPS
+          @stat[:longest_right_part] = leftover.area if (leftover.width - @max_width).abs < EPS
         end
       end
       # Normalize the l_measure
@@ -385,8 +380,8 @@ module Ladb::OpenCutList::BinPacking2D
         if box.fits_into_leftover?(leftovers_v[0]) || box.fits_into_leftover?(leftovers_v[1])
           new_leftovers = leftovers_v
           new_cuts = cuts_v
-        else
-          return false if !finalbb
+        elsif !finalbb
+          return false
         end
       end
       new_cuts.map(&:mark_final) if finalbb
@@ -394,19 +389,17 @@ module Ladb::OpenCutList::BinPacking2D
       # Shortens all cuts that go beyond the @max_x and @max_y point.
       # @max_x and @max_y are always updated when a box is added.
       # All cuts going through the bounding box will be deleted.
-      @cuts_h, _ = @cuts_h.partition { |cut| cut.resize_to(@max_x, @max_y) }
-      @cuts_v, _ = @cuts_v.partition { |cut| cut.resize_to(@max_x, @max_y) }
+      @cuts_h, = @cuts_h.partition { |cut| cut.resize_to(@max_x, @max_y) }
+      @cuts_v, = @cuts_v.partition { |cut| cut.resize_to(@max_x, @max_y) }
 
       # Shortens all leftovers that go beyond @max_x and @max_y.
       # Drop some if they are outside the bounding box, they
       # have been produced by the bounding box cuts.
-      @leftovers, _ = @leftovers.partition { |leftover| leftover.resize_to(@max_x, @max_y) }
+      @leftovers, = @leftovers.partition { |leftover| leftover.resize_to(@max_x, @max_y) }
 
       new_leftovers.each do |leftover|
         add_leftover(leftover)
-        if finalbb && leftover.useable?
-          @stat[:outer_leftover_area] += leftover.area
-        end
+        @stat[:outer_leftover_area] += leftover.area if finalbb && leftover.useable?
       end
       new_cuts.each { |cut| add_cut(cut) }
 
@@ -423,7 +416,7 @@ module Ladb::OpenCutList::BinPacking2D
       @bounding_box_done = false
       # Make two dummy boxes that represent the leftovers after the bounding
       # box has been done. Select the combination giving the largest leftover area.
-      if (@max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width)
+      if @max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width
         dummy1 = Box.new(@max_length, very_small_dim, false, nil)
         dummy2 = Box.new(very_small_dim, @max_width, false, nil)
       else
@@ -431,20 +424,20 @@ module Ladb::OpenCutList::BinPacking2D
         dummy2 = Box.new(@max_length, very_small_dim, false, nil)
       end
 
-      if !bounding_box(dummy1, true)
-        if !bounding_box(dummy2, true)
-          # Not a problem!
-          # puts("can't make a bounding box!")
-        end
-      end
+      return if bounding_box(dummy1, true)
+      return if bounding_box(dummy2, true)
+      # Not a problem!
+      # puts("can't make a bounding box!")
     end
 
     #
     # Debugging!
     #
     def to_str
-      "bin : #{"%5d" % object_id} id = #{"%3d" % @index} [#{"%9.2f" % @length}," \
-      " #{"%9.2f" % @width}], type = #{"%2d" % @type}, signature=#{@stat[:signature]}"
+      s = "bin: #{format('%5d', object_id)} , id = #{format('%3d', @index)}"
+      s << "[#{format('%9.2f', @length)}, #{format('%9.2f', @width)}], "
+      s << "type = #{format('%2d', @type)}, signature=#{@stat[:signature]}"
+      s
     end
 
     #
@@ -470,33 +463,33 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Debugging!
     #
-    def octave(f)
-      f.puts("figure(#{@index + 1});")
-      f.puts("clf(#{@index + 1});")
-      f.puts("grey = [0.9, 0.9, 0.9];")
-      f.puts("red = [0.82, 0.1, 0.26];")
-      f.puts("blue = [0.36, 0.54, 0.66];")
+    def octave(file)
+      file.puts("figure(#{@index + 1});")
+      file.puts("clf(#{@index + 1});")
+      file.puts('grey = [0.9, 0.9, 0.9];')
+      file.puts('red = [0.82, 0.1, 0.26];')
+      file.puts('blue = [0.36, 0.54, 0.66];')
 
-      f.puts("rectangle(\"Position\", [0, 0, #{@length}, #{@width}], \"Facecolor\", green); # bin id #{@index}")
+      file.puts("rectangle(\"Position\", [0, 0, #{@length}, #{@width}], \"Facecolor\", green); # bin id #{@index}")
       @boxes.each do |box|
-        f.puts(box.to_octave)
+        file.puts(box.to_octave)
       end
       @cuts_h.each do |cut|
-        f.puts(cut.to_octave)
+        file.puts(cut.to_octave)
       end
       @cuts_v.each do |cut|
-        f.puts(cut.to_octave)
+        file.puts(cut.to_octave)
       end
       @leftovers.each do |leftover|
-        f.puts(leftover.to_octave)
+        file.puts(leftover.to_octave)
       end
 
-      f.puts("hold on; plot(#{@max_x}, #{@max_y}, \"d\", \"color\", black, \"linewidth\", 2);")
-      f.puts("axis(\"ij\");")
-      f.puts("axis(\"image\");")
+      file.puts("hold on; plot(#{@max_x}, #{@max_y}, \"d\", \"color\", black, \"linewidth\", 2);")
+      file.puts('axis("ij");')
+      file.puts('axis("image");')
       s = "bin index=#{@index}"
-      f.puts("title(\"#{s}\");")
-      f.close
+      file.puts("title(\"#{s}\");")
+      file.close
     end
   end
 end
