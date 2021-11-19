@@ -926,7 +926,7 @@ tab:
       errors: "Tato část nebude importována, protože způsobila následující chyby"
       warnings: "Tato část bude importována, ale pouze s tímto varováním"
     error:
-      no_model: "Model není otevřený, proto není možné importovat dílce ... :)"
+      no_model: "Model není otevřený, proto není možné importovat dílce :)"
       file_not_found: "Soubor nebyl nalezen: **{{ filename }}**"
       bad_extension: "Soubor *{{ filename }}* nemá příponu **.CSV** nebo **.TSV**."
       failed_to_load_csv_file: |
