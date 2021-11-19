@@ -1,12 +1,12 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Implements a subdivision of the bin by guillotine cuts.
   # It gives the contained box an x, y reference and the necessary
   # cuts to place the box at the top left corner.
   #
   class Leftover < Packing2D
-
     # Position and size of this Leftover.
     attr_reader :x, :y, :length, :width
 
@@ -72,7 +72,7 @@ module Ladb::OpenCutList::BinPacking2D
         case @options.score
         when SCORE_BESTAREA_FIT
           # Returns the amount of waste produced, smaller is better
-          box_length * box_width - @length * @width
+          (box_length * box_width) - (@length * @width)
         when SCORE_BESTSHORTSIDE_FIT
           # Returns the smallest difference in one dimension.
           [(box_length - @length).abs, (box_width - @width).abs].min
@@ -80,7 +80,7 @@ module Ladb::OpenCutList::BinPacking2D
           # Returns the largest difference in one dimension.
           [(box_length - @length).abs, (box_width - @width).abs].max
         when SCORE_WORSTAREA_FIT
-          -(box_length * box_width - @length * @width)
+          -((box_length * box_width) - (@length * @width))
         when SCORE_WORSTSHORTSIDE_FIT
           -[(box_length - @length).abs, (box_width - @width).abs].min
         when SCORE_WORSTLONGSIDE_FIT
@@ -141,7 +141,7 @@ module Ladb::OpenCutList::BinPacking2D
       when SPLIT_VERTICAL_FIRST
         false
       else
-        raise(Packing2DError, "Split heuristic not implemented in bin.select_horizontal_first!")
+        raise(Packing2DError, 'Split heuristic not implemented in bin.select_horizontal_first!')
       end
     end
 
@@ -223,7 +223,7 @@ module Ladb::OpenCutList::BinPacking2D
       new_boxes, more_cuts = unmake_superbox(box)
       new_cuts += more_cuts
 
-      return [new_leftovers, new_cuts, new_boxes]
+      [new_leftovers, new_cuts, new_boxes]
     end
 
     #
@@ -235,9 +235,9 @@ module Ladb::OpenCutList::BinPacking2D
       unpacked_boxes = []
       new_cuts = []
 
-      if sbox.is_a?(SuperBox)
+      if sbox.instance_of?(SuperBox)
         if sbox.sboxes.size == 1
-          single_box = sbox.sboxes.shift()
+          single_box = sbox.sboxes.shift
           single_box.set_position(sbox.x, sbox.y)
           unpacked_boxes << single_box
         elsif (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
@@ -267,10 +267,10 @@ module Ladb::OpenCutList::BinPacking2D
             offset += box.width
           end
         end
-      elsif sbox.is_a?(Box)
+      elsif sbox.instance_of?(Box)
         unpacked_boxes << sbox
       else
-        raise(Packing2DError, "Unpacking weird stuff in bin.unmake_superbox!")
+        raise(Packing2DError, 'Unpacking weird stuff in bin.unmake_superbox!')
       end
       [unpacked_boxes, new_cuts]
     end
@@ -279,8 +279,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      s = "lft : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, #{"%9.2f" % @length}, #{"%9.2f" % @width}], "
-      s + "lvl = #{"%3d" % @level}, area = #{"%12.2f" % area()}"
+      s = "lft : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
+      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}, "
+      s << "#{format('%9.2f', @width)}], lvl = #{format('%3d', @level)}, "
+      s << "area = #{format('%12.2f', area)}"
+      s
     end
 
     #

@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Core computing for 2D Bin Packing.
   #
   class Packer < Packing2D
-
     # Array of input bins and boxes.
     attr_reader :bins, :boxes
 
@@ -104,7 +104,7 @@ module Ladb::OpenCutList::BinPacking2D
       # Make copies of unused bins so that each packer has its own instances
       @previous_packer.unused_bins.each do |bin|
         new_bin = Bin.new(bin.length, bin.width, bin.type, @options, 0)
-        @next_bin_index = new_bin.set_index(bin.index)
+        @next_bin_index = new_bin.update_index(bin.index)
         @bins << new_bin
       end
 
@@ -173,7 +173,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns true if standard Bins can be infinitely added.
     #
     def bins_can_be_added?
-      (@options.base_length - 2 * @options.trimsize > EPS && @options.base_width - 2 * @options.trimsize > EPS) || !@bins.empty?
+      ((@options.base_length - (2 * @options.trimsize) > EPS) && \
+       (@options.base_width - (2 * @options.trimsize) > EPS)) || !@bins.empty?
     end
 
     #
@@ -220,7 +221,7 @@ module Ladb::OpenCutList::BinPacking2D
           @boxes = ll.zip(ls).flatten!.compact
         end
       else
-        raise(Packing2DError, "Presorting option not available in packer.sort_boxes!")
+        raise(Packing2DError, 'Presorting option not available in packer.sort_boxes!')
       end
     end
 
@@ -290,8 +291,8 @@ module Ladb::OpenCutList::BinPacking2D
       return false if current_bin.nil?
 
       # Compute maximal stacking length/width.
-      @stacking_maxlength = current_bin.length - 2 * @options.trimsize
-      @stacking_maxwidth = current_bin.width - 2 * @options.trimsize
+      @stacking_maxlength = current_bin.length - (2 * @options.trimsize)
+      @stacking_maxwidth = current_bin.width - (2 * @options.trimsize)
 
       # Depending on Bin, some Boxes may be placeable.
       @boxes += @invalid_boxes
@@ -314,13 +315,13 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Gets the next available bin from the offcuts or produce one.
     #
-    def get_next_bin
+    def consume_next_bin
       bin = nil
       if !@bins.empty?
         bin = @bins.shift
       elsif bins_can_be_added?
         bin = Bin.new(@options.base_length, @options.base_width, BIN_TYPE_AUTO_GENERATED, @options)
-        @next_bin_index = bin.set_index(@next_bin_index)
+        @next_bin_index = bin.update_index(@next_bin_index)
       end
       bin
     end
@@ -339,9 +340,10 @@ module Ladb::OpenCutList::BinPacking2D
         # Get the next Bin. If there are offcuts, this will be the smallest
         # in area, if not it will be a standard Bin, or nil if no Bin can be
         # produced. At this point we do not yet have Superboxes!
-        current_bin = get_next_bin
+        current_bin = consume_next_bin
         # Packing cannot proceed, return with what we have.
         return ERROR_NO_PLACEMENT_POSSIBLE if current_bin.nil?
+
         # Partition the Boxes into @boxes and @invalid_boxes, those that cannot
         # fit into this bin, also makes SuperBoxes if required.
         if can_be_packed?(current_bin)
@@ -361,7 +363,7 @@ module Ladb::OpenCutList::BinPacking2D
             current_bin.keep_signature(@options.signature)
             @packed_bins << current_bin
             @unplaced_boxes = unmake_superboxes(@boxes)
-            if !@invalid_boxes.empty?
+            unless @invalid_boxes.empty?
               @unplaced_boxes += @invalid_boxes
               @invalid_boxes = []
             end
@@ -375,21 +377,21 @@ module Ladb::OpenCutList::BinPacking2D
           # Boxes cannot fit into Bin, mark this Bin as unused.
           @unused_bins << current_bin
           @boxes = unmake_superboxes(@boxes)
-          if !bins_can_be_added?
-            # We are done with packing.
-            @unplaced_boxes = @boxes
-            if !@invalid_boxes.empty?
-              @unplaced_boxes += @invalid_boxes
-              @invalid_boxes = []
-            end
-            @boxes = []
-            return ERROR_NO_BIN
-          else
+          if bins_can_be_added?
             # Reassign invalid boxes to boxes and hope they will find a Bin.
             # This is the case when an offcut cannot fit any Box, but a
             # Standard Bin can still be generated.
             @boxes += @invalid_boxes
             @invalid_boxes = []
+          else
+            # We are done with packing.
+            @unplaced_boxes = @boxes
+            unless @invalid_boxes.empty?
+              @unplaced_boxes += @invalid_boxes
+              @invalid_boxes = []
+            end
+            @boxes = []
+            return ERROR_NO_BIN
           end
         else
           # Silently drop the last Bin, not used.
@@ -411,6 +413,15 @@ module Ladb::OpenCutList::BinPacking2D
         until @boxes.empty?
           # Select next box and get ranked score from current_bin.
           box = @boxes.shift
+
+          # Recompute bounding box, while packing!
+          # Remove this until version 2.1 and further tests.
+          # if current_bin.boxes.size > 2 && box.different?(previous_box)
+          #  current_bin.bounding_box(box, false)
+          # This would be a good place to make a rectangle merge, but
+          # 26.txt shows that this is not possible!
+          # Only recompute bounding box when no merge is possible!
+          # end
 
           score = current_bin.best_ranked_score(box)
 
@@ -486,10 +497,10 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def no_box_left_behind(must_have_nb)
       have_nb = @gstat[:nb_packed_boxes] + @gstat[:nb_invalid_boxes] + @gstat[:nb_unplaced_boxes]
-      if have_nb != must_have_nb
-        p(to_str)
-        raise(Packing2DError, "Lost boxes in packing process have=#{have_nb} <> must_have=#{must_have_nb}!")
-      end
+      return unless have_nb != must_have_nb
+
+      p(to_str)
+      raise(Packing2DError, "Lost boxes in packing process have=#{have_nb} <> must_have=#{must_have_nb}!")
     end
 
     def all_signatures
@@ -513,37 +524,34 @@ module Ladb::OpenCutList::BinPacking2D
       debug_old = @options.debug
       @options.set_debug(true)
 
-      dbg("-> Packing Summary")
+      dbg('-> Packing Summary')
       @packed_bins.each do |bin|
         dbg("\n   single packer stats #{bin.index}")
-        dbg("    nb_packed_boxes            #{"%5d" % bin.stat[:nb_packed_boxes]}")
-        dbg("    efficiency                #{"%6.2f" % bin.stat[:efficiency]}")
-        dbg("    nb_leftovers               #{"%5d" % bin.stat[:nb_leftovers]}")
-        dbg("    outer leftover      #{"%12.2f" % bin.stat[:outer_leftover_area]}")
-        dbg("    length_cuts         #{"%12.2f" % bin.stat[:length_cuts]}")
-        dbg("    nb_cuts                    #{"%5d" % bin.stat[:nb_cuts]}")
-        dbg("    nb_h_through_cuts          #{"%5d" % bin.stat[:nb_h_through_cuts]}")
-        dbg("    nb_v_through_cuts          #{"%5d" % bin.stat[:nb_v_through_cuts]}")
-
+        dbg("    nb_packed_boxes            #{format('%5d', bin.stat[:nb_packed_boxes])}")
+        dbg("    efficiency                #{format('%6.2f', bin.stat[:efficiency])}")
+        dbg("    nb_leftovers               #{format('%5d', bin.stat[:nb_leftovers])}")
+        dbg("    outer leftover      #{format('%12.2f', bin.stat[:outer_leftover_area])}")
+        dbg("    length_cuts         #{format('%12.2f', bin.stat[:length_cuts])}")
+        dbg("    nb_cuts                    #{format('%5d', bin.stat[:nb_cuts])}")
+        dbg("    nb_h_through_cuts          #{format('%5d', bin.stat[:nb_h_through_cuts])}")
+        dbg("    nb_v_through_cuts          #{format('%5d', bin.stat[:nb_v_through_cuts])}")
         dbg("\n")
         bin.to_term
       end
 
       dbg("\n   general stats (accumulated)")
-      dbg("    nb_input_boxes             #{"%5d" % @gstat[:nb_input_boxes]}")
-      dbg("    nb_invalid_boxes           #{"%5d" % @gstat[:nb_invalid_boxes]}")
-      dbg("    nb_packed_boxes            #{"%5d" % @gstat[:nb_packed_boxes]}")
-      dbg("    nb_unplaced_boxes          #{"%5d" % @gstat[:nb_unplaced_boxes]}")
-      dbg("    nb_packed_bins             #{"%5d" % @gstat[:nb_packed_bins]}")
-      dbg("    nb_unused_bins             #{"%5d" % @gstat[:nb_unused_bins]}")
-      dbg("    nb_invalid_bins            #{"%5d" % @gstat[:nb_invalid_bins]}")
-      dbg("    nb_leftovers               #{"%5d" % @gstat[:nb_leftovers]}")
-      dbg("    all_largest_area    #{"%12.2f" % @gstat[:all_largest_area]}")
-      dbg("    total_length_cuts   #{"%12.2f" % @gstat[:total_length_cuts]}")
-      dbg("    total_nb_cuts              #{"%5d" % @gstat[:total_nb_cuts]}")
-      dbg("    nb_through_cuts            #{"%5d" % @gstat[:nb_through_cuts]}")
-      #dbg("    avg compactness           #{"%6.2f" % (@gstat[:total_compactness] / @gstat[:nb_packed_bins])}")
-
+      dbg("    nb_input_boxes             #{format('%5d', @gstat[:nb_input_boxes])}")
+      dbg("    nb_invalid_boxes           #{format('%5d', @gstat[:nb_invalid_boxes])}")
+      dbg("    nb_packed_boxes            #{format('%5d', @gstat[:nb_packed_boxes])}")
+      dbg("    nb_unplaced_boxes          #{format('%5d', @gstat[:nb_unplaced_boxes])}")
+      dbg("    nb_packed_bins             #{format('%5d', @gstat[:nb_packed_bins])}")
+      dbg("    nb_unused_bins             #{format('%5d', @gstat[:nb_unused_bins])}")
+      dbg("    nb_invalid_bins            #{format('%5d', @gstat[:nb_invalid_bins])}")
+      dbg("    nb_leftovers               #{format('%5d', @gstat[:nb_leftovers])}")
+      dbg("    all_largest_area    #{format('%12.2f', @gstat[:all_largest_area])}")
+      dbg("    total_length_cuts   #{format('%12.2f', @gstat[:total_length_cuts])}")
+      dbg("    total_nb_cuts              #{format('%5d', @gstat[:total_nb_cuts])}")
+      dbg("    nb_through_cuts            #{format('%5d', @gstat[:nb_through_cuts])}")
       dbg("\n   unused bins")
       @unused_bins.each do |bin|
         dbg("    #{bin.to_str}")
@@ -577,13 +585,13 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Prints the packing as a Matlab/Octave graphics.
     #
-    def octave(id, directory = "./results")
-      dbg("-> printing octave")
+    def octave(id, directory = './results')
+      dbg('-> printing octave')
       # FileUtils.rm_f Dir.glob("#{directory}/res*.m")
       @packed_bins.each do |bin|
         dbg("   bin #{bin.index}")
         filename = "#{directory}/res_#{id}_#{bin.index}.m"
-        f = File.open(filename, "w")
+        f = File.open(filename, 'w')
         bin.octave(f)
       end
     end

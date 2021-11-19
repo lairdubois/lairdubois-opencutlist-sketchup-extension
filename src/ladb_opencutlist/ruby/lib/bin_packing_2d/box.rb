@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking2D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking2D
   #
   # Implements an element to pack into a Bin.
   #
   class Box
-
     # Position of this Box inside the enclosing Bin.
     attr_reader :x, :y
 
@@ -32,7 +32,8 @@ module Ladb::OpenCutList::BinPacking2D
       @length = length * 1.0
       @width = width * 1.0
 
-      raise(Packing2DError, "Trying to initialize a box with zero or negative length/width!") if @length <= 0.0 || @width <= 0.0
+      raise(Packing2DError, 'Trying to initialize a box with zero or negative length/width!') \
+        if @length <= 0.0 || @width <= 0.0
 
       @rotatable = rotatable
       @rotated = false
@@ -50,39 +51,39 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns true if the Box was rotated.
     #
     def rotated?
-      return @rotated
+      @rotated
     end
 
     #
     # Rotates the Box by 90 deg. if option permits.
     #
     def rotate
-      if @rotatable
-        # Only rotate if length and width are different, otherwise does not
-        # make sense.
-        if (@length - @width).abs > EPS
-          @width, @length = [@length, @width]
-          @rotated = !@rotated
-        end
-      end
+      return unless @rotatable || (@length - @width).abs < EPS
+
+      # Only rotate if length and width are different, otherwise does not
+      # make sense.
+      @width, @length = [@length, @width]
+      @rotated = !@rotated
     end
 
     #
     # Sets the position of this Box inside a Bin when placed into a Leftover by Packer.
     #
-    def set_position(x, y)
-      @x = x
-      @y = y
-      raise(Packing2DError, "Trying to initialize a box with negative x or y!") if @x < 0.0 || @y < 0.0
+    def set_position(x_pos, y_pos)
+      @x = x_pos
+      @y = y_pos
+      raise(Packing2DError, 'Trying to initialize a box with negative x or y!') if @x < 0.0 || @y < 0.0
     end
 
     #
     # Checks if this Box would fit into a rectangle given by length and width.
     #
     def fits_into?(length, width)
-      # EPS tolerance because of conversion from mm to decimal inches!
+      # EPS tolerance because of SketchUp conversion from mm to decimal inches!
       return true if length - @length >= -EPS && width - @width >= -EPS
+
       return true if @rotatable && width - @length >= -EPS && length - @width >= -EPS
+
       false
     end
 
@@ -122,9 +123,11 @@ module Ladb::OpenCutList::BinPacking2D
     def different?(box)
       return true if box.nil?
 
-      return true if (@length - box.length).abs > box.length * DIFF_PERCENTAGE_BOX || (@width - box.width).abs > box.width * DIFF_PERCENTAGE_BOX
+      return true if (@length - box.length).abs > box.length * DIFF_PERCENTAGE_BOX || \
+                     (@width - box.width).abs > box.width * DIFF_PERCENTAGE_BOX
 
-      return true if @rotatable && ((@length - box.width).abs >= box.length * DIFF_PERCENTAGE_BOX || (@width - box.length).abs >= box.width * DIFF_PERCENTAGE_BOX)
+      return true if @rotatable && ((@length - box.width).abs >= box.length * DIFF_PERCENTAGE_BOX || \
+                                    (@width - box.length).abs >= box.width * DIFF_PERCENTAGE_BOX)
 
       false
     end
@@ -133,17 +136,21 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      "box : #{"%5d" % object_id} [#{"%9.2f" % @x}, #{"%9.2f" % @y}, " \
-      "#{"%9.2f" % @length}, #{"%9.2f" % @width}], " \
-      "rotated = #{@rotated}[rotatable=#{@rotatable}]"
+      s = "box : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
+      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}, "
+      s << "#{format('%9.2f', @width)}], "
+      s << "rotated = #{@rotated}[rotatable=#{@rotatable}]"
+      s
     end
 
     #
     # Debugging!
     #
     def to_octave
-      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], " \
-      "\"Facecolor\", blue); # box"
+      s = 'rectangle("Position",'
+      s << "[#{@x},#{@y},#{@length},#{@width}], "
+      s << '"Facecolor", blue);' # box"
+      s
     end
   end
 end
