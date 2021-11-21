@@ -147,7 +147,7 @@ tab:
     help: |
       Seleccione las partes de la escena actual que le gustaría incluir en la lista de partes y luego haga clic en el botón **Generar**.
       Si la selección está vacía, todos los componentes visibles de la escena se incluirán en la lista de piezas.
-    selection_only: Selección
+    is_selection: Selección
     material_undefined: Ningún material definido
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."
       warning:
-        selection_only: Este diagrama de corte está limitado a **piezas seleccionadas**.
+        is_part_selection: Este diagrama de corte está limitado a **piezas seleccionadas**.
         cutting_dimensions: |
           Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
       warning:
-        selection_only: Estas etiquetas están limitadas a **piezas seleccionadas** únicamente
+        is_part_selection: Estas etiquetas están limitadas a **piezas seleccionadas** únicamente
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: La pieza seleccionada no existe en la lista de piezas.
       obsolete_cutlist: "Imposible, la lista de piezas está obsoleta. Regenerarlo."
     warning:
-      partial_cutlist: "Esta lista de piezas es una representación parcial de su modelo, porque solo se basa en una selección de piezas."
+      is_entity_selection: "Esta lista de piezas es una representación parcial de su modelo, porque solo se basa en una selección de piezas."
       no_typed_materials_in_model: "Su modelo no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Su selección no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Su exportación no contiene ninguna parte.

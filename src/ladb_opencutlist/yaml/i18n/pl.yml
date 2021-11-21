@@ -147,7 +147,7 @@ tab:
     help: |
       Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
       Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części
-    selection_only: Wybór
+    is_selection: Wybór
     material_undefined: Brak zdefiniowanego materiału
     not_available_std_width: Niezdefiniowana szerokość
     not_available_std_thickness: Niezdefiniowana grubość
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
         unplaced_parts_plural: "Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
       warning:
-        selection_only: Ten schemat cięcia jest ograniczony do **wybranych części**.
+        is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: |
           Ten rozkrój używa **wstępnych** wymiarów części.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
       warning:
-        selection_only: Te etykiety są ograniczone tylko do **wybranych części**
+        is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: Wybrana część nie istnieje na liście części.
       obsolete_cutlist: "Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją."
     warning:
-      partial_cutlist: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
+      is_entity_selection: "Ta lista części jest częściową reprezentacją Twojego modelu, ponieważ jest oparta tylko na wybranych częściach."
       no_typed_materials_in_model: "Ten model nie używa żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**)."
       export_empty: Twója selekcja do eksportu nie zawiera żadnych części.

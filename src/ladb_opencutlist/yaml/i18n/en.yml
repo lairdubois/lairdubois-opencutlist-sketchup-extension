@@ -147,7 +147,7 @@ tab:
     help: |
       Select the parts to be used for the parts list in the current scene and click **Generate**.
       If the selection is empty, all visible components of the scene will be used to compute the list.
-    selection_only: Selection
+    is_selection: Selection
     material_undefined: No material defined
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 part** could not be placed, because it is too large to fit."
         unplaced_parts_plural: "There are **{{ count }} parts** which could not be placed because they are too large to fit."
       warning:
-        selection_only: This cutting diagram is limited to the **selected parts**.
+        is_part_selection: This cutting diagram is limited to the **selected parts**.
         cutting_dimensions: |
           This cutting diagramm uses the **raw** dimensions of the parts.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
-        selection_only: These labels are limited to **selected parts** only
+        is_part_selection: These labels are limited to **selected parts** only
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: The selected part does not exist in the parts list.
       obsolete_cutlist: "Impossible, the parts list is obsolete. Please, regenerate it."
     warning:
-      partial_cutlist: "This parts list is a partial representation of your model, because it is only based on a selection of parts."
+      is_entity_selection: "This parts list is a partial representation of your model, because it is only based on a selection of parts."
       no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Your export selection does not contain any part.

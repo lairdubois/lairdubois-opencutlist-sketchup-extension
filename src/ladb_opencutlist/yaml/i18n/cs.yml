@@ -147,7 +147,7 @@ tab:
     help: |
       Vyberte části v aktuální scéně, které chcete zahrnout do kusovníku, a poté klikněte na tlačítko **Generovat**.
       Pokud je výběr prázdný, budou do kusovníku zahrnuty všechny viditelné součásti scény.
-    selection_only: Pouze výběr
+    is_selection: Pouze výběr
     material_undefined: Není definován žádný materiál
     not_available_std_width: Šířka není definovaná
     not_available_std_thickness: Tloušťka není definovaná
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 část** nelze umístit, protože je příliš velká, nevleze se."
         unplaced_parts_plural: "Existují části **{{ count }}** nelze umístit, protože je příliš velká, nevleze se."
       warning:
-        selection_only: Tento nářezový plán je omezen na **vybrané části**.
+        is_part_selection: Tento nářezový plán je omezen na **vybrané části**.
         cutting_dimensions: |
           Tento nářezový plán používá **hrubé** rozměry dílů.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Zadané konfigurační parametry neumožňují nastavení platné velikosti štítku.
       warning:
-        selection_only: Tyto štítky jsou omezeny pouze na **vybrané části**
+        is_part_selection: Tyto štítky jsou omezeny pouze na **vybrané části**
     error:
       no_model: Model nejde otevřít. Potřebujeme více informací ;)
       no_entities: Váš model je prázdný. Potřebujeme více informací ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: Vybraný dílec neexistuje v kusovníku.
       obsolete_cutlist: "Je možné, že kusovník je zastaralý. Vygenerujte ho znovu."
     warning:
-      partial_cutlist: Tento kusovník je vytvořen pouze z vybraných dílců.
+      is_entity_selection: Tento kusovník je vytvořen pouze z vybraných dílců.
       no_typed_materials_in_model: "Váš model nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Výběr nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Váš export neobsahuje žádné dílce.

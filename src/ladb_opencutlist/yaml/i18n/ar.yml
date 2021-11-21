@@ -147,7 +147,7 @@ tab:
     help: |
       حدد القطع التي ستستعمل في قائمتك في المشهد الحالي و اضغط على **استحداث**.
       إن لم يكن هناك تحديد، فستدخل كل العناصر المرئية داخل المشهد في حساب قائمة القطع.
-    selection_only: تحديد
+    is_selection: تحديد
     material_undefined: بلا خامة
     not_available_std_width: العرض غير معيّن
     not_available_std_thickness: السمك غير معيّن
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "هناك **1 قطعة** لا يمكن أن تُدرج لأنها أكبر من أن تُحتوى."
         unplaced_parts_plural: "هناك **{{ count }} قطع** لا يمكن أن تدرج لأنها أكبر من أن تُحتوى."
       warning:
-        selection_only: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
+        is_part_selection: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
         cutting_dimensions: |
           يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: لا تسمح مُعلِّمات التكوين المُدخلة بتعيين حجم صالح للملصق.
       warning:
-        selection_only: هذه الملصقات محدودة بـ **القطع المحددة** فحسب
+        is_part_selection: هذه الملصقات محدودة بـ **القطع المحددة** فحسب
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: القطعة المحددة غير موجودة في قائمة القطع
       obsolete_cutlist: مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:
-      partial_cutlist: قائمة القِطع هذه هي تمثيل جزئي لنموذجك، لأنه تدخل فيها بعض القطع المحددة فحسب.
+      is_entity_selection: قائمة القِطع هذه هي تمثيل جزئي لنموذجك، لأنه تدخل فيها بعض القطع المحددة فحسب.
       no_typed_materials_in_model: لا يستعمل نموذجك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**)
       no_typed_materials_in_selection: لا تستعمل في تحديدك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**)
       export_empty: تصديرك لا يحتوي أي قطعة.

@@ -147,7 +147,7 @@ tab:
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
       Falls die Auswahl leer ist, werden alle sichtbaren Komponenten der Szene für die Holzliste verwendet.
-    selection_only: Auswahl
+    is_selection: Nur Auswahl
     material_undefined: Kein Material definiert
     not_available_std_width: Breite nicht verfügbar
     not_available_std_thickness: Dicke nicht verfügbar
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} zu große Teile** konnten nicht platziert werden."
       warning:
-        selection_only: Der Schnittplan beschränkt sich auf die **ausgewählten Teile**.
+        is_part_selection: Der Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: |
           Dieser Schnittplan verwendet die **Rohmaße** der Teile.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
-        selection_only: Diese Etiketten beschränken sich auf **ausgewählte Teile**
+        is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren."
     warning:
-      partial_cutlist: "Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde."
+      is_entity_selection: "Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde."
       no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       export_empty: Ihre Exportauswahl enthält keine Teile.

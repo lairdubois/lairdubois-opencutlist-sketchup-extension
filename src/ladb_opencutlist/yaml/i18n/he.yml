@@ -147,7 +147,7 @@ tab:
     help: |
       בחרו את החלקים הדרושים לתוכנית חיתוך ולחצו על כפתור **חשב**.
       אם לא נעשתה בחירה, כל החלקים הגלויים ייכללו ברשימת החלקים.
-    selection_only: בחירה
+    is_selection: בחירה
     material_undefined: חומר לא מוגדר
     not_available_std_width: רוחב לא מוגדר
     not_available_std_thickness: עובי לא מוגדר
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
         unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
       warning:
-        selection_only: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
+        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
         cutting_dimensions: |
           תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
       warning:
-        selection_only: תוויות אלה מוגבלות ל**חלקים נבחרים**
+        is_part_selection: תוויות אלה מוגבלות ל**חלקים נבחרים**
     error:
       no_model: המודל לא נפתח. נצטרך לתת לי קצת יותר מידע ;)
       no_entities: המודל ריק. נצטרך לתת לי קצת יותר מידע ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: החלק שנבחר אינו קיים בתוכנית חיתוך.
       obsolete_cutlist: "לא ניתן, תוכנית חיתוך לא מעודכנת. ליצור מחדש."
     warning:
-      partial_cutlist: תוכנית חיתוך כוללת רק מודל חלקי מכיוון שהוא נוצר מאלמנטים שנבחרו.
+      is_entity_selection: תוכנית חיתוך כוללת רק מודל חלקי מכיוון שהוא נוצר מאלמנטים שנבחרו.
       no_typed_materials_in_model: "המודל לא משתמש בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "הבחירה אינה משתמשת בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**)."
       export_empty: הייצוא אינו מכיל חלקים כלשהם.

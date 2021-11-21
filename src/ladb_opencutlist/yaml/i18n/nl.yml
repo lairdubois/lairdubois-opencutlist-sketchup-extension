@@ -147,7 +147,7 @@ tab:
     help: |
       Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
       Wanneer niets geselecteerd is worden alle zichtbare onderdelen van de scene gebruikt om de onderdelenlijst te genereren.
-    selection_only: Selectie
+    is_selection: Selectie
     material_undefined: Geen materiaal gedefinieerd
     not_available_std_width: Breedte niet gedefinieerd
     not_available_std_thickness: Dikte niet gedefinieerd
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 onderdeel** is te groot om geplaatst te worden."
         unplaced_parts_plural: "**{{ count }} onderdelen** zijn te groot om geplaatst te worden."
       warning:
-        selection_only: Het zaagplan beperkt zich tot **geselecteerde onderdelen**
+        is_part_selection: Het zaagplan beperkt zich tot **geselecteerde onderdelen**
         cutting_dimensions: |
           Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
-        selection_only: Deze labels zijn beperkt tot **geselecteerde onderdelen**
+        is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: Het geselecteerde onderdeel bestaat niet in de stuklijst.
       obsolete_cutlist: Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
     warning:
-      partial_cutlist: Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
+      is_entity_selection: Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
       no_typed_materials_in_model: "Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**)."
       export_empty: Uw export bevat geen enkel onderdeel.
