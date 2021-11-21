@@ -147,7 +147,7 @@ tab:
     help: |
       Seleccione las partes de la escena actual que le gustaría incluir en la lista de partes y luego haga clic en el botón **Generar**.
       Si la selección está vacía, todos los componentes visibles de la escena se incluirán en la lista de piezas.
-    is_selection: Selección
+    is_selection: Sólo selección
     material_undefined: Ningún material definido
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido

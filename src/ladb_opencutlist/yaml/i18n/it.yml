@@ -147,7 +147,7 @@ tab:
     help: |
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
-    is_selection: Selezionati
+    is_selection: Selezionati solo
     material_undefined: Nessun materiale definito
     not_available_std_width: Larghezza non standard
     not_available_std_thickness: Spessore non standard

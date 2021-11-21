@@ -147,7 +147,7 @@ tab:
     help: |
       Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
       Wanneer niets geselecteerd is worden alle zichtbare onderdelen van de scene gebruikt om de onderdelenlijst te genereren.
-    is_selection: Selectie
+    is_selection: Selectie alleen
     material_undefined: Geen materiaal gedefinieerd
     not_available_std_width: Breedte niet gedefinieerd
     not_available_std_thickness: Dikte niet gedefinieerd

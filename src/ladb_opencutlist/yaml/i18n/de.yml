@@ -738,7 +738,7 @@ tab:
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren."
     warning:
-      is_entity_selection: "Diese Holzliste ist nur eine Teildarstellung ihres Modells, da lediglich eine Auswahl berücksichtigt wurde."
+      is_entity_selection: Nur die in Ihrem Modell ausgewählten Teile wurden berücksichtigt.
       no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       export_empty: Ihre Exportauswahl enthält keine Teile.

@@ -147,7 +147,7 @@ tab:
     help: |
       Selecione as peças na cena atual para incluir na lista e clique no botão **Gerar**.
       Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Planilha de Produção.
-    is_selection: Seleção
+    is_selection: Somente seleção
     material_undefined: Nenhum material definido
     not_available_std_width: Largura indefinida
     not_available_std_thickness: Espessura indefinida

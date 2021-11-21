@@ -147,7 +147,7 @@ tab:
     help: |
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
-    is_selection: Selection seulement
+    is_selection: Sélection seulement
     material_undefined: Sans matière
     not_available_std_width: Largeur non standard
     not_available_std_thickness: Épaisseur non standard
