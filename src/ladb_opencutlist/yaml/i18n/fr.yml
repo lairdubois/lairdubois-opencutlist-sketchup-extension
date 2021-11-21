@@ -50,7 +50,7 @@ default:
   thickness_layer_single: couche
   thickness_layer_plural: couches
   setup_model_units: Configurer les unités du modèle
-  load_more: "Charger la suite..."
+  load_more: Charger la suite
   reset_to_app_defaults: Restaurer aux valeurs d'origine
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Vous disposez de la dernière version d'*OpenCutList*.
 
       *Afin de nous aider à proposer encore plus d'améliorations, n'hésitez pas à soutenir financièrement le projet !*
-    downloading: Téléchargement en cours...
+    downloading: Téléchargement en cours
     changelog: Quoi de neuf ?
     ignore_update: Ignorer cette mise à jour
     download_rescue: Un problème lors du téléchargement ?
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
       tags_filter: Tags à filtrer
-      dimensions_help: Comprendre les dimensions...
+      dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
       material_type: Type
       material_thickness: Matière / Dimension
@@ -571,7 +571,7 @@ tab:
         Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bar_add: Ajouter une taille...
+      option_std_bar_add: Ajouter une taille
       option_std_bar_none: Aucune
       option_scrap_bar_dimensional_lengths: Restes de barre
       option_scrap_bar_edge_lengths: Restes de bande
@@ -586,7 +586,7 @@ tab:
         Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_sheet_add: Ajouter une taille...
+      option_std_sheet_add: Ajouter une taille
       option_std_sheet_none: Aucun
       option_scrap_sheet_sizes: Restes de panneau
       option_scrap_sheet_sizes_placeholder: longueur x largeur x quantité ; ...
