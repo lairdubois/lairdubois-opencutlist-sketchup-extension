@@ -40,6 +40,9 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
 
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
       group = @cutlist.get_group(@group_id)
       return { :errors => [ 'default.error' ] } unless group
 
@@ -88,9 +91,15 @@ module Ladb::OpenCutList
         end
       }
 
+      # Start model modification operation - Disable UI during process
+      model.start_operation('OpenCutList - Cutting diagram 2D', true, false, true)
+
       # Compute the cutting diagram
       # Start and end message to keep user happy!
       result, err = e.run(Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.start_msg'), Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.end_msg'))
+
+      # Commit model modification operation
+      model.commit_operation
 
       # Response
       # --------
@@ -134,7 +143,7 @@ module Ladb::OpenCutList
         material = materials[group.material_name]
         material_attributes = MaterialAttributes.new(material)
         if @part_ids
-          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.selection_only'
+          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.is_part_selection'
         end
         if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
           cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'

@@ -6,25 +6,25 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :selection_only, :length_unit, :currency_symbol, :mass_unit_strippedname, :dir, :filename, :model_name, :model_description, :page_label, :max_number, :instance_count, :ignored_instance_count, :solid_wood_material_count, :sheet_good_material_count, :dimensional_material_count, :edge_material_count, :hardware_material_count
+    attr_accessor :dir, :filename, :model_name, :model_description, :page_label, :max_number, :is_entity_selection, :length_unit, :currency_symbol, :mass_unit_strippedname, :instance_count, :ignored_instance_count, :solid_wood_material_count, :sheet_good_material_count, :dimensional_material_count, :edge_material_count, :hardware_material_count
     attr_reader :errors, :warnings, :tips, :used_tags, :material_usages, :groups
 
-    def initialize(selection_only, length_unit, mass_unit_strippedname, currency_symbol, dir, filename, model_name, model_description, page_label, instance_count)
+    def initialize(dir, filename, model_name, model_description, page_label, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, instance_count)
       @_obsolete = false
       @_observers = []
 
       @errors = []
       @warnings = []
       @tips = []
-      @selection_only = selection_only
-      @length_unit = length_unit
-      @mass_unit_strippedname = mass_unit_strippedname
-      @currency_symbol = currency_symbol
       @dir = dir
       @filename = filename
       @model_name = model_name
       @model_description = model_description
       @page_label = page_label
+      @is_entity_selection = is_entity_selection
+      @length_unit = length_unit
+      @mass_unit_strippedname = mass_unit_strippedname
+      @currency_symbol = currency_symbol
       @instance_count = instance_count
       @ignored_instance_count = 0
       @max_number = nil

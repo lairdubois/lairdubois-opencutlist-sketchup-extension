@@ -65,14 +65,14 @@ module Ladb::OpenCutList
       if model
         if model.selection.empty?
           entities = model.active_entities
-          selection_only = false
+          is_entity_selection = false
         else
           entities = model.selection
-          selection_only = true
+          is_entity_selection = true
         end
       else
         entities = []
-        selection_only = false
+        is_entity_selection = false
       end
 
       # Fetch component instances in given entities
@@ -91,7 +91,7 @@ module Ladb::OpenCutList
       page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
 
       # Create cut list
-      cutlist = Cutlist.new(selection_only, length_unit, mass_unit_strippedname, currency_symbol, dir, filename, model_name, model_description, page_label, @instance_infos_cache.length)
+      cutlist = Cutlist.new(dir, filename, model_name, model_description, page_label, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0
@@ -99,7 +99,7 @@ module Ladb::OpenCutList
           if entities.length == 0
             cutlist.add_error('tab.cutlist.error.no_entities')
           else
-            if selection_only
+            if is_entity_selection
               cutlist.add_error('tab.cutlist.error.no_component_in_selection')
             else
               cutlist.add_error('tab.cutlist.error.no_component_in_model')
@@ -556,7 +556,7 @@ module Ladb::OpenCutList
           end
         }
         if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.hardware_material_count == 0
-          cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{selection_only ? "selection" : "model"}")
+          cutlist.add_warning("tab.cutlist.warning.no_typed_materials_in_#{is_entity_selection ? "selection" : "model"}")
           cutlist.add_tip("tab.cutlist.tip.no_typed_materials")
         end
       end

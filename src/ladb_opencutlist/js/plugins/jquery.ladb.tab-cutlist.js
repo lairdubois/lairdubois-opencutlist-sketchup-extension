@@ -21,7 +21,10 @@
 
         this.generateAt = null;
         this.filename = null;
+        this.modelName = null;
+        this.modelDescription = null;
         this.pageLabel = null;
+        this.selectionOnly = null;
         this.lengthUnit = null;
         this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
@@ -80,14 +83,14 @@
             var errors = response.errors;
             var warnings = response.warnings;
             var tips = response.tips;
-            var selectionOnly = response.selection_only;
-            var lengthUnit = response.length_unit;
-            var massUnitStrippedname = response.mass_unit_strippedname;
-            var currencySymbol = response.currency_symbol;
             var filename = response.filename;
             var modelName = response.model_name;
             var modelDescription = response.model_description;
             var pageLabel = response.page_label;
+            var isEntitySelection = response.is_entity_selection;
+            var lengthUnit = response.length_unit;
+            var massUnitStrippedname = response.mass_unit_strippedname;
+            var currencySymbol = response.currency_symbol;
             var instanceCount = response.instance_count;
             var ignoredInstanceCount = response.ignored_instance_count;
             var usedTags = response.used_tags;
@@ -104,6 +107,7 @@
             that.modelName = modelName;
             that.modelDescription = modelDescription;
             that.pageLabel = pageLabel;
+            that.isEntitySelection = isEntitySelection;
             that.lengthUnit = lengthUnit;
             that.currencySymbol = currencySymbol;
             that.massUnitStrippedname = massUnitStrippedname;
@@ -122,13 +126,13 @@
             // Update filename
             that.$headerExtra.empty();
             that.$headerExtra.append(Twig.twig({ ref: "tabs/cutlist/_header-extra.twig" }).render({
-                selectionOnly: selectionOnly,
                 filename: filename,
                 modelName: modelName,
                 modelDescription: modelDescription,
                 pageLabel: pageLabel,
-                generateAt: that.generateAt,
-                lengthUnit: lengthUnit
+                isEntitySelection: isEntitySelection,
+                lengthUnit: lengthUnit,
+                generateAt: that.generateAt
             }));
 
             // Hide help panel
@@ -843,6 +847,7 @@
                                 modelName: that.modelName,
                                 modelDescription: that.modelDescription,
                                 pageLabel: that.pageLabel,
+                                isEntitySelection: that.isEntitySelection,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
                                 report: response
@@ -1986,7 +1991,7 @@
         var that = this;
 
         var group = this.findGroupById(groupId);
-        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_options', section: groupId }, function (response) {
@@ -1998,7 +2003,7 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', {
                     material_attributes: response,
                     group: group,
-                    selection_only: selectionOnly,
+                    isPartSelection: isPartSelection,
                     tab: forceDefaultTab || that.lastCuttingdiagram1dOptionsTab == null ? 'material' : that.lastCuttingdiagram1dOptionsTab
                 });
 
@@ -2119,7 +2124,7 @@
                     if (typeof generateCallback === 'function') {
                         generateCallback();
                     } else {
-                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null}, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null}, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                 generateOptions: that.generateOptions,
@@ -2128,6 +2133,7 @@
                                 modelName: that.modelName,
                                 modelDescription: that.modelDescription,
                                 pageLabel: that.pageLabel,
+                                isEntitySelection: that.isEntitySelection,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
                                 group: group
@@ -2256,7 +2262,7 @@
         var that = this;
 
         var group = this.findGroupById(groupId);
-        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_options', section: groupId }, function (response) {
@@ -2268,7 +2274,7 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', {
                     material_attributes: response,
                     group: group,
-                    selection_only: selectionOnly,
+                    isPartSelection: isPartSelection,
                     tab: forceDefaultTab || that.lastCuttingdiagram2dOptionsTab == null ? 'material' : that.lastCuttingdiagram2dOptionsTab
                 });
 
@@ -2397,7 +2403,7 @@
                     if (typeof generateCallback === 'function') {
                         generateCallback();
                     } else {
-                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: selectionOnly ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                        rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                             generateOptions: that.generateOptions,
@@ -2406,6 +2412,7 @@
                             modelName: that.modelName,
                             modelDescription: that.modelDescription,
                             pageLabel: that.pageLabel,
+                            isEntitySelection: that.isEntitySelection,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
                             group: group
@@ -2527,7 +2534,7 @@
         var that = this;
 
         var group = this.findGroupById(groupId);
-        var selectionOnly = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve parts to use
         var fnAppendPart = function(parts, part) {
@@ -2541,7 +2548,7 @@
         };
         var parts = [];
         $.each(group.parts, function (index) {
-            if (selectionOnly) {
+            if (isPartSelection) {
                 if (that.selectionPartIds.includes(this.id)) {
                     fnAppendPart(parts, this);
                 }
@@ -2557,7 +2564,7 @@
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: group,
-                selection_only: selectionOnly,
+                isPartSelection: isPartSelection,
                 tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
             });
 
@@ -2742,7 +2749,15 @@
                     labelsOptions.spacing_v = response.spacing_v;
 
                     var errors = [];
+                    var warnings = [];
                     var pages = [];
+
+                    if (isPartSelection) {
+
+                        // Warn for partiel result
+                        warnings.push('tab.cutlist.labels.warning.is_part_selection')
+
+                    }
 
                     if (labelWidth <= 0 || isNaN(labelWidth) || labelHeight <= 0 || isNaN(labelHeight)) {
 
@@ -2816,9 +2831,11 @@
 
                     var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
                         errors: errors,
+                        warnings: warnings,
                         filename: that.filename,
                         modelName: that.modelName,
                         pageLabel: that.pageLabel,
+                        isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
                         group: group,

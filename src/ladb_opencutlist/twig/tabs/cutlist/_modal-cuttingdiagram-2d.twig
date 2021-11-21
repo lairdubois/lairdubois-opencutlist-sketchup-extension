@@ -14,8 +14,8 @@
 {% endblock %}
 
 {% block bodyInner %}
-    {% if selection_only %}
-        <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.selection_only'|i18next }}</div>
+    {% if isPartSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.is_part_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_cuttingdiagram_options_material">

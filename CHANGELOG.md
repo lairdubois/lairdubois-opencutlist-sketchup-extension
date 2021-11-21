@@ -6,6 +6,7 @@ in 2.x, 1.x and 0.x versions.
 
 * 3.0.1 (WIP)
 
+  * Better selection feedbacks in cutlist, cutting diagrams and labels
 
 * 3.0.0 (2021-11-14)
 
