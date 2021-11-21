@@ -50,7 +50,7 @@ default:
   thickness_layer_single: שכבה
   thickness_layer_plural: שכבות
   setup_model_units: הגדרת יחידות במודל
-  load_more: "טען עוד ..."
+  load_more: טען עוד
   reset_to_app_defaults: לשחזר ערכים מקוריים
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       כבר יש לך את הגרסה האחרונה של *OpenCutList*.
 
       *תשקלו לתת חסות לפרויקט זה כדי לתמוך בנו כלכלית ולעזור לנו לשפר את הפונקציונליות שלו!*
-    downloading: טוען ...
+    downloading: טוען
     changelog: "מה חדש?"
     ignore_update: להתעלם מעדכון זה
     download_rescue: "בעיות בהורדה?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "הסינון מציג רק חלקים **{{ count }}** מתוך {{ total }}."
       edge_material_names_filter: סינון לפי חומר קאנט
       tags_filter: סינון לפי תגים
-      dimensions_help: איור מידות...
+      dimensions_help: איור מידות
       summary: חישוב
       material_type: סוג
       material_thickness: חומר / עובי
@@ -571,7 +571,7 @@ tab:
         בחר את גודל הלוח או קאנט שישוכפלו כדי להכיל בצורה הטובה ביותר את כל החלקים.
         רשימה זו מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_lengths)** של החומר.
         ערוך את החומר '{{ material_name }}' כדי לעדכן את הרשימה.
-      option_std_bar_add: הוסף אורך...
+      option_std_bar_add: הוסף אורך
       option_std_bar_none: אין
       option_scrap_bar_dimensional_lengths: פחת הקרש
       option_scrap_bar_edge_lengths: פחת קאנטים
@@ -586,7 +586,7 @@ tab:
         בחר לוח סטנדרטי שישוכפל בכדי להכיל בצורה הטובה ביותר את כל החלקים.
         הרשימה מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_sizes)** של החומר.
         ערוך את החומר '{{ material_name }}' כדי לעדכן רשימה.
-      option_std_sheet_add: הוסף אורך...
+      option_std_sheet_add: הוסף אורך
       option_std_sheet_none: לא
       option_scrap_sheet_sizes: פחת מטר מרובע
       option_scrap_sheet_sizes_placeholder: אורך x רוחב x כמות ; ...

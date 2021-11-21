@@ -50,7 +50,7 @@ default:
   thickness_layer_single: طبقة
   thickness_layer_plural: طبقات
   setup_model_units: تكوين وحدات النموذج
-  load_more: "رفع إضافي..."
+  load_more: رفع إضافي
   reset_to_app_defaults: استعادة القيم الأصلية
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       لديك حاليا آخر نسخة من *OpenCutList*.
 
       *ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات!*
-    downloading: التحميل جارٍ...
+    downloading: التحميل جارٍ
     changelog: ما الجديد؟
     ignore_update: تجاوز هذا التحديث
     download_rescue: مشكلة في التحميل؟
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "يعرض هذا المُرَشِّح فقط **{{ count }}** قِطع/قطعة من مجموع {{ total }}."
       edge_material_names_filter: تصفية وفق خامة الحواشي
       tags_filter: تصفية بالوسوم
-      dimensions_help: فهم الأبعاد...
+      dimensions_help: فهم الأبعاد
       summary: ملخص
       material_type: النوع
       material_thickness: الخامة / السُمك
@@ -571,7 +571,7 @@ tab:
         حدد القضيب النظامي الذي سيُنسخ لاحتواء جميع القِطع
         هذه القائمة محددة وفقا لحقل الخامة **t(tab.materials.edit_material.std_lengths)$**
         لتحديث هذه القائمة، عدّل الخامة '{{ material_name }}'
-      option_std_bar_add: أضف طولا...
+      option_std_bar_add: أضف طولا
       option_std_bar_none: لا شيء
       option_scrap_bar_dimensional_lengths: بواقي تقطيع القضبان
       option_scrap_bar_edge_lengths: بواقي تقطيع أشرطة الحواشي
@@ -586,7 +586,7 @@ tab:
         حدد اللوح النظامي الذي سيُنسخ لحساب أفضل احتواء ممكن للقِطع
         هذه القائمة محددة وفقا لحقل الخامة **t(tab.materials.edit_material.std_sizes)$**
         لتحديث هذه القائمة ، عدل الخامة '{{ material_name }}'
-      option_std_sheet_add: أضف طولا...
+      option_std_sheet_add: أضف طولا
       option_std_sheet_none: لا شيء
       option_scrap_sheet_sizes: بواقي تقطيع الألواح
       option_scrap_sheet_sizes_placeholder: الطول x العرض x العدد ; ...

@@ -50,7 +50,7 @@ default:
   thickness_layer_single: Lage
   thickness_layer_plural: Lagen
   setup_model_units: Modelleinheiten konfigurieren
-  load_more: "Weitere laden ..."
+  load_more: Weitere laden
   reset_to_app_defaults: Originalwerte wiederherstellen
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Sie haben bereits die aktuellste Version von *OpenCutList*.
 
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
-    downloading: Ladevorgang läuft...
+    downloading: Ladevorgang läuft
     changelog: "Was gibt's Neues?"
     ignore_update: Diese Aktualisierung ignorieren
     download_rescue: "Problem beim Herunterladen?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von insgesamt {{ total }} Teilen an."
       edge_material_names_filter: Zu filternde Kantenmaterialien
       tags_filter: Filtern nach Tag
-      dimensions_help: Erklärung zu den Dimensionen...
+      dimensions_help: Erklärung zu den Dimensionen
       summary: Übersicht
       material_type: Typ
       material_thickness: Material / Dicke
@@ -571,7 +571,7 @@ tab:
         Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
-      option_std_bar_add: Länge hinzufügen...
+      option_std_bar_add: Länge hinzufügen
       option_std_bar_none: Keine
       option_scrap_bar_dimensional_lengths: Stangenreste
       option_scrap_bar_edge_lengths: Kantenbandreste
@@ -586,7 +586,7 @@ tab:
         Wählen Sie die Standard-Platte welche dupliziert wird, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_add: Plattenmaß hinzufügen ...
+      option_std_sheet_add: Länge hinzufügen
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...

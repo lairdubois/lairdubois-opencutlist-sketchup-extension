@@ -50,7 +50,7 @@ default:
   thickness_layer_single: слой
   thickness_layer_plural: слои
   setup_model_units: Установка единиц измерения
-  load_more: "Загрузить больше ..."
+  load_more: Загрузить больше
   reset_to_app_defaults: Восстановить исходные значения
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       У вас уже есть последняя версия *OpenCutList*.
 
       *Рассмотрите возможность спонсорства этого проекта, чтобы поддержать нас финансово и помочь нам улучшить его функциональность!*
-    downloading: Идет процесс загрузки...
+    downloading: Идет процесс загрузки
     changelog: "Что нового?"
     ignore_update: Игнорировать это обновление
     download_rescue: "Проблемы со скачиванием?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
       edge_material_names_filter: Фильтр по материалу кромок
       tags_filter: Фильтр по Тегам
-      dimensions_help: Иллюстрация размеров...
+      dimensions_help: Иллюстрация размеров
       summary: Расчёт
       material_type: Тип
       material_thickness: Материал / Толщина
@@ -571,7 +571,7 @@ tab:
         Выберите здесь стандартный размер кромочной полосы, которая будет наилучшим шаблоном для применения в проекте.
         Этот список определяется полем **$t(tab.materials.edit_material.std_lengths)** выбора материала.
         Отредактируйте материал '{{ material_name }}' и обновите список.
-      option_std_bar_add: Добавить длину ...
+      option_std_bar_add: Добавить длину
       option_std_bar_none: Нет
       option_scrap_bar_dimensional_lengths: Остатки доски
       option_scrap_bar_edge_lengths: Остатки кромки
@@ -586,7 +586,7 @@ tab:
         Выберите стандартную панель, для дублирования содержащихся деталей.
         Этот список определяется в поле **$t(tab.materials.edit_material.std_sizes)** выбора материала.
         Отредактируйте материал '{{ material_name }}' и обновите список.
-      option_std_sheet_add: Добавить размер панели ...
+      option_std_sheet_add: Добавить размер панели
       option_std_sheet_none: Нет
       option_scrap_sheet_sizes: Листовые обрезки
       option_scrap_sheet_sizes_placeholder: длина x ширина x количество ; ...

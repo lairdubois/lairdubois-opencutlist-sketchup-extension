@@ -50,7 +50,7 @@ default:
   thickness_layer_single: hladina
   thickness_layer_plural: hladiny
   setup_model_units: Nakonfigurujte modelové jednotky
-  load_more: "Více ..."
+  load_more: Více
   reset_to_app_defaults: Obnovit původní hodnoty
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Již máte nejnovější verzi *OpenCutList*.
 
       *Zvažte sponzorství tohoto projektu, které nám pomůže přidat ještě více funkcí!*
-    downloading: Probíhá stahování...
+    downloading: Probíhá stahování
     changelog: "Co je nového?"
     ignore_update: Přeskočit tuto aktualizaci
     download_rescue: "Problém se stahováním?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Tento filtr zobrazí pouze **{{ count }}** skupiny z celkového počtu {{ total }}."
       edge_material_names_filter: Filtrujte podle hran
       tags_filter: Filtrovat podle štítků
-      dimensions_help: Správné rozměry ...
+      dimensions_help: Správné rozměry
       summary: Shrnutí
       material_type: Typ
       material_thickness: Materíál / Tloušťka
@@ -571,7 +571,7 @@ tab:
         Vyberte standardní desku nebo hranu, které budou duplikovány, aby obsahovaly všechny části.
         Tento seznam je definován v poli **$t(tab.materials.edit_material.std_lengths)** materiálu.
         Upravte materiál '{{ material_name }}' a aktualizujte tento seznam.
-      option_std_bar_add: Přidat délku ...
+      option_std_bar_add: Přidat délku
       option_std_bar_none: Žádný
       option_scrap_bar_dimensional_lengths: Zbytky
       option_scrap_bar_edge_lengths: Odříznuté okrajové pásy
@@ -586,7 +586,7 @@ tab:
         Vybere standardní panel, který bude duplikován, abychom vypočítali nejlepší možné umístění.
         Tento seznam je definován v poli **$t(tab.materials.edit_material.std_sizes)** materiálu.
         Úpravou materiálu '{{ material_name }}' dokončete tento seznam.
-      option_std_sheet_add: Přidat velikost tabule ...
+      option_std_sheet_add: Přidat velikost tabule
       option_std_sheet_none: Žádný
       option_scrap_sheet_sizes: Ořez tabule
       option_scrap_sheet_sizes_placeholder: délka x šířka x množství ; ...

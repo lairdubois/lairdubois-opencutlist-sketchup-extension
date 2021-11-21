@@ -50,7 +50,7 @@ default:
   thickness_layer_single: Laag
   thickness_layer_plural: Lagen
   setup_model_units: Configureer modeleenheden
-  load_more: "Meer laden ..."
+  load_more: Meer laden
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Je hebt al de laatste versie van *OpenCutList*
 
       Wordt sponsor om ons te helpen nog meer functies toe te voegen,
-    downloading: Download is bezig...
+    downloading: Download is bezig
     changelog: "Wat is er nieuw?"
     ignore_update: Sla deze update over
     download_rescue: "Lukt het downloaden niet?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}."
       edge_material_names_filter: Te filteren lijst van kantenband materiaal
       tags_filter: Te filteren Tags
-      dimensions_help: Afmetingen begrijpen...
+      dimensions_help: Afmetingen begrijpen
       summary: Overzicht
       material_type: Type
       material_thickness: Materiaal / Afmeting
@@ -571,7 +571,7 @@ tab:
         Selecteer hier de standaard afmeting van bekantrecht hout of kantenband die gedupliceerd zal worden om optimaal alle onderdelen te bevatten.
         Deze lijst wordt gedefinieerd door het veld **$t(tab.materials.edit_material.std_lengths)** van het materiaal.
         Wijzig het materiaal '{{ material_name }}' om deze lijst up te daten.
-      option_std_bar_add: Voeg een afmeting toe...
+      option_std_bar_add: Voeg een afmeting toe
       option_std_bar_none: Geen enkele
       option_scrap_bar_dimensional_lengths: Overschot van de plank
       option_scrap_bar_edge_lengths: Kantenband overschotten
@@ -586,7 +586,7 @@ tab:
         Selecteer hier het standaard paneel dat gedupliceerd zal worden om zo goed mogelijke alle onderdelen te bevatten.
         Deze lijst wordt gedefinieerd door het veld **$t(tab.materials.edit_material.std_sizes)** van het materiaal.
         Wijzig het materiaal '{{ material_name }}' om deze lijst aan te passen.
-      option_std_sheet_add: Voeg een afmeting toe...
+      option_std_sheet_add: Voeg een afmeting toe
       option_std_sheet_none: Geen enkele
       option_scrap_sheet_sizes: Paneel overschotten
       option_scrap_sheet_sizes_placeholder: lengte x breedte x aantal ; ...

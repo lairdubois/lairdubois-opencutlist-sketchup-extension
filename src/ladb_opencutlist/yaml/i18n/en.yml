@@ -50,7 +50,7 @@ default:
   thickness_layer_single: layer
   thickness_layer_plural: layers
   setup_model_units: Setup the model units
-  load_more: "Load more ..."
+  load_more: Load more
   reset_to_app_defaults: Restore to original values
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       You already have the latest version of *OpenCutList*.
 
       *Consider a sponsorship of this project to help us add even more features!*
-    downloading: Download in progress...
+    downloading: Download in progress
     changelog: "What's new?"
     ignore_update: Skip this update
     download_rescue: "Problem with the download?"
@@ -162,7 +162,7 @@ tab:
       show_hide_block: Show / hide group
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'."
-      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thickness of the material '{{ material_name }}'"
+      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
       not_available_std_section: "The cross section *{{ std_dimension }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "This filter only displays **{{ count }}** parts out of a total of {{ total }}."
       edge_material_names_filter: Filter by edge banding material
       tags_filter: Filter by Tags
-      dimensions_help: Understanding the dimensions...
+      dimensions_help: Understanding dimensions
       summary: Summary
       material_type: Type
       material_thickness: Material / Thickness
@@ -571,7 +571,7 @@ tab:
         Select the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
         Edit the material '{{ material_name }}' to update this list.
-      option_std_bar_add: Add a length ...
+      option_std_bar_add: Add a length
       option_std_bar_none: None
       option_scrap_bar_dimensional_lengths: Offcut Boards
       option_scrap_bar_edge_lengths: Offcut Edge Bandings
@@ -586,7 +586,7 @@ tab:
         Select the standard panel which will be duplicated to calculate the best possible placement.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to complete this list.
-      option_std_sheet_add: Add a panel size ...
+      option_std_sheet_add: Add a panel size
       option_std_sheet_none: None
       option_scrap_sheet_sizes: Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...

@@ -50,7 +50,7 @@ default:
   thickness_layer_single: strato
   thickness_layer_plural: strati
   setup_model_units: Impostare le unità del modello
-  load_more: "Carica di più ..."
+  load_more: Carica di più
   reset_to_app_defaults: Ripristina i valori originali
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       L'ultima versione di *OpenCutList* è già installata.
 
       *E' possibile sponsorizzare OpenCutList per contribuire allo sviluppo di nuove funzionalità!*
-    downloading: Download in corso...
+    downloading: Download in corso
     changelog: Lista delle nuove funzionalita
     ignore_update: Ignorare questo aggiornamento
     download_rescue: "Problemi a scaricare?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
       edge_material_names_filter: Filtro su materiale delle bordature
       tags_filter: Tags da filtrare
-      dimensions_help: Schema delle dimensioni...
+      dimensions_help: Schema delle dimensioni
       summary: Sommario
       material_type: Tipo
       material_thickness: Materiale / Spessore
@@ -571,7 +571,7 @@ tab:
         Seleziona una tavola o un bordo standard, che sarà duplicata in modo da contenere tutte le parti.
         Questo elenco è definito alla voce **$t(tab.materials.edit_material.std_lengths)** del menu Materiali.
         Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
-      option_std_bar_add: Aggiungi una lunghezza ...
+      option_std_bar_add: Aggiungi una lunghezza
       option_std_bar_none: Nessuna
       option_scrap_bar_dimensional_lengths: Avanzi di tavole
       option_scrap_bar_edge_lengths: Avanzi di bordatura
@@ -586,7 +586,7 @@ tab:
         Seleziona il pannello predefinito che verrà duplicato per contenere tutte le parti nel miglior modo possibile.
         Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
         Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
-      option_std_sheet_add: Aggiungi una misura di pannello ...
+      option_std_sheet_add: Aggiungi una misura di pannello
       option_std_sheet_none: Nessuna
       option_scrap_sheet_sizes: Ritagli di pannelli
       option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...

@@ -50,7 +50,7 @@ default:
   thickness_layer_single: warstwa
   thickness_layer_plural: warstwy
   setup_model_units: Ustaw jednostki modelu
-  load_more: "Załaduj więcej ..."
+  load_more: Załaduj więcej
   reset_to_app_defaults: Przywróć oryginalne wartości
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Używasz najnowszą wersję *OpenCutList*.
 
       *Rozważ wsparcie tego projektu, aby pomóc nam dodać jeszcze więcej funkcji!*
-    downloading: Pobieranie w toku...
+    downloading: Pobieranie w toku
     changelog: "Co nowego?"
     ignore_update: Pomiń tą aktualizację
     download_rescue: "Problem z pobraniem?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}."
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
       tags_filter: Filtruj według oznakowań
-      dimensions_help: Zrozumienie wymiarów ...
+      dimensions_help: Zrozumienie wymiarów
       summary: Podsumowanie
       material_type: Rodzaj
       material_thickness: Materiał / Grubość
@@ -571,7 +571,7 @@ tab:
         Wybierz standardową płytę lub obrzeże, która będzie duplikowana aby najlepiej pomieścić wszystkie części.
         Ta lista jest zdefiniowana w polu **$t(tab.materials.edit_material.std_lengths)** materiału.
         Aby uaktualnić tą listę edytuj materiał '{{ material_name }}'.
-      option_std_bar_add: Dodaj długość ...
+      option_std_bar_add: Dodaj długość
       option_std_bar_none: Żaden
       option_scrap_bar_dimensional_lengths: Odpady do wykorzystania
       option_scrap_bar_edge_lengths: Odpady obrzeży
@@ -586,7 +586,7 @@ tab:
         Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
         Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
         Edytuj materiał '{{ material_name }}' aby uzupełnić tę listę.
-      option_std_sheet_add: Dodaj rozmiar arkusza ...
+      option_std_sheet_add: Dodaj rozmiar arkusza
       option_std_sheet_none: Żaden
       option_scrap_sheet_sizes: Arkusze odpadu
       option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
