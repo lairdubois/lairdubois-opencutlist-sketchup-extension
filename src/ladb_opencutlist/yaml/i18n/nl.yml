@@ -50,7 +50,7 @@ default:
   thickness_layer_single: Laag
   thickness_layer_plural: Lagen
   setup_model_units: Configureer modeleenheden
-  load_more: "Meer laden"
+  load_more: "Meer laden ..."
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
 core:
   menu:

@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Tento filtr zobrazí pouze **{{ count }}** skupiny z celkového počtu {{ total }}."
       edge_material_names_filter: Filtrujte podle hran
       tags_filter: Filtrovat podle štítků
-      dimensions_help: Správné rozměry
+      dimensions_help: Správné rozměry ...
       summary: Shrnutí
       material_type: Typ
       material_thickness: Materíál / Tloušťka

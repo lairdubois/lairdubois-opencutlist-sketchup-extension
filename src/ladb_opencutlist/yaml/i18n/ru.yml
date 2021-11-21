@@ -261,7 +261,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
-      name: Описание
+      name: Определение
       material: Материал
       cumulable: Суммировать
       cumulable_help: |
