@@ -50,7 +50,7 @@ default:
   thickness_layer_single: capa
   thickness_layer_plural: capas
   setup_model_units: Configurar las unidades del modelo
-  load_more: "Carga más ..."
+  load_more: Carga más
   reset_to_app_defaults: Restaurar a los valores originales
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Ya tienes la última versión de *OpenCutList*.
 
       *¡Considera patrocinar este proyecto para ayudarnos a agregar aún más funciones!*
-    downloading: Descarga en curso...
+    downloading: Descarga en curso
     changelog: "¿Qué hay de nuevo?"
     ignore_update: Omitir esta actualización
     download_rescue: "¿Problema con la descarga?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}."
       edge_material_names_filter: Material de borde de cantos a filtrar
       tags_filter: Filtrar por etiquetas
-      dimensions_help: Ilustración de las dimensiones...
+      dimensions_help: Ilustración de las dimensiones
       summary: Resumen
       material_type: Tipo
       material_thickness: Material / Espesor
@@ -571,7 +571,7 @@ tab:
         Seleccione el tablero o la tira de canto estándar, que se duplicará para contener todas las partes.
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_lengths)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
-      option_std_bar_add: Añade una longitud ...
+      option_std_bar_add: Añade una longitud
       option_std_bar_none: Ninguno
       option_scrap_bar_dimensional_lengths: Tableros de corte
       option_scrap_bar_edge_lengths: Restos de Canto
@@ -586,7 +586,7 @@ tab:
         Seleccione el panel estándar que se duplicará para contener todas las partes.
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
-      option_std_sheet_add: Agregar un tamaño de panel ...
+      option_std_sheet_add: Agregar un tamaño de panel
       option_std_sheet_none: No
       option_scrap_sheet_sizes: Productos en piezas cortadas
       option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...

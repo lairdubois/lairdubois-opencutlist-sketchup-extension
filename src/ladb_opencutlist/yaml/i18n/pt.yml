@@ -50,7 +50,7 @@ default:
   thickness_layer_single: camada
   thickness_layer_plural: camadas
   setup_model_units: Configure as unidades do modelo
-  load_more: "Carregue mais ..."
+  load_more: Carregue mais
   reset_to_app_defaults: Restaurar os valores originais
 core:
   menu:
@@ -97,7 +97,7 @@ core:
       Você já tem a última versão da *OpenCutList*.
 
       *Patrocine este projeto para nos ajudar a acrescentar ainda mais funcionalidades!*
-    downloading: Download em progresso...
+    downloading: Download em progresso
     changelog: "O que há de novo?"
     ignore_update: Ignorar esta atualização
     download_rescue: "Problemas para baixar?"
@@ -409,7 +409,7 @@ tab:
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
       edge_material_names_filter: Filtrar material de Fita de Borda
       tags_filter: Tags para filtrar
-      dimensions_help: Compreendendo as dimensões ...
+      dimensions_help: Compreendendo as dimensões
       summary: Resumo
       material_type: Tipo
       material_thickness: Espessura do material
@@ -571,7 +571,7 @@ tab:
         Selecione aqui o tamanho padrão da prancha ou fita de borda que será duplicada para melhor conter todas as partes.
         Esta lista é definida pelo campo **$t(tab.materials.edit_material.std_lengths)** do material.
         Editar o material '{{ material_name }}' para atualizar esta lista.
-      option_std_bar_add: Adicione um comprimento ...
+      option_std_bar_add: Adicione um comprimento
       option_std_bar_none: Nenhum
       option_scrap_bar_dimensional_lengths: Sobras de prancha
       option_scrap_bar_edge_lengths: Sobras de fita
@@ -586,7 +586,7 @@ tab:
         Selecione a chapa padrão que será duplicado para conter todas as partes.
         Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
         Edite o material '{{ material_name }}' para atualizar esta lista.
-      option_std_sheet_add: Adicionar um tamanho de painel ...
+      option_std_sheet_add: Adicionar um tamanho de painel
       option_std_sheet_none: Nenhum
       option_scrap_sheet_sizes: Restos de chapas
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
