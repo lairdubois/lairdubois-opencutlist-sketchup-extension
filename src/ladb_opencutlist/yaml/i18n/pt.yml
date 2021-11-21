@@ -147,7 +147,7 @@ tab:
     help: |
       Selecione as peças na cena atual para incluir na lista e clique no botão **Gerar**.
       Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Planilha de Produção.
-    selection_only: Seleção
+    is_selection: Somente seleção
     material_undefined: Nenhum material definido
     not_available_std_width: Largura indefinida
     not_available_std_thickness: Espessura indefinida
@@ -643,7 +643,7 @@ tab:
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
       warning:
-        selection_only: Este diagrama de corte é limitado a **peças selecionadas**.
+        is_part_selection: Este diagrama de corte é limitado a **peças selecionadas**.
         cutting_dimensions: |
           Este layout mostra as peças em suas dimensões de **comprimento bruto**.
         cutting_dimensions_increase_1d: |
@@ -727,7 +727,7 @@ tab:
       error:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
-        selection_only: Estes etiquetas são limitados a **partes selecionadas** somente
+        is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -738,7 +738,7 @@ tab:
       unknow_part: A peça selecionada não existe na Planilha de Produção.
       obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
-      partial_cutlist: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
+      is_entity_selection: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
       no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Sua exportação não contém nenhuma peça.
