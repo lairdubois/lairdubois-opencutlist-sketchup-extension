@@ -2,7 +2,7 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 2.x, 1.x and 0.x versions.
+in 3.x, 2.x, 1.x and 0.x versions.
 
 * 3.0.1 (WIP)
 

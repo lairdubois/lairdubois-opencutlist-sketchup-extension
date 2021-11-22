@@ -173,10 +173,11 @@
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
-                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.cut_plural'|i18next }}</span>
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.stats'|i18next }}</span>
                                     <ul>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.overall_efficiency'|i18next }} : </strong>{{ summary.overall_efficiency|number_format(2, ',', ' ') }}%</li>
                                     </ul>
                                 </div>
                             </div>

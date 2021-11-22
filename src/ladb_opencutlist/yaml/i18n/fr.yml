@@ -611,8 +611,10 @@ tab:
         total_part_count: Σ Pièces
         total_used: Total utilisé
         trimming: Marge
+        stats: Statistiques
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
+        overall_efficiency: Efficacité globale
         efficiency: Efficacité
         leftover: Chute
         cut: Coupe

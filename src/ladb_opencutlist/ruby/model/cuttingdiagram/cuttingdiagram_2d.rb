@@ -62,7 +62,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :sheets
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency, :sheets
 
     def initialize(_def)
       @_def = _def
@@ -73,6 +73,8 @@ module Ladb::OpenCutList
 
       @total_cut_count = _def.total_cut_count
       @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+
+      @overall_efficiency = _def.overall_efficiency
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_summary_sheet }.sort_by { |sheet| [ -sheet.type ] }
 

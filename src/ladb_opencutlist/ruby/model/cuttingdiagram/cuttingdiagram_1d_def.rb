@@ -60,7 +60,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dSummaryDef
 
-    attr_accessor :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length
+    attr_accessor :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency
     attr_reader :bar_defs
 
     def initialize
@@ -71,6 +71,8 @@ module Ladb::OpenCutList
 
       @total_cut_count = 0
       @total_cut_length = 0
+
+      @overall_efficiency = 0
 
       @bar_defs = {}
 
