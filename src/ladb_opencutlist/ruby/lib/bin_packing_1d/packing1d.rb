@@ -1,10 +1,10 @@
-module Ladb::OpenCutList
+# frozen_string_literal: true
 
+module Ladb::OpenCutList
   #
   # Module implementing 1D BinPacking
   #
   module BinPacking1D
-
     # Number of bytes of computer running code
     # from https://gist.github.com/pithyless/9738125
     N_BYTES = [42].pack('i').size
@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     N_BITS = N_BYTES * 16
 
     # Largest integer on this platform
-    MAX_INT = 2**(N_BITS - 2) - 1
+    MAX_INT = (2**(N_BITS - 2)) - 1
 
     #
     # Error used by Timer when execution of algorithm
@@ -65,7 +65,7 @@ module Ladb::OpenCutList
 
     # With more than this number of parts, we split into
     # groups and optimize each group.
-    MAX_PARTS = 80
+    MAX_PARTS = 120
 
     # Algorithm used is subset sum.
     ALG_SUBSET_SUM = 1
@@ -77,12 +77,14 @@ module Ladb::OpenCutList
     #
     class Packing1DError < StandardError
     end
-
     #
     # Top level class (abstract class)
     #
-    class Packing1D
 
+    #
+    # Bin Packing in 1D
+    #
+    class Packing1D
       # Program options, passed to most subclasses.
       attr_accessor :options
 
@@ -98,13 +100,9 @@ module Ladb::OpenCutList
       # Prints a message when debug option is on or
       # when called with option true.
       #
-      def dbg(msg, dbg=false)
+      def dbg(msg, dbg = false)
         # assuming @options exists
-        if dbg
-          puts msg + "\n"
-        else
-          puts msg + "\n" if @options.debug
-        end
+        puts "#{msg}\n" if dbg || @options.debug
       end
     end
   end

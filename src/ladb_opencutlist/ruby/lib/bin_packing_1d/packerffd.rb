@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Ladb::OpenCutList::BinPacking1D
   #
   # Implements First-Fit Decreasing Heuristic
   #
   class PackerFFD < Packer
-
     #
     # run the bin packing optimization.
     #
@@ -11,8 +12,8 @@ module Ladb::OpenCutList::BinPacking1D
       @gstat[:algorithm] = ALG_FFD
 
       remove_unfit
-      if @boxes.size == 0
-        @unplaced_boxes = @unfit_boxes if @unfit_boxes.size > 0
+      if @boxes.empty?
+        @unplaced_boxes = @unfit_boxes unless @unfit_boxes.empty?
         prepare_results
         return ERROR_NO_BIN
       end
@@ -27,23 +28,22 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def first_fit_decreasing
       @bins += @leftovers
-      if @bins.empty?
-        @bins << Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
-      end
+      @bins << Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options) if @bins.empty?
+
       @boxes.each do |box|
         packed = false
         # Box can be packed into one of the existing bins, first fit wins
         @bins.each do |bin|
-          if box.length <= bin.current_leftover
-            bin.add(box)
-            packed = true
-            break
-          end
+          next unless box.length <= bin.current_leftover
+
+          bin.add(box)
+          packed = true
+          break
         end
         # box could not be packed, create new bin if allowed to
-        if not packed
+        unless packed
           if @options.base_bin_length > EPS
-            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
+            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options)
             if box.length <= bin.current_leftover
               bin.add(box)
               @bins << bin
@@ -57,7 +57,7 @@ module Ladb::OpenCutList::BinPacking1D
       end
       packed_bins = []
       @bins.each do |bin|
-        if bin.type == BIN_TYPE_LO && bin.boxes.size == 0
+        if bin.type == BIN_TYPE_LO && bin.boxes.empty?
           @unused_bins << bin
         else
           packed_bins << bin

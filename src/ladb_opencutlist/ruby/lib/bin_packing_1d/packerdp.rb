@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking1D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking1D
   #
   # Core computing for 1D Bin Packing.
   #
   class PackerDP < Packer
-
     #
     # Clones the boxes and leftovers for a single run.
     # Splits up boxes if containing more than MAX_PARTS,
@@ -23,7 +23,7 @@ module Ladb::OpenCutList::BinPacking1D
       else
         # Try to avoid having only small or only large parts
         # in the slices.
-        index_half = (boxes.length/2).round + 1
+        index_half = (boxes.length / 2).round + 1
         boxes = boxes.each_slice(index_half).to_a
         boxes.map(&:compact!)
         boxes = boxes[0].zip(boxes[1]).flatten
@@ -54,8 +54,8 @@ module Ladb::OpenCutList::BinPacking1D
       @start_time = Time.now
       remove_unfit
 
-      if @boxes.size == 0
-        @unplaced_boxes = @unfit_boxes if @unfit_boxes.size > 0
+      if @boxes.empty?
+        @unplaced_boxes = @unfit_boxes unless @unfit_boxes.empty?
         prepare_results
         return ERROR_NO_BIN
       end
@@ -65,13 +65,12 @@ module Ladb::OpenCutList::BinPacking1D
         #
         # Watchdog for excessive computation time
         #
-        if @options.max_time && (Time.now - @start_time > @options.max_time)
-          raise(TimeoutError, 'Timeout expired ...')
-        end
+        raise(TimeoutError, 'Timeout expired ...') if @options.max_time && (Time.now - @start_time > @options.max_time)
 
         bins, err = pack(bclone, lclone)
 
-        if err == ERROR_NONE
+        case err
+        when ERROR_NONE
           # Tidy up the best result so far
           @bins = bins
           @unused_bins += lclone
@@ -84,8 +83,8 @@ module Ladb::OpenCutList::BinPacking1D
             end
           end
           @unplaced_boxes = @boxes + @unfit_boxes
-        elsif err == ERROR_NO_BIN
-          if !bins.empty?
+        when ERROR_NO_BIN
+          unless bins.empty?
             # Found placements, but no more bins available
             err = ERROR_NONE
             @bins = bins
@@ -99,11 +98,11 @@ module Ladb::OpenCutList::BinPacking1D
             @boxes = []
           end
         end
-      rescue TimeoutError => err
-        puts ("Rescued in Packer: #{err.inspect}")
+      rescue TimeoutError => e
+        puts("Rescued in Packer: #{e.inspect}")
         return ERROR_TIMEOUT
-      rescue Packing1DError => err
-        puts ("Rescued in Packer: #{err.inspect}")
+      rescue Packing1DError => e
+        puts("Rescued in Packer: #{e.inspect}")
         return ERROR_BAD_ERROR
       end
 
@@ -146,75 +145,67 @@ module Ladb::OpenCutList::BinPacking1D
         # . or running out of bins
         until lengths.empty?
           if leftovers.empty?
-            if @options.base_bin_length > EPS
-              bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW , @options)
-              using_std_bin = true
-              target_length = bin.netlength
-            else
-              # Returning what we have found so far
-              # all placed boxes are in the bins (tc_28.txt)
-              return [bins, ERROR_NO_BIN]
-            end
+            # Returning what we have found so far
+            # all placed boxes are in the bins (tc_28.txt)
+            return [bins, ERROR_NO_BIN] unless @options.base_bin_length > EPS
+
+            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options)
+            using_std_bin = true
           else
             # Take the next leftover bin
             bin = leftovers.shift
-            target_length = bin.netlength
           end
+          target_length = bin.netlength
 
           # Filter lengths to match and sort by decreasing length
-          valid_lengths = lengths.select{|el| el <= target_length}
+          valid_lengths = lengths.select { |el| el <= target_length }
           valid_lengths.sort!.reverse!
 
           if valid_lengths.empty?
-            if not using_std_bin
-              @unused_bins << bin
-              next
-            else
-              return [bins, ERROR_NONE]
-            end
+            return [bins, ERROR_NONE] if using_std_bin
+
+            @unused_bins << bin
+            next
           end
 
           # This is the core algorithm, finding subsetsums
           # of lengths that best match the target size
-          if @gstat[:nb_input_boxes] > MAX_PARTS
-            # Last element is the smallest one.
-            epsilon = 0.95*valid_lengths.last
-          else
-            epsilon = 0.0
-          end
+          epsilon = if @gstat[:nb_input_boxes] > MAX_PARTS
+                      # Last element is the smallest one.
+                      valid_lengths.last
+                    else
+                      0.0
+                    end
+
           y, y_list = allsubsetsums(valid_lengths, target_length, @options.saw_kerf, epsilon)
           if @status > 0
             @status += 1
-            Sketchup.status_text = (@start_msg + " " + "."*@status)
+            Sketchup.status_text = "#{@start_msg}  #{'.' * @status}" if Object.const_defined?('Sketchup')
           end
 
-          if y.zero?
+          if ! (y > 0)
             # Should only happen if we have a very wide
             # saw kerf and we cannot fit any box.
             # see tc_4.txt
             # returning whatever was found, not sure this really works!
-            if using_std_bin
-              return [bins, ERROR_NONE]
-            end
+            return [bins, ERROR_NONE] if using_std_bin
+
           else
             # Remove objects from bins having the adequate lengths
             # and add them to the bin
             y_list.each do |found_length|
               # Get index of first element having a matching lengths
-              # TODO: precision definition, make sure we are not missing
-              # a box because of precision, before
-              # i = boxes.index { |x| x.length == found_length}
-              i = boxes.index { |x| (x.length - found_length).abs < EPS}
-              if !i.nil?
-                bin.add(boxes[i])
-                d = boxes.delete_at(i)
-                if d.nil?
-                  raise(Packing1DError, "Box is gone!")
-                end
-                # Remove this length (found_length) from the ones we
-                # are looking for
-                lengths.delete_at(lengths.index(found_length) || lengths.length)
-              end
+              # Precision definition, make sure we are not missing
+              i = boxes.index { |x| (x.length - found_length).abs < EPS }
+              next if i.nil?
+
+              bin.add(boxes[i])
+              d = boxes.delete_at(i)
+              raise(Packing1DError, 'Box is gone!') if d.nil?
+
+              # Remove this length (found_length) from the ones we
+              # are looking for
+              lengths.delete_at(lengths.index(found_length) || lengths.length)
             end
             # Add this completed bin to the bins
             bins << bin
@@ -238,14 +229,11 @@ module Ladb::OpenCutList::BinPacking1D
       x_list.each do |x|
         te = {}
         se.each do |y, y_list|
-          length = y_list.reduce(&:+).to_f + x + y_list.length*saw_kerf
-          if length > target
-            next
-          else
-            if y + x > max
-              max = y + x
-            end
-          end
+          length = y_list.reduce(&:+).to_f + x + (y_list.length * saw_kerf)
+          next if length > target
+
+          max = y + x if y + x > max
+
           # New target that can be reached
           te.store(y + x, y_list + [x])
           if @options.max_time && (Time.now - @start_time > @options.max_time)
@@ -260,12 +248,11 @@ module Ladb::OpenCutList::BinPacking1D
         # (depending on the size of the smallest element) will
         # be returned. this avoids being too greedy and doing
         # too much computation
-        if max <= target && max >= target - epsilon
-          return se.max_by{|k, v| k}
-        end
+        return se.max_by { |k, _v| k } if max <= target && max >= target - epsilon
+
       end
 
-      return se.max_by{|k, v| k}
+      se.max_by { |k, _v| k }
     end
   end
 end

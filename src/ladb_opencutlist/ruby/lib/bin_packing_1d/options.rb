@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking1D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking1D
   #
   # Implements Options
   #
   class Options < Packing1D
-
     # Length of a standard bin that can be replicated
     # any number of times.
     attr_reader :base_bin_length
@@ -29,8 +29,8 @@ module Ladb::OpenCutList::BinPacking1D
     # negative base_bin_length.
     #
     def initialize(base_bin_length, saw_kerf, trimsize,
-                   max_time=MAX_TIME, debug=false)
-
+                   max_time = MAX_TIME, debug = false)
+      super(nil)
       @base_bin_length = base_bin_length
       @base_bin_length = 0 if @base_bin_length < 0
 
@@ -40,9 +40,8 @@ module Ladb::OpenCutList::BinPacking1D
       @trimsize = trimsize.abs
 
       @max_time = max_time
-      if @max_time < 0 or @max_time > MAX_TIME
-        @max_time = MAX_TIME
-      end
+      @max_time = MAX_TIME if @max_time < 0 || @max_time > MAX_TIME
+
       @debug = debug
     end
 
@@ -57,10 +56,11 @@ module Ladb::OpenCutList::BinPacking1D
     # Debugging!
     #
     def to_str
-      "  options:\n" \
-      "  saw_kerf         = #{@saw_kerf}\n" \
-      "  trimsize         = #{@trimsize}\n" \
-      "  base_bin_length  = #{@base_bin_length}\n"
+      s = "  options:\n"
+      s << "  saw_kerf         = #{@saw_kerf}\n"
+      s << "  trimsize         = #{@trimsize}\n"
+      s << "  base_bin_length  = #{@base_bin_length}\n"
+      s
     end
   end
 end
