@@ -441,7 +441,7 @@ tab:
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
-      option_source_instances_list: List of instances
+      option_source_instances_list: List of Instances
       option_col_sep: Separator
       option_col_sep_tab: Tabulator
       option_col_sep_comma: Comma
@@ -611,8 +611,10 @@ tab:
         total_part_count: "# Parts"
         total_used: Total used
         trimming: Trimming
+        stats: Statistics
         total_cut_count: Number of cuts
         total_cut_length: Length of cuts
+        overall_efficiency: Overall efficiency
         efficiency: Efficiency
         leftover: Leftover
         cut: Cut
@@ -1021,7 +1023,7 @@ tab:
     zoom_normal: Normal
     zoom_small: Small
     zoom_tiny: Tiny
-    print_margin: Print margins
+    print_margin: Print Margins
     print_margin_normal: Normal
     print_margin_small: Small
     size_and_position: Size and Position of the Window
