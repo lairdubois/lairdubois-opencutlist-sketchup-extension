@@ -75,7 +75,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets global property rotatable = no grain.
     #
     def set_rotatable(rotatable)
-      @rotatable = [true, false].include?(rotatable)
+      if [true, false].include?(rotatable)
+        @rotatable = rotatable
+      else
+        @rotatable = true
+      end
     end
 
     #

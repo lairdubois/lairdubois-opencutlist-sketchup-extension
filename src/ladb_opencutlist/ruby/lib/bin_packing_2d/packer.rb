@@ -81,6 +81,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:all_largest_area] = 0
       @gstat[:largest_bottom_parts] = 0
       @gstat[:cuts_together_count] = 0
+      @gstat[:overall_efficiency] = 0
       @gstat[:rank] = 0
     end
 
@@ -136,6 +137,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:all_largest_area] = @previous_packer.gstat[:all_largest_area]
       @gstat[:total_l_measure] = @previous_packer.gstat[:total_l_measure]
       @gstat[:cuts_together_count] = @previous_packer.gstat[:cuts_together_count]
+      @gstat[:overall_efficiency] = @previous_packer.gstat[:overall_efficiency]
     end
 
     #
@@ -490,6 +492,18 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:cuts_together_count] += @stat[:v_together] + @stat[:h_together]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
       @gstat[:largest_bottom_parts] += current_bin.stat[:largest_bottom_part]
+      @gstat[:overall_efficiency] += @stat[:efficiency]
+    end
+
+    #
+    # Returns the overall efficiency as mean of all efficiencies
+    #
+    def overall_efficiency
+      if @gstat[:nb_packed_bins] > 0
+        return @gstat[:overall_efficiency]/@gstat[:nb_packed_bins]
+      else
+        return 0.0
+      end
     end
 
     #
