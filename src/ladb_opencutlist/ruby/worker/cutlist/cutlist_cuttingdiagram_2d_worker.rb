@@ -166,6 +166,8 @@ module Ladb::OpenCutList
         }
 
         # Summary
+        cuttingdiagram2d_def.summary_def.overall_efficiency = result.overall_efficiency
+        
         result.unused_bins.each { |bin|
           _append_bin_to_summary_sheet_defs(bin, group, false, cuttingdiagram2d_def.summary_def.sheet_defs)
         }

@@ -193,7 +193,7 @@ module Ladb::OpenCutList::BinPacking2D
             "#{format('%5d', stat[:nb_cuts])} " \
             "#{format('%4d', stat[:nb_h_through_cuts])} " \
             "#{format('%4d', stat[:nb_v_through_cuts])} " \
-            "#{format('%11.2f', stat[:largest_bottom_part])} " \
+            "#{format('%11.2f', stat[:largest_leftover_area])} " \
             "#{format('%11.2f', stat[:length_cuts])} " \
             "#{format('%6d', stat[:nb_leftovers])} " \
             "#{format('%8.5f', stat[:l_measure])}" \
@@ -201,13 +201,13 @@ module Ladb::OpenCutList::BinPacking2D
             "#{format('%2d', stat[:v_together])}" \
             "#{format('%4d', packer.gstat[:nb_unplaced_boxes])}" \
             "#{format('%22s', stat[:signature])}" \
-            "#{format('%3d', stat[:rank])}"
+            "#{format('%4d', stat[:rank])}"
         dbg(s)
       end
       return if no_footer
 
       dbg('  packer      usedArea   eff  #cuts thru h/v      bottA        cutL  #left ' \
-          'l_meas. h_t v_t                signature rank')
+          'l_meas. h_t v_t                signature  rank')
     end
 
     #
@@ -267,7 +267,7 @@ module Ladb::OpenCutList::BinPacking2D
     def select_best_packing(packers)
       return nil if packers.empty?
 
-      packers.sort_by! { |packer| [packer.gstat[:total_l_measure], -packer.gstat[:cuts_together_count]] }
+      packers.sort_by! { |packer| [packer.gstat[:overall_efficiency], packer.gstat[:total_l_measure], -packer.gstat[:cuts_together_count]] }
       print_final_packers(packers)
       packers.first
     end
@@ -310,46 +310,43 @@ module Ladb::OpenCutList::BinPacking2D
       # l_measure Packers, sort best_packers by ascending l_measure.
       packers_group = packers.group_by { |packer| packer.stat[:l_measure] }
 
-      # In each group of packers
+      # In each group of packers, select the best one
       packers_group.keys.sort.each_with_index do |k, i|
-        b = packers_group[k].min_by { |p| [-p.stat[:efficiency], -p.stat[:length_cuts], -p.stat[:largest_bottom_part]] }
+        b = packers_group[k].min_by { |p| [p.stat[:length_cuts], -p.stat[:largest_leftover_area]] }
         b.stat[:rank] = i + 1
         best_packers << b
       end
+
+      dbg("best packers = #{best_packers.size}")
       print_intermediate_packers(best_packers)
-      # dbg("best packers with zero left = #{packers_with_zero_left.size}")
 
       # Select best Packers for this level/Bin using the following unweighted criteria.
       # Try to maximize the used area, i.e. area of packed Boxes. This does minimize at the
       # same time the area of unused Boxes. It is equal to efficiency within a group
       # of the same l_measure.
-      update_rank_per_bin(packers, :used_area, false)
 
+      update_rank_per_bin(best_packers, :used_area, false)
       case stacking_pref
       when STACKING_NONE
-        update_rank_per_bin(packers, :largest_bottom_part, false)
-        update_rank_per_bin(packers, :longest_right_part, false) if rotatable
-        update_rank_per_bin(packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
       when STACKING_LENGTH
-        update_rank_per_bin(packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(packers, :nb_v_through_cuts, false) if rotatable
-        update_rank_per_bin(packers, :h_together, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false) if rotatable
+        update_rank_per_bin(best_packers, :h_together, false)
       when STACKING_WIDTH
-        update_rank_per_bin(packers, :nb_v_through_cuts, false)
-        update_rank_per_bin(packers, :nb_h_through_cuts, false) if rotatable
-        update_rank_per_bin(packers, :v_together, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false) if rotatable
+        update_rank_per_bin(best_packers, :v_together, false)
       when STACKING_ALL
-        update_rank_per_bin(packers, :v_together, false)
-        update_rank_per_bin(packers, :h_together, false)
-        update_rank_per_bin(packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :v_together, false)
+        update_rank_per_bin(best_packers, :h_together, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
       end
-      print_intermediate_packers(best_packers)
-
-      best_packers.sort_by! { |packer| packer.stat[:rank] }
 
       # Return a list of possible candidates for the next Bin to pack.
+      best_packers.sort_by! { |packer| packer.stat[:rank] }
       best_packers = best_packers.slice(0, @nb_best_selection)
       print_intermediate_packers(best_packers)
       best_packers
@@ -515,7 +512,7 @@ module Ladb::OpenCutList::BinPacking2D
       # Use this to run exactly one signature
       # Parameters are presort, score, split, stacking
       # signatures = [[1,1,3,1],[4,1,3,1]]
-      # signatures = [[3,4,5,1]]
+      # signatures = [[5,0,3,0]]
 
       # Not a super precise way of measuring compute time.
       start_timer(signatures.size)
