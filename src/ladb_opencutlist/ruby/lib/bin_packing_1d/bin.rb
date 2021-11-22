@@ -1,10 +1,10 @@
-module Ladb::OpenCutList::BinPacking1D
+# frozen_string_literal: true
 
+module Ladb::OpenCutList::BinPacking1D
   #
   # Implements the container of elements of class Box.
   #
   class Bin < Packing1D
-
     # raw length of bin.
     attr_accessor :length
 
@@ -43,13 +43,11 @@ module Ladb::OpenCutList::BinPacking1D
 
       @type = type
       # Making sure it is a float
-      @length = length*1.0
-      if @length <= 0
-        raise(Packing1DError, "Trying to initialize a bin with zero or negative length!")
-      end
+      @length = length * 1.0
+      raise(Packing1DError, 'Trying to initialize a bin with zero or negative length!') if @length <= 0
 
       @current_position = @options.trimsize
-      @current_leftover = @length - 2*@options.trimsize
+      @current_leftover = @length - (2 * @options.trimsize)
       @boxes = []
       @cuts = []
 
@@ -72,7 +70,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Run at the end of packing.
     #
     def sort_boxes
-      @boxes.sort!{|a, b| -a.length <=> -b.length}
+      @boxes.sort! { |a, b| -a.length <=> -b.length }
       @cuts = []
       @current_position = @options.trimsize
       @boxes.each do |box|
@@ -90,9 +88,11 @@ module Ladb::OpenCutList::BinPacking1D
       @current_position = [@current_position, @length].min
 
       @net_used = @length - @current_leftover
-      @efficiency = @net_used/@length.to_f * 100.0
+      @efficiency = @net_used / @length.to_f * 100.0
+
       if @efficiency > 100.0 + EPS
-        raise(Packing1DError, "Float precision error, length=#{@length}, current leftover=#{@current_leftover}")
+        raise(Packing1DError,
+              "Float precision error, length=#{@length}, current leftover=#{@current_leftover}")
       end
     end
 
@@ -101,7 +101,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Returned value is never smaller than 0.
     #
     def netlength
-      return [@length - 2 * @options.trimsize, 0].max
+      [@length - (2 * @options.trimsize), 0].max
     end
 
     #
@@ -112,8 +112,7 @@ module Ladb::OpenCutList::BinPacking1D
       le = format('%6.0f', @current_leftover)
       cp = format('%6.0f', @current_position)
       s = "  bin #{len}/#{cp}/#{le}, " \
-          "eff = #{format('%6.2f', @efficiency)} %\n" \
-          "    boxes: "
+          "eff = #{format('%6.2f', @efficiency)} %\n    boxes: "
       @boxes.each do |box|
         s += " #{format('%6.1f', box.length)}"
       end

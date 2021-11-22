@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 module Ladb::OpenCutList::BinPacking1D
-  
   #
   # Implements an element to pack into a Bin.
   #
   class Box < Packing1D
-
     # Position of the Box inside the enclosing Bin.
     attr_accessor :x
 
@@ -19,11 +19,11 @@ module Ladb::OpenCutList::BinPacking1D
     # Initialize a new Box, ensure that it has a length > 0.
     #
     def initialize(length = 0, data = nil)
+      super(nil)
       @x = 0.0
       @length = length
-      if @length <= 0
-        raise(Packing1DError, "Trying to initialize a box with zero or negative length!")
-      end
+      raise(Packing1DError, 'Trying to initialize a box with zero or negative length!') if @length <= 0
+
       @data = data
     end
 

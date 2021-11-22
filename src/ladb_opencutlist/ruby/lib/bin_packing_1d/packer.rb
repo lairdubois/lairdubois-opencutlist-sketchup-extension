@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Ladb::OpenCutList::BinPacking1D
   #
   # Core computing for 1D Bin Packing.
   #
   class Packer < Packing1D
-
     # Boxes to be packed.
     attr_reader :boxes
 
@@ -54,7 +55,7 @@ module Ladb::OpenCutList::BinPacking1D
       # Smallest box length to pack.
       @smallest = 0
 
-      @start_msg = ""
+      @start_msg = ''
       @status = 0
 
       # Statistics collected for final report.
@@ -64,7 +65,7 @@ module Ladb::OpenCutList::BinPacking1D
       @gstat[:nb_packed_bins] = 0
       @gstat[:unplaced_boxes] = 0
       @gstat[:largest_leftover] = 0
-      @gstat[:overall_efficiency] = 0   # Overall efficiency [0,100] as a percentage of used/waste.
+      @gstat[:overall_efficiency] = 0 # Overall efficiency [0,100] as a percentage of used/waste.
       @gstat[:algorithm] = nil
     end
 
@@ -88,7 +89,7 @@ module Ladb::OpenCutList::BinPacking1D
         @leftovers << Bin.new(leftover.length, BIN_TYPE_LO, @options)
       end
       if @leftovers.empty? && @options.base_bin_length < EPS
-        raise(Packing1DError, "No leftovers and base_bin_length too small!")
+        raise(Packing1DError, 'No leftovers and base_bin_length too small!')
       end
     end
 
@@ -100,7 +101,7 @@ module Ladb::OpenCutList::BinPacking1D
     # run the bin packing optimization.
     #
     def run
-      return ERROR_BAD_ERROR
+      ERROR_BAD_ERROR
     end
 
     #
@@ -113,7 +114,7 @@ module Ladb::OpenCutList::BinPacking1D
       # or @options.base_bin_length
       #
       available_lengths = @leftovers.collect(&:netlength)
-      available_lengths << (@options.base_bin_length - 2 * @options.trimsize)
+      available_lengths << (@options.base_bin_length - (2 * @options.trimsize))
       max_length = available_lengths.max
       @unfit_boxes = @boxes.select { |box| box.length > max_length }
       @boxes = @boxes.select { |box| box.length <= max_length }
@@ -135,27 +136,32 @@ module Ladb::OpenCutList::BinPacking1D
         @gstat[:largest_leftover] = [@gstat[:largest_leftover], bin.current_leftover].max
       end
 
-      @bins = @bins.sort_by {|bin| -bin.efficiency}
-      @gstat[:overall_efficiency] = 100*net_used/length if length > EPS
+      @bins = @bins.sort_by { |bin| -bin.efficiency }
+      @gstat[:overall_efficiency] = 100 * (net_used / length) if length > EPS
       @gstat[:nb_packed_bins] = @bins.size
 
       @gstat[:nb_unplaced_boxes] = @unplaced_boxes.size
       if @gstat[:nb_input_boxes] - @unplaced_boxes.size != nb_packed_boxes
-        raise(Packing1DError, "Lost boxes during packing!")
+        raise(Packing1DError, 'Lost boxes during packing!')
       end
 
       # WHY? do we ever have a leftover left here?
-      if @leftovers.size > 0
-        raise(Packing1DError, "Leftovers not assigned!")
-      end
+      raise(Packing1DError, 'Leftovers not assigned!') unless @leftovers.empty?
     end
 
+    #
+    # Overall efficiency
+    #
+    def overall_efficiency
+      @gstat[:overall_efficiency]
+    end
+    
     def to_str
       s = "  nb bins #{@bins.length}\n"\
           "  overall efficiency #{format('%6.2f', @gstat[:overall_efficiency])} %\n"
 
       @bins.each do |bin|
-        s += bin.to_str + "\n"
+        s += "#{bin.to_str}\n"
       end
       s += "  unplaced boxes[#{@unplaced_boxes.size}]:"
       @unplaced_boxes.each do |box|
@@ -163,7 +169,7 @@ module Ladb::OpenCutList::BinPacking1D
       end
       s += "\n  unused bins[#{@unused_bins.size}]:"
       @unused_bins.each do |bin|
-        s += " #{'%6.1f' % bin.length}"
+        s += " #{format('%6.1f', bin.length)}"
       end
       s += "\n  leftover[#{@leftovers.size}]:\n"
       @leftovers.each do |leftover|
