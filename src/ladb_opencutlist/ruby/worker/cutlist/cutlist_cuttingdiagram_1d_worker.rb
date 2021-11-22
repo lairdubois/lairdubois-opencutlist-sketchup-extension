@@ -149,7 +149,7 @@ module Ladb::OpenCutList
         }
 
         # Summary
-        # TODO cuttingdiagram1d_def.summary_def.overall_efficiency = result.overall_efficiency
+        cuttingdiagram1d_def.summary_def.overall_efficiency = result.overall_efficiency
         result.unused_bins.each { |bin|
           _append_bin_to_summary_bars(bin, group, false, cuttingdiagram1d_def.summary_def.bar_defs)
         }
