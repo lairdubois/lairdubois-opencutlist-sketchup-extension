@@ -611,8 +611,10 @@ tab:
         total_part_count: Σ Onderdelen
         total_used: Totaal gebruikt
         trimming: Marge
+        stats: Statistieken
         total_cut_count: Aantal sneden
         total_cut_length: Lengte van de zaagsnedes
+        overall_efficiency: Algehele efficiëntie
         efficiency: Efficiëntie
         leftover: Overschot
         cut: Snede

@@ -611,8 +611,10 @@ tab:
         total_part_count: Σ Деталей
         total_used: Всего использовано
         trimming: Обрезка
+        stats: Статистика
         total_cut_count: Σ Число резов
         total_cut_length: Σ Длина пропилов
+        overall_efficiency: Общая эффективность
         efficiency: Эффективность
         leftover: Остаток
         cut: Пропил
@@ -643,7 +645,7 @@ tab:
         unplaced_parts: "**1 деталь** не возможно разместить, так как она слишком велика для размещения."
         unplaced_parts_plural: "Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели."
       warning:
-        is_part_selection: Данный отчет ограничен **выбранными деталями**
+        is_part_selection: Данный отчет ограничен **выделенными деталями**
         cutting_dimensions: |
           Эта карта раскроя отображает детали с их **пильными** размерами.
         cutting_dimensions_increase_1d: |
@@ -738,7 +740,7 @@ tab:
       unknow_part: Выделенной детали нет в списке деталей.
       obsolete_cutlist: "Невозможно, список раскроя не актуален. Рассчитать снова."
     warning:
-      is_entity_selection: "Данный список раскроя содержит лишь часть Вашей модели, так как сгенерирован на основе отдельно выделенных деталей."
+      is_entity_selection: "При расчете учитывались только детали, выделенные в модели."
       no_typed_materials_in_model: "В данной модели не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "В выделении не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**)."
       export_empty: Ваш экспорт не содержит ни одной детали.
