@@ -154,6 +154,8 @@
 
                 } else {
                     that.editElement(null);
+                    selectedElement = null;
+                    selectedElementDef = null;
                 }
             })
             .on('mousemove', function (e) {

@@ -334,7 +334,7 @@ module Ladb::OpenCutList
       else
         merged_values = values
       end
-      return merged_values, contains_default_values
+      [ merged_values, contains_default_values ]
     end
 
     def read_global_presets
@@ -391,6 +391,11 @@ module Ladb::OpenCutList
     end
 
     def get_global_preset(dictionary, name = nil, section = nil)
+      values, contains_default_values = get_global_preset_context(dictionary, name, section)
+      values
+    end
+
+    def get_global_preset_context(dictionary, name = nil, section = nil)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
@@ -417,9 +422,10 @@ module Ladb::OpenCutList
 
         # Preset doesn't exists, return default_values
         values = default_values.clone
+        contains_default_values = true
 
       end
-      values
+      [ values, contains_default_values ]
     end
 
     def list_global_preset_dictionaries
@@ -512,6 +518,11 @@ module Ladb::OpenCutList
     end
 
     def get_model_preset(dictionary, section = nil, app_defaults_section = nil)
+      values, contains_default_values = get_model_preset_context(dictionary, section, app_defaults_section)
+      values
+    end
+
+    def get_model_preset_context(dictionary, section = nil, app_defaults_section = nil)
 
       section = '0' if section.nil?
       app_defaults_section = '0' if app_defaults_section.nil?
@@ -532,7 +543,7 @@ module Ladb::OpenCutList
         contains_default_values = true
 
       end
-      values
+      [ values, contains_default_values ]
     end
 
     def list_model_preset_dictionaries
