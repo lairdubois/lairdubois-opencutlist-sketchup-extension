@@ -365,7 +365,7 @@ tab:
       part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
       part_folding: Grupo de partes idênticas
       part_folding_help: |
-        Se esta opção estiver ativada, as peças com **mesmo tamanho**, com as **mesmas tags**, e a **mesma superfície final** (se o display naquela superfície não estiver oculto) serão agrupadas na mesma linha.
+        Se esta opção estiver ativada, peças de **Madeira Sólida, Painel ou Dimensional MLC**, tendo o **mesmo tamanho compatível**, com as **mesmas etiquetas** e a **mesma superfície acabada** *(se a exibição desta superfície não estiver oculta)* serão agrupadas na mesma linha na *lista de peças*.
 
         As peças ainda serão consideradas diferentes para fins de etiquetagem e diagrama de corte.
       hide_entity_names: Ocultar nomes de instâncias
@@ -611,8 +611,10 @@ tab:
         total_part_count: Σ Peças
         total_used: Total utilizado
         trimming: Apara
+        stats: Estatísticas
         total_cut_count: Numero de cortes
         total_cut_length: Comprimento dos cortes
+        overall_efficiency: Eficiência global
         efficiency: Eficiência
         leftover: Sobras
         cut: Corte
@@ -738,7 +740,7 @@ tab:
       unknow_part: A peça selecionada não existe na Planilha de Produção.
       obsolete_cutlist: "Impossível, a Planilha de Produção está obsoleta. Gere novamente."
     warning:
-      is_entity_selection: "Esta Planilha de Produção é uma representação parcial do seu modelo, porque se baseia apenas em uma seleção de partes."
+      is_entity_selection: Somente os elementos selecionados em seu modelo foram levados em conta.
       no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Sua exportação não contém nenhuma peça.
@@ -1003,7 +1005,7 @@ tab:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0**!
       cuttingdiagram_export: |
-        É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *digrama de corte*.
+        É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
         Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
         Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
     objective_crowdfunding: |
