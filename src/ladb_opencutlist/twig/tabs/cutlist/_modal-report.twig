@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block bodyInner %}
-    {% if visible_only %}
-        <div class="alert alert-info text-center">{{ 'tab.cutlist.report.warning.visible_only'|i18next }}</div>
+    {% if isGroupSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.report.warning.is_group_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_report_options_general">

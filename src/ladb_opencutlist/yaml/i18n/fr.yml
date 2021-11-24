@@ -476,7 +476,8 @@ tab:
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       warning:
-        visible_only: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        visible_only: DEPRECATED # by is_group_selection
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:
       title: Rapport
       info_0: |
@@ -499,7 +500,8 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
-        visible_only: Seules les pièces contenues dans les **groupes visibles** sont comptabilisées.
+        visible_only: DEPRECATED # by is_group_selection
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
     cuttingdiagram:
       title: Calepinage
       start_msg: Optimisation en cours
