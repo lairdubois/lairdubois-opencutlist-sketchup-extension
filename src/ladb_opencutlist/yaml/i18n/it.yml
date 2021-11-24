@@ -476,7 +476,7 @@ tab:
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
       warning:
-        visible_only: Le parti contenute nei **gruppi nascosti** non saranno esportate.
+        is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
     report:
       title: Resoconto
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
       warning:
-        visible_only: Solo le parti contenute nei **gruppi visibili** sono pubblicati.
+        is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno contate.
     cuttingdiagram:
       title: Schema di taglio
       start_msg: Ottimizzazione in corso

@@ -476,7 +476,7 @@ tab:
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
       warning:
-        visible_only: Díly uvnitř **skrytých skupin** vašeho seznamu dílů nebudou exportovány.
+        is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
     report:
       title: Zpráva
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
       warning:
-        visible_only: Počítají se pouze části obsažené ve **viditelných skupinách**.
+        is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se nezapočítávají."
     cuttingdiagram:
       title: Nářezový plán
       start_msg: Probíhá optimalizace

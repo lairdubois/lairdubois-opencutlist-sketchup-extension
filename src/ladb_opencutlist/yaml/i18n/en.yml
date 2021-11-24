@@ -476,7 +476,7 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       warning:
-        visible_only: Parts inside **hidden groups** of your parts list will not be exported.
+        is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
     report:
       title: Report
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
-        visible_only: Only the parts contained in the **visible groups** are considered.
+        is_group_selection: Parts inside **hidden groups** of the parts list will not be accounted for.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running

@@ -476,7 +476,7 @@ tab:
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
       warning:
-        visible_only: Las piezas dentro de **grupos ocultos** de su lista de piezas no se exportarán.
+        is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
     report:
       title: Reporte
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
-        visible_only: Sólo se cuentan las piezas contenidas en los **grupos visibles**.
+        is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
     cuttingdiagram:
       title: Diagrama de corte
       start_msg: Optimización en curso
