@@ -476,7 +476,7 @@ tab:
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
       warning:
-        visible_only: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
+        is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
     report:
       title: Relatório
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
-        visible_only: Apenas as partes contidas nos **grupos visíveis** são contadas.
+        is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão contadas.
     cuttingdiagram:
       title: Diagrama de Corte
       start_msg: Otimização em progresso

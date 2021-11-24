@@ -476,7 +476,7 @@ tab:
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
       warning:
-        visible_only: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+        is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
     report:
       title: Raport
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
-        visible_only: Uwzględniane są tylko części zawarte w **widocznych grupach**.
+        is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
     cuttingdiagram:
       title: Schemat cięcia
       start_msg: Optymalizacja w toku

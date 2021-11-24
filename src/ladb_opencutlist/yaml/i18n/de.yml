@@ -476,7 +476,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       warning:
-        visible_only: Die in **ausgeblendeten Gruppen** enthaltenen Teile werden nicht exportiert.
+        is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht exportiert.
     report:
       title: Bericht
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
-        visible_only: "Es werden nur die Teile gezählt, die in den **eingeblendeten Gruppen** enthalten sind."
+        is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht gezählt.
     cuttingdiagram:
       title: Schnittplan
       start_msg: Optimierung läuft

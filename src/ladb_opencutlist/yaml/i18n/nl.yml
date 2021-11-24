@@ -476,7 +476,7 @@ tab:
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
       warning:
-        visible_only: De onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
+        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
     report:
       title: Rapport
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
-        visible_only: Enkel de onderdelen in de **zichtbare groepen** worden meegerekend.
+        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet meegeteld.
     cuttingdiagram:
       title: Zaagschema
       start_msg: Optimalisatie aan de gang
