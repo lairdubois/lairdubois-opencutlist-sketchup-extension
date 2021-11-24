@@ -557,7 +557,7 @@
     LadbTabCutlist.prototype.exportCutlist = function () {
         var that = this;
 
-        var visibleOnly = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        var isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve export option options
@@ -566,7 +566,7 @@
             var exportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
-                visible_only: visibleOnly
+                isGroupSelection: isGroupSelection
             });
 
             // Fetch UI elements
@@ -761,7 +761,7 @@
     LadbTabCutlist.prototype.reportCutlist = function (forceDefaultTab) {
         var that = this;
 
-        var visibleOnly = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        var isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve label options
@@ -770,7 +770,7 @@
             var reportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
-                visible_only: visibleOnly,
+                isGroupSelection: isGroupSelection,
                 tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
             });
 

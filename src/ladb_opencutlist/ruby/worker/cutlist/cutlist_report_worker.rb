@@ -243,6 +243,11 @@ module Ladb::OpenCutList
           @report_def.errors << 'tab.cutlist.report.error.no_typed_material_parts'
         end
 
+        # Warnings
+        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?;
+          @report_def.warnings << 'tab.cutlist.report.warning.is_group_selection'
+        end
+
         # Create the report
         report = @report_def.create_report
 
