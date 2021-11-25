@@ -182,7 +182,7 @@ module Ladb::OpenCutList
     def initialize(cutlist_part)
       @cutlist_part = cutlist_part
 
-      @_sorter = (cutlist_part.is_a?(FolderPart) && cutlist_part.number.to_i > 0) ? cutlist_part.number.to_i : cutlist_part.number,  # Use a special "_sorter" property because number could contains a "+" suffix
+      @_sorter = cutlist_part.number.to_i > 0 ? cutlist_part.number.to_i : cutlist_part.number.rjust(4)  # Use a special "_sorter" property because number could be a letter. In this case, rjust it.
 
       @count = 0
 

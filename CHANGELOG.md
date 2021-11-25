@@ -8,6 +8,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
 
   * Better selection feedbacks in cutlist, cutting diagrams, labels and reports
   * Save default _mass_unit_ and _currency_symbol_ to model even if it is not modified from default values
+  * Fixed cutting diagram part list sort when using letter for part's number@
 
 * 3.0.0 (2021-11-14)
 
