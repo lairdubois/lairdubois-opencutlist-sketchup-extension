@@ -457,7 +457,7 @@ module Ladb::OpenCutList
 
             # Update max_number in group_def
             if group_def.max_number
-              if self._comparable_number(number) > self._comparable_number(group_def.max_number)
+              if _comparable_number(number) > _comparable_number(group_def.max_number)
                 group_def.max_number = number
               end
             else
@@ -467,7 +467,7 @@ module Ladb::OpenCutList
             # Update max_number in cutlist
             if group_def.max_number
               if cutlist.max_number
-                if self._comparable_number(group_def.max_number) > self._comparable_number(cutlist.max_number)
+                if _comparable_number(group_def.max_number) > _comparable_number(cutlist.max_number)
                   cutlist.max_number = group_def.max_number
                 end
               else
