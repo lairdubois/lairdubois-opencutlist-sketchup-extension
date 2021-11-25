@@ -645,15 +645,11 @@ tab:
         unplaced_parts: "**1 pièce** est trop grande pour être placée."
         unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."
       warning:
-        is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**
-        cutting_dimensions: |
-          Ce calepinage présente les pièces dans leur dimensions de **débit**.
-        cutting_dimensions_increase_1d: |
-          *Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.*
-        cutting_dimensions_increase_2d: |
-          *Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Dimensions réduites de l'épaisseur des chants.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
+        cutting_dimensions: Ce calepinage présente les pièces dans leur dimensions de **débit**.
+        cutting_dimensions_increase_1d: Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.
+        cutting_dimensions_increase_2d: Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquettes
       options_layout: Composition
@@ -729,7 +725,7 @@ tab:
       error:
         invalid_size: Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
       warning:
-        is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**
+        is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
