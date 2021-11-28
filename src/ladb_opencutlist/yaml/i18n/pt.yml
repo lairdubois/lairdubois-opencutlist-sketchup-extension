@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Português
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Para que as mudanças tenha efeito, você deve **fechar** e **reabrir** a janela OpenCutList."
 _description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:

@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Español
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Para tener en cuenta todos los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList."
 _description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)"
 default:

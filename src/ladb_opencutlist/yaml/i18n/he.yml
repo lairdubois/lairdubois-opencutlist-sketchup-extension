@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: "עברית (experimental, no rtl)"
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "על מנת לקבל את כל השינויים, עליך **לסגור** ו-**לפתח** מחדש את החלון OpenCutList."
 _description: "תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקלות שימוש ;)"
 default:
@@ -645,10 +647,10 @@ tab:
         unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
         unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
       warning:
-        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
+        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**.
         cutting_dimensions: תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
-        cutting_dimensions_increase_1d: המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'.
-        cutting_dimensions_increase_2d: המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'.
+        cutting_dimensions_increase_1d: "המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'."
         cutting_dimensions_edge_decrement: המידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: תוויות
@@ -725,7 +727,7 @@ tab:
       error:
         invalid_size: פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
       warning:
-        is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**
+        is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**.
     error:
       no_model: המודל לא נפתח. נצטרך לתת לי קצת יותר מידע ;)
       no_entities: המודל ריק. נצטרך לתת לי קצת יותר מידע ;)

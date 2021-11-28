@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Русский
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново плагин OpenСutList."
 _description: "Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)"
 default:

@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Čeština
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Chcete-li provést změny, musíte toto okno **zavřít** a **znovu otevřít**."
 _description: "Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)"
 default:

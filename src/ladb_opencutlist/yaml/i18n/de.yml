@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Deutsch
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**."
 _description: "Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)"
 default:
@@ -352,8 +354,8 @@ tab:
       flipped_detection: Erkennung von gespiegelten Teilen
       flipped_detection_help: |
         Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
-      smart_material: "*Intelligente* Zuweisung des Materials"
-      smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen."
+      smart_material: "*Intelligente* Materialzuweisung"
+      smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen, falls dem Teil selber kein Material zugewiesen wurde."
       dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
       dynamic_attributes_name_help: |
         Ist diese Option aktiv, wird die Bezeichnung aus dem Attribut *Name* der dynamischen Komponenten gelesen, sofern es definiert ist.
@@ -499,7 +501,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
-        is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht gezählt.
+        is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht berücksichtigt.
     cuttingdiagram:
       title: Schnittplan
       start_msg: Optimierung läuft

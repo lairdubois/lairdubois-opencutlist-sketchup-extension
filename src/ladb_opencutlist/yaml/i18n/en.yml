@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: English
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "To reflect all changes, you must **close** and **reopen** the OpenCutList window."
 _description: "Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)"
 default:

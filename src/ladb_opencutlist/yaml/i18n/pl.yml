@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Polski
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć to okno."
 _description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;)"
 default:
@@ -551,7 +553,7 @@ tab:
       option_highlight_primary_cuts_1: Zawsze widoczne
       option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia główne.
       option_saw_kerf: Grubość linii cięcia
-      option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
+      option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia.
       option_trimming: Rozmiar przycinania
       option_trimming_help_1d: Ilość materiału na każdym końcu deski lub obrzeża traktowany jako odpad.
       option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.

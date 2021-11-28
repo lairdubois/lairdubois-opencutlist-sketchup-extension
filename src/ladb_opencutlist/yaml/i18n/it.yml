@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Italiano
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList."
 _description: "Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)"
 default:
@@ -147,7 +149,7 @@ tab:
     help: |
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
-    is_selection: Selezionati solo
+    is_selection: Solo gli elementi selezionati
     material_undefined: Nessun materiale definito
     not_available_std_width: Larghezza non standard
     not_available_std_thickness: Spessore non standard
@@ -736,7 +738,7 @@ tab:
       unknow_part: La parte selezionata non esiste nella distinta.
       obsolete_cutlist: "Impossibile, la distinta non è aggiornata. Va rigenerata."
     warning:
-      is_entity_selection: "Questa distinta è una rappresentazione parziale del tuo modello, perchè mostra solo una selezione di parti."
+      is_entity_selection: Sono inclusi solo gli elementi selezionati.
       no_typed_materials_in_model: "Il vostro modello non usa un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "La vostra selezione non utilizza un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Nessuna parte da esportare.
