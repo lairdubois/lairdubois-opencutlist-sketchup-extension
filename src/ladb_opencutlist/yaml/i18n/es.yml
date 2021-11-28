@@ -645,15 +645,11 @@ tab:
         unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."
       warning:
-        is_part_selection: Este diagrama de corte está limitado a **piezas seleccionadas**.
-        cutting_dimensions: |
-          Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
-        cutting_dimensions_increase_1d: |
-          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Dimensiones reducidas por el grosor de las tiras del canto.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
+        cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
+        cutting_dimensions_increase_1d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensiones reducidas por el grosor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
       options_layout: Composición
@@ -729,7 +725,7 @@ tab:
       error:
         invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
       warning:
-        is_part_selection: Estas etiquetas están limitadas a **piezas seleccionadas** únicamente
+        is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)

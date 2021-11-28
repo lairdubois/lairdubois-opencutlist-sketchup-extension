@@ -476,7 +476,7 @@ tab:
       edge_xmin: عرض الحاشية 1
       edge_xmax: عرض الحاشية 2
       warning:
-        visible_only: لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
+        is_group_selection: لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
     report:
       title: تقرير
       info_0: |
@@ -499,7 +499,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
-        visible_only: القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
+        is_group_selection: القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
     cuttingdiagram:
       title: رسم التقطيعِ التخطيطيُ
       start_msg: تشغيل التحسين
@@ -646,14 +646,10 @@ tab:
         unplaced_parts_plural: "هناك **{{ count }} قطع** لا يمكن أن تدرج لأنها أكبر من أن تُحتوى."
       warning:
         is_part_selection: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
-        cutting_dimensions: |
-          يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
-        cutting_dimensions_increase_1d: |
-          *عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**)*.
-        cutting_dimensions_increase_2d: |
-          *عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**)* و عرضا (**{{ width_increase }}**)*.
-        cutting_dimensions_edge_decrement: |
-          *الأبعاد منقّصة بمقدار سمك الحاشية*<i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions: يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
+        cutting_dimensions_increase_1d: عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**).
+        cutting_dimensions_increase_2d: عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**) و عرضا (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: الأبعاد منقّصة بمقدار سمك الحاشية <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: الملصقات
       options_layout: النموذج الطباعي

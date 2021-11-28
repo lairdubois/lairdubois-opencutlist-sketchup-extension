@@ -261,7 +261,7 @@ tab:
       general: Allgemein
       extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Kantenbänder
-      name: Bezeichnung
+      name: Name
       material: Material
       cumulable: Summierbar
       cumulable_help: |
@@ -290,7 +290,7 @@ tab:
         *OpenCutList zählt dann 2 Stücke von 19 mm Dicke anstelle von 1 Stück von 38 mm Dicke.
       description: Beschreibung
       description_help: |
-        Die *Beschreibung* ermöglicht es Ihnen, persönliche Informationen zu jeder Teildefinition anzugeben.
+        Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
       tags: Tags
       tags_help: |
         Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
@@ -645,15 +645,11 @@ tab:
         unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} zu große Teile** konnten nicht platziert werden."
       warning:
-        is_part_selection: Der Schnittplan beschränkt sich auf die **ausgewählten Teile**.
-        cutting_dimensions: |
-          Dieser Schnittplan verwendet die **Rohmaße** der Teile.
-        cutting_dimensions_increase_1d: |
-          *Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: ein Längenzumaß von (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Übermaße wurden auf dem Material '{{ material_name }}' wie folgt konfiguriert: ein Längenzumaß (**{{ length_increase }}**) und ein Breitenzumaß (**{{ width_increase }}**)*.
-        cutting_dimensions_edge_decrement: |
-          *Maße reduziert um die Materialstärke der Kantenbänder.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
+        cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
+        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiketten
       options_layout: Gestaltung
@@ -729,7 +725,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
-        is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**
+        is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
