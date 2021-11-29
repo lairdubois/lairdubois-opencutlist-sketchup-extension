@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: "עברית (experimental, no rtl)"
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "על מנת לקבל את כל השינויים, עליך **לסגור** ו-**לפתח** מחדש את החלון OpenCutList."
 _description: "תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקלות שימוש ;)"
 default:
@@ -383,7 +385,7 @@ tab:
       hide_edges: הסתר עמודות קאנטים
       hide_edges_help: "אם האפשרות מופעלת, **עמודות קאנטים** של חלקים מסוג *מטר מרובע* אינן מוצגות."
       minimize_on_highlight: כווץ אחרי *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: "אם האפשרות מופעלת, חלון OpenCutList ימוזער כאשר משתמשים בפונקציה *'$t(tab.cutlist.highlight_part)'*"
+      minimize_on_highlight_help: "אם האפשרות מופעלת, חלון OpenCutList ימוזער כאשר משתמשים בפונקציה *'$t(tab.cutlist.highlight_part)'*."
       general: כללי
       part_order_strategy: מיון חלקים
       part_order_strategy_help: |
@@ -476,7 +478,7 @@ tab:
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
       warning:
-        visible_only: החלקים הכלולים ב-**הקבוצות הנסתרות** של תוכנית חיתוך לא ייצאו.
+        is_group_selection: החלקים הכלולים ב-**הקבוצות הנסתרות** של תוכנית חיתוך לא ייצאו.
     report:
       title: דו"ח
       info_0: |
@@ -499,7 +501,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
       warning:
-        visible_only: נספרים רק החלקים הכלולים ב-**הקבוצות הגלויות**.
+        is_group_selection: נספרים רק החלקים הכלולים ב-**הקבוצות הגלויות**.
     cuttingdiagram:
       title: תוכנית חיתוך
       start_msg: אופטימיזציה פועלת
@@ -638,22 +640,18 @@ tab:
         no_bar_dimensional: הקרש הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
         no_bar_edge: הקאנט הסטנדרטי אינו מוגדר כהלכה וגם הפחת לא הוגדר.
         parameters: ההגדרות שגויות. גודל החיתוך עולה על 25% של הלוח או קאנט הארוכים ביותר.
-        no_parts: אין חלק
+        no_parts: אין חלק.
         no_sheet: הלוח הסטנדרטי אינו מוגדר כהלכה ולא מוגדרת שום פחת.
         no_placement_possible: "לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...)."
         bad_error: "שגיאת חישוב. אנא צרו קשר עם המפתחים, מכיוון שיש לכם מקרה מעניין."
         unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
         unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
       warning:
-        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**
-        cutting_dimensions: |
-          תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
-        cutting_dimensions_increase_1d: |
-          *המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'.*
-        cutting_dimensions_increase_2d: |
-          *המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'.*
-        cutting_dimensions_edge_decrement: |
-          *המידות מופחתות בעובי הקאנט.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**.
+        cutting_dimensions: תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
+        cutting_dimensions_increase_1d: "המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'."
+        cutting_dimensions_edge_decrement: המידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: תוויות
       options_layout: הרכב
@@ -729,7 +727,7 @@ tab:
       error:
         invalid_size: פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
       warning:
-        is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**
+        is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**.
     error:
       no_model: המודל לא נפתח. נצטרך לתת לי קצת יותר מידע ;)
       no_entities: המודל ריק. נצטרך לתת לי קצת יותר מידע ;)

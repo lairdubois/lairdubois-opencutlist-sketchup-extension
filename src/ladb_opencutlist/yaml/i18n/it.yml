@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Italiano
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList."
 _description: "Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)"
 default:
@@ -147,7 +149,7 @@ tab:
     help: |
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
-    is_selection: Selezionati solo
+    is_selection: Solo gli elementi selezionati
     material_undefined: Nessun materiale definito
     not_available_std_width: Larghezza non standard
     not_available_std_thickness: Spessore non standard
@@ -351,7 +353,7 @@ tab:
          - *spessore* è sull'asse <span style='color:blue'>blu</span>
       flipped_detection: Rilevamento di parti specchiate
       flipped_detection_help: |
-        Selezionando questa opzione, le parti specchiate saranno rilevate e visualizzate come una nuova parte
+        Selezionando questa opzione, le parti specchiate saranno rilevate e visualizzate come una nuova parte.
       smart_material: Assegnazione *Intelligente* dei materiali
       smart_material_help: "Selezionando questa opzione, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli."
       dynamic_attributes_name: Usa l'attributo *Nome* dei componenti dinamici
@@ -549,7 +551,7 @@ tab:
       option_highlight_primary_cuts: Tagli principali
       option_highlight_primary_cuts_0: Solo al passaggio del mouse
       option_highlight_primary_cuts_1: Sempre visibile
-      option_highlight_primary_cuts_help: Consente di evidenziare i tagli principali
+      option_highlight_primary_cuts_help: Consente di evidenziare i tagli principali.
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
@@ -645,15 +647,11 @@ tab:
         unplaced_parts: "**Una parte** non può essere schematizzata, perchè è troppo grande."
         unplaced_parts_plural: "Ci sono **{{ count }} parti** che non possono essere schematizzate perchè troppo grandi."
       warning:
-        is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**
-        cutting_dimensions: |
-          Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
-        cutting_dimensions_increase_1d: |
-          *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Le dimensioni sono state ridotte dello spessore della bordatura.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
+        cutting_dimensions: Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
+        cutting_dimensions_increase_1d: "Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Le dimensioni sono state ridotte dello spessore della bordatura. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etichette
       options_layout: Schema
@@ -729,7 +727,7 @@ tab:
       error:
         invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
       warning:
-        is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**
+        is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -740,7 +738,7 @@ tab:
       unknow_part: La parte selezionata non esiste nella distinta.
       obsolete_cutlist: "Impossibile, la distinta non è aggiornata. Va rigenerata."
     warning:
-      is_entity_selection: "Questa distinta è una rappresentazione parziale del tuo modello, perchè mostra solo una selezione di parti."
+      is_entity_selection: Sono inclusi solo gli elementi selezionati.
       no_typed_materials_in_model: "Il vostro modello non usa un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "La vostra selezione non utilizza un materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Nessuna parte da esportare.

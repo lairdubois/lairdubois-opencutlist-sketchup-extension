@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Português
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Para que as mudanças tenha efeito, você deve **fechar** e **reabrir** a janela OpenCutList."
 _description: "Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)"
 default:
@@ -646,14 +648,10 @@ tab:
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
       warning:
         is_part_selection: Este diagrama de corte é limitado a **peças selecionadas**.
-        cutting_dimensions: |
-          Este layout mostra as peças em suas dimensões de **comprimento bruto**.
-        cutting_dimensions_increase_1d: |
-          *Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': configurado no material (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': do comprimento (**{{ length_increase }}**) e da largura (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Dimensões reduzidas pela espessura da faixa de borda.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
+        cutting_dimensions_increase_1d: "Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': configurado no material (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': do comprimento (**{{ length_increase }}**) e da largura (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da faixa de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
       options_layout: Composição
@@ -729,7 +727,7 @@ tab:
       error:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
-        is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente
+        is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)

@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Polski
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Aby uwzględnić zmiany, musisz **zamknąć** i **ponownie** otworzyć to okno."
 _description: "Generator listy cięć i schematów cięcia dla stolarzy. Open Source, crowdfunded i łatwy w użyciu ;)"
 default:
@@ -146,7 +148,7 @@ tab:
     title: Lista części
     help: |
       Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
-      Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części
+      Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części.
     is_selection: Wybór
     material_undefined: Brak zdefiniowanego materiału
     not_available_std_width: Niezdefiniowana szerokość
@@ -400,7 +402,7 @@ tab:
       property_edge_pattern: Liczba obrzeży
       property_tags: Oznaczenia
       tags: Oznaczenia
-      tags_help: Własna lista oznaczeń dostępna w oknie właściwości części
+      tags_help: Własna lista oznaczeń dostępna w oknie właściwości części.
       tags_placeholder: Dodaj oznaczenie
     list:
       filters: Filtry
@@ -551,7 +553,7 @@ tab:
       option_highlight_primary_cuts_1: Zawsze widoczne
       option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia główne.
       option_saw_kerf: Grubość linii cięcia
-      option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia
+      option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia.
       option_trimming: Rozmiar przycinania
       option_trimming_help_1d: Ilość materiału na każdym końcu deski lub obrzeża traktowany jako odpad.
       option_trimming_help_2d: Ilość materiału dookoła surowej płyty potraktowany jako odpad.
@@ -638,22 +640,18 @@ tab:
         no_bar_dimensional: Standardowa płyta nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
         no_bar_edge: Standardowe obrzeże nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
         parameters: Parametry są niepoprawne. Rozmiar przycinania jest większy niż 25% najdłuższej płyty lub obrzeża.
-        no_parts: Brak części
+        no_parts: Brak części.
         no_sheet: Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
         no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...)."
         bad_error: "Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek."
-        unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża"
+        unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża."
         unplaced_parts_plural: "Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
-        cutting_dimensions: |
-          Ten rozkrój używa **wstępnych** wymiarów części.
-        cutting_dimensions_increase_1d: |
-          *Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**) i nadmiar szerokości. (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Wymiary pomniejszone o grubość obrzeża.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
+        cutting_dimensions_increase_1d: "Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Te wstępne wymiary zostały skonfigurowane dla materiału '{{ material_name }}': nadmiar długości (**{{ length_increase }}**) i nadmiar szerokości. (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Wymiary pomniejszone o grubość obrzeża. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etykiety
       options_layout: Układ
@@ -729,7 +727,7 @@ tab:
       error:
         invalid_size: Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
       warning:
-        is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**
+        is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**.
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
@@ -830,7 +828,7 @@ tab:
         Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       grained: Kierunek wzoru/tekstury
-      grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale
+      grained_help: Konfiguruje kierunek wzoru lub tekstury na materiale.
       grained_0: Bez wzoru/tekstury
       grained_1: Wzór/tekstura wzdłuż Długości
       edge_decremented: Zmniejszanie

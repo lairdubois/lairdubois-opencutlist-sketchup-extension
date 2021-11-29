@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Čeština
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Chcete-li provést změny, musíte toto okno **zavřít** a **znovu otevřít**."
 _description: "Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)"
 default:
@@ -638,7 +640,7 @@ tab:
         no_bar_dimensional: Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
         no_bar_edge: Standardní olepování hran nebylo správně nakonfigurováno a nebyly definovány žádné zbytky.
         parameters: Parametry jsou nesprávné. Velikost ořezu je větší než 25% nejdelší desky nebo hrany.
-        no_parts: Žádný dílec
+        no_parts: Žádný dílec.
         no_sheet: Standardní velikosti panelů je špatně nakonfigurována a nejsou k dispozici žádné zbytky.
         no_placement_possible: "Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...)."
         bad_error: "Chyba v algoritmu, prosím kontaktujte vývojáře, máte zajímavý případ."
@@ -646,14 +648,10 @@ tab:
         unplaced_parts_plural: "Existují části **{{ count }}** nelze umístit, protože je příliš velká, nevleze se."
       warning:
         is_part_selection: Tento nářezový plán je omezen na **vybrané části**.
-        cutting_dimensions: |
-          Tento nářezový plán používá **hrubé** rozměry dílů.
-        cutting_dimensions_increase_1d: |
-          *Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name }}': hrubé délky (**{{ length_increase }}**).*
-        cutting_dimensions_increase_2d: |
-          *Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name} }': hrubé délky (**{{ length_increase }}**) a hrubé šířky (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Rozměry zmenšené o tloušťku hrany.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions: Tento nářezový plán používá **hrubé** rozměry dílů.
+        cutting_dimensions_increase_1d: "Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name }}': hrubé délky (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name} }': hrubé délky (**{{ length_increase }}**) a hrubé šířky (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Rozměry zmenšené o tloušťku hrany. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Štítky
       options_layout: Rozložení
@@ -729,7 +727,7 @@ tab:
       error:
         invalid_size: Zadané konfigurační parametry neumožňují nastavení platné velikosti štítku.
       warning:
-        is_part_selection: Tyto štítky jsou omezeny pouze na **vybrané části**
+        is_part_selection: Tyto štítky jsou omezeny pouze na **vybrané části**.
     error:
       no_model: Model nejde otevřít. Potřebujeme více informací ;)
       no_entities: Váš model je prázdný. Potřebujeme více informací ;)

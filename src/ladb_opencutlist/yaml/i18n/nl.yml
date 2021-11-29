@@ -84,10 +84,10 @@ core:
       Om volledig te profiteren van OpenCutList, raden we aan om te upgraden naar ten minste **SketchUp 2017**.
     feature_locked: "*Niet de-activeerbaar in deze versie van SketchUp*"
   event:
-    model_change: Er zijn veranderingen aangebracht
-    options_change: Er zijn opties aangepast
-    material_change: Ten minste een materiaal is aangepast
-    selection_change: De selectie is veranderd
+    model_change: Er zijn veranderingen aangebracht.
+    options_change: Er zijn opties aangepast.
+    material_change: Ten minste een materiaal is aangepast.
+    selection_change: De selectie is veranderd.
   upgrade:
     unavailable: De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
@@ -188,7 +188,7 @@ tab:
         Werkelijke breedte: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: Pas het aantal decimalen aan in *Model info* of controleer de maten van de componenten in deze groep
+      rounded_std_footer: Pas het aantal decimalen aan in *Model info* of controleer de maten van de componenten in deze groep.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -212,7 +212,7 @@ tab:
       add_edge_material_name_filter: "Filter op '{{ label }}'"
       remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
       not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
-      instance_count_by_part: "Dit onderdeel wordt geteld als set van **{{ count }}** eenheden"
+      instance_count_by_part: "Dit onderdeel wordt geteld als set van **{{ count }}** eenheden."
       unused_instance_count: "Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt."
       unused_instance_count_plural: "Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt."
       used_instance_count: "**{{ count }}** / {{ total }} gebruikte eenheden"
@@ -353,7 +353,7 @@ tab:
       flipped_detection_help: |
         Als deze optie is geselecteerd, worden gespiegelde onderdelen gedetecteerd en weergegeven als een nieuw onderdeel.
       smart_material: "*Slimme* toekenning van materiaal"
-      smart_material_help: "Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component"
+      smart_material_help: "Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component."
       dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component.
       dynamic_attributes_name_help: |
         Als deze optie is geselecteerd, wordt de aanduiding van onderdelen geëxtraheerd uit het attribuut *Name*, indien gedefinieerd.
@@ -362,7 +362,7 @@ tab:
       part_number_with_letters: Stel de onderdeel nummers opnieuw in
       part_number_with_letters_help: "Als deze optie is geselecteerd, worden onderdelen genummerd met letters (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Stel de onderdeelnummers voor alle groepen opnieuw in
-      part_number_sequence_by_group_help: "Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte)"
+      part_number_sequence_by_group_help: "Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte)."
       part_folding: Groepeer identieke onderdelen
       part_folding_help: |
         Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn.
@@ -511,7 +511,7 @@ tab:
       option_bar_folding_edge: Groepeer overeenkomstige randen
       option_bar_folding_0: Nee
       option_bar_folding_1: Ja
-      option_bar_folding_help: Groepeer panelen of kantenband met gelijke delen en zaagsneden
+      option_bar_folding_help: Groepeer panelen of kantenband met gelijke delen en zaagsneden.
       option_sheet_folding: Groepeer identieke panelen
       option_sheet_folding_0: Nee
       option_sheet_folding_1: Ja
@@ -534,14 +534,14 @@ tab:
       option_origin_corner_2d_1: Linker benedenhoek
       option_origin_corner_2d_2: Rechter bovenhoek
       option_origin_corner_2d_3: Rechter benedenhoek
-      option_origin_corner_1d_help: Laat toe om de coördinaten oorsprong in te stellen van bekantrecht hout of kantenband
+      option_origin_corner_1d_help: Laat toe om de coördinaten oorsprong in te stellen van bekantrecht hout of kantenband.
       option_origin_corner_2d_help: Laat toe om de bronhoek in te stellen waarmee onderdelen in de panelen worden geplaatst.
       option_full_width_diagram: Toon volledige breedte
       option_full_width_diagram_0: Nee
       option_full_width_diagram_1: Ja
       option_full_width_diagram_help: "Wanneer deze optie ingeschakeld is, dan zullen de zaagschema's weergegeven worden met de volledig beschikbare breedte. Zoniet zal hun breedte gedefinieerd worden door een shaal die gebaseerd is op hun effectieve afmeting."
       option_wrap_length: Afbrekingslengte
-      option_wrap_length_help: Maximale lengte waarbij bekantrecht hout of kantenband over meerdere lijnen weergegeven zal worden
+      option_wrap_length_help: Maximale lengte waarbij bekantrecht hout of kantenband over meerdere lijnen weergegeven zal worden.
       option_hide_cross: Overschot
       option_hide_cross_0: Afmetingen en kruis
       option_hide_cross_1: Enkel afmetingen
@@ -549,7 +549,7 @@ tab:
       option_highlight_primary_cuts: Primaire snedes
       option_highlight_primary_cuts_0: Enkel overzicht
       option_highlight_primary_cuts_1: Altijd zichtbaar
-      option_highlight_primary_cuts_help: Laat toe om primaire snedes uit te lichten
+      option_highlight_primary_cuts_help: Laat toe om primaire snedes uit te lichten.
       option_saw_kerf: Dikte van het zaagblad
       option_saw_kerf_help: Breedte van verwijderd materiaal door het zaagblad.
       option_trimming: Marge
@@ -645,15 +645,11 @@ tab:
         unplaced_parts: "**1 onderdeel** is te groot om geplaatst te worden."
         unplaced_parts_plural: "**{{ count }} onderdelen** zijn te groot om geplaatst te worden."
       warning:
-        is_part_selection: Het zaagplan beperkt zich tot **geselecteerde onderdelen**
-        cutting_dimensions: |
-          Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
-        cutting_dimensions_increase_1d: |
-          *Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.*
-        cutting_dimensions_increase_2d: |
-          *Afmetingen vermeerderd met de meerwaarde die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**).*
-        cutting_dimensions_edge_decrement: |
-          *Afmetingen verminderd met de dikte van de kantenband.* <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: Het zaagplan beperkt zich tot **geselecteerde onderdelen**.
+        cutting_dimensions: Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
+        cutting_dimensions_increase_1d: "Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "Afmetingen vermeerderd met de meerwaarde die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Afmetingen verminderd met de dikte van de kantenband. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiketten
       options_layout: Layout
@@ -729,7 +725,7 @@ tab:
       error:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
-        is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**
+        is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
