@@ -23,7 +23,6 @@
         <div class="col-xs-6">
             <div id="ladb_settings_panel_global" class="panel panel-default">
                 <div class="panel-heading">
-                    <button id="ladb_btn_reset" class="btn btn-default btn-xs pull-right"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
                     <strong>{{ 'tab.settings.global_settings'|i18next }}</strong>
                 </div>
                 <div class="panel-body">
@@ -38,6 +37,7 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <button id="ladb_btn_reset" class="btn btn-default btn-xs pull-right"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
                         <label>{{ 'tab.settings.language'|i18next }}</label>
                         <select id="ladb_select_language" class="form-control">
                             {% set preferedLanguage = null %}
