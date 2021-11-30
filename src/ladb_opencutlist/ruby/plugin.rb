@@ -49,7 +49,6 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
-    SETTINGS_KEY_DIALOG_ZOOM = 'settings.dialog_zoom'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
 
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
@@ -58,7 +57,6 @@ module Ladb::OpenCutList
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
-    DIALOG_DEFAULT_ZOOM = '100%'
     DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
@@ -85,12 +83,12 @@ module Ladb::OpenCutList
       @started = false
 
       @dialog = nil
+      @dialog_maximized = false
       @dialog_startup_tab_name = nil
       @dialog_maximized_width = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, DIALOG_DEFAULT_MAXIMIZED_WIDTH)
       @dialog_maximized_height = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, DIALOG_DEFAULT_MAXIMIZED_HEIGHT)
       @dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, DIALOG_DEFAULT_LEFT)
       @dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, DIALOG_DEFAULT_TOP)
-      @dialog_zoom = read_default(SETTINGS_KEY_DIALOG_ZOOM, DIALOG_DEFAULT_ZOOM)
       @dialog_print_margin = read_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, DIALOG_DEFAULT_PRINT_MARGIN)
 
     end
@@ -831,6 +829,12 @@ module Ladb::OpenCutList
             })
         @dialog.set_on_closed {
           @dialog = nil
+          @dialog_maximized = false
+        }
+        @dialog.set_can_close {
+          dialog_store_current_position
+          dialog_store_current_size
+          true
         }
       else
         @dialog = UI::WebDialog.new(
@@ -847,6 +851,7 @@ module Ladb::OpenCutList
         @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
         @dialog.set_on_close {
           @dialog = nil
+          @dialog_maximized = false
         }
       end
 
@@ -921,7 +926,6 @@ module Ladb::OpenCutList
     def hide_dialog
       if @dialog
         @dialog.close
-        @dialog = nil
         true
       else
         false
@@ -934,51 +938,69 @@ module Ladb::OpenCutList
       end
     end
 
-    def dialog_set_size(width, height, persist = false)
+    def dialog_store_size(width, height)
+      @dialog_maximized_width = [ width, DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max
+      @dialog_maximized_height = [ height, DIALOG_DEFAULT_MAXIMIZED_HEIGHT ].max
+      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
+      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
+    end
+
+    def dialog_store_current_size
+      if @dialog && @dialog.respond_to?('get_size') && @dialog_maximized
+        size = @dialog.get_size
+        dialog_store_size(size[0], size[1]) if size && size.length == 2
+      end
+    end
+
+    def dialog_set_size(width, height)
       if @dialog
         if current_os == :MAC && !html_dialog_compatible
           @dialog.execute_script("window.resizeTo(#{width},#{height})")
         else
           @dialog.set_size(width, height)
         end
-        if persist
-          @dialog_maximized_width = width
-          @dialog_maximized_height = height
-          write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
-          write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
-        end
       end
     end
 
-    def dialog_set_position(left, top, persist = false)
+    def dialog_inc_maximized_size(inc_width = 0, inc_height = 0)
+      dialog_store_size(@dialog_maximized_width + inc_width, @dialog_maximized_height + inc_height)
+      if @dialog_maximized
+        dialog_set_size(@dialog_maximized_width, @dialog_maximized_height)
+      end
+    end
+
+    def dialog_store_position(left, top)
+      @dialog_left = left
+      @dialog_top = top
+      write_default(SETTINGS_KEY_DIALOG_LEFT, left)
+      write_default(SETTINGS_KEY_DIALOG_TOP, top)
+    end
+
+    def dialog_store_current_position
+      if @dialog && @dialog.respond_to?('get_position')
+        position = @dialog.get_position
+        dialog_store_position(position[0], position[1]) if position && position.length == 2
+      end
+    end
+
+    def dialog_set_position(left, top)
       if @dialog
         if current_os == :MAC && !html_dialog_compatible
           @dialog.execute_script("window.moveTo(#{left},#{top});")
         else
           @dialog.set_position(left, top)
         end
-        if persist
-          @dialog_left = left
-          @dialog_top = top
-          write_default(SETTINGS_KEY_DIALOG_LEFT, left)
-          write_default(SETTINGS_KEY_DIALOG_TOP, top)
-        end
       end
     end
 
-    def dialog_set_zoom(zoom, persist = false)
-      if @dialog
-        @dialog.execute_script("$('body').css('zoom', '#{zoom}');")
-        if persist
-          @dialog_zoom = zoom
-          write_default(SETTINGS_KEY_DIALOG_ZOOM, zoom)
-        end
-      end
+    def dialog_inc_position(inc_left = 0, inc_top = 0)
+      dialog_store_position(@dialog_left + inc_left, @dialog_top + inc_top)
+      dialog_set_position(@dialog_left, @dialog_top)
     end
 
     def dialog_set_print_margin(print_margin, persist = false)
+      @dialog_print_margin = print_margin
       if persist
-        @dialog_print_margin = print_margin
         write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin)
       end
     end
@@ -1221,7 +1243,6 @@ module Ladb::OpenCutList
     end
 
     def dialog_loaded_command
-      dialog_set_zoom(@dialog_zoom)
       {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
@@ -1242,11 +1263,6 @@ module Ladb::OpenCutList
           :update_available => @update_available,
           :update_muted => @update_muted,
           :last_news_timestamp => @last_news_timestamp,
-          :dialog_maximized_width => @dialog_maximized_width,
-          :dialog_maximized_height => @dialog_maximized_height,
-          :dialog_left => @dialog_left,
-          :dialog_top => @dialog_top,
-          :dialog_zoom => @dialog_zoom,
           :dialog_print_margin => @dialog_print_margin,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
@@ -1261,13 +1277,17 @@ module Ladb::OpenCutList
 
     def dialog_minimize_command
       if @dialog
+        dialog_store_current_position
+        dialog_store_current_size
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+        @dialog_maximized = false
       end
     end
 
     def dialog_maximize_command
       if @dialog
         dialog_set_size(@dialog_maximized_width, @dialog_maximized_height)
+        @dialog_maximized = true
       end
     end
 

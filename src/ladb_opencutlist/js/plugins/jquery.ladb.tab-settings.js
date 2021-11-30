@@ -92,7 +92,6 @@
 
         var $btnReset = $('#ladb_btn_reset', this.$element);
         var $selectLanguage = $('#ladb_select_language', this.$element);
-        var $selectZoom = $('#ladb_select_zoom', this.$element);
         var $btnWidthUp = $('#ladb_btn_width_up', this.$element);
         var $btnWidthDown = $('#ladb_btn_width_down', this.$element);
         var $btnHeightUp = $('#ladb_btn_height_up', this.$element);
@@ -105,40 +104,22 @@
 
         var fnGlobalUpdate = function () {
 
-            // Adjust min limits
-            that.dialog.capabilities.dialog_maximized_width = Math.max(580, that.dialog.capabilities.dialog_maximized_width);
-            that.dialog.capabilities.dialog_maximized_height = Math.max(480, that.dialog.capabilities.dialog_maximized_height);
-            that.dialog.capabilities.dialog_left = Math.max(0, that.dialog.capabilities.dialog_left);
-            that.dialog.capabilities.dialog_top = Math.max(0, that.dialog.capabilities.dialog_top);
-
             // Send to ruby
             rubyCallCommand('settings_dialog_settings', {
                 language: that.dialog.capabilities.language,
-                width: that.dialog.capabilities.dialog_maximized_width,
-                height: that.dialog.capabilities.dialog_maximized_height,
-                left: that.dialog.capabilities.dialog_left,
-                top: that.dialog.capabilities.dialog_top,
-                zoom: that.dialog.capabilities.dialog_zoom,
                 print_margin: that.dialog.capabilities.dialog_print_margin
             });
 
         };
         var fnGlobalFillInputs = function () {
             $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
-            $selectZoom.selectpicker('val', that.dialog.capabilities.dialog_zoom);
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.dialog_print_margin);
         }
 
         $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, {
             noneSelectedText: i18next.t('tab.settings.language_auto')
         }));
-        $selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
         $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
-
-        $selectZoom.prop('disabled', $('body').hasClass('ie'));    // Disable zoom feature on IE
-        if (this.dialog.capabilities.dialog_zoom !== '100%') {
-            $selectZoom.show();
-        }
 
         fnGlobalFillInputs();
 
@@ -148,10 +129,6 @@
             fnGlobalUpdate();
             that.showReloadAlert();
         });
-        $selectZoom.on('change', function () {
-            that.dialog.capabilities.dialog_zoom = $selectZoom.val();
-            fnGlobalUpdate();
-        });
         $selectPrintMargin.on('change', function () {
             that.dialog.capabilities.dialog_print_margin = parseInt($selectPrintMargin.val());
             fnGlobalUpdate();
@@ -159,11 +136,6 @@
         $btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
-            that.dialog.capabilities.dialog_maximized_width = 1100;
-            that.dialog.capabilities.dialog_maximized_height = 640;
-            that.dialog.capabilities.dialog_left = 60;
-            that.dialog.capabilities.dialog_top = 100;
-            that.dialog.capabilities.dialog_zoom = '100%';
             that.dialog.capabilities.dialog_print_margin = 0;
             fnGlobalUpdate();
             fnGlobalFillInputs();
@@ -172,50 +144,66 @@
         });
         $btnWidthUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_maximized_width += 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_size', {
+                inc_width: 20,
+                inc_height: 0,
+            });
             return false;
         });
         $btnWidthDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_maximized_width -= 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_size', {
+                inc_width: -20,
+                inc_height: 0,
+            });
             return false;
         });
         $btnHeightUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_maximized_height += 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_size', {
+                inc_width: 0,
+                inc_height: 20,
+            });
             return false;
         });
         $btnHeightDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_maximized_height -= 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_size', {
+                inc_width: 0,
+                inc_height: -20,
+            });
             return false;
         });
         $btnLeftUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_left += 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_position', {
+                inc_left: 20,
+                inc_top: 0,
+            });
             return false;
         });
         $btnLeftDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_left -= 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_position', {
+                inc_left: -20,
+                inc_top: 0,
+            });
             return false;
         });
         $btnTopUp.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_top += 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_position', {
+                inc_left: 0,
+                inc_top: 20,
+            });
             return false;
         });
         $btnTopDown.on('click', function () {
             $(this).blur();
-            that.dialog.capabilities.dialog_top -= 20;
-            fnGlobalUpdate();
+            rubyCallCommand('settings_dialog_inc_position', {
+                inc_left: 0,
+                inc_top: -20,
+            });
             return false;
         });
 
