@@ -14,6 +14,12 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("settings_dialog_settings") do |settings|
         dialog_settings_command(settings)
       end
+      Plugin.instance.register_command("settings_dialog_inc_size") do |params|
+        dialog_inc_size_command(params)
+      end
+      Plugin.instance.register_command("settings_dialog_inc_position") do |params|
+        dialog_inc_position_command(params)
+      end
       Plugin.instance.register_command('settings_set_length_settings') do |params|
         set_length_settings_command(params)
       end
@@ -43,18 +49,26 @@ module Ladb::OpenCutList
 
       # Check settings
       language = settings['language']
-      width = settings['width']
-      height = settings['height']
-      top = settings['top']
-      left = settings['left']
-      zoom = settings['zoom']
       print_margin = settings['print_margin']
 
       Plugin.instance.set_language(language, true)
-      Plugin.instance.dialog_set_size(width, height, true)
-      Plugin.instance.dialog_set_position(left, top, true)
-      Plugin.instance.dialog_set_zoom(zoom, true)
       Plugin.instance.dialog_set_print_margin(print_margin, true)
+
+    end
+
+    def dialog_inc_size_command(params)
+      inc_width = params['inc_width']
+      inc_height = params['inc_height']
+
+      Plugin.instance.dialog_inc_maximized_size(inc_width, inc_height)
+
+    end
+
+    def dialog_inc_position_command(params)
+      inc_left = params['inc_left']
+      inc_top = params['inc_top']
+
+      Plugin.instance.dialog_inc_position(inc_left, inc_top)
 
     end
 

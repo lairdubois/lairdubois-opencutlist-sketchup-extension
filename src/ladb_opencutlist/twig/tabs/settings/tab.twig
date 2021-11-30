@@ -55,14 +55,14 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group hide">
-                        <label>{{ 'tab.settings.zoom'|i18next }}</label>
-                        <select id="ladb_select_zoom" class="form-control"{% if not compatible_with('body.zoom') %} disabled{% endif %}>
-                            <option value="100%">{{ 'tab.settings.zoom_normal'|i18next }}</option>
-                            <option value="90%">{{ 'tab.settings.zoom_small'|i18next }}</option>
-                            <option value="79%">{{ 'tab.settings.zoom_tiny'|i18next }}</option>
+                    <div class="form-group">
+                        <label>{{ 'tab.settings.print_margin'|i18next }}</label>
+                        <select id="ladb_select_print_margin" class="form-control">
+                            <option value="0">{{ 'tab.settings.print_margin_normal'|i18next }}</option>
+                            <option value="1">{{ 'tab.settings.print_margin_small'|i18next }}</option>
                         </select>
                     </div>
+                    <hr />
                     <div class="form-group">
                         <label>{{ 'tab.settings.size_and_position'|i18next }}</label>
                         <div class="ladb-fake-dialog">
@@ -77,13 +77,6 @@
                             <button id="ladb_btn_height_up" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-plus"></i></button>
                             <button id="ladb_btn_height_down" class="btn btn-sm btn-default"><i class="ladb-opencutlist-icon-minus"></i></button>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ 'tab.settings.print_margin'|i18next }}</label>
-                        <select id="ladb_select_print_margin" class="form-control">
-                            <option value="0">{{ 'tab.settings.print_margin_normal'|i18next }}</option>
-                            <option value="1">{{ 'tab.settings.print_margin_small'|i18next }}</option>
-                        </select>
                     </div>
                 </div>
             </div>

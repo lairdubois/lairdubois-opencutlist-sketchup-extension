@@ -44,11 +44,6 @@
             update_available: options.update_available,
             update_muted: options.update_muted,
             last_news_timestamp: options.last_news_timestamp,
-            dialog_maximized_width: options.dialog_maximized_width,
-            dialog_maximized_height: options.dialog_maximized_height,
-            dialog_left: options.dialog_left,
-            dialog_top: options.dialog_top,
-            dialog_zoom: options.dialog_zoom,
             dialog_print_margin: options.dialog_print_margin,
         };
 
