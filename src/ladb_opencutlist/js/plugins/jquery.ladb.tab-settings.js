@@ -116,9 +116,7 @@
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.dialog_print_margin);
         }
 
-        $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, {
-            noneSelectedText: i18next.t('tab.settings.language_auto')
-        }));
+        $selectLanguage.selectpicker(SELECT_PICKER_OPTIONS);
         $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
 
         fnGlobalFillInputs();

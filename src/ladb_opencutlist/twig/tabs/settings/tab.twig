@@ -40,17 +40,9 @@
                         <button id="ladb_btn_reset" class="btn btn-default btn-xs pull-right"><i class="ladb-opencutlist-icon-reset"></i> {{ 'default.reset_to_app_defaults'|i18next }}</button>
                         <label>{{ 'tab.settings.language'|i18next }}</label>
                         <select id="ladb_select_language" class="form-control">
-                            {% set preferedLanguage = null %}
+                            <option value="auto" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.settings.language_auto'|i18next }}</span>"></option>
+                            <option data-divider="true"></option>
                             {% for language in capabilities.available_languages %}
-                                {% if capabilities.locale starts with language %}
-                                    {% set preferedLanguage = language %}
-                                {% endif %}
-                            {% endfor %}
-                            {% if preferedLanguage %}
-                                <option value="{{ preferedLanguage }}" data-content="<span class='ladb-language-prefix'>{{ preferedLanguage|upper }}</span>{{ ('language.'~preferedLanguage)|i18next }}"></option>
-                                <option data-divider="true"></option>
-                            {% endif %}
-                            {% for language in capabilities.available_languages if language != preferedLanguage %}
                                 <option value="{{ language }}" data-content="<span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
                             {% endfor %}
                         </select>
