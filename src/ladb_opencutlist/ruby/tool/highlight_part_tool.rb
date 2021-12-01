@@ -410,11 +410,7 @@ module Ladb::OpenCutList
 
     # -- GL utils --
 
-    def _offset_toward_camera(view, *args)
-      if args.size > 1
-        return offset_toward_camera(args)
-      end
-      points = args.first
+    def _offset_toward_camera(view, points)
       offset_direction = view.camera.direction.reverse!
       points.map { |point|
         point = point.position if point.respond_to?(:position)

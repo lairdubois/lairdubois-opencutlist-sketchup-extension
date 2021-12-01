@@ -2128,6 +2128,7 @@
                         rubyCallCommand('cutlist_group_cuttingdiagram_1d', $.extend({group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null}, cuttingdiagram1dOptions, that.generateOptions), function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
+                                capabilities: that.dialog.capabilities,
                                 generateOptions: that.generateOptions,
                                 dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                                 filename: that.filename,
@@ -2407,6 +2408,7 @@
                         rubyCallCommand('cutlist_group_cuttingdiagram_2d', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
+                            capabilities: that.dialog.capabilities,
                             generateOptions: that.generateOptions,
                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                             filename: that.filename,
