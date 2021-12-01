@@ -24,7 +24,7 @@
         this.modelName = null;
         this.modelDescription = null;
         this.pageLabel = null;
-        this.selectionOnly = null;
+        this.isEntitySelection = null;
         this.lengthUnit = null;
         this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
@@ -107,6 +107,7 @@
             that.modelName = modelName;
             that.modelDescription = modelDescription;
             that.pageLabel = pageLabel;
+            that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageLabel ? ' - ' + pageLabel : '');
             that.isEntitySelection = isEntitySelection;
             that.lengthUnit = lengthUnit;
             that.currencySymbol = currencySymbol;
@@ -872,7 +873,7 @@
                                 that.reportCutlist();
                             });
                             $btnPrint.on('click', function () {
-                                that.print();
+                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
@@ -2153,7 +2154,7 @@
                                 that.cuttingdiagram1dGroup(groupId);
                             });
                             $btnPrint.on('click', function () {
-                                that.print();
+                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                             });
                             $btnExport.on('click', function () {
 
@@ -2432,7 +2433,7 @@
                             that.cuttingdiagram2dGroup(groupId);
                         });
                         $btnPrint.on('click', function () {
-                            that.print();
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                         });
                         $btnExport.on('click', function () {
 
@@ -2854,7 +2855,7 @@
                         that.labelsGroup(groupId);
                     });
                     $btnPrint.on('click', function () {
-                        that.print('0');
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
@@ -3236,7 +3237,7 @@
             this.blur();
         });
         this.$btnPrint.on('click', function () {
-            that.print();
+            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
             this.blur();
         });
         this.$btnExport.on('click', function () {

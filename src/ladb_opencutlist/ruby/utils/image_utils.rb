@@ -15,7 +15,7 @@ module Ladb::OpenCutList
       # Force out_file to be in_file if nil
       out_file = in_file if out_file.nil?
 
-      bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'bin'))
+      bin_dir = File.absolute_path(File.join(__dir__, '..', '..', 'bin'))
       case Plugin.instance.current_os
 
         when :MAC

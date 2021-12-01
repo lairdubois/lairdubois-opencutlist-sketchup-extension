@@ -233,6 +233,10 @@ module Ladb::OpenCutList
 
     end
 
+    def getExtents
+      Sketchup.active_model.bounds
+    end
+
     # -- Menu --
 
     if Sketchup.version.to_i < 15

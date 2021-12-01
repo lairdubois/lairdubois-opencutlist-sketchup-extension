@@ -23,8 +23,8 @@ module Ladb::OpenCutList
     
     include Singleton
 
-    IS_RBZ = __dir__.start_with? Sketchup.find_support_file('Plugins')
-    IS_DEV = EXTENSION_VERSION.end_with? '-dev'
+    IS_RBZ = __dir__.start_with?(Sketchup.find_support_file('Plugins'))
+    IS_DEV = EXTENSION_VERSION.end_with?('-dev')
 
     require 'pp' if IS_DEV
 
@@ -51,10 +51,10 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
 
-    DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
-    DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     DIALOG_MINIMIZED_WIDTH = 90
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
+    DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
+    DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
@@ -134,7 +134,7 @@ module Ladb::OpenCutList
 
     def get_available_languages
       available_languages = []
-      Dir["#{__dir__}/../yaml/i18n/*.yml"].each { |file|
+      Dir[File.join(__dir__, '..', 'yaml', 'i18n', '*.yml')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
       available_languages.sort
@@ -273,7 +273,6 @@ module Ladb::OpenCutList
     # -----
 
     @global_presets_cache = nil
-    @model_presets_cache = nil
 
     def _process_preset_values_with_app_defaults(dictionary, section, values, is_global)
 
@@ -384,7 +383,7 @@ module Ladb::OpenCutList
       write_global_presets
 
       # Fire event
-      self.trigger_onGlobalPresetChanged(dictionary, section) if fire_event
+      trigger_onGlobalPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -452,7 +451,17 @@ module Ladb::OpenCutList
       end
     end
 
+    def trigger_onGlobalPresetChanged(dictonary, section)
+      @observers.each do |observer|
+        if observer.respond_to?(:onGlobalPresetChanged)
+          observer.onGlobalPresetChanged(dictonary, section)
+        end
+      end
+    end
+
     # -----
+
+    @model_presets_cache = nil
 
     def clear_model_presets_cache
       @model_presets_cache = nil
@@ -511,7 +520,7 @@ module Ladb::OpenCutList
       write_model_presets
 
       # Fire event
-      self.trigger_onModelPresetChanged(dictionary, section) if fire_event
+      trigger_onModelPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -560,16 +569,6 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
       _debug('MODEL PRESETS') do
         pp @model_presets_cache
-      end
-    end
-
-    # -----
-
-    def trigger_onGlobalPresetChanged(dictonary, section)
-      @observers.each do |observer|
-        if observer.respond_to?(:onGlobalPresetChanged)
-          observer.onGlobalPresetChanged(dictonary, section)
-        end
       end
     end
 
@@ -856,7 +855,7 @@ module Ladb::OpenCutList
       end
 
       # Setup dialog page
-      @dialog.set_file("#{__dir__}/../html/dialog-#{language}.html")
+      @dialog.set_file(File.join(__dir__, '..', 'html', "dialog-#{language}.html"))
 
       # Set dialog size and position
       dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
@@ -1316,7 +1315,7 @@ module Ladb::OpenCutList
     end
 
     def play_sound_command(params)    # Expected params = { filename: WAV_FILE_TO_PLAY }
-      UI.play_sound("#{__dir__}/../#{params['filename']}")
+      UI.play_sound(File.join(__dir__, '..', params['filename']))
     end
 
     def send_action_command(params)

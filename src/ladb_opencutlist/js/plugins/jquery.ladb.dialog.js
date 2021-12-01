@@ -928,8 +928,6 @@
                 // Add compatible_with twig function
                 Twig.extendFunction('compatible_with', function(value) {
                     switch (value) {
-                        case 'body.zoom':
-                            return !($('body').hasClass('ie') || $('body').hasClass('edge'));
                         case 'svg.height-auto':
                             return !($('body').hasClass('ie') || $('body').hasClass('edge'));
                     }

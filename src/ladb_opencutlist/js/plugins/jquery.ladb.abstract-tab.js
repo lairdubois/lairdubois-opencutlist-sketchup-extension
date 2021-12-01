@@ -268,7 +268,12 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
 
 // Print /////
 
-LadbAbstractTab.prototype.print = function (margin) {
+LadbAbstractTab.prototype.print = function (title, margin) {
+
+    if (title === undefined) {
+        title = 'OpenCutList';
+    }
+    document.title = title
 
     if (margin === undefined) {
         if (this.dialog.capabilities.dialog_print_margin === 1) {     /* 1 = Small */
