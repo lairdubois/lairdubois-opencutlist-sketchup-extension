@@ -126,13 +126,13 @@
                                         <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>
                                     {% endif %}
                                     {% if group.material_type == 2 %} {# 2 = TYPE_SOLID_WOOD #}
-                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
+                                        <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
                                     {% endif %}
                                     {% if group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
-                                        <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>
+                                        <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>
                                     {% endif %}
                                     {% if editableRow %}
-                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':entry.material_display_name }) }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':entry.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                                     {% endif %}
                                 </div>
                                 {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
@@ -200,7 +200,7 @@
                                             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                             <span class="ladb-separator"></span>
                                             <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
-                                            <a href="#" class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}"><i class="ladb-opencutlist-icon-edit"></i></a>
+                                            <a href="#" class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                                         </div>
                                     </td>
                                     <td class="text-center">{{ part.count }}</td>

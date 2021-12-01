@@ -1159,7 +1159,7 @@
                 .prop('title', i18next.t('tab.cutlist.tooltip.highlight_parts'))
                 .tooltip('fixTitle');
             $editPartBtn
-                .prop('title', i18next.t('tab.cutlist.tooltip.edit_parts_properties'))
+                .prop('title', i18next.t('tab.cutlist.tooltip.edit_parts_properties') + '...')
                 .tooltip('fixTitle');
             $('i', $highlightPartBtn).addClass('ladb-opencutlist-icon-magnifier-multiple');
             $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
@@ -1174,7 +1174,7 @@
             }
             if ($('i', $editPartBtn).hasClass('ladb-opencutlist-icon-edit')) {
                 $editPartBtn
-                    .prop('title', i18next.t('tab.cutlist.tooltip.edit_part_properties'))
+                    .prop('title', i18next.t('tab.cutlist.tooltip.edit_part_properties') + '...')
                     .tooltip('fixTitle');
                 $('i', $editPartBtn).removeClass('ladb-opencutlist-icon-edit-multiple');
             }
