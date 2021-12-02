@@ -126,26 +126,30 @@
 
 }
 
-.ladb-material-texture-preview {
-  display: table-cell;
-  height: 285px;
-  width: 618px;
-  text-align: center;
-  vertical-align: middle;
-  padding-bottom: 20px;
+.ladb-material-texture-preview-wrapper {
+  display: table;
+  width: 100%;
 
-  .thumbnail {
-    position: relative;
-    display: inline-block;
-    margin: 0;
+  .ladb-material-texture-preview {
+    display: table-cell;
+    height: 285px;
+    text-align: center;
+    vertical-align: middle;
+    padding-bottom: 20px;
 
-    img {
-      max-width: @material-texture-preview-size;
-      max-height: @material-texture-preview-size;
+    .thumbnail {
+      position: relative;
+      display: inline-block;
+      margin: 0;
+
+      img {
+        max-width: @material-texture-preview-size;
+        max-height: @material-texture-preview-size;
+      }
+
     }
 
   }
-
 }
 
 // Print

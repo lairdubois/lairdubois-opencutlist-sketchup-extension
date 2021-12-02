@@ -20,10 +20,12 @@
                 {% include 'tabs/materials/_material-properties-form.twig' with { 'tab':properties_tab } %}
             </div>
             <div role="tabpanel" class="tab-pane" id="tab_edit_material_texture">
-                <div class="ladb-material-texture-preview">
-                    <div class="thumbnail">
-                        <img id="ladb_materials_img_texture" src="">
-                        <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;">{{ material.texture_image_width }} x {{ material.texture_image_height }} px</div>
+                <div class="ladb-material-texture-preview-wrapper">
+                    <div class="ladb-material-texture-preview">
+                        <div class="thumbnail">
+                            <img id="ladb_materials_img_texture" src="">
+                            <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;">{{ material.texture_image_width }} x {{ material.texture_image_height }} px</div>
+                        </div>
                     </div>
                 </div>
                 <div class="text-center">
