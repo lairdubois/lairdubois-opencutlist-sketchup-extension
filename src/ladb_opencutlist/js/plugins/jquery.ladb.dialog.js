@@ -552,6 +552,7 @@
     // Modal /////
 
     LadbDialog.prototype.appendModal = function (id, twigFile, renderParams) {
+        var that = this;
 
         // Hide previously opened modal
         if (this._$modal) {
@@ -569,6 +570,7 @@
             $(this)
                 .data('bs.modal', null)
                 .remove();
+            that._$modal = null;
         });
 
         return this._$modal;
@@ -695,9 +697,14 @@
 
         // Bind buttons
         $btnOk.on('click', function() {
+
             if (callback) {
                 callback();
             }
+
+            // Hide modal
+            $modal.modal('hide');
+
         });
 
         // Show modal
@@ -719,9 +726,14 @@
 
         // Bind buttons
         $btnConfirm.on('click', function() {
+
             if (callback) {
                 callback();
             }
+
+            // Hide modal
+            $modal.modal('hide');
+
         });
 
         // Show modal
@@ -748,19 +760,14 @@
 
         // Bind buttons
         $btnValidate.on('click', function() {
+
             if (callback) {
                 callback($input.val().trim());
             }
-        });
 
-        // Bind enter keyup on text input if configured
-        $('input[type=text]', $modal).on('keyup', function(e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                if ($btnValidate && $btnValidate.is(':enabled')) {
-                    $btnValidate.click();
-                }
-            }
+            // Hide modal
+            $modal.modal('hide');
+
         });
 
         // Show modal
@@ -900,7 +907,7 @@
                 }
 
                 if ($modal) {
-                    var $btnValidate = $('.btn-validate-modal', that._$modal).first();
+                    var $btnValidate = $('.btn-validate-modal', $modal).first();
                     if ($btnValidate && $btnValidate.is(':enabled')) {
                         $btnValidate.click();
                     }
