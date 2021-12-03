@@ -22,6 +22,7 @@ var knownOptions = {
 };
 
 var options = minimist(process.argv.slice(2), knownOptions);
+var isProd = options.env.toLowerCase() === 'prod';
 
 // Convert less to .css files
 gulp.task('less_compile', function () {
@@ -53,7 +54,7 @@ gulp.task('i18n_compile', function () {
     var languageLabels = {};
     var languageReloadMsgs = {};
     var descriptions = {};
-    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml');
+    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml');
     ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.safeLoad(contents);
@@ -89,26 +90,30 @@ gulp.task('i18n_compile', function () {
         .pipe(gulp.dest('../src'))
         .pipe(touch());
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
 // Compile dialog.twig to dialog-XX.html files - this permits to avoid dynamic loading on runtime
 gulp.task('i18n_dialog_compile', function () {
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog.twig'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
 
 // Create the .rbz archive
 gulp.task('rbz_create', function () {
-    return gulp.src([
+    var blob = [
         'src/**/!(.DS_store|*.less|*.twig|!(*.min).css)',
         '!src/**/less/**',
         '!src/**/twig/**',
-    ], { cwd: '../'})
-        .pipe(gulpif(options.env.toLowerCase() === 'prod', zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env.toLowerCase() + '.rbz')))
+    ];
+    if (isProd) {
+        blob.push('!src/**/yaml/i18n/zz.yml');
+    }
+    return gulp.src(blob, { cwd: '../'})
+        .pipe(gulpif(isProd, zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env.toLowerCase() + '.rbz')))
         .pipe(gulp.dest('../dist'));
 });
 
@@ -119,7 +124,7 @@ gulp.task('version', function () {
 
     // Retrive version from package.json
     var pkg = JSON.parse(fs.readFileSync('./package.json'));
-    var version = pkg.version + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase());
+    var version = pkg.version + (isProd ? '' : '-' + options.env.toLowerCase());
 
     // Compute build from current date
     var nowISO = (new Date()).toISOString();
@@ -127,7 +132,7 @@ gulp.task('version', function () {
 
     if (options.manifest || options.manifest === undefined) {
         // Update version property in manifest.json
-        gulp.src('../dist/manifest' + (options.env.toLowerCase() === 'prod' ? '' : '-' + options.env.toLowerCase()) + '.json')
+        gulp.src('../dist/manifest' + (isProd ? '' : '-' + options.env.toLowerCase()) + '.json')
             .pipe(replace(/"version": "[0-9.]+(-[a-z]*)?"/g, '"version": "' + version + '"'))
             .pipe(replace(/"build": "[0-9]{12}?"/g, '"build": "' + build + '"'))
             .pipe(gulp.dest('../dist'))
