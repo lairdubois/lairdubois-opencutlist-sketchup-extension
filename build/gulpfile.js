@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
+var del = require('del');
 var minimist = require('minimist');
 var fs = require('fs');
 var ladb_twig_compile = require('./plugins/gulp-ladb-twig-compile');
@@ -90,6 +91,11 @@ gulp.task('i18n_compile', function () {
         .pipe(gulp.dest('../src'))
         .pipe(touch());
 
+    // Clean previously generated i18n files
+    del('../src/ladb_opencutlist/js/i18n/*', {
+        force: true
+    });
+
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
@@ -97,6 +103,12 @@ gulp.task('i18n_compile', function () {
 
 // Compile dialog.twig to dialog-XX.html files - this permits to avoid dynamic loading on runtime
 gulp.task('i18n_dialog_compile', function () {
+
+    // Clean previously generated dialog files
+    del('../src/ladb_opencutlist/html/*', {
+        force: true
+    });
+
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog.twig'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
@@ -110,6 +122,7 @@ gulp.task('rbz_create', function () {
         '!src/**/twig/**',
     ];
     if (isProd) {
+        // Exclude zz debug language in prod environment
         blob.push('!src/**/yaml/i18n/zz.yml');
     }
     return gulp.src(blob, { cwd: '../'})
