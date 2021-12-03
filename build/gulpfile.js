@@ -53,7 +53,7 @@ gulp.task('i18n_compile', function () {
     var languageLabels = {};
     var languageReloadMsgs = {};
     var descriptions = {};
-    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/*.yml');
+    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml');
     ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.safeLoad(contents);
@@ -89,14 +89,14 @@ gulp.task('i18n_compile', function () {
         .pipe(gulp.dest('../src'))
         .pipe(touch());
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
 // Compile dialog.twig to dialog-XX.html files - this permits to avoid dynamic loading on runtime
 gulp.task('i18n_dialog_compile', function () {
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/*.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (options.env.toLowerCase() === 'prod' ? '!(zz)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog.twig'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
