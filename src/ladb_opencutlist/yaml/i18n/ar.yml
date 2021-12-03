@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: "العربية (experimental, no rtl)"
+# the reload message will be displayed when a user switches to this language
 _reload_msg: لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
 _description: مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)
 default:
@@ -647,8 +649,8 @@ tab:
       warning:
         is_part_selection: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
         cutting_dimensions: يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
-        cutting_dimensions_increase_1d: عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**).
-        cutting_dimensions_increase_2d: عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**) و عرضا (**{{ width_increase }}**).
+        cutting_dimensions_increase_1d: "عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**) و عرضا (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: الأبعاد منقّصة بمقدار سمك الحاشية <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: الملصقات

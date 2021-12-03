@@ -1,4 +1,6 @@
+# this label must be in your language
 _label: Nederlands
+# the reload message will be displayed when a user switches to this language
 _reload_msg: "Om alle wijzigingen weer te geven, moet u het OpenCutList-venster **sluiten** en **opnieuw openen**."
 _description: "Genereer materiaallijsten, zaagschema's voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)"
 default:

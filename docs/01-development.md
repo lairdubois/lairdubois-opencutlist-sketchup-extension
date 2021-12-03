@@ -12,15 +12,15 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v14.15.2
+    v16.13.1
     $ npm -v
-    6.14.8
+    8.1.3
     $ npm install npm@latest -g
     $ npm -v
-    6.14.9
+    8.2.0
 ```
 
-On Windows you may also have to install `gulp-cli` to be able to run **gulp** from the command line:
+On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line:
 
 ``` bash
      $ npm install gulp-cli -g
@@ -93,14 +93,14 @@ The default behavior of the **gulp** task (without argument) is to *compile* and
 
 ## 5. Adding a New Language
 
+Note: If you just want to add a new language to **OpenCutList** and you would like to volunteer for the translation, then becoming a translator via [Transifex](https://www.transifex.com/opencutlist/opencutlist/) is a much better way. Your translation may help other users and you will get assistance from the **OpenCutList** team.
+
 Adding a new translation file is simple. Just add a new `.yml` file into the `src/yaml/i18n` directory by duplicating `fr.yml` (or any other file) and changing all the values into the desired language.
 The first entry in the file should have the key `_label` corresponding to a label for the new language.
 
 After compiling the project (see 4.), your new language will appear in the **Preferences panel** of **OpenCutList**.
 
 Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
-
-Note: If you just want to add a new language to **OpenCutList** and you would like to volunteer for the translation, then becoming a translator via [Transifex](https://www.transifex.com/opencutlist/opencutlist/) is a much better way. Your translation may help other users and you will get assistance from the **OpenCutList** team.
 
 ## 6. Run OpenCutList from Dev Project Folder
 
