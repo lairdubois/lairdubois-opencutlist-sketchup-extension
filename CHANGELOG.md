@@ -6,6 +6,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
 
 * 3.0.1 (WIP)
 
+  * Added translator language "zz" (English with Transifex line numbers)
   * Now automatically store OpenCutList dialog size and position on resize and move when using SketchUp >= 2021.1
   * Save default _mass_unit_ and _currency_symbol_ to model even if it is not modified from default values
   * Improved document filename when printing to PDF
