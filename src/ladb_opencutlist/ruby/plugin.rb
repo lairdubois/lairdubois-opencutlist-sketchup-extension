@@ -134,7 +134,7 @@ module Ladb::OpenCutList
 
     def get_available_languages
       available_languages = []
-      Dir[File.join(__dir__, '..', 'yaml', 'i18n', '*.yml')].each { |file|
+      Dir[File.join(__dir__, '..', 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
       available_languages.sort
