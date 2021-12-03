@@ -15,7 +15,7 @@
     };
 
     LadbEditorFormula.prototype.tagFromWordDef = function (wordDef) {
-        return "<div class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'><span>" + wordDef.label + "</span></div>";
+        return "<span class='" + wordDef.class + "' contenteditable='false' data-value='" + wordDef.value + "'>" + wordDef.label + "</span>";
     }
 
     LadbEditorFormula.prototype.setFormula = function (formula) {
@@ -52,18 +52,20 @@
         };
 
         var words = fnExplore(this.$element.get(0), []);
-        return words.join(' ').trim();
+        return words.join('').trim();
     };
 
     LadbEditorFormula.prototype.bind = function () {
         var that = this;
 
         var tribute = new Tribute({
-            autocompleteMode: true,
-            noMatchTemplate: "",
+            trigger: '@',
+            autocompleteMode: false,
+            requireLeadingSpace: false,
+            noMatchTemplate: '',
             values: that.options.wordDefs,
             allowSpaces: false,
-            replaceTextSuffix: '<span></span>',
+            replaceTextSuffix: '',
             lookup: 'label',
             selectTemplate: function(item) {
                 if (typeof item === 'undefined') return null;

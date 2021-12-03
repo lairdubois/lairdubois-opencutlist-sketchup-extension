@@ -7,22 +7,18 @@
   font-size: 13px;
   height: inherit;
   min-height: 22px;
-  line-height: 22px;
-
-  > span {
-    min-width: 5px;
-    display: inline-block;
-  }
 
   .variable {
+    display: inline-block;
     background: #eee;
     border-radius: 4px;
-    display: inline-block;
     margin: 0 2px;
-    line-height: 20px;
+    padding: 0 5px;
 
-    > span {
-      margin: 0 5px;
+    &:before {
+      content: '@';
+      color: #bbb;
+      margin-right: 2px;
     }
 
   }
