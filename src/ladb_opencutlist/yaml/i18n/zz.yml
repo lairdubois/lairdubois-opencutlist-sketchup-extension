@@ -1,4 +1,3 @@
-# If this option is selected, the **length** or the **width** will be considered **unit length** or **unit width** multiplied by the count when sorting the parts list.
 ---
 _label: "[1] English"
 _reload_msg: "[2] To reflect all changes, you must **close** and **reopen** the OpenCutList window."
