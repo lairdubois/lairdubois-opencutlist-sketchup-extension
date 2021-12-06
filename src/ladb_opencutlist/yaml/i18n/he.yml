@@ -478,7 +478,7 @@ tab:
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
       warning:
-        is_group_selection: החלקים הכלולים ב-**הקבוצות הנסתרות** של תוכנית חיתוך לא ייצאו.
+        is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
     report:
       title: דו"ח
       info_0: |
@@ -501,7 +501,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
       warning:
-        is_group_selection: נספרים רק החלקים הכלולים ב-**הקבוצות הגלויות**.
+        is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא יובאו בחשבון.
     cuttingdiagram:
       title: תוכנית חיתוך
       start_msg: אופטימיזציה פועלת
@@ -613,7 +613,7 @@ tab:
         total_part_count: סה"כ חלקים
         total_used: סה"כ בשימוש
         trimming: שוליים
-        stats: סטָטִיסטִיקָה
+        stats: סטטיסטיקה
         total_cut_count: מספר חיתוכים
         total_cut_length: אורך חיתוך
         overall_efficiency: יעילות כללית
@@ -647,11 +647,11 @@ tab:
         unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
         unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
       warning:
-        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים נבחרים**.
-        cutting_dimensions: תוכנית חיתוך מציגה את החלקים במידות **חיתוך** שלהם.
-        cutting_dimensions_increase_1d: "המידות גדלו בתוספת (**{{ length_increase }}**) שהוגדר בחומר '{{ material_name }}'."
-        cutting_dimensions_increase_2d: "המידות גדלו בתוספת לאורך (**{{ length_increase }}**) ולרוחב (**{{ width_increase }}**) שהוגדרה בחומר '{{ material_name }}'."
-        cutting_dimensions_edge_decrement: המידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
+        cutting_dimensions: תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
+        cutting_dimensions_increase_1d: "מידות גולמיות אלו הוגדרו בחומר '{{ material_name }}': אורך יתר (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "מידות גולמיות אלו הוגדרו בחומר '{{ material_name }}': אורך יתר (**{{ length_increase }}**) ורוחב יתר (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: מידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: תוויות
       options_layout: הרכב
