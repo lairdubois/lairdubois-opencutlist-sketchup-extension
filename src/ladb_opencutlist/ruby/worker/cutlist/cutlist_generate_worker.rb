@@ -520,10 +520,10 @@ module Ladb::OpenCutList
             end
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
-            group_def.total_cutting_volume += part_def.cutting_size.volume
+            group_def.total_cutting_volume += part_def.cutting_size.volume * definition_attributes.thickness_layer_count
           end
         end
-        group_def.part_count += 1
+        group_def.part_count += definition_attributes.thickness_layer_count
 
       end
 
