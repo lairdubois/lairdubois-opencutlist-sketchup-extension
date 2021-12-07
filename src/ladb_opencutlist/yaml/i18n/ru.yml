@@ -651,7 +651,7 @@ tab:
         cutting_dimensions: Эта карта раскроя отображает детали с их **пильными** размерами.
         cutting_dimensions_increase_1d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**)."
-        cutting_dimensions_edge_decrement: Размеры уменьшить на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions_edge_decrement: Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Этикетки
       options_layout: Состав
