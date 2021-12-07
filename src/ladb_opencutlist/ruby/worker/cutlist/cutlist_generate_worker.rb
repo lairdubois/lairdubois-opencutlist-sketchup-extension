@@ -494,7 +494,7 @@ module Ladb::OpenCutList
           end
           if group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             if part_def.final_area.nil?
-              group_def.invalid_final_area_part_count += 1
+              group_def.invalid_final_area_part_count += definition_attributes.thickness_layer_count
             else
               group_def.total_final_area += part_def.final_area * definition_attributes.thickness_layer_count
             end
