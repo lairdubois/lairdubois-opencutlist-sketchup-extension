@@ -490,13 +490,13 @@ module Ladb::OpenCutList
             group_def.total_cutting_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            group_def.total_cutting_area += part_def.cutting_size.area
+            group_def.total_cutting_area += part_def.cutting_size.area * definition_attributes.thickness_layer_count
           end
           if group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             if part_def.final_area.nil?
               group_def.invalid_final_area_part_count += 1
             else
-              group_def.total_final_area += part_def.final_area
+              group_def.total_final_area += part_def.final_area * definition_attributes.thickness_layer_count
             end
             if part_def.edge_count > 0
               PartDef::EDGES_Y.each { |edge|
