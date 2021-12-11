@@ -4,15 +4,16 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 3.x, 2.x, 1.x and 0.x versions.
 
-* 3.0.1 (WIP)
+* 3.0.1 (2021-12-11)
 
-  * Added translator language "zz" (English with Transifex line numbers)
+  * Added translator language "zz" (English with Transifex line numbers) - Only available in DEV environment
   * Now automatically store OpenCutList dialog size and position on resize and move when using SketchUp >= 2021.1
   * Save default _mass_unit_ and _currency_symbol_ to model even if it is not modified from default values
   * Improved document filename when printing to PDF
   * Improved selection warning feedbacks in cutlist, cutting diagrams, labels and reports
   * Improved 'enter' key catch for validation in modal's textinputs
   * Fixed cutting diagram part list sort when using letter for part's number
+  * Fixed area and volume summary
 
 * 3.0.0 (2021-11-14)
 
