@@ -696,8 +696,8 @@ tab:
       option_color: Цвет
       formula:
         part_number: Номер
-        part_name: Описание
-        part_description: Определение
+        part_name: Определение
+        part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
         part_cutting_size: Размеры элемента

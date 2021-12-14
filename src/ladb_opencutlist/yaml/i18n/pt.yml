@@ -649,8 +649,8 @@ tab:
       warning:
         is_part_selection: Este diagrama de corte é limitado a **peças selecionadas**.
         cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
-        cutting_dimensions_increase_1d: "Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': configurado no material (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Dimensões aumentadas pelo superdimensionamento '{{ material_name }}': do comprimento (**{{ length_increase }}**) e da largura (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: "Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da faixa de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
