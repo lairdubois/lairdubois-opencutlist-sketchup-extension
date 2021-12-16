@@ -13,7 +13,7 @@
     </g>
 
     <g class="arrow">
-        {% set arrowOriginX = (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
+        {% set arrowOriginX = part.flipped ? areaSize - (areaSize - partLength) / 2 - partOutlineWidth * 2 : (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
         {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
         {% set arrowWidth = partLength - partOutlineWidth * 4 %}
         {% set arrowLength = partWidth - partOutlineWidth * 4 %}
@@ -27,7 +27,7 @@
             [     0 , 2/3.0 ],
             [     0 , 1/3.0 ],
         ] %}
-        <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"/>
+        <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] * (part.flipped ? -1 : 1) }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"/>
     </g>
 
     {% block extra %}{% endblock %}
