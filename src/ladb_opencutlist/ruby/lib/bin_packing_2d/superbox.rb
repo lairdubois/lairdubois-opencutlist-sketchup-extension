@@ -22,6 +22,9 @@ module Ladb::OpenCutList::BinPacking2D
     # The shape of this Superbox.
     attr_reader :shape
 
+    # Unbreakable
+    attr_reader :unbreakable
+
     #
     # Initializes a new SuperBox.
     #
@@ -33,7 +36,8 @@ module Ladb::OpenCutList::BinPacking2D
       @length = 0
       @width = 0
       @saw_kerf = saw_kerf
-
+      @unbreakable = false
+      
       @maxlength = maxlength
       @maxwidth = maxwidth
 
@@ -42,6 +46,9 @@ module Ladb::OpenCutList::BinPacking2D
       @sboxes = []
     end
 
+    def make_unbreakable
+      @unbreakable = true
+    end
     #
     # Adds a first Box to the SuperBox.
     #
@@ -69,8 +76,8 @@ module Ladb::OpenCutList::BinPacking2D
       until boxes.empty?
         box = boxes.shift
         if box.rotatable == @rotatable &&
-           (@width - box.width).abs <= EPS &&
-           @length + @saw_kerf + box.length <= @maxlength
+          (@width - box.width).abs <= EPS &&
+          @length + @saw_kerf + box.length <= @maxlength
           @length = @length + @saw_kerf + box.length
           @sboxes << box
         elsif box.rotatable == @rotatable && box.rotatable &&

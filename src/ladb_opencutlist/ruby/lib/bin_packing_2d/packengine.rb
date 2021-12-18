@@ -61,9 +61,11 @@ module Ladb::OpenCutList::BinPacking2D
       @level = 0
       @nb_best_selection = BEST_X_LARGE
 
-      @status = 0
-      @start_msg = ''
-      @end_msg = ''
+      @total_area = 0
+      @signatures = nil
+      @last_packers = nil
+      @stage = 0
+      @packers = nil
 
       @warnings = []
       @errors = []
@@ -87,6 +89,7 @@ module Ladb::OpenCutList::BinPacking2D
       if length <= 0 || width <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BOX
       else
+        @total_area += (length*width)
         @boxes << Box.new(length, width, rotatable, data)
       end
     end
@@ -234,11 +237,11 @@ module Ladb::OpenCutList::BinPacking2D
             "#{format('%6d', gstat[:total_nb_cuts])} " \
             "#{format('%6d', gstat[:nb_through_cuts])}" \
             "#{format('%2d', gstat[:cuts_together_count])}" \
-            "#{format('%7.4f', gstat[:total_l_measure])}" \
+            "#{format('%10.5f', gstat[:total_l_measure])}" \
             "#{format('%12.2f', gstat[:total_length_cuts])}" \
             "#{format('%3d', gstat[:rank])}"
         dbg(s)
-        packer.all_signatures
+        #packer.all_signatures
       end
       dbg('   packer    packed/unused/inv.   packed/unplac./inv.  #left ' \
           '  leftoverA  #cuts  #thru tg    ∑Lm       ∑cutL rank')
@@ -267,7 +270,7 @@ module Ladb::OpenCutList::BinPacking2D
     def select_best_packing(packers)
       return nil if packers.empty?
 
-      packers.sort_by! { |packer| [packer.gstat[:overall_efficiency], packer.gstat[:total_l_measure], -packer.gstat[:cuts_together_count]] }
+      packers.sort_by! { |packer| [-packer.gstat[:largest_bottom_parts], packer.gstat[:total_length_cuts], -packer.gstat[:cuts_together_count]] }
       print_final_packers(packers)
       packers.first
     end
@@ -375,10 +378,6 @@ module Ladb::OpenCutList::BinPacking2D
     # Packs next Bins, returns a list of Packers.
     #
     def pack_next_bin(previous_packer, signatures)
-      if @status > 0
-        @status += 1
-        Sketchup.status_text = "#{@start_msg} #{'.' * @status}"
-      end
 
       packers = []
       signatures.each do |signature|
@@ -483,31 +482,37 @@ module Ladb::OpenCutList::BinPacking2D
       true
     end
 
+    def get_estimated_stages
+      if @options.base_length > 0 && @options.base_length > 0
+        e = ((@total_area*1.5)/(@options.base_length*@options.base_width)).ceil
+        #puts("estimated stages = #{e}")
+      else
+        e = @bins.size
+        #puts("estimated stages = #{e}")
+      end
+      return e, @signatures.size
+    end
+
     #
     # Checks for consistency, creates multiple Packers and runs them.
     # Returns best packing by selecting best packing at each stage.
     #
-    def run(start_msg = 'Optimizing', end_msg = 'Optimization done')
-      if Object.const_defined?('Sketchup')
-        @start_msg = start_msg
-        @end_msg = end_msg
-        @status = 1
-        Sketchup.status_text = "#{@start_msg} #{'.' * @status}"
-      end
+    def start
       return nil, @errors.first if !valid_input? && !@errors.empty?
       return nil, @errors.first unless bins_available?
 
       case @options.optimization
       when OPT_MEDIUM
-        signatures = make_signatures_medium
+        @signatures = make_signatures_medium
         @nb_best_selection = BEST_X_SMALL
       when OPT_ADVANCED
-        signatures = make_signatures_large
+        @signatures = make_signatures_large
         @nb_best_selection = BEST_X_SMALL if @boxes.size < MAX_BOXES_TIME
       else
         @errors << ERROR_INVALID_INPUT
         return nil, @errors.first
       end
+
 
       # Use this to run exactly one signature
       # Parameters are presort, score, split, stacking
@@ -515,22 +520,41 @@ module Ladb::OpenCutList::BinPacking2D
       # signatures = [[5,0,3,0]]
 
       # Not a super precise way of measuring compute time.
-      start_timer(signatures.size)
+      start_timer(@signatures.size)
+    end
 
+    def is_done
+      return @done
+    end
+
+    def has_errors
+      return !@errors.empty?
+    end
+
+    def get_errors
+      return @errors
+    end
+
+    def run()
       begin
-        packers = pack(nil, signatures)
-        if packers.empty?
-          @errors << ERROR_NO_PLACEMENT_POSSIBLE
-          return nil, @errors.first
+        if @stage == 0
+          @stage += 1
+          @packers = pack(nil, @signatures)
+          if @packers.empty?
+            @errors << ERROR_NO_PLACEMENT_POSSIBLE
+            @done = true
+          end
+        else
+          @stage += 1
+          if packings_done?(@packers)
+            @done = true
+            @last_packers = select_best_x_packings(@packers) if !@packers.nil? && !@packers.empty?
+          else
+            @packers = select_best_x_packings(@packers)
+            @last_packers = @packers
+            @packers = pack(@packers, @signatures)
+          end
         end
-
-        until packings_done?(packers)
-          packers = select_best_x_packings(packers)
-          last_packers = packers
-          packers = pack(packers, signatures)
-        end
-
-        last_packers = select_best_x_packings(packers) if !packers.nil? && !packers.empty?
       rescue TimeoutError => e
         puts("Rescued in PackEngine: #{e.inspect}")
         # TODO: packengine timeout error, we should return the best solution found so far
@@ -543,21 +567,23 @@ module Ladb::OpenCutList::BinPacking2D
         @errors << ERROR_BAD_ERROR
         return nil, @errors.first
       end
+    end
 
+    def finish
       # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
       # invalid_bins and invalid_boxes here are global! they cannot fit each other
       unless @invalid_boxes.empty?
         @warnings << WARNING_ILLEGAL_SIZED_BOX
-        last_packers.each { |packer| packer.add_invalid_boxes(@invalid_boxes) }
+        @last_packers.each { |packer| packer.add_invalid_boxes(@invalid_boxes) }
       end
       unless @invalid_bins.empty?
         @warnings << WARNING_ILLEGAL_SIZED_BIN
-        last_packers.each { |packer| packer.add_invalid_bins(@invalid_bins) }
+        @last_packers.each { |packer| packer.add_invalid_bins(@invalid_bins) }
       end
 
       # Get the best packer
-      opt = select_best_packing(last_packers)
-      stop_timer(signatures.size, "#{last_packers[0].packed_bins.size} bin(s)")
+      opt = select_best_packing(@last_packers)
+      stop_timer(@signatures.size, "#{@last_packers[0].packed_bins.size} bin(s)")
 
       # Check validity by checking if we still have all boxes :-)
       begin
@@ -569,10 +595,7 @@ module Ladb::OpenCutList::BinPacking2D
         return nil, ERROR_BAD_ERROR
       end
 
-      if @status > 0
-        msg = "#{@end_msg} : #{format('%4.1f', (Time.now - @start_time))} s"
-        Sketchup.status_text = msg
-      end
+      opt.packed_bins.each { |bin| bin.mark_keep }
 
       @errors << ERROR_NONE if @errors.empty?
       return opt, @errors.first

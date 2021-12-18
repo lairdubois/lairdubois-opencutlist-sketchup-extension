@@ -13,16 +13,20 @@ module Ladb::OpenCutList::BinPacking2D
     # Level of this Leftover.
     attr_reader :level
 
+    # Keep this leftover
+    attr_reader :keep
+
     #
     # Initializes a new Leftover.
     #
-    def initialize(x, y, length, width, level, options)
+    def initialize(x, y, length, width, level, keep, options)
       super(options)
 
       @x = x
       @y = y
       @length = length
       @width = width
+      @keep = true
       @level = level
     end
 
@@ -56,6 +60,15 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Mark leftovers to keep on bins.
+    #
+    def mark_keep
+      if (@length < @options.min_length) || (@width < @options.min_width)
+        @keep = false
+      end
+    end
+
+    #
     # Returns the area of this Leftover.
     #
     def area
@@ -82,9 +95,9 @@ module Ladb::OpenCutList::BinPacking2D
         when SCORE_WORSTAREA_FIT
           -((box_length * box_width) - (@length * @width))
         when SCORE_WORSTSHORTSIDE_FIT
-          -[(box_length - @length).abs, (box_width - @width).abs].min
+          [(box_length - @length).abs, (box_width - @width).abs].max
         when SCORE_WORSTLONGSIDE_FIT
-          -[(box_length - @length).abs, (box_width - @width).abs].max
+          [(box_length - @length).abs, (box_width - @width).abs].min
         end
       else
         MAX_INT
@@ -166,7 +179,7 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       # Bottom leftover.
-      lb = Leftover.new(@x, y + @options.saw_kerf, @length, @y + @width - y - @options.saw_kerf, @level, @options)
+      lb = Leftover.new(@x, y + @options.saw_kerf, @length, @y + @width - y - @options.saw_kerf, @level, true, @options)
       new_leftovers << lb
 
       # Vertical cut.
@@ -176,7 +189,7 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       # Right leftover.
-      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level + 1, @options)
+      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level + 1, true, @options)
       new_leftovers << lr
 
       # If the Box is a Superbox, unmake it!
@@ -206,7 +219,7 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       # Right leftover.
-      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, @width, @level, @options)
+      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, @width, @level, true, @options)
       new_leftovers << lr
 
       # Horizontal cut.
@@ -216,7 +229,7 @@ module Ladb::OpenCutList::BinPacking2D
       end
 
       # Bottom leftover.
-      lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level + 1, @options)
+      lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level + 1, true, @options)
       new_leftovers << lb
 
       # Unmake it if a Superbox, does nothing if box.nil?
@@ -240,6 +253,8 @@ module Ladb::OpenCutList::BinPacking2D
           single_box = sbox.sboxes.shift
           single_box.set_position(sbox.x, sbox.y)
           unpacked_boxes << single_box
+        elsif sbox.unbreakable
+          unpacked_boxes << sbox
         elsif (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
               (@options.stacking == STACKING_WIDTH && sbox.rotated)
           top_box = sbox.sboxes.shift

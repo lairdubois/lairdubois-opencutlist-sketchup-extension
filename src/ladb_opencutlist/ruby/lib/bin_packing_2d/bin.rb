@@ -156,7 +156,7 @@ module Ladb::OpenCutList::BinPacking2D
         @leftovers = []
         l = Leftover.new(@options.trimsize,
                          @options.trimsize, @length - (2 * @options.trimsize),
-                         @width - (2 * @options.trimsize), 1, @options)
+                         @width - (2 * @options.trimsize), 1, true, @options)
         @leftovers << l
         @max_length = l.length
         @max_width = l.width
@@ -362,7 +362,7 @@ module Ladb::OpenCutList::BinPacking2D
       return if @bounding_box_done
 
       # Make a dummy Leftover.
-      lo = Leftover.new(0, 0, @length, @width, 1, @options)
+      lo = Leftover.new(0, 0, @length, @width, 1, true, @options)
       lo.trim
 
       # Split it two ways.
@@ -428,6 +428,13 @@ module Ladb::OpenCutList::BinPacking2D
       return if bounding_box(dummy2, true)
       # Not a problem!
       # puts("can't make a bounding box!")
+    end
+
+    #
+    # Mark leftovers to keep on bins.
+    #
+    def mark_keep
+      @leftovers.each { |lo| lo.mark_keep }
     end
 
     #

@@ -58,6 +58,9 @@ module Ladb::OpenCutList
       options.set_trimsize(@trimming)
       options.set_optimization(@optimization)
       options.set_stacking_pref(@stacking)
+      # all leftovers smaller than either length or width will be marked with
+      # the attribute @keep = true, part is larger in at least one dimension.
+      options.set_keep(@saw_kerf*20, @saw_kerf*20)
 
       # Create the bin packing engine with given bins and boxes
       e = BinPacking2D::PackEngine.new(options)
@@ -96,7 +99,21 @@ module Ladb::OpenCutList
 
       # Compute the cutting diagram
       # Start and end message to keep user happy!
-      result, err = e.run(Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.start_msg'), Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.end_msg'))
+      err = 0
+      e.start
+      if !e.has_errors
+        stages, signatures = e.get_estimated_stages
+        puts("estimated stages #{stages}, each with #{signatures} different packings")
+        until e.is_done || e.has_errors
+          puts("one stage")
+          e.run()
+        end
+      end
+      if e.has_errors
+        err = e.get_errors.first
+      else
+        result, err = e.finish()
+      end
 
       # Commit model modification operation
       model.commit_operation

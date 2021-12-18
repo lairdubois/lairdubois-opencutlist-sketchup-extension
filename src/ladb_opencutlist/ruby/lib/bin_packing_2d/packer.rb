@@ -257,9 +257,8 @@ module Ladb::OpenCutList::BinPacking2D
 
       sboxes = []
       until @boxes.empty?
-        box = @boxes.shift
         sbox = SuperBox.new(@stacking_maxlength, @stacking_maxwidth, @options.saw_kerf)
-        sbox.add_first_box(box)
+        sbox.add_first_box(@boxes.shift)
         sboxes << sbox
         @boxes = sbox.stack_width(@boxes) unless @boxes.empty?
       end
