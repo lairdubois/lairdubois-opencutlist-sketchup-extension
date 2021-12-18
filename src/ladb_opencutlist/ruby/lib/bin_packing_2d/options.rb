@@ -6,7 +6,7 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Options
     attr_reader :debug, :optimization, :stacking_pref, :base_length, :base_width,
-                :saw_kerf, :trimsize, :rotatable
+                :saw_kerf, :trimsize, :rotatable, :min_length, :min_width
     attr_accessor :presort, :stacking, :score, :split
 
     def initialize
@@ -21,6 +21,8 @@ module Ladb::OpenCutList::BinPacking2D
       @rotatable = false
       @saw_kerf = 0
       @trimsize = 0
+      @min_length = @saw_kerf
+      @min_width = @saw_kerf
       # Used internally by algorithm.
       @presort = 0
       @score = 0
@@ -94,6 +96,14 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def set_trimsize(trimsize)
       @trimsize = trimsize
+    end
+
+    #
+    #
+    #
+    def set_keep(min_length, min_width)
+      @min_length = min_length
+      @min_width = min_width
     end
 
     #
