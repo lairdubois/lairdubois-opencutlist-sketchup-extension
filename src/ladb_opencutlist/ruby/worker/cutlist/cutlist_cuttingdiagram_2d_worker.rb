@@ -106,13 +106,13 @@ module Ladb::OpenCutList
         puts("estimated stages #{stages}, each with #{signatures} different packings")
         until e.is_done || e.has_errors
           puts("one stage")
-          e.run()
+          e.run
         end
       end
       if e.has_errors
         err = e.get_errors.first
       else
-        result, err = e.finish()
+        result, err = e.finish
       end
 
       # Commit model modification operation

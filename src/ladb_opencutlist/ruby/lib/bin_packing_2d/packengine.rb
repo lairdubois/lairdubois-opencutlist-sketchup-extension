@@ -535,7 +535,7 @@ module Ladb::OpenCutList::BinPacking2D
       return @errors
     end
 
-    def run()
+    def run
       begin
         if @stage == 0
           @stage += 1
