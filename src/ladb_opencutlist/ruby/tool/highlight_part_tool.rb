@@ -81,7 +81,7 @@ module Ladb::OpenCutList
           font: FONT_TEXT,
           size: _screen_scale(Plugin.instance.current_os == :MAC ? 15 : 12),
           align: TextAlignCenter,
-          y_offset: _screen_scale(10)
+          y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
       }
 
       @initial_model_transparency = false
