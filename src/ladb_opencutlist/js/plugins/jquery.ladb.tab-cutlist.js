@@ -2527,7 +2527,7 @@
                         window.requestAnimationFrame(function () {
                             rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
                                 window.requestAnimationFrame(function () {
-                                    that.dialog.startProgress(response.estimated_stages);
+                                    that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
                                 });
                             });

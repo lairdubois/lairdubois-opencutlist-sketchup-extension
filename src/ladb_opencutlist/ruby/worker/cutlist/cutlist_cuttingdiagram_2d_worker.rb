@@ -100,8 +100,8 @@ module Ladb::OpenCutList
         @pack_engine.start
 
         if step_by_step && !@pack_engine.has_errors
-          estimated_stages, signatures = @pack_engine.get_estimated_steps
-          return { :estimated_stages => estimated_stages }
+          estimated_steps, signatures = @pack_engine.get_estimated_steps
+          return { :estimated_steps => estimated_steps }
         end
 
       end
