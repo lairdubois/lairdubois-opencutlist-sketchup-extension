@@ -37,7 +37,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def run
+    def run(step_by_step = false)
       return { :errors => [ 'default.error' ] } unless @cutlist
 
       model = Sketchup.active_model
@@ -49,77 +49,107 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
 
-      # The dimensions need to be in Sketchup internal units AND float
-      options = BinPacking2D::Options.new
-      options.set_base_length(@std_sheet_length)
-      options.set_base_width(@std_sheet_width)
-      options.set_rotatable(!group.material_grained)
-      options.set_saw_kerf(@saw_kerf)
-      options.set_trimsize(@trimming)
-      options.set_optimization(@optimization)
-      options.set_stacking_pref(@stacking)
-      # all leftovers smaller than either length or width will be marked with
-      # the attribute @keep = true, part is larger in at least one dimension.
-      options.set_keep(@saw_kerf*20, @saw_kerf*20)
+      unless @pack_engine
 
-      # Create the bin packing engine with given bins and boxes
-      e = BinPacking2D::PackEngine.new(options)
+        # The dimensions need to be in Sketchup internal units AND float
+        options = BinPacking2D::Options.new
+        options.set_base_length(@std_sheet_length)
+        options.set_base_width(@std_sheet_width)
+        options.set_rotatable(!group.material_grained)
+        options.set_saw_kerf(@saw_kerf)
+        options.set_trimsize(@trimming)
+        options.set_optimization(@optimization)
+        options.set_stacking_pref(@stacking)
+        # all leftovers smaller than either length or width will be marked with
+        # the attribute @keep = true, part is larger in at least one dimension.
+        options.set_keep(@saw_kerf*20, @saw_kerf*20)
 
-      # Add bins from scrap sheets
-      @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
-        ddq = scrap_sheet_size.split('x')
-        length = ddq[0].strip.to_l.to_f
-        width = ddq[1].strip.to_l.to_f
-        quantity = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
-        i = 0
-        while i < quantity  do
-          e.add_bin(length, width)
-          i += 1
+        # Create the bin packing engine with given bins and boxes
+        @pack_engine = BinPacking2D::PackEngine.new(options)
+
+        # Add bins from scrap sheets
+        @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+          ddq = scrap_sheet_size.split('x')
+          length = ddq[0].strip.to_l.to_f
+          width = ddq[1].strip.to_l.to_f
+          quantity = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+          i = 0
+          while i < quantity  do
+            @pack_engine.add_bin(length, width)
+            i += 1
+          end
+        }
+
+        # Add boxes from parts
+        add_boxes_proc = Proc.new { |part|
+          for i in 1..part.count
+            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
+          end
+        }
+        parts.each { |part|
+          if part.instance_of?(FolderPart)
+            part.children.each { |child_part|
+              add_boxes_proc.call(child_part)
+            }
+          else
+            add_boxes_proc.call(part)
+          end
+        }
+
+        # Start engine
+        @pack_engine.start
+
+        if step_by_step && !@pack_engine.has_errors
+          estimated_stages, signatures = @pack_engine.get_estimated_stages
+          return { :estimated_stages => estimated_stages }
         end
-      }
 
-      # Add boxes from parts
-      add_boxes_proc = Proc.new { |part|
-        for i in 1..part.count
-          e.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
-        end
-      }
-      parts.each { |part|
-        if part.instance_of?(FolderPart)
-          part.children.each { |child_part|
-            add_boxes_proc.call(child_part)
-          }
+      end
+      unless @pack_engine.is_done || @pack_engine.has_errors
+
+        if step_by_step
+          # Run engine (one stage)
+          @pack_engine.run
         else
-          add_boxes_proc.call(part)
+          # Run engine (all stages)
+          until @pack_engine.is_done || @pack_engine.has_errors
+            @pack_engine.run
+          end
         end
-      }
 
-      # Start model modification operation - Disable UI during process
-      model.start_operation('OpenCutList - Cutting diagram 2D', true, false, true)
-
-      # Compute the cutting diagram
-      # Start and end message to keep user happy!
-      err = 0
-      e.start
-      if !e.has_errors
-        stages, signatures = e.get_estimated_stages
-        puts("estimated stages #{stages}, each with #{signatures} different packings")
-        until e.is_done || e.has_errors
-          puts("one stage")
-          e.run
-        end
       end
-      if e.has_errors
-        err = e.get_errors.first
-      else
-        result, err = e.finish
+      err = BinPacking2D::ERROR_NONE
+      if @pack_engine.has_errors
+        err = @pack_engine.get_errors.first
+      elsif @pack_engine.is_done
+
+        # Finish engine
+        result, err = @pack_engine.finish
+
       end
 
-      # Commit model modification operation
-      model.commit_operation
+      errors = []
+      if err > BinPacking2D::ERROR_NONE
+
+        # Engine error -> returns error only
+
+        case err
+          when BinPacking2D::ERROR_NO_BIN
+            errors << 'tab.cutlist.cuttingdiagram.error.no_sheet'
+          when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
+            errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+          when BinPacking2D::ERROR_BAD_ERROR
+            errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
+        end
+
+      end
 
       # Response
       # --------
+
+      unless result
+        return { :errors => errors }
+      end
 
       cuttingdiagram2d_def = Cuttingdiagram2dDef.new
       cuttingdiagram2d_def.options_def.px_saw_kerf = [_to_px(@saw_kerf), 1].max
@@ -135,155 +165,140 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
 
-      if err > BinPacking2D::ERROR_NONE
+      cuttingdiagram2d_def.errors += errors
 
-        # Engine error -> returns error only
-
-        case err
-          when BinPacking2D::ERROR_NO_BIN
-            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_sheet'
-          when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
-            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
-          when BinPacking2D::ERROR_BAD_ERROR
-            cuttingdiagram2d_def.errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
-        end
-
-      else
-
-        # Errors
-        if result.unplaced_boxes.length > 0
-          cuttingdiagram2d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
-        end
-
-        # Warnings
-        materials = Sketchup.active_model.materials
-        material = materials[group.material_name]
-        material_attributes = MaterialAttributes.new(material)
-        if @part_ids
-          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.is_part_selection'
-        end
-        if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
-          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
-        end
-        if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-          cuttingdiagram2d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
-        end
-        if group.edge_decremented
-          cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
-        end
-
-        # Unplaced boxes
-        result.unplaced_boxes.each { |box|
-          part_def = cuttingdiagram2d_def.unplaced_part_defs[box.data.number]
-          unless part_def
-            part_def = Cuttingdiagram2dListedPartDef.new(box.data)
-            cuttingdiagram2d_def.unplaced_part_defs[box.data.number] = part_def
-          end
-          part_def.count += 1
-        }
-
-        # Summary
-        cuttingdiagram2d_def.summary_def.overall_efficiency = result.overall_efficiency
-        result.unused_bins.each { |bin|
-          _append_bin_to_summary_sheet_defs(bin, group, false, cuttingdiagram2d_def.summary_def.sheet_defs)
-        }
-        result.packed_bins.each { |bin|
-          _append_bin_to_summary_sheet_defs(bin, group, true, cuttingdiagram2d_def.summary_def.sheet_defs)
-          cuttingdiagram2d_def.summary_def.total_used_count += 1
-          cuttingdiagram2d_def.summary_def.total_used_area += Size2d.new(bin.length.to_l, bin.width.to_l).area
-          cuttingdiagram2d_def.summary_def.total_used_part_count += bin.boxes.count
-          bin.cuts.each { |cut|
-            cuttingdiagram2d_def.summary_def.total_cut_count += 1
-            cuttingdiagram2d_def.summary_def.total_cut_length += cut.length
-          }
-        }
-
-        # Sheets
-        sheet_key = 0
-        result.packed_bins.each { |bin|
-
-          type_id = _compute_bin_type_id(bin, group, true)
-          sheet_key = @sheet_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (sheet_key += 1)
-
-          # Check similarity
-          if @sheet_folding
-            grouped_sheet_def = cuttingdiagram2d_def.sheet_defs[sheet_key]
-            if grouped_sheet_def
-              grouped_sheet_def.count += 1
-              next
-            end
-          end
-
-          sheet_def = Cuttingdiagram2dSheetDef.new
-          sheet_def.type_id = type_id
-          sheet_def.type = bin.type
-          sheet_def.count = 1
-          sheet_def.px_length = _to_px(bin.length)
-          sheet_def.px_width = _to_px(bin.width)
-          sheet_def.length = bin.length
-          sheet_def.width = bin.width
-          sheet_def.efficiency = bin.efficiency
-          sheet_def.total_cut_length = bin.total_length_cuts
-
-          # Parts
-          bin.boxes.each { |box|
-
-            part_def = Cuttingdiagram2dPartDef.new(box.data)
-            part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
-            part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
-            part_def.px_length = _to_px(box.length)
-            part_def.px_width = _to_px(box.width)
-            part_def.rotated = box.rotated
-            sheet_def.part_defs.push(part_def)
-
-            unless @hide_part_list
-              grouped_part_def = sheet_def.grouped_part_defs[box.data.id]
-              unless grouped_part_def
-
-                grouped_part_def = Cuttingdiagram2dListedPartDef.new(box.data)
-                sheet_def.grouped_part_defs[box.data.id] = grouped_part_def
-
-              end
-              grouped_part_def.count += 1
-            end
-          }
-
-          # Leftovers
-          bin.leftovers.each { |box|
-
-            leftover_def = Cuttingdiagram2dLeftoverDef.new
-            leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
-            leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
-            leftover_def.px_length = _to_px(box.length)
-            leftover_def.px_width = _to_px(box.width)
-            leftover_def.length = box.length
-            leftover_def.width = box.width
-            sheet_def.leftover_defs.push(leftover_def)
-
-          }
-
-          # Cuts
-          bin.cuts.each { |cut|
-
-            cut_def = Cuttingdiagram2dCutDef.new
-            cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : @saw_kerf, bin.length))
-            cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? @saw_kerf : cut.length, bin.width))
-            cut_def.px_length = _to_px(cut.length)
-            cut_def.x = cut.x
-            cut_def.y = cut.y
-            cut_def.length = cut.length
-            cut_def.is_horizontal = cut.is_horizontal
-            cut_def.is_through = cut.is_through
-            cut_def.is_final = cut.is_final
-            sheet_def.cut_defs.push(cut_def)
-
-          }
-
-          cuttingdiagram2d_def.sheet_defs[sheet_key] = sheet_def
-
-        }
-
+      # Errors
+      if result.unplaced_boxes.length > 0
+        cuttingdiagram2d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
       end
+
+      # Warnings
+      materials = Sketchup.active_model.materials
+      material = materials[group.material_name]
+      material_attributes = MaterialAttributes.new(material)
+      if @part_ids
+        cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.is_part_selection'
+      end
+      if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
+        cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
+      end
+      if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+        cuttingdiagram2d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_2d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+      end
+      if group.edge_decremented
+        cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
+      end
+
+      # Unplaced boxes
+      result.unplaced_boxes.each { |box|
+        part_def = cuttingdiagram2d_def.unplaced_part_defs[box.data.number]
+        unless part_def
+          part_def = Cuttingdiagram2dListedPartDef.new(box.data)
+          cuttingdiagram2d_def.unplaced_part_defs[box.data.number] = part_def
+        end
+        part_def.count += 1
+      }
+
+      # Summary
+      cuttingdiagram2d_def.summary_def.overall_efficiency = result.overall_efficiency
+      result.unused_bins.each { |bin|
+        _append_bin_to_summary_sheet_defs(bin, group, false, cuttingdiagram2d_def.summary_def.sheet_defs)
+      }
+      result.packed_bins.each { |bin|
+        _append_bin_to_summary_sheet_defs(bin, group, true, cuttingdiagram2d_def.summary_def.sheet_defs)
+        cuttingdiagram2d_def.summary_def.total_used_count += 1
+        cuttingdiagram2d_def.summary_def.total_used_area += Size2d.new(bin.length.to_l, bin.width.to_l).area
+        cuttingdiagram2d_def.summary_def.total_used_part_count += bin.boxes.count
+        bin.cuts.each { |cut|
+          cuttingdiagram2d_def.summary_def.total_cut_count += 1
+          cuttingdiagram2d_def.summary_def.total_cut_length += cut.length
+        }
+      }
+
+      # Sheets
+      sheet_key = 0
+      result.packed_bins.each { |bin|
+
+        type_id = _compute_bin_type_id(bin, group, true)
+        sheet_key = @sheet_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (sheet_key += 1)
+
+        # Check similarity
+        if @sheet_folding
+          grouped_sheet_def = cuttingdiagram2d_def.sheet_defs[sheet_key]
+          if grouped_sheet_def
+            grouped_sheet_def.count += 1
+            next
+          end
+        end
+
+        sheet_def = Cuttingdiagram2dSheetDef.new
+        sheet_def.type_id = type_id
+        sheet_def.type = bin.type
+        sheet_def.count = 1
+        sheet_def.px_length = _to_px(bin.length)
+        sheet_def.px_width = _to_px(bin.width)
+        sheet_def.length = bin.length
+        sheet_def.width = bin.width
+        sheet_def.efficiency = bin.efficiency
+        sheet_def.total_cut_length = bin.total_length_cuts
+
+        # Parts
+        bin.boxes.each { |box|
+
+          part_def = Cuttingdiagram2dPartDef.new(box.data)
+          part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
+          part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+          part_def.px_length = _to_px(box.length)
+          part_def.px_width = _to_px(box.width)
+          part_def.rotated = box.rotated
+          sheet_def.part_defs.push(part_def)
+
+          unless @hide_part_list
+            grouped_part_def = sheet_def.grouped_part_defs[box.data.id]
+            unless grouped_part_def
+
+              grouped_part_def = Cuttingdiagram2dListedPartDef.new(box.data)
+              sheet_def.grouped_part_defs[box.data.id] = grouped_part_def
+
+            end
+            grouped_part_def.count += 1
+          end
+        }
+
+        # Leftovers
+        bin.leftovers.each { |box|
+
+          leftover_def = Cuttingdiagram2dLeftoverDef.new
+          leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
+          leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+          leftover_def.px_length = _to_px(box.length)
+          leftover_def.px_width = _to_px(box.width)
+          leftover_def.length = box.length
+          leftover_def.width = box.width
+          sheet_def.leftover_defs.push(leftover_def)
+
+        }
+
+        # Cuts
+        bin.cuts.each { |cut|
+
+          cut_def = Cuttingdiagram2dCutDef.new
+          cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : @saw_kerf, bin.length))
+          cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? @saw_kerf : cut.length, bin.width))
+          cut_def.px_length = _to_px(cut.length)
+          cut_def.x = cut.x
+          cut_def.y = cut.y
+          cut_def.length = cut.length
+          cut_def.is_horizontal = cut.is_horizontal
+          cut_def.is_through = cut.is_through
+          cut_def.is_final = cut.is_final
+          sheet_def.cut_defs.push(cut_def)
+
+        }
+
+        cuttingdiagram2d_def.sheet_defs[sheet_key] = sheet_def
+
+      }
 
       cuttingdiagram2d_def.create_cuttingdiagram2d
     end

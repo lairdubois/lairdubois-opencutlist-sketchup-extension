@@ -64,8 +64,12 @@ module Ladb::OpenCutList
         group_cuttingdiagram_1d_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d") do |settings|
-        group_cuttingdiagram_2d_command(settings)
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d_start") do |settings|
+        group_cuttingdiagram_2d_start_command(settings)
+      end
+
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d_advance") do |settings|
+        group_cuttingdiagram_2d_advance_command
       end
 
     end
@@ -195,14 +199,22 @@ module Ladb::OpenCutList
       cuttingdiagram1d.to_hash
     end
 
-    def group_cuttingdiagram_2d_command(settings)
+    def group_cuttingdiagram_2d_start_command(settings)
       require_relative '../worker/cutlist/cutlist_cuttingdiagram_2d_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
+      @cuttingdiagram2d_worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
 
       # Run !
-      cuttingdiagram2d = worker.run
+      cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
+
+      cuttingdiagram2d.to_hash
+    end
+
+    def group_cuttingdiagram_2d_advance_command
+
+      # Run !
+      cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
 
       cuttingdiagram2d.to_hash
     end
