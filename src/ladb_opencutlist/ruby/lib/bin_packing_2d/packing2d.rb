@@ -51,6 +51,8 @@ module Ladb::OpenCutList
     ERROR_PARAMETERS = 6
     # Error in input.
     ERROR_INVALID_INPUT = 7
+    # Error in step by step run
+    ERROR_STEP_BY_STEP = 8
 
     # Type of standard bin.
     BIN_TYPE_AUTO_GENERATED = 0

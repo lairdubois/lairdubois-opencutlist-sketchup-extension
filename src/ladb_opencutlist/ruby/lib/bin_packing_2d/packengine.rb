@@ -64,7 +64,7 @@ module Ladb::OpenCutList::BinPacking2D
       @total_area = 0
       @signatures = nil
       @last_packers = nil
-      @stage = 0
+      @step = 0
       @packers = nil
 
       @warnings = []
@@ -482,24 +482,35 @@ module Ladb::OpenCutList::BinPacking2D
       true
     end
 
-    def get_estimated_stages
+    def get_estimated_steps
       if @options.base_length > 0 && @options.base_length > 0
         e = ((@total_area*1.5)/(@options.base_length*@options.base_width)).ceil
-        #puts("estimated stages = #{e}")
       else
         e = @bins.size
-        #puts("estimated stages = #{e}")
       end
       return e, @signatures.size
     end
 
+    def runall
+      start
+      until is_done || has_errors
+        run
+      end
+      if has_errors
+        err = get_errors.first
+        return nil, err
+      else
+        return finish()
+      end
+    end
+
     #
     # Checks for consistency, creates multiple Packers and runs them.
-    # Returns best packing by selecting best packing at each stage.
+    # Returns best packing by selecting best packing at each step.
     #
     def start
-      return nil, @errors.first if !valid_input? && !@errors.empty?
-      return nil, @errors.first unless bins_available?
+      return if !valid_input? && !@errors.empty?
+      return unless bins_available?
 
       case @options.optimization
       when OPT_MEDIUM
@@ -510,17 +521,16 @@ module Ladb::OpenCutList::BinPacking2D
         @nb_best_selection = BEST_X_SMALL if @boxes.size < MAX_BOXES_TIME
       else
         @errors << ERROR_INVALID_INPUT
-        return nil, @errors.first
+        return
       end
-
 
       # Use this to run exactly one signature
       # Parameters are presort, score, split, stacking
-      # signatures = [[1,1,3,1],[4,1,3,1]]
-      # signatures = [[5,0,3,0]]
+      # @signatures = [[5,0,3,0]]
 
       # Not a super precise way of measuring compute time.
       start_timer(@signatures.size)
+      @step = 1
     end
 
     def is_done
@@ -536,16 +546,20 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     def run
+      if @step == 0
+        @errors << ERROR_STEP_BY_STEP
+        return
+      end
       begin
-        if @stage == 0
-          @stage += 1
+        if @step == 1
+          @step += 1
           @packers = pack(nil, @signatures)
           if @packers.empty?
             @errors << ERROR_NO_PLACEMENT_POSSIBLE
             @done = true
           end
         else
-          @stage += 1
+          @step += 1
           if packings_done?(@packers)
             @done = true
             @last_packers = select_best_x_packings(@packers) if !@packers.nil? && !@packers.empty?
@@ -572,6 +586,12 @@ module Ladb::OpenCutList::BinPacking2D
     def finish
       # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
       # invalid_bins and invalid_boxes here are global! they cannot fit each other
+      
+      # Cannot finish on unfinished packing!
+      if !@done
+        @errors << ERROR_STEP_BY_STEP
+        return
+      end
       unless @invalid_boxes.empty?
         @warnings << WARNING_ILLEGAL_SIZED_BOX
         @last_packers.each { |packer| packer.add_invalid_boxes(@invalid_boxes) }
