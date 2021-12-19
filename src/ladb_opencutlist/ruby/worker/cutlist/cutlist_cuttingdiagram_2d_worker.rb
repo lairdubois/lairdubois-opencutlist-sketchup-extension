@@ -62,7 +62,7 @@ module Ladb::OpenCutList
         options.set_stacking_pref(@stacking)
         # all leftovers smaller than either length or width will be marked with
         # the attribute @keep = true, part is larger in at least one dimension.
-        options.set_keep(@saw_kerf*20, @saw_kerf*20)
+        options.set_keep(@saw_kerf * 20, @saw_kerf * 20)
 
         # Create the bin packing engine with given bins and boxes
         @pack_engine = BinPacking2D::PackEngine.new(options)
@@ -96,7 +96,7 @@ module Ladb::OpenCutList
           end
         }
 
-        # Start engine
+        # Start pack engine
         @pack_engine.start
 
         if step_by_step && !@pack_engine.has_errors
@@ -105,25 +105,22 @@ module Ladb::OpenCutList
         end
 
       end
-      unless @pack_engine.is_done || @pack_engine.has_errors
+      until @pack_engine.is_done || @pack_engine.has_errors
 
-        if step_by_step
-          # Run engine (one stage)
-          @pack_engine.run
-        else
-          # Run engine (all stages)
-          until @pack_engine.is_done || @pack_engine.has_errors
-            @pack_engine.run
-          end
-        end
+        # Run pack engine
+        @pack_engine.run
+
+        # Break loop if step by step
+        break if step_by_step
 
       end
+      result = nil
       err = BinPacking2D::ERROR_NONE
       if @pack_engine.has_errors
         err = @pack_engine.get_errors.first
       elsif @pack_engine.is_done
 
-        # Finish engine
+        # Finish pack engine
         result, err = @pack_engine.finish
 
       end
