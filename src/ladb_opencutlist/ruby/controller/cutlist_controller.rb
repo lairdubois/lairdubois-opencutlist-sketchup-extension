@@ -133,6 +133,8 @@ module Ladb::OpenCutList
     end
 
     def report_advance_command
+      return { :errors => [ 'default.error' ] } unless @report_worker
+
       # Run !
       @report_worker.run
     end
@@ -212,6 +214,7 @@ module Ladb::OpenCutList
     end
 
     def group_cuttingdiagram_2d_advance_command
+      return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d_worker
 
       # Run !
       cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
