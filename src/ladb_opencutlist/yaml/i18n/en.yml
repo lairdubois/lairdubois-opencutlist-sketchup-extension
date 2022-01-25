@@ -739,8 +739,8 @@ tab:
       obsolete_cutlist: "Impossible, the parts list is obsolete. Please, regenerate it."
     warning:
       is_entity_selection: Only the selected parts in your model have been taken into account.
-      no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, or **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, or **$t(tab.materials.type_5)**)."
       export_empty: Your export selection does not contain any part.
     success:
       exported_to: "Successful export to {{ export_path }}."
