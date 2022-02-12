@@ -3,11 +3,13 @@
 {# set displayOwned (facultative) #}
 {# set flat (facultative) #}
 {# set noColor (facultative) #}
+{# set noPrint (facultative) #}
 {# set attr (facultative) #}
 
 {% set displayOwned = displayOwned|default(false) %}
 {% set flat = flat|default(false) %}
 {% set noColor = noColor|default(false) %}
+{% set noPrint = noPrint|default(false) %}
 
 {% for materialOrigin in materialOrigins %}
     {% if materialOrigin > 1 or displayOwned %}  {# OWNED origin are ignored #}
@@ -19,7 +21,7 @@
                 </div>
             </div>
         {% else %}
-            <a{% if attr is defined %} href="#"{% endif %}{% if not noColor %} class="ladb-tool-info"{% endif %}{% if attr is defined %} {{ attr }}{% endif %} data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
+            <a{% if attr is defined %} href="#"{% endif %}{% if not noColor %} class="ladb-tool-info{% if noPrint %} no-print{% endif %}"{% endif %}{% if attr is defined %} {{ attr }}{% endif %} data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.material_origin_'~materialOrigin)|i18next }}"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }}"></i></a>
         {% endif %}
     {% endif %}
 {% endfor %}
