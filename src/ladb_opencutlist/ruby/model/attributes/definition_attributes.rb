@@ -15,7 +15,7 @@ module Ladb::OpenCutList
     @@cached_uuids = {}
     @@used_uuids = []
 
-    def initialize(definition, force_unique_uuid =false)
+    def initialize(definition, force_unique_uuid = false)
       @definition = definition
       read_from_attributes(force_unique_uuid)
     end
