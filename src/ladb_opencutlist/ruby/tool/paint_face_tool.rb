@@ -6,10 +6,21 @@ module Ladb::OpenCutList
 
     def initialize
 
-      @cursor_id = nil
-      cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-highlight.png')
+      @add = true
+
+      @unpaint_color = Sketchup::Color.new(255, 255, 255)
+      @paint_color = Sketchup.active_model.materials.current ? Sketchup.active_model.materials.current.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+
+      # Create cursors
+      @cursor_paint_id = nil
+      cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-paint.pdf')
       if cursor_path
-        @cursor_id = UI.create_cursor(cursor_path, 0, 0)
+        @cursor_paint_id = UI.create_cursor(cursor_path, 7, 25)
+      end
+      @cursor_unpaint_id = nil
+      cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-unpaint.pdf')
+      if cursor_path
+        @cursor_unpaint_id = UI.create_cursor(cursor_path, 7, 25)
       end
 
     end
@@ -27,6 +38,9 @@ module Ladb::OpenCutList
         @pick_helper = Sketchup.active_model.active_view.pick_helper
 
       end
+
+      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
+
     end
 
     def deactivate(view)
@@ -43,7 +57,7 @@ module Ladb::OpenCutList
 
     def draw(view)
       if @triangles
-        view.drawing_color = Sketchup.active_model.materials.current.color if Sketchup.active_model.materials.current
+        view.drawing_color = @add ? @paint_color : @unpaint_color
         view.draw(GL_TRIANGLES, @triangles)
       end
     end
@@ -55,7 +69,23 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onSetCursor
-      UI.set_cursor(@cursor_id)
+      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
+    end
+
+    def onKeyDown(key, repeat, flags, view)
+      if key == CONSTRAIN_MODIFIER_KEY
+        @add = false
+        view.invalidate
+        UI.set_cursor(@cursor_unpaint_id)
+      end
+    end
+
+    def onKeyUp(key, repeat, flags, view)
+      if key == CONSTRAIN_MODIFIER_KEY
+        @add = true
+        view.invalidate
+        UI.set_cursor(@cursor_paint_id)
+      end
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -64,7 +94,7 @@ module Ladb::OpenCutList
     def onLButtonUp(flags, x, y, view)
       _pick_hover_face(x, y, view)
       if @hover_face
-        @hover_face.material = flags & CONSTRAIN_MODIFIER_MASK != 0 ? nil : Sketchup.active_model.materials.current
+        @hover_face.material = @add ? Sketchup.active_model.materials.current : nil
       end
     end
 
@@ -104,6 +134,22 @@ module Ladb::OpenCutList
 
     end
 
+    def _get_color_from_path(path)
+      entity = path.last
+      color = nil
+      if entity
+        if entity.material
+          color = entity.material.color
+        elsif path.length > 0
+          color = _get_color_from_path(path.slice(0, path.length - 1))
+        end
+      end
+      unless color
+        color = Sketchup::Color.new(255, 255, 255)
+      end
+      color
+    end
+
     def _pick_hover_face(x, y, view)
       if @pick_helper.do_pick(x, y) > 0
 
@@ -115,7 +161,10 @@ module Ladb::OpenCutList
           end
           if pick_path && pick_path.last && pick_path.last.is_a?(Sketchup::Face)
 
+            return if pick_path.last == @hover_face
+
             @hover_face = pick_path.last
+            @unpaint_color = _get_color_from_path(pick_path.slice(0, pick_path.length - 1))
             @triangles = _compute_face_triangles(view, pick_path.last, PathUtils::get_transformation(pick_path))
 
             view.invalidate
