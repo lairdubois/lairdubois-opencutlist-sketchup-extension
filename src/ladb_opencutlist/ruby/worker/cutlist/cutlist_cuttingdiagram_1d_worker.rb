@@ -80,7 +80,7 @@ module Ladb::OpenCutList
       model.start_operation('OpenCutList - Cutting diagram 1D', true, false, true)
 
       # Compute the cutting diagram
-      result, err = e.run(Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.start_msg'), Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.end_msg'))
+      result, err = e.runall
 
       # Commit model modification operation
       model.commit_operation

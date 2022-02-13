@@ -13,8 +13,6 @@ module Ladb::OpenCutList::BinPacking1D
   # Setup and run bin packing in 1D.
   #
   class PackEngine < Packing1D
-    # List of warnings.
-    attr_reader :warnings
 
     #
     # Initialize a new PackEngine with options.
@@ -25,7 +23,16 @@ module Ladb::OpenCutList::BinPacking1D
       @boxes = []
       @warnings = []
       @largest_bin = 0.0
+
+      @packerFFD = nil
+      @packerDP = nil
+      @errDP = nil
+      @errFFD = nil
+
       @min_nb_bins = {}
+      @done = false
+      @warnings = []
+      @errors = []
     end
 
     #
@@ -105,103 +112,200 @@ module Ladb::OpenCutList::BinPacking1D
       dbg(' alg.    eff.       leftL      #bins  #unplaced_boxes')
     end
 
+    # Sets the global start time.
+    #
+    def start_timer
+      dbg("-> start of packing with #{@boxes.size} box(es), #{@leftovers.size} bin(s)")
+      @start_time = Time.now
+    end
+
+    #
+    # Prints total time used since start_timer.
+    #
+    def stop_timer(msg)
+      dbg("-> end of packing(s) time = #{format('%6.4f', (Time.now - @start_time))} s, " + msg)
+    end
+
+    #
+    #
+    #
+    def is_done
+      return @done
+    end
+
+    #
+    #
+    #
+    def has_errors
+      return !@errors.empty?
+    end
+
+    #
+    #
+    #
+    def get_errors
+      return @errors
+    end
+
+    #
+    #
+    #
+    def get_warnings
+      return @warnings
+    end
+
+    def packings_done?
+      return (@errDP == ERROR_NONE || @errFFD == ERROR_NONE)
+    end
+
+    #
+    # Get number of estimated steps. In each step a single bin will be packed.
+    #
+    def get_estimated_steps
+      # DP algorithm cannot be broken, therefore 4 steps
+      return 4
+    end
+
+    #
+    # Alternative to start, run, finish.
+    #
+    def runall
+      start
+      until is_done || has_errors
+        run
+      end
+      if has_errors
+        err = get_errors.first
+        return nil, err
+      else
+        return finish
+      end
+    end
+
     #
     # Selects best packer and returns it or nil.
     #
     def best_solution(packerFFD, packerDP)
+
       return packerDP if packerFFD.nil?
-
       return packerFFD if packerDP.nil?
-
+      print("DP = #{packerDP.bins.length}\n")
+      print("FFD = #{packerFFD.bins.length}\n")
       packers = [packerDP, packerFFD]
-
       packers_with_zero_left = packers.select { |packer| packer.gstat[:nb_unplaced_boxes] == 0 }
       packers = packers_with_zero_left unless packers_with_zero_left.empty?
-
       print_packers(packers)
       packers.min_by { |packer| [packer.gstat[:nb_packed_bins], -packer.gstat[:overall_efficiency], packer.gstat[:nb_unplaced_boxes], -packer.gstat[:largest_leftover]] }
     end
 
     #
-    # Checks for consistency, creates a Packer and runs it.
+    # Start phase of algorithm, checking for valid input.
     #
-    def run(start_msg = 'Optimizing', end_msg = 'Optimization done')
-      status = 0
-      if Object.const_defined?('Sketchup')
-        start_time = Time.now
-        status = 1
-        Sketchup.status_text = "#{start_msg} #{'.' * status}"
-      end
+    def start
+      @status = 0
 
-      error = ERROR_BAD_ERROR
       @options.set_debug(false)
       update_max_bin
 
       # Check for boxes and bins
-      return nil, ERROR_NO_BOX if @boxes.empty?
+      if @boxes.empty?
+        @errors << ERROR_NO_BOX
+        return
+      end
+      if @options.base_bin_length < EPS && @leftovers.empty?
+        @errors << ERROR_NO_BIN
+        return
+      end
+      if !valid_trimsize
+        @errors << ERROR_PARAMETERS
+        return
+      end
+      if @options.trimsize > (SIZE_WARNING_FACTOR * @largest_bin)
+        @warnings << WARNING_TRIM_SIZE_LARGE
+      end
+      if !valid_saw_kerf
+        @errors << ERROR_PARAMETERS
+        return
+      end
+      if @options.saw_kerf > EPS && @options.saw_kerf > (SIZE_WARNING_FACTOR * @largest_bin)
+          @warnings << WARNING_SAW_KERF_LARGE
+      end
+      # Not a super precise way of measuring compute time.
+      start_timer
+      @step = 1
+    end
 
-      return nil, ERROR_NO_BIN if @options.base_bin_length < EPS && @leftovers.empty?
-
-      # Check parameters
-      return nil, ERROR_PARAMETERS unless valid_trimsize
-
-      @warnings << WARNING_TRIM_SIZE_LARGE if @options.trimsize > (SIZE_WARNING_FACTOR * @largest_bin)
-
-      return nil, ERROR_PARAMETERS unless valid_saw_kerf
-
-      @warnings << WARNING_SAW_KERF_LARGE if @options.saw_kerf > EPS \
-        && @options.saw_kerf > (SIZE_WARNING_FACTOR * @largest_bin)
-
-      # Run first fit decreasing, because it's so simple
+    #
+    # Use first fit decreasing algorithm.
+    #
+    def packFFD
       begin
-        packerFFD = PackerFFD.new(@options)
-        packerFFD.add_leftovers(@leftovers)
-        packerFFD.add_boxes(@boxes)
-        errFFD = packerFFD.run
+        @packerFFD = PackerFFD.new(@options)
+        @packerFFD.add_leftovers(@leftovers)
+        @packerFFD.add_boxes(@boxes)
+        @errFFD = @packerFFD.run
       rescue Packing1DError => e
         puts("Rescued in PackEngine packerFFD: #{e.inspect}")
-        errFFD = ERROR_BAD_ERROR
-        packerFFD = nil
+        @errFFD = ERROR_BAD_ERROR
+        @packerFFD = nil
       end
+    end
 
-      # Run a dynamic programming version of subset sum
+    #
+    # Run a dynamic programming version of subset sum
+    #
+    def packDP
       begin
-        packerDP = PackerDP.new(@options)
-        packerDP.add_leftovers(@leftovers)
-        packerDP.add_boxes(@boxes)
-        errDP = packerDP.run(start_msg, 1)
+        @packerDP = PackerDP.new(@options)
+        @packerDP.add_leftovers(@leftovers)
+        @packerDP.add_boxes(@boxes)
+        @errDP = @packerDP.run
       rescue Packing1DError => e
         puts("Rescued in PackEngine packerDP: #{e.inspect}")
-        errDP = ERROR_BAD_ERROR
-        packerDP = nil
+        @errDP = ERROR_BAD_ERROR
+        print(@warnings)
+        @packerDP = nil
+      rescue TimeoutError => e
+        puts("Rescued in PackEngine: #{e.inspect}")
+        # TODO: packengine timeout error, we should return the best solution found so far
+        # but this is dangerous, since it can lead to different versions.
+        @warnings << WARNING_ALGORITHM_FFD
+        @warnings << WARNING_TIMEOUT
+        return nil, @errors.first
       end
-
-      packer = nil
-      if errDP == ERROR_NONE
-        if errFFD == ERROR_NONE
-          packer = best_solution(packerFFD, packerDP)
-          error = ERROR_NONE
-        else
-          packer = packerDP
-          error = errDP
-        end
-      else
-        packer = packerFFD
-        error = errFFD
-      end
-
-      # dbg(packer.to_str)
-      if packer.nil?
-        error = ERROR_BAD_ERROR
-      elsif status > 0
-        msg = "#{end_msg} : #{format('%4.1f', (Time.now - start_time))} s"
-        if Object.const_defined?('Sketchup')
-          Sketchup.status_text = msg
-        else
-          puts(msg)
-        end
-      end
-      [packer, error]
     end
+
+    #
+    # Run FFD first, then DP.
+    #
+    def run
+      if @step == 0
+        # means start has not run yet!
+        @errors << ERROR_STEP_BY_STEP
+        return
+      end
+      if @step == 1
+        packFFD
+        @step += 1
+      elsif @step == 2
+        packDP
+        @step += 1
+      elsif packings_done?
+        @done = true
+      else
+        @errors << ERROR_NO_PLACEMENT_POSSIBLE
+      end
+    end
+
+    #
+    # Finish this run, select best solution.
+    #
+    def finish
+        packer = best_solution(@packerFFD, @packerDP)
+        stop_timer("FFD = #{@packerFFD.bins.length}, DP = #{@packerDP.bins.length}")
+        @errors << ERROR_NONE if @errors.empty?
+        return [packer, @errors.first]
+    end
+
   end
 end

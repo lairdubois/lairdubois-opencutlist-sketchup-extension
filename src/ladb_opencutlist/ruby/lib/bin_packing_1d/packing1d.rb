@@ -52,6 +52,8 @@ module Ladb::OpenCutList
     WARNING_ILLEGAL_SIZED_BIN = 3
     # A suboptimal algorithm was used.
     WARNING_ALGORITHM_FFD = 4
+    # Error when subsetsum takes too long.
+    WARNING_TIMEOUT = 5
 
     # If trimsize/saw kerf > SIZE_WARNING_FACTOR*largest leftover.
     SIZE_WARNING_FACTOR = 0.25

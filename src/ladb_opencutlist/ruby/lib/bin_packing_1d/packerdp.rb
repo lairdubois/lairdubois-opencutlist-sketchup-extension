@@ -43,10 +43,7 @@ module Ladb::OpenCutList::BinPacking1D
     #
     # run the bin packing optimization.
     #
-    def run(start_msg, status)
-      @start_msg = start_msg
-      @status = status
-
+    def run
       @gstat[:algorithm] = ALG_SUBSET_SUM
       err = ERROR_NONE
 
@@ -100,7 +97,7 @@ module Ladb::OpenCutList::BinPacking1D
         end
       rescue TimeoutError => e
         puts("Rescued in Packer: #{e.inspect}")
-        return ERROR_TIMEOUT
+        raise
       rescue Packing1DError => e
         puts("Rescued in Packer: #{e.inspect}")
         return ERROR_BAD_ERROR
@@ -170,18 +167,15 @@ module Ladb::OpenCutList::BinPacking1D
 
           # This is the core algorithm, finding subsetsums
           # of lengths that best match the target size
-          epsilon = if @gstat[:nb_input_boxes] > MAX_PARTS
-                      # Last element is the smallest one.
-                      valid_lengths.last
-                    else
-                      0.0
-                    end
+          epsilon = valid_lengths.last/10
+                    # if @gstat[:nb_input_boxes] > MAX_PARTS
+                    #   # Last element is the smallest one.
+                    #   valid_lengths.last
+                    # else
+                    #   0.0
+                    # end
 
           y, y_list = allsubsetsums(valid_lengths, target_length, @options.saw_kerf, epsilon)
-          if @status > 0
-            @status += 1
-            Sketchup.status_text = "#{@start_msg}  #{'.' * @status}" if Object.const_defined?('Sketchup')
-          end
 
           if ! (y > 0)
             # Should only happen if we have a very wide
