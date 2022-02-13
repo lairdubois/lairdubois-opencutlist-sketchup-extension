@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {
@@ -18,7 +18,7 @@
     "gulp-touch-custom": "1.0.3",
     "gulp-zip": "4.2.0",
     "js-yaml": "3.14.0",
-    "markdown-it": "12.0.2",
+    "markdown-it": "12.3.2",
     "markdown-it-external-links": "0.0.6",
     "merge": "2.1.1",
     "minimist": "1.2.5",

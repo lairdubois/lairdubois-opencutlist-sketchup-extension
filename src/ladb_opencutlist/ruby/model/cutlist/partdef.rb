@@ -133,6 +133,9 @@ module Ladb::OpenCutList
             when 'tags'
               a_value = [ part_def_a.tags ]
               b_value = [ part_def_b.tags ]
+            when 'thickness_layer_count'
+              a_value = [ part_def_a.thickness_layer_count ]
+              b_value = [ part_def_b.thickness_layer_count ]
             else
               next
           end

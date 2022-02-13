@@ -1124,7 +1124,7 @@ module Ladb::OpenCutList
       unless edge_part_def
 
         edge_part_def = PartDef.new(edge_part_id)
-        edge_part_def.name = "#{part_def.name}#{part_def.number ? " (#{part_def.number})" : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
+        edge_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
         edge_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
         edge_part_def.size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
         edge_part_def.material_name = edge_group_def.material_name
