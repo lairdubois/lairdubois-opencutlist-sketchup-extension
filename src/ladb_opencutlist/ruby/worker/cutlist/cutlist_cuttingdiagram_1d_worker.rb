@@ -30,7 +30,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def run
+    def run(step_by_step = false)
       return { :errors => [ 'default.error' ] } unless @cutlist
 
       model = Sketchup.active_model
@@ -42,51 +42,89 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
 
-      # The dimensions need to be in Sketchup internal units AND float
-      options = BinPacking1D::Options.new(@std_bar_length, @saw_kerf, @trimming)
+      unless @pack_engine
 
-      # Create the bin packing engine with given bins and boxes
-      e = BinPacking1D::PackEngine.new(options)
+        # The dimensions need to be in Sketchup internal units AND float
+        options = BinPacking1D::Options.new(@std_bar_length, @saw_kerf, @trimming)
 
-      # Add bins from scrap lengths
-      @scrap_bar_lengths.split(';').each { |scrap_bar_length|
-        dq = scrap_bar_length.split('x')
-        length = dq[0].strip.to_l.to_f
-        quantity = [ 1, (dq[1].nil? || dq[1].strip.to_i == 0) ? 1 : dq[1].strip.to_i ].max
-        i = 0
-        while i < quantity  do
-          e.add_bin(length)
-          i += 1
-        end
-      }
+        # Create the bin packing engine with given bins and boxes
+        @pack_engine = BinPacking1D::PackEngine.new(options)
 
-      # Add boxes from parts
-      add_boxes_proc = Proc.new { |part|
-        for i in 1..part.count
-          e.add_box(part.cutting_length.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
-        end
-      }
-      parts.each { |part|
-        if part.instance_of?(FolderPart)
-          part.children.each { |child_part|
-            add_boxes_proc.call(child_part)
-          }
+        # Add bins from scrap lengths
+        @scrap_bar_lengths.split(';').each { |scrap_bar_length|
+          dq = scrap_bar_length.split('x')
+          length = dq[0].strip.to_l.to_f
+          quantity = [ 1, (dq[1].nil? || dq[1].strip.to_i == 0) ? 1 : dq[1].strip.to_i ].max
+          i = 0
+          while i < quantity  do
+            @pack_engine.add_bin(length)
+            i += 1
+          end
+        }
+
+        # Add boxes from parts
+        add_boxes_proc = Proc.new { |part|
+          for i in 1..part.count
+            @pack_engine.add_box(part.cutting_length.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
+          end
+        }
+        parts.each { |part|
+          if part.instance_of?(FolderPart)
+            part.children.each { |child_part|
+              add_boxes_proc.call(child_part)
+            }
+          else
+            add_boxes_proc.call(part)
+          end
+        }
+
+      end
+      until @pack_engine.is_done || @pack_engine.has_errors
+
+        # Run pack engine
+        @pack_engine.run
+
+        # Break loop if step by step
+        break if step_by_step
+
+      end
+      result = nil
+      err = BinPacking1D::ERROR_NONE
+      if @pack_engine.has_errors
+        err = @pack_engine.get_errors.first
+      elsif @pack_engine.is_done
+
+        # Finish pack engine
+        result, err = @pack_engine.finish
+
+      end
+
+      errors = []
+      if err > BinPacking1D::ERROR_SUBOPT
+
+        # Engine error -> returns error only
+
+        case err
+        when BinPacking1D::ERROR_NO_BIN
+          errors << 'tab.cutlist.cuttingdiagram.error.no_bar_' + (group.material_type == MaterialAttributes::TYPE_EDGE ? 'edge' : 'dimensional')
+        when BinPacking1D::ERROR_PARAMETERS
+          errors << 'tab.cutlist.cuttingdiagram.error.parameters'
+        when BinPacking1D::ERROR_NO_BOX
+          errors << 'tab.cutlist.cuttingdiagram.error.no_parts'
+        when BinPacking1D::ERROR_BAD_ERROR
+          errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
         else
-          add_boxes_proc.call(part)
+          puts('funky error, contact developpers', err)
         end
-      }
 
-      # Start model modification operation - Disable UI during process
-      model.start_operation('OpenCutList - Cutting diagram 1D', true, false, true)
-
-      # Compute the cutting diagram
-      result, err = e.runall
-
-      # Commit model modification operation
-      model.commit_operation
+      end
 
       # Response
       # --------
+
+      unless result
+        return { :errors => errors }
+      end
 
       cuttingdiagram1d_def = Cuttingdiagram1dDef.new
       cuttingdiagram1d_def.options_def.px_saw_kerf = [_to_px(@saw_kerf), 1].max
@@ -100,150 +138,131 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram1d_def.options_def.wrap_length = @wrap_length
 
-      if err > BinPacking1D::ERROR_SUBOPT
+      cuttingdiagram1d_def.errors += errors
 
-        # Engine error -> returns error only
-
-        case err
-        when BinPacking1D::ERROR_NO_BIN
-          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_bar_' + (group.material_type == MaterialAttributes::TYPE_EDGE ? 'edge' : 'dimensional')
-        when BinPacking1D::ERROR_PARAMETERS
-          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.parameters'
-        when BinPacking1D::ERROR_NO_BOX
-          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.no_parts'
-        when BinPacking1D::ERROR_BAD_ERROR
-          cuttingdiagram1d_def.errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
-        else
-          puts('funky error, contact developpers', err)
-        end
-
-      else
-
-        # Errors
-        if result.unplaced_boxes.length > 0
-          cuttingdiagram1d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
-        end
-
-        # Warnings
-        materials = Sketchup.active_model.materials
-        material = materials[group.material_name]
-        material_attributes = MaterialAttributes.new(material)
-        if @part_ids
-          cuttingdiagram1d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.is_part_selection'
-        end
-        if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
-          cuttingdiagram1d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
-        end
-        if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
-          cuttingdiagram1d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
-        end
-
-        # Unplaced boxes
-        result.unplaced_boxes.each { |box|
-          part_def = cuttingdiagram1d_def.unplaced_part_defs[box.data.number]
-          unless part_def
-            part_def = Cuttingdiagram1dListedPartDef.new(box.data)
-            cuttingdiagram1d_def.unplaced_part_defs[box.data.number] = part_def
-          end
-          part_def.count += 1
-        }
-
-        # Summary
-        cuttingdiagram1d_def.summary_def.overall_efficiency = result.overall_efficiency
-        result.unused_bins.each { |bin|
-          _append_bin_to_summary_bars(bin, group, false, cuttingdiagram1d_def.summary_def.bar_defs)
-        }
-        result.bins.each { |bin|
-          _append_bin_to_summary_bars(bin, group, true, cuttingdiagram1d_def.summary_def.bar_defs)
-          cuttingdiagram1d_def.summary_def.total_used_count += 1
-          cuttingdiagram1d_def.summary_def.total_used_length += bin.length
-          cuttingdiagram1d_def.summary_def.total_used_part_count += bin.boxes.count
-          bin.cuts.each { |cut|
-            cuttingdiagram1d_def.summary_def.total_cut_count += 1
-            cuttingdiagram1d_def.summary_def.total_cut_length += group.def.std_width
-          }
-        }
-
-        # Bars
-        bar_key = 0
-        result.bins.each { |bin|
-
-          type_id = _compute_bin_type_id(bin, group, true)
-          bar_key = @bar_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (bar_key += 1)
-
-          # Check similarity
-          if @bar_folding
-            bar_def = cuttingdiagram1d_def.bar_defs[bar_key]
-            if bar_def
-              bar_def.count += 1
-              next
-            end
-          end
-
-          wrap_length = [ @wrap_length, bin.length ].min
-          wrap_length = bin.length if wrap_length <= @trimming + @saw_kerf
-
-          bar_def = Cuttingdiagram1dBarDef.new
-          bar_def.type_id = type_id
-          bar_def.type = bin.type
-          bar_def.count = 1
-          bar_def.px_length = _to_px(bin.length)
-          bar_def.px_width = _to_px(group.def.std_width)
-          bar_def.length = bin.length
-          bar_def.width = group.def.std_width
-          bar_def.efficiency = bin.efficiency
-          bin.cuts.each { |cut|
-            bar_def.total_cut_length += group.def.std_width
-          }
-
-          slice_count = (bin.length / wrap_length).ceil
-          i = 0
-          while i < slice_count do
-            slice_length = [ wrap_length, bin.length - i * wrap_length ].min
-            slice_def = Cuttingdiagram1dSliceDef.new
-            slice_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, 0, slice_length, wrap_length))
-            slice_def.px_length = _to_px(slice_length)
-            bar_def.slice_defs.push(slice_def)
-            i += 1
-          end
-
-          # Parts
-          bin.boxes.each { |box|
-
-            part_def = Cuttingdiagram1dPartDef.new(box.data)
-            part_def.slice_defs.concat(_to_slice_defs(box.x, box.length, wrap_length))
-            bar_def.part_defs.push(part_def)
-
-            unless @hide_part_list
-              grouped_part_def = bar_def.grouped_part_defs[box.data.id]
-              unless grouped_part_def
-                grouped_part_def = Cuttingdiagram1dListedPartDef.new(box.data)
-                bar_def.grouped_part_defs[box.data.id] = grouped_part_def
-              end
-              grouped_part_def.count += 1
-            end
-          }
-
-          # Leftover
-          lefover_def = Cuttingdiagram1dLeftoverDef.new
-          lefover_def.x = bin.current_position
-          lefover_def.length = bin.current_leftover
-          lefover_def.slice_defs.concat(_to_slice_defs(bin.current_position, bin.current_leftover, wrap_length))
-          bar_def.leftover_def = lefover_def
-
-          # Cuts
-          bin.cuts.each { |cut|
-            cut_def = Cuttingdiagram1dCutDef.new
-            cut_def.x = cut.to_l
-            cut_def.slice_defs.concat(_to_slice_defs(cut, @saw_kerf, wrap_length))
-            bar_def.cut_defs.push(cut_def)
-          }
-
-          cuttingdiagram1d_def.bar_defs[bar_key] = bar_def
-
-        }
-
+      # Errors
+      if result.unplaced_boxes.length > 0
+        cuttingdiagram1d_def.errors << [ 'tab.cutlist.cuttingdiagram.error.unplaced_parts', { :count => result.unplaced_boxes.length } ]
       end
+
+      # Warnings
+      materials = Sketchup.active_model.materials
+      material = materials[group.material_name]
+      material_attributes = MaterialAttributes.new(material)
+      if @part_ids
+        cuttingdiagram1d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.is_part_selection'
+      end
+      if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0 || group.edge_decremented
+        cuttingdiagram1d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions'
+      end
+      if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+        cuttingdiagram1d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
+      end
+
+      # Unplaced boxes
+      result.unplaced_boxes.each { |box|
+        part_def = cuttingdiagram1d_def.unplaced_part_defs[box.data.number]
+        unless part_def
+          part_def = Cuttingdiagram1dListedPartDef.new(box.data)
+          cuttingdiagram1d_def.unplaced_part_defs[box.data.number] = part_def
+        end
+        part_def.count += 1
+      }
+
+      # Summary
+      cuttingdiagram1d_def.summary_def.overall_efficiency = result.overall_efficiency
+      result.unused_bins.each { |bin|
+        _append_bin_to_summary_bars(bin, group, false, cuttingdiagram1d_def.summary_def.bar_defs)
+      }
+      result.bins.each { |bin|
+        _append_bin_to_summary_bars(bin, group, true, cuttingdiagram1d_def.summary_def.bar_defs)
+        cuttingdiagram1d_def.summary_def.total_used_count += 1
+        cuttingdiagram1d_def.summary_def.total_used_length += bin.length
+        cuttingdiagram1d_def.summary_def.total_used_part_count += bin.boxes.count
+        bin.cuts.each { |cut|
+          cuttingdiagram1d_def.summary_def.total_cut_count += 1
+          cuttingdiagram1d_def.summary_def.total_cut_length += group.def.std_width
+        }
+      }
+
+      # Bars
+      bar_key = 0
+      result.bins.each { |bin|
+
+        type_id = _compute_bin_type_id(bin, group, true)
+        bar_key = @bar_folding ? "#{type_id}|#{bin.boxes.map { |box| box.data.number }.join('|')}" : (bar_key += 1)
+
+        # Check similarity
+        if @bar_folding
+          bar_def = cuttingdiagram1d_def.bar_defs[bar_key]
+          if bar_def
+            bar_def.count += 1
+            next
+          end
+        end
+
+        wrap_length = [ @wrap_length, bin.length ].min
+        wrap_length = bin.length if wrap_length <= @trimming + @saw_kerf
+
+        bar_def = Cuttingdiagram1dBarDef.new
+        bar_def.type_id = type_id
+        bar_def.type = bin.type
+        bar_def.count = 1
+        bar_def.px_length = _to_px(bin.length)
+        bar_def.px_width = _to_px(group.def.std_width)
+        bar_def.length = bin.length
+        bar_def.width = group.def.std_width
+        bar_def.efficiency = bin.efficiency
+        bin.cuts.each { |cut|
+          bar_def.total_cut_length += group.def.std_width
+        }
+
+        slice_count = (bin.length / wrap_length).ceil
+        i = 0
+        while i < slice_count do
+          slice_length = [ wrap_length, bin.length - i * wrap_length ].min
+          slice_def = Cuttingdiagram1dSliceDef.new
+          slice_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, 0, slice_length, wrap_length))
+          slice_def.px_length = _to_px(slice_length)
+          bar_def.slice_defs.push(slice_def)
+          i += 1
+        end
+
+        # Parts
+        bin.boxes.each { |box|
+
+          part_def = Cuttingdiagram1dPartDef.new(box.data)
+          part_def.slice_defs.concat(_to_slice_defs(box.x, box.length, wrap_length))
+          bar_def.part_defs.push(part_def)
+
+          unless @hide_part_list
+            grouped_part_def = bar_def.grouped_part_defs[box.data.id]
+            unless grouped_part_def
+              grouped_part_def = Cuttingdiagram1dListedPartDef.new(box.data)
+              bar_def.grouped_part_defs[box.data.id] = grouped_part_def
+            end
+            grouped_part_def.count += 1
+          end
+        }
+
+        # Leftover
+        lefover_def = Cuttingdiagram1dLeftoverDef.new
+        lefover_def.x = bin.current_position
+        lefover_def.length = bin.current_leftover
+        lefover_def.slice_defs.concat(_to_slice_defs(bin.current_position, bin.current_leftover, wrap_length))
+        bar_def.leftover_def = lefover_def
+
+        # Cuts
+        bin.cuts.each { |cut|
+          cut_def = Cuttingdiagram1dCutDef.new
+          cut_def.x = cut.to_l
+          cut_def.slice_defs.concat(_to_slice_defs(cut, @saw_kerf, wrap_length))
+          bar_def.cut_defs.push(cut_def)
+        }
+
+        cuttingdiagram1d_def.bar_defs[bar_key] = bar_def
+
+      }
 
       cuttingdiagram1d_def.create_cuttingdiagram1d
     end

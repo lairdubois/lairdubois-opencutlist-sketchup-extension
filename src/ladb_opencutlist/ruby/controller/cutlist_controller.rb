@@ -60,8 +60,12 @@ module Ladb::OpenCutList
         part_toggle_front_command(part_data)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d") do |settings|
-        group_cuttingdiagram_1d_command(settings)
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d_start") do |settings|
+        group_cuttingdiagram_1d_start_command(settings)
+      end
+
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d_advance") do |settings|
+        group_cuttingdiagram_1d_advance_command
       end
 
       Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d_start") do |settings|
@@ -189,14 +193,23 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def group_cuttingdiagram_1d_command(settings)
+    def group_cuttingdiagram_1d_start_command(settings)
       require_relative '../worker/cutlist/cutlist_cuttingdiagram_1d_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
+      @cuttingdiagram1d_worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
 
       # Run !
-      cuttingdiagram1d = worker.run
+      cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
+
+      cuttingdiagram1d.to_hash
+    end
+
+    def group_cuttingdiagram_1d_advance_command
+      return { :errors => [ 'default.error' ] } unless @cuttingdiagram1d_worker
+
+      # Run !
+      cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
 
       cuttingdiagram1d.to_hash
     end
