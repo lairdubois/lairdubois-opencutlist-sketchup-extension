@@ -2126,7 +2126,7 @@
                             window.requestAnimationFrame(function () {
                                 rubyCallCommand('cutlist_group_cuttingdiagram_1d_advance', null, function (response) {
 
-                                    if (response.errors && response.errors.length > 0 || response.sheets && response.sheets.length > 0) {
+                                    if (response.errors && response.errors.length > 0 || response.bars && response.bars.length > 0) {
 
                                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                             capabilities: that.dialog.capabilities,
