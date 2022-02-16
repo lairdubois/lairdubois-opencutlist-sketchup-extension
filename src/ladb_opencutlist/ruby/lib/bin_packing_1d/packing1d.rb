@@ -29,18 +29,18 @@ module Ladb::OpenCutList
 
     # No errors during packing.
     ERROR_NONE = 0
-    # Solution may not be optimal.
-    ERROR_SUBOPT = 1
-    # No bins available for packing.
-    ERROR_NO_BIN = 2
-    # Bad parameter
+    # Error when no bin for packing available.
+    ERROR_NO_BIN = 1
+    # Error when no boxes for packing available.
+    ERROR_NO_BOX = 2
+    # Error in parameters.
     ERROR_PARAMETERS = 3
-    # Catch for bad errors with unknown cause.
-    ERROR_BAD_ERROR = 4
-    # No boxes available to pack.
-    ERROR_NO_BOX = 5
-    # Error when subsetsum takes too long.
-    ERROR_TIMEOUT = 6
+    # Error when no placement possible, e.g. boxes larger than bin.
+    ERROR_NO_PLACEMENT_POSSIBLE = 4
+    # Error that needs further debugging.
+    ERROR_BAD_ERROR = 5
+    # Error in step by step run
+    ERROR_STEP_BY_STEP = 6
 
     # A large saw kerf warning.
     WARNING_SAW_KERF_LARGE = 0
@@ -50,10 +50,10 @@ module Ladb::OpenCutList
     WARNING_ILLEGAL_SIZED_BOX = 2
     # A bin with zero or negative length.
     WARNING_ILLEGAL_SIZED_BIN = 3
-    # A suboptimal algorithm was used.
-    WARNING_ALGORITHM_FFD = 4
     # Error when subsetsum takes too long.
-    WARNING_TIMEOUT = 5
+    WARNING_TIMEOUT = 4
+    # Solution may not be optimal.
+    WARNING_SUBOPT = 6
 
     # If trimsize/saw kerf > SIZE_WARNING_FACTOR*largest leftover.
     SIZE_WARNING_FACTOR = 0.25

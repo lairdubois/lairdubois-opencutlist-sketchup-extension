@@ -23,12 +23,6 @@ module Ladb::OpenCutList::BinPacking2D
   # Packing2D: Setup and run bin packing in 2D.
   #
   class PackEngine < Packing2D
-    # List of warnings.
-    attr_reader :warnings
-
-    # Error code to be returned.
-    attr_reader :errors
-
     # List of boxes to pack.
     attr_reader :boxes
 
@@ -67,6 +61,7 @@ module Ladb::OpenCutList::BinPacking2D
       @step = 0
       @packers = nil
 
+      @done = false
       @warnings = []
       @errors = []
     end
@@ -116,65 +111,83 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Checks if Bins are available for Packer, removes
+    # Boxes that are too large to fit any Bin, removes
+    # Bins that are too small to enclose any Box.
+    #
+    def bins_available?
+      @next_bin_index = 0
+
+      # If base Bin is possible, start with this size
+      if (@options.base_length - (2 * @options.trimsize)) > EPS && (@options.base_width - (2 * @options.trimsize)) > EPS
+        @max_length_bin = @options.base_length
+        @max_width_bin = @options.base_width
+      end
+
+      # Offcuts (user defined bins) are used in increasing order of area.
+      @bins.sort_by! { |bin| [bin.length * bin.width] }
+      valid_bins = []
+      until @bins.empty?
+        bin = @bins.shift
+        valid = false
+        @boxes.each do |box|
+          if box.fits_into?(bin.length - (2 * @options.trimsize), bin.width - (2 * @options.trimsize))
+            valid = true
+            break
+          end
+        end
+        if valid
+          @max_length_bin = [@max_length_bin, bin.length - (2 * @options.trimsize)].max
+          @max_width_bin = [@max_width_bin, bin.width - (2 * @options.trimsize)].max
+          @next_bin_index = bin.update_index(@next_bin_index)
+          valid_bins << bin
+        else
+          @invalid_bins << bin
+        end
+      end
+
+      # Only these Bins are valid
+      @bins = valid_bins
+
+      # If we have no Bins at all, add a Bin to start with.
+      if @bins.empty? && (@options.base_length - (2 * @options.trimsize) > EPS) && \
+         (@options.base_width - (2 * @options.trimsize) > EPS)
+        new_bin = Bin.new(@options.base_length, @options.base_width, BIN_TYPE_AUTO_GENERATED, @options)
+        @next_bin_index = new_bin.update_index(@next_bin_index)
+        @max_length_bin = @options.base_length - (2 * @options.trimsize)
+        @max_width_bin = @options.base_width - (2 * @options.trimsize)
+        @bins << new_bin
+      end
+      @boxes, @invalid_boxes = @boxes.partition { |box| box.fits_into?(@max_length_bin, @max_width_bin) }
+
+      # There are no Boxes left to fit
+      if @boxes.empty?
+        @errors << ERROR_NO_PLACEMENT_POSSIBLE
+        return false
+      end
+      # No Bins to pack Boxes
+      if @bins.empty?
+        @errors << ERROR_NO_BIN
+        return false
+      end
+      true
+    end
+
+    #
     # Returns true if input is somewhat valid.
     #
     def valid_input?
-      if @boxes.empty?
-        @errors << ERROR_NO_BOX
-      else
-        @nb_input_boxes = @boxes.size
-      end
-      @errors << ERROR_NO_BIN if (@options.base_length < EPS || @options.base_width < EPS) && @bins.empty?
+      max_dim = [@options.base_length, @options.base_width, @max_length_bin, @max_width_bin].max
+
+      # these are most likely errors, even if there could be some cases
+      # where it might still work
+      @errors << ERROR_PARAMETERS if @options.saw_kerf >= max_dim
+      @errors << ERROR_PARAMETERS if (@options.trimsize * 2.0) >= max_dim
+
+      @errors << ERROR_NO_BOX if @boxes.empty?
+      @nb_input_boxes = @boxes.size
+
       @errors.empty?
-    end
-
-    #
-    # Sets the global start time.
-    #
-    def start_timer(sigsize)
-      dbg("-> start of packing with #{@boxes.size} box(es), #{@bins.size} bin(s) with #{sigsize} signatures")
-      @start_time = Time.now
-    end
-
-    #
-    # Prints total time used since start_timer.
-    #
-    def stop_timer(signature_size, msg)
-      dbg("-> end of packing(s) nb = #{signature_size}, time = #{format('%6.4f', (Time.now - @start_time))} s, " + msg)
-    end
-
-    #
-    # Builds the large signature set.
-    #
-    def make_signatures_large
-      # Signature size will be the product of all possibilities
-      # 6 * 6 * 6 = 216 => 216 * 1 or 3, Max 648 possibilities.
-      presort = (PRESORT_WIDTH_DECR..PRESORT_SHORTEST_SIDE_DECR).to_a # 6
-      score = (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a # 6
-      split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 6
-      stacking = if @options.stacking_pref <= STACKING_WIDTH
-                   [@options.stacking_pref]
-                 else
-                   (STACKING_NONE..STACKING_WIDTH).to_a
-                 end
-      presort.product(score, split, stacking)
-    end
-
-    #
-    # Builds the small signature set.
-    #
-    def make_signatures_medium
-      # Signature size will be the product of all possibilities
-      # 4 * 4 * 4 = 64 => 64 * 1 or 3, Max 192 possibilities
-      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # 3
-      score = (SCORE_BESTAREA_FIT..SCORE_WORSTAREA_FIT).to_a # 4
-      split = (SPLIT_MINIMIZE_AREA..SPLIT_LONGER_AXIS).to_a # 4
-      stacking = if @options.stacking_pref <= STACKING_WIDTH
-                   [@options.stacking_pref]
-                 else
-                   (STACKING_NONE..STACKING_WIDTH).to_a
-                 end
-      presort.product(score, split, stacking)
     end
 
     #
@@ -245,6 +258,82 @@ module Ladb::OpenCutList::BinPacking2D
       end
       dbg('   packer    packed/unused/inv.   packed/unplac./inv.  #left ' \
           '  leftoverA  #cuts  #thru tg    ∑Lm       ∑cutL rank')
+    end
+
+    #
+    # Sets the global start time.
+    #
+    def start_timer(sigsize)
+      dbg("-> start of packing with #{@boxes.size} box(es), #{@bins.size} bin(s) with #{sigsize} signatures")
+      @start_time = Time.now
+    end
+
+    #
+    # Prints total time used since start_timer.
+    #
+    def stop_timer(signature_size, msg)
+      dbg("-> end of packing(s) nb = #{signature_size}, time = #{format('%6.4f', (Time.now - @start_time))} s, " + msg)
+    end
+
+    #
+    #
+    #
+    def is_done
+      return @done
+    end
+
+    #
+    #
+    #
+    def has_errors
+      return !@errors.empty?
+    end
+
+    #
+    #
+    #
+    def get_errors
+      returned_errors = [ERROR_NONE, ERROR_NO_BIN, ERROR_PARAMETERS,
+          ERROR_NO_PLACEMENT_POSSIBLE, ERROR_BAD_ERROR]
+      if (@errors & returned_errors).size != @errors.size
+        # delete this value and put in front if errors contain
+        # more than what should be returned
+        @errors.delete(ERROR_BAD_ERROR)
+        @errors.unshift(ERROR_BAD_ERROR)
+      end
+      return @errors
+    end
+
+    #
+    #
+    #
+    def get_warnings
+      return @warnings
+    end
+
+    #
+    # Get number of estimated steps. In each step a single bin will be packed.
+    #
+    def get_estimated_steps
+      if @options.base_length > 0 && @options.base_length > 0
+        e = ((@total_area*1.5)/(@options.base_length*@options.base_width)).ceil
+      else
+        e = @bins.size
+      end
+      return e, @signatures.size
+    end
+
+    #
+    # Checks if packing is done.
+    #
+    def packings_done?(packers)
+      return true if packers.nil? || packers.empty?
+
+      packers.each do |packer|
+        # at least one Packer has no Boxes left.
+        return false unless packer.unplaced_boxes.empty?
+      end
+      true
     end
 
     #
@@ -356,6 +445,40 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Builds the large signature set.
+    #
+    def make_signatures_large
+      # Signature size will be the product of all possibilities
+      # 6 * 6 * 6 = 216 => 216 * 1 or 3, Max 648 possibilities.
+      presort = (PRESORT_WIDTH_DECR..PRESORT_SHORTEST_SIDE_DECR).to_a # 6
+      score = (SCORE_BESTAREA_FIT..SCORE_WORSTLONGSIDE_FIT).to_a # 6
+      split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 6
+      stacking = if @options.stacking_pref <= STACKING_WIDTH
+                   [@options.stacking_pref]
+                 else
+                   (STACKING_NONE..STACKING_WIDTH).to_a
+                 end
+      presort.product(score, split, stacking)
+    end
+
+    #
+    # Builds the small signature set.
+    #
+    def make_signatures_medium
+      # Signature size will be the product of all possibilities
+      # 4 * 4 * 4 = 64 => 64 * 1 or 3, Max 192 possibilities
+      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # 3
+      score = (SCORE_BESTAREA_FIT..SCORE_WORSTAREA_FIT).to_a # 4
+      split = (SPLIT_MINIMIZE_AREA..SPLIT_LONGER_AXIS).to_a # 4
+      stacking = if @options.stacking_pref <= STACKING_WIDTH
+                   [@options.stacking_pref]
+                 else
+                   (STACKING_NONE..STACKING_WIDTH).to_a
+                 end
+      presort.product(score, split, stacking)
+    end
+
+    #
     # Packs next bin, starting from a set of previous bins.
     # This builds up a tree of packings where at each level
     # the attempted packings are given by the signatures.
@@ -407,90 +530,8 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Checks if packing is done.
+    # Run all steps at once
     #
-    def packings_done?(packers)
-      return true if packers.nil? || packers.empty?
-
-      packers.each do |packer|
-        # at least one Packer has no Boxes left.
-        return false unless packer.unplaced_boxes.empty?
-      end
-      true
-    end
-
-    #
-    # Checks if Bins are available for Packer, removes
-    # Boxes that are too large to fit any Bin, removes
-    # Bins that are too small to enclose any Box.
-    #
-    def bins_available?
-      @next_bin_index = 0
-
-      # If base Bin is possible, start with this size
-      if (@options.base_length - (2 * @options.trimsize)) > EPS && (@options.base_width - (2 * @options.trimsize)) > EPS
-        @max_length_bin = @options.base_length
-        @max_width_bin = @options.base_width
-      end
-
-      # Offcuts (user defined bins) are used in increasing order of area.
-      @bins.sort_by! { |bin| [bin.length * bin.width] }
-      valid_bins = []
-      until @bins.empty?
-        bin = @bins.shift
-        valid = false
-        @boxes.each do |box|
-          if box.fits_into?(bin.length - (2 * @options.trimsize), bin.width - (2 * @options.trimsize))
-            valid = true
-            break
-          end
-        end
-        if valid
-          @max_length_bin = [@max_length_bin, bin.length - (2 * @options.trimsize)].max
-          @max_width_bin = [@max_width_bin, bin.width - (2 * @options.trimsize)].max
-          @next_bin_index = bin.update_index(@next_bin_index)
-          valid_bins << bin
-        else
-          @invalid_bins << bin
-        end
-      end
-
-      # Only these Bins are valid
-      @bins = valid_bins
-
-      # If we have no Bins at all, add a Bin to start with.
-      if @bins.empty? && (@options.base_length - (2 * @options.trimsize) > EPS) && \
-         (@options.base_width - (2 * @options.trimsize) > EPS)
-        new_bin = Bin.new(@options.base_length, @options.base_width, BIN_TYPE_AUTO_GENERATED, @options)
-        @next_bin_index = new_bin.update_index(@next_bin_index)
-        @max_length_bin = @options.base_length - (2 * @options.trimsize)
-        @max_width_bin = @options.base_width - (2 * @options.trimsize)
-        @bins << new_bin
-      end
-      @boxes, @invalid_boxes = @boxes.partition { |box| box.fits_into?(@max_length_bin, @max_width_bin) }
-
-      # There are no Boxes left to fit
-      if @boxes.empty?
-        @errors << ERROR_NO_PLACEMENT_POSSIBLE
-        return false
-      end
-      # No Bins to pack Boxes
-      if @bins.empty?
-        @errors << ERROR_NO_BIN
-        return false
-      end
-      true
-    end
-
-    def get_estimated_steps
-      if @options.base_length > 0 && @options.base_length > 0
-        e = ((@total_area*1.5)/(@options.base_length*@options.base_width)).ceil
-      else
-        e = @bins.size
-      end
-      return e, @signatures.size
-    end
-
     def runall
       start
       until is_done || has_errors
@@ -500,7 +541,7 @@ module Ladb::OpenCutList::BinPacking2D
         err = get_errors.first
         return nil, err
       else
-        return finish()
+        return finish
       end
     end
 
@@ -509,8 +550,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns best packing by selecting best packing at each step.
     #
     def start
-      return if !valid_input? && !@errors.empty?
       return unless bins_available?
+      return if !valid_input?
 
       case @options.optimization
       when OPT_MEDIUM
@@ -533,18 +574,9 @@ module Ladb::OpenCutList::BinPacking2D
       @step = 1
     end
 
-    def is_done
-      return @done
-    end
-
-    def has_errors
-      return !@errors.empty?
-    end
-
-    def get_errors
-      return @errors
-    end
-
+    #
+    # Run by packing 1 bin at a time.
+    #
     def run
       if @step == 0
         @errors << ERROR_STEP_BY_STEP
@@ -586,7 +618,7 @@ module Ladb::OpenCutList::BinPacking2D
     def finish
       # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
       # invalid_bins and invalid_boxes here are global! they cannot fit each other
-      
+
       # Cannot finish on unfinished packing!
       if !@done
         @errors << ERROR_STEP_BY_STEP
@@ -612,13 +644,18 @@ module Ladb::OpenCutList::BinPacking2D
         dump
         puts("Rescued in PackEngine: #{e.inspect}")
         @errors << ERROR_BAD_ERROR
-        return nil, ERROR_BAD_ERROR
+        return nil, get_errors.first
       end
 
       opt.packed_bins.each { |bin| bin.mark_keep }
 
-      @errors << ERROR_NONE if @errors.empty?
-      return opt, @errors.first
+      # if get_warnings.size > 0
+      #   get_warnings.each do |w|
+      #     puts("warning = #{w}")
+      #   end
+      # end
+      @errors << ERROR_NONE if ! has_errors
+      return opt, get_errors.first
     end
   end
 end
