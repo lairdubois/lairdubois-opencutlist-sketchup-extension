@@ -34,16 +34,18 @@ A few frequently asked questions are listed [here](docs/02-faq.md).
 
 ## Documentation
 
-A comprehensive guide to **OpenCutList** is not yet available.
+[Documentation](https://docs.opencutlist.org/) for **OpenCutList** is available.
 
 ## Tutorials
 
 There are a number of great videos on YouTube about using **OpenCutList** for woodworking projects.
 
 - 🇫🇷&nbsp;&nbsp;**Boris Beaulant** | [Conférence de présentation OpenCutList au salon Habitat et Bois - Epinal 2019](https://www.youtube.com/watch?v=gW0FrYRItoc)
+- 🇫🇷&nbsp;&nbsp;**José Das Neves** | [OpenCutList: Extension pour faire son devis, débit et calepinage dans SketchUp - Part01](https://www.youtube.com/watch?v=HsjndYJvqvs)
 - 🇩🇪&nbsp;&nbsp;**Heiko Rech** | [VLOG \#30 - Stücklisten und Zuschnittpläne in SketchUp erstellen](https://www.youtube.com/watch?v=dLoiFJI9LGQ)
 - 🇩🇪&nbsp;&nbsp;**Johannes Boernsen** | [OpenCutList: Automatische Schnittpläne und Materiallisten mit Sketchup erstellen](https://www.youtube.com/watch?v=55jhInrVzJU)
 - 🇩🇪&nbsp;&nbsp;**Bastelpause** | [PERFEKTE Stückliste und Zuschnittpläne mit OpenCutList in SketchUp](https://www.youtube.com/watch?v=0hnhiksHr7g)
+- 🇩🇪&nbsp;&nbsp;**Tolzi** | [Opencutlist plugin (Sketchup)](https://www.youtube.com/watch?v=drI0vk2F_kI)
 - 🇺🇸&nbsp;&nbsp;**FollowAndrew** | [Generate Cut-list Woodworking 3D SketchUp](https://www.youtube.com/watch?v=yrex6zLv66I)
 - 🇬🇧&nbsp;&nbsp;**Firebird Interiors** | [Cutlists made easy! (Sketchup For Fitted Furniture Makers Part 6)](https://www.youtube.com/watch?v=wswN3mEtsCI)
 - 🇬🇧&nbsp;&nbsp;**Strawbyte Workshop** | [Use Cutting Lists for Fast Cabinet Making with SketchUp and Open Cutting List (OCL)](https://www.youtube.com/watch?v=1P13BBYvap0)
@@ -51,6 +53,7 @@ There are a number of great videos on YouTube about using **OpenCutList** for wo
 - 🇨🇴&nbsp;&nbsp;**Guillermo Digital Artist** | [Plugin para despiece en SketchUp OpenCutList gratis en español](https://www.youtube.com/watch?v=CLakxzqhbSo)
 - 🇪🇸&nbsp;&nbsp;**Ab Ovo Estudio** | [¡Como hacer una lista de piezas y de corte de un mueble en Sketchup!](https://www.youtube.com/watch?v=bTy0m1buLCo)
 - 🇪🇨&nbsp;&nbsp;**Lar7 Estudio** | [OPTIMIZADOR DE CORTES CON CANTOS PARA MELAMINA EN SKETCHUP PLUGIN](https://www.youtube.com/watch?v=0TB7NLR-uJk)
+- 🇪🇨&nbsp;&nbsp;**Melamina Ecuador** | [Despiece de melamina con OPEN CUT LIST 2021](https://www.youtube.com/watch?v=bCjrL6VMEaA)
 - 🇧🇷&nbsp;&nbsp;**Marceneria Provençal** | [Projetos e planos de corte com OpenCutList no SketchUp](https://www.youtube.com/watch?v=4eUKo0Shp4g)
 - 🇷🇺&nbsp;&nbsp;**Chipovan** | [Проба создания стола в SketchUp 2019 и OpenCutList](https://www.youtube.com/watch?v=_wPXOvkwYfs)
 - 🇷🇺&nbsp;&nbsp;**volkov.project** | [Как сделать раскрой и посчитать материал](https://www.youtube.com/watch?v=j0bclvCNjg4)
