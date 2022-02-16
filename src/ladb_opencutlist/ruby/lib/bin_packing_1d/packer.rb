@@ -145,7 +145,8 @@ module Ladb::OpenCutList::BinPacking1D
         raise(Packing1DError, 'Lost boxes during packing!')
       end
 
-      # WHY? do we ever have a leftover left here?
+      # WHY? do we ever have a leftover left here? yes, when no placement
+      # was possible, because of a too large trimming size, ...
       raise(Packing1DError, 'Leftovers not assigned!') unless @leftovers.empty?
     end
 
@@ -155,7 +156,7 @@ module Ladb::OpenCutList::BinPacking1D
     def overall_efficiency
       @gstat[:overall_efficiency]
     end
-    
+
     def to_str
       s = "  nb bins #{@bins.length}\n"\
           "  overall efficiency #{format('%6.2f', @gstat[:overall_efficiency])} %\n"

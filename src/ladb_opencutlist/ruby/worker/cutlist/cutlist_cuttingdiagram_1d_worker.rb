@@ -108,7 +108,7 @@ module Ladb::OpenCutList
       end
 
       errors = []
-      if err > BinPacking1D::ERROR_SUBOPT
+      if err > BinPacking1D::ERROR_NONE
 
         # Engine error -> returns error only
 
@@ -117,12 +117,10 @@ module Ladb::OpenCutList
           errors << 'tab.cutlist.cuttingdiagram.error.no_bar_' + (group.material_type == MaterialAttributes::TYPE_EDGE ? 'edge' : 'dimensional')
         when BinPacking1D::ERROR_PARAMETERS
           errors << 'tab.cutlist.cuttingdiagram.error.parameters'
-        when BinPacking1D::ERROR_NO_BOX
-          errors << 'tab.cutlist.cuttingdiagram.error.no_parts'
-        when BinPacking1D::ERROR_BAD_ERROR
+        when BinPacking1D::ERROR_NO_PLACEMENT_POSSIBLE
+          errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+        else # BinPacking1D::ERROR_BAD_ERROR and others
           errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
-        else
-          puts('funky error, contact developpers', err)
         end
 
       end

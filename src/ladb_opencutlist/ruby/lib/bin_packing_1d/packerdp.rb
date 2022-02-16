@@ -167,13 +167,12 @@ module Ladb::OpenCutList::BinPacking1D
 
           # This is the core algorithm, finding subsetsums
           # of lengths that best match the target size
-          epsilon = valid_lengths.last/10
-                    # if @gstat[:nb_input_boxes] > MAX_PARTS
-                    #   # Last element is the smallest one.
-                    #   valid_lengths.last
-                    # else
-                    #   0.0
-                    # end
+          epsilon = if @gstat[:nb_input_boxes] > MAX_PARTS
+                      # Last element is the smallest one.
+                      valid_lengths.last
+                    else
+                      0.0
+                    end
 
           y, y_list = allsubsetsums(valid_lengths, target_length, @options.saw_kerf, epsilon)
 

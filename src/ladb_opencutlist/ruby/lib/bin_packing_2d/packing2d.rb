@@ -30,29 +30,29 @@ module Ladb::OpenCutList
     # With less than this Boxes, use BEST_X_SMALL to keep Packers.
     MAX_BOXES_TIME = 30
 
-    # Bin has illegal size <= 0, has been ignored.
-    WARNING_ILLEGAL_SIZED_BIN = 0
-    # Box has illegal size <= 0, has been ignored.
-    WARNING_ILLEGAL_SIZED_BOX = 1
-
     # No error.
     ERROR_NONE = 0
     # Timeout error.
-    ERROR_TIMEOUT = 1
-    # Error when no bin for packing available.
-    ERROR_NO_BIN = 2
+    ERROR_NO_BIN = 1
     # Error when no boxes for packing available.
-    ERROR_NO_BOX = 3
+    ERROR_NO_BOX = 2
+    # Error in parameters.
+    ERROR_PARAMETERS = 3
     # Error when no placement possible, e.g. boxes larger than bin.
     ERROR_NO_PLACEMENT_POSSIBLE = 4
     # Error that needs further debugging.
     ERROR_BAD_ERROR = 5
-    # Error in parameters.
-    ERROR_PARAMETERS = 6
-    # Error in input.
-    ERROR_INVALID_INPUT = 7
     # Error in step by step run
-    ERROR_STEP_BY_STEP = 8
+    ERROR_STEP_BY_STEP = 6
+
+    # A large saw kerf warning.
+    WARNING_SAW_KERF_LARGE = 0
+    # A large trimsize warning.
+    WARNING_TRIM_SIZE_LARGE = 1
+    # A box with zero or negative length.
+    WARNING_ILLEGAL_SIZED_BOX = 2
+    # A bin with zero or negative length.
+    WARNING_ILLEGAL_SIZED_BIN = 3
 
     # Type of standard bin.
     BIN_TYPE_AUTO_GENERATED = 0
