@@ -356,11 +356,11 @@ tab:
         Selezionando questa opzione, le parti specchiate saranno rilevate e visualizzate come una nuova parte.
       smart_material: Assegnazione *Intelligente* dei materiali
       smart_material_help: "Selezionando questa opzione, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli."
-      dynamic_attributes_name: Usa l'attributo *Nome* dei componenti dinamici
+      dynamic_attributes_name: Usa l'attributo *Name* dei componenti dinamici
       dynamic_attributes_name_help: |
         Selezionando questa opzione, la classificazione delle parti sarà estratta, se esiste, dall'attributo *Name*.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Nome* è differente.
+        <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Name* è differente.
       part_number_with_letters: Usa le lettere per contrassegnare le parti
       part_number_with_letters_help: "Selezionando questa opzione, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Fai ripartire la numerazione ad ogni gruppo
