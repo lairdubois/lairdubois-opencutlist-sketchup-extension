@@ -356,11 +356,11 @@ tab:
         Pokud je vybrána tato možnost, zrcadlené dílce budou detekovány a zobrazeny jako samostatné dílce.
       smart_material: "*Chytré* přiřazení materiálu"
       smart_material_help: "Pokud je vybrána tato možnost, lze dílcům bez definovaného materiálu přiřadit materiál z jejich skupiny nebo podskupiny."
-      dynamic_attributes_name: Použijte atribut *Název* dynamických komponent
+      dynamic_attributes_name: Použijte atribut *Name* dynamických komponent
       dynamic_attributes_name_help: |
-        Pokud je tato možnost povolena, označení součástí, které jsou dynamickými součástmi, bude extrahováno z atributu *Název*, pokud je definován.
+        Pokud je tato možnost povolena, označení součástí, které jsou dynamickými součástmi, bude extrahováno z atributu *Name*, pokud je definován.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Instance součástí se stejnou definicí komponenty budou odděleny, pokud atribut *Název* nemá stejnou hodnotu.
+        <i class='ladb-opencutlist-icon-warning'></i> Instance součástí se stejnou definicí komponenty budou odděleny, pokud atribut *Name* nemá stejnou hodnotu.
       part_number_with_letters: K číslování dílů používejte písmena
       part_number_with_letters_help: "Pokud je tato možnost aktivována, jsou místnosti očíslovány písmeny (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Resetujte čísla dílů podle skupiny
