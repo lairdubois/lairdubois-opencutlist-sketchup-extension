@@ -167,12 +167,7 @@ module Ladb::OpenCutList
       end
 
       if i18n_string
-        match = /^\$\((.+)\)$/.match(i18n_string)
-        if match && match[1]
-          get_i18n_string(match[1])
-        else
-          i18n_string
-        end
+        i18n_string.gsub(/\$\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
       else
         path_key
       end

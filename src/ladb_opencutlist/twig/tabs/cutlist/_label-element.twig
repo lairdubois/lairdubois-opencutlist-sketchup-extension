@@ -87,8 +87,8 @@
         {% set value = filename %}
     {% elseif terms[0] == 'model_name' %}
         {% set value = modelName %}
-    {% elseif terms[0] == 'page_label' %}
-        {% set value = pageLabel %}
+    {% elseif terms[0] == 'page_name' %}
+        {% set value = pageName %}
     {% elseif terms[0] == 'length_unit' %}
         {% set value = lengthUnit ? ('default.unit_'~lengthUnit)|i18next : '' %}
     {% elseif terms[0] == 'generated_at' %}

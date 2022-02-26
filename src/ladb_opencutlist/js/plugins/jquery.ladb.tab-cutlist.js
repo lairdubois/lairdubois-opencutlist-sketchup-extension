@@ -23,7 +23,8 @@
         this.filename = null;
         this.modelName = null;
         this.modelDescription = null;
-        this.pageLabel = null;
+        this.pageName = null;
+        this.pageDescription = null;
         this.isEntitySelection = null;
         this.lengthUnit = null;
         this.usedTags = [];
@@ -92,7 +93,8 @@
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var modelDescription = response.model_description;
-                var pageLabel = response.page_label;
+                var pageName = response.page_name;
+                var pageDescription = response.page_description;
                 var isEntitySelection = response.is_entity_selection;
                 var lengthUnit = response.length_unit;
                 var massUnitStrippedname = response.mass_unit_strippedname;
@@ -112,8 +114,9 @@
                 that.filename = filename;
                 that.modelName = modelName;
                 that.modelDescription = modelDescription;
-                that.pageLabel = pageLabel;
-                that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageLabel ? ' - ' + pageLabel : '');
+                that.pageName = pageName;
+                that.pageDescription = pageDescription;
+                that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageName ? ' - ' + pageName : '');
                 that.isEntitySelection = isEntitySelection;
                 that.lengthUnit = lengthUnit;
                 that.currencySymbol = currencySymbol;
@@ -136,7 +139,8 @@
                     filename: filename,
                     modelName: modelName,
                     modelDescription: modelDescription,
-                    pageLabel: pageLabel,
+                    pageName: pageName,
+                    pageDescription: pageDescription,
                     isEntitySelection: isEntitySelection,
                     lengthUnit: lengthUnit,
                     generateAt: that.generateAt
@@ -855,7 +859,8 @@
                             filename: that.filename,
                             modelName: that.modelName,
                             modelDescription: that.modelDescription,
-                            pageLabel: that.pageLabel,
+                            pageName: that.pageName,
+                            pageDescription: that.pageDescription,
                             isEntitySelection: that.isEntitySelection,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
@@ -2145,7 +2150,8 @@
                                             filename: that.filename,
                                             modelName: that.modelName,
                                             modelDescription: that.modelDescription,
-                                            pageLabel: that.pageLabel,
+                                            pageName: that.pageName,
+                                            pageDescription: that.pageDescription,
                                             isEntitySelection: that.isEntitySelection,
                                             lengthUnit: that.lengthUnit,
                                             generatedAt: new Date().getTime() / 1000,
@@ -2453,7 +2459,8 @@
                                             filename: that.filename,
                                             modelName: that.modelName,
                                             modelDescription: that.modelDescription,
-                                            pageLabel: that.pageLabel,
+                                            pageName: that.pageName,
+                                            pageDescription: that.pageDescription,
                                             isEntitySelection: that.isEntitySelection,
                                             lengthUnit: that.lengthUnit,
                                             generatedAt: new Date().getTime() / 1000,
@@ -2912,7 +2919,7 @@
                         warnings: warnings,
                         filename: that.filename,
                         modelName: that.modelName,
-                        pageLabel: that.pageLabel,
+                        pageName: that.pageName,
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,

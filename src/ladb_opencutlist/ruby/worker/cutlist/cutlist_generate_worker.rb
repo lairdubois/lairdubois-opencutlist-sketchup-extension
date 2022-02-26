@@ -88,10 +88,11 @@ module Ladb::OpenCutList
       dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''
       model_description = model ? model.description : ''
-      page_label = model && model.pages && model.pages.selected_page ? model.pages.selected_page.label : ''
+      page_name = model && model.pages && model.pages.selected_page ? model.pages.selected_page.name : ''
+      page_description = model && model.pages && model.pages.selected_page ? model.pages.selected_page.description : ''
 
       # Create cut list
-      cutlist = Cutlist.new(dir, filename, model_name, model_description, page_label, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
+      cutlist = Cutlist.new(dir, filename, model_name, model_description, page_name, page_description, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0

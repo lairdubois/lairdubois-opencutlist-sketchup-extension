@@ -138,7 +138,7 @@ core:
       save_to: Actualiser le préréglage '{{ name }}'
       delete: Supprimer le préréglage '{{ name }}'
   progress:
-    please_wait: Veuillez patienter
+    please_wait: Calcul d'un monde en paix
   component:
     textinput:
       reset: Réinitialiser cette valeur
