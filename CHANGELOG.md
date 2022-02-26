@@ -4,9 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 3.x, 2.x, 1.x and 0.x versions.
 
-* 3.0.2 (WIP)
+* 4.0.0 (WIP)
 
   * Added cutting diagram 2D progress bar
+
+* 3.0.2 (WIP)
+
+  * Fixed TextArea auto height scroll bug
 
 * 3.0.1 (2021-12-11)
 
