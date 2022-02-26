@@ -7,6 +7,8 @@ in 3.x, 2.x, 1.x and 0.x versions.
 * 3.0.2 (WIP)
 
   * Fixed TextArea auto height scroll bug
+  * Added label size 8
+  * Fixed a few translation errors
 
 * 3.0.1 (2021-12-11)
 

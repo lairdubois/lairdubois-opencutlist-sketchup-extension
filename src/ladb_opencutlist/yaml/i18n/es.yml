@@ -157,7 +157,7 @@ tab:
     highlight_part: Resalta pieza en el modelo
     highlight_parts: Resalta piezas en el modelo
     edit_part_properties: Editar las propiedades de la pieza
-    edit_part_axes_properties: Edita las propiedades (tiras de los cantos) de la pieza
+    edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
     tooltip:
