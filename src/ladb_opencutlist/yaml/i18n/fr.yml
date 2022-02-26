@@ -399,7 +399,7 @@ tab:
       property_width: Largeur
       property_name: Désignation
       property_count: Quantité
-      property_edge_pattern: Nombre de chant
+      property_edge_pattern: Nombre de chants
       property_tags: Tags
       tags: Tags
       tags_help: Liste personnalisée des tags proposés dans la fenêtre de propriétés des pièces.
