@@ -14,6 +14,9 @@ in 3.x, 2.x, 1.x and 0.x versions.
 * 3.0.2 (WIP)
 
   * Fixed TextArea auto height scroll bug
+  * Fixed a few translation errors
+  * Added label size 8
+  * Labels are now sorted on part numbers ASC
 
 * 3.0.1 (2021-12-11)
 
