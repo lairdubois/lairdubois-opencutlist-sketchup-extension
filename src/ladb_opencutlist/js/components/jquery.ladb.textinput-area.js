@@ -13,11 +13,37 @@
     LadbTextinputArea.DEFAULTS = {
     };
 
+    LadbTextinputArea.prototype.getParentOverflows = function(el) {
+
+        var arr = [];
+
+        while (el && el.parentNode && el.parentNode instanceof Element) {
+            if (el.parentNode.scrollTop) {
+                arr.push({
+                    node: el.parentNode,
+                    scrollTop: el.parentNode.scrollTop,
+                })
+            }
+            el = el.parentNode;
+        }
+
+        return arr;
+    }
+
     LadbTextinputArea.prototype.autoHeight = function() {
+
+        var overflows = this.getParentOverflows(this.$element[0]);
+
         this.$element
-            .css('height', 'auto')
+            .css('height', '')
             .css('height', (this.$element[0].scrollHeight) + 'px')
         ;
+
+        // Prevents scroll-position jumping
+        overflows.forEach(function(el) {
+            el.node.scrollTop = el.scrollTop
+        });
+
     };
 
     LadbTextinputArea.prototype.init = function() {
