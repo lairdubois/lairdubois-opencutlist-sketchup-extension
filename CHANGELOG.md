@@ -8,6 +8,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
 
   * Added cutting diagram 2D progress bar
   * Added generate cutlist menu item
+  * Added progress feedback on generate cutlist and list materials
   * Improved ruby I18n string getter
 
 * 3.0.2 (WIP)

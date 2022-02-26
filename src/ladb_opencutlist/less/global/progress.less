@@ -11,7 +11,7 @@
   z-index: 9999;
 
   .ladb-progress-backdrop {
-    background-color: #000;
+    background-color: #fff;
     opacity: 0.4;
     width: 100%;
     height: 100%;
@@ -19,25 +19,31 @@
     left: 0;
   }
 
-  .ladb-progress-label {
+  .ladb-progress-box {
     position: absolute;
     top: 50%;
+    left: 50%;
     margin-top: -40px;
+    margin-left: -25%;
+    width: 50%;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+
+  .ladb-progress-label {
     height: 20px;
     line-height: 20px;
     text-align: center;
-    color: #fff;
+    color: #000;
     width: 100%;
+    font-weight: bold;
   }
 
   .progress {
-    position: absolute;
-    width: 50%;
-    top: 50%;
-    left: 50%;
     height: 20px;
-    margin-top: -10px;
-    margin-left: -25%;
+    margin-top: 10px;
+    margin-bottom: 0;
 
     .progress-bar {
       transition: none;

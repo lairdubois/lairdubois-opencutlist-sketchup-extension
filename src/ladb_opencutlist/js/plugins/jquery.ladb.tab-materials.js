@@ -40,81 +40,91 @@
         this.$btnList.prop('disabled', true);
         this.setObsolete(false);
 
-        rubyCallCommand('materials_list', this.generateOptions, function (response) {
+        window.requestAnimationFrame(function () {
 
-            var errors = response.errors;
-            var warnings = response.warnings;
-            var filename = response.filename;
-            var modelName = response.model_name;
-            var materials = response.materials;
-            var currentMaterialName = response.current_material_name;
+            // Start progress feedback
+            that.dialog.startProgress(1);
 
-            // Keep useful data
-            that.lengthUnitStrippedname = response.length_unit_strippedname;
-            that.massUnitStrippedname = response.mass_unit_strippedname;
-            that.currencySymbol = response.currency_symbol;
-            that.materials = materials;
+            rubyCallCommand('materials_list', that.generateOptions, function (response) {
 
-            // Update filename
-            that.$fileTabs.empty();
-            that.$fileTabs.append(Twig.twig({ ref: "tabs/materials/_file-tab.twig" }).render({
-                filename: filename,
-                modelName: modelName
-            }));
+                var errors = response.errors;
+                var warnings = response.warnings;
+                var filename = response.filename;
+                var modelName = response.model_name;
+                var materials = response.materials;
+                var currentMaterialName = response.current_material_name;
 
-            // Update items state
-            that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials == null || materials.length === 0);
+                // Keep useful data
+                that.lengthUnitStrippedname = response.length_unit_strippedname;
+                that.massUnitStrippedname = response.mass_unit_strippedname;
+                that.currencySymbol = response.currency_symbol;
+                that.materials = materials;
 
-            // Update page
-            that.$page.empty();
-            that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
-                errors: errors,
-                warnings: warnings,
-                materials: materials,
-                currentMaterialName: currentMaterialName
-            }));
+                // Update filename
+                that.$fileTabs.empty();
+                that.$fileTabs.append(Twig.twig({ ref: "tabs/materials/_file-tab.twig" }).render({
+                    filename: filename,
+                    modelName: modelName
+                }));
 
-            // Setup tooltips
-            that.dialog.setupTooltips();
+                // Update items state
+                that.$itemPurgeUnused.closest('li').toggleClass('disabled', materials == null || materials.length === 0);
 
-            // Bind rows
-            $('.ladb-material-box', that.$page).each(function (index) {
-                var $box = $(this);
-                $box.on('click', function (e) {
-                    $(this).blur();
-                    $('.ladb-click-tool', $(this)).click();
-                    return false;
+                // Update page
+                that.$page.empty();
+                that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
+                    errors: errors,
+                    warnings: warnings,
+                    materials: materials,
+                    currentMaterialName: currentMaterialName
+                }));
+
+                // Setup tooltips
+                that.dialog.setupTooltips();
+
+                // Bind rows
+                $('.ladb-material-box', that.$page).each(function (index) {
+                    var $box = $(this);
+                    $box.on('click', function (e) {
+                        $(this).blur();
+                        $('.ladb-click-tool', $(this)).click();
+                        return false;
+                    });
                 });
-            });
-            $('.ladb-btn-edit-material', that.$page).on('click', function() {
-                $(this).blur();
-                var materialId = $(this).closest('.ladb-material-box').data('material-id');
-                that.editMaterial(materialId);
-                return false;
-            });
-            $('.ladb-btn-set-current', that.$page)
-                .on('click', function () {
+                $('.ladb-btn-edit-material', that.$page).on('click', function() {
                     $(this).blur();
                     var materialId = $(this).closest('.ladb-material-box').data('material-id');
-                    that.setCurrentMaterial(materialId);
-                    return false;
-                })
-                .on('dblclick', function () {
-                    $(this).blur();
-                    that.dialog.minimize();
+                    that.editMaterial(materialId);
                     return false;
                 });
+                $('.ladb-btn-set-current', that.$page)
+                    .on('click', function () {
+                        $(this).blur();
+                        var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                        that.setCurrentMaterial(materialId);
+                        return false;
+                    })
+                    .on('dblclick', function () {
+                        $(this).blur();
+                        that.dialog.minimize();
+                        return false;
+                    });
 
-            // Restore button state
-            that.$btnList.prop('disabled', false);
+                // Restore button state
+                that.$btnList.prop('disabled', false);
 
-            // Stick header
-            that.stickSlideHeader(that.$rootSlide);
+                // Stick header
+                that.stickSlideHeader(that.$rootSlide);
 
-            // Callback
-            if (typeof callback === 'function') {
-                callback();
-            }
+                // Finish progress feedback
+                that.dialog.finishProgress();
+
+                // Callback
+                if (typeof callback === 'function') {
+                    callback();
+                }
+
+            });
 
         });
 
@@ -402,9 +412,9 @@
                         } else {
 
                             // Reload the list
-                            var material_id = that.editedMaterial.id;
+                            var materialId = that.editedMaterial.id;
                             that.loadList(function() {
-                                that.scrollSlideToTarget(null, $('#ladb_material_' + material_id, that.$page), false, true);
+                                that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
                             });
 
                         }

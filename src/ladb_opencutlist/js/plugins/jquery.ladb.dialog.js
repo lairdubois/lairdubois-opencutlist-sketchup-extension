@@ -524,10 +524,13 @@
 
     LadbDialog.prototype.startProgress = function (maxSteps) {
 
-        this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render());
-        this.$progressBar = $('.progress-bar', this.$progress);
         this.progressMaxSteps = Math.max(1, maxSteps);
         this.progressStep = 0;
+
+        this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render({
+            hiddenProgressBar: this.progressMaxSteps <= 1
+        }));
+        this.$progressBar = $('.progress-bar', this.$progress);
 
         $('body').append(this.$progress);
 

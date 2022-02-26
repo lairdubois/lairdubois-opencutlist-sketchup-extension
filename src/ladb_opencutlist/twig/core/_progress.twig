@@ -1,7 +1,9 @@
 <div class="ladb-progress">
     <div class="ladb-progress-backdrop"></div>
-    <div class="ladb-progress-label">{{ 'core.progress.please_wait'|i18next }}...</div>
-    <div class="progress">
-        <div class="progress-bar" style="width:0;"></div>
+    <div class="ladb-progress-box">
+        <div class="ladb-progress-label">{{ 'core.progress.please_wait'|i18next }}...</div>
+        <div class="progress"{% if hiddenProgressBar|default(false) %} style="display: none"{% endif %}>
+            <div class="progress-bar" style="width:0;"></div>
+        </div>
     </div>
 </div>

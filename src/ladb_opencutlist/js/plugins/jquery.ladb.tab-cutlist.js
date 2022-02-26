@@ -76,326 +76,265 @@
         this.popToRootSlide();
         this.hideModalInside();
 
-        rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
+        window.requestAnimationFrame(function () {
 
-            that.generateAt = new Date().getTime() / 1000;
-            that.setObsolete(false);
+            // Start progress feedback
+            that.dialog.startProgress(1);
 
-            var errors = response.errors;
-            var warnings = response.warnings;
-            var tips = response.tips;
-            var filename = response.filename;
-            var modelName = response.model_name;
-            var modelDescription = response.model_description;
-            var pageLabel = response.page_label;
-            var isEntitySelection = response.is_entity_selection;
-            var lengthUnit = response.length_unit;
-            var massUnitStrippedname = response.mass_unit_strippedname;
-            var currencySymbol = response.currency_symbol;
-            var instanceCount = response.instance_count;
-            var ignoredInstanceCount = response.ignored_instance_count;
-            var usedTags = response.used_tags;
-            var materialUsages = response.material_usages;
-            var groups = response.groups;
-            var solidWoodMaterialCount = response.solid_wood_material_count;
-            var sheetGoodMaterialCount = response.sheet_good_material_count;
-            var dimensionalMaterialCount = response.dimensional_material_count;
-            var edgeMaterialCount = response.edge_material_count;
-            var hardwareMaterialCount = response.hardware_material_count;
+            rubyCallCommand('cutlist_generate', $.extend(that.generateOptions, that.generateFilters), function (response) {
 
-            // Keep usefull data
-            that.filename = filename;
-            that.modelName = modelName;
-            that.modelDescription = modelDescription;
-            that.pageLabel = pageLabel;
-            that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageLabel ? ' - ' + pageLabel : '');
-            that.isEntitySelection = isEntitySelection;
-            that.lengthUnit = lengthUnit;
-            that.currencySymbol = currencySymbol;
-            that.massUnitStrippedname = massUnitStrippedname;
-            that.usedTags = usedTags;
-            that.usedEdgeMaterialDisplayNames = [];
-            that.materialUsages = materialUsages;
-            that.groups = groups;
+                that.generateAt = new Date().getTime() / 1000;
+                that.setObsolete(false);
 
-            // Compute usedEdgeMaterialDisplayNames
-            for (var i = 0; i < materialUsages.length; i++) {
-                if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
-                    that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
-                }
-            }
+                var errors = response.errors;
+                var warnings = response.warnings;
+                var tips = response.tips;
+                var filename = response.filename;
+                var modelName = response.model_name;
+                var modelDescription = response.model_description;
+                var pageLabel = response.page_label;
+                var isEntitySelection = response.is_entity_selection;
+                var lengthUnit = response.length_unit;
+                var massUnitStrippedname = response.mass_unit_strippedname;
+                var currencySymbol = response.currency_symbol;
+                var instanceCount = response.instance_count;
+                var ignoredInstanceCount = response.ignored_instance_count;
+                var usedTags = response.used_tags;
+                var materialUsages = response.material_usages;
+                var groups = response.groups;
+                var solidWoodMaterialCount = response.solid_wood_material_count;
+                var sheetGoodMaterialCount = response.sheet_good_material_count;
+                var dimensionalMaterialCount = response.dimensional_material_count;
+                var edgeMaterialCount = response.edge_material_count;
+                var hardwareMaterialCount = response.hardware_material_count;
 
-            // Update filename
-            that.$headerExtra.empty();
-            that.$headerExtra.append(Twig.twig({ ref: "tabs/cutlist/_header-extra.twig" }).render({
-                filename: filename,
-                modelName: modelName,
-                modelDescription: modelDescription,
-                pageLabel: pageLabel,
-                isEntitySelection: isEntitySelection,
-                lengthUnit: lengthUnit,
-                generateAt: that.generateAt
-            }));
+                // Keep usefull data
+                that.filename = filename;
+                that.modelName = modelName;
+                that.modelDescription = modelDescription;
+                that.pageLabel = pageLabel;
+                that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageLabel ? ' - ' + pageLabel : '');
+                that.isEntitySelection = isEntitySelection;
+                that.lengthUnit = lengthUnit;
+                that.currencySymbol = currencySymbol;
+                that.massUnitStrippedname = massUnitStrippedname;
+                that.usedTags = usedTags;
+                that.usedEdgeMaterialDisplayNames = [];
+                that.materialUsages = materialUsages;
+                that.groups = groups;
 
-            // Hide help panel
-            that.$panelHelp.hide();
-
-            // Update buttons and items state
-            that.$btnPrint.prop('disabled', groups.length === 0);
-            that.$btnExport.prop('disabled', groups.length === 0);
-            that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
-            that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
-            that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
-            that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
-            that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
-            that.$itemExpendAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
-            that.$itemCollapseAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
-
-            // Update page
-            that.$page.empty();
-            that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
-                showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
-                showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
-                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
-                generateOptions: that.generateOptions,
-                generateFilters: that.generateFilters,
-                errors: errors,
-                warnings: warnings,
-                tips: tips,
-                instanceCount: instanceCount,
-                ignoredInstanceCount: ignoredInstanceCount,
-                usedTags: usedTags,
-                usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
-                groups: groups
-            }));
-
-            // Setup tooltips
-            that.dialog.setupTooltips();
-
-            // Cleanup and Render selection
-            that.cleanupSelection();
-            that.renderSelection();
-
-            // Cleanup nonexistent hidden group ids
-            var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
-            for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
-                if (that.generateOptions.hidden_group_ids[i] == null || that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
-                    continue;
-                }
-                var exists = false;
-                for (var j = 0; j < groups.length; j++) {
-                    if (that.generateOptions.hidden_group_ids[i] === groups[j].id) {
-                        exists = true;
-                        break;
+                // Compute usedEdgeMaterialDisplayNames
+                for (var i = 0; i < materialUsages.length; i++) {
+                    if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
+                        that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
                 }
-                if (!exists) {
-                    that.generateOptions.hidden_group_ids.splice(i, 1);
+
+                // Update filename
+                that.$headerExtra.empty();
+                that.$headerExtra.append(Twig.twig({ ref: "tabs/cutlist/_header-extra.twig" }).render({
+                    filename: filename,
+                    modelName: modelName,
+                    modelDescription: modelDescription,
+                    pageLabel: pageLabel,
+                    isEntitySelection: isEntitySelection,
+                    lengthUnit: lengthUnit,
+                    generateAt: that.generateAt
+                }));
+
+                // Hide help panel
+                that.$panelHelp.hide();
+
+                // Update buttons and items state
+                that.$btnPrint.prop('disabled', groups.length === 0);
+                that.$btnExport.prop('disabled', groups.length === 0);
+                that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
+                that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemExpendAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
+                that.$itemCollapseAll.parents('li').toggleClass('disabled', groups.length === 0 || !that.generateOptions.part_folding);
+
+                // Update page
+                that.$page.empty();
+                that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                    showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
+                    showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
+                    dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                    generateOptions: that.generateOptions,
+                    generateFilters: that.generateFilters,
+                    errors: errors,
+                    warnings: warnings,
+                    tips: tips,
+                    instanceCount: instanceCount,
+                    ignoredInstanceCount: ignoredInstanceCount,
+                    usedTags: usedTags,
+                    usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
+                    groups: groups
+                }));
+
+                // Setup tooltips
+                that.dialog.setupTooltips();
+
+                // Cleanup and Render selection
+                that.cleanupSelection();
+                that.renderSelection();
+
+                // Cleanup nonexistent hidden group ids
+                var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
+                for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
+                    if (that.generateOptions.hidden_group_ids[i] == null || that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
+                        continue;
+                    }
+                    var exists = false;
+                    for (var j = 0; j < groups.length; j++) {
+                        if (that.generateOptions.hidden_group_ids[i] === groups[j].id) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        that.generateOptions.hidden_group_ids.splice(i, 1);
+                    }
                 }
-            }
-            if (hiddenGroupIdsLength > that.generateOptions.hidden_group_ids.length) {
-                that.saveUIOptionsHiddenGroupIds();
-            }
+                if (hiddenGroupIdsLength > that.generateOptions.hidden_group_ids.length) {
+                    that.saveUIOptionsHiddenGroupIds();
+                }
 
-            // Bind inputs
-            $('#ladb_cutlist_tags_filter', that.$page)
-                .tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                    autocomplete: {
-                        source: that.usedTags,
-                        delay: 100
-                    },
-                    showAutocompleteOnFocus: false
-                }))
-                .on('tokenfield:createtoken', function (e) {
+                // Bind inputs
+                $('#ladb_cutlist_tags_filter', that.$page)
+                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                        autocomplete: {
+                            source: that.usedTags,
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: false
+                    }))
+                    .on('tokenfield:createtoken', function (e) {
 
-                    // Unique token
-                    var existingTokens = $(this).tokenfield('getTokens');
-                    $.each(existingTokens, function (index, token) {
-                        if (token.value === e.attrs.value) {
+                        // Unique token
+                        var existingTokens = $(this).tokenfield('getTokens');
+                        $.each(existingTokens, function (index, token) {
+                            if (token.value === e.attrs.value) {
+                                e.preventDefault();
+                            }
+                        });
+
+                        // Available token only
+                        var available = false;
+                        $.each(that.usedTags, function (index, token) {
+                            if (token === e.attrs.value) {
+                                available = true;
+                                return false;
+                            }
+                        });
+                        if (!available) {
                             e.preventDefault();
                         }
-                    });
 
-                    // Available token only
-                    var available = false;
-                    $.each(that.usedTags, function (index, token) {
-                        if (token === e.attrs.value) {
-                            available = true;
-                            return false;
-                        }
-                    });
-                    if (!available) {
-                        e.preventDefault();
-                    }
+                    })
+                    .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                        that.generateCutlist(function () {
+                            $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
+                        });
+                    })
+                ;
+                $('#ladb_cutlist_edge_material_names_filter', that.$page)
+                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                        autocomplete: {
+                            source: that.usedEdgeMaterialDisplayNames,
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: false
+                    }))
+                    .on('tokenfield:createtoken', function (e) {
 
-                })
-                .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                    var tokenList = $(this).tokenfield('getTokensList');
-                    that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
-                    that.generateCutlist(function () {
-                        $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
-                    });
-                })
-            ;
-            $('#ladb_cutlist_edge_material_names_filter', that.$page)
-                .tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                    autocomplete: {
-                        source: that.usedEdgeMaterialDisplayNames,
-                        delay: 100
-                    },
-                    showAutocompleteOnFocus: false
-                }))
-                .on('tokenfield:createtoken', function (e) {
+                        // Unique token
+                        var existingTokens = $(this).tokenfield('getTokens');
+                        $.each(existingTokens, function (index, token) {
+                            if (token.value === e.attrs.value) {
+                                e.preventDefault();
+                            }
+                        });
 
-                    // Unique token
-                    var existingTokens = $(this).tokenfield('getTokens');
-                    $.each(existingTokens, function (index, token) {
-                        if (token.value === e.attrs.value) {
+                        // Available token only
+                        var available = false;
+                        $.each(that.usedEdgeMaterialDisplayNames, function (index, token) {
+                            if (token === e.attrs.value) {
+                                available = true;
+                                return false;
+                            }
+                        });
+                        if (!available) {
                             e.preventDefault();
                         }
-                    });
+                    })
+                    .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        that.generateFilters.edge_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                        that.generateCutlist(function () {
+                            $('#ladb_cutlist_edge_material_names_filter-tokenfield', that.$page).focus();
+                        });
+                    })
+                ;
 
-                    // Available token only
-                    var available = false;
-                    $.each(that.usedEdgeMaterialDisplayNames, function (index, token) {
-                        if (token === e.attrs.value) {
-                            available = true;
-                            return false;
-                        }
-                    });
-                    if (!available) {
-                        e.preventDefault();
-                    }
-                })
-                .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                    var tokenList = $(this).tokenfield('getTokensList');
-                    that.generateFilters.edge_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
-                    that.generateCutlist(function () {
-                        $('#ladb_cutlist_edge_material_names_filter-tokenfield', that.$page).focus();
-                    });
-                })
-            ;
-
-            // Bind buttons
-            $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
-                $(this).blur();
-                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-            });
-            $('#ladb_cutlist_btn_tags_filter_clear', that.$page).on('click', function () {
-                $(this).blur();
-                that.generateFilters.tags_filter = [];
-                that.generateCutlist();
-            });
-            $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
-                $(this).blur();
-                that.generateFilters.edge_material_names_filter = [];
-                that.generateCutlist();
-            });
-            $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                if ($group.hasClass('no-print')) {
-                    that.showGroup($group);
-                } else {
-                    that.hideGroup($group);
-                }
-            });
-            $('a.ladb-btn-scrollto', that.$page).on('click', function () {
-                $(this).blur();
-                var $target = $($(this).attr('href'));
-                if ($target.data('group-id')) {
-                    that.showGroup($target);
-                }
-                that.scrollSlideToTarget(null, $target, true, true);
-                return false;
-            });
-            $('a.ladb-btn-material-filter', that.$page).on('click', function () {
-                $(this).blur();
-                var materialFilter = $(this).data('material-display-name');
-                var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
-                if (indexOf > -1) {
-                    that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
-                } else {
-                    that.generateFilters.edge_material_names_filter.push(materialFilter);
-                }
-                that.generateCutlist();
-                return false;
-            });
-            $('a.ladb-btn-edit-material', that.$page).on('click', function () {
-                $(this).blur();
-
-                // Flag to ignore next material change event
-                that.ignoreNextMaterialEvents = true;
-
-                var materialId = $(this).data('material-id');
-                that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                    materialId: materialId,
-                    updatedCallback: function () {
-
-                        // Flag to stop ignoring next material change event
-                        that.ignoreNextMaterialEvents = false;
-
-                        // Refresh the list
-                        that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
-
+                // Bind buttons
+                $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
+                    $(this).blur();
+                    that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                });
+                $('#ladb_cutlist_btn_tags_filter_clear', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.generateFilters.tags_filter = [];
+                    that.generateCutlist();
+                });
+                $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.generateFilters.edge_material_names_filter = [];
+                    that.generateCutlist();
+                });
+                $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    if ($group.hasClass('no-print')) {
+                        that.showGroup($group);
+                    } else {
+                        that.hideGroup($group);
                     }
                 });
-                return false;
-            });
-            $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                var group = that.findGroupById(groupId);
-                if (group) {
+                $('a.ladb-btn-scrollto', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $target = $($(this).attr('href'));
+                    if ($target.data('group-id')) {
+                        that.showGroup($target);
+                    }
+                    that.scrollSlideToTarget(null, $target, true, true);
+                    return false;
+                });
+                $('a.ladb-btn-material-filter', that.$page).on('click', function () {
+                    $(this).blur();
+                    var materialFilter = $(this).data('material-display-name');
+                    var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
+                    if (indexOf > -1) {
+                        that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
+                    } else {
+                        that.generateFilters.edge_material_names_filter.push(materialFilter);
+                    }
+                    that.generateCutlist();
+                    return false;
+                });
+                $('a.ladb-btn-edit-material', that.$page).on('click', function () {
+                    $(this).blur();
 
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    // Use real std dimension if dimension is rounded
-                    var std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
-
-                    rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: std_dimension }, function (response) {
-
-                        // Flag to stop ignoring next material change event
-                        that.ignoreNextMaterialEvents = false;
-
-                        if (response['errors']) {
-                            that.dialog.notifyErrors(response['errors']);
-                        } else {
-
-                            var wTop = $group.offset().top - $(window).scrollTop();
-
-                            // Refresh the list
-                            that.generateCutlist(function () {
-
-                                // Try to scroll to the edited group's block
-                                var $group = $('#ladb_group_' + groupId, that.$page);
-                                if ($group.length > 0) {
-                                    that.$rootSlide.animate({ scrollTop: $group.offset().top - wTop }, 0).promise().then(function () {
-                                        $group.effect('highlight', {}, 1500);
-                                    });
-                                }
-
-                            });
-
-                        }
-                    });
-                }
-                return false;
-            });
-            $('a.ladb-item-edit-material', that.$page).on('click', function () {
-                $(this).blur();
-
-                // Flag to ignore next material change event
-                that.ignoreNextMaterialEvents = true;
-
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                var group = that.findGroupById(groupId);
-                if (group) {
+                    var materialId = $(this).data('material-id');
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                        materialId: group.material_id,
+                        materialId: materialId,
                         updatedCallback: function () {
 
                             // Flag to stop ignoring next material change event
@@ -406,152 +345,222 @@
 
                         }
                     });
-                }
-            });
-            $('a.ladb-item-highlight-group-parts', that.$page).on('click', function () {
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.highlightGroupParts(groupId);
-                $(this).blur();
-            });
-            $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.hideAllGroups(groupId);
-                that.scrollSlideToTarget(null, $group, true, false);
-            });
-            $('a.ladb-item-show-all-groups', that.$page).on('click', function () {
-                $(this).blur();
-                that.showAllGroups();
-            });
-            $('a.ladb-item-numbers-save', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                var wTop = $group.offset().top - $(window).scrollTop();
-                that.numbersSave({ group_id: groupId }, function () {
-                    that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    return false;
                 });
-            });
-            $('a.ladb-item-numbers-reset', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                var wTop = $group.offset().top - $(window).scrollTop();
-                that.numbersReset({ group_id: groupId }, function () {
-                    that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    var group = that.findGroupById(groupId);
+                    if (group) {
+
+                        // Flag to ignore next material change event
+                        that.ignoreNextMaterialEvents = true;
+
+                        // Use real std dimension if dimension is rounded
+                        var std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
+
+                        rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: std_dimension }, function (response) {
+
+                            // Flag to stop ignoring next material change event
+                            that.ignoreNextMaterialEvents = false;
+
+                            if (response['errors']) {
+                                that.dialog.notifyErrors(response['errors']);
+                            } else {
+
+                                var wTop = $group.offset().top - $(window).scrollTop();
+
+                                // Refresh the list
+                                that.generateCutlist(function () {
+
+                                    // Try to scroll to the edited group's block
+                                    var $group = $('#ladb_group_' + groupId, that.$page);
+                                    if ($group.length > 0) {
+                                        that.$rootSlide.animate({ scrollTop: $group.offset().top - wTop }, 0).promise().then(function () {
+                                            $group.effect('highlight', {}, 1500);
+                                        });
+                                    }
+
+                                });
+
+                            }
+                        });
+                    }
+                    return false;
                 });
-            });
-            $('button.ladb-btn-group-cuttingdiagram1d', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.cuttingdiagram1dGroup(groupId, true);
-            });
-            $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.cuttingdiagram2dGroup(groupId, true);
-            });
-            $('button.ladb-btn-group-labels', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.labelsGroup(groupId);
-            });
-            $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.dimensionsHelpGroup(groupId);
-            });
-            $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
-                $(this).blur();
-                var $part = $(this).parents('.ladb-cutlist-row');
-                var partId = $part.data('part-id');
-                var tab = $(this).data('tab');
-                that.editPart(partId, undefined, tab);
-                return false;
-            });
-            $('a.ladb-btn-select-group-parts', that.$page).on('click', function () {
-                $(this).blur();
-                var $group = $(this).parents('.ladb-cutlist-group');
-                var groupId = $group.data('group-id');
-                that.selectGroupParts(groupId);
-                return false;
-            });
-            $('a.ladb-btn-select-part, td.ladb-btn-select-part', that.$page)
-                .on('click', function () {
+                $('a.ladb-item-edit-material', that.$page).on('click', function () {
+                    $(this).blur();
+
+                    // Flag to ignore next material change event
+                    that.ignoreNextMaterialEvents = true;
+
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    var group = that.findGroupById(groupId);
+                    if (group) {
+                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                            materialId: group.material_id,
+                            updatedCallback: function () {
+
+                                // Flag to stop ignoring next material change event
+                                that.ignoreNextMaterialEvents = false;
+
+                                // Refresh the list
+                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+
+                            }
+                        });
+                    }
+                });
+                $('a.ladb-item-highlight-group-parts', that.$page).on('click', function () {
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.highlightGroupParts(groupId);
+                    $(this).blur();
+                });
+                $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.hideAllGroups(groupId);
+                    that.scrollSlideToTarget(null, $group, true, false);
+                });
+                $('a.ladb-item-show-all-groups', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.showAllGroups();
+                });
+                $('a.ladb-item-numbers-save', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    var wTop = $group.offset().top - $(window).scrollTop();
+                    that.numbersSave({ group_id: groupId }, function () {
+                        that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    });
+                });
+                $('a.ladb-item-numbers-reset', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    var wTop = $group.offset().top - $(window).scrollTop();
+                    that.numbersReset({ group_id: groupId }, function () {
+                        that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
+                    });
+                });
+                $('button.ladb-btn-group-cuttingdiagram1d', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.cuttingdiagram1dGroup(groupId, true);
+                });
+                $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.cuttingdiagram2dGroup(groupId, true);
+                });
+                $('button.ladb-btn-group-labels', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.labelsGroup(groupId);
+                });
+                $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.dimensionsHelpGroup(groupId);
+                });
+                $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
                     $(this).blur();
                     var $part = $(this).parents('.ladb-cutlist-row');
                     var partId = $part.data('part-id');
-                    that.selectPart(partId);
+                    var tab = $(this).data('tab');
+                    that.editPart(partId, undefined, tab);
                     return false;
-                })
-                .on('dblclick', function() {
+                });
+                $('a.ladb-btn-select-group-parts', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
                     that.selectGroupParts(groupId);
                     return false;
-                })
-            ;
-            $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
-                $(this).blur();
-                var $part = $(this).parents('.ladb-cutlist-row');
-                var partId = $part.data('part-id');
-                that.highlightPart(partId);
-                return false;
-            });
-            $('a.ladb-btn-edit-part', that.$page).on('click', function () {
-                $(this).blur();
-                var $part = $(this).parents('.ladb-cutlist-row');
-                var partId = $part.data('part-id');
-                that.editPart(partId);
-                return false;
-            });
-            $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
-                $(this).blur();
-                var $part = $(this).parents('.ladb-cutlist-row-folder');
-                that.toggleFoldingRow($part);
-                return false;
-            });
-            $('a.ladb-btn-label-filter', that.$page).on('click', function () {
-                $(this).blur();
-                var labelFilter = $(this).html();
-                var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
-                if (indexOf > -1) {
-                    that.generateFilters.tags_filter.splice(indexOf, 1);
+                });
+                $('a.ladb-btn-select-part, td.ladb-btn-select-part', that.$page)
+                    .on('click', function () {
+                        $(this).blur();
+                        var $part = $(this).parents('.ladb-cutlist-row');
+                        var partId = $part.data('part-id');
+                        that.selectPart(partId);
+                        return false;
+                    })
+                    .on('dblclick', function() {
+                        $(this).blur();
+                        var $group = $(this).parents('.ladb-cutlist-group');
+                        var groupId = $group.data('group-id');
+                        that.selectGroupParts(groupId);
+                        return false;
+                    })
+                ;
+                $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $part = $(this).parents('.ladb-cutlist-row');
+                    var partId = $part.data('part-id');
+                    that.highlightPart(partId);
+                    return false;
+                });
+                $('a.ladb-btn-edit-part', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $part = $(this).parents('.ladb-cutlist-row');
+                    var partId = $part.data('part-id');
+                    that.editPart(partId);
+                    return false;
+                });
+                $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $part = $(this).parents('.ladb-cutlist-row-folder');
+                    that.toggleFoldingRow($part);
+                    return false;
+                });
+                $('a.ladb-btn-label-filter', that.$page).on('click', function () {
+                    $(this).blur();
+                    var labelFilter = $(this).html();
+                    var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
+                    if (indexOf > -1) {
+                        that.generateFilters.tags_filter.splice(indexOf, 1);
+                    } else {
+                        that.generateFilters.tags_filter.push(labelFilter);
+                    }
+                    that.generateCutlist();
+                    return false;
+                });
+                $('.ladb-cutlist-row', that.$page).on('click', function () {
+                    $(this).blur();
+                    $('.ladb-click-tool', $(this)).first().click();
+                    return false;
+                });
+
+                // Restore button state
+                that.$btnGenerate.prop('disabled', false);
+
+                // Stick header
+                that.stickSlideHeader(that.$rootSlide);
+
+                // Finish progress feedback
+                that.dialog.finishProgress();
+
+                // Callback
+                if (typeof callback === 'function') {
+                    callback();
                 } else {
-                    that.generateFilters.tags_filter.push(labelFilter);
+                    if (errors.length === 0 && warnings.length === 0 && tips.length === 0) {
+                        // No callback -> scroll to the first printable group
+                        that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
+                    }
                 }
-                that.generateCutlist();
-                return false;
+
             });
-            $('.ladb-cutlist-row', that.$page).on('click', function () {
-                $(this).blur();
-                $('.ladb-click-tool', $(this)).first().click();
-                return false;
-            });
-
-            // Restore button state
-            that.$btnGenerate.prop('disabled', false);
-
-            // Stick header
-            that.stickSlideHeader(that.$rootSlide);
-
-            // Callback
-            if (typeof callback === 'function') {
-                callback();
-            } else {
-                if (errors.length === 0 && warnings.length === 0 && tips.length === 0) {
-                    // No callback -> scroll to the first printable group
-                    that.scrollSlideToTarget(null, $('.ladb-cutlist-group:not(.no-print)', that.$page).first())
-                }
-            }
-
         });
 
     };
