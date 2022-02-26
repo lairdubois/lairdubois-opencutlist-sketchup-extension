@@ -61,6 +61,8 @@ core:
       generate_cutlist: Générer la fiche de débit
       edit_part_properties: $(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $(tab.cutlist.edit_part_edges_properties)
   toolbar:
     name: OpenCutList
     command: OpenCutList

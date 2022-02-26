@@ -259,13 +259,13 @@ module Ladb::OpenCutList
         item = menu.add_item("[#{@hover_part.number}] #{@hover_part.name}") {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
-        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_properties')) {
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'general', dontGenerate: true }")
         }
-        menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_axes_properties')) {
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'axes', dontGenerate: true }")
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_size_increase_properties')) {
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'size_increase', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {
@@ -277,7 +277,7 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('tab.cutlist.edit_part_edges_properties')) {
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'edges', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {
