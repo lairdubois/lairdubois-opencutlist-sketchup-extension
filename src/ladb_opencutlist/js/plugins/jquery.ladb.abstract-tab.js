@@ -266,6 +266,12 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
     return this._$modal;
 };
 
+LadbAbstractTab.prototype.hideModalInside = function () {
+    if (this._$modal) {
+        this._$modal.modal('hide');
+    }
+}
+
 // Print /////
 
 LadbAbstractTab.prototype.print = function (title, margin) {

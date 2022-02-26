@@ -58,6 +58,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
+      generate_cutlist: Générer la fiche de débit
       edit_part_properties: $(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
   toolbar:

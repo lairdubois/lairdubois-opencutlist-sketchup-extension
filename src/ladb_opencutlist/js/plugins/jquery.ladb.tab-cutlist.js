@@ -74,6 +74,7 @@
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
         this.popToRootSlide();
+        this.hideModalInside();
 
         rubyCallCommand('cutlist_generate', $.extend(this.generateOptions, this.generateFilters), function (response) {
 
