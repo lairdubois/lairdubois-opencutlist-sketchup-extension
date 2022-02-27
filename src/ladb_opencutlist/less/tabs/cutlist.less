@@ -184,6 +184,33 @@
 
     }
 
+    td.ladb-cutlist-edge {
+
+      &.ladb-active {
+        font-weight: bold;
+        background-color: #fafafa;
+      }
+
+      &.ladb-disabled {
+        background-image: url(../img/bg-hatched.svg);
+        background-repeat: repeat;
+        background-size: 10px;
+      }
+
+      .ladb-cutlist-edge-material-name {
+        display: block;
+        font-size: 70%;
+        text-align: center;
+      }
+
+      .ladb-cutlist-edge-std-dimension {
+        display: block;
+        font-size: 55%;
+        text-align: center;
+      }
+
+    }
+
     .ladb-cutlist-part-entity-names {
       font-size: 70%;
     }
@@ -227,27 +254,6 @@
     .ladb-part-description {
       font-size: 70%;
       margin-top: 5px;
-    }
-
-    .ladb-cutlist-edge {
-
-      &.ladb-active {
-        font-weight: bold;
-        background-color: #fafafa;
-      }
-
-      .ladb-cutlist-edge-material-name {
-        display: block;
-        font-size: 70%;
-        text-align: center;
-      }
-
-      .ladb-cutlist-edge-std-dimension {
-        display: block;
-        font-size: 55%;
-        text-align: center;
-      }
-
     }
 
   }

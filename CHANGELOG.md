@@ -11,6 +11,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
   * Added progress feedback on generate cutlist and list materials
   * Added page description to printed part list
   * Improved ruby i18n string getter to support $()
+  * Improved disabled edge cell display in part list
 
 * 3.0.2 (WIP)
 
