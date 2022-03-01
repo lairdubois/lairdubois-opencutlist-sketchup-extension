@@ -13,12 +13,11 @@ in 3.x, 2.x, 1.x and 0.x versions.
   * Improved ruby i18n string getter to support $()
   * Improved disabled edge cell display in part list
 
-* 3.0.2 (WIP)
+* 3.0.2 (2022-02-27)
 
   * Fixed TextArea auto height scroll bug
   * Fixed a few translation errors
   * Added label size 8
-  * Labels are now sorted on part numbers ASC
 
 * 3.0.1 (2021-12-11)
 

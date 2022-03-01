@@ -2630,17 +2630,17 @@
         });
 
         // Sort parts on numbers ASC
-        parts.sort(function (a, b) {
-            var numberA = isNaN(a.number) ? a.number.padStart(3, ' ') : a.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
-            var numberB = isNaN(a.number) ? b.number.padStart(3, ' ') : b.number;
-            if (numberA < numberB) {
-                return -1;
-            }
-            if (numberA > numberB) {
-                return 1;
-            }
-            return 0;
-        });
+        // parts.sort(function (a, b) {
+        //     var numberA = isNaN(a.number) ? a.number.padStart(3, ' ') : a.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
+        //     var numberB = isNaN(a.number) ? b.number.padStart(3, ' ') : b.number;
+        //     if (numberA < numberB) {
+        //         return -1;
+        //     }
+        //     if (numberA > numberB) {
+        //         return 1;
+        //     }
+        //     return 0;
+        // });
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {
