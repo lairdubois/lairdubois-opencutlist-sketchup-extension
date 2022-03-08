@@ -51,7 +51,7 @@ module Ladb::OpenCutList
     def self.get_transformation(path)
       transformation = Geom::Transformation.new
       path.each { |entity|
-        transformation *= entity.transformation
+        transformation *= entity.transformation if entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
       }
       transformation
     end
