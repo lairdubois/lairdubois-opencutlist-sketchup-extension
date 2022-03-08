@@ -356,11 +356,11 @@ tab:
         Jeśli ta opcja jest włączona, lustrzane części zostaną wykryte i wyświetlone jako nowa część.
       smart_material: "*Inteligentne* przypisanie materiału"
       smart_material_help: "Jeśli ta opcja jest zaznaczona, do części bez zdefiniowanego materiału można przypisać materiał przypisany do jednego z ich rodziców lub dzieci."
-      dynamic_attributes_name: Użyj atrybutu *Nazwa* komponentów dynamicznych
+      dynamic_attributes_name: Użyj atrybutu *Name* komponentów dynamicznych
       dynamic_attributes_name_help: |
-        Jeśli ta opcja jest wybrana, oznaczenie części zostanie wyodrębnione z atrybutu *Nazwa*, jeśli została zdefiniowana.
+        Jeśli ta opcja jest wybrana, oznaczenie części zostanie wyodrębnione z atrybutu *Name*, jeśli została zdefiniowana.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Wystąpienia części o tej samej definicji zostaną oddzielone, jeśli atrybut *Nazwa* nie ma tej samej wartości.
+        <i class='ladb-opencutlist-icon-warning'></i> Wystąpienia części o tej samej definicji zostaną oddzielone, jeśli atrybut *Name* nie ma tej samej wartości.
       part_number_with_letters: Użyj liter do numerowania części
       part_number_with_letters_help: "Jeśli ta opcja jest zaznaczona, części są numerowane za pomocą liter (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Ponownie zainicjuj numerowanie części dla każdej grupy

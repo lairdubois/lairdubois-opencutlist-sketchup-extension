@@ -157,7 +157,7 @@ tab:
     highlight_part: Resalta pieza en el modelo
     highlight_parts: Resalta piezas en el modelo
     edit_part_properties: Editar las propiedades de la pieza
-    edit_part_axes_properties: Edita las propiedades (tiras de los cantos) de la pieza
+    edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
     tooltip:
@@ -356,9 +356,9 @@ tab:
         Si se selecciona esta opción, las partes reflejadas serán detectadas y mostradas como una nueva parte.
       smart_material: "*Asignación inteligente* de material"
       smart_material_help: "Si seleccionas esta opción, a las partes sin material definido se les puede asignar el material asignado a uno de sus padres o hijos."
-      dynamic_attributes_name: Utilice el atributo *Nombre* de componentes dinámicos
+      dynamic_attributes_name: Utilice el atributo *Name* de componentes dinámicos
       dynamic_attributes_name_help: |
-        Si se selecciona esta opción, la designación de las piezas se extraerá del atributo *Nombre*, si está definido.
+        Si se selecciona esta opción, la designación de las piezas se extraerá del atributo *Name*, si está definido.
 
         <i class='ladb-opencutlist-icon-warning'></i> Las instancias de partes con la misma definición se separarán si el atributo *Name* no tiene el mismo valor.
       part_number_with_letters: Usa letras para enumerar las partes

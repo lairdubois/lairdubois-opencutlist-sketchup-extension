@@ -1,3 +1,4 @@
+---
 _label: 1 - English
 _reload_msg: 2 - To reflect all changes, you must **close** and **reopen** the OpenCutList window.
 _description: 3 - Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)
@@ -745,8 +746,8 @@ tab:
       obsolete_cutlist: 596 - Impossible, the parts list is obsolete. Please, regenerate it.
     warning:
       is_entity_selection: 597 - Only the selected parts in your model have been taken into account.
-      no_typed_materials_in_model: 598 - Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 599 - The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: 598 - Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 599 - The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
       export_empty: 600 - Your export selection does not contain any part.
     success:
       exported_to: 601 - Successful export to {{ export_path }}.
