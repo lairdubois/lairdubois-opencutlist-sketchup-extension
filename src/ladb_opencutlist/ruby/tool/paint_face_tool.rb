@@ -73,7 +73,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-      if key == CONSTRAIN_MODIFIER_KEY
+      if key == COPY_MODIFIER_KEY
         @add = false
         view.invalidate
         UI.set_cursor(@cursor_unpaint_id)
@@ -81,7 +81,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUp(key, repeat, flags, view)
-      if key == CONSTRAIN_MODIFIER_KEY
+      if key == COPY_MODIFIER_KEY
         @add = true
         view.invalidate
         UI.set_cursor(@cursor_paint_id)
