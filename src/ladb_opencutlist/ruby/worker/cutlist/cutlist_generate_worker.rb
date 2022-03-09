@@ -950,14 +950,14 @@ module Ladb::OpenCutList
           else
             return {
                 :available => value_f == std_value_f,
-                :value => value
+                :value => value.to_l  # Force value to be Length type
             }
           end
         end
       }
       {
           :available => false,
-          :value => value
+          :value => value.to_l  # Force value to be Length type
       }
     end
 
