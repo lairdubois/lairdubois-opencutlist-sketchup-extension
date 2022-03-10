@@ -61,10 +61,11 @@ module Ladb::OpenCutList
           align: TextAlignCenter,
           y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
         }
-        button_x = (view.vpwidth - _screen_scale(90) * (@materials.length - 2)) / 2
+        button_size = [ _screen_scale(80), view.vpwidth / @materials.length ].min
+        button_x = (view.vpwidth - button_size * (@materials.length - 2)) / 2
 
         @materials.each do |material|
-          button = GLButton.new(view, material.name, button_x, _screen_scale(100), _screen_scale(80), _screen_scale(80), button_text_options, material.color) do |button, flags, x, y, view|
+          button = GLButton.new(view, material.name, button_x, button_size, button_size - _screen_scale(10), button_size - _screen_scale(10), button_text_options, material.color) do |button, flags, x, y, view|
             @selected_button.is_selected = false if @selected_button
             @selected_button = button
             @selected_button.is_selected = true
@@ -76,7 +77,7 @@ module Ladb::OpenCutList
             @selected_button.is_selected = true
           end
           @buttons.push(button)
-          button_x += _screen_scale(90)
+          button_x += button_size
         end
 
       end
@@ -302,7 +303,11 @@ module Ladb::OpenCutList
     end
 
     def _update_paint_color
-      @paint_color = @@current_material ? @@current_material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+      begin
+        @paint_color = @@current_material ? @@current_material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+      rescue
+        @paint_color = @unpaint_color
+      end
     end
 
   end
