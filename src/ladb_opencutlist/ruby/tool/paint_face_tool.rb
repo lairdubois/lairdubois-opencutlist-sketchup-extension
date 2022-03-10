@@ -1,26 +1,83 @@
 module Ladb::OpenCutList
 
   require_relative '../utils/path_utils'
+  require_relative '../helper/screen_scale_factor_helper'
+  require_relative '../model/attributes/material_attributes'
+  require_relative '../gl/gl_button'
 
   class PaintFaceTool
 
+    include ScreenScaleFactorHelper
+
+    COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
+    FONT_TEXT = 'Verdana'
+
     def initialize
 
-      @add = true
+      model = Sketchup.active_model
+      if model
 
-      @unpaint_color = Sketchup::Color.new(255, 255, 255)
-      @paint_color = Sketchup.active_model.materials.current ? Sketchup.active_model.materials.current.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+        view = model.active_view
 
-      # Create cursors
-      @cursor_paint_id = nil
-      cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-paint.pdf')
-      if cursor_path
-        @cursor_paint_id = UI.create_cursor(cursor_path, 7, 25)
-      end
-      @cursor_unpaint_id = nil
-      cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-unpaint.pdf')
-      if cursor_path
-        @cursor_unpaint_id = UI.create_cursor(cursor_path, 7, 25)
+        @add = true
+
+        @materials = []
+        @current_material = nil
+        model.materials.each do |material|
+          material_attributes = MaterialAttributes.new(material)
+          # if material_attributes.type == MaterialAttributes::TYPE_EDGE  # Filter on EDGE type
+            @materials.push(material)
+            @current_material = material if material == model.materials.current
+          # end
+        end
+        unless @current_material
+          @current_material = @materials.first
+        end
+
+        @unpaint_color = Sketchup::Color.new(255, 255, 255)
+        @paint_color = @current_material ? @current_material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+
+        # Create cursors
+        @cursor_paint_id = nil
+        cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-paint.pdf')
+        if cursor_path
+          @cursor_paint_id = UI.create_cursor(cursor_path, 7, 25)
+        end
+        @cursor_unpaint_id = nil
+        cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-unpaint.pdf')
+        if cursor_path
+          @cursor_unpaint_id = UI.create_cursor(cursor_path, 7, 25)
+        end
+
+        # Create buttons
+        @buttons = []
+        @selected_button = nil
+
+        button_text_options = {
+          color: COLOR_TEXT,
+          font: FONT_TEXT,
+          size: _screen_scale(Plugin.instance.current_os == :MAC ? 8 : 5),
+          align: TextAlignCenter,
+          y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
+        }
+        button_y = 100
+
+        @materials.each do |material|
+          button = GLButton.new(view, material.name, _screen_scale(100), _screen_scale(button_y), _screen_scale(80), _screen_scale(80), button_text_options, material.color) do |button, flags, x, y, view|
+            @selected_button.is_selected = false if @selected_button
+            @selected_button = button
+            @selected_button.is_selected = true
+            @current_material = material
+            @paint_color = material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85)
+          end
+          if material == @current_material
+            @selected_button = button
+            @selected_button.is_selected = true
+          end
+          @buttons.push(button)
+          button_y += 90
+        end
+
       end
 
     end
@@ -56,10 +113,19 @@ module Ladb::OpenCutList
     end
 
     def draw(view)
+
       if @triangles
         view.drawing_color = @add ? @paint_color : @unpaint_color
         view.draw(GL_TRIANGLES, @triangles)
       end
+
+      # Draw buttons (only if Sketchup > 2016)
+      if Sketchup.version_number >= 16000000
+        @buttons.each { |button|
+          button.draw(view)
+        }
+      end
+
     end
 
     def getExtents
@@ -89,16 +155,31 @@ module Ladb::OpenCutList
     end
 
     def onLButtonDown(flags, x, y, view)
+      @buttons.each { |button|
+        if button.onLButtonDown(flags, x, y, view)
+          return
+        end
+      }
     end
 
     def onLButtonUp(flags, x, y, view)
+      @buttons.each { |button|
+        if button.onLButtonUp(flags, x, y, view)
+          return
+        end
+      }
       _pick_hover_face(x, y, view)
       if @hover_face
-        @hover_face.material = @add ? Sketchup.active_model.materials.current : nil
+        @hover_face.material = @add ? @current_material : nil
       end
     end
 
     def onMouseMove(flags, x, y, view)
+      @buttons.each { |button|
+        if button.onMouseMove(flags, x, y, view)
+          return
+        end
+      }
       _pick_hover_face(x, y, view)
     end
 

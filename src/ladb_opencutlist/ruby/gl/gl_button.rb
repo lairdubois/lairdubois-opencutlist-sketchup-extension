@@ -5,12 +5,14 @@ module Ladb::OpenCutList
     COLOR_BORDER = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_FILL = Sketchup::Color.new(255, 255, 255, 255).freeze
-    COLOR_FILL_HOVER = Sketchup::Color.new(190, 190, 190, 255).freeze
-    COLOR_FILL_DOWN = Sketchup::Color.new(128, 128, 128, 255).freeze
+    COLOR_FILL_HOVER = Sketchup::Color.new(0, 0, 0, 70).freeze
+    COLOR_FILL_DOWN = Sketchup::Color.new(0, 0, 0, 90).freeze
 
     FONT_TEXT = 'Verdana'
 
-    def initialize(view, text, x, y, width, height, text_options, &callback)
+    attr_accessor :is_selected
+
+    def initialize(view, text, x, y, width, height, text_options, fill_color, &callback)
       @text = text
       @x = x
       @y = y
@@ -19,9 +21,11 @@ module Ladb::OpenCutList
       @text_options = text_options
       @text_font_size = text_options[:size] ? text_options[:size] : 12
       @text_y_offset = text_options[:y_offset] ? text_options[:y_offset] : 0
+      @fill_color = fill_color ? fill_color : COLOR_FILL
       @callback = callback
       @is_hover = false
       @is_down = false
+      @is_selected = false
       update_coords(view)
     end
 
@@ -41,7 +45,7 @@ module Ladb::OpenCutList
         @is_down = false
         view.invalidate
         if @callback
-          @callback.call(flags, x, y, view)
+          @callback.call(self, flags, x, y, view)
         end
         return true
       end
@@ -63,10 +67,14 @@ module Ladb::OpenCutList
 
     def draw(view)
       update_coords(view)
-      view.drawing_color = @is_down ? COLOR_FILL_DOWN : @is_hover ? COLOR_FILL_HOVER : COLOR_FILL
-      view.line_stipple = ''
-      view.line_width = 1
+      view.drawing_color = @fill_color
       view.draw2d(GL_QUADS, @points)
+      if @is_down || @is_hover
+        view.drawing_color = @is_down ? COLOR_FILL_DOWN : @is_hover ? COLOR_FILL_HOVER : COLOR_FILL
+        view.draw2d(GL_QUADS, @points)
+      end
+      view.line_stipple = ''
+      view.line_width = @is_selected ? 4 : 1
       view.drawing_color = COLOR_BORDER
       view.draw2d(GL_LINE_LOOP, @points)
       view.draw_text(@text_point, @text, @text_options)

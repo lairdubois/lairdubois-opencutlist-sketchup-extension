@@ -1,12 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative '../helper/layer_visibility_helper'
+  require_relative '../helper/screen_scale_factor_helper'
   require_relative '../gl/gl_button'
   require_relative '../model/cutlist/cutlist'
 
   class HighlightPartTool < CutlistObserver
 
     include LayerVisibilityHelper
+    include ScreenScaleFactorHelper
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
@@ -46,8 +48,6 @@ module Ladb::OpenCutList
 
       # Add tool as observer of the cutlist
       @cutlist.add_observer(self)
-
-      @screen_scale_factor = Sketchup.version_number >= 17000000 ? UI::scale_factor : 1.0
 
       @text_line_1 = ''
       @text_line_2 = ''
@@ -139,10 +139,10 @@ module Ladb::OpenCutList
         }
 
         # Define buttons
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), _screen_scale(130), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), _screen_scale(130), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options, nil) do |button, flags, x, y, view|
           view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
         end)
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), _screen_scale(260), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options) do |flags, x, y, view|
+        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), _screen_scale(260), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options, nil) do |button, flags, x, y, view|
           view.zoom_extents
         end)
 
@@ -228,7 +228,6 @@ module Ladb::OpenCutList
         @buttons.each { |button|
           button.draw(view)
         }
-
       end
 
     end
@@ -324,9 +323,7 @@ module Ladb::OpenCutList
           return
         end
       }
-
       _pick_hover_part(x, y, view)
-
     end
 
     def onMouseLeave(view)
@@ -539,10 +536,6 @@ module Ladb::OpenCutList
         }
       end
       _reset(view)
-    end
-
-    def _screen_scale(value)
-      value * @screen_scale_factor
     end
 
   end
