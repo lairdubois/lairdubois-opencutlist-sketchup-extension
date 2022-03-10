@@ -12,6 +12,8 @@ module Ladb::OpenCutList
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     FONT_TEXT = 'Verdana'
 
+    @@current_material = nil
+
     def initialize
 
       model = Sketchup.active_model
@@ -22,20 +24,19 @@ module Ladb::OpenCutList
         @add = true
 
         @materials = []
-        @current_material = nil
         model.materials.each do |material|
           material_attributes = MaterialAttributes.new(material)
           # if material_attributes.type == MaterialAttributes::TYPE_EDGE  # Filter on EDGE type
             @materials.push(material)
-            @current_material = material if material == model.materials.current
+            @@current_material = material if @@current_material.nil? && material == model.materials.current
           # end
         end
-        unless @current_material
-          @current_material = @materials.first
+        unless @@current_material
+          @@current_material = @materials.first
         end
 
         @unpaint_color = Sketchup::Color.new(255, 255, 255)
-        @paint_color = @current_material ? @current_material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
+        _update_paint_color
 
         # Create cursors
         @cursor_paint_id = nil
@@ -60,22 +61,22 @@ module Ladb::OpenCutList
           align: TextAlignCenter,
           y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
         }
-        button_y = 100
+        button_x = (view.vpwidth - _screen_scale(90) * (@materials.length - 2)) / 2
 
         @materials.each do |material|
-          button = GLButton.new(view, material.name, _screen_scale(100), _screen_scale(button_y), _screen_scale(80), _screen_scale(80), button_text_options, material.color) do |button, flags, x, y, view|
+          button = GLButton.new(view, material.name, button_x, _screen_scale(100), _screen_scale(80), _screen_scale(80), button_text_options, material.color) do |button, flags, x, y, view|
             @selected_button.is_selected = false if @selected_button
             @selected_button = button
             @selected_button.is_selected = true
-            @current_material = material
-            @paint_color = material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85)
+            @@current_material = material
+            _update_paint_color
           end
-          if material == @current_material
+          if material == @@current_material
             @selected_button = button
             @selected_button.is_selected = true
           end
           @buttons.push(button)
-          button_y += 90
+          button_x += _screen_scale(90)
         end
 
       end
@@ -170,7 +171,7 @@ module Ladb::OpenCutList
       }
       _pick_hover_face(x, y, view)
       if @hover_face
-        @hover_face.material = @add ? @current_material : nil
+        @hover_face.material = @add ? @@current_material : nil
       end
     end
 
@@ -298,6 +299,10 @@ module Ladb::OpenCutList
       }
 
       triangles
+    end
+
+    def _update_paint_color
+      @paint_color = @@current_material ? @@current_material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : @unpaint_color
     end
 
   end
