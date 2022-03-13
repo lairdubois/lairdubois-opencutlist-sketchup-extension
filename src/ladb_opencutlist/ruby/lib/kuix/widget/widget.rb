@@ -6,7 +6,7 @@ module Ladb::OpenCutList::Kuix
     attr_reader :bounds
     attr_reader :margin, :border, :padding, :gap
     attr_reader :min_size
-    attr_accessor :background_color, :border_color, :color
+    attr_reader :background_color, :border_color, :color
     attr_accessor :parent, :child, :last_child, :next, :previous
     attr_accessor :layout, :layout_data
 
@@ -14,18 +14,23 @@ module Ladb::OpenCutList::Kuix
 
       @id = id
 
+      # Computed bounds of the widget relative to its parent
       @bounds = Bounds.new
 
       @margin = Inset.new
       @border = Inset.new
       @padding = Inset.new
-      @gap = Gap.new
 
       @min_size = Size.new
 
       @background_color = nil
       @border_color = nil
       @color = nil
+
+      @styles = {
+        :default => {}
+      }
+      @active_pseudo_classes = []
 
       @parent = nil
       @child = nil
@@ -72,6 +77,48 @@ module Ladb::OpenCutList::Kuix
         )
       end
       size
+    end
+
+    # -- Style --
+
+    def activate_pseudo_class(pseudo_class)
+      unless @active_pseudo_classes.include?(pseudo_class)
+        @active_pseudo_classes.push(pseudo_class)
+        invalidate
+      end
+    end
+
+    def deactivate_pseudo_class(pseudo_class)
+      if @active_pseudo_classes.include?(pseudo_class)
+        @active_pseudo_classes.delete(pseudo_class)
+        invalidate
+      end
+    end
+
+    def set_style_attribute(attribute, value, pseudo_class = :default)
+      unless @styles.has_key?(pseudo_class)
+        @styles[pseudo_class] = {}
+      end
+      @styles[pseudo_class][attribute] = value
+      invalidate
+    end
+
+    def do_style
+
+      # Default values
+      @background_color = @styles[:default][:background_color]
+      @border_color = @styles[:default][:border_color]
+      @color = @styles[:default][:color]
+
+      @active_pseudo_classes.each do |pseudo_class|
+        style = @styles[pseudo_class]
+        if style
+          @background_color = style[:background_color] if style.has_key?(:background_color)
+          @border_color = style[:border_color] if style.has_key?(:border_color)
+          @color = style[:color] if style.has_key?(:color)
+        end
+      end
+
     end
 
     # -- DOM --
@@ -148,6 +195,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def do_layout
+      do_style
       if @layout
         @layout.do_layout(self)
       end
@@ -206,6 +254,59 @@ module Ladb::OpenCutList::Kuix
       if @next
         @next.paint(graphics)
       end
+    end
+
+    # -- Hit --
+
+    def hit_widget(x, y)
+      widget = nil
+      hit_bounds = Bounds.new(   # Exclude margin from hit test
+        @bounds.origin.x + @margin.left,
+        @bounds.origin.y + @margin.top,
+        @bounds.size.width - @margin.left - @margin.right,
+        @bounds.size.height - @margin.top - @margin.bottom
+      )
+      if hit_bounds.inside?(x, y)
+        if @child
+          widget = @child.hit_widget(
+            x - hit_bounds.origin.x - @border.left - @padding.left,
+            y - hit_bounds.origin.y - @border.top - @padding.top
+          )
+        end
+        if hittable?
+          widget = self unless widget
+        end
+      elsif @next
+        widget = @next.hit_widget(x, y)
+      end
+      widget
+    end
+
+    def hittable?
+      false
+    end
+
+    # -- Events --
+
+    def onMouseEnter(flags)
+      activate_pseudo_class(:hover)
+    end
+
+    def onMouseLeave
+      deactivate_pseudo_class(:active)
+      deactivate_pseudo_class(:hover)
+    end
+
+    def onMouseDown(flags)
+      activate_pseudo_class(:active)
+    end
+
+    def onMouseClick(flags)
+      deactivate_pseudo_class(:active)
+    end
+
+    def onMouseDoubleClick(flags)
+      deactivate_pseudo_class(:active)
     end
 
     # --

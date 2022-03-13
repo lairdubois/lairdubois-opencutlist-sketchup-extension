@@ -2,9 +2,10 @@ module Ladb::OpenCutList::Kuix
 
   class GridLayout
 
-    def initialize(num_cols = 1, num_rows = 1)
-      @num_cols = num_cols
-      @num_rows = num_rows
+    def initialize(num_cols = 1, num_rows = 1, horizontal_gap = 0, vertical_gap = 0)
+      @num_cols = [ num_cols, 1 ].max
+      @num_rows = [ num_rows, 1 ].max
+      @gap = Gap.new(horizontal_gap, vertical_gap)
     end
 
     def measure_prefered_size(target, prefered_width, size)
@@ -23,9 +24,8 @@ module Ladb::OpenCutList::Kuix
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 
-      gap = target.gap
-      horizontal_gap = gap.horizontal * (@num_cols - 1)
-      vertical_gap = gap.vertical * (@num_rows - 1)
+      horizontal_gap = @gap.horizontal * (@num_cols - 1)
+      vertical_gap = @gap.vertical * (@num_rows - 1)
 
       cell_width = (available_width - horizontal_gap) / @num_cols
       cell_height = (available_height - vertical_gap) / @num_rows
@@ -41,8 +41,8 @@ module Ladb::OpenCutList::Kuix
 
         if layout
           widget.bounds.set(
-            col * (cell_width + gap.horizontal),
-            row * (cell_height + gap.vertical),
+            col * (cell_width + @gap.horizontal),
+            row * (cell_height + @gap.vertical),
             cell_width,
             cell_height
           )
@@ -50,7 +50,7 @@ module Ladb::OpenCutList::Kuix
         else
           prefered_size = widget.get_prefered_size(available_width)
           prefered_cell_width = [ prefered_cell_width, prefered_size.width ].max
-          prefered_cell_height = [ prefered_cell_height, prefered_size.width ].max
+          prefered_cell_height = [ prefered_cell_height, prefered_size.height ].max
         end
 
         col += 1

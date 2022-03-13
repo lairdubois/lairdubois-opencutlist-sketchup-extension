@@ -6,7 +6,7 @@ module Ladb::OpenCutList
   require_relative '../gl/gl_button'
   require_relative '../lib/kuix/kuix'
 
-  class PaintFaceTool
+  class PaintFaceTool < Kuix::KuixTool
 
     include ScreenScaleFactorHelper
 
@@ -16,15 +16,13 @@ module Ladb::OpenCutList
     @@current_material = nil
 
     def initialize
-
-      SKETCHUP_CONSOLE.clear
+      super
 
       model = Sketchup.active_model
       if model
 
-        view = model.active_view
-
         @add = true
+        @selected_button = nil
 
         @materials = []
         model.materials.each do |material|
@@ -53,159 +51,58 @@ module Ladb::OpenCutList
           @cursor_unpaint_id = UI.create_cursor(cursor_path, 7, 25)
         end
 
-        #####
+      end
 
-        @kuix = Kuix::KuixEngine.new(view)
+    end
 
-        canvas = @kuix.canvas
-        canvas.background_color = Sketchup::Color.new(255, 0, 0, 128)
-        canvas.border_color = Sketchup::Color.new(128, 128, 128, 128)
-        canvas.margin.set(10, 10, 200, 10)
-        canvas.border.set(50, 10, 10, 10)
-        canvas.padding.set(10, 10, 10, 10)
-        canvas.layout = Kuix::GridLayout.new(3, 3)
-        canvas.gap.set(10, 10)
+    def setup_widgets
 
-        for i in 0..7
+      @canvas.layout = Kuix::BorderLayout.new
 
-          border = rand(50)
+      buttons = Kuix::Widget.new
+      buttons.padding.set(10, 10, 10, 10)
+      buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      buttons.layout = Kuix::GridLayout.new(@materials.length, 1, 10, 10)
+      buttons.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
+      @canvas.append(buttons)
 
-          w0 = Kuix::Widget.new('w0')
-          w0.background_color = Sketchup::Color.new(rand(255), rand(255), rand(255), 255)
-          w0.border_color = Sketchup::Color.new(rand(255), rand(255), rand(255), 255)
-          w0.border.set(border, border, border, border)
-          canvas.append(w0)
-        end
+      @materials.each do |material|
 
-        w0.layout = Kuix::BorderLayout.new
-        w0.gap.set(20, 20)
+        button = Kuix::Button.new('') { |button|
+          @selected_button.selected = false if @selected_button
+          @selected_button = button
+          @selected_button.selected = true
+          @@current_material = material
+          _update_paint_color
+        }
+        button.min_size.set(0, 100)
+        button.border.set(10, 10, 10, 10)
+        button.set_style_attribute(:background_color, material.color)
+        button.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200), :active)
+        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 0, 100), :hover)
+        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 0, 255), :selected)
+        button.layout = Kuix::GridLayout.new
+        buttons.append(button)
 
-        w1 = Kuix::Label.new('w0')
-        w1.text = 'The NORTH'
-        w1.text_size = 30
-        w1.text_align = TextAlignCenter
-        # w1.text_vertical_align = TextVerticalAlignCenter
-        w1.color = Sketchup::Color.new(200, 0, 0, 255)
-        w1.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        w1.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w1.border_color = Sketchup::Color.new(0, 0 ,0 , 255)
-        w1.border.set(10, 10, 10, 10)
-        w1.min_size.set(50, 50)
-        w1.margin.set(10, 10, 10, 10)
-        w1.padding.set(10, 10, 10, 10)
-        w0.append(w1)
+        label = Kuix::Label.new
+        label.text = material.name
+        button.append(label)
 
-        w2 = Kuix::Widget.new('w0')
-        w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-        w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w2.border_color = Sketchup::Color.new(0, 0 , 255, 255)
-        w2.border.set(10, 10, 10, 10)
-        w2.min_size.set(50, 50)
-        w0.append(w2)
-
-        w2 = Kuix::Label.new('w0')
-        w2.text = "CENTER !"
-        w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w2.border_color = Sketchup::Color.new(255, 0 , 255, 255)
-        w2.border.set(10, 10, 10, 10)
-        w2.min_size.set(50, 50)
-        w0.append(w2)
-
-        w2 = Kuix::Label.new('w0')
-        w2.text = "EAST !"
-        w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-        w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w2.border_color = Sketchup::Color.new(255, 0 , 128, 255)
-        w2.border.set(10, 10, 10, 10)
-        w2.min_size.set(100, 50)
-        w0.append(w2)
-
-        w2 = Kuix::Widget.new('w0')
-        w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-        w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w2.border_color = Sketchup::Color.new(0, 255 , 255, 255)
-        w2.border.set(10, 10, 10, 10)
-        w2.min_size.set(50, 50)
-        w2.layout = Kuix::GridLayout.new(2, 2)
-        w0.append(w2)
-
-        w21 = Kuix::Widget.new('w0')
-        w21.background_color = Sketchup::Color.new(255, 255, 255, 255)
-        w21.border_color = Sketchup::Color.new(0, 255 , 255, 255)
-        w21.border.set(10, 10, 10, 10)
-        w21.min_size.set(50, 50)
-        w2.append(w21)
-
-
-        #####
-
-        # Create buttons
-        @buttons = []
-        @selected_button = nil
-
-        unless @materials.empty?
-
-          button_text_options = {
-            color: COLOR_TEXT,
-            font: FONT_TEXT,
-            size: _screen_scale(Plugin.instance.current_os == :MAC ? 8 : 5),
-            align: TextAlignCenter,
-            y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
-          }
-          button_size = [ _screen_scale(80), view.vpwidth / @materials.length ].min
-          button_x = (view.vpwidth - button_size * (@materials.length - 2)) / 2
-
-          @materials.each do |material|
-            button = GLButton.new(view, material.name, button_x, button_size, button_size - _screen_scale(10), button_size - _screen_scale(10), button_text_options, material.color) do |button, flags, x, y, view|
-              @selected_button.is_selected = false if @selected_button
-              @selected_button = button
-              @selected_button.is_selected = true
-              @@current_material = material
-              _update_paint_color
-            end
-            if material == @@current_material
-              @selected_button = button
-              @selected_button.is_selected = true
-            end
-            @buttons.push(button)
-            button_x += button_size
-          end
-
+        if material == @@current_material
+          @selected_button = button
+          @selected_button.selected = true
         end
 
       end
+
 
     end
 
     # -- Tool stuff --
 
-    def activate
-      model = Sketchup.active_model
-      if model
-
-        # Invalidate view
-        model.active_view.invalidate
-
-        # Retrive pick helper
-        @pick_helper = Sketchup.active_model.active_view.pick_helper
-
-      end
-
-      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
-
-    end
-
     def deactivate(view)
+      super
       onQuit(view)
-    end
-
-    def suspend(view)
-      view.invalidate
-    end
-
-    def resume(view)
-      view.invalidate
     end
 
     def draw(view)
@@ -215,28 +112,28 @@ module Ladb::OpenCutList
         view.draw(GL_TRIANGLES, @triangles)
       end
 
-      # Draw buttons (only if Sketchup > 2016)
-      if Sketchup.version_number >= 16000000
-        @buttons.each { |button|
-          button.draw(view)
-        }
-      end
-
-      @kuix.draw(view)
-
-    end
-
-    def getExtents
-      Sketchup.active_model.bounds
+      super
     end
 
     # -- Events --
+
+    def onActivate(view)
+      super
+
+      # Retrive pick helper
+      @pick_helper = view.pick_helper
+
+      # Set startup cursor
+      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
+
+    end
 
     def onSetCursor
       UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
     end
 
     def onKeyDown(key, repeat, flags, view)
+      return if super
       if key == COPY_MODIFIER_KEY
         @add = false
         view.invalidate
@@ -245,6 +142,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUp(key, repeat, flags, view)
+      return if super
       if key == COPY_MODIFIER_KEY
         @add = true
         view.invalidate
@@ -252,20 +150,8 @@ module Ladb::OpenCutList
       end
     end
 
-    def onLButtonDown(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onLButtonDown(flags, x, y, view)
-          return
-        end
-      }
-    end
-
     def onLButtonUp(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onLButtonUp(flags, x, y, view)
-          return
-        end
-      }
+      return if super
       _pick_hover_face(x, y, view)
       if @hover_face
         @hover_face.material = @add ? @@current_material : nil
@@ -273,20 +159,16 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onMouseMove(flags, x, y, view)
-          return
-        end
-      }
+      if super
+        _reset(view)
+        return
+      end
       _pick_hover_face(x, y, view)
     end
 
     def onMouseLeave(view)
+      return if super
       _reset(view)
-    end
-
-    def onCancel(flag, view)
-      _quit(view)
     end
 
     def onQuit(view)
@@ -294,10 +176,6 @@ module Ladb::OpenCutList
       # Invalidate view
       view.invalidate
 
-    end
-
-    def onViewChanged(view)
-      puts "onViewChanged: #{view}"
     end
 
     private

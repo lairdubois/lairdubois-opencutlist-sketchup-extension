@@ -24,6 +24,10 @@ module Ladb::OpenCutList::Kuix
 
   class BorderLayout
 
+    def initialize(horizontal_gap = 0, vertical_gap = 0)
+      @gap = Gap.new(horizontal_gap, vertical_gap)
+    end
+
     def measure_prefered_size(target, prefered_width, size)
       _compute(target, prefered_width, size, false)
     end
@@ -39,8 +43,6 @@ module Ladb::OpenCutList::Kuix
       insets = target.get_insets
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
-
-      gap = target.gap
 
       top_height = 0
       right_width = 0
@@ -84,10 +86,10 @@ module Ladb::OpenCutList::Kuix
       end
 
       # Compute gap values
-      vertical_top_gap = (!north_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil? || !south_widget.nil?)) ? gap.vertical : 0
-      vertical_bottom_gap = (!south_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil?)) ? gap.vertical : 0
-      horizontal_left_gap = (!west_widget.nil? && (!center_widget.nil? || !east_widget.nil?)) ? gap.horizontal : 0
-      horizontal_right_gap = (!east_widget.nil? && (!center_widget.nil? || !west_widget.nil?)) ? gap.horizontal : 0
+      vertical_top_gap = (!north_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil? || !south_widget.nil?)) ? @gap.vertical : 0
+      vertical_bottom_gap = (!south_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil?)) ? @gap.vertical : 0
+      horizontal_left_gap = (!west_widget.nil? && (!center_widget.nil? || !east_widget.nil?)) ? @gap.horizontal : 0
+      horizontal_right_gap = (!east_widget.nil? && (!center_widget.nil? || !west_widget.nil?)) ? @gap.horizontal : 0
 
       vertical_gap = vertical_top_gap + vertical_bottom_gap
       horizontal_gap = horizontal_left_gap + horizontal_right_gap
