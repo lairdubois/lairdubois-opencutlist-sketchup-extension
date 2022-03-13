@@ -23,7 +23,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy(anchor)
-      Anchor.new(anchor.position)
+      set(anchor.position)
     end
 
     # -- Properties --
