@@ -36,6 +36,8 @@ module Ladb::OpenCutList
           @@current_material = @materials.first
         end
 
+        @materials.sort_by! { |material| [ material.name ] }
+
         @unpaint_color = Sketchup::Color.new(255, 255, 255)
         _update_paint_color
 
@@ -55,14 +57,16 @@ module Ladb::OpenCutList
 
     end
 
-    def setup_widgets
+    def setup_widgets(view)
 
       @canvas.layout = Kuix::BorderLayout.new
 
+      unit = [ view.vpwidth, view.vpheight ].max / 400
+
       buttons = Kuix::Widget.new
-      buttons.padding.set(10, 10, 10, 10)
+      buttons.padding.set(unit, unit, unit, unit)
       buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      buttons.layout = Kuix::GridLayout.new(@materials.length, 1, 10, 10)
+      buttons.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit, unit)
       buttons.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
       @canvas.append(buttons)
 
@@ -75,17 +79,18 @@ module Ladb::OpenCutList
           @@current_material = material
           _update_paint_color
         }
-        button.min_size.set(0, 100)
-        button.border.set(10, 10, 10, 10)
+        button.min_size.set(0, unit * 10)
+        button.border.set(unit, unit, unit, unit)
         button.set_style_attribute(:background_color, material.color)
         button.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200), :active)
         button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 0, 100), :hover)
-        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 0, 255), :selected)
+        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
         button.layout = Kuix::GridLayout.new
         buttons.append(button)
 
         label = Kuix::Label.new
         label.text = material.name
+        label.text_size = unit * 3
         button.append(label)
 
         if material == @@current_material

@@ -42,7 +42,7 @@ module Ladb::OpenCutList
 
       # -- UI stuff --
 
-      def setup_widgets
+      def setup_widgets(view)
         # Override and implement startup widgets here
       end
 
@@ -103,7 +103,7 @@ module Ladb::OpenCutList
         @canvas = Canvas.new(view)
 
         # Setup children widgets
-        setup_widgets
+        setup_widgets(view)
 
         view.invalidate
       end
