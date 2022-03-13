@@ -13,6 +13,14 @@ module Ladb::OpenCutList
     COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     FONT_TEXT = 'Verdana'
 
+    COLOR_MATERIAL_TYPES = {
+      1 => Sketchup::Color.new(76, 175, 80, 255).freeze,
+      2 => Sketchup::Color.new(237, 162, 0, 255).freeze,
+      3 => Sketchup::Color.new(245, 89, 172, 255).freeze,
+      4 => Sketchup::Color.new(102, 142, 238, 255).freeze,
+      5 => Sketchup::Color.new(0, 0, 0, 255).freeze
+    }
+
     @@current_material = nil
 
     def initialize
@@ -26,7 +34,7 @@ module Ladb::OpenCutList
 
         @materials = []
         model.materials.each do |material|
-          material_attributes = MaterialAttributes.new(material)
+          # material_attributes = MaterialAttributes.new(material)
           # if material_attributes.type == MaterialAttributes::TYPE_EDGE  # Filter on EDGE type
             @materials.push(material)
             @@current_material = material if @@current_material.nil? && material == model.materials.current
@@ -61,16 +69,18 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = [ view.vpwidth, view.vpheight ].max / 400
+      unit = view.vpheight / 200
 
       buttons = Kuix::Widget.new
       buttons.padding.set(unit, unit, unit, unit)
       buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      buttons.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit, unit)
-      buttons.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
+      buttons.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
+      buttons.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 255))
       @canvas.append(buttons)
 
       @materials.each do |material|
+
+        material_attributes = MaterialAttributes.new(material)
 
         button = Kuix::Button.new('') { |button|
           @selected_button.selected = false if @selected_button
@@ -82,13 +92,25 @@ module Ladb::OpenCutList
         button.min_size.set(0, unit * 10)
         button.border.set(unit, unit, unit, unit)
         button.set_style_attribute(:background_color, material.color)
-        button.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200), :active)
-        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 0, 100), :hover)
+        button.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(255, 255, 255, 255), 0.8), :active)
+        button.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(0, 0, 0, 255), 0.8), :hover)
         button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
-        button.layout = Kuix::GridLayout.new
+        button.layout = Kuix::StaticLayout.new
         buttons.append(button)
 
+        if material_attributes.type > 0
+
+          overlay = Kuix::Widget.new
+          overlay.layout_data = Kuix::StaticLayoutData.new(1.0, 0, unit * 2, unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
+          overlay.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
+          overlay.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 255))
+          overlay.border.set(0, 0, unit / 2, unit / 2)
+          button.append(overlay)
+
+        end
+
         label = Kuix::Label.new
+        label.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
         label.text = material.name
         label.text_size = unit * 3
         button.append(label)

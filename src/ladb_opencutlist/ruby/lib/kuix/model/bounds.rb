@@ -1,8 +1,5 @@
 module Ladb::OpenCutList::Kuix
 
-  require_relative 'point'
-  require_relative 'size'
-
   class Bounds
 
     TOP_LEFT = 0

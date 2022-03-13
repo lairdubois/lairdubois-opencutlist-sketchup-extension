@@ -283,7 +283,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def hittable?
-      false
+      !@background_color.nil?
     end
 
     # -- Events --

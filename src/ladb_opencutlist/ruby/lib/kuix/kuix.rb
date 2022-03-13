@@ -8,6 +8,7 @@ module Ladb::OpenCutList
     require_relative 'layout/static_layout'
     require_relative 'layout/grid_layout'
 
+    require_relative 'model/anchor'
     require_relative 'model/size'
     require_relative 'model/point'
     require_relative 'model/bounds'
