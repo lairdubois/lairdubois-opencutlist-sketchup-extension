@@ -13,6 +13,19 @@ module Ladb::OpenCutList::Kuix
       @y = y
     end
 
+    def copy(point)
+      set(point.x, point.y)
+    end
+
+    # -- Manipulations --
+
+    def translate(dx, dy)
+      @x += dx
+      @y += dy
+    end
+
+    # --
+
     def to_s
       "#{self.class.name} (x=#{@x}, y=#{@y})"
     end

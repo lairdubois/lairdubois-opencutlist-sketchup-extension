@@ -14,25 +14,31 @@ module Ladb::OpenCutList::Kuix
       @position = position
     end
 
+    # --
+
+    def to_s
+      "#{self.class.name} (position=#{@position})"
+    end
+
   end
 
   class BorderLayout
 
     def measure_prefered_size(target, prefered_width, size)
-      _measure(target, prefered_width, size, false)
+      _compute(target, prefered_width, size, false)
     end
 
     def do_layout(target)
-      _measure(target, target.width, nil, true)
+      _compute(target, target.bounds.width, nil, true)
     end
 
     # -- Internals --
 
-    def _measure(target, preferred_width, size, layout)
+    def _compute(target, preferred_width, size, layout)
 
       insets = target.get_insets
       available_width = preferred_width - insets.left - insets.right
-      available_height = target.height - insets.top - insets.bottom
+      available_height = target.bounds.height - insets.top - insets.bottom
 
       gap = target.gap
 
@@ -65,7 +71,9 @@ module Ladb::OpenCutList::Kuix
           when BorderLayoutData::SOUTH
             south_widget = widget
           else
-            center_widget = widget
+            if center_widget.nil?
+              center_widget = widget
+            end
           end
 
         elsif center_widget.nil?
@@ -126,46 +134,56 @@ module Ladb::OpenCutList::Kuix
 
         # Center
         if center_widget
-          center_widget.x = left_width + horizontal_left_gap
-          center_widget.y = top_height + vertical_top_gap
-          center_widget.width = center_width
-          center_widget.height = center_height
+          center_widget.bounds.set(
+            left_width + horizontal_left_gap,
+            top_height + vertical_top_gap,
+            center_width,
+            center_height
+          )
           center_widget.do_layout
         end
 
         # North
         if north_widget
-          north_widget.x = 0
-          north_widget.y = 0
-          north_widget.width = available_width
-          north_widget.height = top_height
+          north_widget.bounds.set(
+            0,
+            0,
+            available_width,
+            top_height
+          )
           north_widget.do_layout
         end
 
         # West
         if west_widget
-          west_widget.x = 0
-          west_widget.y = top_height + vertical_top_gap
-          west_widget.width = left_width
-          west_widget.height = center_height
+          west_widget.bounds.set(
+            0,
+            top_height + vertical_top_gap,
+            left_width,
+            center_height
+          )
           west_widget.do_layout
         end
 
         # East
         if east_widget
-          east_widget.x = available_width - right_width
-          east_widget.y = top_height + vertical_top_gap
-          east_widget.width = right_width
-          east_widget.height = center_height
+          east_widget.bounds.set(
+            available_width - right_width,
+            top_height + vertical_top_gap,
+            right_width,
+            center_height
+          )
           east_widget.do_layout
         end
 
         # South
         if south_widget
-          south_widget.x = 0
-          south_widget.y = available_height - bottom_height
-          south_widget.width = available_width
-          south_widget.height = bottom_height
+          south_widget.bounds.set(
+            0,
+            available_height - bottom_height,
+            available_width,
+            bottom_height
+          )
           south_widget.do_layout
         end
 

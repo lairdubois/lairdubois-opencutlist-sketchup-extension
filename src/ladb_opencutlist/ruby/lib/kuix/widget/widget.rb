@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Kuix
   class Widget
 
     attr_accessor :id
-    attr_accessor :x, :y, :width, :height
+    attr_reader :bounds
     attr_reader :margin, :border, :padding, :gap
     attr_reader :min_size
     attr_accessor :background_color, :border_color, :color
@@ -14,10 +14,7 @@ module Ladb::OpenCutList::Kuix
 
       @id = id
 
-      @x = 0
-      @y = 0
-      @width = 0
-      @height = 0
+      @bounds = Bounds.new
 
       @margin = Inset.new
       @border = Inset.new
@@ -44,10 +41,6 @@ module Ladb::OpenCutList::Kuix
 
     end
 
-    def to_s
-      "#{self.class.name} (id=#{@id}, x=#{x}, y=#{y}, width=#{width}, height=#{height})"
-    end
-
     # --
 
     def get_insets
@@ -56,6 +49,14 @@ module Ladb::OpenCutList::Kuix
         @margin.right + @border.right + @padding.right,
         @margin.bottom + @border.bottom + @padding.bottom,
         @margin.left + @border.left + @padding.left
+      )
+    end
+
+    def get_content_size
+      insets = get_insets
+      Size.new(
+        @bounds.size.width - insets.left - insets.right,
+        @bounds.size.height - insets.top - insets.bottom,
       )
     end
 
@@ -135,15 +136,15 @@ module Ladb::OpenCutList::Kuix
 
     # -- Layout --
 
+    def is_invalidated?
+      @invalidated
+    end
+
     def invalidate
       @invalidated = true
       if @parent && !@parent.is_invalidated?
         @parent.invalidate
       end
-    end
-
-    def is_invalidated?
-      @invalidated
     end
 
     def do_layout
@@ -157,7 +158,7 @@ module Ladb::OpenCutList::Kuix
 
     def paint(graphics)
 
-      graphics.translate(@x + @margin.left, @y + @margin.top)
+      graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
       paint_border(graphics)
 
       graphics.translate(@border.left, @border.top)
@@ -166,7 +167,7 @@ module Ladb::OpenCutList::Kuix
       graphics.translate(@padding.left, @padding.top)
       paint_content(graphics)
 
-      graphics.translate(-@x - @margin.left - @border.left - @padding.left, -@y - @margin.top - @border.top - @padding.top)
+      graphics.translate(-@bounds.x - @margin.left - @border.left - @padding.left, -@bounds.y - @margin.top - @border.top - @padding.top)
       paint_sibling(graphics)
 
     end
@@ -174,8 +175,8 @@ module Ladb::OpenCutList::Kuix
     def paint_border(graphics)
       if @border_color
 
-        width = @width - @margin.left - @margin.right
-        height = @height - @margin.top - @margin.bottom
+        width = @bounds.width - @margin.left - @margin.right
+        height = @bounds.height - @margin.top - @margin.bottom
 
         graphics.set_drawing_color(@border_color)
         graphics.draw_rect(0, 0, width - @border.right, @border.top)
@@ -188,8 +189,8 @@ module Ladb::OpenCutList::Kuix
     def paint_background(graphics)
       if @background_color
 
-        width = @width - @margin.left - @border.left - @margin.right - @border.right
-        height = @height - @margin.top - @border.top - @margin.bottom - @border.bottom
+        width = @bounds.width - @margin.left - @border.left - @margin.right - @border.right
+        height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
 
         graphics.draw_rect(0, 0, width, height, @background_color)
       end
@@ -205,6 +206,12 @@ module Ladb::OpenCutList::Kuix
       if @next
         @next.paint(graphics)
       end
+    end
+
+    # --
+
+    def to_s
+      "#{self.class.name} (id=#{@id}, bounds=#{@bounds})"
     end
 
   end

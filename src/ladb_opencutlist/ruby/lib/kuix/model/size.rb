@@ -13,12 +13,20 @@ module Ladb::OpenCutList::Kuix
       @height = height
     end
 
-    def to_s
-      "#{self.class.name} (width=#{@width}, height=#{@height})"
+    def copy(size)
+      set(size.width, size.height)
     end
+
+    # -- Tests --
 
     def is_empty?
       @width == 0 || @height == 0
+    end
+
+    # --
+
+    def to_s
+      "#{self.class.name} (width=#{@width}, height=#{@height})"
     end
 
   end

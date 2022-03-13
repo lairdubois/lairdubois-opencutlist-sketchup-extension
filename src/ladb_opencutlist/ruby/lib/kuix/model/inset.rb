@@ -15,6 +15,12 @@ module Ladb::OpenCutList::Kuix
       @left = left
     end
 
+    def copy(inset)
+      set(inset.top, inset.right, inset.bottom, inset.left)
+    end
+
+    # --
+
     def to_s
       "#{self.class.name} (top=#{@top}, right=#{@right}, bottom=#{@bottom}, left=#{@left})"
     end

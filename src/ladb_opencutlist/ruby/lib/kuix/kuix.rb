@@ -10,7 +10,7 @@ module Ladb::OpenCutList
 
     require_relative 'model/size'
     require_relative 'model/point'
-    require_relative 'model/metrics'
+    require_relative 'model/bounds'
     require_relative 'model/inset'
     require_relative 'model/gap'
 
@@ -31,13 +31,12 @@ module Ladb::OpenCutList
       def draw(view)
 
         # Check if viewport has changed
-        if view.vpwidth != @canvas.width || view.vpheight != @canvas.height
-          @canvas.width = view.vpwidth
-          @canvas.height = view.vpheight
+        if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
+          @canvas.bounds.set(0, 0, view.vpwidth, view.vpheight)
           @canvas.do_layout
         end
 
-        # Check if canvas need to be revelidated
+        # Check if canvas need to be revalidated
         if @canvas.is_invalidated?
           @canvas.do_layout
         end

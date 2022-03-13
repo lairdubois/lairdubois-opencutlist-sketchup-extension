@@ -1,19 +1,19 @@
 module Ladb::OpenCutList::Kuix
 
-  require_relative '../model/metrics'
+  require_relative '../model/bounds'
 
   class Graphics
 
     def initialize(view)
       @view = view
-      @x = 0
-      @y = 0
+      @origin = Point.new
     end
 
-    def translate(x, y)
-      @x += x
-      @y += y
+    def translate(dx, dy)
+      @origin.translate(dx, dy)
     end
+
+    # -- Drawing --
 
     def set_drawing_color(color)
       @view.drawing_color = color
@@ -23,9 +23,9 @@ module Ladb::OpenCutList::Kuix
       if background_color
         set_drawing_color(background_color)
       end
-      @view.draw2d(GL_QUADS, Metrics.new(
-        @x + x,
-        @y + y,
+      @view.draw2d(GL_QUADS, Bounds.new(
+        @origin.x + x,
+        @origin.y + y,
         width,
         height
       ).get_points)
@@ -48,8 +48,7 @@ module Ladb::OpenCutList::Kuix
       if color
         set_drawing_color(color)
       end
-      puts "draw_text text=#{text}"
-      @view.draw_text(Geom::Point3d.new(@x + x, @y + y, 0), text, text_options)
+      @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
     end
 
   end

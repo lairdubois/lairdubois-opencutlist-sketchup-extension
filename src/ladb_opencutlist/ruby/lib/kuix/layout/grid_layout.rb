@@ -8,20 +8,20 @@ module Ladb::OpenCutList::Kuix
     end
 
     def measure_prefered_size(target, prefered_width, size)
-      _measure(target, prefered_width, size, false)
+      _compute(target, prefered_width, size, false)
     end
 
     def do_layout(target)
-      _measure(target, target.width, nil, true)
+      _compute(target, target.bounds.width, nil, true)
     end
 
     # -- Internals --
 
-    def _measure(target, preferred_width, size, layout)
+    def _compute(target, preferred_width, size, layout)
 
       insets = target.get_insets
       available_width = preferred_width - insets.left - insets.right
-      available_height = target.height - insets.top - insets.bottom
+      available_height = target.bounds.height - insets.top - insets.bottom
 
       gap = target.gap
       horizontal_gap = gap.horizontal * (@num_cols - 1)
@@ -40,10 +40,12 @@ module Ladb::OpenCutList::Kuix
       until widget.nil?
 
         if layout
-          widget.x = col * (cell_width + gap.horizontal)
-          widget.y = row * (cell_height + gap.vertical)
-          widget.width = cell_width
-          widget.height = cell_height
+          widget.bounds.set(
+            col * (cell_width + gap.horizontal),
+            row * (cell_height + gap.vertical),
+            cell_width,
+            cell_height
+          )
           widget.do_layout
         else
           prefered_size = widget.get_prefered_size(available_width)

@@ -81,13 +81,18 @@ module Ladb::OpenCutList
         w0.gap.set(20, 20)
 
         w1 = Kuix::Label.new('w0')
-        w1.text = 'COUCOU'
-        w1.color = Sketchup::Color.new(0, 0, 0, 255)
+        w1.text = 'The NORTH'
+        w1.text_size = 30
+        w1.text_align = TextAlignCenter
+        # w1.text_vertical_align = TextVerticalAlignCenter
+        w1.color = Sketchup::Color.new(200, 0, 0, 255)
         w1.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
         w1.background_color = Sketchup::Color.new(255, 255, 255, 255)
         w1.border_color = Sketchup::Color.new(0, 0 ,0 , 255)
         w1.border.set(10, 10, 10, 10)
         w1.min_size.set(50, 50)
+        w1.margin.set(10, 10, 10, 10)
+        w1.padding.set(10, 10, 10, 10)
         w0.append(w1)
 
         w2 = Kuix::Widget.new('w0')
@@ -98,7 +103,8 @@ module Ladb::OpenCutList
         w2.min_size.set(50, 50)
         w0.append(w2)
 
-        w2 = Kuix::Widget.new('w0')
+        w2 = Kuix::Label.new('w0')
+        w2.text = "CENTER !"
         w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
         w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
         w2.border_color = Sketchup::Color.new(255, 0 , 255, 255)
@@ -106,12 +112,13 @@ module Ladb::OpenCutList
         w2.min_size.set(50, 50)
         w0.append(w2)
 
-        w2 = Kuix::Widget.new('w0')
+        w2 = Kuix::Label.new('w0')
+        w2.text = "EAST !"
         w2.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
         w2.background_color = Sketchup::Color.new(255, 255, 255, 255)
         w2.border_color = Sketchup::Color.new(255, 0 , 128, 255)
         w2.border.set(10, 10, 10, 10)
-        w2.min_size.set(50, 50)
+        w2.min_size.set(100, 50)
         w0.append(w2)
 
         w2 = Kuix::Widget.new('w0')

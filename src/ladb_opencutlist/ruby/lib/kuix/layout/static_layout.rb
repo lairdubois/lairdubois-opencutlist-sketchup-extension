@@ -11,6 +11,8 @@ module Ladb::OpenCutList::Kuix
       @height = height
     end
 
+    # --
+
     def to_s
       "#{self.class.name} (x=#{@x}, y=#{@y}, width=#{@width}, height=#{@height})"
     end
@@ -20,65 +22,63 @@ module Ladb::OpenCutList::Kuix
   class StaticLayout
 
     def measure_prefered_size(target, prefered_width, size)
-      _measure(target, prefered_width, size, false)
+      _compute(target, prefered_width, size, false)
     end
 
     def do_layout(target)
-      _measure(target, target.width, nil, true)
+      _compute(target, target.bounds.width, nil, true)
     end
 
     # -- Internals --
 
-    def _measure(target, preferred_width, size, layout)
+    def _compute(target, preferred_width, size, layout)
 
       insets = target.get_insets
       available_width = preferred_width - insets.left - insets.right
-      available_height = target.height - insets.top - insets.bottom
+      available_height = target.bounds.height - insets.top - insets.bottom
 
-      content_metrics = Metrics.new
+      content_bounds = Bounds.new
 
       widget = target.child
       until widget.nil?
 
         preferred_size = widget.get_prefered_size(available_width)
+        widget_bounds = Bounds.new
 
         if widget.layout_data && widget.layout_data.is_a?(StaticLayoutData)
-          widget_x = widget.layout_data.x
-          widget_y = widget.layout_data.y
+          widget_bounds.origin.x = widget.layout_data.x
+          widget_bounds.origin.y = widget.layout_data.y
           if widget.layout_data.width < 0
-            widget_width = preferred_size.width
+            widget_bounds.size.width = preferred_size.width
           else
-            widget_width = [ widget.layout_data.width, preferred_size.width ].max
+            widget_bounds.size.width = [ widget.layout_data.width, preferred_size.width ].max
           end
           if widget.layout_data.height < 0
-            widget_height = preferred_size.height
+            widget_bounds.size.height = preferred_size.height
           else
-            widget_height = [ widget.layout_data.height, preferred_size.height ].max
+            widget_bounds.size.height = [ widget.layout_data.height, preferred_size.height ].max
           end
         else
-          widget_x = 0
-          widget_y = 0
-          widget_width = preferred_size.width
-          widget_height = preferred_size.height
+          widget_bounds.origin.x = 0
+          widget_bounds.origin.y = 0
+          widget_bounds.size.width = preferred_size.width
+          widget_bounds.size.height = preferred_size.height
         end
 
         if layout
-          widget.x = widget_x
-          widget.y = widget_y
-          widget.width = widget_width
-          widget.height = widget_height
+          widget.bounds.copy(widget_bounds)
           widget.do_layout
         end
 
-        content_metrics.add(widget_x, widget_y, widget_width, widget_height)
+        content_bounds.union(widget_bounds)
 
         widget = widget.next
       end
 
       unless layout
         size.set(
-          insets.left + [ target.min_size.width, content_metrics.width ].max + insets.right,
-          insets.top + [ target.min_size.height, content_metrics.height ].max + insets.bottom
+          insets.left + [ target.min_size.width, content_bounds.width ].max + insets.right,
+          insets.top + [ target.min_size.height, content_bounds.height ].max + insets.bottom
         )
       end
 

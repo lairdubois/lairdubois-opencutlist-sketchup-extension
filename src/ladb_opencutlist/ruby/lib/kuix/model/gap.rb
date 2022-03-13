@@ -13,6 +13,12 @@ module Ladb::OpenCutList::Kuix
       @vertical = vertical
     end
 
+    def copy(gap)
+      set(gap.horizontal, gap.vertical)
+    end
+
+    # --
+
     def to_s
       "#{self.class.name} (horizontal=#{@horizontal}, vertical=#{@vertical})"
     end
