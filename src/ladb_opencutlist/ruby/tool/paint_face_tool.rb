@@ -92,7 +92,7 @@ module Ladb::OpenCutList
       @materials.each do |material|
 
         material_attributes = MaterialAttributes.new(material)
-        material_color_is_dark = (material.color.red + material.color.green + material.color.blue) < 300
+        material_color_is_dark = (0.2126 * material.color.red + 0.7152 * material.color.green + 0.0722 * material.color.blue) < 128
 
         button = Kuix::Button.new
         button.min_size.set(0, unit * 10)

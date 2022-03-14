@@ -81,7 +81,7 @@ module Ladb::OpenCutList::Kuix
 
     def paint_content(graphics)
       super
-      graphics.draw_text(@text_point.x, @text_point.y, @text, @text_options, @color)
+      graphics.draw_text(@text_point.x, @text_point.y, @text, @text_options)
     end
 
   end
