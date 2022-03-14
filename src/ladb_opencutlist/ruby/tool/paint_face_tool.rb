@@ -69,33 +69,54 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = view.vpheight / 200
+      unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
+
+      south = Kuix::Widget.new
+      south.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      south.layout = Kuix::BorderLayout.new(0, unit)
+      south.padding.set(unit, unit, unit, unit)
+      south.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+      @canvas.append(south)
+
+      label = Kuix::Label.new
+      label.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      label.text_size = unit * 3
+      label.visible = false
+      south.append(label)
 
       buttons = Kuix::Widget.new
-      buttons.padding.set(unit, unit, unit, unit)
-      buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       buttons.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
-      buttons.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 255))
-      @canvas.append(buttons)
+      south.append(buttons)
 
       @materials.each do |material|
 
         material_attributes = MaterialAttributes.new(material)
+        material_color_is_dark = (material.color.red + material.color.green + material.color.blue) < 300
 
-        button = Kuix::Button.new('') { |button|
+        button = Kuix::Button.new
+        button.min_size.set(0, unit * 10)
+        button.border.set(unit, unit, unit, unit)
+        button.set_style_attribute(:background_color, material.color)
+        button.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new('white'), 0.8), :active)
+        button.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
+        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
+        button.layout = Kuix::StaticLayout.new
+        button.on(:click) { |button|
           @selected_button.selected = false if @selected_button
           @selected_button = button
           @selected_button.selected = true
           @@current_material = material
           _update_paint_color
         }
-        button.min_size.set(0, unit * 10)
-        button.border.set(unit, unit, unit, unit)
-        button.set_style_attribute(:background_color, material.color)
-        button.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(255, 255, 255, 255), 0.8), :active)
-        button.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(0, 0, 0, 255), 0.8), :hover)
-        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
-        button.layout = Kuix::StaticLayout.new
+        button.on(:enter) { |button|
+          label.text = material.name + (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
+          label.visible = true
+        }
+        button.on(:leave) { |button|
+          label.text = ''
+          label.visible = false
+        }
         buttons.append(button)
 
         if material_attributes.type > 0
@@ -103,17 +124,20 @@ module Ladb::OpenCutList
           overlay = Kuix::Widget.new
           overlay.layout_data = Kuix::StaticLayoutData.new(1.0, 0, unit * 2, unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
           overlay.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
-          overlay.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 255))
+          overlay.set_style_attribute(:border_color, Sketchup::Color.new('white'))
           overlay.border.set(0, 0, unit / 2, unit / 2)
           button.append(overlay)
 
         end
 
-        label = Kuix::Label.new
-        label.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
-        label.text = material.name
-        label.text_size = unit * 3
-        button.append(label)
+        btn_label = Kuix::Label.new
+        btn_label.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
+        btn_label.text = material.name.length > 12 ? "#{material.name[0..11]}..." : material.name
+        btn_label.text_size = unit * 3
+        if material_color_is_dark
+          btn_label.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255, 255))
+        end
+        button.append(btn_label)
 
         if material == @@current_material
           @selected_button = button

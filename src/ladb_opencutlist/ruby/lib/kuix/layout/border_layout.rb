@@ -60,28 +60,30 @@ module Ladb::OpenCutList::Kuix
       # Loop on children
       widget = target.child
       until widget.nil?
+        if widget.visible?
 
-        if widget.layout_data && widget.layout_data.is_a?(BorderLayoutData)
+          if widget.layout_data && widget.layout_data.is_a?(BorderLayoutData)
 
-          case widget.layout_data.position
-          when BorderLayoutData::NORTH
-            north_widget = widget
-          when BorderLayoutData::WEST
-            west_widget = widget
-          when BorderLayoutData::EAST
-            east_widget = widget
-          when BorderLayoutData::SOUTH
-            south_widget = widget
-          else
-            if center_widget.nil?
-              center_widget = widget
+            case widget.layout_data.position
+            when BorderLayoutData::NORTH
+              north_widget = widget
+            when BorderLayoutData::WEST
+              west_widget = widget
+            when BorderLayoutData::EAST
+              east_widget = widget
+            when BorderLayoutData::SOUTH
+              south_widget = widget
+            else
+              if center_widget.nil?
+                center_widget = widget
+              end
             end
+
+          elsif center_widget.nil?
+            center_widget = widget
           end
 
-        elsif center_widget.nil?
-          center_widget = widget
         end
-
         widget = widget.next
       end
 

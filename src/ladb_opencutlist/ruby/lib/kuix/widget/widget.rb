@@ -44,6 +44,8 @@ module Ladb::OpenCutList::Kuix
       @layout = nil
       @layout_data = nil
 
+      @visible = true
+
     end
 
     # --
@@ -183,13 +185,22 @@ module Ladb::OpenCutList::Kuix
 
     # -- Layout --
 
-    def is_invalidated?
+    def visible=(value)
+      @visible = value
+      invalidate
+    end
+
+    def visible?
+      @visible
+    end
+
+    def invalidated?
       @invalidated
     end
 
     def invalidate
       @invalidated = true
-      if @parent && !@parent.is_invalidated?
+      if @parent && !@parent.invalidated?
         @parent.invalidate
       end
     end
@@ -206,16 +217,21 @@ module Ladb::OpenCutList::Kuix
 
     def paint(graphics)
 
-      graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
-      paint_border(graphics)
+      if @visible
 
-      graphics.translate(@border.left, @border.top)
-      paint_background(graphics)
+        graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
+        paint_border(graphics)
 
-      graphics.translate(@padding.left, @padding.top)
-      paint_content(graphics)
+        graphics.translate(@border.left, @border.top)
+        paint_background(graphics)
 
-      graphics.translate(-@bounds.x - @margin.left - @border.left - @padding.left, -@bounds.y - @margin.top - @border.top - @padding.top)
+        graphics.translate(@padding.left, @padding.top)
+        paint_content(graphics)
+
+        graphics.translate(-@bounds.x - @margin.left - @border.left - @padding.left, -@bounds.y - @margin.top - @border.top - @padding.top)
+
+      end
+
       paint_sibling(graphics)
 
     end
@@ -266,7 +282,7 @@ module Ladb::OpenCutList::Kuix
         @bounds.size.width - @margin.left - @margin.right,
         @bounds.size.height - @margin.top - @margin.bottom
       )
-      if hit_bounds.inside?(x, y)
+      if @visible && hit_bounds.inside?(x, y)
         if @child
           widget = @child.hit_widget(
             x - hit_bounds.origin.x - @border.left - @padding.left,

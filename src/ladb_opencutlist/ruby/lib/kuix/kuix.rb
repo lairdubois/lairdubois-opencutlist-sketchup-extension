@@ -83,7 +83,7 @@ module Ladb::OpenCutList
         end
 
         # Check if canvas need to be revalidated
-        if @canvas.is_invalidated?
+        if @canvas.invalidated?
           @canvas.do_layout
         end
 

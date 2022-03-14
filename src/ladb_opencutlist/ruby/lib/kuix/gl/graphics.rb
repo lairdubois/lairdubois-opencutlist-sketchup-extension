@@ -45,9 +45,6 @@ module Ladb::OpenCutList::Kuix
     end
 
     def draw_text(x, y, text, text_options, color = nil)
-      if color
-        set_drawing_color(color)
-      end
       @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
     end
 

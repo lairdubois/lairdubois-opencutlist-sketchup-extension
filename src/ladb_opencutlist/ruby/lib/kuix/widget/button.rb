@@ -2,12 +2,13 @@ module Ladb::OpenCutList::Kuix
 
   class Button < Widget
 
+    attr_accessor :on_mouse_enter, :on_mouse_leave
     attr_accessor :selected
 
-    def initialize(id = nil, &on_click)
+    def initialize(id = nil)
       super(id)
 
-      @on_click = on_click
+      @handlers = {}
 
       @selected = false
 
@@ -32,11 +33,29 @@ module Ladb::OpenCutList::Kuix
 
     # -- Events --
 
+    def on(event, &block)
+      @handlers[event] = block
+    end
+
+    def fire(event, params = nil)
+      if @handlers[event]
+        @handlers[event].call(self, params)
+      end
+    end
+
+    def onMouseEnter(flags)
+      super
+      fire(:enter, flags)
+    end
+
+    def onMouseLeave
+      super
+      fire(:leave)
+    end
+
     def onMouseClick(flags)
       super
-      if @on_click
-        @on_click.call(self)
-      end
+      fire(:click, flags)
     end
 
 

@@ -38,30 +38,32 @@ module Ladb::OpenCutList::Kuix
       # Loop on children
       widget = target.child
       until widget.nil?
+        if widget.visible?
 
-        if layout
-          widget.bounds.set(
-            col * (cell_width + @gap.horizontal),
-            row * (cell_height + @gap.vertical),
-            cell_width,
-            cell_height
-          )
-          widget.do_layout
-        else
-          prefered_size = widget.get_prefered_size(available_width)
-          prefered_cell_width = [ prefered_cell_width, prefered_size.width ].max
-          prefered_cell_height = [ prefered_cell_height, prefered_size.height ].max
-        end
-
-        col += 1
-        if col >= @num_cols
-          col = 0
-          row += 1
-          if row >= @num_rows
-            break
+          if layout
+            widget.bounds.set(
+              col * (cell_width + @gap.horizontal),
+              row * (cell_height + @gap.vertical),
+              cell_width,
+              cell_height
+            )
+            widget.do_layout
+          else
+            prefered_size = widget.get_prefered_size(available_width)
+            prefered_cell_width = [ prefered_cell_width, prefered_size.width ].max
+            prefered_cell_height = [ prefered_cell_height, prefered_size.height ].max
           end
-        end
 
+          col += 1
+          if col >= @num_cols
+            col = 0
+            row += 1
+            if row >= @num_rows
+              break
+            end
+          end
+
+        end
         widget = widget.next
       end
 
