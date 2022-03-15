@@ -2,7 +2,6 @@ module Ladb::OpenCutList::Kuix
 
   class Button < Widget
 
-    attr_accessor :on_mouse_enter, :on_mouse_leave
     attr_accessor :selected
 
     def initialize(id = nil)
@@ -23,12 +22,6 @@ module Ladb::OpenCutList::Kuix
       else
         deactivate_pseudo_class(:selected)
       end
-    end
-
-    # -- Hit --
-
-    def hittable?
-      true
     end
 
     # -- Events --

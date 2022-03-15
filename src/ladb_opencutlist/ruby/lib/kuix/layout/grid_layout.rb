@@ -20,7 +20,7 @@ module Ladb::OpenCutList::Kuix
 
     def _compute(target, preferred_width, size, layout)
 
-      insets = target.get_insets
+      insets = target.insets
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 

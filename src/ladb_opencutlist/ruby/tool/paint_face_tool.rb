@@ -50,16 +50,8 @@ module Ladb::OpenCutList
         _update_paint_color
 
         # Create cursors
-        @cursor_paint_id = nil
-        cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-paint.pdf')
-        if cursor_path
-          @cursor_paint_id = UI.create_cursor(cursor_path, 7, 25)
-        end
-        @cursor_unpaint_id = nil
-        cursor_path = File.join(__dir__, '..', '..', 'img', 'cursor-unpaint.pdf')
-        if cursor_path
-          @cursor_unpaint_id = UI.create_cursor(cursor_path, 7, 25)
-        end
+        @cursor_paint_id = create_cursor('paint', 7, 25)
+        @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
 
       end
 
@@ -71,76 +63,77 @@ module Ladb::OpenCutList
 
       unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
 
-      south = Kuix::Widget.new
-      south.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      south.layout = Kuix::BorderLayout.new(0, unit)
-      south.padding.set(unit, unit, unit, unit)
-      south.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      @canvas.append(south)
+      south_wid = Kuix::Widget.new
+      south_wid.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      south_wid.layout = Kuix::BorderLayout.new(0, unit)
+      south_wid.padding.set(unit, unit, unit, unit)
+      south_wid.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+      @canvas.append(south_wid)
 
-      label = Kuix::Label.new
-      label.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      label.text_size = unit * 3
-      label.visible = false
-      south.append(label)
+      status_lbl = Kuix::Label.new
+      status_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      status_lbl.text_size = unit * 3
+      status_lbl.visible = false
+      south_wid.append(status_lbl)
 
-      buttons = Kuix::Widget.new
-      buttons.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      buttons.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
-      south.append(buttons)
+      btns_wid = Kuix::Widget.new
+      btns_wid.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      btns_wid.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
+      south_wid.append(btns_wid)
 
       @materials.each do |material|
 
         material_attributes = MaterialAttributes.new(material)
-        material_color_is_dark = (0.2126 * material.color.red + 0.7152 * material.color.green + 0.0722 * material.color.blue) < 128
+        material_color_is_dark = (0.2126 * material.color.red + 0.7152 * material.color.green + 0.0722 * material.color.blue) <= 128
 
-        button = Kuix::Button.new
-        button.min_size.set(0, unit * 10)
-        button.border.set(unit, unit, unit, unit)
-        button.set_style_attribute(:background_color, material.color)
-        button.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new('white'), 0.8), :active)
-        button.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
-        button.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
-        button.layout = Kuix::StaticLayout.new
-        button.on(:click) { |button|
+        btn = Kuix::Button.new
+        btn.min_size.set(0, unit * 10)
+        btn.border.set(unit, unit, unit, unit)
+        btn.set_style_attribute(:background_color, material.color)
+        btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new('white'), 0.8), :active)
+        btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
+        btn.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255, 255), :selected)
+        btn.layout = Kuix::StaticLayout.new
+        btn.on(:click) { |button|
           @selected_button.selected = false if @selected_button
           @selected_button = button
           @selected_button.selected = true
           @@current_material = material
           _update_paint_color
         }
-        button.on(:enter) { |button|
-          label.text = material.name + (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
-          label.visible = true
+        btn.on(:enter) { |button|
+          status_lbl.text = material.name + (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
+          status_lbl.visible = true
         }
-        button.on(:leave) { |button|
-          label.text = ''
-          label.visible = false
+        btn.on(:leave) { |button|
+          status_lbl.text = ''
+          status_lbl.visible = false
         }
-        buttons.append(button)
+        btns_wid.append(btn)
 
         if material_attributes.type > 0
 
-          overlay = Kuix::Widget.new
-          overlay.layout_data = Kuix::StaticLayoutData.new(1.0, 0, unit * 2, unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
-          overlay.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
-          overlay.set_style_attribute(:border_color, Sketchup::Color.new('white'))
-          overlay.border.set(0, 0, unit / 2, unit / 2)
-          button.append(overlay)
+          overlay_wid = Kuix::Widget.new
+          overlay_wid.layout_data = Kuix::StaticLayoutData.new(1.0, 0, unit * 2, unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
+          overlay_wid.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
+          overlay_wid.set_style_attribute(:border_color, Sketchup::Color.new('white'))
+          overlay_wid.border.set(0, 0, unit / 2, unit / 2)
+          overlay_wid.hittable = false
+          btn.append(overlay_wid)
 
         end
 
-        btn_label = Kuix::Label.new
-        btn_label.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
-        btn_label.text = material.name.length > 12 ? "#{material.name[0..11]}..." : material.name
-        btn_label.text_size = unit * 3
+        btn_lbl = Kuix::Label.new
+        btn_lbl.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
+        btn_lbl.text = material.name.length > 12 ? "#{material.name[0..11]}..." : material.name
+        btn_lbl.text_size = unit * 3
         if material_color_is_dark
-          btn_label.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255, 255))
+          btn_lbl.set_style_attribute(:color, Sketchup::Color.new('white'))
         end
-        button.append(btn_label)
+        btn.append(btn_lbl)
 
         if material == @@current_material
-          @selected_button = button
+          @selected_button = btn
           @selected_button.selected = true
         end
 
@@ -171,24 +164,20 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
+      # Set startup cursor
+      set_root_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
+
       # Retrive pick helper
       @pick_helper = view.pick_helper
 
-      # Set startup cursor
-      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
-
-    end
-
-    def onSetCursor
-      UI.set_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
     end
 
     def onKeyDown(key, repeat, flags, view)
       return if super
       if key == COPY_MODIFIER_KEY
         @add = false
+        set_root_cursor(@cursor_unpaint_id)
         view.invalidate
-        UI.set_cursor(@cursor_unpaint_id)
       end
     end
 
@@ -196,8 +185,8 @@ module Ladb::OpenCutList
       return if super
       if key == COPY_MODIFIER_KEY
         @add = true
+        set_root_cursor(@cursor_paint_id)
         view.invalidate
-        UI.set_cursor(@cursor_paint_id)
       end
     end
 
@@ -237,13 +226,6 @@ module Ladb::OpenCutList
         @triangles = nil
         view.invalidate
       end
-    end
-
-    def _quit(view)
-
-      # Unselect tool
-      view.model.select_tool(nil)  # Desactivate the tool on click
-
     end
 
     def _get_color_from_path(path)

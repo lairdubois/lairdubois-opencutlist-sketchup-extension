@@ -61,7 +61,7 @@ module Ladb::OpenCutList::Kuix
       super
 
       # Compute text point
-      content_size = get_content_size
+      content_size = self.content_size
       content_bounds = Bounds.new(0, 0, content_size.width, content_size.height)
       case @text_options[:align]
       when TextAlignCenter

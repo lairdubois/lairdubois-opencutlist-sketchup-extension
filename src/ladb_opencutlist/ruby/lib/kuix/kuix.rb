@@ -36,6 +36,11 @@ module Ladb::OpenCutList
         # Determine if the tool is deactiveted when the user undo last action
         @quit_on_undo = quit_on_undo
 
+        @cursor_select_id = create_cursor('select', 4, 7)
+        @cursors = [ @cursor_select_id ]
+
+        # Internals
+
         @mouse_down_widget = nil
         @mouse_hover_widget = nil
 
@@ -45,6 +50,30 @@ module Ladb::OpenCutList
 
       def setup_widgets(view)
         # Override and implement startup widgets here
+      end
+
+      def create_cursor(name, hot_x, hot_y)
+        cursor_id = nil
+        cursor_path = File.join(__dir__, '..', '..', '..', 'img', "cursor-#{name}.#{Plugin.instance.current_os == :MAC ? 'pdf' : 'svg'}")
+        if cursor_path
+          cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y)
+        end
+        cursor_id
+      end
+
+      def set_root_cursor(cursor_id)
+        @cursors[0] = cursor_id
+        onSetCursor
+      end
+
+      def push_cursor(cursor_id)
+        @cursors.push(cursor_id)
+      end
+
+      def pop_cursor
+        if @cursors.length > 1
+          @cursors.pop
+        end
       end
 
       # -- Tool stuff --
@@ -69,7 +98,7 @@ module Ladb::OpenCutList
       end
 
       def quit(view)
-        # Desactivate the tool
+        # Deactivate the tool
         view.model.select_tool(nil)
       end
 
@@ -147,6 +176,7 @@ module Ladb::OpenCutList
         hit_widget = @canvas.hit_widget(x, y)
         if hit_widget && @mouse_down_widget == hit_widget
           @mouse_down_widget.onMouseClick(flags)
+          @mouse_down_widget = nil
           return true
         end
         @mouse_down_widget = nil
@@ -156,6 +186,7 @@ module Ladb::OpenCutList
         hit_widget = @canvas.hit_widget(x, y)
         if hit_widget
           hit_widget.onMouseDoubleClick(flags)
+          @mouse_down_widget = nil
           return true
         end
         @mouse_down_widget = nil
@@ -167,14 +198,17 @@ module Ladb::OpenCutList
           if hit_widget != @mouse_hover_widget
             if @mouse_hover_widget
               @mouse_hover_widget.onMouseLeave
+              pop_cursor
             end
             @mouse_hover_widget = hit_widget
             @mouse_hover_widget.onMouseEnter(flags)
+            push_cursor(@cursor_select_id)
           end
           return true
         else
           if @mouse_hover_widget
             @mouse_hover_widget.onMouseLeave
+            pop_cursor
           end
           @mouse_hover_widget = nil
         end
@@ -183,8 +217,13 @@ module Ladb::OpenCutList
       def onMouseLeave(view)
         if @mouse_hover_widget
           @mouse_hover_widget.onMouseLeave
+          pop_cursor
         end
         @mouse_hover_widget = nil
+      end
+
+      def onSetCursor
+        UI.set_cursor(@cursors.last)
       end
 
     end

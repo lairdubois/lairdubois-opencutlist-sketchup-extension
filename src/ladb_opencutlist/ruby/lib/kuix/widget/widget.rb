@@ -45,12 +45,13 @@ module Ladb::OpenCutList::Kuix
       @layout_data = nil
 
       @visible = true
+      @hittable = true
 
     end
 
-    # --
+    # -- Properties --
 
-    def get_insets
+    def insets
       Inset.new(
         @margin.top + @border.top + @padding.top,
         @margin.right + @border.right + @padding.right,
@@ -59,8 +60,8 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
-    def get_content_size
-      insets = get_insets
+    def content_size
+      insets = self.insets
       Size.new(
         @bounds.size.width - insets.left - insets.right,
         @bounds.size.height - insets.top - insets.bottom,
@@ -72,7 +73,7 @@ module Ladb::OpenCutList::Kuix
       if @layout
         @layout.measure_prefered_size(self, prefered_width, size)
       else
-        insets = self.get_insets
+        insets = self.insets
         size.set(
           insets.left + @min_size.width + insets.right,
           insets.top + @min_size.height + insets.bottom
@@ -194,6 +195,14 @@ module Ladb::OpenCutList::Kuix
       @visible
     end
 
+    def hittable=(value)
+      @hittable = value
+    end
+
+    def hittable?
+      @hittable && !@background_color.nil?
+    end
+
     def invalidated?
       @invalidated
     end
@@ -296,10 +305,6 @@ module Ladb::OpenCutList::Kuix
         widget = @next.hit_widget(x, y)
       end
       widget
-    end
-
-    def hittable?
-      !@background_color.nil?
     end
 
     # -- Events --
