@@ -15,8 +15,6 @@ module Ladb::OpenCutList
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
     COLOR_FACE_HOVER_SMILAR = Sketchup::Color.new(0, 62, 255, 128).freeze
-    COLOR_TEXT_BG = Sketchup::Color.new(255, 255, 255, 191).freeze
-    COLOR_TEXT = Sketchup::Color.new(0, 0, 0, 255).freeze
     COLOR_DRAWING = Sketchup::Color.new(255, 255, 255, 255).freeze
     COLOR_DRAWING_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
 
