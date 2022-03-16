@@ -112,11 +112,8 @@ module Ladb::OpenCutList
     # ---
 
     def add_observer(observer)
-      if observer.is_a? CutlistObserver
-        @_observers.push(observer)
-      else
-        raise('Invalid CutlistObserver')
-      end
+      throw 'Invalid CutlistObserver' unless observer.is_a?(CutlistObserverHelper)
+      @_observers.push(observer)
     end
 
     def remove_observer(observer)
@@ -133,7 +130,7 @@ module Ladb::OpenCutList
 
   end
 
-  class CutlistObserver
+  module CutlistObserverHelper
 
     def onInvalidateCutlist(cutlist)
     end

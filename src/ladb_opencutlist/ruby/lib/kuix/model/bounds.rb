@@ -24,6 +24,10 @@ module Ladb::OpenCutList::Kuix
       @size.set(width, height)
     end
 
+    def set_all(value = 0)
+      set(value, value, value, value)
+    end
+
     def copy(bounds)
       @origin.copy(bounds.origin)
       @size.copy(bounds.size)
@@ -105,7 +109,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- Manipulations --
 
-    def union(bounds)
+    def union!(bounds)
       if is_empty?
         copy(bounds)
       else

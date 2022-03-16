@@ -13,6 +13,10 @@ module Ladb::OpenCutList::Kuix
       @height = height
     end
 
+    def set_all(value = 0)
+      set(value, value)
+    end
+
     def copy(size)
       set(size.width, size.height)
     end

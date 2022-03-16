@@ -63,23 +63,23 @@ module Ladb::OpenCutList
 
       unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
 
-      south_wid = Kuix::Widget.new
-      south_wid.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      south_wid.layout = Kuix::BorderLayout.new(0, unit)
-      south_wid.padding.set(unit, unit, unit, unit)
-      south_wid.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      @canvas.append(south_wid)
+      panel = Kuix::Widget.new
+      panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      panel.layout = Kuix::BorderLayout.new(0, unit)
+      panel.padding.set(unit, unit, unit, unit)
+      panel.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+      @canvas.append(panel)
 
-      status_lbl = Kuix::Label.new
-      status_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      status_lbl.text_size = unit * 3
-      status_lbl.visible = false
-      south_wid.append(status_lbl)
+      lbl_status = Kuix::Label.new
+      lbl_status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      lbl_status.text_size = unit * 3
+      lbl_status.visible = false
+      panel.append(lbl_status)
 
-      btns_wid = Kuix::Widget.new
-      btns_wid.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      btns_wid.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
-      south_wid.append(btns_wid)
+      btns = Kuix::Widget.new
+      btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      btns.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
+      panel.append(btns)
 
       @materials.each do |material|
 
@@ -87,7 +87,7 @@ module Ladb::OpenCutList
         material_color_is_dark = (0.2126 * material.color.red + 0.7152 * material.color.green + 0.0722 * material.color.blue) <= 128
 
         btn = Kuix::Button.new
-        btn.min_size.set(0, unit * 10)
+        btn.min_size.set(unit * 20, unit * 10)
         btn.border.set(unit, unit, unit, unit)
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new('white'), 0.8), :active)
@@ -102,14 +102,14 @@ module Ladb::OpenCutList
           _update_paint_color
         }
         btn.on(:enter) { |button|
-          status_lbl.text = material.name + (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
-          status_lbl.visible = true
+          lbl_status.text = material.name + (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
+          lbl_status.visible = true
         }
         btn.on(:leave) { |button|
-          status_lbl.text = ''
-          status_lbl.visible = false
+          lbl_status.text = ''
+          lbl_status.visible = false
         }
-        btns_wid.append(btn)
+        btns.append(btn)
 
         if material_attributes.type > 0
 

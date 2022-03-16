@@ -15,6 +15,10 @@ module Ladb::OpenCutList::Kuix
       @left = left
     end
 
+    def set_all(value = 0)
+      set(value, value, value, value)
+    end
+
     def copy(inset)
       set(inset.top, inset.right, inset.bottom, inset.left)
     end

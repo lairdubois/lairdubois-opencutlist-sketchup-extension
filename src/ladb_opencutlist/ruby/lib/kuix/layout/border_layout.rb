@@ -25,7 +25,8 @@ module Ladb::OpenCutList::Kuix
   class BorderLayout
 
     def initialize(horizontal_gap = 0, vertical_gap = 0)
-      @gap = Gap.new(horizontal_gap, vertical_gap)
+      @horizontal_gap = horizontal_gap
+      @vertical_gap = vertical_gap
     end
 
     def measure_prefered_size(target, prefered_width, size)
@@ -88,13 +89,13 @@ module Ladb::OpenCutList::Kuix
       end
 
       # Compute gap values
-      vertical_top_gap = (!north_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil? || !south_widget.nil?)) ? @gap.vertical : 0
-      vertical_bottom_gap = (!south_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil?)) ? @gap.vertical : 0
-      horizontal_left_gap = (!west_widget.nil? && (!center_widget.nil? || !east_widget.nil?)) ? @gap.horizontal : 0
-      horizontal_right_gap = (!east_widget.nil? && (!center_widget.nil? || !west_widget.nil?)) ? @gap.horizontal : 0
+      vertical_top_gap = (!north_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil? || !south_widget.nil?)) ? @vertical_gap : 0
+      vertical_bottom_gap = (!south_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil?)) ? @vertical_gap : 0
+      horizontal_left_gap = (!west_widget.nil? && (!center_widget.nil? || !east_widget.nil?)) ? @horizontal_gap : 0
+      horizontal_right_gap = (!east_widget.nil? && (!center_widget.nil? || !west_widget.nil?)) ? @horizontal_gap : 0
 
-      vertical_gap = vertical_top_gap + vertical_bottom_gap
-      horizontal_gap = horizontal_left_gap + horizontal_right_gap
+      total_horizontal_gap = horizontal_left_gap + horizontal_right_gap
+      total_vertical_gap = vertical_top_gap + vertical_bottom_gap
 
       # North
       if north_widget
@@ -105,14 +106,14 @@ module Ladb::OpenCutList::Kuix
 
       # West
       if west_widget
-        prefered_size = west_widget.get_prefered_size(available_width - horizontal_gap)
+        prefered_size = west_widget.get_prefered_size(available_width - total_horizontal_gap)
         left_width = prefered_size.width
         center_height = prefered_size.height
       end
 
       # East
       if east_widget
-        prefered_size = east_widget.get_prefered_size(available_width - left_width - horizontal_gap)
+        prefered_size = east_widget.get_prefered_size(available_width - left_width - total_horizontal_gap)
         right_width = prefered_size.width
         center_height = [ center_height, prefered_size.height].max
       end
@@ -126,15 +127,15 @@ module Ladb::OpenCutList::Kuix
 
       # Center
       if center_widget
-        prefered_size = center_widget.get_prefered_size(available_width - left_width - right_width - horizontal_gap)
+        prefered_size = center_widget.get_prefered_size(available_width - left_width - right_width - total_horizontal_gap)
         center_width = [ center_width, prefered_size.width ].max
         center_height = [ center_height, prefered_size.height].max
       end
 
       if layout
 
-        center_width = available_width - left_width - right_width - horizontal_gap
-        center_height = available_height - top_height - bottom_height - vertical_gap
+        center_width = available_width - left_width - right_width - total_horizontal_gap
+        center_height = available_height - top_height - bottom_height - total_vertical_gap
 
         # Center
         if center_widget
@@ -193,8 +194,8 @@ module Ladb::OpenCutList::Kuix
 
       else
         size.set(
-          insets.left + [ target.min_size.width, left_width + center_width + right_width + horizontal_gap ].max + insets.right,
-          insets.top + [ target.min_size.height, top_height + center_height + bottom_height + vertical_gap ].max + insets.bottom
+          insets.left + [ target.min_size.width, left_width + center_width + right_width + total_horizontal_gap ].max + insets.right,
+          insets.top + [ target.min_size.height, top_height + center_height + bottom_height + total_vertical_gap ].max + insets.bottom
         )
       end
 

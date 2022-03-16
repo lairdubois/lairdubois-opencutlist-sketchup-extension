@@ -2,13 +2,15 @@ module Ladb::OpenCutList
 
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/screen_scale_factor_helper'
-  require_relative '../gl/gl_button'
   require_relative '../model/cutlist/cutlist'
+  require_relative '../gl/gl_button'
+  require_relative '../lib/kuix/kuix'
 
-  class HighlightPartTool < CutlistObserver
+  class HighlightPartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
     include ScreenScaleFactorHelper
+    include CutlistObserverHelper
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
     COLOR_FACE_HOVER = Sketchup::Color.new(0, 62, 255, 200).freeze
@@ -40,6 +42,8 @@ module Ladb::OpenCutList
     FONT_TEXT = 'Verdana'
 
     def initialize(cutlist, group, parts, instance_count, maximize_on_quit)
+      super(true, true)
+
       @cutlist = cutlist
       @group = group
       @parts = parts
@@ -49,43 +53,8 @@ module Ladb::OpenCutList
       # Add tool as observer of the cutlist
       @cutlist.add_observer(self)
 
-      @text_line_1 = ''
-      @text_line_2 = ''
-      @text_line_3 = ''
-
-      @text_line_1_height = _screen_scale(30)
-      @text_line_2_height = _screen_scale(20)
-      @text_line_3_height = _screen_scale(30)
-
-      # Define text options
-      @line_1_text_options = {
-          color: COLOR_TEXT,
-          font: FONT_TEXT,
-          size: _screen_scale(Plugin.instance.current_os == :MAC ? 20 : 15),
-          align: TextAlignCenter
-      }
-      @line_2_text_options = {
-          color: COLOR_TEXT,
-          font: FONT_TEXT,
-          size: _screen_scale(Plugin.instance.current_os == :MAC ? 12 : 8),
-          align: TextAlignCenter
-      }
-      @line_3_text_options = {
-          color: COLOR_TEXT,
-          font: FONT_TEXT,
-          size: _screen_scale(Plugin.instance.current_os == :MAC ? 15 : 10),
-          align: TextAlignCenter
-      }
-      button_text_options = {
-          color: COLOR_TEXT,
-          font: FONT_TEXT,
-          size: _screen_scale(Plugin.instance.current_os == :MAC ? 15 : 12),
-          align: TextAlignCenter,
-          y_offset: Sketchup.version_number >= 22000000 ? _screen_scale(5) : _screen_scale(10)
-      }
-
       @initial_model_transparency = false
-      @buttons = []
+
       @hover_part = nil
       @hover_pick_path = nil
 
@@ -138,21 +107,107 @@ module Ladb::OpenCutList
 
         }
 
-        # Define buttons
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.transparency'), _screen_scale(130), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options, nil) do |button, flags, x, y, view|
-          view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
-        end)
-        @buttons.push(GLButton.new(view, Plugin.instance.get_i18n_string('tool.highlight.zoom_extents'), _screen_scale(260), _screen_scale(50), _screen_scale(120), _screen_scale(40), button_text_options, nil) do |button, flags, x, y, view|
-          view.zoom_extents
-        end)
-
       end
+
+    end
+
+    # -- UI stuff --
+
+    def setup_widgets(view)
+
+      @canvas.layout = Kuix::BorderLayout.new
+
+      unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
+
+      panel = Kuix::Widget.new
+      panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      panel.layout = Kuix::BorderLayout.new
+      panel.padding.set_all(unit)
+      panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200))
+      @canvas.append(panel)
+
+        # Labels
+
+        lbls = Kuix::Widget.new
+        lbls.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        lbls.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        panel.append(lbls)
+
+          @lbl_1 = Kuix::Label.new
+          @lbl_1.text_size = unit * 4
+          lbls.append(@lbl_1)
+
+          @lbl_2 = Kuix::Label.new
+          @lbl_2.text_size = unit * 2
+          lbls.append(@lbl_2)
+
+          @lbl_3 = Kuix::Label.new
+          @lbl_3.text_size = unit * 3
+          lbls.append(@lbl_3)
+
+        # Buttons
+
+        btn_border = unit / 2
+        btn_min_width = unit * 30
+        btn_min_height = unit * 10
+        btn_bg_color = Sketchup::Color.new('white')
+        btn_bg_active_color = Sketchup::Color.new(200, 200, 200, 255)
+        btn_border_color = Sketchup::Color.new(220, 220, 220, 255)
+        btn_border_hover_color = Sketchup::Color.new(128, 128, 128, 255)
+        btn_border_selected_color = Sketchup::Color.new(0, 0, 255, 255)
+
+        btns = Kuix::Widget.new
+        btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        btns.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+        panel.append(btns)
+
+          btn_1 = Kuix::Button.new
+          btn_1.layout = Kuix::BorderLayout.new
+          btn_1.border.set_all(btn_border)
+          btn_1.min_size.set(btn_min_width, btn_min_height)
+          btn_1.set_style_attribute(:background_color, btn_bg_color)
+          btn_1.set_style_attribute(:background_color, btn_bg_active_color, :active)
+          btn_1.set_style_attribute(:border_color, btn_border_color)
+          btn_1.set_style_attribute(:border_color, btn_border_hover_color, :hover)
+          btn_1.set_style_attribute(:border_color, btn_border_selected_color, :selected)
+          btn_1.on(:click) do |button|
+            view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
+            button.selected = view.model.rendering_options["ModelTransparency"]
+          end
+          btn_1.selected = view.model.rendering_options["ModelTransparency"]
+          btns.append(btn_1)
+
+            btn_1_lbl = Kuix::Label.new
+            btn_1_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+            btn_1_lbl.text = Plugin.instance.get_i18n_string('tool.highlight.transparency')
+            btn_1_lbl.text_size = unit * 3
+            btn_1.append(btn_1_lbl)
+
+          btn_2 = Kuix::Button.new
+          btn_2.layout = Kuix::BorderLayout.new
+          btn_2.border.set_all(btn_border)
+          btn_2.min_size.set(btn_min_width, btn_min_height)
+          btn_2.set_style_attribute(:background_color, btn_bg_color)
+          btn_2.set_style_attribute(:background_color, btn_bg_active_color, :active)
+          btn_2.set_style_attribute(:border_color, btn_border_color)
+          btn_2.set_style_attribute(:border_color, btn_border_hover_color, :hover)
+          btn_2.on(:click) do |button|
+            view.zoom_extents
+          end
+          btns.append(btn_2)
+
+            btn_2_lbl = Kuix::Label.new
+            btn_2_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+            btn_2_lbl.text = Plugin.instance.get_i18n_string('tool.highlight.zoom_extents')
+            btn_2_lbl.text_size = unit * 3
+            btn_2.append(btn_2_lbl)
 
     end
 
     # -- Tool stuff --
 
     def activate
+      super
       model = Sketchup.active_model
       if model
 
@@ -170,15 +225,8 @@ module Ladb::OpenCutList
     end
 
     def deactivate(view)
+      super
       onQuit(view)
-    end
-
-    def suspend(view)
-      view.invalidate
-    end
-
-    def resume(view)
-      view.invalidate
     end
 
     def draw(view)
@@ -212,28 +260,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Draw text lines and buttons (only if Sketchup > 2016)
-      if Sketchup.version_number >= 16000000
-        bg_height = @text_line_1_height + (@text_line_2.empty? ? 0 : @text_line_2_height) + (@text_line_3.empty? ? 0 : @text_line_3_height)
-        _draw_rect(view, 0, view.vpheight - bg_height, view.vpwidth, bg_height, COLOR_TEXT_BG)
-        unless @text_line_1.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_1_height - (@text_line_2.empty? ? 0 : @text_line_2_height) - (@text_line_3.empty? ? 0 : @text_line_3_height), 0), @text_line_1, @line_1_text_options)
-        end
-        unless @text_line_2.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_2_height - (@text_line_3.empty? ? 0 : @text_line_3_height), 0), @text_line_2, @line_2_text_options)
-        end
-        unless @text_line_3.nil?
-          view.draw_text(Geom::Point3d.new(view.vpwidth / 2, view.vpheight - @text_line_3_height, 0), @text_line_3, @line_3_text_options)
-        end
-        @buttons.each { |button|
-          button.draw(view)
-        }
-      end
-
-    end
-
-    def getExtents
-      Sketchup.active_model.bounds
+      super
     end
 
     # -- Menu --
@@ -295,20 +322,8 @@ module Ladb::OpenCutList
 
     # -- Events --
 
-    def onLButtonDown(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onLButtonDown(flags, x, y, view)
-          return
-        end
-      }
-    end
-
     def onLButtonUp(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onLButtonUp(flags, x, y, view)
-          return
-        end
-      }
+      return if super
       _pick_hover_part(x, y, view)
       if @hover_part
         UI.beep
@@ -318,20 +333,13 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      @buttons.each { |button|
-        if button.onMouseMove(flags, x, y, view)
-          return
-        end
-      }
+      return if super
       _pick_hover_part(x, y, view)
     end
 
     def onMouseLeave(view)
+      return if super
       _reset(view)
-    end
-
-    def onCancel(flag, view)
-      _quit(view)
     end
 
     def onQuit(view)
@@ -361,24 +369,36 @@ module Ladb::OpenCutList
 
         instance_count = part.instance_count_by_part * part.count - part.unused_instance_count
 
-        @text_line_1 = "[#{part.number}] #{part.name}"
-        @text_line_2 = part.tags.join(' | ')
-        @text_line_3 = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
+        @lbl_1.visible = true
+        @lbl_2.visible = true
+        @lbl_3.visible = true
+
+        @lbl_1.text = "[#{part.number}] #{part.name}"
+        @lbl_2.text = part.tags.join(' | ')
+        @lbl_3.text = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
             " | #{instance_count.to_s} #{Plugin.instance.get_i18n_string(instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')}" +
             " | #{(part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"
 
       elsif @group
 
-        @text_line_1 = (@group.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
-        @text_line_2 = ''
-        @text_line_3 = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
+        @lbl_1.visible = true
+        @lbl_2.visible = false
+        @lbl_3.visible = true
+
+        @lbl_1.text = (@group.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
+        @lbl_2.text = ''
+        @lbl_3.text = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       else
 
-        @text_line_1 = ''
-        @text_line_2 = ''
-        @text_line_3 = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
+        @lbl_1.visible = false
+        @lbl_2.visible = false
+        @lbl_3.visible = true
+
+        @lbl_1.text = ''
+        @lbl_2.text = ''
+        @lbl_3.text = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       end
 

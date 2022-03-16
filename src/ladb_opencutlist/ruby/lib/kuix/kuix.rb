@@ -7,13 +7,13 @@ module Ladb::OpenCutList
     require_relative 'layout/border_layout'
     require_relative 'layout/static_layout'
     require_relative 'layout/grid_layout'
+    require_relative 'layout/inline_layout'
 
     require_relative 'model/anchor'
     require_relative 'model/size'
     require_relative 'model/point'
     require_relative 'model/bounds'
     require_relative 'model/inset'
-    require_relative 'model/gap'
 
     require_relative 'widget/widget'
     require_relative 'widget/canvas'
@@ -36,6 +36,7 @@ module Ladb::OpenCutList
         # Determine if the tool is deactiveted when the user undo last action
         @quit_on_undo = quit_on_undo
 
+        # Cursor management
         @cursor_select_id = create_cursor('select', 4, 7)
         @cursors = [ @cursor_select_id ]
 
@@ -169,6 +170,7 @@ module Ladb::OpenCutList
         @mouse_down_widget = hit_widget
         if @mouse_down_widget
           @mouse_down_widget.onMouseDown(flags)
+          return true
         end
       end
 

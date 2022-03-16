@@ -7,21 +7,23 @@ module Ladb::OpenCutList::Kuix
     def initialize(id = nil)
       super(id)
 
+      # Event handlers
       @handlers = {}
-
-      @selected = false
 
     end
 
     # -- Properties --
 
     def selected=(value)
-      @selected = value
-      if @selected
+      if value
         activate_pseudo_class(:selected)
       else
         deactivate_pseudo_class(:selected)
       end
+    end
+
+    def selected?
+      has_pseudo_class?(:selected)
     end
 
     # -- Events --
@@ -30,9 +32,13 @@ module Ladb::OpenCutList::Kuix
       @handlers[event] = block
     end
 
-    def fire(event, params = nil)
+    def off(event)
+      @handlers.delete!(event)
+    end
+
+    def fire(event, *args)
       if @handlers[event]
-        @handlers[event].call(self, params)
+        @handlers[event].call(self, args)
       end
     end
 

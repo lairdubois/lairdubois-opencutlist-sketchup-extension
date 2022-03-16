@@ -13,6 +13,10 @@ module Ladb::OpenCutList::Kuix
       @y = y
     end
 
+    def set_all(value = 0)
+      set(value, value)
+    end
+
     def copy(point)
       set(point.x, point.y)
     end

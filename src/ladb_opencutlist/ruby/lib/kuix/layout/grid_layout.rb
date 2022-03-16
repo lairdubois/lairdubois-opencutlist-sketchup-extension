@@ -5,7 +5,8 @@ module Ladb::OpenCutList::Kuix
     def initialize(num_cols = 1, num_rows = 1, horizontal_gap = 0, vertical_gap = 0)
       @num_cols = [ num_cols, 1 ].max
       @num_rows = [ num_rows, 1 ].max
-      @gap = Gap.new(horizontal_gap, vertical_gap)
+      @horizontal_gap = horizontal_gap
+      @vertical_gap = vertical_gap
     end
 
     def measure_prefered_size(target, prefered_width, size)
@@ -24,11 +25,11 @@ module Ladb::OpenCutList::Kuix
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 
-      horizontal_gap = @gap.horizontal * (@num_cols - 1)
-      vertical_gap = @gap.vertical * (@num_rows - 1)
+      total_horizontal_gap = @horizontal_gap * (@num_cols - 1)
+      total_vertical_gap = @vertical_gap * (@num_rows - 1)
 
-      cell_width = (available_width - horizontal_gap) / @num_cols
-      cell_height = (available_height - vertical_gap) / @num_rows
+      cell_width = (available_width - total_horizontal_gap) / @num_cols
+      cell_height = (available_height - total_vertical_gap) / @num_rows
 
       col = 0
       row = 0
@@ -42,8 +43,8 @@ module Ladb::OpenCutList::Kuix
 
           if layout
             widget.bounds.set(
-              col * (cell_width + @gap.horizontal),
-              row * (cell_height + @gap.vertical),
+              col * (cell_width + @horizontal_gap),
+              row * (cell_height + @vertical_gap),
               cell_width,
               cell_height
             )
@@ -69,8 +70,8 @@ module Ladb::OpenCutList::Kuix
 
       unless layout
         size.set(
-          insets.left + [ target.min_size.width, prefered_cell_width * @num_cols + horizontal_gap ].max + insets.right,
-          insets.top + [ target.min_size.height, prefered_cell_height * @num_rows + vertical_gap ].max + insets.bottom
+          insets.left + [ target.min_size.width, prefered_cell_width * @num_cols + total_horizontal_gap ].max + insets.right,
+          insets.top + [ target.min_size.height, prefered_cell_height * @num_rows + total_vertical_gap ].max + insets.bottom
         )
       end
 

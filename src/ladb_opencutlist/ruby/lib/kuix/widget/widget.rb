@@ -98,6 +98,10 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def has_pseudo_class?(pseudo_class)
+      @active_pseudo_classes.include?(pseudo_class)
+    end
+
     def set_style_attribute(attribute, value, pseudo_class = :default)
       unless @styles.has_key?(pseudo_class)
         @styles[pseudo_class] = {}
@@ -128,6 +132,7 @@ module Ladb::OpenCutList::Kuix
 
     # Append given widget to self and returns self
     def append(widget)
+      throw 'Widget.append only supports Widget' unless widget.is_a?(Widget)
 
       # Remove widget from previous parent
       if widget.parent

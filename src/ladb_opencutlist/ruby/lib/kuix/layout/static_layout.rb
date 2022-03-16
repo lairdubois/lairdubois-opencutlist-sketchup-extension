@@ -40,6 +40,7 @@ module Ladb::OpenCutList::Kuix
 
       content_bounds = Bounds.new
 
+      # Loop on children
       widget = target.child
       until widget.nil?
         if widget.visible?
@@ -107,7 +108,7 @@ module Ladb::OpenCutList::Kuix
             widget.do_layout
           end
 
-          content_bounds.union(widget_bounds)
+          content_bounds.union!(widget_bounds)
 
         end
         widget = widget.next

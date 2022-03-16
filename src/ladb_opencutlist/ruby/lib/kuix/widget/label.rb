@@ -5,6 +5,7 @@ module Ladb::OpenCutList::Kuix
     attr_reader :text, :text_options
 
     def initialize(id = '')
+      super(id)
       @text = ''
       @text_options = {
           :font => 'Verdana',
@@ -16,13 +17,13 @@ module Ladb::OpenCutList::Kuix
         @text_options[:vertical_align] = TextVerticalAlignCenter
       end
       @text_point = Point.new
-      super
     end
 
     # -- Properties --
 
     def text=(value)
       @text = value
+      compute_min_size
       invalidate
     end
 
@@ -33,7 +34,7 @@ module Ladb::OpenCutList::Kuix
 
     def text_size=(value)
       @text_options[:size] = value
-      @min_size.height = [ @min_size.height, value ].max
+      compute_min_size
       invalidate
     end
 
@@ -75,6 +76,24 @@ module Ladb::OpenCutList::Kuix
         @text_point.y -= @text_options[:size] # Workaround the "center" text to SU prior 2020 where text anchor is top
       end
 
+    end
+
+    def compute_min_size
+      if @text_options[:size]
+        if Sketchup.version_number < 2000000000 || Sketchup.active_model.nil?
+          # Estimate text size
+          @min_size.set(
+            @text.length * @text_options[:size].to_i * 0.7,
+            @text_options[:size]
+          )
+        else
+          text_bounds = Sketchup.active_model.active_view.text_bounds(Geom::Point3d.new, @text, @text_options)
+          @min_size.set(
+            text_bounds.width,
+            text_bounds.height
+          )
+        end
+      end
     end
 
     # -- Render --
