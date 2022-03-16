@@ -26,6 +26,22 @@ module Ladb::OpenCutList::Kuix
       has_pseudo_class?(:selected)
     end
 
+    # --
+
+    def append_label(text, text_size)
+
+      # Create a new label
+      label = Label.new
+      label.text = text
+      label.text_size = text_size
+
+      # Append it
+      self.layout = GridLayout.new unless self.layout
+      self.append(label)
+
+      label
+    end
+
     # -- Events --
 
     def on(event, &block)

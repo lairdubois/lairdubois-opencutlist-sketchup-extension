@@ -38,7 +38,7 @@ module Ladb::OpenCutList::Kuix
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 
-      content_bounds = Bounds.new
+      content_bounds = Bounds.new unless layout
 
       # Loop on children
       widget = target.child
@@ -106,9 +106,9 @@ module Ladb::OpenCutList::Kuix
           if layout
             widget.bounds.copy(widget_bounds)
             widget.do_layout
+          else
+            content_bounds.union!(widget_bounds)
           end
-
-          content_bounds.union!(widget_bounds)
 
         end
         widget = widget.next

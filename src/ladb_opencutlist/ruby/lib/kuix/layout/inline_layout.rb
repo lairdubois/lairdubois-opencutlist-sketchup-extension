@@ -39,7 +39,6 @@ module Ladb::OpenCutList::Kuix
                             :preferred_size => preferred_size
                           })
 
-
           if @horizontal
             content_bounds.size.width += preferred_size.width
             content_bounds.size.height = [ preferred_size.height, content_bounds.size.height ].max
@@ -102,9 +101,7 @@ module Ladb::OpenCutList::Kuix
 
         end
 
-      end
-
-      unless layout
+      else
         size.set(
           insets.left + [ target.min_size.width, content_bounds.size.width ].max + insets.right,
           insets.top + [ target.min_size.height, content_bounds.size.height ].max + insets.bottom

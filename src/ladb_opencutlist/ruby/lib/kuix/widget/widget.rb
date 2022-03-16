@@ -9,6 +9,7 @@ module Ladb::OpenCutList::Kuix
     attr_reader :background_color, :border_color, :color
     attr_accessor :parent, :child, :last_child, :next, :previous
     attr_accessor :layout, :layout_data
+    attr_accessor :data
 
     def initialize(id = nil)
 
@@ -46,6 +47,8 @@ module Ladb::OpenCutList::Kuix
 
       @visible = true
       @hittable = true
+
+      @data = nil
 
     end
 
@@ -177,11 +180,14 @@ module Ladb::OpenCutList::Kuix
     end
 
     def remove_all
-      unless @child
+      if @child
         widget = @child
         until widget.nil?
-          widget.next = widget.previous = widget.parent = null
-          widget = widget.next
+          next_widget = widget.next
+          widget.next = nil
+          widget.previous = nil
+          widget.parent = nil
+          widget = next_widget
         end
         @child = nil
         @last_child = nil
@@ -205,7 +211,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def hittable?
-      @hittable && !@background_color.nil?
+      @hittable && (@background_color || @border_color)
     end
 
     def invalidated?
