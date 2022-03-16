@@ -1,10 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/screen_scale_factor_helper'
   require_relative '../model/cutlist/cutlist'
-  require_relative '../gl/gl_button'
-  require_relative '../lib/kuix/kuix'
 
   class HighlightPartTool < Kuix::KuixTool
 

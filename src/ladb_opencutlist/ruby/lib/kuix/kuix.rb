@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
       attr_reader :canvas
 
-      def initialize(quit_on_esc = true, quit_on_undo = true)
+      def initialize(quit_on_esc = true, quit_on_undo = false)
 
         if Plugin::IS_DEV
           SKETCHUP_CONSOLE.clear

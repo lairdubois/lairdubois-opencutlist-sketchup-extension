@@ -1,10 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../lib/kuix/kuix'
   require_relative '../utils/path_utils'
   require_relative '../helper/screen_scale_factor_helper'
   require_relative '../model/attributes/material_attributes'
-  require_relative '../gl/gl_button'
-  require_relative '../lib/kuix/kuix'
 
   class PaintFaceTool < Kuix::KuixTool
 
@@ -65,9 +64,7 @@ module Ladb::OpenCutList
 
       panel = Kuix::Widget.new
       panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      panel.layout = Kuix::BorderLayout.new(0, unit)
-      panel.padding.set_all(unit)
-      panel.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+      panel.layout = Kuix::BorderLayout.new
       @canvas.append(panel)
 
         # Status label
@@ -76,6 +73,8 @@ module Ladb::OpenCutList
         lbl_status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
         lbl_status.text_size = unit * 3
         lbl_status.visible = false
+        lbl_status.padding.set_all(unit)
+        lbl_status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
         panel.append(lbl_status)
 
         # Buttons panel
@@ -83,6 +82,8 @@ module Ladb::OpenCutList
         btns = Kuix::Widget.new
         btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
         btns.layout = Kuix::GridLayout.new([ @materials.length, 10 ].min, (@materials.length / 10.0).ceil, unit / 2, unit / 2)
+        btns.padding.set_all(unit)
+        btns.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         panel.append(btns)
 
         @materials.each do |material|
