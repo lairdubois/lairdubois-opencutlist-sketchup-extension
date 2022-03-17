@@ -438,7 +438,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :active)
         btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
         btn.set_style_attribute(:border_color, Sketchup::Color.new('blue'), :selected)
-        btn.append_static_label(material.name.length > 12 ? "#{material.name[0..11]}..." : material.name, unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
+        btn.append_static_label(material.name, unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
         btn.on(:click) { |button|
 
           # Toggle button
