@@ -63,6 +63,7 @@ core:
       edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $(tab.cutlist.edit_part_edges_properties)
+      smart_paint: Pinceau intelligent
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -1094,3 +1095,8 @@ tool:
   highlight:
     transparency: Transparence
     zoom_extents: Zoom étendu
+  smart_paint:
+    filters: Filtres
+    action: Action
+    pick_strategy_0: Colorier faces
+    pick_strategy_1: Colorier composants

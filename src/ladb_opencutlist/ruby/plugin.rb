@@ -18,7 +18,7 @@ module Ladb::OpenCutList
   require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
-  require_relative 'tool/paint_face_tool'
+  require_relative 'tool/smart_paint_tool'
 
   class Plugin
     
@@ -667,9 +667,8 @@ module Ladb::OpenCutList
         end
       }
       submenu.add_separator
-      paint_face_item = submenu.add_item('Paint Face') {
-        paint_face_item = PaintFaceTool.new
-        Sketchup.active_model.select_tool(paint_face_item)
+      submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
+        Sketchup.active_model.select_tool(SmartPaintTool.new)
       }
 
       # Setup Context Menu

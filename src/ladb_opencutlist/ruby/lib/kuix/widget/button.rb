@@ -28,15 +28,17 @@ module Ladb::OpenCutList::Kuix
 
     # --
 
-    def append_label(text, text_size)
+    def append_static_label(text, text_size, text_color = nil)
 
       # Create a new label
       label = Label.new
       label.text = text
       label.text_size = text_size
+      label.set_style_attribute(:color, text_color) if text_color
+      label.layout_data = StaticLayoutData.new(0, 0, 1.0, 1.0)
 
       # Append it
-      self.layout = GridLayout.new unless self.layout
+      self.layout = StaticLayout.new unless self.layout
       self.append(label)
 
       label

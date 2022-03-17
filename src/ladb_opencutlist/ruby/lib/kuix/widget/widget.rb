@@ -136,6 +136,8 @@ module Ladb::OpenCutList::Kuix
     # Append given widget to self and returns self
     def append(widget)
       throw 'Widget.append only supports Widget' unless widget.is_a?(Widget)
+      throw 'Widget.append can\'t append itself' if widget == self
+      throw 'Widget.append can\'t append nil' if widget.nil?
 
       # Remove widget from previous parent
       if widget.parent

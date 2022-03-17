@@ -53,7 +53,7 @@ module Ladb::OpenCutList
       @initial_model_transparency = false
 
       @hover_part = nil
-      @hover_pick_path = nil
+      @picked_path = nil
 
       model = Sketchup.active_model
       if model
@@ -404,7 +404,7 @@ module Ladb::OpenCutList
     def _reset(view)
       if @hover_part
         @hover_part = nil
-        @hover_pick_path = nil
+        @picked_path = nil
         _update_text_lines
         view.invalidate
       end
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
         @pick_helper.count.times { |pick_path_index|
 
           pick_path = @pick_helper.path_at(pick_path_index)
-          if pick_path == @hover_pick_path
+          if pick_path == @picked_path
             return  # Previously detected path, stop process to optimize.
           end
           if pick_path
@@ -540,7 +540,7 @@ module Ladb::OpenCutList
               part.def.entity_serialized_paths.each { |sp|
                 if serialized_path.start_with?(sp)
                   @hover_part = part
-                  @hover_pick_path = pick_path
+                  @picked_path = pick_path
                   _update_text_lines
                   view.invalidate
                   return
