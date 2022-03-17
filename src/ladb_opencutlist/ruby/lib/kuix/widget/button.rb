@@ -75,6 +75,10 @@ module Ladb::OpenCutList::Kuix
       fire(:click, flags)
     end
 
+    def onMouseDoubleClick(flags)
+      super
+      fire(:doubleclick, flags)
+    end
 
   end
 

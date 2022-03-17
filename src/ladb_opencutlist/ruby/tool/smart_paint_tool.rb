@@ -48,9 +48,11 @@ module Ladb::OpenCutList
         end
 
         @add = true
-        @selected_button = nil
 
+        @paint_color = nil
         @unpaint_color = nil
+
+        @selected_button = nil
 
         # Create cursors
         @cursor_paint_id = create_cursor('paint', 7, 25)
@@ -114,6 +116,7 @@ module Ladb::OpenCutList
             filters_lbl.text_bold = true
             filters.append(filters_lbl)
 
+            @filter_buttons = []
             for type in 0..(COLOR_MATERIAL_TYPES.length - 1)
 
               filters_btn = Kuix::Button.new
@@ -128,11 +131,18 @@ module Ladb::OpenCutList
               filters_btn.data = type
               filters_btn.append_static_label(Plugin.instance.get_i18n_string("tab.materials.type_#{type}"), unit * 3)
               filters_btn.on(:click) { |button|
-                type = button.data
 
-                # Toggle filter & button
-                @@material_type_filters[type] = !@@material_type_filters[type]
-                button.selected = @@material_type_filters[type]
+                toggle_filter_by_type(button.data)
+
+                # Re populate material defs & setup corresponding buttons
+                _populate_material_defs(view.model)
+                _setup_material_buttons(unit, status, status_lbl_1, status_lbl_2)
+
+              }
+              filters_btn.on(:doubleclick) { |button|
+
+                set_filters(false)
+                set_filter_by_type(button.data, true)
 
                 # Re populate material defs & setup corresponding buttons
                 _populate_material_defs(view.model)
@@ -140,6 +150,8 @@ module Ladb::OpenCutList
 
               }
               filters.append(filters_btn)
+
+              @filter_buttons.push(filters_btn)
 
             end
 
@@ -179,7 +191,7 @@ module Ladb::OpenCutList
         west = Kuix::Widget.new
         west.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
         west.layout = Kuix::GridLayout.new
-        west.padding.set(unit, 0, unit, unit)
+        west.padding.set(unit, unit / 2, unit, unit)
         west.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         panel.append(west)
 
@@ -207,6 +219,8 @@ module Ladb::OpenCutList
 
     end
 
+    # -- Setter --
+
     def set_pick_strategy(pick_strategy)
       @@pick_strategy = pick_strategy
 
@@ -216,6 +230,32 @@ module Ladb::OpenCutList
         }
       end
 
+    end
+
+    def set_filters(value = true)
+
+      @@material_type_filters.keys.each do |type|
+        set_filter_by_type(type, value)
+      end
+
+    end
+
+    def set_filter_by_type(type, value)
+
+      @@material_type_filters[type] = value
+
+      if @filter_buttons
+        @filter_buttons.each { |button|
+          if button.data == type
+            button.selected = value
+          end
+        }
+      end
+
+    end
+
+    def toggle_filter_by_type(type)
+      set_filter_by_type(type, !@@material_type_filters[type])
     end
 
     def set_current_material(material, material_attributes)
@@ -272,9 +312,6 @@ module Ladb::OpenCutList
 
     def onActivate(view)
       super
-
-      # Set startup cursor
-      set_root_cursor(@add ? @cursor_paint_id : @cursor_unpaint_id)
 
       # Retrive pick helper
       @pick_helper = view.pick_helper
@@ -364,6 +401,8 @@ module Ladb::OpenCutList
         set_current_material(nil, nil)
       elsif @@current_material && !current_material_exists || @@current_material.nil? && !@material_defs.empty?
         set_current_material(@material_defs.first[:material], @material_defs.first[:material_attributes])
+      else
+        set_current_material(@@current_material, @@current_material ? MaterialAttributes.new(@@current_material) : nil)  # Reapply current material to setup the paint color
       end
 
     end

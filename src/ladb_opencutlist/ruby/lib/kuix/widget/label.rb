@@ -23,6 +23,7 @@ module Ladb::OpenCutList::Kuix
 
     def text=(value)
       @text = value
+      @truncated_text = value
       compute_min_size
       invalidate
     end
@@ -35,11 +36,14 @@ module Ladb::OpenCutList::Kuix
     def text_size=(value)
       @text_options[:size] = value
       compute_min_size
+      compute_letter_width
       invalidate
     end
 
     def text_bold=(value)
       @text_options[:bold] = value
+      compute_min_size
+      compute_letter_width
       invalidate
     end
 
@@ -76,6 +80,28 @@ module Ladb::OpenCutList::Kuix
         @text_point.y -= @text_options[:size] # Workaround the "center" text to SU prior 2020 where text anchor is top
       end
 
+      # Truncate text if necessary
+      if @letter_width
+        text_width = @text.length * @letter_width
+        if text_width > content_size.width
+          @truncated_text = @text[0..(content_size.width / @letter_width).to_i]
+        else
+          @truncated_text = @text
+        end
+      end
+
+    end
+
+    def compute_letter_width
+      if @text_options[:size]
+        if Sketchup.version_number < 2000000000 || Sketchup.active_model.nil?
+          # Estimate letter width
+          @letter_width = @text_options[:size].to_i * 0.7
+        else
+          text_bounds = Sketchup.active_model.active_view.text_bounds(Geom::Point3d.new, 'A', @text_options)
+          @letter_width = text_bounds.width
+        end
+      end
     end
 
     def compute_min_size
@@ -100,7 +126,7 @@ module Ladb::OpenCutList::Kuix
 
     def paint_content(graphics)
       super
-      graphics.draw_text(@text_point.x, @text_point.y, @text, @text_options)
+      graphics.draw_text(@text_point.x, @text_point.y, @truncated_text, @text_options)
     end
 
   end
