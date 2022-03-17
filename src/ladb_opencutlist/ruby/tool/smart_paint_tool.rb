@@ -406,7 +406,7 @@ module Ladb::OpenCutList
       end
 
       # Sort material defs (type > name)
-      @material_defs.sort_by! { |material_def| [ MaterialAttributes::type_order(material_def[:material_attributes].type), material_def[:material].name ] }
+      @material_defs.sort_by! { |material_def| [ MaterialAttributes::type_order(material_def[:material_attributes].type), material_def[:material].display_name ] }
 
       # Select default current material if necessary
       if model.materials.length == 0
@@ -438,7 +438,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :active)
         btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
         btn.set_style_attribute(:border_color, Sketchup::Color.new('blue'), :selected)
-        btn.append_static_label(material.name, unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
+        btn.append_static_label(material.display_name, unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
         btn.on(:click) { |button|
 
           # Toggle button
@@ -452,7 +452,7 @@ module Ladb::OpenCutList
         }
         btn.on(:enter) { |button|
           status.visible = true
-          status_lbl_1.text = material.name
+          status_lbl_1.text = material.display_name
           status_lbl_2.text = (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
           status_lbl_2.visible = material_attributes.type > 0
         }
