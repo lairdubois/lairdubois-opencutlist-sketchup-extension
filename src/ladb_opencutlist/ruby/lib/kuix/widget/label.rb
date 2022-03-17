@@ -81,10 +81,14 @@ module Ladb::OpenCutList::Kuix
       end
 
       # Truncate text if necessary
-      if @letter_width && content_size.width < @min_size.width
-        text_width = @text.length * @letter_width
-        if text_width > content_size.width
-          @truncated_text = @text[0..(content_size.width / @letter_width).to_i]
+      if @letter_width
+        if content_size.width < @min_size.width
+          text_width = @text.length * @letter_width
+          if text_width > content_size.width
+            @truncated_text = @text[0..(content_size.width / @letter_width).to_i]
+          else
+            @truncated_text = @text
+          end
         else
           @truncated_text = @text
         end
