@@ -55,9 +55,11 @@ module Ladb::OpenCutList
         @selected_button = nil
 
         # Create cursors
-        @cursor_paint_id = create_cursor('paint', 7, 25)
+        @cursor_paint_face_id = create_cursor('paint-face', 7, 25)
+        @cursor_paint_component_instance_id = create_cursor('paint-component-instance', 7, 25)
         @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
         @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
+        @cursor_pick_id = @cursor_paint_component_instance_id
 
         _populate_material_defs(model)
 
@@ -69,7 +71,7 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
+      unit = [ [ view.vpheight / 150, 10 ].min, 4 ].max
 
       panel = Kuix::Widget.new
       panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
@@ -222,6 +224,7 @@ module Ladb::OpenCutList
     # -- Setter --
 
     def set_pick_strategy(pick_strategy)
+
       @@pick_strategy = pick_strategy
 
       if @pick_strategy_buttons
@@ -229,6 +232,18 @@ module Ladb::OpenCutList
           button.selected = button.data == pick_strategy
         }
       end
+
+      case pick_strategy
+      when PICK_STRATEGY_FACE
+        @cursor_pick_id = @cursor_paint_face_id
+      when PICK_STRATEGY_COMPONENT_INSTANCE
+        @cursor_pick_id = @cursor_paint_component_instance_id
+      else
+        throw 'Invalid pick stragegy'
+      end
+
+      # Update root cursor
+      set_root_cursor(@@current_material ? @cursor_pick_id : @cursor_nopaint_id)
 
     end
 
@@ -265,9 +280,6 @@ module Ladb::OpenCutList
 
       # Update the paint color
       @paint_color = material ? material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : nil
-
-      # Update root cursor
-      set_root_cursor(material ? @cursor_paint_id : @cursor_nopaint_id)
 
       # Select the pick strategy
       if material_attributes
@@ -331,7 +343,7 @@ module Ladb::OpenCutList
       return if super
       if key == COPY_MODIFIER_KEY
         @add = true
-        set_root_cursor(@cursor_paint_id)
+        set_root_cursor(@cursor_pick_id)
         view.invalidate
       end
     end
@@ -497,7 +509,6 @@ module Ladb::OpenCutList
 
     def _pick_entity(x, y, view)
       if @pick_helper.do_pick(x, y) > 0
-
         @pick_helper.count.times { |pick_path_index|
 
           picked_path = @pick_helper.path_at(pick_path_index)
@@ -507,6 +518,16 @@ module Ladb::OpenCutList
           if picked_path && picked_path.last && picked_path.last.is_a?(Sketchup::Face)
 
             case @@pick_strategy
+
+            when PICK_STRATEGY_FACE
+
+              @picked_path = picked_path
+              @picked_entity = picked_path.last
+              @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
+              @triangles = _compute_face_triangles(view, picked_path.last, PathUtils::get_transformation(picked_path))
+
+              view.invalidate
+              return
 
             when PICK_STRATEGY_COMPONENT_INSTANCE
 
@@ -528,15 +549,7 @@ module Ladb::OpenCutList
               }
 
             else
-
-              @picked_path = picked_path
-              @picked_entity = picked_path.last
-              @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
-              @triangles = _compute_face_triangles(view, picked_path.last, PathUtils::get_transformation(picked_path))
-
-              view.invalidate
-              return
-
+              throw 'Invalid pick strategy'
             end
 
           end
