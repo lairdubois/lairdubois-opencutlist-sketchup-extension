@@ -1099,4 +1099,4 @@ tool:
     filters: Filtres
     action: Action
     pick_strategy_0: Colorier faces
-    pick_strategy_1: Colorier composants
+    pick_strategy_1: Colorier instances

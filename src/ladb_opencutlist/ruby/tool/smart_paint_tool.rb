@@ -12,11 +12,11 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
 
     PICK_STRATEGY_FACE = 0
-    PICK_STRATEGY_COMPONENT = 1
+    PICK_STRATEGY_COMPONENT_INSTANCE = 1
 
     PICK_STRATEGIES = [
       PICK_STRATEGY_FACE,
-      PICK_STRATEGY_COMPONENT
+      PICK_STRATEGY_COMPONENT_INSTANCE
     ]
 
     COLOR_MATERIAL_TYPES = {
@@ -30,7 +30,7 @@ module Ladb::OpenCutList
 
     @@current_material = nil
     @@material_type_filters = nil
-    @@pick_strategy = PICK_STRATEGY_COMPONENT
+    @@pick_strategy = PICK_STRATEGY_COMPONENT_INSTANCE
 
     def initialize
       super
@@ -237,11 +237,11 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_EDGE
           set_pick_strategy(PICK_STRATEGY_FACE)
         else
-          set_pick_strategy(PICK_STRATEGY_COMPONENT)
+          set_pick_strategy(PICK_STRATEGY_COMPONENT_INSTANCE)
         end
 
       else
-        set_pick_strategy(PICK_STRATEGY_COMPONENT)
+        set_pick_strategy(PICK_STRATEGY_COMPONENT_INSTANCE)
       end
 
     end
@@ -469,7 +469,7 @@ module Ladb::OpenCutList
 
             case @@pick_strategy
 
-            when PICK_STRATEGY_COMPONENT
+            when PICK_STRATEGY_COMPONENT_INSTANCE
 
               tmp_picked_path = picked_path.to_a
               picked_path.reverse_each { |entity|
