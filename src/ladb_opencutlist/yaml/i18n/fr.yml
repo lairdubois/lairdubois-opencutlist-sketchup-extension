@@ -1098,8 +1098,11 @@ tool:
   smart_paint:
     filters: Filtres
     action: Action
-    pick_strategy_0: Colorier faces
-    pick_strategy_1: Colorier instances
+    action_0: Colorier faces
+    action_1: Colorier pièces
+    action_2: Nettoyer faces
+    action_3: Nettoyer pièces
+    action_4: Prélever
     warning:
       no_material: Votre modèle ne contient aucune matière !
       all_filtered: Les filtres choisis masquent toutes les matières !

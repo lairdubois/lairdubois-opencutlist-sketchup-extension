@@ -22,6 +22,7 @@ module Ladb::OpenCutList::Kuix
     # -- Properties --
 
     def text=(value)
+      return if @text == value
       @text = value
       @truncated_text = value
       compute_min_size
