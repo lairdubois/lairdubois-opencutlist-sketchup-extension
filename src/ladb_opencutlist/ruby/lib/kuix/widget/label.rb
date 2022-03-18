@@ -34,7 +34,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def text_size=(value)
-      @text_options[:size] = value
+      @text_options[:size] = Sketchup.platform == :platform_win ? value * 0.75 : value  # Windows workaround -> 0.75 = 96 / 72
       compute_min_size
       compute_letter_width
       invalidate

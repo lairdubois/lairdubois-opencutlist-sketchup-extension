@@ -202,6 +202,7 @@ module Ladb::OpenCutList
           west_btn.min_size.set_all(unit * 10)
           west_btn.border.set_all(unit)
           west_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255))
+          west_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220, 255), :active)
           west_btn.set_style_attribute(:border_color, Sketchup::Color.new(128, 128, 128, 255), :hover)
           west_btn.append_static_label('⚙︎', unit * 5)
           west_btn.on(:click) { |button|
@@ -209,11 +210,31 @@ module Ladb::OpenCutList
           }
           west.append(west_btn)
 
+        east = Kuix::Widget.new
+        east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        east.layout = Kuix::GridLayout.new
+        east.padding.set(unit, unit, unit, unit / 2)
+        east.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+        panel.append(east)
+
+          east_btn = Kuix::Button.new
+          east_btn.layout = Kuix::GridLayout.new
+          east_btn.min_size.set_all(unit * 10)
+          east_btn.border.set_all(unit)
+          east_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255))
+          east_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220, 255), :active)
+          east_btn.set_style_attribute(:border_color, Sketchup::Color.new(128, 128, 128, 255), :hover)
+          east_btn.append_static_label('+', unit * 5)
+          east_btn.on(:click) { |button|
+            Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
+          }
+          east.append(east_btn)
+
         # Buttons panel
 
         @btns = Kuix::Widget.new
         @btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        @btns.padding.set(unit, unit, unit, 0)
+        @btns.padding.set(unit, 0, unit, 0)
         @btns.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         panel.append(@btns)
 

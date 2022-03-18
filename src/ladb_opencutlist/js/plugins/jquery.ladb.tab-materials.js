@@ -137,7 +137,7 @@
 
         var material = {
             name: name ? name : '',
-            color: color ? color : color,
+            color: color ? color : '',
             attributes: {
                 type: type ? type : 0
             }
@@ -1038,9 +1038,9 @@
 
         this.registerCommand('new_material', function (parameters) {
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
-                var name = parameters.name;
-                var color = parameters.color;
-                var type = parameters.type;
+                var name = parameters ? parameters.name : null;
+                var color = parameters ? parameters.color : null;
+                var type = parameters ? parameters.type : null;
                 that.newMaterial(name, color, type);
             }, 1);
         });
