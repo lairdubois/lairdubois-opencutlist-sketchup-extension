@@ -1100,3 +1100,6 @@ tool:
     action: Action
     pick_strategy_0: Colorier faces
     pick_strategy_1: Colorier instances
+    warning:
+      no_material: Votre modèle ne contient aucune matière !
+      all_filtered: Les filtres choisis masquent toutes les matières !

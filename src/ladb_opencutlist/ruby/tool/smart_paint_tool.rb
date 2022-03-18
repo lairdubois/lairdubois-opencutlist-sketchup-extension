@@ -138,7 +138,7 @@ module Ladb::OpenCutList
 
                 # Re populate material defs & setup corresponding buttons
                 _populate_material_defs(view.model)
-                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
+                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2, settings)
 
               }
               filters_btn.on(:doubleclick) { |button|
@@ -148,7 +148,7 @@ module Ladb::OpenCutList
 
                 # Re populate material defs & setup corresponding buttons
                 _populate_material_defs(view.model)
-                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
+                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2, settings)
 
               }
               filters.append(filters_btn)
@@ -217,7 +217,7 @@ module Ladb::OpenCutList
         @btns.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         panel.append(@btns)
 
-          _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
+          _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2, settings)
 
     end
 
@@ -419,10 +419,26 @@ module Ladb::OpenCutList
 
     end
 
-    def _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
+    def _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2, settings)
 
       @btns.remove_all
       @btns.layout = Kuix::GridLayout.new([ @material_defs.length, 10 ].min, (@material_defs.length / 10.0).ceil, unit / 2, unit / 2)
+
+      if @material_defs.empty?
+
+        warning_lbl = Kuix::Label.new
+        warning_lbl.text = Plugin.instance.get_i18n_string("tool.smart_paint.warning.#{Sketchup.active_model.materials.length == 0 ? 'no_material' : 'all_filtered'}")
+        warning_lbl.text_size = unit * 3
+        warning_lbl.margin.set_all(unit)
+        warning_lbl.set_style_attribute(:background_color, Sketchup::Color.new(242, 222, 222, 255))
+        warning_lbl.set_style_attribute(:color, Sketchup::Color.new(169, 68, 66, 255))
+        @btns.append(warning_lbl)
+
+        if Sketchup.active_model.materials.length > 0
+          settings.visible = true
+        end
+
+      end
 
       @material_defs.each do |material_def|
 
