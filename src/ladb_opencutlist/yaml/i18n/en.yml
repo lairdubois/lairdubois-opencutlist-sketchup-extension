@@ -58,8 +58,12 @@ core:
   menu:
     submenu: OpenCutList
     item:
+      generate_cutlist: Generate parts list
       edit_part_properties: $(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $(tab.cutlist.edit_part_edges_properties)
+      smart_paint: Paint Parts
   toolbar:
     name: OpenCutList
     command: OpenCutList
@@ -135,7 +139,7 @@ core:
       save_to: "Update preset '{{ name }}'"
       delete: "Delete preset '{{ name }}'"
   progress:
-    please_wait: Please wait
+    please_wait: Calculating a world of peace
   component:
     textinput:
       reset: Reset this value
@@ -401,6 +405,7 @@ tab:
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
       property_tags: Tags
+      property_thickness_layer_count: Number of layers
       tags: Tags
       tags_help: Custom list of tags proposed in the part properties window.
       tags_placeholder: Add a tag
@@ -1090,3 +1095,11 @@ tool:
   highlight:
     transparency: Transparency
     zoom_extents: Zoom Extents
+    smart_paint:
+      filters: Filters
+      action: Action
+      pick_strategy_0: Paint Faces
+      pick_strategy_1: Paint Instances
+      warning:
+        no_material: Your model does not contain any material!
+        all_filtered: The selected filters hide all materials!
