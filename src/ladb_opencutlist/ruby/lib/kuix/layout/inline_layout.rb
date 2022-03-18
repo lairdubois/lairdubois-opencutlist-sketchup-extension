@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Kuix
 
     def initialize(horizontal = true, gap = 0, anchor = nil)
       @horizontal = horizontal
-      @gap = gap
+      @gap = gap.to_i
       @anchor = anchor
     end
 

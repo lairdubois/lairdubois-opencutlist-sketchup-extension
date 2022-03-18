@@ -51,14 +51,14 @@ module Ladb::OpenCutList::Kuix
           if widget.layout_data && widget.layout_data.is_a?(StaticLayoutData)
 
             # X
-            if widget.layout_data.x.is_a?(Float)
+            if widget.layout_data.x.is_a?(Float) && widget.layout_data.x <= 1.0
               widget_bounds.origin.x = available_width * widget.layout_data.x
             else
               widget_bounds.origin.x = widget.layout_data.x
             end
 
             # Y
-            if widget.layout_data.y.is_a?(Float)
+            if widget.layout_data.y.is_a?(Float) && widget.layout_data.y <= 1.0
               widget_bounds.origin.y = available_height * widget.layout_data.y
             else
               widget_bounds.origin.y = widget.layout_data.y
@@ -67,7 +67,7 @@ module Ladb::OpenCutList::Kuix
             # Width
             if widget.layout_data.width < 0
               widget_bounds.size.width = preferred_size.width
-            elsif widget.layout_data.width.is_a?(Float)
+            elsif widget.layout_data.width.is_a?(Float) && widget.layout_data.width <= 1.0
               widget_bounds.size.width = available_width * widget.layout_data.width
             else
               widget_bounds.size.width = [ widget.layout_data.width, preferred_size.width ].max
@@ -76,7 +76,7 @@ module Ladb::OpenCutList::Kuix
             # Height
             if widget.layout_data.height < 0
               widget_bounds.size.height = preferred_size.height
-            elsif widget.layout_data.height.is_a?(Float)
+            elsif widget.layout_data.height.is_a?(Float) && widget.layout_data.height <= 1.0
               widget_bounds.size.height = available_height * widget.layout_data.height
             else
               widget_bounds.size.height = [ widget.layout_data.height, preferred_size.height ].max

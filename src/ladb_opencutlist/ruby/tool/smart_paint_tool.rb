@@ -138,7 +138,7 @@ module Ladb::OpenCutList
 
                 # Re populate material defs & setup corresponding buttons
                 _populate_material_defs(view.model)
-                _setup_material_buttons(unit, status, status_lbl_1, status_lbl_2)
+                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
 
               }
               filters_btn.on(:doubleclick) { |button|
@@ -148,7 +148,7 @@ module Ladb::OpenCutList
 
                 # Re populate material defs & setup corresponding buttons
                 _populate_material_defs(view.model)
-                _setup_material_buttons(unit, status, status_lbl_1, status_lbl_2)
+                _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
 
               }
               filters.append(filters_btn)
@@ -217,7 +217,7 @@ module Ladb::OpenCutList
         @btns.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         panel.append(@btns)
 
-          _setup_material_buttons(unit, status, status_lbl_1, status_lbl_2)
+          _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
 
     end
 
@@ -419,7 +419,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _setup_material_buttons(unit, status, status_lbl_1, status_lbl_2)
+    def _setup_material_buttons(view, unit, status, status_lbl_1, status_lbl_2)
 
       @btns.remove_all
       @btns.layout = Kuix::GridLayout.new([ @material_defs.length, 10 ].min, (@material_defs.length / 10.0).ceil, unit / 2, unit / 2)

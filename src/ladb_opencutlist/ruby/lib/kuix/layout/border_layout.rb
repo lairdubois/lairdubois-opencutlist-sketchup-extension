@@ -25,8 +25,8 @@ module Ladb::OpenCutList::Kuix
   class BorderLayout
 
     def initialize(horizontal_gap = 0, vertical_gap = 0)
-      @horizontal_gap = horizontal_gap
-      @vertical_gap = vertical_gap
+      @horizontal_gap = horizontal_gap.to_i
+      @vertical_gap = vertical_gap.to_i
     end
 
     def measure_prefered_size(target, prefered_width, size)

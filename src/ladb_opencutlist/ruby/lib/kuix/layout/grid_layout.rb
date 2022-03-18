@@ -3,10 +3,10 @@ module Ladb::OpenCutList::Kuix
   class GridLayout
 
     def initialize(num_cols = 1, num_rows = 1, horizontal_gap = 0, vertical_gap = 0)
-      @num_cols = [ num_cols, 1 ].max
-      @num_rows = [ num_rows, 1 ].max
-      @horizontal_gap = horizontal_gap
-      @vertical_gap = vertical_gap
+      @num_cols = [ num_cols.to_i, 1 ].max
+      @num_rows = [ num_rows.to_i, 1 ].max
+      @horizontal_gap = horizontal_gap.to_i
+      @vertical_gap = vertical_gap.to_i
     end
 
     def measure_prefered_size(target, prefered_width, size)
