@@ -11,6 +11,7 @@ module Ladb::OpenCutList
     include ScreenScaleFactorHelper
     include LayerVisibilityHelper
 
+    ACTION_NONE = -1
     ACTION_PAINT_FACE = 0
     ACTION_PAINT_PART = 1
     ACTION_UNPAINT_FACE = 2
@@ -56,16 +57,12 @@ module Ladb::OpenCutList
         @paint_color = nil
         @unpaint_color = nil
 
-        @selected_button = nil
-
         # Create cursors
         @cursor_paint_face_id = create_cursor('paint-face', 7, 25)
         @cursor_paint_part_id = create_cursor('paint-part', 7, 25)
         @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
         @cursor_picker_id = create_cursor('picker', 7, 25)
         @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
-
-        _populate_material_defs(model)
 
       end
 
@@ -347,7 +344,7 @@ module Ladb::OpenCutList
       # Select the pick strategy
       if material_attributes
 
-        # Set pick strategy according to material type
+        # Set action according to material type
         case material_attributes.type
         when MaterialAttributes::TYPE_EDGE
           set_action(ACTION_PAINT_FACE)
@@ -356,7 +353,7 @@ module Ladb::OpenCutList
         end
 
       else
-        set_action(ACTION_PAINT_PART)
+        set_action(nil)
       end
 
       # Update buttons
@@ -394,6 +391,10 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onActivate(view)
+
+      # Populate material defs
+      _populate_material_defs(view.model)
+
       super
 
       # Retrive pick helper
@@ -507,7 +508,7 @@ module Ladb::OpenCutList
                                 :material_attributes => material_attributes
                               })
           if @@current_material.nil? && material == model.materials.current
-            set_current_material(material, material_attributes)
+            @@current_material = material
           end
         end
         current_material_exists = current_material_exists || @@current_material == material
