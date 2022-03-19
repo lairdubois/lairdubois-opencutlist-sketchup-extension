@@ -59,10 +59,10 @@ core:
     submenu: OpenCutList
     item:
       generate_cutlist: Generate parts list
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $(tab.cutlist.edit_part_size_increase_properties)
-      edit_part_edges_properties: $(tab.cutlist.edit_part_edges_properties)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       smart_paint: Paint Parts
   toolbar:
     name: OpenCutList
@@ -1095,11 +1095,29 @@ tool:
   highlight:
     transparency: Transparency
     zoom_extents: Zoom Extents
-    smart_paint:
-      filters: Filters
-      action: Action
-      pick_strategy_0: Paint Faces
-      pick_strategy_1: Paint Instances
-      warning:
-        no_material: Your model does not contain any material!
-        all_filtered: The selected filters hide all materials!
+  smart_paint:
+    copy_key_win: Control
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
+    status_paint_face: Click to paint a face.
+    status_paint_part: Click to paint an entire part.
+    status_unpaint_face: Click to clear a face.
+    status_unpaint_part: Click to clear a part.
+    status_pick: Click to sample the material.
+    filters: Filters
+    filter_0: Without type
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Action
+    action_0: Paint Face
+    action_1: Paint Part
+    action_2: Clear Face
+    action_3: Clear Part
+    action_4: Pickup
+    warning:
+      no_material: Your model does not contain any material!
+      all_filtered: The selected filters hide all materials!
