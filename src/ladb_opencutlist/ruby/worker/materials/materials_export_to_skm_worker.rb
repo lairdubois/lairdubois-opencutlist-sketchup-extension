@@ -34,7 +34,7 @@ module Ladb::OpenCutList
         dir = File.dirname(model.path)
       end
 
-      dir = URI::escape(dir) if Plugin.instance.current_os == :MAC
+      dir = URI::escape(dir) if Plugin.instance.platform_is_mac
 
       # Open save panel
       path = UI.savepanel(Plugin.instance.get_i18n_string('tab.materials.export_to_skm.title'), dir, @display_name + '.skm')

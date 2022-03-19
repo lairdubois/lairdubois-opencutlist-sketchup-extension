@@ -32,7 +32,7 @@
             sketchup_version: options.sketchup_version,
             sketchup_version_number: options.sketchup_version_number,
             ruby_version: options.ruby_version,
-            current_os: options.current_os,
+            platform_name: options.platform_name,
             is_64bit: options.is_64bit,
             user_agent: window.navigator.userAgent,
             locale: options.locale,

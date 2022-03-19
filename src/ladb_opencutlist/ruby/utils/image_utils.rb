@@ -16,9 +16,9 @@ module Ladb::OpenCutList
       out_file = in_file if out_file.nil?
 
       bin_dir = File.absolute_path(File.join(__dir__, '..', '..', 'bin'))
-      case Plugin.instance.current_os
+      case Sketchup.platform
 
-        when :MAC
+        when :platform_osx
 
           bin_dir = File.join(bin_dir, 'osx')
           convert_path = File.join(bin_dir, 'bin', 'convert')
@@ -29,7 +29,7 @@ module Ladb::OpenCutList
           # Prepend the environment variables we need
           lib_path = "DYLD_LIBRARY_PATH=\"#{File.join(bin_dir, 'lib')}\""
 
-        when :WIN
+        when :platform_win
 
           bin_dir = File.join(bin_dir, 'x86')
           convert_path = File.absolute_path(File.join(bin_dir, 'convert.exe'))

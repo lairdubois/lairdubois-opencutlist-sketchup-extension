@@ -67,7 +67,6 @@ module Ladb::OpenCutList
 
       @temp_dir = nil
       @language = nil
-      @current_os = nil
       @i18n_strings_cache = nil
       @app_defaults_cache = nil
       @html_dialog_compatible = nil
@@ -141,11 +140,16 @@ module Ladb::OpenCutList
       available_languages.sort
     end
 
-    def current_os
-      if @current_os
-        return @current_os
-      end
-      @current_os = (Object::RUBY_PLATFORM =~ /mswin/i || Object::RUBY_PLATFORM =~ /mingw/i) ? :WIN : ((Object::RUBY_PLATFORM =~ /darwin/i) ? :MAC : :OTHER)
+    def platform_is_win
+      Sketchup.platform == :platform_win
+    end
+
+    def platform_is_mac
+      Sketchup.platform == :platform_osx
+    end
+
+    def platform_name
+      Sketchup.platform == :platform_win ? 'win' : 'mac'
     end
 
     def get_i18n_string(path_key)
@@ -168,7 +172,7 @@ module Ladb::OpenCutList
       end
 
       if i18n_string
-        i18n_string.gsub(/\$\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
+        i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
       else
         path_key
       end
@@ -920,7 +924,7 @@ module Ladb::OpenCutList
         if html_dialog_compatible
           @dialog.show
         else
-          if current_os == :MAC
+          if platform_is_mac
             @dialog.show_modal
           else
             @dialog.show
@@ -962,7 +966,7 @@ module Ladb::OpenCutList
 
     def dialog_set_size(width, height)
       if @dialog
-        if current_os == :MAC && !html_dialog_compatible
+        if platform_is_mac && !html_dialog_compatible
           @dialog.execute_script("window.resizeTo(#{width},#{height})")
         else
           @dialog.set_size(width, height)
@@ -993,7 +997,7 @@ module Ladb::OpenCutList
 
     def dialog_set_position(left, top)
       if @dialog
-        if current_os == :MAC && !html_dialog_compatible
+        if platform_is_mac && !html_dialog_compatible
           @dialog.execute_script("window.moveTo(#{left},#{top});")
         else
           @dialog.set_position(left, top)
@@ -1260,7 +1264,7 @@ module Ladb::OpenCutList
           :sketchup_version => Sketchup.version,
           :sketchup_version_number => Sketchup.version_number,
           :ruby_version => RUBY_VERSION,
-          :current_os => "#{current_os}",
+          :platform_name => platform_name,
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
           :language => Plugin.instance.language,

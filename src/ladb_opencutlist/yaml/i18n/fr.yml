@@ -59,10 +59,10 @@ core:
     submenu: OpenCutList
     item:
       generate_cutlist: Générer la fiche de débit
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $(tab.cutlist.edit_part_size_increase_properties)
-      edit_part_edges_properties: $(tab.cutlist.edit_part_edges_properties)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       smart_paint: Colorier des pièces
   toolbar:
     name: OpenCutList
@@ -1096,12 +1096,27 @@ tool:
     transparency: Transparence
     zoom_extents: Zoom étendu
   smart_paint:
+    copy_key_win: Control
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
+    status_paint_face: Cliquez pour colorier une face.
+    status_paint_part: Cliquez pour colorier une pièce entière.
+    status_unpaint_face: Cliquez pour nettoyer une face.
+    status_unpaint_part: Cliquez pour nettoyer une pièce entière.
+    status_pick: Cliquez pour prélever un échantillon de la matière.
     filters: Filtres
+    filter_0: Sans type
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
     action: Action
-    action_0: Colorier faces
-    action_1: Colorier pièces
-    action_2: Nettoyer faces
-    action_3: Nettoyer pièces
+    action_0: Colorier face
+    action_1: Colorier pièce
+    action_2: Nettoyer face
+    action_3: Nettoyer pièce
     action_4: Prélever
     warning:
       no_material: Votre modèle ne contient aucune matière !

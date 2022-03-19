@@ -36,7 +36,7 @@ module Ladb::OpenCutList
 
     @@current_material = nil
     @@material_type_filters = nil
-    @@action = ACTION_PAINT_PART
+    @@action = nil
 
     def initialize
       super
@@ -62,8 +62,8 @@ module Ladb::OpenCutList
         @cursor_paint_face_id = create_cursor('paint-face', 7, 25)
         @cursor_paint_part_id = create_cursor('paint-part', 7, 25)
         @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
-        @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
         @cursor_picker_id = create_cursor('picker', 7, 25)
+        @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
 
         _populate_material_defs(model)
 
@@ -135,7 +135,7 @@ module Ladb::OpenCutList
               filters_btn.set_style_attribute(:border_color, COLOR_MATERIAL_TYPES[type], :selected)
               filters_btn.selected = @@material_type_filters[type]
               filters_btn.data = type
-              filters_btn.append_static_label(Plugin.instance.get_i18n_string("tab.materials.type_#{type}"), @unit * 3)
+              filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
               filters_btn.on(:click) { |button|
 
                 toggle_filter_by_type(button.data)
@@ -261,15 +261,31 @@ module Ladb::OpenCutList
       # Update root cursor
       case action
       when ACTION_PAINT_FACE
+        Sketchup.set_status_text(
+          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_face') +
+            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face') +
+            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+          SB_PROMPT)
         set_root_cursor(@cursor_paint_face_id)
       when ACTION_PAINT_PART
+        Sketchup.set_status_text(
+          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_part') +
+            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part') +
+            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+          SB_PROMPT)
         set_root_cursor(@cursor_paint_part_id)
-      when ACTION_UNPAINT_FACE, ACTION_UNPAINT_PART
+      when ACTION_UNPAINT_FACE
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face'), SB_PROMPT)
+        set_root_cursor(@cursor_unpaint_id)
+      when ACTION_UNPAINT_PART
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part'), SB_PROMPT)
         set_root_cursor(@cursor_unpaint_id)
       when ACTION_PICK
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'), SB_PROMPT)
         set_root_cursor(@cursor_picker_id)
       else
-        throw 'Invalid action'
+        Sketchup.set_status_text('', SB_PROMPT)
+        set_root_cursor(@cursor_nopaint_id)
       end
 
     end
