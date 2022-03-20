@@ -39,8 +39,8 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_add_std_dimension_command") do |settings|
         add_std_dimension_command(settings)
       end
-      Plugin.instance.register_command("materials_set_current_command") do |settings|
-        set_current_command(settings)
+      Plugin.instance.register_command("materials_smart_paint_command") do |settings|
+        smart_paint_command(settings)
       end
       Plugin.instance.register_command("materials_purge_unused") do ||
         purge_unused_command
@@ -160,11 +160,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def set_current_command(settings)
-      require_relative '../worker/materials/materials_set_current_worker'
+    def smart_paint_command(settings)
+      require_relative '../worker/materials/materials_smart_paint_worker'
 
       # Setup worker
-      worker = MaterialsSetCurrentWorker.new(settings)
+      worker = MaterialsSmartPaintWorker.new(settings)
 
       # Run !
       worker.run

@@ -535,7 +535,7 @@
     LadbTabMaterials.prototype.setCurrentMaterial = function (materialId) {
         var material = this.findMaterialById(materialId);
         if (material) {
-            rubyCallCommand('materials_set_current_command', {
+            rubyCallCommand('materials_smart_paint_command', {
                 name: material.name
             });
         }

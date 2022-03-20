@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../tool/smart_paint_tool'
 
-  class MaterialsSetCurrentWorker
+  class MaterialsSmartPaintWorker
 
     def initialize(settings)
       @name = settings['name']
