@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../tool/smart_paint_tool'
+
   class MaterialsSetCurrentWorker
 
     def initialize(settings)
@@ -19,8 +21,8 @@ module Ladb::OpenCutList
 
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
-      # Set material as current
-      materials.current = material
+      # Select Smart Paint Tool
+      Sketchup.active_model.select_tool(SmartPaintTool.new(material))
 
       # Send action
       success = Sketchup.send_action('selectPaintTool:')

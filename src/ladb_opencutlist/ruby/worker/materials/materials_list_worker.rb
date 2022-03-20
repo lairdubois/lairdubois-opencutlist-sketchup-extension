@@ -34,8 +34,7 @@ module Ladb::OpenCutList
           :edge_material_count => 0,
           :hardware_material_count => 0,
           :untyped_material_count => 0,
-          :materials => [],
-          :current_material_name => materials && materials.current ? materials.current.name : nil
+          :materials => []
       }
 
       if materials

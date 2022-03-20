@@ -27,23 +27,26 @@ module Ladb::OpenCutList
     ]
 
     COLOR_MATERIAL_TYPES = {
-      0 => Sketchup::Color.new(128, 128, 128, 255).freeze,
-      1 => Sketchup::Color.new(76, 175, 80, 255).freeze,
-      2 => Sketchup::Color.new(237, 162, 0, 255).freeze,
-      3 => Sketchup::Color.new(245, 89, 172, 255).freeze,
-      4 => Sketchup::Color.new(102, 142, 238, 255).freeze,
-      5 => Sketchup::Color.new(0, 0, 0, 255).freeze
+      MaterialAttributes::TYPE_UNKNOWN => Sketchup::Color.new(128, 128, 128, 255).freeze,
+      MaterialAttributes::TYPE_SOLID_WOOD => Sketchup::Color.new(76, 175, 80, 255).freeze,
+      MaterialAttributes::TYPE_SHEET_GOOD => Sketchup::Color.new(237, 162, 0, 255).freeze,
+      MaterialAttributes::TYPE_DIMENSIONAL => Sketchup::Color.new(245, 89, 172, 255).freeze,
+      MaterialAttributes::TYPE_EDGE => Sketchup::Color.new(102, 142, 238, 255).freeze,
+      MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0, 255).freeze
     }
 
     @@current_material = nil
-    @@material_type_filters = nil
+    @@filters = nil
     @@action = nil
 
-    def initialize
+    def initialize(material = nil)
       super
 
       model = Sketchup.active_model
       if model
+
+        # Try to use given material
+        @@current_material = material if material
 
         # Force global current material to be valid
         unless @@current_material.nil?
@@ -54,7 +57,8 @@ module Ladb::OpenCutList
           end
         end
 
-        @paint_color = nil
+        @paint_down_color = nil
+        @paint_hover_color = nil
         @unpaint_color = nil
 
         # Create cursors
@@ -83,7 +87,7 @@ module Ladb::OpenCutList
 
         @status = Kuix::Widget.new
         @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        @status.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @status.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         @status.padding.set_all(@unit)
         @status.visible = false
         @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
@@ -130,7 +134,7 @@ module Ladb::OpenCutList
               filters_btn.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[type], :active)
               filters_btn.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[type].blend(Sketchup::Color.new('white'), 0.2), :hover)
               filters_btn.set_style_attribute(:border_color, COLOR_MATERIAL_TYPES[type], :selected)
-              filters_btn.selected = @@material_type_filters[type]
+              filters_btn.selected = @@filters[type]
               filters_btn.data = type
               filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
               filters_btn.on(:click) { |button|
@@ -243,19 +247,36 @@ module Ladb::OpenCutList
 
     end
 
-    # -- Setter --
+    # -- Setters --
+
+    def set_status(text_1, text_2 = '')
+      return unless @status && text_1.is_a?(String) && text_2.is_a?(String)
+      @status_lbl_1.text = text_1
+      @status_lbl_1.visible = !text_1.empty?
+      @status_lbl_2.text = text_2
+      @status_lbl_2.visible = !text_2.empty?
+      @status.visible = @status_lbl_1.visible? || @status_lbl_2.visible?
+    end
+
+    def set_status_material(material, material_attributes)
+      set_status(material.display_name, material_attributes.type > 0 ? "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
+    end
 
     def set_action(action)
 
       @@action = action
 
+      # Update buttons
       if @action_buttons
         @action_buttons.each { |button|
           button.selected = button.data == action
         }
       end
 
-      # Update root cursor
+      # Reset status
+      set_status('')
+
+      # Update status text and root cursor
       case action
       when ACTION_PAINT_FACE
         Sketchup.set_status_text(
@@ -287,6 +308,10 @@ module Ladb::OpenCutList
 
     end
 
+    def is_action_none
+      @@action == ACTION_NONE
+    end
+
     def is_action_face
       @@action == ACTION_PAINT_FACE || @@action == ACTION_UNPAINT_FACE
     end
@@ -309,7 +334,7 @@ module Ladb::OpenCutList
 
     def set_filters(value = true)
 
-      @@material_type_filters.keys.each do |type|
+      @@filters.keys.each do |type|
         set_filter_by_type(type, value)
       end
 
@@ -317,7 +342,7 @@ module Ladb::OpenCutList
 
     def set_filter_by_type(type, value)
 
-      @@material_type_filters[type] = value
+      @@filters[type] = value
 
       if @filter_buttons
         @filter_buttons.each { |button|
@@ -330,7 +355,7 @@ module Ladb::OpenCutList
     end
 
     def toggle_filter_by_type(type)
-      set_filter_by_type(type, !@@material_type_filters[type])
+      set_filter_by_type(type, !@@filters[type])
     end
 
     def set_current_material(material, material_attributes, update_buttons = false)
@@ -339,7 +364,8 @@ module Ladb::OpenCutList
       @@current_material = material
 
       # Update the paint color
-      @paint_color = material ? material.color.blend(Sketchup::Color.new(255, 255, 255), 0.85) : nil
+      @paint_down_color = material ? material.color.blend(Sketchup::Color.new(_color_is_dark(material.color) ? 'white' : 'black'), 0.85) : nil
+      @paint_hover_color = material ? material.color : nil
 
       # Select the pick strategy
       if material_attributes
@@ -374,7 +400,7 @@ module Ladb::OpenCutList
     def draw(view)
 
      if is_action_paint
-       color = @paint_color
+       color = @is_down ? @paint_down_color : @paint_hover_color
      elsif is_action_unpaint
        color = @unpaint_color
      else
@@ -433,23 +459,20 @@ module Ladb::OpenCutList
       end
     end
 
+    def onLButtonDown(flags, x, y, view)
+      return if super
+      unless is_action_none
+        @is_down = true
+        _handle_mouse_event(x, y, view, :l_button_down)
+      end
+    end
+
     def onLButtonUp(flags, x, y, view)
       return if super
-      _pick_entity(x, y, view)
-      if @picked_entity
-        if is_action_paint
-          @picked_entity.material = get_current_material
-          return
-        elsif is_action_unpaint
-          @picked_entity.material = nil
-          return
-        end
-      elsif @picked_path && is_action_pick
-        material = _get_material_from_path(@picked_path)
-        set_current_material(material, MaterialAttributes.new(material), true)
-        return
+      unless is_action_none
+        @is_down = false
+        _handle_mouse_event(x, y, view, :l_button_up)
       end
-      UI.beep
     end
 
     def onMouseMove(flags, x, y, view)
@@ -457,8 +480,8 @@ module Ladb::OpenCutList
         _reset(view)
         return
       end
-      if get_current_material
-        _pick_entity(x, y, view)
+      unless is_action_none
+        _handle_mouse_event(x, y, view, :move)
       end
     end
 
@@ -487,13 +510,17 @@ module Ladb::OpenCutList
 
     private
 
+    def _color_is_dark(color)
+      (0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue) <= 128
+    end
+
     def _populate_material_defs(model)
 
       # Setup default filter if not set
-      if @@material_type_filters.nil?
-        @@material_type_filters = {}
+      if @@filters.nil?
+        @@filters = {}
         for type in 0..COLOR_MATERIAL_TYPES.length - 1
-          @@material_type_filters[type] = true
+          @@filters[type] = true
         end
       end
 
@@ -502,7 +529,7 @@ module Ladb::OpenCutList
       current_material_exists = false
       model.materials.each do |material|
         material_attributes = MaterialAttributes.new(material)
-        if @@material_type_filters[material_attributes.type]
+        if @@filters[material_attributes.type]
           @material_defs.push({
                                 :material => material,
                                 :material_attributes => material_attributes
@@ -554,7 +581,7 @@ module Ladb::OpenCutList
 
         material = material_def[:material]
         material_attributes = material_def[:material_attributes]
-        material_color_is_dark = (0.2126 * material.color.red + 0.7152 * material.color.green + 0.0722 * material.color.blue) <= 128
+        material_color_is_dark = _color_is_dark(material.color)
 
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
@@ -574,13 +601,10 @@ module Ladb::OpenCutList
 
         }
         btn.on(:enter) { |button|
-          @status.visible = true
-          @status_lbl_1.text = material.display_name
-          @status_lbl_2.text = (material_attributes.type > 0 ? " (#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
-          @status_lbl_2.visible = material_attributes.type > 0
+          set_status_material(material, material_attributes)
         }
         btn.on(:leave) { |button|
-          @status.visible = false
+          set_status('')
         }
         @btns.append(btn)
 
@@ -603,9 +627,10 @@ module Ladb::OpenCutList
     end
 
     def _reset(view)
-      if @picked_entity
+      if @picked_path
+        set_status('')
+        @is_down = false
         @picked_path = nil
-        @picked_entity = nil
         @triangles = nil
         view.invalidate
       end
@@ -634,12 +659,12 @@ module Ladb::OpenCutList
       color
     end
 
-    def _pick_entity(x, y, view)
+    def _handle_mouse_event(x, y, view, event = nil)
       if @pick_helper.do_pick(x, y) > 0
         @pick_helper.count.times { |pick_path_index|
 
           picked_path = @pick_helper.path_at(pick_path_index)
-          if picked_path == @picked_path
+          if picked_path == @picked_path && event == :move
             return  # Previously detected path, stop process to optimize.
           end
           if picked_path && picked_path.last && picked_path.last.is_a?(Sketchup::Face)
@@ -650,9 +675,18 @@ module Ladb::OpenCutList
 
             when ACTION_PAINT_FACE, ACTION_UNPAINT_FACE
 
-              @picked_entity = picked_path.last
+              picked_entity = picked_path.last
+
               @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
-              @triangles = _compute_face_triangles(view, picked_path.last, PathUtils::get_transformation(picked_path))
+              @triangles = _compute_face_triangles(view, picked_entity, PathUtils::get_transformation(picked_path))
+
+              if event == :l_button_up
+                if is_action_paint
+                  picked_entity.material = get_current_material
+                elsif is_action_unpaint
+                  picked_entity.material = nil
+                end
+              end
 
               view.invalidate
               return
@@ -663,9 +697,18 @@ module Ladb::OpenCutList
               picked_path.reverse_each { |entity|
                 if entity.is_a?(Sketchup::ComponentInstance)
 
-                  @picked_entity = entity
+                  picked_entity = entity
+
                   @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
-                  @triangles = _compute_children_faces_tirangles(view, entity.definition.entities, PathUtils::get_transformation(tmp_picked_path))
+                  @triangles = _compute_children_faces_tirangles(view, picked_entity.definition.entities, PathUtils::get_transformation(tmp_picked_path))
+
+                  if event == :l_button_up
+                    if is_action_paint
+                      picked_entity.material = get_current_material
+                    elsif is_action_unpaint
+                      picked_entity.material = nil
+                    end
+                  end
 
                   view.invalidate
                   return
@@ -675,14 +718,28 @@ module Ladb::OpenCutList
                 tmp_picked_path.pop
               }
 
-              @picked_entity = nil
               @unpaint_color = nil
               @triangles = nil
               return
 
             when ACTION_PICK
 
-              @picked_entity = nil
+              material = _get_material_from_path(picked_path)
+              if material
+                if event == :move
+
+                  # Display material infos
+                  set_status_material(material, MaterialAttributes.new(material))
+
+                elsif event == :l_button_up
+
+                  # Set picked material as current (and switch to paint action)
+                  set_current_material(material, MaterialAttributes.new(material), true)
+
+                  return
+                end
+              end
+
               @unpaint_color = nil
               @triangles = nil
               return
@@ -694,6 +751,7 @@ module Ladb::OpenCutList
         }
       end
       _reset(view)
+      UI.beep if event == :l_button_up
     end
 
     def _offset_toward_camera(view, points)

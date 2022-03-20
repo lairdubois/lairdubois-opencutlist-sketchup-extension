@@ -63,10 +63,12 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      smart_paint: Colorier des pièces
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Colorier des pièces
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -780,8 +782,8 @@ tab:
       texture_colorized: Combiner définitivement la teinte dans l'image de la texture
       edit: Éditer les propriétés de '{{ name }}'
       set_current: |
-        Sélectionner '{{ name }}'
-        *Double-clic pour utiliser*
+        Colorier des pièces avec '{{ name }}'
+        *Double-clic pour réduire*
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées

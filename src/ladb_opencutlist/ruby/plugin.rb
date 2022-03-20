@@ -171,7 +171,7 @@ module Ladb::OpenCutList
         puts "I18n value not found (key=#{path_key})."
       end
 
-      if i18n_string
+      if i18n_string && i18n_string.is_a?(String)
         i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
       else
         path_key
@@ -696,15 +696,27 @@ module Ladb::OpenCutList
 
       # Setup Toolbar
       toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name'))
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command')) {
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.dialog')) {
         toggle_dialog
       }
       cmd.small_icon = '../img/icon-72x72.png'
       cmd.large_icon = '../img/icon-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command')
-      cmd.menu_text = get_i18n_string('core.toolbar.command')
+      cmd.tooltip = get_i18n_string('core.toolbar.command.dialog')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.dialog')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.dialog')
       toolbar = toolbar.add_item(cmd)
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
+        Sketchup.active_model.select_tool(SmartPaintTool.new)
+      }
+      cmd.small_icon = '../img/icon-smart-paint-72x72.png'
+      cmd.large_icon = '../img/icon-smart-paint-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_paint')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_paint')
+      toolbar = toolbar.add_item(cmd)
+
       toolbar.restore
 
     end

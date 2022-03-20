@@ -52,7 +52,6 @@
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var materials = response.materials;
-                var currentMaterialName = response.current_material_name;
 
                 // Keep useful data
                 that.lengthUnitStrippedname = response.length_unit_strippedname;
@@ -75,8 +74,7 @@
                 that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
-                    materials: materials,
-                    currentMaterialName: currentMaterialName
+                    materials: materials
                 }));
 
                 // Setup tooltips
