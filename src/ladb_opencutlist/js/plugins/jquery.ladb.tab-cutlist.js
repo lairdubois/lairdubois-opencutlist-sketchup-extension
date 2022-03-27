@@ -613,7 +613,7 @@
                 $sorter.empty();
                 for (var i = 0; i < colDefs.length; i++) {
 
-                    // Create ans append row
+                    // Create and append row
                     $sorter.append(Twig.twig({ref: "tabs/cutlist/_export-col-def.twig"}).render({
                         colDef: colDefs[i]
                     }));

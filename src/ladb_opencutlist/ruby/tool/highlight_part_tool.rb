@@ -3,12 +3,15 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/screen_scale_factor_helper'
+  require_relative '../helper/face_triangles_helper'
+  require_relative '../utils/point3d_utils'
   require_relative '../model/cutlist/cutlist'
 
   class HighlightPartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
     include ScreenScaleFactorHelper
+    include FaceTrianglesHelper
     include CutlistObserverHelper
 
     COLOR_FACE = Sketchup::Color.new(255, 0, 0, 128).freeze
@@ -80,7 +83,7 @@ module Ladb::OpenCutList
           part.def.instance_infos.each { |serialized_path, instance_info|
 
             # Compute instance faces triangles
-            draw_def[:face_triangles].concat(_compute_children_faces_tirangles(view, instance_info.entity.definition.entities, instance_info.transformation))
+            draw_def[:face_triangles].concat(_compute_children_faces_triangles(view, instance_info.entity.definition.entities, instance_info.transformation))
 
             # Compute back and front face arrows
             if group.material_type != MaterialAttributes::TYPE_HARDWARE && group.material_type != MaterialAttributes::TYPE_UNKNOWN
@@ -422,67 +425,6 @@ module Ladb::OpenCutList
 
     end
 
-    # -- GL utils --
-
-    def _offset_toward_camera(view, points)
-      offset_direction = view.camera.direction.reverse!
-      points.map { |point|
-        point = point.position if point.respond_to?(:position)
-        # Model.pixels_to_model converts argument to integers.
-        size = view.pixels_to_model(2, point) * 0.01
-        point.offset(offset_direction, size)
-      }
-    end
-
-    def _transform_points(points, transformation)
-      return false if transformation.nil?
-      points.each { |point| point.transform!(transformation) }
-      true
-    end
-
-    def _compute_children_faces_tirangles(view, entities, transformation = nil)
-      triangles = []
-      entities.each { |entity|
-        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Face)
-            triangles.concat(_compute_face_triangles(view, entity, transformation))
-          elsif entity.is_a?(Sketchup::Group)
-            triangles.concat(_compute_children_faces_tirangles(view, entity.entities, transformation ? transformation * entity.transformation : entity.transformation))
-          elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-            triangles.concat(_compute_children_faces_tirangles(view, entity.definition.entities, transformation ? transformation * entity.transformation : entity.transformation))
-          end
-        end
-      }
-      triangles
-    end
-
-    def _compute_face_triangles(view, face, transformation = nil)
-
-      # Thank you @thomthom for this piece of code ;)
-
-      if face.deleted?
-        return false
-      end
-
-      mesh = face.mesh(0) # POLYGON_MESH_POINTS
-      points = mesh.points
-
-      _offset_toward_camera(view, points)
-      _transform_points(points, transformation)
-
-      triangles = []
-      mesh.polygons.each { |polygon|
-        polygon.each { |index|
-          # Indicies start at 1 and can be negative to indicate edge smoothing.
-          # Must take this into account when looking up the points in our array.
-          triangles << points[index.abs - 1]
-        }
-      }
-
-      triangles
-    end
-
     def _path(bounds, offsets, loop, transformation, order = [ 1 , 2 , 3 ])
       origin = bounds.min
       points = []
@@ -498,19 +440,8 @@ module Ladb::OpenCutList
         end
         points << points.first.clone
       end
-      _transform_points(points, transformation)
+      Point3dUtils::transform_points(points, transformation)
       points
-    end
-
-    def _draw_rect(view, x, y, width, height, color)
-      @points = [
-          Geom::Point3d.new(        x ,          y , 0),
-          Geom::Point3d.new(x + width ,          y , 0),
-          Geom::Point3d.new(x + width , y + height , 0),
-          Geom::Point3d.new(        x , y + height , 0)
-      ]
-      view.drawing_color = color
-      view.draw2d(GL_QUADS, @points)
     end
 
     def _pick_hover_part(x, y, view)

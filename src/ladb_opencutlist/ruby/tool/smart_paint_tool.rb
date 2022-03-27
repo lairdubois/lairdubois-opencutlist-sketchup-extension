@@ -2,14 +2,18 @@ module Ladb::OpenCutList
 
   require_relative '../lib/kuix/kuix'
   require_relative '../utils/path_utils'
+  require_relative '../utils/color_utils'
+  require_relative '../utils/material_utils'
   require_relative '../helper/screen_scale_factor_helper'
   require_relative '../helper/layer_visibility_helper'
+  require_relative '../helper/face_triangles_helper'
   require_relative '../model/attributes/material_attributes'
 
   class SmartPaintTool < Kuix::KuixTool
 
     include ScreenScaleFactorHelper
     include LayerVisibilityHelper
+    include FaceTrianglesHelper
 
     ACTION_NONE = -1
     ACTION_PAINT_FACE = 0
@@ -308,27 +312,27 @@ module Ladb::OpenCutList
 
     end
 
-    def is_action_none
+    def is_action_none?
       @@action == ACTION_NONE
     end
 
-    def is_action_face
+    def is_action_face?
       @@action == ACTION_PAINT_FACE || @@action == ACTION_UNPAINT_FACE
     end
 
-    def is_action_part
+    def is_action_part?
       @@action == ACTION_PAINT_PART || @@action == ACTION_UNPAINT_PART
     end
 
-    def is_action_paint
+    def is_action_paint?
       @@action == ACTION_PAINT_FACE || @@action == ACTION_PAINT_PART
     end
 
-    def is_action_unpaint
+    def is_action_unpaint?
       @@action == ACTION_UNPAINT_FACE || @@action == ACTION_UNPAINT_PART
     end
 
-    def is_action_pick
+    def is_action_pick?
       @@action == ACTION_PICK
     end
 
@@ -364,7 +368,7 @@ module Ladb::OpenCutList
       @@current_material = material
 
       # Update the paint color
-      @paint_down_color = material ? material.color.blend(Sketchup::Color.new(_color_is_dark(material.color) ? 'white' : 'black'), 0.85) : nil
+      @paint_down_color = material ? material.color.blend(Sketchup::Color.new(ColorUtils::color_is_dark?(material.color) ? 'white' : 'black'), 0.85) : nil
       @paint_hover_color = material ? material.color : nil
 
       # Select the pick strategy
@@ -399,9 +403,9 @@ module Ladb::OpenCutList
 
     def draw(view)
 
-     if is_action_paint
+     if is_action_paint?
        color = @is_down ? @paint_down_color : @paint_hover_color
-     elsif is_action_unpaint
+     elsif is_action_unpaint?
        color = @unpaint_color
      else
        color = nil
@@ -439,10 +443,14 @@ module Ladb::OpenCutList
 
     end
 
+    def onResume(view)
+      set_action(@@action)  # Force SU status text
+    end
+
     def onKeyDown(key, repeat, flags, view)
       return if super
       if key == COPY_MODIFIER_KEY
-        set_action(is_action_face ? ACTION_UNPAINT_FACE : ACTION_UNPAINT_PART)
+        set_action(is_action_face? ? ACTION_UNPAINT_FACE : ACTION_UNPAINT_PART)
         view.invalidate
       elsif key == ALT_MODIFIER_KEY
         @picked_path = nil
@@ -461,7 +469,7 @@ module Ladb::OpenCutList
 
     def onLButtonDown(flags, x, y, view)
       return if super
-      unless is_action_none
+      unless is_action_none?
         @is_down = true
         _handle_mouse_event(x, y, view, :l_button_down)
       end
@@ -469,7 +477,7 @@ module Ladb::OpenCutList
 
     def onLButtonUp(flags, x, y, view)
       return if super
-      unless is_action_none
+      unless is_action_none?
         @is_down = false
         _handle_mouse_event(x, y, view, :l_button_up)
       end
@@ -480,7 +488,7 @@ module Ladb::OpenCutList
         _reset(view)
         return
       end
-      unless is_action_none
+      unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
     end
@@ -509,10 +517,6 @@ module Ladb::OpenCutList
     end
 
     private
-
-    def _color_is_dark(color)
-      (0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue) <= 128
-    end
 
     def _populate_material_defs(model)
 
@@ -581,7 +585,7 @@ module Ladb::OpenCutList
 
         material = material_def[:material]
         material_attributes = material_def[:material_attributes]
-        material_color_is_dark = _color_is_dark(material.color)
+        material_color_is_dark = ColorUtils::color_is_dark?(material.color)
 
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
@@ -636,29 +640,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_material_from_path(path)
-      entity = path.last
-      material = nil
-      if entity
-        if entity.material
-          material = entity.material
-        elsif path.length > 0
-          material = _get_material_from_path(path.slice(0, path.length - 1))
-        end
-      end
-      material
-    end
-
-    def _get_color_from_path(path)
-      material = _get_material_from_path(path)
-      if material
-        color = material.color
-      else
-        color = Sketchup::Color.new(255, 255, 255)
-      end
-      color
-    end
-
     def _handle_mouse_event(x, y, view, event = nil)
       if @pick_helper.do_pick(x, y) > 0
         @pick_helper.count.times { |pick_path_index|
@@ -671,60 +652,53 @@ module Ladb::OpenCutList
 
             @picked_path = picked_path
 
-            case @@action
+            if is_action_face?
 
-            when ACTION_PAINT_FACE, ACTION_UNPAINT_FACE
+              picked_face = picked_path.last
 
-              picked_entity = picked_path.last
-
-              @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
-              @triangles = _compute_face_triangles(view, picked_entity, PathUtils::get_transformation(picked_path))
+              @unpaint_color = MaterialUtils::get_color_from_path(picked_path[0...-1]) # [0...-1] returns array without last element
+              @triangles = _compute_face_triangles(view, picked_face, PathUtils::get_transformation(picked_path))
 
               if event == :l_button_up
-                if is_action_paint
-                  picked_entity.material = get_current_material
-                elsif is_action_unpaint
-                  picked_entity.material = nil
+                if is_action_paint?
+                  picked_face.material = get_current_material
+                elsif is_action_unpaint?
+                  picked_face.material = nil
                 end
               end
 
               view.invalidate
               return
 
-            when ACTION_PAINT_PART, ACTION_UNPAINT_PART
+            elsif is_action_part?
 
-              tmp_picked_path = picked_path.to_a
-              picked_path.reverse_each { |entity|
-                if entity.is_a?(Sketchup::ComponentInstance)
+              picked_part_path = _get_part_path_from_path(picked_path)
+              picked_part = picked_path.last
+              if picked_part
 
-                  picked_entity = entity
+                @unpaint_color = MaterialUtils::get_color_from_path(picked_part_path[0...-1]) # [0...-1] returns array without last element
+                @triangles = _compute_children_faces_triangles(view, picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))
 
-                  @unpaint_color = _get_color_from_path(picked_path.slice(0, picked_path.length - 1))
-                  @triangles = _compute_children_faces_tirangles(view, picked_entity.definition.entities, PathUtils::get_transformation(tmp_picked_path))
-
-                  if event == :l_button_up
-                    if is_action_paint
-                      picked_entity.material = get_current_material
-                    elsif is_action_unpaint
-                      picked_entity.material = nil
-                    end
+                if event == :l_button_up
+                  if is_action_paint?
+                    picked_part.material = get_current_material
+                  elsif is_action_unpaint?
+                    picked_part.material = nil
                   end
-
-                  view.invalidate
-                  return
-
                 end
 
-                tmp_picked_path.pop
-              }
+                view.invalidate
+                return
+
+              end
 
               @unpaint_color = nil
               @triangles = nil
               return
 
-            when ACTION_PICK
+            elsif is_action_pick?
 
-              material = _get_material_from_path(picked_path)
+              material = MaterialUtils::get_material_from_path(picked_path)
               if material
                 if event == :move
 
@@ -738,6 +712,8 @@ module Ladb::OpenCutList
 
                   return
                 end
+              else
+                UI.beep if event == :l_button_up # Feedback for "no material"
               end
 
               @unpaint_color = nil
@@ -754,63 +730,12 @@ module Ladb::OpenCutList
       UI.beep if event == :l_button_up
     end
 
-    def _offset_toward_camera(view, points)
-      offset_direction = view.camera.direction.reverse!
-      points.map { |point|
-        point = point.position if point.respond_to?(:position)
-        # Model.pixels_to_model converts argument to integers.
-        size = view.pixels_to_model(2, point) * 0.01
-        point.offset(offset_direction, size)
+    def _get_part_path_from_path(path)
+      part_path = path.to_a
+      path.reverse_each { |entity|
+        return part_path if entity.is_a?(Sketchup::ComponentInstance)
+        part_path.pop
       }
-    end
-
-    def _transform_points(points, transformation)
-      return false if transformation.nil?
-      points.each { |point| point.transform!(transformation) }
-      true
-    end
-
-    def _compute_children_faces_tirangles(view, entities, transformation = nil)
-      triangles = []
-      entities.each { |entity|
-        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Face)
-            triangles.concat(_compute_face_triangles(view, entity, transformation))
-          elsif entity.is_a?(Sketchup::Group)
-            triangles.concat(_compute_children_faces_tirangles(view, entity.entities, transformation ? transformation * entity.transformation : entity.transformation))
-          elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-            triangles.concat(_compute_children_faces_tirangles(view, entity.definition.entities, transformation ? transformation * entity.transformation : entity.transformation))
-          end
-        end
-      }
-      triangles
-    end
-
-    def _compute_face_triangles(view, face, transformation = nil)
-
-      # Thank you @thomthom for this piece of code ;)
-
-      if face.deleted?
-        return false
-      end
-
-      mesh = face.mesh(0) # POLYGON_MESH_POINTS
-      points = mesh.points
-
-      _offset_toward_camera(view, points)
-      _transform_points(points, transformation)
-
-      triangles = []
-      mesh.polygons.each { |polygon|
-        polygon.each { |index|
-          # Indicies start at 1 and can be negative to indicate edge smoothing.
-          # Must take this into account when looking up the points in our array.
-          triangles << points[index.abs - 1]
-        }
-      }
-
-      triangles
     end
 
   end
