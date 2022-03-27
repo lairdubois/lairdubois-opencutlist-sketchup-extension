@@ -22,9 +22,9 @@
             <div role="tabpanel" class="tab-pane" id="tab_edit_material_texture">
                 <div class="ladb-material-texture-preview-wrapper">
                     <div class="ladb-material-texture-preview">
-                        <div class="thumbnail">
+                        <div id="ladb_materials_div_texture_thumbnail" class="thumbnail" style="display: none;">
                             <img id="ladb_materials_img_texture" src="">
-                            <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;">{{ material.texture_image_width }} x {{ material.texture_image_height }} px</div>
+                            <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;"><span id="ladb_materials_span_texture_width">{{ material.texture_image_width }}</span> x <span id="ladb_materials_span_texture_height">{{ material.texture_image_height }}</span> px</div>
                         </div>
                     </div>
                 </div>
@@ -42,6 +42,8 @@
                     {% if material.colorized %}
                         <button id="ladb_materials_btn_texture_colorized" class="btn btn-default{% if not material.texture_colorizable %} hide{% endif %}" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_colorized'|i18next }}{% if not material.texture_colorizable %}<br>{{ 'core.warning.feature_locked'|i18next }}{% endif %}"><i class="ladb-opencutlist-icon-plus" style="font-size: 80%;"></i> <i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}"></i></button>
                     {% endif %}
+                    &nbsp;
+                    <button id="ladb_materials_btn_texture_load" class="btn btn-default" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_load'|i18next }}"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.materials.edit_material.texture_load'|i18next }}...</button>
                 </div>
                 <hr>
                 <div class="row">

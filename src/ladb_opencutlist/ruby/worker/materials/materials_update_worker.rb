@@ -11,6 +11,7 @@ module Ladb::OpenCutList
       attributes = material_data['attributes']
       @texture_rotation = material_data['texture_rotation']
       @texture_file = material_data['texture_file']
+      @texture_loaded = material_data['texture_loaded']
       @texture_width = material_data['texture_width']
       @texture_height = material_data['texture_height']
       @texture_colorizable = material_data['texture_colorizable']
@@ -68,7 +69,7 @@ module Ladb::OpenCutList
       # Update texture
       unless @texture_file.nil?
 
-        if @texture_rotation > 0 || (@texture_colorized and @texture_colorizable)
+        if @texture_loaded || @texture_rotation > 0 || (@texture_colorized and @texture_colorizable)
 
           # Rotate texture
           ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0

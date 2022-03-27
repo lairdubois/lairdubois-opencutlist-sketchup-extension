@@ -245,10 +245,14 @@
             // Fetch UI elements
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
             var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
+            var $divTextureThumbnail = $('#ladb_materials_div_texture_thumbnail', $modal);
             var $imgTexture = $('#ladb_materials_img_texture', $modal);
+            var $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
+            var $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
             var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
             var $btnTextureColorized = $('#ladb_materials_btn_texture_colorized', $modal);
+            var $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
@@ -301,15 +305,21 @@
             var fnGetMaterialTexture = function (colorized) {
                 rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: colorized }, function (response) {
 
-                    // Add texture file to material
-                    material.texture_file = response.texture_file;
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else if (response.texture_file) {
 
-                    if (response.texture_colorized) {
-                        $btnTextureColorized.addClass('active')
+                        // Add texture file to material
+                        material.texture_file = response.texture_file;
+
+                        if (response.texture_colorized) {
+                            $btnTextureColorized.addClass('active')
+                        }
+
+                        // Update img src with generated texture file
+                        $imgTexture.attr('src', material.texture_file);
+
                     }
-
-                    // Update img src with generated texture file
-                    $imgTexture.attr('src', material.texture_file);
 
                 });
             };
@@ -329,6 +339,13 @@
             var fnUpdateBtnUpdateStatus = function() {
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
+
+            // Bind img
+            $imgTexture.on('load', function() {
+                $divTextureThumbnail.show();
+                $spanTextureWidth.html(this.naturalWidth);
+                $spanTextureHeight.html(this.naturalHeight);
+            });
 
             // Bind inputs
             $inputs.inputName.on('keyup change', fnUpdateBtnUpdateStatus);
@@ -355,6 +372,25 @@
             $btnTextureColorized.on('click', function () {
                 $btnTextureColorized.toggleClass('active');
                 fnGetMaterialTexture($btnTextureColorized.hasClass('active'));
+                this.blur();
+            });
+            $btnTextureLoad.on('click', function () {
+                rubyCallCommand('materials_load_texture_command', null, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else if (response.texture_file) {
+
+                        // Add texture file to material
+                        material.texture_file = response.texture_file;
+                        material.texture_loaded = true;
+
+                        // Update img src with generated texture file
+                        $imgTexture.attr('src', material.texture_file);
+
+                    }
+
+                });
                 this.blur();
             });
             $btnTextureSizeLock.on('click', function () {
@@ -1101,14 +1137,16 @@
             }
         });
         addEventCallback([ 'on_material_set_current' ], function (params) {
-            for (var i = 0; i < that.materials.length; i++) {
-                if (that.materials[i].name === params.material_name) {
-                    if (that.currentMaterial !== that.materials[i]) {
-                        that.currentMaterial = that.materials[i];
-                        $('.ladb-material-box').removeClass('ladb-active');
-                        $('.ladb-material-box[data-material-id="' + that.currentMaterial.id + '"]').addClass('ladb-active');
+            if (that.materials) {
+                for (var i = 0; i < that.materials.length; i++) {
+                    if (that.materials[i].name === params.material_name) {
+                        if (that.currentMaterial !== that.materials[i]) {
+                            that.currentMaterial = that.materials[i];
+                            $('.ladb-material-box').removeClass('ladb-active');
+                            $('.ladb-material-box[data-material-id="' + that.currentMaterial.id + '"]').addClass('ladb-active');
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         });
