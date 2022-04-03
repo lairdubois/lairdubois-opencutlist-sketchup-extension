@@ -63,10 +63,12 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      smart_paint: Paint Parts
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Paint Parts
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -778,6 +780,7 @@ tab:
       grain_direction: Grain direction
       colorized: This tone will be applied to the texture of this material when it is rendered in the model
       texture_colorized: Combine this tone with the texture image
+      texture_load: Load a new texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: |
         Select '{{ name }}'
@@ -846,9 +849,12 @@ tab:
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
       std_prices_dim_placeholder: Select a size
       std_prices_add: Add a price
+      texture_load: Load
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
+    texture_load:
+      title: Load an image
     import_from_skm:
       title: Import .skm file
     export_to_skm:
@@ -871,6 +877,7 @@ tab:
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
       failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
+      invalid_image_file: Invalid image
     success:
       exported_to: "Successful export to {{ export_path }}."
     obsolete_base: "To stay in sync, you need to update the material list."
