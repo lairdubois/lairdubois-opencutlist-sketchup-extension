@@ -33,7 +33,7 @@ module Ladb::OpenCutList
         dir = File.dirname(model.path)
       end
 
-      dir = URI::escape(dir) if Plugin.instance.platform_is_mac
+      dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
 
       # Open save panel
       path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_skp.title'), dir, @definition_id + '.skp')

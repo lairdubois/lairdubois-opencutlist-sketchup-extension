@@ -26,7 +26,9 @@ module Ladb::OpenCutList
         dir = File.dirname(model.path)
       end
 
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.import_from_skm.title'), URI::escape(dir), "Material Files|*.skm;||")
+      dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
+
+      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
         begin
           material = materials.load(path)

@@ -202,13 +202,13 @@ module Ladb::OpenCutList
     end
 
     def add_material_origin(material_origin)
-      unless @material_origins.include? material_origin
+      unless @material_origins.include?(material_origin)
         @material_origins.push(material_origin)
       end
     end
 
     def add_entity_id(entity_id)
-      unless @entity_ids.include? entity_id   # Because of groups and components, multiple entity can have the same ID
+      unless @entity_ids.include?(entity_id)   # Because of groups and components, multiple entity can have the same ID
         @entity_ids.push(entity_id)
       end
     end
@@ -218,7 +218,7 @@ module Ladb::OpenCutList
     end
 
     def add_entity_name(entity_name, entity_named_path)
-      if @entity_names.has_key? entity_name
+      if @entity_names.has_key?(entity_name)
         @entity_names[entity_name].push(entity_named_path)
       else
         @entity_names[entity_name] = [ entity_named_path ]

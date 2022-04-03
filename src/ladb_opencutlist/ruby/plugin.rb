@@ -1091,10 +1091,8 @@ module Ladb::OpenCutList
       # Download the RBZ
       begin
 
-        # URLs with spaces will raise an InvalidURIError, so we need to encode it.
-        # However, the user can pass an already encoded URL, so we first need to
-        # decode it.
-        url = URI.encode(URI.decode(url))
+        # URLs with spaces will raise an InvalidURIError, so we need to encode spaces.
+        url = url.gsub(/ /, '%20')
 
         # This will raise an InvalidURIError if the URL is very wrong. It will still
         # pass for strings like "foo", though.
@@ -1321,15 +1319,15 @@ module Ladb::OpenCutList
 
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
       path = params['path']
-      if path
-        UI.openURL("file:///#{path}")
+      if path && path.is_a?(String)
+        UI.openURL("file:///#{path.gsub(/ /, '%20')}")  # Encode spaces with %20
       end
     end
 
     def open_url_command(params)    # Expected params = { url: URL }
       url = params['url']
-      if url
-        UI.openURL(url)
+      if url && url.is_a?(String)
+        UI.openURL(url.gsub(/ /, '%20'))  # Encode spaces with %20
       end
     end
 

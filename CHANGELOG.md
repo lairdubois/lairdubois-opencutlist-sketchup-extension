@@ -15,6 +15,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
   * Improved ruby i18n string getter to support $()
   * Improved disabled edge cell display in part list
   * Fixed edge std size display
+  * Remove URI.escape deprecation uses
 
 * 3.0.2 (2022-02-27)
 
