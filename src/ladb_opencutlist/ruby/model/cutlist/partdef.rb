@@ -53,7 +53,7 @@ module Ladb::OpenCutList
       @edge_errors = []
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
-      @entity_names = {}                  # All non empty entity instance names (key = name, value = count)
+      @entity_names = {}                  # All non empty entity instance names (key = name, value = array of 'named path')
       @length_increased = false
       @width_increased = false
       @thickness_increased = false
