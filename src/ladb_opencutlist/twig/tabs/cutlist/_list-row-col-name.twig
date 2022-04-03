@@ -41,7 +41,7 @@
         {% endif %}
     </div>
     <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
-    {% if not part.children and not generateOptions.hide_entity_names %}
+    {% if not generateOptions.hide_entity_names %}
         {% if part.entity_names is not empty %}
             {% set entity_names = [] %}
             {% set blank_entity_name_count = 0 %}

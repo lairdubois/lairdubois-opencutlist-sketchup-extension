@@ -142,7 +142,7 @@ module Ladb::OpenCutList
                         :bbox_thickness => no_dimensions ? '' : _sanitize_value_string(part.thickness),
                         :final_area => no_dimensions ? '' : _sanitize_value_string(part.final_area),
                         :material_name => group.material_display_name,
-                        :entity_names => part.is_a?(Part) ? part.entity_names.map(&:first).join(',') : '',
+                        :entity_names => part.entity_names.map(&:first).join(','),
                         :description => part.description,
                         :tags => part.tags.empty? ? '' : part.tags.join(','),
                         :edge_ymin => _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),

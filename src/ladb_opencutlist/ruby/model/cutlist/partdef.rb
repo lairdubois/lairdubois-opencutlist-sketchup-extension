@@ -225,6 +225,14 @@ module Ladb::OpenCutList
       end
     end
 
+    def merge_entity_names(entity_names)
+      entity_names.each { |entity_name, entity_named_paths|
+        entity_named_paths.each { |entity_named_path|
+          add_entity_name(entity_name, entity_named_path)
+        }
+      }
+    end
+
     def multiple_layers
       @layers.length > 1
     end

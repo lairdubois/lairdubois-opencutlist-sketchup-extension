@@ -619,6 +619,7 @@ module Ladb::OpenCutList
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
                 folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
                 folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
+                folder_part_def.merge_entity_names(first_child_part_def.entity_names)
                 folder_part_def.final_area = first_child_part_def.final_area
 
                 folder_part_def.children.push(first_child_part_def)
@@ -634,6 +635,7 @@ module Ladb::OpenCutList
               end
               folder_part_def.children.push(part_def)
               folder_part_def.count += part_def.count
+              folder_part_def.merge_entity_names(part_def.entity_names)
               folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
               folder_part_def.children_warning_count += 1 if part_def.multiple_layers
               folder_part_def.children_warning_count += 1 if part_def.unused_instance_count > 0
