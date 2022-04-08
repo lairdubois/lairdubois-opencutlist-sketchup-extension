@@ -85,7 +85,8 @@ module Ladb::OpenCutList
 
             next unless cuttingdiagram2d_summary_sheet.is_used
 
-            std_price = _get_std_price([cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ], material_attributes)
+            # Only standard sheet uses dim prices
+            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ] : nil, material_attributes)
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.std_price = std_price
@@ -130,7 +131,8 @@ module Ladb::OpenCutList
 
             next unless cuttingdiagram1d_summary_bar.is_used
 
-            std_price = _get_std_price([ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ], material_attributes)
+            # Only standard bar uses dim prices
+            std_price = _get_std_price(cuttingdiagram1d_summary_bar.type == BinPacking1D::BIN_TYPE_NEW ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ] : nil, material_attributes)
 
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
             report_entry_bar_def.std_price = std_price
@@ -314,9 +316,11 @@ module Ladb::OpenCutList
     def _get_std_price(entry_dim, material_attributes)
 
       h_std_prices = material_attributes.h_std_prices
-      h_std_prices.each do |std_price|
-        if std_price[:dim] == entry_dim
-          return std_price
+      unless  entry_dim.nil?
+        h_std_prices.each do |std_price|
+          if std_price[:dim] == entry_dim
+            return std_price
+          end
         end
       end
 
