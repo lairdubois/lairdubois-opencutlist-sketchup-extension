@@ -5,27 +5,12 @@ module Ladb::OpenCutList
   # Module implementing 1D BinPacking
   #
   module BinPacking1D
-    # Number of bytes of computer running code
-    # from https://gist.github.com/pithyless/9738125
-    N_BYTES = [42].pack('i').size
-
-    # Number of bits
-    N_BITS = N_BYTES * 16
-
-    # Largest integer on this platform
-    MAX_INT = (2**(N_BITS - 2)) - 1
-
     #
     # Error used by Timer when execution of algorithm
     # takes too long (defined in Option).
     #
     class TimeoutError < StandardError
     end
-
-    # Type of a new bin.
-    BIN_TYPE_NEW = 0
-    # Type of leftover/scrap bin.
-    BIN_TYPE_LO = 1
 
     # No errors during packing.
     ERROR_NONE = 0
@@ -50,38 +35,41 @@ module Ladb::OpenCutList
     WARNING_ILLEGAL_SIZED_BOX = 2
     # A bin with zero or negative length.
     WARNING_ILLEGAL_SIZED_BIN = 3
-    # Error when subsetsum takes too long.
+    # Error when subset sum takes too long.
     WARNING_TIMEOUT = 4
-    # Solution may not be optimal.
-    WARNING_SUBOPT = 6
+    # Solution may not be optimal (not reliable).
+    WARNING_SUBOPTIMAL = 6
 
     # If trimsize/saw kerf > SIZE_WARNING_FACTOR*largest leftover.
     SIZE_WARNING_FACTOR = 0.25
 
-    # Default allocated computation time in seconds.
+    # Default allocated computation time in seconds for DP algorithm.
     MAX_TIME = 3
 
     # Epsilon precision for comparison.
     # Smaller than this is considered zero.
     EPS = 0.0001
 
-    # With more than this number of parts, we split into
-    # groups and optimize each group.
-    MAX_PARTS = 120
+    # With more than this number of parts, parts will
+    # be split into groups and each group optimized on its own.
+    MAX_PARTS = 250
 
-    # Algorithm used is subset sum.
-    ALG_SUBSET_SUM = 1
-    # Algorithm used is FFD.
-    ALG_FFD = 2
+    # Algorithm used is a modified Subset Sum.
+    ALG_SUBSET_OPT_V1 = 1
+    ALG_SUBSET_OPT_V2 = 2
+    # Algorithm used is first fit decreasing (FFD).
+    ALG_FFD = 3
+
+    # Type of a new bin.
+    BIN_TYPE_AUTO_GENERATED = 0
+    # Type of leftover/scrap bin.
+    BIN_TYPE_LO = 1
 
     #
     # Exception raised in this module.
     #
     class Packing1DError < StandardError
     end
-    #
-    # Top level class (abstract class)
-    #
 
     #
     # Bin Packing in 1D
@@ -104,7 +92,9 @@ module Ladb::OpenCutList
       #
       def dbg(msg, dbg = false)
         # assuming @options exists
-        puts "#{msg}\n" if dbg || @options.debug
+        return if @options.nil?
+
+        puts("#{msg}\n") if dbg || @options.debug
       end
     end
   end

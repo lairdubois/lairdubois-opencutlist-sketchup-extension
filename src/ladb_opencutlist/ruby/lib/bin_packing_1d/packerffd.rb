@@ -14,13 +14,12 @@ module Ladb::OpenCutList::BinPacking1D
       remove_unfit
       if @boxes.empty?
         @unplaced_boxes = @unfit_boxes unless @unfit_boxes.empty?
-        prepare_results
         return ERROR_NO_BIN
       end
 
-      err = first_fit_decreasing
-      prepare_results
-      err
+      @error = first_fit_decreasing
+      prepare_results if @error == ERROR_NONE
+      @error
     end
 
     #
@@ -28,7 +27,7 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def first_fit_decreasing
       @bins += @leftovers
-      @bins << Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options) if @bins.empty?
+      @bins << Bin.new(@options.base_bin_length, BIN_TYPE_AUTO_GENERATED, @options) if @bins.empty?
 
       @boxes.each do |box|
         packed = false
@@ -43,7 +42,7 @@ module Ladb::OpenCutList::BinPacking1D
         # box could not be packed, create new bin if allowed to
         unless packed
           if @options.base_bin_length > EPS
-            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options)
+            bin = Bin.new(@options.base_bin_length, BIN_TYPE_AUTO_GENERATED, @options)
             if box.length <= bin.current_leftover
               bin.add(box)
               @bins << bin

@@ -32,7 +32,8 @@ module Ladb::OpenCutList::BinPacking1D
                    max_time = MAX_TIME, debug = false)
       super(nil)
       @base_bin_length = base_bin_length
-      @base_bin_length = 0 if @base_bin_length < 0
+      @base_bin_length = 0.0 if @base_bin_length.nil?
+      @base_bin_length = 0.0 if @base_bin_length < 0.0
 
       # The following two options are tested by packengine.
       # make them positive.
@@ -56,8 +57,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Debugging!
     #
     def to_str
-      s = "  options:\n"
-      s << "  saw_kerf         = #{@saw_kerf}\n"
+      s = "  options:\n  saw_kerf         = #{@saw_kerf}\n"
       s << "  trimsize         = #{@trimsize}\n"
       s << "  base_bin_length  = #{@base_bin_length}\n"
       s

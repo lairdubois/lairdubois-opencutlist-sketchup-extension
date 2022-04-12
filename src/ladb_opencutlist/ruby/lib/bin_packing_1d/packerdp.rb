@@ -12,14 +12,15 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def clone_split(boxes, leftovers)
       length = boxes.size
-      boxes_clone = []
+
       #
       # We don't need a deep clone of boxes, because they
-      # will receive their position once the best packing
+      # will not receive their position until the best packing
       # has been found.
       #
       if length < MAX_PARTS
         boxes_clone = [boxes.clone]
+        boxes_clone.sort_by!(&:length).reverse!
       else
         # Try to avoid having only small or only large parts
         # in the slices.
@@ -43,19 +44,18 @@ module Ladb::OpenCutList::BinPacking1D
     #
     # run the bin packing optimization.
     #
-    def run
-      @gstat[:algorithm] = ALG_SUBSET_SUM
-      err = ERROR_NONE
+    def run(variant)
+      @variant = variant
+      @gstat[:algorithm] = @variant
+
+      remove_unfit
+      if @boxes.empty?
+        @unplaced_boxes = @unfit_boxes unless @unfit_boxes.empty?
+        return ERROR_NO_BIN
+      end
 
       # Not a super precise way of measuring compute time.
       @start_time = Time.now
-      remove_unfit
-
-      if @boxes.empty?
-        @unplaced_boxes = @unfit_boxes unless @unfit_boxes.empty?
-        prepare_results
-        return ERROR_NO_BIN
-      end
 
       begin
         bclone, lclone = clone_split(@boxes, @leftovers)
@@ -94,6 +94,8 @@ module Ladb::OpenCutList::BinPacking1D
             @unplaced_boxes = @boxes + @unfit_boxes
             @boxes = []
           end
+        else
+          raise(Packing1DError, 'Hit strange case!')
         end
       rescue TimeoutError => e
         puts("Rescued in Packer: #{e.inspect}")
@@ -103,8 +105,9 @@ module Ladb::OpenCutList::BinPacking1D
         return ERROR_BAD_ERROR
       end
 
-      prepare_results if err == ERROR_NONE
-      err
+      @error = err
+      prepare_results if @error == ERROR_NONE
+      @error
     end
 
     #
@@ -127,7 +130,7 @@ module Ladb::OpenCutList::BinPacking1D
         # more than one chunk of at most MAX_PARTS boxes
         # we do this to prevent an almost empty last bin
         # of the first chunk.
-        if (idx > 0) && !bins.empty?
+        if idx > 0 && !bins.empty?
           bin = bins.pop
           boxes += bin.boxes
         end
@@ -146,13 +149,13 @@ module Ladb::OpenCutList::BinPacking1D
             # all placed boxes are in the bins (tc_28.txt)
             return [bins, ERROR_NO_BIN] unless @options.base_bin_length > EPS
 
-            bin = Bin.new(@options.base_bin_length, BIN_TYPE_NEW, @options)
+            bin = Bin.new(@options.base_bin_length, BIN_TYPE_AUTO_GENERATED, @options)
             using_std_bin = true
           else
             # Take the next leftover bin
             bin = leftovers.shift
           end
-          target_length = bin.netlength
+          target_length = bin.net_length
 
           # Filter lengths to match and sort by decreasing length
           valid_lengths = lengths.select { |el| el <= target_length }
@@ -165,44 +168,38 @@ module Ladb::OpenCutList::BinPacking1D
             next
           end
 
-          # This is the core algorithm, finding subsetsums
-          # of lengths that best match the target size
-          epsilon = if @gstat[:nb_input_boxes] > MAX_PARTS
-                      # Last element is the smallest one.
-                      valid_lengths.last
+          # 0.1 and 0.5 seem to be the best combinations
+          epsilon = if @variant == ALG_SUBSET_OPT_V1
+                      valid_lengths.last * 0.1
                     else
-                      0.0
+                      valid_lengths.last * 0.5
                     end
 
-          y, y_list = allsubsetsums(valid_lengths, target_length, @options.saw_kerf, epsilon)
+          y, y_list = all_subset_sums(valid_lengths, target_length, @options.saw_kerf, epsilon)
 
-          if ! (y > 0)
-            # Should only happen if we have a very wide
-            # saw kerf and we cannot fit any box.
-            # see tc_4.txt
-            # returning whatever was found, not sure this really works!
-            return [bins, ERROR_NONE] if using_std_bin
+          # Should only happen if we have a very wide saw kerf and we cannot fit any box.
+          # See tc_4.txt
+          # Returning whatever was found, not sure this really works!
+          return [bins, ERROR_NONE] if y <= 0 && using_std_bin
 
-          else
-            # Remove objects from bins having the adequate lengths
-            # and add them to the bin
-            y_list.each do |found_length|
-              # Get index of first element having a matching lengths
-              # Precision definition, make sure we are not missing
-              i = boxes.index { |x| (x.length - found_length).abs < EPS }
-              next if i.nil?
+          # Remove objects from bins having the adequate lengths
+          # and add them to the bin
+          y_list.each do |found_length|
+            # Get index of first element having a matching lengths
+            # Precision definition, make sure we are not missing
+            i = boxes.index { |x| (x.length - found_length).abs < EPS }
+            next if i.nil?
 
-              bin.add(boxes[i])
-              d = boxes.delete_at(i)
-              raise(Packing1DError, 'Box is gone!') if d.nil?
+            bin.add(boxes[i])
+            d = boxes.delete_at(i)
+            raise(Packing1DError, 'Box is gone!') if d.nil?
 
-              # Remove this length (found_length) from the ones we
-              # are looking for
-              lengths.delete_at(lengths.index(found_length) || lengths.length)
-            end
-            # Add this completed bin to the bins
-            bins << bin
+            # Remove this length (found_length) from the ones we
+            # are looking for
+            lengths.delete_at(lengths.index(found_length) || lengths.length)
           end
+          # Add this completed bin to the bins
+          bins << bin
         end
       end
       # We now have bins, q still contains all boxes,
@@ -216,35 +213,41 @@ module Ladb::OpenCutList::BinPacking1D
     # positive epsilon which helps not being
     # too greedy.
     #
-    def allsubsetsums(x_list, target, saw_kerf, epsilon)
+    def all_subset_sums(x_list, target, saw_kerf, epsilon)
+      # Selection of best sets
       se = { 0 => [] }
-      max = 0
+      # x_list is already sorted in reverse order
+      max_so_far = 0
       x_list.each do |x|
         te = {}
         se.each do |y, y_list|
-          length = y_list.reduce(&:+).to_f + x + (y_list.length * saw_kerf)
+          length = y + x + (y_list.length * saw_kerf)
           next if length > target
 
-          max = y + x if y + x > max
-
-          # New target that can be reached
+          # The max reached so far
+          max_so_far = [y + x, max_so_far].max
+          # The key does not exist, because we eliminate all duplicates
+          # in merge step below.
           te.store(y + x, y_list + [x])
+          # Check for excessive computation time
           if @options.max_time && (Time.now - @start_time > @options.max_time)
             raise(TimeoutError, 'Timeout expired ...!')
           end
         end
         # Merge te with se, resolve conflicts by
         # keeping the key with the least number of parts
-        se.merge!(te) { |_k, v1, v2| v1.length < v2.length ? v1 : v2 }
+        # This is the first step where we potentially lose optimality by
+        # only keeping the shortest solution.
+        se.merge!(te) { |_k, v1, v2| v1.length <= v2.length ? v1 : v2 }
 
         # The first max to reach the sum within a term of epsilon
         # (depending on the size of the smallest element) will
         # be returned. this avoids being too greedy and doing
-        # too much computation
-        return se.max_by { |k, _v| k } if max <= target && max >= target - epsilon
-
+        # too much computation.
+        # Second step where we might loose optimality, by stopping search
+        # when goal is reached.
+        return se.max_by { |k, _v| k } if max_so_far <= target && max_so_far >= target - epsilon
       end
-
       se.max_by { |k, _v| k }
     end
   end

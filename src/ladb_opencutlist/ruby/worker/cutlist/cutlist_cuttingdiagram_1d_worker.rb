@@ -81,13 +81,13 @@ module Ladb::OpenCutList
         # Start pack engine
         @pack_engine.start
 
-        if step_by_step && !@pack_engine.has_errors
+        if step_by_step && !@pack_engine.errors?
           estimated_steps, signatures = @pack_engine.get_estimated_steps
           return { :estimated_steps => estimated_steps }
         end
 
       end
-      until @pack_engine.is_done || @pack_engine.has_errors
+      until @pack_engine.done? || @pack_engine.errors?
 
         # Run pack engine
         @pack_engine.run
@@ -98,9 +98,9 @@ module Ladb::OpenCutList
       end
       result = nil
       err = BinPacking1D::ERROR_NONE
-      if @pack_engine.has_errors
+      if @pack_engine.errors?
         err = @pack_engine.get_errors.first
-      elsif @pack_engine.is_done
+      elsif @pack_engine.done?
 
         # Finish pack engine
         result, err = @pack_engine.finish
