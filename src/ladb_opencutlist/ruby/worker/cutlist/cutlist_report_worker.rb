@@ -132,7 +132,7 @@ module Ladb::OpenCutList
             next unless cuttingdiagram1d_summary_bar.is_used
 
             # Only standard bar uses dim prices
-            std_price = _get_std_price(cuttingdiagram1d_summary_bar.type == BinPacking1D::BIN_TYPE_NEW ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ] : nil, material_attributes)
+            std_price = _get_std_price(cuttingdiagram1d_summary_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ] : nil, material_attributes)
 
             report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
             report_entry_bar_def.std_price = std_price
