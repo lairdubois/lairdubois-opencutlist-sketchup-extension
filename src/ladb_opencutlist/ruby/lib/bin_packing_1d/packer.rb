@@ -22,6 +22,8 @@ module Ladb::OpenCutList::BinPacking1D
     # Leftovers which have nave not been used.
     attr_reader :unused_bins
 
+    attr_reader :error
+
     # General statistics object for the packer.
     attr_reader :gstat
 
@@ -55,15 +57,15 @@ module Ladb::OpenCutList::BinPacking1D
       # Smallest box length to pack.
       @smallest = 0
 
-      @start_msg = ''
-      @status = 0
+      # Remember last error
+      @error = nil
 
       # Statistics collected for final report.
       @gstat = {}
       @gstat[:nb_input_boxes] = 0 # Total number of boxes to pack
       @gstat[:nb_valid_boxes] = 0 # Number of valid boxes, i.e. not too large
       @gstat[:nb_packed_bins] = 0
-      @gstat[:unplaced_boxes] = 0
+      @gstat[:nb_unplaced_boxes] = 0
       @gstat[:largest_leftover] = 0
       @gstat[:overall_efficiency] = 0 # Overall efficiency [0,100] as a percentage of used/waste.
       @gstat[:algorithm] = nil
@@ -88,17 +90,13 @@ module Ladb::OpenCutList::BinPacking1D
       leftovers.each do |leftover|
         @leftovers << Bin.new(leftover.length, BIN_TYPE_LO, @options)
       end
-      if @leftovers.empty? && @options.base_bin_length < EPS
-        raise(Packing1DError, 'No leftovers and base_bin_length too small!')
-      end
+      return if !@leftovers.empty? || @options.base_bin_length >= EPS
+
+      raise(Packing1DError, 'No leftovers and base_bin_length too small!')
     end
 
     #
-    # Clones the boxes and leftovers for a single run.
-    # Splits up boxes if containing more than MAX_PARTS,
-
-    #
-    # run the bin packing optimization.
+    # Run the bin packing optimization.
     #
     def run
       ERROR_BAD_ERROR
@@ -110,14 +108,13 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def remove_unfit
       #
-      # check if @boxes fit within either bins in @leftovers
-      # or @options.base_bin_length
+      # Check if @boxes fit within either bins in @leftovers
+      # or @options.base_bin_length.
       #
-      available_lengths = @leftovers.collect(&:netlength)
+      available_lengths = @leftovers.collect(&:net_length)
       available_lengths << (@options.base_bin_length - (2 * @options.trimsize))
       max_length = available_lengths.max
-      @unfit_boxes = @boxes.select { |box| box.length > max_length }
-      @boxes = @boxes.select { |box| box.length <= max_length }
+      @boxes, @unfit_boxes = @boxes.partition { |box| box.length <= max_length }
       @gstat[:nb_valid_boxes] = @boxes.size
     end
 

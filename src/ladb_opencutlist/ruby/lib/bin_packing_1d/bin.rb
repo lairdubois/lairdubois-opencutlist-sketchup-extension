@@ -70,7 +70,7 @@ module Ladb::OpenCutList::BinPacking1D
     # Run at the end of packing.
     #
     def sort_boxes
-      @boxes.sort! { |a, b| -a.length <=> -b.length }
+      @boxes.sort_by!(&:length).reverse!
       @cuts = []
       @current_position = @options.trimsize
       @boxes.each do |box|
@@ -90,18 +90,17 @@ module Ladb::OpenCutList::BinPacking1D
       @net_used = @length - @current_leftover
       @efficiency = @net_used / @length.to_f * 100.0
 
-      if @efficiency > 100.0 + EPS
-        raise(Packing1DError,
-              "Float precision error, length=#{@length}, current leftover=#{@current_leftover}")
-      end
+      return unless @efficiency > 100.0 + EPS
+
+      raise(Packing1DError, "Float precision error, length=#{@length}, current leftover=#{@current_leftover}")
     end
 
     #
     # Returns the net (available) length of this bin.
     # Returned value is never smaller than 0.
     #
-    def netlength
-      [@length - (2 * @options.trimsize), 0].max
+    def net_length
+      [@length - (2 * @options.trimsize), 0.0].max
     end
 
     #
