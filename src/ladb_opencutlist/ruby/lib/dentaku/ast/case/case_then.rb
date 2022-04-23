@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 module Dentaku
   module AST
     class CaseThen < Node
+      attr_reader :node
+
       def initialize(node)
         @node = node
       end
@@ -24,6 +26,10 @@ module Dentaku
 
       def self.max_param_count
         1
+      end
+
+      def accept(visitor)
+        visitor.visit_then(self)
       end
     end
   end

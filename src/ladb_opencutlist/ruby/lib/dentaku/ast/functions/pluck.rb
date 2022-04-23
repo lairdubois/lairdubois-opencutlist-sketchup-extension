@@ -1,10 +1,10 @@
-require_relative '../function'
+require_relative './enum'
 require_relative '../../exceptions'
 
 module Ladb::OpenCutList
 module Dentaku
   module AST
-    class Pluck < Function
+    class Pluck < Enum
       def self.min_param_count
         2
       end
@@ -13,12 +13,13 @@ module Dentaku
         2
       end
 
-      def deferred_args
-        [1]
-      end
-
       def value(context = {})
-        collection = @args[0].value(context)
+        collection = Array(@args[0].value(context))
+        unless collection.all? { |elem| elem.is_a?(Hash) }
+          raise ArgumentError.for(:incompatible_type, value: collection),
+                'PLUCK() requires first argument to be an array of hashes'
+        end
+
         pluck_path = @args[1].identifier
 
         collection.map { |h| h.transform_keys(&:to_s)[pluck_path] }

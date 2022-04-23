@@ -23,6 +23,7 @@ module Dentaku
 
       and:      AST::And,
       or:       AST::Or,
+      xor:      AST::Xor,
     }.freeze
 
     attr_reader :input, :output, :operations, :arities, :case_sensitive
@@ -44,11 +45,11 @@ module Dentaku
       min_size = operator.arity || operator.min_param_count || count
       max_size = operator.arity || operator.max_param_count || count
 
-      if output.length < min_size
+      if output.length < min_size || args_size < min_size
         fail! :too_few_operands, operator: operator, expect: min_size, actual: output.length
       end
 
-      if output.length > max_size && operations.empty?
+      if output.length > max_size && operations.empty? || args_size > max_size
         fail! :too_many_operands, operator: operator, expect: max_size, actual: output.length
       end
 
@@ -144,7 +145,8 @@ module Dentaku
                 inner_case_inputs,
                 operations: [AST::Case],
                 arities: [0],
-                function_registry: @function_registry
+                function_registry: @function_registry,
+                case_sensitive: case_sensitive
               )
               subparser.parse
               output.concat(subparser.output)

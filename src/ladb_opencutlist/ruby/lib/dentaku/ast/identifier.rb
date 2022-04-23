@@ -32,13 +32,21 @@ module Dentaku
       end
 
       def dependencies(context = {})
-        context.key?(identifier) ? dependencies_of(context[identifier]) : [identifier]
+        context.key?(identifier) ? dependencies_of(context[identifier], context) : [identifier]
+      end
+
+      def accept(visitor)
+        visitor.visit_identifier(self)
+      end
+
+      def to_s
+        identifier.to_s
       end
 
       private
 
-      def dependencies_of(node)
-        node.respond_to?(:dependencies) ? node.dependencies : []
+      def dependencies_of(node, context)
+        node.respond_to?(:dependencies) ? node.dependencies(context) : []
       end
     end
   end

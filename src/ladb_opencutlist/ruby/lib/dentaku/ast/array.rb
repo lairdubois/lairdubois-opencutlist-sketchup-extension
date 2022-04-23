@@ -1,7 +1,9 @@
+require_relative "./node"
+
 module Ladb::OpenCutList
 module Dentaku
   module AST
-    class Array
+    class Array < Node
       def self.arity
       end
 
@@ -30,6 +32,10 @@ module Dentaku
 
       def type
         nil
+      end
+      
+      def accept(visitor)
+        visitor.visit_array(self)
       end
     end
   end

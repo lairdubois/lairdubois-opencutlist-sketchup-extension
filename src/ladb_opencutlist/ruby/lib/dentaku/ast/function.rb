@@ -5,6 +5,8 @@ module Ladb::OpenCutList
 module Dentaku
   module AST
     class Function < Node
+      attr_reader :args
+
       # @return [Integer] with the number of significant decimal digits to use.
       DIG = Float::DIG + 1
 
@@ -12,17 +14,13 @@ module Dentaku
         @args = args
       end
 
-      def dependencies(context = {})
-        deferred = deferred_args
-        @args.each_with_index
-             .reject { |_, i| deferred.include? i }
-             .flat_map { |a, _| a.dependencies(context) }
+      def accept(visitor)
+        visitor.visit_function(self)
       end
 
-      # override if your function implementation needs to defer evaluation of
-      # any arguments
-      def deferred_args
-        []
+      def dependencies(context = {})
+        @args.each_with_index
+             .flat_map { |a, _| a.dependencies(context) }
       end
 
       def self.get(name)

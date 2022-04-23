@@ -6,9 +6,10 @@ module Dentaku
   module AST
     class RubyMath < Function
       def self.[](method)
-        klass = Class.new(self)
+        klass_name = method.to_s.capitalize
+        klass = const_set(klass_name , Class.new(self))
         klass.implement(method)
-        klass
+        const_get(klass_name)
       end
 
       def self.implement(method)
@@ -41,8 +42,10 @@ module Dentaku
         self.class.call(*args)
       end
 
+      ARRAY_RETURN_TYPES = [:frexp, :lgamma].freeze
+
       def type
-        nil
+        ARRAY_RETURN_TYPES.include?(@name) ? :array : :numeric
       end
     end
   end

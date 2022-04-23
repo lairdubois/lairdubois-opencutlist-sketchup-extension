@@ -77,9 +77,6 @@ module Ladb::OpenCutList
             options = { :col_sep => col_sep }
             csv_file = CSV.generate(**options) do |csv|
 
-              # Create the formula calculator
-              calculator = Dentaku::Calculator.new
-
               case @source
 
                 when EXPORT_OPTION_SOURCE_SUMMARY
@@ -107,7 +104,7 @@ module Ladb::OpenCutList
                       :total_final_area => (group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
                     }
 
-                    csv << _evaluate_row(calculator, vars)
+                    csv << _evaluate_row(vars)
                   }
 
                 when EXPORT_OPTION_SOURCE_CUTLIST
@@ -151,7 +148,7 @@ module Ladb::OpenCutList
                         :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
                       }
 
-                      csv << _evaluate_row(calculator, vars)
+                      csv << _evaluate_row(vars)
                     }
                   }
 
@@ -203,7 +200,7 @@ module Ladb::OpenCutList
                             :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
                           }
 
-                          csv << _evaluate_row(calculator, vars)
+                          csv << _evaluate_row(vars)
                         }
 
                       }
@@ -248,7 +245,7 @@ module Ladb::OpenCutList
       ''
     end
 
-    def _evaluate_row(calculator, vars)
+    def _evaluate_row(vars)
       row = []
       @col_defs.each { |col_def|
         unless col_def['hidden']
@@ -259,7 +256,7 @@ module Ladb::OpenCutList
             formula = col_def['formula']
           end
           begin
-            value = calculator.evaluate!(formula, vars)
+            value = Dentaku.calculator.evaluate!(formula, vars)
           rescue => e
             value = "!ERROR"
           end

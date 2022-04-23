@@ -17,6 +17,7 @@ in 3.x, 2.x, 1.x and 0.x versions.
   * Fixed edge std size display
   * Remove URI.escape deprecation uses
   * Now only standard sheet and bar uses dim prices in reports
+  * Bump to Dentaku 3.5.0
 
 * 3.0.2 (2022-02-27)
 

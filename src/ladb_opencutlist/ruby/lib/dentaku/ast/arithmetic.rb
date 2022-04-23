@@ -58,7 +58,7 @@ module Dentaku
       end
 
       def valid_node?(node)
-        node && (node.type == :numeric || node.dependencies.any?)
+        node && (node.type == :numeric || node.type == :integer || node.dependencies.any?)
       end
 
       def valid_left?
@@ -219,6 +219,10 @@ module Dentaku
     class Exponentiation < Arithmetic
       def operator
         :**
+      end
+
+      def display_operator
+        "^"
       end
 
       def self.precedence
