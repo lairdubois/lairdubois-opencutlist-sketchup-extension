@@ -181,8 +181,16 @@
     };
 
     LadbEditorExport.prototype.addColumn = function (name) {
-        var $item = this.appendColumn(name)
+
+        // Create and append item
+        var $item = this.appendColumn(name);
+
+        // Edit column
         this.editColumn($item);
+
+        // Scroll sortable to bottom
+        this.$sortable.animate({ scrollTop: this.$sortable.get(0).scrollHeight }, 200);
+
     };
 
     LadbEditorExport.prototype.init = function () {
