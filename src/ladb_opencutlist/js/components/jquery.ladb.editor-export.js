@@ -46,7 +46,7 @@
                 name: $(this).data('name'),
                 header: $(this).data('header'),
                 formula: $(this).data('formula'),
-                hidden: $(this).data('hidden')
+                hidden: typeof $(this).data('hidden') == 'boolean' ? $(this).data('hidden') : false
             });
         });
         return colDefs;
