@@ -443,6 +443,12 @@ tab:
       edges: Chants
     export:
       title: Exporter au format CSV
+      add_column: Ajouter une colonne
+      add_native_columns: Ajouter une colonne native
+      remove_column: Retirer
+      columns: Colonnes
+      header: Titre
+      formula: Formule
       info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       options: Options d'export
@@ -484,6 +490,10 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      placeholder:
+        no_header: Saisissez un titre
+        no_formula_native: Valeur par défaut
+        no_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:

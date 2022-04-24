@@ -79,6 +79,12 @@
             }
         });
         tribute.attach(this.$element.get( 0 ));
+        this.$element.get( 0 ).addEventListener('tribute-replaced', function (e) {
+            that.$element.trigger('change');
+        });
+        this.$element.on('keyup', function () {
+            that.$element.trigger('change');
+        })
 
     };
 

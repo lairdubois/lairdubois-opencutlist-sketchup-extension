@@ -8,6 +8,14 @@
   height: inherit;
   min-height: 22px;
 
+  &:empty:before {
+    content: attr(placeholder);
+    pointer-events: none;
+    color: #999;
+    font-family: sans-serif;
+    font-size: 14px;
+  }
+
   .variable {
     display: inline-block;
     background: #eee;

@@ -296,6 +296,16 @@
     border: 1px solid @ladb-global-border;
     padding: 5px 10px 5px 0;
     background: lighten(@ladb-global-border, 10%);
+    cursor: pointer;
+    user-select: none;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
 
     .ladb-handle {
       cursor: ns-resize;
@@ -335,6 +345,11 @@
 
     &.ladb-inactive {
       opacity: 0.5;
+    }
+
+    &.ladb-selected {
+      border-color: @ladb-global-color-focus;
+      background: lighten(@ladb-global-color-focus, 30%);
     }
 
     .ladb-cutlist-export-col-formula {

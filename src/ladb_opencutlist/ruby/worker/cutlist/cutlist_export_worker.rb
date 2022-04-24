@@ -82,14 +82,7 @@ module Ladb::OpenCutList
                 when EXPORT_OPTION_SOURCE_SUMMARY
 
                   # Header row
-                  header = []
-                  @col_defs.each { |col_def|
-                    unless col_def['hidden']
-                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
-                    end
-                  }
-
-                  csv << header
+                  csv << _evaluate_header
 
                   @cutlist.groups.each { |group|
                     next if @hidden_group_ids.include? group.id
@@ -110,14 +103,7 @@ module Ladb::OpenCutList
                 when EXPORT_OPTION_SOURCE_CUTLIST
 
                   # Header row
-                  header = []
-                  @col_defs.each { |col_def|
-                    unless col_def['hidden']
-                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
-                    end
-                  }
-
-                  csv << header
+                  csv << _evaluate_header
 
                   # Content rows
                   @cutlist.groups.each { |group|
@@ -155,14 +141,7 @@ module Ladb::OpenCutList
                 when EXPORT_OPTION_SOURCE_INSTANCES_LIST
 
                   # Header row
-                  header = []
-                  @col_defs.each { |col_def|
-                    unless col_def['hidden']
-                      header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
-                    end
-                  }
-
-                  csv << header
+                  csv << _evaluate_header
 
                   # Content rows
                   @cutlist.groups.each { |group|
@@ -245,6 +224,22 @@ module Ladb::OpenCutList
       ''
     end
 
+    def _evaluate_header
+      header = []
+      @col_defs.each { |col_def|
+        unless col_def['hidden']
+          if col_def['header'].is_a?(String) && !col_def['header'].empty?
+            header.push(col_def['header'])
+          elsif col_def['name'].is_a?(String) && !col_def['name'].empty?
+            header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
+          else
+            header.push('')
+          end
+        end
+      }
+      header
+    end
+
     def _evaluate_row(vars)
       row = []
       @col_defs.each { |col_def|
@@ -252,7 +247,7 @@ module Ladb::OpenCutList
           if col_def['formula'].nil? || col_def['formula'].empty?
             formula = col_def['name']
           else
-            vars[:value] = vars[col_def['name'].to_sym]
+            # vars[:value] = vars[col_def['name'].to_sym]
             formula = col_def['formula']
           end
           begin

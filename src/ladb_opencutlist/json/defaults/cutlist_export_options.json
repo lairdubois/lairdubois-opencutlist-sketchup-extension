@@ -175,11 +175,6 @@
           "formula": ""
         },
         {
-          "name": "bbox_length",
-          "hidden": false,
-          "formula": ""
-        },
-        {
           "name": "bbox_width",
           "hidden": false,
           "formula": ""
