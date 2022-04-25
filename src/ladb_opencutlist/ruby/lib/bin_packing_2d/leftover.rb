@@ -8,7 +8,7 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Leftover < Packing2D
     # Position and size of this Leftover.
-    attr_reader :x, :y, :length, :width
+    attr_reader :x_pos, :y_pos, :length, :width
 
     # Level of this Leftover.
     attr_reader :level
@@ -19,11 +19,11 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Initializes a new Leftover.
     #
-    def initialize(x, y, length, width, level, keep, options)
+    def initialize(x, y, length, width, level, _keep, options)
       super(options)
 
-      @x = x
-      @y = y
+      @x_pos = x
+      @y_pos = y
       @length = length
       @width = width
       @keep = true
@@ -34,11 +34,11 @@ module Ladb::OpenCutList::BinPacking2D
     # Trims the top level Leftover of a Bin. These Cut s are NOT recorded/counted.
     #
     def trim
-      @x += @options.trimsize
-      @y += @options.trimsize
+      @x_pos += @options.trimsize
+      @y_pos += @options.trimsize
       @length -= 2 * @options.trimsize
       @width -= 2 * @options.trimsize
-      useable?
+      usable?
     end
 
     #
@@ -46,16 +46,16 @@ module Ladb::OpenCutList::BinPacking2D
     # position max_x, max_y, may be smaller!
     #
     def resize_to(max_x, max_y)
-      @length = [max_x - @x, @length].min
-      @width = [max_y - @y, @width].min
-      useable?
+      @length = [max_x - @x_pos, @length].min
+      @width = [max_y - @y_pos, @width].min
+      usable?
     end
 
     #
     # Returns true if this Leftover has a valid size, i.e
     # slightly larger than nothing in both dimensions.
     #
-    def useable?
+    def usable?
       @length > @options.saw_kerf && @width > @options.saw_kerf
     end
 
@@ -63,9 +63,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Mark leftovers to keep on bins.
     #
     def mark_keep
-      if (@length < @options.min_length) || (@width < @options.min_width)
-        @keep = false
-      end
+      @keep = false if (@length < @options.min_length) || (@width < @options.min_width)
     end
 
     #
@@ -76,7 +74,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns the heuristic score for placing a Nox inside this Leftover
+    # Returns the heuristic score for placing a Box inside this Leftover
     # or MAX_INT if it does not fit.
     #
     def heuristic_score(box_length, box_width)
@@ -94,10 +92,12 @@ module Ladb::OpenCutList::BinPacking2D
           [(box_length - @length).abs, (box_width - @width).abs].max
         when SCORE_WORSTAREA_FIT
           -((box_length * box_width) - (@length * @width))
-        when SCORE_WORSTSHORTSIDE_FIT
-          [(box_length - @length).abs, (box_width - @width).abs].max
-        when SCORE_WORSTLONGSIDE_FIT
-          [(box_length - @length).abs, (box_width - @width).abs].min
+        when SCORE_BESTWIDTH_FIT
+          (box_width - @width).abs
+        when SCORE_BESTLENGTH_FIT
+          (box_length - @length).abs
+        else
+          MAX_INT
         end
       else
         MAX_INT
@@ -165,7 +165,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def split_horizontal_first(x, y, box = nil)
       # Trying to split outside of this leftover!
-      if x > @x + @length + EPS || y > @y + @width + EPS
+      if x > @x_pos + @length + EPS || y > @y_pos + @width + EPS
         raise(Packing2DError, "Splitting outside of this leftover in split_horizontal_first! #{@options.signature}")
       end
 
@@ -173,23 +173,25 @@ module Ladb::OpenCutList::BinPacking2D
       new_leftovers = []
 
       # Horizontal cut.
-      if (@y + @width - y).abs >= EPS
-        cf = Cut.new(@x, y, @length, true, @level)
+      if (@y_pos + @width - y).abs >= EPS
+        cf = Cut.new(@x_pos, y, @length, true, @level)
         new_cuts << cf
       end
 
       # Bottom leftover.
-      lb = Leftover.new(@x, y + @options.saw_kerf, @length, @y + @width - y - @options.saw_kerf, @level, true, @options)
+      lb = Leftover.new(@x_pos, y + @options.saw_kerf, @length, @y_pos + @width - y - @options.saw_kerf,
+                        @level, true, @options)
       new_leftovers << lb
 
       # Vertical cut.
-      if (@x + @length - x).abs >= EPS
-        cs = Cut.new(x, @y, y - @y, false, @level)
+      if (@x_pos + @length - x).abs >= EPS
+        cs = Cut.new(x, @y_pos, y - @y_pos, false, @level)
         new_cuts << cs
       end
 
       # Right leftover.
-      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, y - @y, @level + 1, true, @options)
+      lr = Leftover.new(x + @options.saw_kerf, @y_pos, @x_pos + @length - x - @options.saw_kerf, y - @y_pos,
+                        @level + 1, true, @options)
       new_leftovers << lr
 
       # If the Box is a Superbox, unmake it!
@@ -204,8 +206,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns the leftovers, the cuts and the unpacked boxes.
     #
     def split_vertical_first(x, y, box = nil)
-      if x > @x + @length + EPS || y > @y + @width + EPS
-        puts("x = #{x}, bin x = #{@x}, length = #{@length}, y = #{y}, bin y = #{@y} width = #{@width}")
+      if x > @x_pos + @length + EPS || y > @y_pos + @width + EPS
+        puts("x = #{x}, bin x = #{@x_pos}, length = #{@length}, y = #{y}, bin y = #{@y_pos} width = #{@width}")
         raise(Packing2DError, "Splitting outside of this leftover in split_vertical_first! #{@options.signature}")
       end
 
@@ -213,23 +215,25 @@ module Ladb::OpenCutList::BinPacking2D
       new_leftovers = []
 
       # Vertical cut.
-      if (@x + @length - x).abs >= EPS
-        cf = Cut.new(x, @y, @width, false, @level)
+      if (@x_pos + @length - x).abs >= EPS
+        cf = Cut.new(x, @y_pos, @width, false, @level)
         new_cuts << cf
       end
 
       # Right leftover.
-      lr = Leftover.new(x + @options.saw_kerf, @y, @x + @length - x - @options.saw_kerf, @width, @level, true, @options)
+      lr = Leftover.new(x + @options.saw_kerf, @y_pos, @x_pos + @length - x - @options.saw_kerf, @width,
+                        @level, true, @options)
       new_leftovers << lr
 
       # Horizontal cut.
-      if (@y + @width - y).abs >= EPS
-        cs = Cut.new(@x, y, x - @x, true, @level)
+      if (@y_pos + @width - y).abs >= EPS
+        cs = Cut.new(@x_pos, y, x - @x_pos, true, @level)
         new_cuts << cs
       end
 
       # Bottom leftover.
-      lb = Leftover.new(@x, y + @options.saw_kerf, x - @x, @y + @width - y - @options.saw_kerf, @level + 1, true, @options)
+      lb = Leftover.new(@x_pos, y + @options.saw_kerf, x - @x_pos, @y_pos + @width - y - @options.saw_kerf,
+                        @level + 1, true, @options)
       new_leftovers << lb
 
       # Unmake it if a Superbox, does nothing if box.nil?
@@ -251,33 +255,33 @@ module Ladb::OpenCutList::BinPacking2D
       if sbox.instance_of?(SuperBox)
         if sbox.sboxes.size == 1
           single_box = sbox.sboxes.shift
-          single_box.set_position(sbox.x, sbox.y)
+          single_box.set_position(sbox.x_pos, sbox.y_pos)
           unpacked_boxes << single_box
         elsif sbox.unbreakable
           unpacked_boxes << sbox
         elsif (@options.stacking == STACKING_LENGTH && !sbox.rotated) ||
               (@options.stacking == STACKING_WIDTH && sbox.rotated)
           top_box = sbox.sboxes.shift
-          top_box.set_position(sbox.x, sbox.y)
-          offset = sbox.x + top_box.length
+          top_box.set_position(sbox.x_pos, sbox.y_pos)
+          offset = sbox.x_pos + top_box.length
           unpacked_boxes << top_box
           sbox.sboxes.each do |box|
-            new_cuts << Cut.new(offset, sbox.y, sbox.width, false, @level)
+            new_cuts << Cut.new(offset, sbox.y_pos, sbox.width, false, @level)
             offset += @options.saw_kerf
-            box.set_position(offset, sbox.y)
+            box.set_position(offset, sbox.y_pos)
             unpacked_boxes << box
             offset += box.length
           end
         elsif (@options.stacking == STACKING_LENGTH && sbox.rotated) ||
               (@options.stacking == STACKING_WIDTH && !sbox.rotated)
           top_box = sbox.sboxes.shift
-          top_box.set_position(sbox.x, sbox.y)
-          offset = sbox.y + top_box.width
+          top_box.set_position(sbox.x_pos, sbox.y_pos)
+          offset = sbox.y_pos + top_box.width
           unpacked_boxes << top_box
           sbox.sboxes.each do |box|
-            new_cuts << Cut.new(sbox.x, offset, sbox.length, true, @level)
+            new_cuts << Cut.new(sbox.x_pos, offset, sbox.length, true, @level)
             offset += @options.saw_kerf
-            box.set_position(sbox.x, offset)
+            box.set_position(sbox.x_pos, offset)
             unpacked_boxes << box
             offset += box.width
           end
@@ -294,25 +298,10 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      s = "lft : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
-      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}, "
-      s << "#{format('%9.2f', @width)}], lvl = #{format('%3d', @level)}, "
-      s << "area = #{format('%12.2f', area)}"
-      s
-    end
-
-    #
-    # Debugging!
-    #
-    def to_term
-      dbg("    leftover #{to_str}")
-    end
-
-    #
-    # Debugging!
-    #
-    def to_octave
-      "rectangle(\"Position\", [#{@x},#{@y},#{@length},#{@width}], \"Facecolor\", grey); # empty leftover\n"
+      s = "lft : #{format('%5d', object_id)} [#{format('%9.2f', @x_pos)}, "
+      s += "#{format('%9.2f', @y_pos)}, #{format('%9.2f', @length)}, "
+      s += "#{format('%9.2f', @width)}], lvl = #{format('%3d', @level)}, "
+      s + "area = #{format('%12.2f', area)}"
     end
   end
 end

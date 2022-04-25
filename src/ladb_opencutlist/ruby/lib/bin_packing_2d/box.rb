@@ -6,7 +6,7 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Box
     # Position of this Box inside the enclosing Bin.
-    attr_reader :x, :y
+    attr_reader :x_pos, :y_pos
 
     # Length this Box.
     attr_reader :length
@@ -27,8 +27,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Initializes a new Box, ensure that it has a length and width > 0.
     #
     def initialize(length, width, rotatable, data)
-      @x = 0
-      @y = 0
+      @x_pos = 0
+      @y_pos = 0
       @length = length * 1.0
       @width = width * 1.0
 
@@ -70,9 +70,9 @@ module Ladb::OpenCutList::BinPacking2D
     # Sets the position of this Box inside a Bin when placed into a Leftover by Packer.
     #
     def set_position(x_pos, y_pos)
-      @x = x_pos
-      @y = y_pos
-      raise(Packing2DError, 'Trying to initialize a box with negative x or y!') if @x < 0.0 || @y < 0.0
+      @x_pos = x_pos
+      @y_pos = y_pos
+      raise(Packing2DError, 'Trying to initialize a box with negative x or y!') if @x_pos < 0.0 || @y_pos < 0.0
     end
 
     #
@@ -136,21 +136,10 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      s = "box : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
-      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}, "
-      s << "#{format('%9.2f', @width)}], "
-      s << "rotated = #{@rotated}[rotatable=#{@rotatable}]"
-      s
-    end
-
-    #
-    # Debugging!
-    #
-    def to_octave
-      s = 'rectangle("Position",'
-      s << "[#{@x},#{@y},#{@length},#{@width}], "
-      s << '"Facecolor", blue);' # box"
-      s
+      s = "box : #{format('%5d', object_id)} [#{format('%9.2f', @x_pos)}, "
+      s += "#{format('%9.2f', @y_pos)}, #{format('%9.2f', @length)}, "
+      s += "#{format('%9.2f', @width)}], "
+      s + "rotated = #{@rotated}[rotatable=#{@rotatable}]"
     end
   end
 end
