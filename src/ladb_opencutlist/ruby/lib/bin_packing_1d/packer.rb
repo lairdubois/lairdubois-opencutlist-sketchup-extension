@@ -88,7 +88,7 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def add_leftovers(leftovers)
       leftovers.each do |leftover|
-        @leftovers << Bin.new(leftover.length, BIN_TYPE_LO, @options)
+        @leftovers << Bin.new(leftover.length, BIN_TYPE_USER_DEFINED, @options)
       end
       return if !@leftovers.empty? || @options.base_bin_length >= EPS
 
