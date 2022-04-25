@@ -238,7 +238,7 @@ module Ladb::OpenCutList
         bin.boxes.each { |box|
 
           part_def = Cuttingdiagram1dPartDef.new(box.data)
-          part_def.slice_defs.concat(_to_slice_defs(box.x, box.length, wrap_length))
+          part_def.slice_defs.concat(_to_slice_defs(box.x_pos, box.length, wrap_length))
           bar_def.part_defs.push(part_def)
 
           unless @hide_part_list
