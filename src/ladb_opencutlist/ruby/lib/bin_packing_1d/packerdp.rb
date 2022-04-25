@@ -36,7 +36,7 @@ module Ladb::OpenCutList::BinPacking1D
       #
       leftovers_clone = []
       leftovers.each do |leftover|
-        leftovers_clone << Bin.new(leftover.length, BIN_TYPE_LO, @options)
+        leftovers_clone << Bin.new(leftover.length, BIN_TYPE_USER_DEFINED, @options)
       end
       [boxes_clone, leftovers_clone]
     end

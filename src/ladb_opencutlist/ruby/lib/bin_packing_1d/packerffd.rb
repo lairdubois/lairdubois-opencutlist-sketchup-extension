@@ -56,7 +56,7 @@ module Ladb::OpenCutList::BinPacking1D
       end
       packed_bins = []
       @bins.each do |bin|
-        if bin.type == BIN_TYPE_LO && bin.boxes.empty?
+        if bin.type == BIN_TYPE_USER_DEFINED && bin.boxes.empty?
           @unused_bins << bin
         else
           packed_bins << bin
