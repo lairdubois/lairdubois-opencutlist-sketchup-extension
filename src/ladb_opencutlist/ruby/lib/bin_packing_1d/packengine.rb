@@ -49,7 +49,7 @@ module Ladb::OpenCutList::BinPacking1D
       if length <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BIN
       else
-        new_bin = Bin.new(length, BIN_TYPE_LO, @options)
+        new_bin = Bin.new(length, BIN_TYPE_USER_DEFINED, @options)
         # No need to sort, algorithm will pick largest available
         @leftovers.push(new_bin)
       end

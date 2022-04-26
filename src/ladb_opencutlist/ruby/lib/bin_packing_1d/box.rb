@@ -6,7 +6,7 @@ module Ladb::OpenCutList::BinPacking1D
   #
   class Box < Packing1D
     # Position of the Box inside the enclosing Bin.
-    attr_accessor :x
+    attr_accessor :x_pos
 
     # Length of this Box.
     attr_reader :length
@@ -20,7 +20,7 @@ module Ladb::OpenCutList::BinPacking1D
     #
     def initialize(length = 0, data = nil)
       super(nil)
-      @x = 0.0
+      @x_pos = 0.0
       @length = length * 1.0
       raise(Packing1DError, 'Trying to initialize a box with zero or negative length!') if @length <= 0
 

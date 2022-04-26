@@ -44,6 +44,8 @@ module Ladb::OpenCutList
     ERROR_BAD_ERROR = 5
     # Error in step by step run
     ERROR_STEP_BY_STEP = 6
+    # Error invalid input
+    ERROR_INVALID_INPUT = 7
 
     # A large saw kerf warning.
     WARNING_SAW_KERF_LARGE = 0
@@ -82,10 +84,10 @@ module Ladb::OpenCutList
     SCORE_BESTSHORTSIDE_FIT = 1
     SCORE_BESTLONGSIDE_FIT = 2
     SCORE_WORSTAREA_FIT = 3
-    SCORE_WORSTSHORTSIDE_FIT = 4
-    SCORE_WORSTLONGSIDE_FIT = 5
+    SCORE_BESTWIDTH_FIT = 4
+    SCORE_BESTLENGTH_FIT = 5
     SCORE = ['best area', 'short side', 'long side', 'worst area',
-             'worst short side', 'worst long side'].freeze
+             'best width', 'best length'].freeze
 
     # Splitting strategies defining the order of the guillotine cuts.
     SPLIT_SHORTERLEFTOVER_AXIS = 0
@@ -104,7 +106,7 @@ module Ladb::OpenCutList
     STACKING_NONE = 0
     # Stack boxes lengthwise by grouping common widths.
     STACKING_LENGTH = 1
-    # Stack boxes widthwise by grouping common lengths.
+    # Stack boxes width-wise by grouping common lengths.
     STACKING_WIDTH = 2
     # Stack none, length and width.
     STACKING_ALL = 3
@@ -144,10 +146,9 @@ module Ladb::OpenCutList
       #
       def dbg(msg, debug = false)
         # Assuming @options exists.
-        return unless debug || (!@options.nil? && @options.debug)
+        return if @options.nil?
 
-        puts(msg)
-        $stdout.flush
+        puts("#{msg}\n") if debug || @options.debug
       end
     end
   end

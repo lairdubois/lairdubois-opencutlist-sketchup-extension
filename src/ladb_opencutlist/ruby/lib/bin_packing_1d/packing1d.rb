@@ -63,7 +63,7 @@ module Ladb::OpenCutList
     # Type of a new bin.
     BIN_TYPE_AUTO_GENERATED = 0
     # Type of leftover/scrap bin.
-    BIN_TYPE_LO = 1
+    BIN_TYPE_USER_DEFINED = 1
 
     #
     # Exception raised in this module.
@@ -90,11 +90,11 @@ module Ladb::OpenCutList
       # Prints a message when debug option is on or
       # when called with option true.
       #
-      def dbg(msg, dbg = false)
+      def dbg(msg, debug = false)
         # assuming @options exists
         return if @options.nil?
 
-        puts("#{msg}\n") if dbg || @options.debug
+        puts("#{msg}\n") if debug || @options.debug
       end
     end
   end

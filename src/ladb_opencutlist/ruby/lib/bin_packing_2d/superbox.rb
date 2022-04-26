@@ -6,11 +6,11 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class SuperBox < Box
     # Shape of the stacking, lengthwise.
-    SL = 0
-    # Shape of stacking, widthwise.
-    SW = 1
+    SHAPE_LENGTH = 0
+    # Shape of stacking, width-wise.
+    SHAPE_WIDTH = 1
 
-    # The list of Boxe s in a SuperBox.
+    # The list of Boxes in a SuperBox.
     attr_reader :sboxes
 
     # The maximal length for packing in a SuperBox.
@@ -22,7 +22,7 @@ module Ladb::OpenCutList::BinPacking2D
     # The shape of this Superbox.
     attr_reader :shape
 
-    # Unbreakable
+    # Unbreakable if the SuperBox should not be broken.
     attr_reader :unbreakable
 
     #
@@ -37,20 +37,24 @@ module Ladb::OpenCutList::BinPacking2D
       @width = 0
       @saw_kerf = saw_kerf
       @unbreakable = false
-      
       @maxlength = maxlength
       @maxwidth = maxwidth
 
       # Shape is currently unknown, assuming, but not important!
-      @shape = SL
+      @shape = SHAPE_LENGTH
       @sboxes = []
     end
 
+    #
+    # Make this superbox unbreakable, meaning it will not
+    # be further decomposed during packing.
+    #
     def make_unbreakable
       @unbreakable = true
     end
+
     #
-    # Adds a first Box to the SuperBox.
+    # Add a first Box to the SuperBox.
     #
     def add_first_box(box)
       @sboxes << box
@@ -64,24 +68,23 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Stacks identical elements in boxes until maxlength reached.
+    # Stack identical elements in boxes until maxlength reached.
     # Boxes passed in should all have the same width.
     # Returns the elements that could not be stacked.
     #
     def stack_length(boxes)
+      # Only superbox with size 1 can have other boxes stacked onto it!
       raise(Packing2DError, 'SuperBox length is empty, cannot stack!') unless @sboxes.size == 1
 
       surplus_boxes = []
-      @shape = SL
+      @shape = SHAPE_LENGTH
       until boxes.empty?
         box = boxes.shift
-        if box.rotatable == @rotatable &&
-          (@width - box.width).abs <= EPS &&
-          @length + @saw_kerf + box.length <= @maxlength
+        if box.rotatable == @rotatable && (@width - box.width).abs <= EPS &&
+           @length + @saw_kerf + box.length <= @maxlength
           @length = @length + @saw_kerf + box.length
           @sboxes << box
-        elsif box.rotatable == @rotatable && box.rotatable &&
-              (@width - box.length).abs <= EPS &&
+        elsif box.rotatable == @rotatable && box.rotatable && (@width - box.length).abs <= EPS &&
               @length + @saw_kerf + box.width <= @maxlength
           box.rotate
           @length = @length + @saw_kerf + box.length
@@ -94,26 +97,25 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Stacks identical elements in boxes until maxwidth is reached.
+    # Stack identical elements in boxes until maxwidth is reached.
     # Boxes passed in should all have the same length.
     # Returns the elements that could not be stacked.
     #
     def stack_width(boxes)
+      # Only superbox with size 1 can have other boxes stacked onto it!
       raise(Packing2DError, 'Superbox width is empty, cannot stack!') unless @sboxes.size == 1
 
       surplus_boxes = []
       # We have a first element in the superbox
-      @shape = SW
+      @shape = SHAPE_WIDTH
       until boxes.empty?
         box = boxes.shift
         # Reject boxes than do not have the same rotatable
-        if box.rotatable == @rotatable &&
-           (@length - box.length).abs <= EPS &&
+        if box.rotatable == @rotatable && (@length - box.length).abs <= EPS &&
            @width + @saw_kerf + box.width <= @maxwidth
           @width = @width + @saw_kerf + box.width
           @sboxes << box
-        elsif box.rotatable == @rotatable && box.rotatable &&
-              (@length - box.width).abs <= EPS &&
+        elsif box.rotatable == @rotatable && box.rotatable && (@length - box.width).abs <= EPS &&
               @width + @saw_kerf + box.length <= @maxwidth
           box.rotate
           @width = @width + @saw_kerf + box.width
@@ -126,18 +128,18 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Reduces this SuperBox by one element, the first and largest.
+    # Reduce this SuperBox by one element, the first and largest.
     #
     def reduce
       case @shape
-      when SL
+      when SHAPE_LENGTH
         return @sboxes[0], nil unless @sboxes.size > 1
 
         # Splat operator
         first, *@sboxes = @sboxes
         @length = @length - first.length - @saw_kerf
         return first, self
-      when SW
+      when SHAPE_WIDTH
         return @sboxes[0], nil unless @sboxes.size > 1
 
         # Splat operator
@@ -150,7 +152,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Rotates the SuperBox by 90deg degree if option permits
+    # Rotate the SuperBox by 90 degree if option permits
     # and shape is still valid. Also rotates all contained boxes.
     #
     def rotate
@@ -159,7 +161,7 @@ module Ladb::OpenCutList::BinPacking2D
         @width, @length = [@length, @width]
         @rotated = !@rotated
         @sboxes.each(&:rotate)
-        @shape = SL ? SW : SL
+        @shape = SHAPE_LENGTH ? SHAPE_WIDTH : SHAPE_LENGTH
         return true
       end
       # on anything else!

@@ -80,6 +80,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:area_unplaced_boxes] = 0
       @gstat[:all_largest_area] = 0
       @gstat[:largest_bottom_parts] = 0
+      @gstat[:largest_leftover_area] = 0
       @gstat[:cuts_together_count] = 0
       @gstat[:overall_efficiency] = 0
       @gstat[:rank] = 0
@@ -138,6 +139,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:total_l_measure] = @previous_packer.gstat[:total_l_measure]
       @gstat[:cuts_together_count] = @previous_packer.gstat[:cuts_together_count]
       @gstat[:overall_efficiency] = @previous_packer.gstat[:overall_efficiency]
+      @gstat[:largest_leftover_area] = @previous_packer.gstat[:largest_leftover_area]
     end
 
     #
@@ -157,7 +159,7 @@ module Ladb::OpenCutList::BinPacking2D
 
     #
     # Adds a list of invalid Boxes (too large to fit any Bin) to this Packer.
-    # TODO: We do not yet make a distinction between invalid and unplaceable box in the GUI.
+    # TODO: We do not yet make a distinction between invalid and not placeable box in the GUI.
     #
     def add_invalid_boxes(invalid_boxes)
       @invalid_boxes += invalid_boxes
@@ -175,7 +177,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Returns true if standard Bins can be infinitely added.
     #
     def bins_can_be_added?
-      ((@options.base_length - (2 * @options.trimsize) > EPS) && \
+      ((@options.base_length - (2 * @options.trimsize) > EPS) &&
        (@options.base_width - (2 * @options.trimsize) > EPS)) || !@bins.empty?
     end
 
@@ -198,7 +200,7 @@ module Ladb::OpenCutList::BinPacking2D
         @boxes.sort_by! { |box| [-box.length - box.width, -box.length] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
-        wl, ws = @boxes.partition { |box| box.width >= (@_maxwidth - w_max.width) }
+        wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
         wl.sort_by! { |box| -box.width }
         ws.sort_by! { |box| -box.width }
         if wl.empty? || ws.empty?
@@ -211,7 +213,7 @@ module Ladb::OpenCutList::BinPacking2D
         end
       when PRESORT_ALTERNATING_LENGTHS
         l_max = @boxes.max_by(&:length)
-        ll, ls = @boxes.partition { |box| box.length >= (@_maxlength - l_max.length) }
+        ll, ls = @boxes.partition { |box| box.length >= (@stacking_maxlength - l_max.length) }
         ll.sort_by! { |box| -box.length }
         ls.sort_by! { |box| -box.length }
         if ll.empty? || ls.empty?
@@ -231,7 +233,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Takes boxes with same length/width and tries to stack them so
     # that they will be placed as a single box, horizontally or vertically, thus
     # reducing the number of cuts.
-    # TODO: try to rebalance stacks, this leads to more compact bounding boxes!
+    # TODO: try to re-balance stacks, this leads to more compact bounding boxes!
     #
     def make_superboxes_length
       # Stack the boxes by decreasing length.
@@ -302,14 +304,12 @@ module Ladb::OpenCutList::BinPacking2D
 
       return false if @boxes.empty?
 
-      case @options.stacking
-      when STACKING_LENGTH
+      if @options.stacking == STACKING_LENGTH
         make_superboxes_length
-      when STACKING_WIDTH
+      elsif @options.stacking == STACKING_WIDTH
         make_superboxes_width
       end
       sort_boxes
-
       true
     end
 
@@ -335,8 +335,6 @@ module Ladb::OpenCutList::BinPacking2D
       # removed by Packengine and will be re-added at the end.
       @gstat[:nb_input_boxes] = @boxes.size if @previous_packer.nil?
 
-      current_bin = nil
-      nb_packed_boxes = 0
       loop do
         # Get the next Bin. If there are offcuts, this will be the smallest
         # in area, if not it will be a standard Bin, or nil if no Bin can be
@@ -348,19 +346,12 @@ module Ladb::OpenCutList::BinPacking2D
         # Partition the Boxes into @boxes and @invalid_boxes, those that cannot
         # fit into this bin, also makes SuperBoxes if required.
         if can_be_packed?(current_bin)
-          nb_packed_boxes = pack_single(current_bin)
           # @boxes contains all Boxes that have NOT been placed, they may be
           # Superboxes. This packer is now almost done!
-          if nb_packed_boxes > 0
+          if pack_single(current_bin) > 0
             current_bin.final_bounding_box
             # Second pass after final bounding box has been applied
-            if current_bin.any_fit_into_leftovers(@boxes)
-              nb = pack_single(current_bin)
-              if nb > 0
-                current_bin.final_bounding_box
-                nb_packed_boxes += nb
-              end
-            end
+            current_bin.final_bounding_box if current_bin.any_fit_into_leftovers(@boxes) && pack_single(current_bin) > 0
             current_bin.keep_signature(@options.signature)
             @packed_bins << current_bin
             @unplaced_boxes = unmake_superboxes(@boxes)
@@ -380,7 +371,7 @@ module Ladb::OpenCutList::BinPacking2D
           @boxes = unmake_superboxes(@boxes)
           if bins_can_be_added?
             # Reassign invalid boxes to boxes and hope they will find a Bin.
-            # This is the case when an offcut cannot fit any Box, but a
+            # This is the case when an off-cut cannot fit any Box, but a
             # Standard Bin can still be generated.
             @boxes += @invalid_boxes
             @invalid_boxes = []
@@ -469,7 +460,7 @@ module Ladb::OpenCutList::BinPacking2D
 
     #
     # Collects all pieces per bin, runs statistics.
-    # TODO: packer.postprocess verify that we havent lost any boxes in the packing process
+    # TODO: packer.postprocess verify that we haven't lost any boxes in the packing process
     #
     def postprocess(current_bin)
       current_bin.summarize
@@ -491,6 +482,7 @@ module Ladb::OpenCutList::BinPacking2D
       @gstat[:cuts_together_count] += @stat[:v_together] + @stat[:h_together]
       @gstat[:all_largest_area] += current_bin.stat[:outer_leftover_area]
       @gstat[:largest_bottom_parts] += current_bin.stat[:largest_bottom_part]
+      @gstat[:largest_leftover_area] = [@stat[:largest_leftover_area], @gstat[:largest_leftover_area]].max
       @gstat[:overall_efficiency] += @stat[:efficiency]
     end
 
@@ -499,9 +491,9 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def overall_efficiency
       if @gstat[:nb_packed_bins] > 0
-        return @gstat[:overall_efficiency]/@gstat[:nb_packed_bins]
+        @gstat[:overall_efficiency] / @gstat[:nb_packed_bins]
       else
-        return 0.0
+        0.0
       end
     end
 
@@ -593,20 +585,6 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def signature
       "packer id=#{@options.signature}"
-    end
-
-    #
-    # Prints the packing as a Matlab/Octave graphics.
-    #
-    def octave(id, directory = './results')
-      dbg('-> printing octave')
-      # FileUtils.rm_f Dir.glob("#{directory}/res*.m")
-      @packed_bins.each do |bin|
-        dbg("   bin #{bin.index}")
-        filename = "#{directory}/res_#{id}_#{bin.index}.m"
-        f = File.open(filename, 'w')
-        bin.octave(f)
-      end
     end
   end
 end

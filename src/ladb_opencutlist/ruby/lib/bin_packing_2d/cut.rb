@@ -6,7 +6,7 @@ module Ladb::OpenCutList::BinPacking2D
   #
   class Cut < Packing2D
     # Starting position of this Cut and its length.
-    attr_reader :x, :y, :length
+    attr_reader :x_pos, :y_pos, :length
 
     # Direction of this guillotine Cut (see Packing2D).
     attr_reader :is_horizontal
@@ -25,8 +25,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def initialize(x, y, length, horizontal, level)
       super(nil)
-      @x = x
-      @y = y
+      @x_pos = x
+      @y_pos = y
       @length = length
       @is_horizontal = horizontal
       @is_through = false
@@ -69,12 +69,12 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def resize_to(max_x, max_y)
       # Starting point of the cut is well inside of the bounding box
-      return false unless @x < max_x && @y < max_y
+      return false unless @x_pos < max_x && @y_pos < max_y
 
-      if @is_horizontal && @x + @length > max_x
-        update_length(max_x - @x)
-      elsif !@is_horizontal && @y + @length > max_y
-        update_length(max_y - @y)
+      if @is_horizontal && @x_pos + @length > max_x
+        update_length(max_x - @x_pos)
+      elsif !@is_horizontal && @y_pos + @length > max_y
+        update_length(max_y - @y_pos)
       end
       valid?
     end
@@ -84,24 +84,9 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def to_str
       dir = @is_horizontal ? 'H' : 'V'
-      s = "cut : #{format('%5d', object_id)} [#{format('%9.2f', @x)}, "
-      s << "#{format('%9.2f', @y)}, #{format('%9.2f', @length)}], "
-      s << "#{dir}, #{format('%3d', @level)}, #{@is_through}, #{@is_final}]"
-      s
-    end
-
-    #
-    # Debugging!
-    #
-    def to_octave
-      linewidth = 2
-      if @is_horizontal
-        "line([#{@x}, #{@x + @length}], [#{@y}, #{@y}], \"color\", " \
-          "red, \"linewidth\", #{linewidth}) # horizontal cut"
-      else
-        "line([#{@x}, #{@x}], [#{y}, #{@y + @length}], \"color\", " \
-          "red,  \"linewidth\", #{linewidth}) # vertical cut"
-      end
+      s = "cut : #{format('%5d', object_id)} [#{format('%9.2f', @x_pos)}, "
+      s += "#{format('%9.2f', @y_pos)}, #{format('%9.2f', @length)}], "
+      s + "#{dir}, #{format('%3d', @level)}, #{@is_through}, #{@is_final}]"
     end
   end
 end

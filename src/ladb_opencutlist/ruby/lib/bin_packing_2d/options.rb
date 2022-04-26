@@ -31,14 +31,14 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets debug mode to on/off.
+    # Set debug mode to on/off.
     #
     def set_debug(debug)
       @debug = debug
     end
 
     #
-    # Sets optimization level.
+    # Set optimization level.
     #
     def set_optimization(optimization)
       @optimization = if (OPT_MEDIUM..OPT_ADVANCED).cover?(optimization)
@@ -49,7 +49,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets the stacking preference.
+    # Set the stacking preference.
     #
     def set_stacking_pref(stacking_pref)
       @stacking_pref = if (STACKING_NONE..STACKING_ALL).cover?(stacking_pref)
@@ -60,46 +60,46 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Sets the base length of infinite Bin.
+    # Set the base length of infinite Bin.
     #
     def set_base_length(base_length)
       @base_length = base_length
     end
 
     #
-    # Sets the base width of infinite Bin.
+    # Set the base width of infinite Bin.
     #
     def set_base_width(base_width)
       @base_width = base_width
     end
 
     #
-    # Sets global property rotatable = no grain.
+    # Set global property rotatable = no grain.
     #
     def set_rotatable(rotatable)
-      if [true, false].include?(rotatable)
-        @rotatable = rotatable
-      else
-        @rotatable = true
-      end
+      @rotatable = if [true, false].include?(rotatable)
+                     rotatable
+                   else
+                     true
+                   end
     end
 
     #
-    # Sets saw kerf width.
+    # Set saw kerf width.
     #
     def set_saw_kerf(saw_kerf)
       @saw_kerf = saw_kerf
     end
 
     #
-    # Sets trim size around bin (symmetrical).
+    # Set trim size around bin (symmetrical).
     #
     def set_trimsize(trimsize)
       @trimsize = trimsize
     end
 
     #
-    #
+    # Set the keep parameter.
     #
     def set_keep(min_length, min_width)
       @min_length = min_length
@@ -107,7 +107,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Makes a signature string of the options.
+    # Return a signature string of the options.
     #
     def signature
       "#{@presort}/#{@score}/#{@split}/#{@stacking}/#{format('%5.2f', @saw_kerf)}/#{format('%5.2f', @trimsize)}"
@@ -118,15 +118,14 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def to_str
       s = "-> options\n"
-      s << "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n"
-      s << "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n"
-      s << "   computations     = #{get_computations(@optimization, @stacking_pref)}\n"
-      s << "   base_length      = #{@base_length}\n"
-      s << "   base_width       = #{@base_width}\n"
-      s << "   trimsize         = #{@trimsize}\n"
-      s << "   saw_kerf         = #{@saw_kerf}\n"
-      s << "   global rotatable = #{@rotatable}\n"
-      s
+      s += "   optimization     = #{@optimization} => #{OPTIMIZATION[@optimization]}\n"
+      s += "   stacking_pref    = #{@stacking_pref} => #{STACKING[@stacking_pref]}\n"
+      s += "   computations     = #{get_computations(@optimization, @stacking_pref)}\n"
+      s += "   base_length      = #{@base_length}\n"
+      s += "   base_width       = #{@base_width}\n"
+      s += "   trimsize         = #{@trimsize}\n"
+      s += "   saw_kerf         = #{@saw_kerf}\n"
+      s + "   global rotatable = #{@rotatable}\n"
     end
   end
 end

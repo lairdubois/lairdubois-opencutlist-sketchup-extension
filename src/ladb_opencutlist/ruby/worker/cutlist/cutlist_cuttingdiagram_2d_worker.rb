@@ -99,13 +99,13 @@ module Ladb::OpenCutList
         # Start pack engine
         @pack_engine.start
 
-        if step_by_step && !@pack_engine.has_errors
+        if step_by_step && !@pack_engine.errors?
           estimated_steps, signatures = @pack_engine.get_estimated_steps
           return { :estimated_steps => estimated_steps }
         end
 
       end
-      until @pack_engine.is_done || @pack_engine.has_errors
+      until @pack_engine.done? || @pack_engine.errors?
 
         # Run pack engine
         @pack_engine.run
@@ -116,9 +116,9 @@ module Ladb::OpenCutList
       end
       result = nil
       err = BinPacking2D::ERROR_NONE
-      if @pack_engine.has_errors
+      if @pack_engine.errors?
         err = @pack_engine.get_errors.first
-      elsif @pack_engine.is_done
+      elsif @pack_engine.done?
 
         # Finish pack engine
         result, err = @pack_engine.finish
@@ -245,8 +245,8 @@ module Ladb::OpenCutList
         bin.boxes.each { |box|
 
           part_def = Cuttingdiagram2dPartDef.new(box.data)
-          part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
-          part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+          part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x_pos, box.length, bin.length))
+          part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y_pos, box.width, bin.width))
           part_def.px_length = _to_px(box.length)
           part_def.px_width = _to_px(box.width)
           part_def.rotated = box.rotated
@@ -268,8 +268,8 @@ module Ladb::OpenCutList
         bin.leftovers.each { |box|
 
           leftover_def = Cuttingdiagram2dLeftoverDef.new
-          leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x, box.length, bin.length))
-          leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y, box.width, bin.width))
+          leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x_pos, box.length, bin.length))
+          leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y_pos, box.width, bin.width))
           leftover_def.px_length = _to_px(box.length)
           leftover_def.px_width = _to_px(box.width)
           leftover_def.length = box.length
@@ -282,11 +282,11 @@ module Ladb::OpenCutList
         bin.cuts.each { |cut|
 
           cut_def = Cuttingdiagram2dCutDef.new
-          cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x, cut.is_horizontal ? cut.length : @saw_kerf, bin.length))
-          cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y, cut.is_horizontal ? @saw_kerf : cut.length, bin.width))
+          cut_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, cut.x_pos, cut.is_horizontal ? cut.length : @saw_kerf, bin.length))
+          cut_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, cut.y_pos, cut.is_horizontal ? @saw_kerf : cut.length, bin.width))
           cut_def.px_length = _to_px(cut.length)
-          cut_def.x = cut.x
-          cut_def.y = cut.y
+          cut_def.x = cut.x_pos
+          cut_def.y = cut.y_pos
           cut_def.length = cut.length
           cut_def.is_horizontal = cut.is_horizontal
           cut_def.is_through = cut.is_through

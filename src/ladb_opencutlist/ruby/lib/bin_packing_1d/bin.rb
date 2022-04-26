@@ -74,7 +74,7 @@ module Ladb::OpenCutList::BinPacking1D
       @cuts = []
       @current_position = @options.trimsize
       @boxes.each do |box|
-        box.x = @current_position
+        box.x_pos = @current_position
         @current_position += box.length
         @cuts << @current_position
         @current_position += @options.saw_kerf
