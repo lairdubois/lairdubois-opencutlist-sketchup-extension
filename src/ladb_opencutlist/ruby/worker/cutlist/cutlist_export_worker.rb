@@ -247,7 +247,6 @@ module Ladb::OpenCutList
           if col_def['formula'].nil? || col_def['formula'].empty?
             formula = col_def['name']
           else
-            # vars[:value] = vars[col_def['name'].to_sym]
             formula = col_def['formula']
           end
           begin

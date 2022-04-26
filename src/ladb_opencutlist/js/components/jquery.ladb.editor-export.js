@@ -30,7 +30,7 @@
         $.each(colDefs, function (index, colDef) {
 
             // Append column
-            that.appendColumn(colDef.name, colDef.header, colDef.formula, colDef.hidden);
+            that.appendColumnItem(colDef.name, colDef.header, colDef.formula, colDef.hidden);
 
         });
 
@@ -52,7 +52,7 @@
         return colDefs;
     };
 
-    LadbEditorExport.prototype.appendColumn = function (name, header, formula, hidden) {
+    LadbEditorExport.prototype.appendColumnItem = function (name, header, formula, hidden) {
         var that = this;
 
         // Create and append row
@@ -172,18 +172,27 @@
 
     LadbEditorExport.prototype.removeColumn = function ($item) {
 
+        // Retrieve sibling item if possible
+        var $siblingItem = $item.prev();
+        if ($siblingItem.length === 0) {
+            $siblingItem = $item.next();
+            if ($siblingItem.length === 0) {
+                $siblingItem = null;
+            }
+        }
+
         // Remove column item
         $item.remove();
 
-        // Cancel editing
-        this.editColumn(null);
+        // Move editing to sibling item
+        this.editColumn($siblingItem);
 
     };
 
     LadbEditorExport.prototype.addColumn = function (name) {
 
         // Create and append item
-        var $item = this.appendColumn(name);
+        var $item = this.appendColumnItem(name);
 
         // Edit column
         this.editColumn($item);
